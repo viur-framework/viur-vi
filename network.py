@@ -44,6 +44,8 @@ class NetworkService( object ):
 			@param modul: Name of the modul where the change occured
 			@type modul: string
 		"""
+		print("NOTIFIYING CHANGES NOW")
+		print( NetworkService.changeListeners )
 		for c in NetworkService.changeListeners:
 			c.onDataChanged( modul )
 
@@ -206,6 +208,7 @@ class NetworkService( object ):
 
 		"""
 		assert not( cacheable and modifies ), "Cannot cache a request modifying data!"
+		print( params )
 		if cacheable:
 			key = NetworkService.keyFromQuery( modul, url, params )
 			if key in NetworkService._cache.keys():
@@ -259,6 +262,7 @@ class NetworkService( object ):
 			self.waitingForSkey = False
 			self.doFetch( NetworkService.urlForArgs(self.modul,self.url), self.params, json.loads(text) )
 		else:
+			print("IM COMPLETE", self)
 			self.result = text
 			self.status = "succeeded"
 			try:

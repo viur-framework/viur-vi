@@ -16,28 +16,28 @@ from __pyjamas__ import JS
 import json
 from network import NetworkService
 from priorityqueue import HandlerClassSelector
-from widgets import ListWidget
+from widgets import TreeWidget
 from config import conf
 import pygwt
 from pane import Pane
 
 
-class ListHandler( Pane ):
+class TreeHandler( Pane ):
 	def __init__(self, modulName, modulInfo, *args, **kwargs):
-		super( ListHandler, self ).__init__( modulName )
+		super( TreeHandler, self ).__init__( modulName )
 		self.modulName = modulName
 
 
 
 	@staticmethod
 	def canHandle( modulName, modulInfo ):
-		return( True )
+		return( modulInfo["handler"]=="tree" or modulInfo["handler"].startswith("tree."))
 
 	def onClick(self, *args, **kwargs ):
 		print("CLICK")
 		if not len(self.widgets):
-			self.addWidget( ListWidget(self.modulName ) )
-		super( ListHandler, self ).onClick()
+			self.addWidget( TreeWidget(self.modulName ) )
+		super( TreeHandler, self ).onClick()
 
 
-HandlerClassSelector.insert( 1, ListHandler.canHandle, ListHandler )
+HandlerClassSelector.insert( 3, TreeHandler.canHandle, TreeHandler )

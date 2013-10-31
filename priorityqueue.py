@@ -24,11 +24,12 @@ class PriorityQueue( object ):
 
 HandlerClassSelector = PriorityQueue() # Used during startup to select an Wrapper-Class
 editBoneSelector = PriorityQueue() # Queried by editWidget to locate its bones
+actionDelegateSelector = PriorityQueue() # Locates an QAction for a given modul/action-name
 #OLD
 
 
 viewDelegateSelector = PriorityQueue() # Queried by listWidget to determine the viewDelegates for the table
-actionDelegateSelector = PriorityQueue() # Locates an QAction for a given modul/action-name
+
 protocolWrapperClassSelector = PriorityQueue() # Used during startup to select an Wrapper-Class
 protocolWrapperInstanceSelector = PriorityQueue() # Used afterwards to get a specific instance
 

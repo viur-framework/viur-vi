@@ -3,6 +3,7 @@
 
 from priorityqueue import editBoneSelector, viewDelegateSelector
 from pyjamas.ui.TextBox import TextBox
+from pyjamas.ui.Label import Label
 from pyjamas import DOM
 
 class BaseViewBoneDelegate( object ):
@@ -12,6 +13,10 @@ class BaseViewBoneDelegate( object ):
 		self.boneName = boneName
 		self.modulName=modulName
 
+	def render( self, data, field ):
+		if field in data.keys():
+			return( Label(str( data[field])))
+		return( Label("..") )
 
 class BaseEditBone( TextBox ):
 	def getLineEdit(self):

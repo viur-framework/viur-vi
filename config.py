@@ -1,2 +1,3 @@
 
-conf = { "mainWindow": None }
+conf = { "mainWindow": None,
+	 "modules": {} }

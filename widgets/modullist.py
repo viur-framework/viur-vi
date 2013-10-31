@@ -13,6 +13,7 @@ from pyjamas import DOM
 import json
 from network import NetworkService
 from priorityqueue import HandlerClassSelector
+from config import conf
 
 import pygwt
 
@@ -38,6 +39,7 @@ class ModulListWidget(Widget):
 	def onCompletion(self, req):
 		data = NetworkService.decode(req)
 		for modulName, modulInfo in data["modules"].items():
+			conf[modulName] = modulInfo
 			handlerCls = HandlerClassSelector.select( modulName, modulInfo )
 			assert handlerCls is not None, "No handler avaiable for modul %s" % modulName
 			handler = handlerCls( modulName, modulInfo )

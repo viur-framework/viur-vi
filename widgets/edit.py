@@ -4,12 +4,12 @@ from network import NetworkService
 from config import conf
 from priorityqueue import editBoneSelector
 from priorityqueue import protocolWrapperInstanceSelector
-from pyjamas.ui.CellPanel import CellPanel
+from pyjamas.ui.FlexTable import FlexTable
 from pyjamas.ui.InlineLabel import InlineLabel
 from pyjamas.ui.Button import Button
 from pyjamas import DOM
 
-class EditWidget( CellPanel ):
+class EditWidget( FlexTable ):
 	appList = "list"
 	appHierarchy = "hierarchy"
 	appTree = "tree"
@@ -57,8 +57,8 @@ class EditWidget( CellPanel ):
 		self._lastData = {} #Dict of structure and values recived
 		self.editTaskID = None
 		self.reloadData( )
-		submitBtn = Button( "Save", self.onBtnSaveContinueReleased )
-		self.add( submitBtn )
+		#submitBtn = Button( "Save", self.onBtnSaveContinueReleased )
+		#self.add( submitBtn )
 		#Hide Previewbuttons if no PreviewURLs are set
 		#if modul in conf.serverConfig["modules"].keys():
 		#	if not "previewurls" in conf.serverConfig["modules"][ self.modul  ].keys() \
@@ -135,9 +135,10 @@ class EditWidget( CellPanel ):
 			#request = NetworkService.request("/%s/execute/%s" % ( self.modul, self.id ), data, secure=True, successHandler=self.onSaveResult )
 		elif self.applicationType == EditWidget.appList: ## Application: List
 			if self.key and (not self.clone or not data):
-				self.editTaskID = protoWrap.edit( self.key, **data )
+				#self.editTaskID = protoWrap.edit( self.key, **data )
+				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData)
 			else:
-				NetworkService.request("%s/add" % self.modul, data, secure=len(data)>0, successHandler=self.setData )
+				NetworkService.request(self.modul, "add", data, secure=len(data)>0, successHandler=self.setData )
 				#self.editTaskID = protoWrap.add( **data )
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
 			if self.key and not self.clone:
@@ -202,10 +203,10 @@ class EditWidget( CellPanel ):
 		assert (request or data)
 		if request:
 			data = NetworkService.decode( request )
-		print("EDIT WIDGET GOT DATA")
-		print( data )
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
 			NetworkService.notifyChange(self.modul)
+			self.clear()
+			self.bones = {}
 			self.reloadData()
 			return
 		#Clear the UI
@@ -217,6 +218,7 @@ class EditWidget( CellPanel ):
 		tabs = {}
 		for key, bone in data["structure"]:
 			tmpDict[ key ] = bone
+		currRow = 0
 		for key, bone in data["structure"]:
 			if bone["visible"]==False:
 				continue
@@ -278,15 +280,13 @@ class EditWidget( CellPanel ):
 			dataWidget.show()
 			self.bones[ key ] = widget
 			"""
-			tr = DOM.createElement("tr")
-			labelTd = DOM.createElement("td")
-			editTd = DOM.createElement("td")
-			DOM.appendChild(tr,labelTd)
-			DOM.appendChild(tr,editTd)
-			DOM.appendChild(self.getBody(), tr )
-			self.add( InlineLabel(bone["descr"]), labelTd)
-			self.add( widget, editTd )
+
+			self.add( InlineLabel(bone["descr"]),currRow, 0)
+			self.add( widget,currRow, 1)
+			currRow += 1
 			self.bones[ key ] = widget
+		submitBtn = Button( "Save", self.onBtnSaveContinueReleased )
+		self.add( submitBtn, currRow, 1 )
 		self.unserialize( data["values"] )
 		self._lastData = data
 		#event.emit( "rebuildBreadCrumbs()" )

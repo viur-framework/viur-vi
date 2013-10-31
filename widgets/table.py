@@ -18,6 +18,7 @@ from pyjamas.ui.Focus import FocusMixin
 from pyjamas.ui.FocusWidget import FocusWidget
 import pygwt
 from pyjamas.Timer import Timer
+from event import EventDispatcher
 
 def addClass( elem, cls):
 	cls = cls.lower()
@@ -49,7 +50,7 @@ class SelectTable( FlexTable, FocusWidget ):
 
 			- selectionChanged: called if the current _multi_ selection changes. (Ie the user
 				holds ctrl and clicks a row). The selection might contain no, one or multiple rows.
-				Its _not_ called if the cursor moves. Its also _not_ called if the user simply double
+				Its also called if the cursor moves. Its called if the user simply double
 				clicks a row. So its possible to recive a selectionActivated event without an
 				selectionChanged Event.
 			- selectionActivated: called if a selection is activated, ie. a row is double-clicked or Return
@@ -61,6 +62,10 @@ class SelectTable( FlexTable, FocusWidget ):
 		FlexTable.__init__(self,*args,**kwargs)
 		FocusWidget.__init__(self, self.getElement(), *args,**kwargs)
 		#super(Table,self).__init__(*args,**kwargs)
+		#Events
+		self.selectionChangedEvent = EventDispatcher("selectionChanged")
+		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
+		self.cursorMovedEvent = EventDispatcher("cursorMoved")
 		self.headElem = DOM.createElement("thead")
 		DOM.appendChild( self.element, self.headElem )
 		self.sinkEvents(Event.ONCLICK | Event.ONDBLCLICK | Event.ONMOUSEMOVE | Event.ONMOUSEDOWN | Event.ONMOUSEUP | Event.ONKEYPRESS)
@@ -84,73 +89,9 @@ class SelectTable( FlexTable, FocusWidget ):
 		"""
 		tmp = "<tr>"
 		for h in headers:
-			tmp += "<td>%s</td>" % h
+			tmp += "<th>%s</th>" % h
 		tmp += "</tr>"
 		self.headElem.innerHTML = tmp
-
-	def registerSelectionChangedListener(self, listener):
-		"""
-			Register an object getting called when the selection changes.
-			'listener' must provide an onSelectionChanged function accepting
-			two arguments: the table and the new selection
-			@param listener: Object to inform of changes
-			@type listener: object
-		"""
-		assert not listener in self._selectionChangedListener, "This listener is already registered"
-		assert "onSelectionChanged" in dir( listener ), "Listener must provide a onSelectionChanged function"
-		self._selectionChangedListener.append( listener )
-
-	def removeSelectionChangedListener(self, listener):
-		"""
-			Removes an object from the list of objects being informed of selection changes.
-			@param listener: The object to remove
-			@type listener: object
-		"""
-		assert listener in self._selectionChangedListener, "Cannot remove unknown listener"
-		self._selectionChangedListener.remove( listener )
-
-	def registerSelectionActivatedListener(self, listener):
-		"""
-			Register an object getting called when a selection is activated.
-			'listener' must provide an onSelectionActivated function accepting
-			two arguments: the table and the selection
-			@param listener: Object to inform of activated selections
-			@type listener: object
-		"""
-		assert not listener in self._selectionActivatedListeners, "This listener is already registered"
-		assert "onSelectionActivated" in dir( listener ), "Listener must provide a onSelectionChanged function"
-		self._selectionActivatedListeners.append( listener )
-
-	def removeSelectionActivatedListener(self, listener):
-		"""
-			Removes an object from the list of objects being informed of selection activations.
-			@param listener: The object to remove
-			@type listener: object
-		"""
-		assert listener in self._selectionActivatedListeners, "Cannot remove unknown listener"
-		self._selectionActivatedListeners.remove( listener )
-
-	def registerCursorMovedListener(self, listener):
-		"""
-			Register an object getting called when the cursor moves.
-			'listener' must provide an onCursorMoved function accepting
-			two arguments: the table and the new cursor position
-			@param listener: Object to inform of changes
-			@type listener: object
-		"""
-		assert not listener in self._cursorMovedListeners, "This listener is already registered"
-		assert "onCursorMoved" in dir( listener ), "Listener must provide a onSelectionChanged function"
-		self._cursorMovedListeners.append( listener )
-
-	def removeCursorMovedListener(self, listener):
-		"""
-			Removes an object from the list of objects being informed of cursor moves.
-			@param listener: The object to remove
-			@type listener: object
-		"""
-		assert listener in self._cursorMovedListeners, "Cannot remove unknown listener"
-		self._cursorMovedListeners.remove( listener )
-
 
 	def getTrByIndex(self, idx):
 		"""
@@ -179,6 +120,7 @@ class SelectTable( FlexTable, FocusWidget ):
 		"""
 		body = DOM.getParent(tr)
 		row = DOM.getChildIndex(body, tr)
+		print("INDEX IS", row)
 		return( row )
 
 	def _rowForEvent(self, event ):
@@ -198,6 +140,8 @@ class SelectTable( FlexTable, FocusWidget ):
 		eventType = DOM.eventGetType(event)
 		if eventType == "mousedown":
 			tr = self._rowForEvent( event )
+			if tr is None:
+				return
 			if self._isCtlPressed and tr:
 				row = self.getIndexByTr(tr)
 				if row in self._selectedRows:
@@ -216,6 +160,8 @@ class SelectTable( FlexTable, FocusWidget ):
 		elif eventType == "mousemove":
 			if self._isMouseDown:
 				tr = self._rowForEvent( event )
+				if tr is None:
+					return
 				self.addSelectedRow( self.getIndexByTr(tr) )
 				event.preventDefault()
 		elif eventType == "keydown":
@@ -248,9 +194,14 @@ class SelectTable( FlexTable, FocusWidget ):
 						self.setCursorRow(self._currentRow-1, removeExistingSelection=(not self._isCtlPressed))
 				event.preventDefault()
 			elif DOM.eventGetKeyCode(event)==13: # Return
-				if self._currentRow:
-					print("ROW %s activated" % self._currentRow)
-				event.preventDefault()
+				if len( self._selectedRows )>0:
+					self.selectionActivatedEvent.fire( self, self._selectedRows )
+					event.preventDefault()
+					return
+				if self._currentRow is not None:
+					self.selectionActivatedEvent.fire( self, [self._currentRow] )
+					event.preventDefault()
+					return
 			elif DOM.eventGetKeyCode(event)==17:
 				self._isCtlPressed = True
 				self._ctlStartRow = self._currentRow or 0
@@ -258,8 +209,8 @@ class SelectTable( FlexTable, FocusWidget ):
 			self._isCtlPressed = False
 			self._ctlStartRow = None
 		elif eventType == "dblclick":
-			if self._currentRow:
-				print("ROW %s activated" % self._currentRow)
+			if self._currentRow is not None:
+				self.selectionActivatedEvent.fire( self, [self._currentRow] )
 			event.preventDefault()
 		#print( eventType )
 
@@ -271,6 +222,7 @@ class SelectTable( FlexTable, FocusWidget ):
 			return
 		self._selectedRows.append( row )
 		addClass(self.getTrByIndex(row),"is_selected")
+		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 		print("Currently selected rows: %s" % str(self._selectedRows))
 
 	def removeSelectedRow(self, row):
@@ -283,6 +235,7 @@ class SelectTable( FlexTable, FocusWidget ):
 			return
 		self._selectedRows.remove( row )
 		removeClass(self.getTrByIndex(row),"is_selected")
+		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 
 	def selectRow(self, newRow ):
 		"""
@@ -298,6 +251,7 @@ class SelectTable( FlexTable, FocusWidget ):
 		if not newRow in self._selectedRows:
 			self._selectedRows.append( newRow )
 			addClass(self.getTrByIndex(newRow),"is_selected")
+		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 
 	def setCursorRow(self, row, removeExistingSelection=True ):
 		"""
@@ -308,18 +262,39 @@ class SelectTable( FlexTable, FocusWidget ):
 			removeClass(self.getTrByIndex(self._currentRow),"is_focused")
 		self._currentRow = row
 		addClass(self.getTrByIndex(self._currentRow),"is_focused")
-		self._emitCursorMovedEvent( row )
+		self.cursorMovedEvent.fire( self, row )
 		if removeExistingSelection:
 			for row in self._selectedRows[:]:
 				self.removeSelectedRow( row )
-			#FIXME: Selection Changed event
+			self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 
-	def _emitCursorMovedEvent(self, row):
-		""""
-			Emits the onCursorMoved Event to all subscribed listeners.
+	def getCurrentSelection(self):
+		if self._selectedRows:
+			return( self._selectedRows[:])
+		elif self._currentRow is not None:
+			return( [self._currentRow ])
+		else:
+			return( None )
+
+	def clear(self):
 		"""
-		for e in self._cursorMovedListeners:
-			e.onCursorMoved( self, row )
+			Hook the clear() method so we can reset some internal states, too
+		"""
+		super(SelectTable, self).clear()
+		self._currentRow = None
+		self._selectedRows = []
+
+	def removeRow(self, row):
+		"""
+			Hook the removeRow method so we can reset some internal states, too
+		"""
+		if row in self._selectedRows:
+			self._selectedRows.remove( row )
+			self.selectionChangedEvent.fire( self )
+		if self._currentRow == row:
+			self._currentRow = None
+			self.cursorMovedEvent.fire( self )
+		super( SelectTable, self ).removeRow( row )
 
 class DataTable(FocusWidget):
 	"""
@@ -340,9 +315,16 @@ class DataTable(FocusWidget):
 		self._modelIdx = 0 # Internal counter to distinguish between 2 rows with identical data
 		self._isAjaxLoading = False # Determines if we already requested the next batch of rows
 		self._dataProvider = None # Which object to call if we need more data
-		for f in ["registerCursorMovedListener","removeCursorMovedListener","setHeader"]:
+		self._cellRender = {} # Map of renders for a given field
+		# We re-emit some events with custom parameters
+		self.selectionChangedEvent = EventDispatcher("selectionChanged")
+		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
+		self.table.selectionChangedEvent.register( self )
+		self.table.selectionActivatedEvent.register( self )
+		#Proxy some events and functions of the original table
+		for f in ["cursorMovedEvent","setHeader"]:
 			setattr( self, f, getattr(self.table,f))
-		self.registerCursorMovedListener( self )
+		self.cursorMovedEvent.register( self )
 
 	def setDataProvider(self,obj):
 		"""
@@ -353,7 +335,7 @@ class DataTable(FocusWidget):
 			Notice: If the bottom of the table is reached, onNextBatchNeeded will only be called once.
 			No further calls will be made until add() or setDataProvider() has been called afterwards.
 		"""
-		assert obj==None or "onNextBatchNeeded" in dir(obj),"The dataProvider must provide a 'onNextBatchNeeded function"
+		assert obj==None or "onNextBatchNeeded" in dir(obj),"The dataProvider must provide a 'onNextBatchNeeded' function"
 		self._dataProvider = obj
 		self._isAjaxLoading = False
 
@@ -401,16 +383,19 @@ class DataTable(FocusWidget):
 		if isinstance( objOrIndex, int ):
 			assert objOrIndex>0 and objOrIndex<len(self._model), "Modelindex out of range"
 			self._model.remove( self._model[objOrIndex] )
-			self.table.removeCells( objOrIndex, 0 , len( self._shownFields) )
+			self.table.removeRow( objOrIndex )
 		else:
 			raise TypeError("Expected int or dict, got %s" % str(type(objOrIndex)))
 
-	def clear(self):
+	def clear(self, keepModel=False):
 		"""
 			Flushes the whole table.
 		"""
 		self.table.clear()
-		self._model = []
+		while( self.table.getRowCount()>0 ):
+			self.table.removeRow(0)
+		if not keepModel:
+			self._model = []
 
 	def _renderObject(self, obj):
 		"""
@@ -425,12 +410,24 @@ class DataTable(FocusWidget):
 		self.table.prepareRow( rowIdx )
 		cellIdx = 0
 		for field in self._shownFields:
-			if field in obj.keys():
+			if field in self._cellRender.keys():
+				lbl = self._cellRender[ field ].render( obj, field )
+			elif field in obj.keys():
 				lbl = Label(obj[field])
 			else:
 				lbl = Label("...")
 			self.table.add( lbl, rowIdx, cellIdx )
 			cellIdx += 1
+
+	def rebuildTable(self):
+		"""
+			Rebuilds the entire table.
+			Useful if something fundamental changed (ie. the cell renderer or the list of visible fields)
+		"""
+
+		self.clear( keepModel=True )
+		for obj in self._model:
+			self._renderObject( obj )
 
 	def setShownFields(self,fields):
 		"""
@@ -440,10 +437,8 @@ class DataTable(FocusWidget):
 			@param fields: List of model-keys which will be displayed.
 			@type fields: list
 		"""
-		self.table.clear()
 		self._shownFields = fields
-		for obj in self._model:
-			self._renderObject( obj )
+		self.rebuildTable()
 
 	def onBrowserEvent(self, event):
 		"""
@@ -456,3 +451,40 @@ class DataTable(FocusWidget):
 			if self._dataProvider:
 				self._isAjaxLoading = True
 				self._dataProvider.onNextBatchNeeded()
+
+
+	def onSelectionChanged( self, table, rows ):
+		"""
+			Re-emit the event. Maps row-numbers to actual models.
+		"""
+		vals = [ self._model[x] for x in rows]
+		self.selectionChangedEvent.fire( self, vals )
+
+	def onSelectionActivated( self, table, rows ):
+		"""
+			Re-emit the event. Maps row-numbers to actual models.
+		"""
+		vals = [ self._model[x] for x in rows]
+		self.selectionActivatedEvent.fire( self, vals )
+
+	def getCurrentSelection(self):
+		"""
+			Override the getCurrentSelection method to
+			yield actual models, not row-numbers.
+		"""
+		rows = self.table.getCurrentSelection()
+		return( [ self._model[x] for x in rows] )
+
+	def setCellRender(self, field, render):
+		"""
+			Sets the render for cells of 'field' to render.
+			A cell render receives the data for a given cell and returns
+			the appropriate widget to display that data for the table.
+		"""
+		if render is None:
+			if field in self._cellRender.keys():
+				del self._cellRender[ field ]
+		else:
+			assert "render" in dir(render), "The render must provide a 'render' method"
+			self._cellRender[ field ] = render
+		self.rebuildTable()

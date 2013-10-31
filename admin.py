@@ -17,7 +17,8 @@ import json
 from network import NetworkService
 import handler
 import bones
-
+import actions
+from priorityqueue import HandlerClassSelector
 
 import pygwt
 
@@ -34,44 +35,96 @@ class CoreWindow(Panel,FocusWidget):
 		self.workSpace.setAttribute("class","vi_workspace")
 		DOM.appendChild( self.element, self.workSpace )
 		self.modulMgr = DOM.createElement("div")
-		self.modulMgr.setAttribute("class","vi_manager")
-		DOM.appendChild( self.element, self.modulMgr )
-		self.modulList = ModulListWidget()
-		self.adopt( self.modulList,self.modulMgr )
-		self.modulList.onAttach()
+		self.modulMgr.setAttribute("class","vi_wm")
+		DOM.appendChild( self.workSpace, self.modulMgr )
+		self.modulList = DOM.createElement("nav")
+		DOM.setElemAttribute( self.modulList, "class", "vi_manager" )
+		DOM.appendChild( self.modulMgr, self.modulList )
+		self.modulListUl = DOM.createElement("ul")
+		DOM.setElemAttribute(self.modulListUl,"class","modullist")
+		DOM.appendChild( self.modulList, self.modulListUl)
+		self.viewport = DOM.createElement("div")
+		DOM.setElemAttribute(self.viewport,"class","vi_viewer")
+		DOM.appendChild(self.workSpace, self.viewport)
+		#DOM.appendChild( self.modulMgr, self.modulList )
+		#self.modulList = ModulListWidget()
+		#self.adopt( self.modulList,self.modulMgr )
+		#self.modulList.onAttach()
 		self.currentPane = None
-		self.panes = {}
+		self.panes = []
+		NetworkService.request( None, "/admin/config", successHandler=self.onCompletion,
+					failureHandler=self.onError, cacheable=True )
+
+	def onCompletion(self, req):
+		print("ONLOAD MODULES")
+		data = NetworkService.decode(req)
+		for modulName, modulInfo in data["modules"].items():
+			conf[modulName] = modulInfo
+			handlerCls = HandlerClassSelector.select( modulName, modulInfo )
+			assert handlerCls is not None, "No handler avaiable for modul %s" % modulName
+			handler = handlerCls( modulName, modulInfo )
+			self.addPane( handler )
+
+
+
+	def onError(self, req, code):
+		print("ONERROR")
+
+	def addPane(self, pane, parentPane=None):
+		#paneHandle = "pane_%s" % self.paneIdx
+		#self.paneIdx += 1
+		self.panes.append( pane )
+		if parentPane:
+			parentPane.addChildPane( pane )
+			pane.parent = parentPane
+		else:
+			DOM.appendChild(self.modulListUl, pane.getElement())
+			pane.parent = self
+		DOM.appendChild( self.viewport, pane.widgetsDomElm )
+		DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
+		pane.onAttach()
+
+
+
+	def stackPane(self, pane):
+		assert self.currentPane is not None, "Cannot stack a pane. There's no current one."
+		return( self.addPane( pane, parentPane=self.currentPane ) )
+
+	def focusPane(self, pane):
+		print("FOCUS PANE", pane)
+		assert pane in self.panes, "Cannot focus unknown pane!"
+		if self.currentPane is not None:
+			DOM.setStyleAttribute(self.currentPane.widgetsDomElm, "display", "none" )
+		self.currentPane = pane
+		DOM.setStyleAttribute(self.currentPane.widgetsDomElm, "display", "block" )
+
+	def removePane(self, pane):
+		assert pane in self.panes, "Cannot remove unknown pane!"
+		self.panes.remove( pane )
+		if pane==self.currentPane:
+			if self.panes:
+				self.focusPane( self.panes[-1])
+			else:
+				self.currentPane == None
+		if pane.parent == self:
+			DOM.removeChild( self.modulListUl, pane.getElement() )
+		else:
+			pane.parent.removeChildPane( pane )
+		DOM.removeChild( self.viewport, pane.widgetsDomElm )
+		pane.onDetach()
 
 	def addWidget(self, widget, pane ):
-		if not pane in self.panes.keys():
-			self.panes[ pane ] = []
-			paneDiv = DOM.createElement("div")
-			DOM.setElemAttribute(paneDiv,"class","vi_viewer")
-			paneDiv.id = "core_window_"+pane
-			#paneDiv.id = "core_window_"+pane
-			DOM.appendChild( self.workSpace, paneDiv )
-			#DOM.setAttribute( paneDiv, "id", "core_window_"+pane )
-		if self.currentPane is not None:
-			oldPaneElem = DOM.getElementById( "core_window_"+self.currentPane )
-			DOM.setStyleAttribute(oldPaneElem, "display", "none" )
-			#self.disown( self.current )
-			#self.current.onDetach()
-			#self.current = None
-		paneElem = DOM.getElementById( "core_window_"+pane )
-		assert paneElem, "The pane DIV seems missing!"
-		self.currentPane = pane
-		self.panes[ pane ].append( widget )
-		DOM.setStyleAttribute(paneElem, "display", "block" )
-		DOM.appendChild( paneElem, widget.getElement() )
-		widget.setParent( self )
-		widget.onAttach()
+		pane.addWidget( widget )
+
+	def stackWidget(self, widget ):
+		assert self.currentPane is not None, "Cannot stack a widget while no pane is active"
+		self.addWidget( widget, self.currentPane )
+
 
 	def removeWidget(self, widget ):
-		for paneName, widgetList in self.panes.items():
-			if widget in widgetList:
-				widget.onDetach()
-				DOM.removeChild( DOM.getElementById("core_window_"+paneName), widget.getElement() )
-				widgetList.remove( widget )
+		for pane in self.panes:
+			if widget in pane.widgets:
+				pane.removeWidget( widget )
 				return
 		raise AssertionError("Tried to remove unknown widget %s" % str( widget ))
 
