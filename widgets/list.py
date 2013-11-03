@@ -1,27 +1,15 @@
 import pyjd # this is dummy in pyjs.
-from pyjamas.ui.RootPanel import RootPanel
-from pyjamas.ui.Button import Button
-from pyjamas.ui.HTML import HTML
-from pyjamas.ui.Label import Label
-from pyjamas.ui import Event
-from pyjamas import Window
-from pyjamas.HTTPRequest import HTTPRequest
-from pyjamas.ui.FocusWidget import FocusWidget
-from pyjamas.ui.Widget import Widget
-from pyjamas.ui.Panel import Panel
-from pyjamas import DOM
 import json
 from network import NetworkService
 from priorityqueue import viewDelegateSelector
-from widgets.table import DataTable
-from widgets.actionbar import ActionBar
-
-import pygwt
-
+#from widgets.table import DataTable
+#from widgets.actionbar import ActionBar
+import html5
 
 
 
-class ListWidget( Widget ):
+
+class ListWidget( html5.Div ):
 	"""
 		Provides the interface to list-applications.
 		It acts as a dataprovider for a DataTable and binds an actionbar
@@ -33,24 +21,24 @@ class ListWidget( Widget ):
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
 		"""
-		self.element = DOM.createElement("div")
-		super( ListWidget, self ).__init__( self.element )
+		super( ListWidget, self ).__init__(  )
 		self.modul = modul
 		#self.setStyleName("vi_viewer")
-		self.actionBar = ActionBar( self, modul )
-		DOM.appendChild( self.element, self.actionBar.getElement() )
-		self.actionBar.onAttach()
-		self.table = DataTable()
-		#self.table = DOM.createElement("table")
-		DOM.appendChild( self.element, self.table.getElement() )
-		self.table.onAttach()
+
+		#self.actionBar = ActionBar( self, modul )
+		#DOM.appendChild( self.element, self.actionBar.getElement() )
+		#self.actionBar.onAttach()
+		#self.table = DataTable()
+		##self.table = DOM.createElement("table")
+		#DOM.appendChild( self.element, self.table.getElement() )
+		#self.table.onAttach()
 		self._currentCursor = None
-		self.reloadData()
-		self.table.setDataProvider(self)
+		#self.reloadData()
+		#self.table.setDataProvider(self)
 		#Proxy some events and functions of the original table
-		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
-			setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["add","edit","delete"])
+		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
+		#	setattr( self, f, getattr(self.table,f))
+		#self.actionBar.setActions(["add","edit","delete"])
 		#HTTPRequest().asyncGet("/admin/%s/list" % self.modul, self)
 
 

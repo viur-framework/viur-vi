@@ -1,31 +1,11 @@
-import pyjd # this is dummy in pyjs.
-
-from pyjamas.ui import Event
-
-from pyjamas.ui.FocusWidget import FocusWidget
-from pyjamas.ui.Widget import Widget
-from pyjamas.ui.Button import Button
-
-from pyjamas import DOM
 from config import conf
+import html5
 
 
 
 
-class ClickableLabel( FocusWidget ):
-	"""
-		Provides a clickable label for panes.
-		Its not possible to catch clicks on a pane directly
-		as it also catches clicks for its children.
-	"""
-	def __init__( self, descr ):
-		self.element = DOM.createElement("a")
-		super( ClickableLabel, self ).__init__( self.element )
-		DOM.setElemAttribute(self.element,"href","#")
-		self.element.innerHTML = descr
-		self.sinkEvents(Event.ONCLICK | Event.MOUSEEVENTS)
 
-class Pane( Widget ):
+class Pane( html5.Li ):
 	"""
 		Base class for Panes.
 		A pane represents a entry in the left menu aswell
@@ -35,23 +15,21 @@ class Pane( Widget ):
 		(through they might overlap).
 	"""
 	def __init__(self, descr, icon=None, closeable=False ):
-		self.element = DOM.createElement("li")
-		super( Pane, self ).__init__( self.element )
+		super( Pane, self ).__init__( )
 		self.descr = descr
 		self.icon = icon
 		self.closeable = closeable
 		self.widgets = []
 		self.childPanes = []
-		self.widgetsDomElm = DOM.createElement("div")
+		self.widgetsDomElm = html5.Div()
 		self.childDomElem = None
-		self.label = ClickableLabel( descr )
-		DOM.appendChild(self.getElement(), self.label.getElement())
-		self.label.onAttach()
-		self.label.addClickListener( self.onClick )
-		if closeable:
-			self.closeBtn = Button("X", self.onBtnCloseReleased)
-			DOM.appendChild(self.getElement(),self.closeBtn.getElement())
-			self.closeBtn.onAttach()
+		self.label = html5.Span( descr ) #FIXME: descr fehlt
+		self.appendChild( self.label )
+		#self.label.addClickListener( self.onClick )
+		#if closeable:
+		#	self.closeBtn = Button("X", self.onBtnCloseReleased)
+		#	DOM.appendChild(self.getElement(),self.closeBtn.getElement())
+		#	self.closeBtn.onAttach()
 
 	def onBtnCloseReleased(self, *args, **kwargs):
 		print("CLOSING PANE")

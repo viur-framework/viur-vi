@@ -1,51 +1,39 @@
-import pyjd # this is dummy in pyjs.
-from pyjamas.ui.RootPanel import RootPanel
-from pyjamas.ui.Button import Button
-from pyjamas.ui.HTML import HTML
-from pyjamas.ui.Label import Label
-from pyjamas.ui import Event
-from pyjamas import Window
-from pyjamas.HTTPRequest import HTTPRequest
-from pyjamas.ui.FocusWidget import FocusWidget
-from pyjamas.ui.Widget import Widget
-from pyjamas.ui.Panel import Panel
-from pyjamas import DOM
+import pyjd
+import html5
 from config import conf
-from widgets import ModulListWidget, TopBarWidget, DataTable
-from __pyjamas__ import JS
+#from widgets import ModulListWidget, TopBarWidget, DataTable
+from widgets import TopBarWidget
 import json
 from network import NetworkService
 import handler
-import bones
-import actions
+#import bones
+#import actions
 from priorityqueue import HandlerClassSelector
 
-import pygwt
 
 
 
 
-class CoreWindow(Panel,FocusWidget):
+class CoreWindow( html5.Div ):
 	def __init__(self, *args, **kwargs ):
-		self.setElement( DOM.createElement("div") )
 		super( CoreWindow, self ).__init__( *args, **kwargs )
 		self.topBar = TopBarWidget()
-		self.adopt( self.topBar,self.getElement())
-		self.workSpace = DOM.createElement("div")
-		self.workSpace.setAttribute("class","vi_workspace")
-		DOM.appendChild( self.element, self.workSpace )
-		self.modulMgr = DOM.createElement("div")
-		self.modulMgr.setAttribute("class","vi_wm")
-		DOM.appendChild( self.workSpace, self.modulMgr )
-		self.modulList = DOM.createElement("nav")
-		DOM.setElemAttribute( self.modulList, "class", "vi_manager" )
-		DOM.appendChild( self.modulMgr, self.modulList )
-		self.modulListUl = DOM.createElement("ul")
-		DOM.setElemAttribute(self.modulListUl,"class","modullist")
-		DOM.appendChild( self.modulList, self.modulListUl)
-		self.viewport = DOM.createElement("div")
-		DOM.setElemAttribute(self.viewport,"class","vi_viewer")
-		DOM.appendChild(self.workSpace, self.viewport)
+		self.appendChild( self.topBar )
+		self.workSpace = html5.Div()
+		self.workSpace["class"] = "vi_workspace"
+		self.appendChild( self.workSpace )
+		self.modulMgr = html5.Div()
+		self.modulMgr["class"] = "vi_wm"
+		self.appendChild( self.modulMgr )
+		self.modulList = html5.Nav()
+		self.modulList["class"] = "vi_manager"
+		self.modulMgr.appendChild( self.modulList )
+		self.modulListUl = html5.Ul()
+		self.modulListUl["class"] = "modullist"
+		self.modulList.appendChild( self.modulListUl )
+		self.viewport = html5.Div()
+		self.viewport["class"] = "vi_viewer"
+		self.workSpace.appendChild( self.viewport)
 		#DOM.appendChild( self.modulMgr, self.modulList )
 		#self.modulList = ModulListWidget()
 		#self.adopt( self.modulList,self.modulMgr )
@@ -78,11 +66,10 @@ class CoreWindow(Panel,FocusWidget):
 			parentPane.addChildPane( pane )
 			pane.parent = parentPane
 		else:
-			DOM.appendChild(self.modulListUl, pane.getElement())
-			pane.parent = self
-		DOM.appendChild( self.viewport, pane.widgetsDomElm )
-		DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
-		pane.onAttach()
+			self.modulListUl.appendChild( pane )
+		self.viewport.appendChild(pane.widgetsDomElm)
+		pane.widgetsDomElm["display"] = "none"
+		#DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
 
 
 
@@ -131,7 +118,8 @@ class CoreWindow(Panel,FocusWidget):
 if __name__ == '__main__':
 	pyjd.setup("public/admin.html")
 	conf["mainWindow"] = CoreWindow()
-	RootPanel().add( conf["mainWindow"] )
+	html5.Body().appendChild( conf["mainWindow"] )
+	#RootPanel().add( conf["mainWindow"] )
 	"""
 	t = DataTable()
 	conf["mainWindow"].addWidget(t,"test")

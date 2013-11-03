@@ -4,8 +4,7 @@
 import sys, os, time
 #from config import conf
 import json
-from pyjamas.HTTPRequest import HTTPRequest
-from pyjamas import Timer
+import Timer
 import string, random, time
 
 
@@ -25,6 +24,23 @@ class DeferredCall( Timer ):
 
 	def run(self):
 		self._tFunc( *self._tArgs, **self._tKwArgs )
+
+class HTTPRequest(object):
+	def __init__(self, *args, **kwargs ):
+		super( HTTPRequest, self ).__init__( *args, **kwargs )
+		self.req = eval("new XMLHttpRequest()")
+		self.req.onreadystatechange = self.onReadyStateChange
+		self.cb = None
+
+	def asyncGet(self, url, cb):
+		self.cb = cb
+		self.req.open("GET",url,True)
+		self.req.send()
+
+	def onReadyStateChange(self):
+		if self.req.readyState == 4 and self.req.status == 200:
+			self.cb.onCompletion( self.req.responseText)
+
 
 class NetworkService( object ):
 	"""
