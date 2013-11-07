@@ -1,13 +1,12 @@
 import pyjd
 import html5
 from config import conf
-#from widgets import ModulListWidget, TopBarWidget, DataTable
 from widgets import TopBarWidget
 import json
 from network import NetworkService
 import handler
-#import bones
-#import actions
+import bones
+import actions
 from priorityqueue import HandlerClassSelector
 
 
@@ -81,9 +80,9 @@ class CoreWindow( html5.Div ):
 		print("FOCUS PANE", pane)
 		assert pane in self.panes, "Cannot focus unknown pane!"
 		if self.currentPane is not None:
-			DOM.setStyleAttribute(self.currentPane.widgetsDomElm, "display", "none" )
+			self.currentPane.widgetsDomElm["style"]["display"] = "none"
 		self.currentPane = pane
-		DOM.setStyleAttribute(self.currentPane.widgetsDomElm, "display", "block" )
+		self.currentPane.widgetsDomElm["style"]["display"] = "block"
 
 	def removePane(self, pane):
 		assert pane in self.panes, "Cannot remove unknown pane!"
@@ -94,11 +93,10 @@ class CoreWindow( html5.Div ):
 			else:
 				self.currentPane == None
 		if pane.parent == self:
-			DOM.removeChild( self.modulListUl, pane.getElement() )
+			self.modulListUl.removeChild( pane )
 		else:
 			pane.parent.removeChildPane( pane )
-		DOM.removeChild( self.viewport, pane.widgetsDomElm )
-		pane.onDetach()
+		self.viewport.removeChild( pane.widgetsDomElm )
 
 	def addWidget(self, widget, pane ):
 		pane.addWidget( widget )

@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
 from utils import formatString
-from pyjamas.ui.Widget import Widget
-from pyjamas.ui.Button import Button
-from pyjamas.ui.Label import Label
-from pyjamas import DOM
 from widgets.list import ListWidget
 from config import conf
 
@@ -32,10 +29,10 @@ class RelationalViewBoneDelegate( object ):
 			val = ", ".join( [x["name"] for x in val])
 		elif isinstance(val, dict):
 			val = val["name"]
-		return( Label( val ) )
+		return( html5.Label( val ) )
 		#return( formatString( self.format, self.structure, value ) ) FIXME!
 
-class RelationalSingleSelectionBone( Widget ):
+class RelationalSingleSelectionBone( html5.Div ):
 	"""
 		Provides the widget for a relationalBone with multiple=False
 	"""
@@ -53,8 +50,7 @@ class RelationalSingleSelectionBone( Widget ):
 			@param format: Specifies how entries should be displayed.
 			@type format: string
 		"""
-		self.element = DOM.createElement("div")
-		super( RelationalSingleSelectionBone,  self ).__init__( self.element, *args, **kwargs )
+		super( RelationalSingleSelectionBone,  self ).__init__( *args, **kwargs )
 		self.srcModul = srcModul
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -63,11 +59,11 @@ class RelationalSingleSelectionBone( Widget ):
 		self.selection = None
 		self.currentSelector = None
 		self.selectionTxt = DOM.createElement("input")
-		DOM.setElemAttribute( self.selectionTxt, "type", "text")
-		DOM.appendChild(self.getElement(), self.selectionTxt )
-		self.selectBtn = Button("Select", self.onShowSelector)
-		DOM.appendChild( self.getElement(), self.selectBtn.getElement())
-		self.selectBtn.onAttach()
+		#DOM.setElemAttribute( self.selectionTxt, "type", "text")
+		#DOM.appendChild(self.getElement(), self.selectionTxt )
+		#self.selectBtn = Button("Select", self.onShowSelector)
+		#DOM.appendChild( self.getElement(), self.selectBtn.getElement())
+		#self.selectBtn.onAttach()
 
 
 	@classmethod
@@ -157,7 +153,7 @@ class RelationalSingleSelectionBone( Widget ):
 		else:
 			DOM.setElemAttribute( self.selectionTxt, "value",  "" )
 
-class RelationalMultiSelectionBoneEntry( Widget ):
+class RelationalMultiSelectionBoneEntry( html5.Div ):
 	"""
 		Wrapper-class that holds one referenced entry in a RelationalMultiSelectionBone.
 		Provides the UI to display its data and a button to remove it from the bone.
@@ -187,7 +183,7 @@ class RelationalMultiSelectionBoneEntry( Widget ):
 		self.parent.removeEntry( self )
 
 
-class RelationalMultiSelectionBone( Widget ):
+class RelationalMultiSelectionBone( html5.Div ):
 	"""
 		Provides the widget for a relationalBone with multiple=True
 	"""

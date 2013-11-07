@@ -1,101 +1,204 @@
+import html5
 import pyjd # this is dummy in pyjs.
-from pyjamas.ui.RootPanel import RootPanel
-from pyjamas.ui.Button import Button
-from pyjamas.ui.HTML import HTML
-from pyjamas.ui.Label import Label
-from pyjamas.ui import Event
-from pyjamas import Window
-from pyjamas.HTTPRequest import HTTPRequest
-from pyjamas.ui.FocusWidget import FocusWidget
-from pyjamas.ui.Widget import Widget
-from pyjamas.ui.Panel import Panel
-from pyjamas import DOM
-import json
 from network import NetworkService
-from priorityqueue import viewDelegateSelector
-from widgets.table import DataTable
-from widgets.actionbar import ActionBar
-
-import pygwt
+from widgets import ActionBar
+from event import EventDispatcher
 
 
-class NodeWidget( Widget ):
+class NodeWidget( html5.Div ):
 	def __init__(self, modul, data, *args, **kwargs ):
-		self.element = DOM.createElement("div")
 		super( NodeWidget, self ).__init__( *args, **kwargs )
 		self.modul = modul
 		self.data = data
 		self.element.innerHTML = data["name"]
-		DOM.setStyleAttribute( self.getElement(), "border","1px solid blue")
+		self["style"]["border"] = "1px solid blue"
+		self["class"] = "tree treeitem node"
 
 
-class LeafWidget( Widget ):
+class LeafWidget( html5.Div ):
 	def __init__(self, modul, data, *args, **kwargs ):
-		self.element = DOM.createElement("div")
 		super( LeafWidget, self ).__init__( *args, **kwargs )
 		self.modul = modul
 		self.data = data
 		self.element.innerHTML = data["name"]
-		DOM.setStyleAttribute( self.getElement(), "border","1px solid black")
+		self["style"]["border"] = "1px solid black"
+		self["class"] = "tree treeitem leaf"
 
-class TreeWidget( Widget ):
+class FileWidget( LeafWidget ):
+	def __init__(self, modul, data, *args, **kwargs ):
+		super( FileWidget, self ).__init__( modul, data, *args, **kwargs )
+		if "servingurl" in data.keys():
+			self.appendChild( html5.Img( data["servingurl"]) )
+		self["class"].append("file")
+
+def doesEventHitWidget( event, widget ):
+	while widget:
+		if event.target == widget.element:
+			return( True )
+		widget = widget.parent()
+	return( False )
+
+class SelectableDiv( html5.Div ):
+
+
+	def __init__(self, nodeWidget, leafWidget, selectionType="both", multiSelection=False, *args, **kwargs ):
+		super( SelectableDiv, self ).__init__(*args, **kwargs)
+		self["class"].append("tree selectioncontainer")
+		self["tabindex"] = 1
+		self.selectionType = selectionType
+		self.multiSelection = multiSelection
+		self.nodeWidget = nodeWidget
+		self.leafWidget = leafWidget
+		self.selectionChangedEvent = EventDispatcher("selectionChanged")
+		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
+		self.cursorMovedEvent = EventDispatcher("cursorMoved")
+		self._selectedItems = [] # List of row-indexes currently selected
+		self._currentItem = None # Rowindex of the cursor row
+		self._isMouseDown = False # Tracks status of the left mouse button
+		self._isCtlPressed = False # Tracks status of the ctrl key
+		self._ctlStartRow = None # Stores the row where a multi-selection (using the ctrl key) started
+		self.sinkEvent( "onClick","onDblClick", "onMouseMove", "onMouseDown", "onMouseUp", "onKeyDown", "onKeyUp" )
+
+	def setCurrentItem(self, item):
+		if self._currentItem:
+			self._currentItem["class"].remove("cursor")
+		self._currentItem = item
+		if item:
+			item["class"].append("cursor")
+
+	def onClick(self, event):
+		print("GOT ONCLICK")
+		print( self._children)
+		self.focus()
+		for child in self._children:
+			if doesEventHitWidget( event, child ):
+				print("p1")
+				self.setCurrentItem( child )
+				if self._isCtlPressed:
+					print("p2")
+					self.addSelectedItem( child )
+		if not self._isCtlPressed:
+			print("p3")
+			self.clearSelection()
+
+	def onDblClick(self, event):
+		print("DBLCLICK")
+		for child in self._children:
+			if doesEventHitWidget( event, child ):
+				if self.selectionType=="node" and isinstance( child, self.nodeWidget ) or \
+				   self.selectionType=="leaf" and isinstance( child, self.leafWidget ) or \
+				   self.selectionType=="both":
+					self.selectionActivatedEvent.fire( self, [child] )
+
+	def onKeyDown(self, event):
+		print("GOT KEY DOWN")
+		if event.keyCode==13: # Return
+			if len( self._selectedItems )>0:
+				self.selectionActivatedEvent.fire( self, self._selectedItems )
+				event.preventDefault()
+				return
+			if self._currentItem is not None:
+				self.selectionActivatedEvent.fire( self, [self._currentItem] )
+				event.preventDefault()
+				return
+		elif event.keyCode==17: #Ctrl
+			self._isCtlPressed = True
+
+	def onKeyUp(self, event):
+		if event.keyCode==17:
+			self._isCtlPressed = False
+
+	def clearSelection(self):
+		for child in self._children[:]:
+			self.removeSelectedItem( child )
+
+	def addSelectedItem(self, item):
+		#if not self.multiSelection:
+		#	return
+		if self.selectionType=="node" and isinstance( item, self.nodeWidget ) or \
+		   self.selectionType=="leaf" and isinstance( item, self.leafWidget ) or \
+		   self.selectionType=="both":
+			if not item in self._selectedItems:
+				self._selectedItems.append( item )
+				item["class"].append("selected")
+
+	def removeSelectedItem(self,item):
+		if not item in self._selectedItems:
+			return
+		self._selectedItems.remove( item )
+		item["class"].remove("selected")
+
+	def clear(self):
+		self.clearSelection()
+		for child in self._children[:]:
+			self.removeChild( child )
+
+class TreeWidget( html5.Div ):
+
+	nodeWidget = NodeWidget
+	leafWidget = FileWidget
+
 	def __init__( self, modul, rootNode=None, node=None, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
 		"""
-		self.element = DOM.createElement("div")
-		super( TreeWidget, self ).__init__( self.element )
+		super( TreeWidget, self ).__init__( )
+		print("INIT TREE WIDGET")
 		self.modul = modul
 		self.rootNode = rootNode
 		self.node = node or rootNode
 		#self.setStyleName("vi_viewer")
-		#self.actionBar = ActionBar( self, modul )
+		self.actionBar = ActionBar( self, modul )
+		self.appendChild( self.actionBar )
 		#DOM.appendChild( self.element, self.actionBar.getElement() )
-		#self.actionBar.onAttach()
-		self.pathList = DOM.createElement("div")
-		DOM.appendChild( self.getElement(), self.pathList )
-		DOM.setStyleAttribute(self.pathList,"border","1px solid red")
-		self.entryFrame = DOM.createElement("div")
-		DOM.appendChild( self.getElement(), self.entryFrame )
-		DOM.setStyleAttribute(self.entryFrame,"border","1px solid green")
+		self.pathList = html5.Div()
+		self.appendChild( self.pathList )
+		self.pathList["style"]["border"] = "1px solid red"
+		#DOM.appendChild( self.getElement(), self.pathList )
+		#DOM.setStyleAttribute(self.pathList,"border","1px solid red")
+		self.entryFrame = SelectableDiv( self.nodeWidget, self.leafWidget )
+		self.appendChild( self.entryFrame )
+		self.entryFrame.selectionActivatedEvent.register( self )
+		self.entryFrame["style"]["border"] = "1px solid green"
+		#DOM.setStyleAttribute(self.entryFrame,"border","1px solid green")
 		self._currentCursor = None
 		self._currentRequests = []
 		if self.rootNode:
+			print("INIT TREE WIDGET X!")
 			self.reloadData()
 		else:
+			print("INIT TREE WIDGET X2")
 			NetworkService.request(self.modul,"listRootNodes", successHandler=self.onSetDefaultRootNode)
-		self.children = []
 		self.path = []
-		self.pathChildren = []
-		self.sinkEvents( Event.ONCLICK )
+		self.sinkEvent( "onClick" )
 		##Proxy some events and functions of the original table
 		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 		#	setattr( self, f, getattr(self.table,f))
 		#self.actionBar.setActions(["add","edit","delete"])
 		#HTTPRequest().asyncGet("/admin/%s/list" % self.modul, self)
 
+	def onSelectionActivated(self, div, selection ):
+		if len(selection)!=1:
+			return
+		item = selection[0]
+		if isinstance( item, self.nodeWidget ):
+			self.path.append( item.data )
+			self.rebuildPath()
+			self.setNode( item.data["id"] )
+		elif isinstance(item, self.leafWidget):
+			print("SELECTED LEAF")
 
-	def onBrowserEvent(self, event):
-		super( TreeWidget, self ).onBrowserEvent( event )
-		eventType = DOM.eventGetType(event)
-		if eventType == "click":
-			for c in self.children:
-				# Test if the user clicked a node/leaf item
-				if c.getElement() == event.target:
-					if isinstance( c, NodeWidget ):
-						self.path.append( c.data )
-						self.rebuildPath()
-						self.setNode( c.data["id"] )
-						return
-			for c in self.pathChildren:
-				# Test if the user clicked inside the path-list
-				if c.getElement() == event.target:
-					self.path = self.path[ : self.pathChildren.index( c )]
-					self.rebuildPath()
-					self.setNode( c.data["id"] )
-					return
-		print( eventType )
+	def onClick(self, event):
+		print("ONCLICK")
+		super( TreeWidget, self ).onClick( event )
+		for c in self.pathList._children:
+			# Test if the user clicked inside the path-list
+			if doesEventHitWidget( event, c ):
+				self.path = self.path[ : self.pathList._children.index( c )]
+				self.rebuildPath()
+				self.setNode( c.data["id"] )
+				return
 
 	def onSetDefaultRootNode(self, req):
 		data = NetworkService.decode( req )
@@ -105,6 +208,7 @@ class TreeWidget( Widget ):
 	def setRootNode(self, rootNode):
 		self.rootNode = rootNode
 		self.node = rootNode
+		self.rebuildPath()
 		self.reloadData()
 
 	def setNode(self, node):
@@ -112,23 +216,20 @@ class TreeWidget( Widget ):
 		self.reloadData()
 
 	def rebuildPath(self):
-		for c in self.pathChildren[:]:
-			c.onDetach()
-			DOM.removeChild( self.pathList, c.getElement() )
-			self.pathChildren.remove( c )
+		for c in self.pathList._children[:]:
+			self.pathList.removeChild( c )
 		for p in [None]+self.path:
 			if p is None:
 				c = NodeWidget( self.modul, {"id":self.rootNode,"name":"root"} )
 			else:
 				c = NodeWidget( self.modul, p )
-			self.pathChildren.append( c )
-			DOM.appendChild( self.pathList, c.getElement() )
-			c.onAttach()
+			self.pathList.appendChild( c )
+			#DOM.appendChild( self.pathList, c.getElement() )
+			#c.onAttach()
 
 	def reloadData(self):
 		assert self.node is not None, "reloadData called while self.node is None"
-		for c in self.children[:]:
-			self.removeItem( c )
+		self.entryFrame.clear()
 		r = NetworkService.request(self.modul,"list/node", {"node":self.node}, successHandler=self.onRequestSucceded )
 		r.reqType = "node"
 		r = NetworkService.request(self.modul,"list/leaf", {"node":self.node}, successHandler=self.onRequestSucceded )
@@ -138,17 +239,9 @@ class TreeWidget( Widget ):
 		data = NetworkService.decode( req )
 		for skel in data["skellist"]:
 			if req.reqType=="node":
-				n = NodeWidget( self.modul, skel )
+				n = self.nodeWidget( self.modul, skel )
 			else:
-				n = LeafWidget( self.modul, skel )
-			self.addItem( n )
+				n = self.leafWidget( self.modul, skel )
+			self.entryFrame.appendChild(n)
 
-	def addItem(self, item):
-		self.children.append(item)
-		DOM.appendChild( self.entryFrame, item.getElement() )
-		item.onAttach()
 
-	def removeItem( self, item ):
-		item.onDetach()
-		DOM.removeChild( self.entryFrame, item.getElement() )
-		self.children.remove( item )

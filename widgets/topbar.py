@@ -4,10 +4,10 @@ from network import NetworkService
 
 class TopBarWidget( html5.Div ):
 	def __init__(self):
-		#self.setStyleName( "vi_topbar")
 		#DOM.setAttribute( self.element, "class", "vi_topbar")
 		super(TopBarWidget,self ).__init__( )
-		#NetworkService.request( "user", "view/self", successHandler=self.onDD, cacheable=False )
+		self["class"] = "vi_topbar"
+		NetworkService.request( "user", "view/self", successHandler=self.onDD, cacheable=False )
 		#HTTPRequest().asyncGet("/admin/user/view/self", self)
 		#self.nav.setParent( self )
 		#self.element.appendChild( self.nav )
@@ -26,9 +26,10 @@ class TopBarWidget( html5.Div ):
 	def onDD(self, req):
 		print("onDD")
 		data = NetworkService.decode(req)
-		nameLi = DOM.createElement("li")
-		nameLi.innerHTML = "<a href=\"#\" title=\"{'accountmanagement'}\" class=\"icon accountmgnt\">%s</a>" % data["values"]["name"]
-		DOM.appendChild( self.ul, nameLi )
+		nameLi = html5.Li()
+		nameLi.element.innerHTML = "<a href=\"#\" title=\"{'accountmanagement'}\" class=\"icon accountmgnt\">%s</a>" % data["values"]["name"]
+		self.appendChild( nameLi )
+
 		#l = Label("SUCESS")
 		#RootPanel().add(l)
 		#l = Label(text)

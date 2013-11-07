@@ -4,11 +4,10 @@
 import sys, os, time
 #from config import conf
 import json
-import Timer
 import string, random, time
 
 
-class DeferredCall( Timer ):
+class DeferredCall( object ):
 	"""
 		Calls the given function with a fixed delay.
 		This allows assuming that calls to NetworkService are always
@@ -16,13 +15,15 @@ class DeferredCall( Timer ):
 		before the Network-Call yields results.
 	"""
 	def __init__( self, func, *args, **kwargs ):
-		Timer.__init__( self, 25 )
-		#super( DeferredCall, self ).__init__(25)
+		super( DeferredCall, self ).__init__()
 		self._tFunc = func
 		self._tArgs = args
 		self._tKwArgs = kwargs
+		w = eval("window")
+		w.setTimeout( self.run, 25 )
 
 	def run(self):
+		print("FIREING TIMER")
 		self._tFunc( *self._tArgs, **self._tKwArgs )
 
 class HTTPRequest(object):
@@ -34,10 +35,25 @@ class HTTPRequest(object):
 
 	def asyncGet(self, url, cb):
 		self.cb = cb
+		self.type = "GET"
+		self.payload = None
+		self.content_type = None
 		self.req.open("GET",url,True)
-		self.req.send()
 
-	def onReadyStateChange(self):
+
+	def asyncPost(self, url, payload, cb, content_type=None ):
+		self.cb = cb
+		self.type = "POST"
+		self.payload = payload
+		self.content_type = content_type
+		self.req.open("POST",url,True)
+
+
+	def onReadyStateChange(self, *args, **kwargs):
+		if self.req.readyState == 1:
+			if self.type=="POST" and self.content_type is not None:
+				self.req.setRequestHeader('Content-Type', self.content_type)
+			self.req.send( self.payload )
 		if self.req.readyState == 4 and self.req.status == 200:
 			self.cb.onCompletion( self.req.responseText)
 

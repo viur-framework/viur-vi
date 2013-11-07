@@ -17,6 +17,7 @@ from config import conf
 
 import pygwt
 
+### OBSOLETE ??? ####
 class ModulListWidget(Widget):
 	"""
 		Fetches the list of all modules from the server, select the

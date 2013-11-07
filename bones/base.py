@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
-from pyjamas.ui.TextBox import TextBox
-from pyjamas.ui.Label import Label
-from pyjamas import DOM
+
 
 class BaseViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -15,10 +14,10 @@ class BaseViewBoneDelegate( object ):
 
 	def render( self, data, field ):
 		if field in data.keys():
-			return( Label(str( data[field])))
+			return( html5.Label(str( data[field])))
 		return( Label("..") )
 
-class BaseEditBone( TextBox ):
+class BaseEditBone( html5.Input ):
 	def getLineEdit(self):
 		return (QtGui.QLineEdit( self ))
 
@@ -42,11 +41,11 @@ class BaseEditBone( TextBox ):
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
-			self.setText( data[ self.boneName ] if data[ self.boneName ] else "" )
+			self["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
 			#self.lineEdit.setText( str( data[ self.boneName ] ) if data[ self.boneName ] else "" )
 
 	def serializeForPost(self):
-		return( { self.boneName: self.getText() } )
+		return( { self.boneName: self["value"] } )
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )

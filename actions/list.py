@@ -1,34 +1,15 @@
-import pyjd # this is dummy in pyjs.
-from pyjamas.ui.RootPanel import RootPanel
-from pyjamas.ui.Button import Button
-from pyjamas.ui.HTML import HTML
-from pyjamas.ui.Label import Label
-from pyjamas.ui import Event
-from pyjamas import Window
-from pyjamas.HTTPRequest import HTTPRequest
-from pyjamas.ui.FocusWidget import FocusWidget
-from pyjamas.ui.Button import Button
-from pyjamas.ui.Panel import Panel
-from pyjamas import DOM
-import json
+import html5
 from network import NetworkService
-from widgets.table import DataTable
-from widgets.actionbar import ActionBar
 from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
-from pyjamas.ui.DialogBox import DialogBox
-from pyjamas.ui.DialogWindow import DialogWindow
-import pygwt
 
-class AddAction( Button ):
+
+class AddAction( html5.ext.Button ):
 	def __init__(self, parent, *args, **kwargs):
-		super( AddAction, self ).__init__( *args, **kwargs )
-		self.setHTML("Add")
-		self.addClickListener( self )
-		self.addStyleName("icon")
-		self.addStyleName("add")
+		super( AddAction, self ).__init__( "Add", *args, **kwargs )
+		self["style"] = "icon add"
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
@@ -37,25 +18,30 @@ class AddAction( Button ):
 	def onClick(self, sender=None):
 		pane = Pane("Add", closeable=True)
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent.modul, EditWidget.appList)
+		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList)
 		pane.addWidget( edwg )
 		pane.focus()
 
 actionDelegateSelector.insert( 1, AddAction.isSuitableFor, AddAction )
 
 
-class EditAction( Button ):
+class EditAction( html5.ext.Button ):
 	def __init__(self, parent, *args, **kwargs):
-		super( EditAction, self ).__init__( *args, **kwargs )
-		self.setHTML("Edit")
-		self.addClickListener( self )
-		parent.selectionChangedEvent.register( self )
-		self.setEnabled(False)
-		self.addStyleName("icon")
-		self.addStyleName("edit")
+		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
+		#self.setEnabled(False)
+		self["style"] = "icon edit"
 		#self.setStyleAttribute("opacity","0.5")
 
+	def onAttach(self):
+		super(EditAction,self).onAttach()
+		self.parent().parent().selectionChangedEvent.register( self )
+
+	def onDetach(self):
+		self.parent().parent().selectionChangedEvent.unregister( self )
+		super(EditAction,self).onDetach()
+
 	def onSelectionChanged(self, table, selection ):
+		return
 		if len(selection)>0:
 			self.setEnabled(True)
 		else:
@@ -79,7 +65,7 @@ class EditAction( Button ):
 
 actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
-class YesNoDialog( DialogWindow ):
+class YesNoDialog( html5.Div ):
 	def __init__(self, topic, question, funcYes=None, funcNo=None, *args, **kwargs):
 		super( YesNoDialog, self ).__init__( modal=True, *args, **kwargs )
 		self.yesFunc = funcYes
@@ -110,19 +96,24 @@ class YesNoDialog( DialogWindow ):
 		self.noFunc = None
 
 
-class DeleteAction( Button ):
+class DeleteAction( html5.ext.Button ):
 	def __init__(self, parent, *args, **kwargs):
-		super( DeleteAction, self ).__init__( *args, **kwargs )
-		self.setHTML("Delete")
-		self.addClickListener( self )
-		parent.selectionChangedEvent.register( self )
-		self.setEnabled(False)
-		self.addStyleName("icon")
-		self.addStyleName("delete")
+		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )
+		self["style"] = "icon delete"
+		#self.setEnabled(False)
 		#self.setStyleAttribute("opacity","0.5")
 
 
+	def onAttach(self):
+		super(DeleteAction,self).onAttach()
+		self.parent().parent().selectionChangedEvent.register( self )
+
+	def onDetach(self):
+		self.parent().parent().selectionChangedEvent.unregister( self )
+		super(DeleteAction,self).onDetach()
+
 	def onSelectionChanged(self, table, selection ):
+		return
 		if len(selection)>0:
 			self.setEnabled(True)
 		else:

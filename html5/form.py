@@ -332,10 +332,10 @@ class Input(Widget):
 class Label( Widget ):
 	_baseClass = "label"
 
-	def __init__(self, *args, **kwargs):
+	def __init__(self, txt="", *args, **kwargs):
 		super(Label,self).__init__( *args, **kwargs )
+		self.element.innerHTML = txt
 
-	print "Label attribute For dont work!"
 	'''
 
 	def _getFor(self):

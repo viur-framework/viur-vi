@@ -111,6 +111,7 @@ class Widget( object ):
 		self._children = []
 		self._catchedEvents = []
 		self._disabledState = None
+		self._parent = None
 
 	def sinkEvent(self, *args):
 		for eventName in args:
@@ -200,13 +201,14 @@ class Widget( object ):
 		Specifies whether the element represents an element that is is focusable (that is, an element which is part of the sequence of focusable elements in the document), and the relative order of the element in the sequence of focusable elements in the document.
 		@return: number
 		"""
-		return self.element.tabindex
+		return self.element.getAttribute("tabindex")
 	def _setTabindex(self,val):
 		"""
 		Specifies whether the element represents an element that is is focusable (that is, an element which is part of the sequence of focusable elements in the document), and the relative order of the element in the sequence of focusable elements in the document.
 		@param val:  number
 		"""
-		self.element.tabindex=val
+		print("SETTING TABINDEX")
+		self.element.setAttribute("tabindex",val)
 
 	def _getSpellcheck(self):
 		"""
@@ -385,6 +387,7 @@ class Widget( object ):
 	def appendChild(self, child):
 		self._children.append( child )
 		self.element.appendChild( child.element )
+		child._parent = self
 		child.onAttach()
 
 	def removeChild(self, child):
@@ -392,6 +395,7 @@ class Widget( object ):
 		child.onDetach()
 		self.element.removeChild( child.element )
 		self._children.remove( child )
+		child._parent = None
 
 	def onBlur(self, event):
 		pass
@@ -454,6 +458,15 @@ class Widget( object ):
 	def onScroll(self, event):
 		pass
 
+	def focus(self):
+		self.element.focus()
+
+	def blur(self):
+		self.element.blur()
+
+	def parent(self):
+		return( self._parent )
+
 
 	def _getEventMap(self):
 		res = { "onblur": "onBlur",
@@ -488,8 +501,6 @@ class Widget( object ):
 				"onscroll":"onScroll"
 		}
 		return( res )
-
-
 
 
 

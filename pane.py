@@ -19,12 +19,13 @@ class Pane( html5.Li ):
 		self.descr = descr
 		self.icon = icon
 		self.closeable = closeable
-		self.widgets = []
 		self.childPanes = []
 		self.widgetsDomElm = html5.Div()
 		self.childDomElem = None
-		self.label = html5.Span( descr ) #FIXME: descr fehlt
+		self.label = html5.Span( )
+		self.label.element.innerHTML = descr #FIXME: descr fehlt
 		self.appendChild( self.label )
+		self.sinkEvent("onClick")
 		#self.label.addClickListener( self.onClick )
 		#if closeable:
 		#	self.closeBtn = Button("X", self.onBtnCloseReleased)
@@ -45,17 +46,23 @@ class Pane( html5.Li ):
 		assert pane != self, "A pane cannot be a child of itself"
 		self.childPanes.append( pane )
 		if not self.childDomElem:
-			self.childDomElem = DOM.createElement("ul")
-			DOM.setElemAttribute(self.childDomElem, "class", "actionlist")
-			DOM.appendChild( self.getElement(), self.childDomElem )
-		DOM.appendChild( self.childDomElem, pane.getElement() )
+			self.childDomElem = html5.Ul()
+			self.childDomElem["class"] = "actionlist"
+			self.appendChild( self.childDomElem )
+			#self.childDomElem = DOM.createElement("ul")
+			#DOM.setElemAttribute(self.childDomElem, "class", "actionlist")
+			#DOM.appendChild( self.getElement(), self.childDomElem )
+		self.childDomElem.appendChild( pane )
+		#DOM.appendChild( self.childDomElem, pane.getElement() )
 
 	def removeChildPane(self, pane):
 		assert pane in self.childPanes, "Cannot remove unknown child-pane %s from %s" % (str(pane),str(self))
 		self.childPanes.remove( pane )
-		DOM.removeChild( self.childDomElem, pane.getElement() )
+		self.childDomElem.removeChild( pane )
+		#DOM.removeChild( self.childDomElem, pane.getElement() )
 		if len(self.childPanes)==0: #No more children, remove the UL element
-			DOM.removeChild( self.getElement(), self.childDomElem )
+			self.removeChild( self.childDomElem )
+			#DOM.removeChild( self.getElement(), self.childDomElem )
 			self.childDomElem = None
 
 
@@ -76,15 +83,10 @@ class Pane( html5.Li ):
 			@type widget: widget
 
 		"""
-		self.widgets.append( widget )
-		DOM.appendChild( self.widgetsDomElm, widget.getElement() )
-		widget.onAttach()
+		self.widgetsDomElm.appendChild( widget )
 
 	def removeWidget(self, widget):
-		assert widget in self.widgets, "Cannot remove unknown widget %s" % str(widget)
-		self.widgets.remove( widget )
-		DOM.removeChild( self.widgetsDomElm, widget.getElement() )
-		widget.onDetach()
+		self.widgetsDomElm.removeChild( widget )
 
 	def onClick(self, *args, **kwargs ):
 		self.focus()

@@ -2,8 +2,8 @@ import pyjd # this is dummy in pyjs.
 import json
 from network import NetworkService
 from priorityqueue import viewDelegateSelector
-#from widgets.table import DataTable
-#from widgets.actionbar import ActionBar
+from widgets.table import DataTable
+from widgets.actionbar import ActionBar
 import html5
 
 
@@ -23,23 +23,17 @@ class ListWidget( html5.Div ):
 		"""
 		super( ListWidget, self ).__init__(  )
 		self.modul = modul
-		#self.setStyleName("vi_viewer")
-
-		#self.actionBar = ActionBar( self, modul )
-		#DOM.appendChild( self.element, self.actionBar.getElement() )
-		#self.actionBar.onAttach()
-		#self.table = DataTable()
-		##self.table = DOM.createElement("table")
-		#DOM.appendChild( self.element, self.table.getElement() )
-		#self.table.onAttach()
+		self.actionBar = ActionBar( modul )
+		self.appendChild( self.actionBar )
+		self.table = DataTable()
+		self.appendChild( self.table )
 		self._currentCursor = None
-		#self.reloadData()
-		#self.table.setDataProvider(self)
+		self.table.setDataProvider(self)
 		#Proxy some events and functions of the original table
-		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
-		#	setattr( self, f, getattr(self.table,f))
-		#self.actionBar.setActions(["add","edit","delete"])
-		#HTTPRequest().asyncGet("/admin/%s/list" % self.modul, self)
+		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
+			setattr( self, f, getattr(self.table,f))
+		self.actionBar.setActions(["add","edit","delete"])
+		self.reloadData()
 
 
 	def onNextBatchNeeded(self):

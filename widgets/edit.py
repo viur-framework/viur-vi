@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
+
+import html5
 from network import NetworkService
-#from utils import RegisterQueue, Overlay, formatString
 from config import conf
 from priorityqueue import editBoneSelector
 from priorityqueue import protocolWrapperInstanceSelector
-from pyjamas.ui.FlexTable import FlexTable
-from pyjamas.ui.InlineLabel import InlineLabel
-from pyjamas.ui.Button import Button
-from pyjamas import DOM
 
-class EditWidget( FlexTable ):
+
+class EditWidget( html5.Table ):
 	appList = "list"
 	appHierarchy = "hierarchy"
 	appTree = "tree"
@@ -32,8 +30,7 @@ class EditWidget( FlexTable ):
 			@param clone: If true, it will load the values from the given id, but will save a new entry (i.e. allows "cloning" an existing entry)
 			@type clone: Bool
 		"""
-		self.element = DOM.createDiv()
-		super( EditWidget, self ).__init__( self.element, *args, **kwargs )
+		super( EditWidget, self ).__init__( *args, **kwargs )
 		self.modul = modul
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
 		assert applicationType in [ EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree, EditWidget.appSingleton ] #Invalid Application-Type?
@@ -212,6 +209,7 @@ class EditWidget( FlexTable ):
 		#Clear the UI
 		#for c in self.children[ : ]:
 		#	self.disown( c )
+		self.clear()
 		self.bones = {}
 		self.dataCache = data
 		tmpDict = {}
@@ -280,13 +278,15 @@ class EditWidget( FlexTable ):
 			dataWidget.show()
 			self.bones[ key ] = widget
 			"""
-
-			self.add( InlineLabel(bone["descr"]),currRow, 0)
-			self.add( widget,currRow, 1)
+			self.prepareCol(currRow,1)
+			self["cell"][currRow][0] = html5.Label(bone["descr"])
+			self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget
-		submitBtn = Button( "Save", self.onBtnSaveContinueReleased )
-		self.add( submitBtn, currRow, 1 )
+		submitBtn = html5.ext.Button("Save", self.onBtnSaveContinueReleased)
+		self.prepareCol(currRow,1)
+		self["cell"][currRow][1] = submitBtn
+		#self.add( submitBtn, currRow, 1 )
 		self.unserialize( data["values"] )
 		self._lastData = data
 		#event.emit( "rebuildBreadCrumbs()" )
@@ -298,6 +298,7 @@ class EditWidget( FlexTable ):
 			bone.unserialize( data )
 
 	def onBtnSaveContinueReleased(self, *args, **kwargs ):
+		print( "BTN CLICK RECIVED")
 		self.closeOnSuccess = False
 		#self.overlay.inform( self.overlay.BUSY )
 		res = {}
