@@ -39,6 +39,12 @@ def doesEventHitWidget( event, widget ):
 	return( False )
 
 class SelectableDiv( html5.Div ):
+	"""
+		Provides a Container, which allows selecting its contents.
+		Designed to be used within a tree widget, as it distinguishes between
+		two different types of content (nodes and leafs) and allows selections to
+		be restricted to a certain kind.
+	"""
 
 
 	def __init__(self, nodeWidget, leafWidget, selectionType="both", multiSelection=False, *args, **kwargs ):
@@ -67,18 +73,13 @@ class SelectableDiv( html5.Div ):
 			item["class"].append("cursor")
 
 	def onClick(self, event):
-		print("GOT ONCLICK")
-		print( self._children)
 		self.focus()
 		for child in self._children:
 			if doesEventHitWidget( event, child ):
-				print("p1")
 				self.setCurrentItem( child )
 				if self._isCtlPressed:
-					print("p2")
 					self.addSelectedItem( child )
 		if not self._isCtlPressed:
-			print("p3")
 			self.clearSelection()
 
 	def onDblClick(self, event):
@@ -133,6 +134,13 @@ class SelectableDiv( html5.Div ):
 		for child in self._children[:]:
 			self.removeChild( child )
 
+	def getCurrentSelection(self):
+		if len(self._selectedItems)>0:
+			return( self._selectedItems[:] )
+		if self._currentItem:
+			return( self._currentItem )
+		return( None )
+
 class TreeWidget( html5.Div ):
 
 	nodeWidget = NodeWidget
@@ -148,20 +156,13 @@ class TreeWidget( html5.Div ):
 		self.modul = modul
 		self.rootNode = rootNode
 		self.node = node or rootNode
-		#self.setStyleName("vi_viewer")
-		self.actionBar = ActionBar( self, modul )
+		self.actionBar = ActionBar( modul, "tree" )
 		self.appendChild( self.actionBar )
-		#DOM.appendChild( self.element, self.actionBar.getElement() )
 		self.pathList = html5.Div()
 		self.appendChild( self.pathList )
-		self.pathList["style"]["border"] = "1px solid red"
-		#DOM.appendChild( self.getElement(), self.pathList )
-		#DOM.setStyleAttribute(self.pathList,"border","1px solid red")
 		self.entryFrame = SelectableDiv( self.nodeWidget, self.leafWidget )
 		self.appendChild( self.entryFrame )
 		self.entryFrame.selectionActivatedEvent.register( self )
-		self.entryFrame["style"]["border"] = "1px solid green"
-		#DOM.setStyleAttribute(self.entryFrame,"border","1px solid green")
 		self._currentCursor = None
 		self._currentRequests = []
 		if self.rootNode:
@@ -172,11 +173,10 @@ class TreeWidget( html5.Div ):
 			NetworkService.request(self.modul,"listRootNodes", successHandler=self.onSetDefaultRootNode)
 		self.path = []
 		self.sinkEvent( "onClick" )
-		##Proxy some events and functions of the original table
-		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
-		#	setattr( self, f, getattr(self.table,f))
-		#self.actionBar.setActions(["add","edit","delete"])
-		#HTTPRequest().asyncGet("/admin/%s/list" % self.modul, self)
+		#Proxy some events and functions of the original table
+		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
+			setattr( self, f, getattr(self.entryFrame,f))
+		self.actionBar.setActions(["add","edit","delete"])
 
 	def onSelectionActivated(self, div, selection ):
 		if len(selection)!=1:

@@ -19,7 +19,7 @@ class HierarchyHandler( Pane ):
 		print("CLICK TREE")
 		if not len(self.widgetsDomElm._children):
 			self.addWidget( HierarchyWidget(self.modulName ) )
-		super( HierarchyHandler, self ).onClick()
+		super( HierarchyHandler, self ).onClick( *args, **kwargs )
 
 
 HandlerClassSelector.insert( 3, HierarchyHandler.canHandle, HierarchyHandler )

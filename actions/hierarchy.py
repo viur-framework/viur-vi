@@ -13,12 +13,13 @@ class AddAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
-		return( (modul == "list" or modul.startswith("list.") and actionName=="add") )
+		return( (modul == "hierarchy" or modul.startswith("hierarchy.") and actionName=="add") )
 
 	def onClick(self, sender=None):
+		print("ADD ACTION HIERARCHY", self.parent().parent().rootNode)
 		pane = Pane("Add", closeable=True)
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList)
+		edwg = EditWidget( self.parent().parent().modul, EditWidget.appHierarchy, node=self.parent().parent().rootNode )
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -50,7 +51,7 @@ class EditAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
-		return( (modul == "list" or modul.startswith("list.") and actionName=="edit") )
+		return( (modul == "hierarchy" or modul.startswith("hierarchy.") and actionName=="edit") )
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
@@ -59,7 +60,7 @@ class EditAction( html5.ext.Button ):
 		for s in selection:
 			pane = Pane("Edit", closeable=True)
 			conf["mainWindow"].stackPane( pane )
-			edwg = EditWidget( self.parent().parent().modul, EditWidget.appList, key=s["id"])
+			edwg = EditWidget( self.parent().parent().modul, EditWidget.appHierarchy, key=s["id"])
 			pane.addWidget( edwg )
 			pane.focus()
 
@@ -128,7 +129,7 @@ class DeleteAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
-		return( (modul == "list" or modul.startswith("list.") and actionName=="delete") )
+		return( (modul == "hierarchy" or modul.startswith("hierarchy.") and actionName=="delete") )
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()

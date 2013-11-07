@@ -88,8 +88,9 @@ class Pane( html5.Li ):
 	def removeWidget(self, widget):
 		self.widgetsDomElm.removeChild( widget )
 
-	def onClick(self, *args, **kwargs ):
+	def onClick(self, event, *args, **kwargs ):
 		self.focus()
+		event.stopPropagation()
 
 	def focus(self):
 		conf["mainWindow"].focusPane( self )

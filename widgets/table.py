@@ -1,29 +1,6 @@
 import html5
 from event import EventDispatcher
 
-def addClass( elem, cls):
-	cls = cls.lower()
-	classes = DOM.getElemAttribute( elem, "class" )
-	if not classes:
-		tmpCls = []
-	else:
-		tmpCls = classes.lower().split(" ")
-	if not cls in tmpCls:
-		tmpCls.append( cls )
-	DOM.setElemAttribute( elem, "class", " ".join(tmpCls))
-
-def removeClass(elem, cls):
-	cls = cls.lower()
-	classes = DOM.getElemAttribute( elem, "class" )
-	if not classes:
-		tmpCls = []
-	else:
-		tmpCls = classes.lower().split(" ")
-	if cls in tmpCls:
-		tmpCls.remove( cls )
-	DOM.setElemAttribute( elem, "class", " ".join(tmpCls))
-
-
 class SelectTable( html5.Table ):
 	"""
 		Provides an Html-Table which allows selecting rows.

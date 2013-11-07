@@ -23,7 +23,7 @@ class ListWidget( html5.Div ):
 		"""
 		super( ListWidget, self ).__init__(  )
 		self.modul = modul
-		self.actionBar = ActionBar( modul )
+		self.actionBar = ActionBar( modul, "list" )
 		self.appendChild( self.actionBar )
 		self.table = DataTable()
 		self.appendChild( self.table )
@@ -97,6 +97,7 @@ class ListWidget( html5.Div ):
 		for skel in data["skellist"]:
 			self.table.add( skel )
 		self.table.setShownFields( boneList )
+		print("SETTING NEW HEADER", [x["descr"] for x in boneInfoList])
 		self.table.setHeader( [x["descr"] for x in boneInfoList])
 		if "cursor" in data.keys():
 			self._currentCursor = data["cursor"]

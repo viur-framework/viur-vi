@@ -19,7 +19,7 @@ class TreeHandler( Pane ):
 		print("CLICK TREE")
 		if not len(self.widgetsDomElm._children):
 			self.addWidget( TreeWidget(self.modulName ) )
-		super( TreeHandler, self ).onClick()
+		super( TreeHandler, self ).onClick( *args, **kwargs )
 
 
 HandlerClassSelector.insert( 3, TreeHandler.canHandle, TreeHandler )

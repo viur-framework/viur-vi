@@ -58,10 +58,13 @@ class RelationalSingleSelectionBone( html5.Div ):
 		self.format = format
 		self.selection = None
 		self.currentSelector = None
-		self.selectionTxt = DOM.createElement("input")
+		self.selectionTxt = html5.Input()
+		self.selectionTxt["type"] = "text"
+		self.appendChild( self.selectionTxt )
 		#DOM.setElemAttribute( self.selectionTxt, "type", "text")
 		#DOM.appendChild(self.getElement(), self.selectionTxt )
-		#self.selectBtn = Button("Select", self.onShowSelector)
+		self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
+		self.appendChild( self.selectBtn )
 		#DOM.appendChild( self.getElement(), self.selectBtn.getElement())
 		#self.selectBtn.onAttach()
 
@@ -149,9 +152,9 @@ class RelationalSingleSelectionBone( html5.Div ):
 		"""
 		self.selection = selection
 		if selection:
-			DOM.setElemAttribute( self.selectionTxt, "value",  selection["name"] )
+			self.selectionTxt["value"] = selection["name"]
 		else:
-			DOM.setElemAttribute( self.selectionTxt, "value",  "" )
+			self.selectionTxt["value"] = ""
 
 class RelationalMultiSelectionBoneEntry( html5.Div ):
 	"""
@@ -168,16 +171,14 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 			@param data: Values of the entry we shall display
 			@type data: dict
 		"""
-		self.element = DOM.createElement("div")
 		super( RelationalMultiSelectionBoneEntry, self ).__init__( *args, **kwargs )
 		self.parent = parent
 		self.modul = modul
 		self.data = data
-		txtLbl = Label( data["name"])
-		DOM.appendChild( self.getElement(), txtLbl.getElement() )
-		remBtn = Button("X", self.onRemove )
-		DOM.appendChild( self.getElement(), remBtn.getElement() )
-		remBtn.onAttach()
+		txtLbl = html5.Label( data["name"])
+		self.appendChild( txtLbl )
+		remBtn = html5.ext.Button("X", self.onRemove )
+		self.appendChild( remBtn )
 
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry( self )
@@ -201,8 +202,7 @@ class RelationalMultiSelectionBone( html5.Div ):
 			@param format: Specifies how entries should be displayed.
 			@type format: string
 		"""
-		self.element = DOM.createElement("div")
-		super( RelationalMultiSelectionBone,  self ).__init__( self.element, *args, **kwargs )
+		super( RelationalMultiSelectionBone,  self ).__init__( *args, **kwargs )
 		self.srcModul = srcModul
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -210,11 +210,10 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.format = format
 		self.entries = []
 		self.currentSelector = None
-		self.selectionDiv = DOM.createElement("div")
-		DOM.appendChild(self.getElement(), self.selectionDiv )
-		self.selectBtn = Button("Select", self.onShowSelector)
-		DOM.appendChild( self.getElement(), self.selectBtn.getElement())
-		self.selectBtn.onAttach()
+		self.selectionDiv = html5.Div()
+		self.appendChild( self.selectionDiv )
+		self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
+		self.appendChild( self.selectBtn )
 
 
 	@classmethod
@@ -289,6 +288,8 @@ class RelationalMultiSelectionBone( html5.Div ):
 			@type selection: dict
 		"""
 		print( selection )
+		if selection is None:
+			return
 		for data in selection:
 			entry = RelationalMultiSelectionBoneEntry( self, self.destModul, data)
 			self.addEntry( entry )
@@ -299,8 +300,7 @@ class RelationalMultiSelectionBone( html5.Div ):
 			@type entry: RelationalMultiSelectionBoneEntry
 		"""
 		self.entries.append( entry )
-		DOM.appendChild( self.selectionDiv, entry.getElement() )
-		entry.onAttach()
+		self.selectionDiv.appendChild( entry )
 
 	def removeEntry(self, entry ):
 		"""
@@ -308,8 +308,7 @@ class RelationalMultiSelectionBone( html5.Div ):
 			@type entry: RelationalMultiSelectionBoneEntry
 		"""
 		assert entry in self.entries, "Cannot remove unknown entry %s from realtionalBone" % str(entry)
-		entry.onDetach()
-		DOM.removeChild( self.selectionDiv, entry.getElement() )
+		self.selectionDiv.removeChild( entry )
 		self.entries.remove( entry )
 
 def CheckForRelationalBoneSingleSelection( modulName, boneName, skelStructure ):

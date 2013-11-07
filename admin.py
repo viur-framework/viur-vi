@@ -108,7 +108,7 @@ class CoreWindow( html5.Div ):
 
 	def removeWidget(self, widget ):
 		for pane in self.panes:
-			if widget in pane.widgets:
+			if widget in pane.widgetsDomElm._children:
 				pane.removeWidget( widget )
 				return
 		raise AssertionError("Tried to remove unknown widget %s" % str( widget ))

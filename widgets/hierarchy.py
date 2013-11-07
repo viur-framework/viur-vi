@@ -45,14 +45,12 @@ class HierarchyWidget( html5.Div ):
 		self.modul = modul
 		self.rootNode = rootNode
 		self.node = node or rootNode
-		#self.setStyleName("vi_viewer")
-		self.actionBar = ActionBar( self, modul )
+		self.actionBar = ActionBar( modul, "hierarchy" )
 		self.appendChild( self.actionBar )
 		self.entryFrame = html5.Ol()
 		self.appendChild( self.entryFrame )
-		#self.entryFrame.selectionActivatedEvent.register( self )
-		self.entryFrame["style"]["border"] = "1px solid green"
-		#DOM.setStyleAttribute(self.entryFrame,"border","1px solid green")
+		self.selectionChangedEvent = EventDispatcher("selectionChanged")
+		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 		self._currentCursor = None
 		self._currentRequests = []
 		if self.rootNode:
@@ -62,11 +60,11 @@ class HierarchyWidget( html5.Div ):
 			print("INIT TREE WIDGET X2")
 			NetworkService.request(self.modul,"listRootNodes", successHandler=self.onSetDefaultRootNode)
 		self.path = []
-		self.sinkEvent( "onClick" )
+		self.sinkEvent( "onClick", "onDblClick" )
 		##Proxy some events and functions of the original table
 		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 		#	setattr( self, f, getattr(self.table,f))
-		#self.actionBar.setActions(["add","edit","delete"])
+		self.actionBar.setActions(["add","edit","delete"])
 		#HTTPRequest().asyncGet("/admin/%s/list" % self.modul, self)
 
 	def itemForEvent(self,event, elem=None):
@@ -99,6 +97,15 @@ class HierarchyWidget( html5.Div ):
 		if not item.isLoaded:
 			item.isLoaded = True
 			self.loadNode( item.data["id"] )
+		self._currentCursor = item
+		self.selectionChangedEvent.fire( self, item )
+
+	def onDblClick(self, event):
+		item = self.itemForEvent( event )
+		if item is None:
+			return
+		self._currentCursor = item
+		self.selectionActivatedEvent.fire( self, [item] )
 
 
 	def onSetDefaultRootNode(self, req):
@@ -131,3 +138,7 @@ class HierarchyWidget( html5.Div ):
 		for skel in data["skellist"]:
 			ol.appendChild( HierarchyItem( self.modul, skel ) )
 
+	def getCurrentSelection(self):
+		if self._currentCursor is not None:
+			return( [ self._currentCursor.data ] )
+		return( [] )

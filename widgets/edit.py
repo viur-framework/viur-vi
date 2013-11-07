@@ -35,14 +35,14 @@ class EditWidget( html5.Table ):
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
 		assert applicationType in [ EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree, EditWidget.appSingleton ] #Invalid Application-Type?
 		if applicationType==EditWidget.appHierarchy or applicationType==EditWidget.appTree:
-			assert id or node #Need either an id or an node
+			assert id is not None or node is not None #Need either an id or an node
 		if clone:
-			assert id #Need an id if we should clone an entry
+			assert id is not None #Need an id if we should clone an entry
 			assert not applicationType==EditWidget.appSingleton # We cant clone a singleton
 			if applicationType==EditWidget.appHierarchy or applicationType==EditWidget.appTree:
-				assert node #We still need a rootNode for cloning
+				assert node is not None #We still need a rootNode for cloning
 			if applicationType==EditWidget.appTree:
-				assert path #We still need a path for cloning #FIXME
+				assert path is not None #We still need a path for cloning #FIXME
 		# End santy-checks
 		self.applicationType = applicationType
 		self.key = key
@@ -139,9 +139,11 @@ class EditWidget( html5.Table ):
 				#self.editTaskID = protoWrap.add( **data )
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
 			if self.key and not self.clone:
-				self.editTaskID = protoWrap.edit( self.key, **data )
+				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData)
+				#self.editTaskID = protoWrap.edit( self.key, **data )
 			else:
-				self.editTaskID = protoWrap.add( self.node, **data )
+				NetworkService.request(self.modul, "add/%s" % self.node, data, secure=len(data)>0, successHandler=self.setData )
+				#self.editTaskID = protoWrap.add( self.node, **data )
 		elif self.applicationType == EditWidget.appTree: ## Application: Tree
 			if self.key and not self.clone:
 				self.editTaskID = protoWrap.edit( self.key, self.skelType, **data )

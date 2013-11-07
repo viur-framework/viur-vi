@@ -23,7 +23,7 @@ class ListHandler( Pane ):
 		if not len(self.widgetsDomElm._children):
 			print("ADDING WIDGET")
 			self.addWidget( ListWidget(self.modulName ) )
-		super( ListHandler, self ).onClick()
+		super( ListHandler, self ).onClick( *args, **kwargs )
 
 
 HandlerClassSelector.insert( 1, ListHandler.canHandle, ListHandler )

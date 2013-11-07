@@ -5,10 +5,11 @@ from priorityqueue import actionDelegateSelector
 
 
 class ActionBar( html5.Div ):
-	def __init__( self, modul, *args, **kwargs ):
+	def __init__( self, modul, appType, *args, **kwargs ):
 		super( ActionBar, self ).__init__(  )
 		self.actions = []
 		self.modul = modul
+		self.appType = appType
 		self.element.innerHTML ="ACTIONS"
 
 	def setActions(self, actions):
@@ -18,7 +19,7 @@ class ActionBar( html5.Div ):
 			if action=="|":
 				continue
 			else:
-				actionWdg = actionDelegateSelector.select( "list.%s" % self.modul, action )
+				actionWdg = actionDelegateSelector.select( "%s.%s" % (self.appType, self.modul), action )
 				print("HAVE ACTION for", action)
 				if actionWdg is not None:
 					actionWdg = actionWdg( self.parent )

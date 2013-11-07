@@ -15,7 +15,7 @@ class BaseViewBoneDelegate( object ):
 	def render( self, data, field ):
 		if field in data.keys():
 			return( html5.Label(str( data[field])))
-		return( Label("..") )
+		return( html5.Label("..") )
 
 class BaseEditBone( html5.Input ):
 	def getLineEdit(self):
