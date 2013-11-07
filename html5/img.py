@@ -1,4 +1,4 @@
-from html5 import Widget
+from html5.widget import Widget
 
 class Img( Widget ):
 	_baseClass = "img"
