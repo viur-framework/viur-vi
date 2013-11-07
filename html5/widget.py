@@ -1,5 +1,4 @@
 from html5 import document
-import re
 
 class ClassWrapper( list ):
 	def __init__( self, targetWidget ):

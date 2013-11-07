@@ -11,8 +11,6 @@ from priorityqueue import HandlerClassSelector
 
 
 
-
-
 class CoreWindow( html5.Div ):
 	def __init__(self, *args, **kwargs ):
 		super( CoreWindow, self ).__init__( *args, **kwargs )
@@ -118,35 +116,6 @@ if __name__ == '__main__':
 	conf["mainWindow"] = CoreWindow()
 	html5.Body().appendChild( conf["mainWindow"] )
 	#RootPanel().add( conf["mainWindow"] )
-	"""
-	t = DataTable()
-	conf["mainWindow"].addWidget(t,"test")
-	tmp = {"1":"Erstellt am",
-	       "2":u"Name",
-	       "3":u"Serie",
-	       "4":u"Verfügbar in",
-	       "5":u"Auffindbar über Produktfinder",
-	       "6":u"Einbauort",
-	       "7":u"Oberfläche",
-	       "8":u"Glass"}
-	t.add( tmp )
-	tmp = {"1":"12.02.2013 10:27:49",
-	       "2":u"Runddusche, 2-Teilig",
-	       "3":u"Exklusiv",
-	       "4":u"Schweiz, Deutschland, Österreich",
-	       "5":u"Ja",
-	       "6":u"Raumecke",
-	       "7":u"ägäis, bahama-beige, ebony, (schwarz-matt), rot (RAL 3003)",
-	       "8":u"klar hell, chinchilla"}
-	t.add( tmp )
-	for x in range(0,25):
-		tmp = {}
-		for y in range(0,10):
-			tmp[str(y)] = "val"+str(y)
-		t.add( tmp )
-			#t.add( Label( "%s-%s" % (x,y)),x,y)
-	t.setShownFields(["1","2","3","4","5","6","7","8"])
-	"""
 	#t.setFocus( True )
 	#conf["mainWindow"].addWidget(None,"test")
 	pyjd.run()

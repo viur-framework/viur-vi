@@ -1,4 +1,4 @@
-from html5 import Span
+from html5.span import Span
 
 class Button(Span):
 	def __init__(self, txt=None, callback=None, *args, **kwargs):

@@ -1,7 +1,7 @@
 import html5
 import pyjd # this is dummy in pyjs.
 from network import NetworkService
-from widgets import ActionBar
+from widgets.actionbar import ActionBar
 from event import EventDispatcher
 
 
