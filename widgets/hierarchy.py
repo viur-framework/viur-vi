@@ -6,6 +6,9 @@ from event import EventDispatcher
 
 
 class HierarchyItem( html5.Li ):
+	"""
+		Holds one entry in a hierarchy.
+	"""
 	def __init__(self, modul, data, *args, **kwargs ):
 		super( HierarchyItem, self ).__init__( *args, **kwargs )
 		self.modul = modul
@@ -20,6 +23,13 @@ class HierarchyItem( html5.Li ):
 		self["class"].append("unexpaned")
 
 	def toggleExpand(self):
+		"""
+			Expands or unexpands this entry.
+			If its expanded, it children (if any) are visible,
+			otherwise the ol-tag (and all its children) are display: None
+			Does *not* load it children when its first expanding - that has
+			to be done by the HierarchyWidget.
+		"""
 		if self.isExpanded:
 			self.ol["style"]["display"] = "none"
 			self["class"].remove("expaned")
@@ -34,6 +44,11 @@ class HierarchyItem( html5.Li ):
 
 
 class HierarchyWidget( html5.Div ):
+	"""
+		Displays a hierarchy where entries are direct children of each other.
+		(There's only one type on entries in a HierarchyApplication. If you need to
+		differentiate between nodes/leafs use a TreeApplication instead)
+	"""
 
 	def __init__( self, modul, rootNode=None, node=None, *args, **kwargs ):
 		"""
@@ -68,6 +83,10 @@ class HierarchyWidget( html5.Div ):
 		#HTTPRequest().asyncGet("/admin/%s/list" % self.modul, self)
 
 	def itemForEvent(self,event, elem=None):
+		"""
+			Tries to map an event to one of our HierarchyItems.
+			Returns the item actually clicked, not its top-level parent.
+		"""
 		if elem is None:
 			elem = self.entryFrame
 		for child in elem._children:
@@ -79,6 +98,12 @@ class HierarchyWidget( html5.Div ):
 		return( None )
 
 	def itemForKey(self, key, elem=None ):
+		"""
+			Returns the HierarchyWidget displaying the entry with the given key.
+			@param key: The key (id) of the item.
+			@type key: string
+			@returns: HierarchyItem
+		"""
 		if elem is None:
 			elem = self.entryFrame
 		for child in elem._children:
@@ -109,21 +134,40 @@ class HierarchyWidget( html5.Div ):
 
 
 	def onSetDefaultRootNode(self, req):
+		"""
+			We requested the list of rootNodes for that modul and that
+			request just finished. Parse the respone and set our rootNode
+			to the first rootNode received.
+		"""
 		data = NetworkService.decode( req )
 		if len(data)>0:
 			self.setRootNode( data[0]["key"])
 
 	def setRootNode(self, rootNode):
+		"""
+			Set the currently displayed hierarchy to 'rootNode'.
+			@param rootNode: Key of the rootNode which children we shall display
+			@type rootNode: string
+		"""
 		self.rootNode = rootNode
 		self.node = rootNode
+		self._currentCursor = None
 		self.reloadData()
 
 
 	def reloadData(self):
+		"""
+			Reload the data were displaying.
+		"""
 		self.loadNode( self.rootNode )
 
 	def loadNode(self, node):
-		print("FETCHING PARENT", node)
+		"""
+			Fetch the (direct) children of the given node.
+			Once the list is received, append them to their parent node.
+			@param node: Key of the node to fetch
+			@type node: string
+		"""
 		r = NetworkService.request(self.modul,"list/", {"parent":node}, successHandler=self.onRequestSucceded )
 		r.node = node
 
@@ -139,6 +183,10 @@ class HierarchyWidget( html5.Div ):
 			ol.appendChild( HierarchyItem( self.modul, skel ) )
 
 	def getCurrentSelection(self):
+		"""
+			Returns the list of entries currently selected.
+			@returns: list of dict
+		"""
 		if self._currentCursor is not None:
 			return( [ self._currentCursor.data ] )
 		return( [] )

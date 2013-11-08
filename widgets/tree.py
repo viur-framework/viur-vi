@@ -3,6 +3,7 @@ import pyjd # this is dummy in pyjs.
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
+from priorityqueue import displayDelegateSelector
 
 
 class NodeWidget( html5.Div ):
@@ -24,12 +25,7 @@ class LeafWidget( html5.Div ):
 		self["style"]["border"] = "1px solid black"
 		self["class"] = "tree treeitem leaf"
 
-class FileWidget( LeafWidget ):
-	def __init__(self, modul, data, *args, **kwargs ):
-		super( FileWidget, self ).__init__( modul, data, *args, **kwargs )
-		if "servingurl" in data.keys():
-			self.appendChild( html5.Img( data["servingurl"]) )
-		self["class"].append("file")
+
 
 def doesEventHitWidget( event, widget ):
 	while widget:
@@ -144,7 +140,7 @@ class SelectableDiv( html5.Div ):
 class TreeWidget( html5.Div ):
 
 	nodeWidget = NodeWidget
-	leafWidget = FileWidget
+	leafWidget = LeafWidget
 
 	def __init__( self, modul, rootNode=None, node=None, *args, **kwargs ):
 		"""
@@ -245,3 +241,9 @@ class TreeWidget( html5.Div ):
 			self.entryFrame.appendChild(n)
 
 
+	@staticmethod
+	def canHandle( modul, modulInfo ):
+		print("CANHANDLE", modul, modulInfo)
+		return( modulInfo["handler"].startswith("tree." ) )
+
+displayDelegateSelector.insert( 1, TreeWidget.canHandle, TreeWidget )
