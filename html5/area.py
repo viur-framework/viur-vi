@@ -1,6 +1,6 @@
 from html5.a import A
-
-class Area( A ):
+from html5.html5Attr.form import Alt
+class Area( A,Alt ):
 	_baseClass = "area"
 
 	def __init__(self, *args, **kwargs):
@@ -10,11 +10,6 @@ class Area( A ):
 		return self.element.coords
 	def _setCoords(self,val):
 		self.element.coords=val
-
-	def _getAlt(self):
-		return self.element.alt
-	def _setAlt(self,val):
-		self.element.alt=val
 
 	def _getShape(self):
 		return self.element.shape

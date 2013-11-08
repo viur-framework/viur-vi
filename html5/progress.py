@@ -1,6 +1,6 @@
 from html5.widget import Widget
-
-class Progress( Widget ):
+from html5.html5Attr.form import Value
+class Progress( Widget,Value ):
     _baseClass = "progress"
 
     def __init__(self, *args, **kwargs):
@@ -10,11 +10,6 @@ class Progress( Widget ):
 		return self.element.max
 	def _setMax(self,val):
 		self.element.max=val
-
-	def _getValue(self):
-		return self.element.value
-	def _setValue(self,val):
-		self.element.value=val
 
 
 

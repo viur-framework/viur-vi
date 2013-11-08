@@ -1,20 +1,12 @@
 from html5.widget import Widget
+from html5.html5Attr.form import Name
+from html5.html5Attr.charset import Charset
 
-class Meta( Widget ):
+class Meta( Widget,Name,Charset ):
     _baseClass = "meta"
 
     def __init__(self, *args, **kwargs):
         super(Meta,self).__init__( *args, **kwargs )
-
-	def _getName(self):
-		return self.element.name
-	def _setName(self,val):
-		self.element.name=val
-
-	def _getCharset(self):
-		return self.element.charset
-	def _setCharset(self,val):
-		self.element.charset=val
 
 	def _getContent(self):
 		return self.element.content

@@ -1,112 +1,28 @@
 from html5.widget import Widget
+from html5.html5Attr._label import _Label
+from html5.html5Attr.media import Type,Dimensions
+from html5.html5Attr.form import _Form,Alt,Autofocus,Disabled,Name,Checked,Value,Formhead,Autocomplete,Inputs,Required,Multiple,Size,__For
+from html5.html5Attr.href import Target
+from html5.html5Attr.src import Src
 
-class Button( Widget):
+
+class Button( Widget,Type,_Form,Autofocus,Disabled,Name,Value,Formhead):
 	_baseClass = "button"
 
 	def __init__(self, *args, **kwargs):
 		super(Button,self).__init__( *args, **kwargs )
 
-	def _getAutofocus(self):
-		return( True if self.element.hasAttribute("autofocus") else False )
-	def _setAutofocus(self,val):
-		if val==True:
-			self.element.setAttribute("autofocus","")
-		else:
-			self.element.removeAttribute("autofocus")
-
-	def _getDisabled(self):
-		return( True if self.element.hasAttribute("disabled") else False )
-	def _setDisabled(self,val):
-		if val==True:
-			self.element.setAttribute("disabled","")
-		else:
-			self.element.removeAttribute("disabled")
-
-	def _getFormnovalidate(self):
-		return( True if self.element.hasAttribute("formnovalidate") else False )
-	def _setFormnovalidate(self,val):
-		if val==True:
-			self.element.setAttribute("formnovalidate","")
-		else:
-			self.element.removeAttribute("formnovalidate")
-
-	def _getForm(self):
-		return self.element.form
-	def _setForm(self,val):
-		self.element.form=val
-
-	def _getFormaction(self):
-		return self.element.formaction
-	def _setFormaction(self,val):
-		self.element.formaction=val
-
-	def _getFormenctype(self):
-		return self.element.formenctype
-	def _setFormenctype(self,val):
-		self.element.formenctype=val
-
-	def _getFormmethod(self):
-		return self.element.formmethod
-	def _setFormmethod(self,val):
-		self.element.formmethod=val
-
-	def _getFormtarget(self):
-		return self.element.formtarget
-	def _setFormtarget(self,val):
-		self.element.formtarget=val
-
-	def _getName(self):
-		return self.element.name
-	def _setName(self,val):
-		self.element.name=val
-
-	def _getType(self):
-		return self.element.type
-	def _setType(self,val):
-		self.element.type=val
-
-	def _getValue(self):
-		return self.element.value
-	def _setValue(self,val):
-		self.element.value=val
-
-class Fieldset(Widget):
+class Fieldset(Widget,_Form,Disabled,Name):
 	_baseClass = "fieldset"
 
 	def __init__(self, *args, **kwargs):
 		super(Fieldset,self).__init__( *args, **kwargs )
 
-	def _getDisabled(self):
-		return( True if self.element.hasAttribute("disabled") else False )
-	def _setDisabled(self,val):
-		if val==True:
-			self.element.setAttribute("disabled","")
-		else:
-			self.element.removeAttribute("disabled")
-
-	def _getForm(self):
-		return self.element.form
-	def _setForm(self,val):
-		self.element.form=val
-
-	def _getName(self):
-		return self.element.name
-	def _setName(self,val):
-		self.element.name=val
-
-class Form(Widget):
+class Form(Widget,Disabled,Name,Target,Autocomplete):
 	_baseClass = "form"
 
 	def __init__(self, *args, **kwargs):
 		super(Form,self).__init__( *args, **kwargs )
-
-	def _getDisabled(self):
-		return( True if self.element.hasAttribute("disabled") else False )
-	def _setDisabled(self,val):
-		if val==True:
-			self.element.setAttribute("disabled","")
-		else:
-			self.element.removeAttribute("disabled")
 
 	def _getNovalidate(self):
 		return( True if self.element.hasAttribute("novalidate") else False )
@@ -126,37 +42,17 @@ class Form(Widget):
 	def _setMethod(self,val):
 		self.element.method=val
 
-
 	def _getEnctype(self):
 		return self.element.enctype
 	def _setEnctype(self,val):
 		self.element.enctype=val
 
-
-	def _getAutocomplete(self):
-		return True if self.element.autocomplete=="on" else False
-	def _setAutocomplete(self,val):
-		self.element.autocomplete="on" if val==True else "off"
-
-
-	'''
 	def _getAcceptCharset(self):
-		return self.element.accept-charset
+		return getattr(self.element,"accept-charset")
 	def _setAcceptCharset(self,val):
-		self.element.accept-charset=val
-	'''
+		self.element.setAttribute("accept-charset",val)
 
-	def _getTarget(self):
-		return self.element.target
-	def _setTarget(self,val):
-		self.element.target=val
-
-	def _getName(self):
-		return self.element.name
-	def _setName(self,val):
-		self.element.name=val
-
-class Input(Widget):
+class Input(Widget,Type,_Form,Alt,Autofocus,Disabled,Checked,Name,Dimensions,Value,Formhead,Autocomplete,Inputs,Multiple,Size,Src):
 	_baseClass = "input"
 
 	def __init__(self, *args, **kwargs):
@@ -166,84 +62,6 @@ class Input(Widget):
 		return self.element.accept
 	def _setAccept(self,val):
 		self.element.accept=val
-
-	def _getAlt(self):
-		return self.element.alt
-	def _setAlt(self,val):
-		self.element.alt=val
-
-	def _getAutocomplete(self):
-		return True if self.element.autocomplete=="on" else False
-	def _setAutocomplete(self,val):
-		self.element.autocomplete="on" if val==True else "off"
-
-	def _getAutofocus(self):
-		return( True if self.element.hasAttribute("autofocus") else False )
-	def _setAutofocus(self,val):
-		if val==True:
-			self.element.setAttribute("autofocus","")
-		else:
-			self.element.removeAttribute("autofocus")
-
-	def _getChecked(self):
-		return( True if self.element.hasAttribute("checked") else False )
-	def _setChecked(self,val):
-		if val==True:
-			self.element.setAttribute("checked","")
-		else:
-			self.element.removeAttribute("checked")
-
-	def _getDisabled(self):
-		return( True if self.element.hasAttribute("disabled") else False )
-	def _setDisabled(self,val):
-		if val==True:
-			self.element.setAttribute("disabled","")
-		else:
-			self.element.removeAttribute("disabled")
-
-	def _getForm(self):
-		return self.element.form
-	def _setForm(self,val):
-		self.element.form=val
-
-
-	def _getFormaction(self):
-		return self.element.formaction
-	def _setFormaction(self,val):
-		self.element.formaction=val
-
-	def _getFormenctype(self):
-		return self.element.formenctype
-	def _setFormenctype(self,val):
-		self.element.formenctype=val
-
-	def _getFormmethod(self):
-		return self.element.formmethod
-	def _setFormmethod(self,val):
-		self.element.formmethod=val
-
-	def _getFormtarget(self):
-		return self.element.formtarget
-	def _setFormtarget(self,val):
-		self.element.formtarget=val
-
-	def _getFormnovalidate(self):
-		return( True if self.element.hasAttribute("formnovalidate") else False )
-	def _setFormnovalidate(self,val):
-		if val==True:
-			self.element.setAttribute("formnovalidate","")
-		else:
-			self.element.removeAttribute("formnovalidate")
-
-	def _getWidth(self):
-		return self.element.width
-	def _setWidth(self,val):
-		self.element.width=val
-
-	def _getHeight(self):
-		return self.element.height
-	def _setHeight(self,val):
-		self.element.height=val
 
 	def _getList(self):
 		return self.element.list
@@ -260,127 +78,34 @@ class Input(Widget):
 	def _setMin(self,val):
 		self.element.min=val
 
-	def _getMaxlength(self):
-		return self.element.maxlength
-	def _setMaxlength(self,val):
-		self.element.maxlength=val
-
-	def _getMultiple(self):
-		return( True if self.element.hasAttribute("multiple") else False )
-	def _setMultiple(self,val):
-		if val==True:
-			self.element.setAttribute("multiple","")
-		else:
-			self.element.removeAttribute("multiple")
-
-	def _getName(self):
-		return self.element.name
-	def _setName(self,val):
-		self.element.name=val
-
 	def _getPattern(self):
 		return self.element.pattern
 	def _setPattern(self,val):
 		self.element.pattern=val
-
-	def _getPlaceholder(self):
-		return self.element.placeholder
-	def _setPlaceholder(self,val):
-		self.element.placeholder=val
-
-	def _getReadonly(self):
-		return( True if self.element.hasAttribute("readonly") else False )
-	def _setReadonly(self,val):
-		if val==True:
-			self.element.setAttribute("readonly","")
-		else:
-			self.element.removeAttribute("readonly")
-
-	def _getRequired(self):
-		return( True if self.element.hasAttribute("required") else False )
-	def _setRequired(self,val):
-		if val==True:
-			self.element.setAttribute("required","")
-		else:
-			self.element.removeAttribute("required")
-
-	def _getSize(self):
-		return self.element.size
-	def _setSize(self,val):
-		self.element.size=val
-
-	def _getSrc(self):
-		return self.element.src
-	def _setSrc(self,val):
-		self.element.src=val
-
-	def _getType(self):
-		return self.element.type
-	def _setType(self,val):
-		self.element.type=val
 
 	def _getStep(self):
 		return self.element.step
 	def _setStep(self,val):
 		self.element.step=val
 
-	def _getValue(self):
-		return self.element.value
-	def _setValue(self,val):
-		self.element.value=val
-
-class Label( Widget ):
+class Label( Widget,_Form,__For ):
 	_baseClass = "label"
 
 	def __init__(self, txt="", *args, **kwargs):
 		super(Label,self).__init__( *args, **kwargs )
 		self.element.innerHTML = txt
 
-	'''
-
-	def _getFor(self):
-		return self.element.for
-	def _setFor(self,val):
-		self.element.for=val
-	'''
-
-	def _getForm(self):
-		return self.element.form
-	def _setForm(self,val):
-		self.element.form=val
-
-class Optgroup( Widget ):
+class Optgroup( Widget,_Label,Disabled ):
 	_baseClass = "optgroup"
 
 	def __init__(self, *args, **kwargs):
 		super(Optgroup,self).__init__( *args, **kwargs )
 
-	def _getDisabled(self):
-		return( True if self.element.hasAttribute("disabled") else False )
-	def _setDisabled(self,val):
-		if val==True:
-			self.element.setAttribute("disabled","")
-		else:
-			self.element.removeAttribute("disabled")
-
-	def _getLabel(self):
-		return self.element.label
-	def _setLabel(self,val):
-		self.element.label=val
-
-class Option( Widget ):
+class Option( Widget,_Label,Disabled,Value ):
 	_baseClass = "option"
 
 	def __init__(self, *args, **kwargs):
 		super(Option,self).__init__( *args, **kwargs )
-
-	def _getDisabled(self):
-		return( True if self.element.hasAttribute("disabled") else False )
-	def _setDisabled(self,val):
-		if val==True:
-			self.element.setAttribute("disabled","")
-		else:
-			self.element.removeAttribute("disabled")
 
 	def _getSelected(self):
 		return( True if self.element.hasAttribute("selected") else False )
@@ -390,123 +115,31 @@ class Option( Widget ):
 		else:
 			self.element.removeAttribute("selected")
 
-	def _getLabel(self):
-		return self.element.label
-	def _setLabel(self,val):
-		self.element.label=val
-
-	def _getValue(self):
-		return self.element.value
-	def _setValue(self,val):
-		self.element.value=val
-
-class Output( Widget ):
+class Output( Widget,_Form,Name,__For ):
 	_baseClass = "output"
 
 	def __init__(self, *args, **kwargs):
 		super(Output,self).__init__( *args, **kwargs )
 
-	'''
 
-	def _getFor(self):
-		return self.element.for
-	def _setFor(self,val):
-		self.element.for=val
-	'''
 
-	def _getForm(self):
-		return self.element.form
-	def _setForm(self,val):
-		self.element.form=val
-
-	def _getName(self):
-		return self.element.name
-	def _setName(self,val):
-		self.element.name=val
-
-class Select( Widget ):
+class Select( Widget,_Form,Autofocus,Disabled,Name,Required,Multiple,Size ):
 	_baseClass = "select"
 
 	def __init__(self, *args, **kwargs):
 		super(Select,self).__init__( *args, **kwargs )
 
-	def _getDisabled(self):
-		return( True if self.element.hasAttribute("disabled") else False )
-	def _setDisabled(self,val):
-		if val==True:
-			self.element.setAttribute("disabled","")
-		else:
-			self.element.removeAttribute("disabled")
 
-	def _getAutofocus(self):
-		return( True if self.element.hasAttribute("autofocus") else False )
-	def _setAutofocus(self,val):
-		if val==True:
-			self.element.setAttribute("autofocus","")
-		else:
-			self.element.removeAttribute("autofocus")
-
-	def _getMultiple(self):
-		return( True if self.element.hasAttribute("multiple") else False )
-	def _setMultiple(self,val):
-		if val==True:
-			self.element.setAttribute("multiple","")
-		else:
-			self.element.removeAttribute("multiple")
-
-	def _getRequired(self):
-		return( True if self.element.hasAttribute("required") else False )
-	def _setRequired(self,val):
-		if val==True:
-			self.element.setAttribute("required","")
-		else:
-			self.element.removeAttribute("required")
-
-	def _getSize(self):
-		return self.element.size
-	def _setSize(self,val):
-		self.element.size=val
-
-	def _getForm(self):
-		return self.element.form
-	def _setForm(self,val):
-		self.element.form=val
-
-	def _getName(self):
-		return self.element.name
-	def _setName(self,val):
-		self.element.name=val
-
-class Textarea( Widget ):
+class Textarea( Widget,_Form ,Autofocus,Disabled,Name,Inputs):
 	_baseClass = "output"
 
 	def __init__(self, *args, **kwargs):
 		super(Textarea,self).__init__( *args, **kwargs )
 
-	def _getForm(self):
-		return self.element.form
-	def _setForm(self,val):
-		self.element.form=val
-
-	def _getName(self):
-		return self.element.name
-	def _setName(self,val):
-		self.element.name=val
-
 	def _getCols(self):
 		return self.element.cols
 	def _setCols(self,val):
 		self.element.cols=val
-
-	def _getMaxlength(self):
-		return self.element.maxlength
-	def _setMaxlength(self,val):
-		self.element.maxlength=val
-
-	def _getPlaceholder(self):
-		return self.element.placeholder
-	def _setPlaceholder(self,val):
-		self.element.placeholder=val
 
 	def _getRows(self):
 		return self.element.rows
@@ -517,37 +150,5 @@ class Textarea( Widget ):
 		return self.element.wrap
 	def _setWrap(self,val):
 		self.element.wrap=val
-
-	def _getDisabled(self):
-		return( True if self.element.hasAttribute("disabled") else False )
-	def _setDisabled(self,val):
-		if val==True:
-			self.element.setAttribute("disabled","")
-		else:
-			self.element.removeAttribute("disabled")
-
-	def _getAutofocus(self):
-		return( True if self.element.hasAttribute("autofocus") else False )
-	def _setAutofocus(self,val):
-		if val==True:
-			self.element.setAttribute("autofocus","")
-		else:
-			self.element.removeAttribute("autofocus")
-
-	def _getRequired(self):
-		return( True if self.element.hasAttribute("required") else False )
-	def _setRequired(self,val):
-		if val==True:
-			self.element.setAttribute("required","")
-		else:
-			self.element.removeAttribute("required")
-
-	def _getReadonly(self):
-		return( True if self.element.hasAttribute("readonly") else False )
-	def _setReadonly(self,val):
-		if val==True:
-			self.element.setAttribute("readonly","")
-		else:
-			self.element.removeAttribute("readonly")
 
 

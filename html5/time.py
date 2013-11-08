@@ -1,12 +1,7 @@
 from html5.widget import Widget
-
-class Time( Widget ):
+from html5.html5Attr.cite import Datetime
+class Time( Widget ,Datetime):
     _baseClass = "time"
 
     def __init__(self, *args, **kwargs):
         super(Time,self).__init__( *args, **kwargs )
-
-	def _getDatetime(self):
-		return self.element.datetime
-	def _setDatetime(self,val):
-		self.element.datetime=val

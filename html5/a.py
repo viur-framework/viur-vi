@@ -1,6 +1,9 @@
 from html5.base import Base
+from html5.html5Attr.href import Href
+from html5.html5Attr.media import Media
+from html5.html5Attr.rel import Rel
 
-class A( Base ):
+class A( Base ,Href,Media,Rel):
 	_baseClass = "a"
 
 	def __init__(self, *args, **kwargs):
@@ -20,22 +23,6 @@ class A( Base ):
 		"""
 		self.element.download = val
 
-	def _getHreflang(self):
-		return self.element.hreflang
-	def _setHreflang(self,val):
-		self.element.hreflang=val
-	def _getMedia(self):
-		return self.element.media
-	def _setMedia(self,val):
-		self.element.media=val
-	def _getRel(self):
-		return self.element.rel
-	def _setRel(self,val):
-		self.element.rel=val
-	def _getType(self):
-		return self.element.type
-	def _setType(self,val):
-		self.element.type=val
 
 
 

@@ -1,16 +1,10 @@
 from html5.widget import Widget
-
-class Meter( Widget ):
+from html5.html5Attr.form import _Form as Form,Value
+class Meter( Widget,Form ,Value):
     _baseClass = "meter"
 
     def __init__(self, *args, **kwargs):
         super(Meter,self).__init__( *args, **kwargs )
-
-
-	def _getForm(self):
-		return self.element.form
-	def _setForm(self,val):
-		self.element.form=val
 
 	def _getHigh(self):
 		return self.element.high
@@ -37,9 +31,5 @@ class Meter( Widget ):
 	def _setOptimum(self,val):
 		self.element.optimum=val
 
-	def _getValue(self):
-		return self.element.value
-	def _setValue(self,val):
-		self.element.value=val
 
 

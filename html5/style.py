@@ -1,16 +1,11 @@
 from html5.widget import Widget
+from html5.html5Attr.media import Media
 
-class Style( Widget ):
+class Style( Widget,Media ):
     _baseClass = "style"
 
     def __init__(self, *args, **kwargs):
         super(Style,self).__init__( *args, **kwargs )
-
-	def _getMedia(self):
-		return self.element.media
-	def _setMedia(self,val):
-		self.element.media=val
-
 	def _getScoped(self):
 		return( True if self.element.hasAttribute("scoped") else False )
 	def _setScoped(self,val):
@@ -18,8 +13,3 @@ class Style( Widget ):
 			self.element.setAttribute("scoped","")
 		else:
 			self.element.removeAttribute("scoped")
-
-	def _getType(self):
-		return self.element.type
-	def _setType(self,val):
-		self.element.type=val

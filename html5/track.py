@@ -1,6 +1,7 @@
 from html5.widget import Widget
-
-class Track( Widget ):
+from html5.html5Attr.src import Src
+from html5.html5Attr._label import _Label as Label
+class Track( Widget,Src,Label ):
     _baseClass = "track"
 
     def __init__(self, *args, **kwargs):
@@ -10,16 +11,6 @@ class Track( Widget ):
 		return self.element.kind
 	def _setKind(self,val):
 		self.element.kind=val
-
-	def _getLabel(self):
-		return self.element.label
-	def _setLabel(self,val):
-		self.element.label=val
-
-	def _getSrc(self):
-		return self.element.src
-	def _setSrc(self,val):
-		self.element.src=val
 
 	def _getSrclang(self):
 		return self.element.srclang
