@@ -349,7 +349,205 @@ class Label( Widget ):
 	def _setForm(self,val):
 		self.element.form=val
 
+class Optgroup( Widget ):
+	_baseClass = "optgroup"
 
+	def __init__(self, *args, **kwargs):
+		super(Optgroup,self).__init__( *args, **kwargs )
 
+	def _getDisabled(self):
+		return( True if self.element.hasAttribute("disabled") else False )
+	def _setDisabled(self,val):
+		if val==True:
+			self.element.setAttribute("disabled","")
+		else:
+			self.element.removeAttribute("disabled")
+
+	def _getLabel(self):
+		return self.element.label
+	def _setLabel(self,val):
+		self.element.label=val
+
+class Option( Widget ):
+	_baseClass = "option"
+
+	def __init__(self, *args, **kwargs):
+		super(Option,self).__init__( *args, **kwargs )
+
+	def _getDisabled(self):
+		return( True if self.element.hasAttribute("disabled") else False )
+	def _setDisabled(self,val):
+		if val==True:
+			self.element.setAttribute("disabled","")
+		else:
+			self.element.removeAttribute("disabled")
+
+	def _getSelected(self):
+		return( True if self.element.hasAttribute("selected") else False )
+	def _setSelected(self,val):
+		if val==True:
+			self.element.setAttribute("selected","")
+		else:
+			self.element.removeAttribute("selected")
+
+	def _getLabel(self):
+		return self.element.label
+	def _setLabel(self,val):
+		self.element.label=val
+
+	def _getValue(self):
+		return self.element.value
+	def _setValue(self,val):
+		self.element.value=val
+
+class Output( Widget ):
+	_baseClass = "output"
+
+	def __init__(self, *args, **kwargs):
+		super(Output,self).__init__( *args, **kwargs )
+
+	'''
+
+	def _getFor(self):
+		return self.element.for
+	def _setFor(self,val):
+		self.element.for=val
+	'''
+
+	def _getForm(self):
+		return self.element.form
+	def _setForm(self,val):
+		self.element.form=val
+
+	def _getName(self):
+		return self.element.name
+	def _setName(self,val):
+		self.element.name=val
+
+class Select( Widget ):
+	_baseClass = "select"
+
+	def __init__(self, *args, **kwargs):
+		super(Select,self).__init__( *args, **kwargs )
+
+	def _getDisabled(self):
+		return( True if self.element.hasAttribute("disabled") else False )
+	def _setDisabled(self,val):
+		if val==True:
+			self.element.setAttribute("disabled","")
+		else:
+			self.element.removeAttribute("disabled")
+
+	def _getAutofocus(self):
+		return( True if self.element.hasAttribute("autofocus") else False )
+	def _setAutofocus(self,val):
+		if val==True:
+			self.element.setAttribute("autofocus","")
+		else:
+			self.element.removeAttribute("autofocus")
+
+	def _getMultiple(self):
+		return( True if self.element.hasAttribute("multiple") else False )
+	def _setMultiple(self,val):
+		if val==True:
+			self.element.setAttribute("multiple","")
+		else:
+			self.element.removeAttribute("multiple")
+
+	def _getRequired(self):
+		return( True if self.element.hasAttribute("required") else False )
+	def _setRequired(self,val):
+		if val==True:
+			self.element.setAttribute("required","")
+		else:
+			self.element.removeAttribute("required")
+
+	def _getSize(self):
+		return self.element.size
+	def _setSize(self,val):
+		self.element.size=val
+
+	def _getForm(self):
+		return self.element.form
+	def _setForm(self,val):
+		self.element.form=val
+
+	def _getName(self):
+		return self.element.name
+	def _setName(self,val):
+		self.element.name=val
+
+class Textarea( Widget ):
+	_baseClass = "output"
+
+	def __init__(self, *args, **kwargs):
+		super(Textarea,self).__init__( *args, **kwargs )
+
+	def _getForm(self):
+		return self.element.form
+	def _setForm(self,val):
+		self.element.form=val
+
+	def _getName(self):
+		return self.element.name
+	def _setName(self,val):
+		self.element.name=val
+
+	def _getCols(self):
+		return self.element.cols
+	def _setCols(self,val):
+		self.element.cols=val
+
+	def _getMaxlength(self):
+		return self.element.maxlength
+	def _setMaxlength(self,val):
+		self.element.maxlength=val
+
+	def _getPlaceholder(self):
+		return self.element.placeholder
+	def _setPlaceholder(self,val):
+		self.element.placeholder=val
+
+	def _getRows(self):
+		return self.element.rows
+	def _setRows(self,val):
+		self.element.rows=val
+
+	def _getWrap(self):
+		return self.element.wrap
+	def _setWrap(self,val):
+		self.element.wrap=val
+
+	def _getDisabled(self):
+		return( True if self.element.hasAttribute("disabled") else False )
+	def _setDisabled(self,val):
+		if val==True:
+			self.element.setAttribute("disabled","")
+		else:
+			self.element.removeAttribute("disabled")
+
+	def _getAutofocus(self):
+		return( True if self.element.hasAttribute("autofocus") else False )
+	def _setAutofocus(self,val):
+		if val==True:
+			self.element.setAttribute("autofocus","")
+		else:
+			self.element.removeAttribute("autofocus")
+
+	def _getRequired(self):
+		return( True if self.element.hasAttribute("required") else False )
+	def _setRequired(self,val):
+		if val==True:
+			self.element.setAttribute("required","")
+		else:
+			self.element.removeAttribute("required")
+
+	def _getReadonly(self):
+		return( True if self.element.hasAttribute("readonly") else False )
+	def _setReadonly(self,val):
+		if val==True:
+			self.element.setAttribute("readonly","")
+		else:
+			self.element.removeAttribute("readonly")
 
 
