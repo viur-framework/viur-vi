@@ -65,7 +65,7 @@ class CoreWindow( html5.Div ):
 		else:
 			self.modulListUl.appendChild( pane )
 		self.viewport.appendChild(pane.widgetsDomElm)
-		pane.widgetsDomElm["display"] = "none"
+		pane.widgetsDomElm["style"]["display"] = "none"
 		#DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
 
 

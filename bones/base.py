@@ -18,8 +18,6 @@ class BaseViewBoneDelegate( object ):
 		return( html5.Label("..") )
 
 class BaseEditBone( html5.Input ):
-	def getLineEdit(self):
-		return (QtGui.QLineEdit( self ))
 
 	def setParams(self):
 		return
@@ -53,4 +51,6 @@ class BaseEditBone( html5.Input ):
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 0, lambda *args, **kwargs: True, BaseEditBone)
+
+
 viewDelegateSelector.insert( 0, lambda *args, **kwargs: True, BaseViewBoneDelegate)

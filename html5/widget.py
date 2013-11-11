@@ -1,3 +1,4 @@
+import re
 from html5 import document
 
 class ClassWrapper( list ):
@@ -158,6 +159,7 @@ class Widget( object ):
 		funcName = self._getTargetFuncName( key, "set" )
 		if funcName in dir( self ):
 			return( getattr( self, funcName )( value ) )
+		raise ValueError, "%s is no valid attribute for %s" % (key, (self._baseClass or str(self)))
 
 	def _getData(self):
 		"""

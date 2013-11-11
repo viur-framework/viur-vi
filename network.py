@@ -16,11 +16,15 @@ class DeferredCall( object ):
 	"""
 	def __init__( self, func, *args, **kwargs ):
 		super( DeferredCall, self ).__init__()
+		delay = 25
+		if "_delay" in kwargs.keys():
+			delay = kwargs["_delay"]
+			del kwargs["_delay"]
 		self._tFunc = func
 		self._tArgs = args
 		self._tKwArgs = kwargs
 		w = eval("window")
-		w.setTimeout( self.run, 25 )
+		w.setTimeout( self.run, delay )
 
 	def run(self):
 		print("FIREING TIMER")
@@ -304,7 +308,8 @@ class NetworkService( object ):
 					s( self )
 			except:
 				if self.modifies:
-					NetworkService.notifyChange( self.modul )
+					DeferredCall(NetworkService.notifyChange, self.modul, _delay=1500)
+					#NetworkService.notifyChange( self.modul )
 				raise
 			# Remove references to our handlers
 			self.successHandler = []
@@ -312,7 +317,7 @@ class NetworkService( object ):
 			self.failureHandler = []
 			self.params = None
 			if self.modifies:
-				NetworkService.notifyChange( self.modul )
+				DeferredCall(NetworkService.notifyChange, self.modul, _delay=1500)
 
 	def onError(self, text, code):
 		"""
