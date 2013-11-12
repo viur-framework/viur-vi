@@ -9,7 +9,7 @@ from pane import Pane
 class AddAction( html5.ext.Button ):
 	def __init__(self, parent, *args, **kwargs):
 		super( AddAction, self ).__init__( "Add", *args, **kwargs )
-		self["style"] = "icon add"
+		self["class"] = "icon add"
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
@@ -29,7 +29,7 @@ class EditAction( html5.ext.Button ):
 	def __init__(self, parent, *args, **kwargs):
 		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
 		#self.setEnabled(False)
-		self["style"] = "icon edit"
+		self["class"] = "icon edit"
 		#self.setStyleAttribute("opacity","0.5")
 
 	def onAttach(self):
@@ -105,7 +105,7 @@ class YesNoDialog( html5.Div ):
 class DeleteAction( html5.ext.Button ):
 	def __init__(self, parent, *args, **kwargs):
 		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )
-		self["style"] = "icon delete"
+		self["class"] = "icon delete"
 		#self.setEnabled(False)
 		#self.setStyleAttribute("opacity","0.5")
 
