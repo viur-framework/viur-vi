@@ -1,5 +1,6 @@
 import html5
 import pyjd # this is dummy in pyjs.
+from time import time
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
@@ -13,7 +14,7 @@ class HierarchyItem( html5.Li ):
 		super( HierarchyItem, self ).__init__( *args, **kwargs )
 		self.modul = modul
 		self.data = data
-		self.element.innerHTML = data["name"]
+		self.element.innerHTML = "%s %s" % (data["name"], data["sortindex"])
 		self.isLoaded = False
 		self.isExpanded = False
 		self.ol = html5.Ol()
@@ -58,25 +59,16 @@ class HierarchyItem( html5.Li ):
 		event.stopPropagation()
 
 	def onDrop(self, event):
-		print("ON DROP")
+		event.stopPropagation()
 		height = self.element.offsetHeight
 		eventOffset = event.offsetY
 		srcKey = event.dataTransfer.getData("Text")
-		if eventOffset>height*0.10 and eventOffset<height*0.90:
-			print("bbbbb")
+		if eventOffset>=height*0.10 and eventOffset<=height*0.90:
+			# Just make the item a child of us
 			NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":self.data["id"]}, secure=True, modifies=True )
 		elif eventOffset<height*0.10:
-			print("lllllllllllllll")
-			parent = self.parent()
-			parentID = None
-			while parent:
-				if "data" in dir(parent):
-					parentID = parent.data["id"]
-					break
-				if "rootNode" in dir(parent):
-					parentID = parent.rootNode
-					break
-				parent = parent.parent()
+			#Insert this item *before* the current item
+			parentID = self.data["parententry"]
 			if parentID:
 				lastIdx = 0
 				for c in self.parent()._children:
@@ -84,13 +76,36 @@ class HierarchyItem( html5.Li ):
 						if c == self:
 							break
 						lastIdx = c.data["sortindex"]
-				newIdx = (lastIdx+self.data["sortidx"])/2.0
-				NetworkService.request(self.modul,"setIndex",{"item":srcKey,"index":newIdx}, secure=True, modifies=True )
-				NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":parentID}, secure=True, modifies=True )
+				newIdx = str((lastIdx+self.data["sortindex"])/2.0)
+				req = NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":parentID}, secure=True, successHandler=self.onItemReparented )
+				req.newIdx = newIdx
+				req.item = srcKey
 		elif eventOffset>height*0.90:
-			print("kkkk")
+			#Insert this item *after* the current item
+			parentID = self.data["parententry"]
+			if parentID:
+				lastIdx = time()
+				doUseNextChild = False
+				for c in self.parent()._children:
+					if "data" in dir(c) and "sortindex" in c.data.keys():
+						if doUseNextChild:
+							lastIdx = c.data["sortindex"]
+							break
+						if c == self:
+							doUseNextChild = True
+				newIdx = str((lastIdx+self.data["sortindex"])/2.0)
+				req = NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":parentID}, secure=True, successHandler=self.onItemReparented )
+				req.newIdx = newIdx
+				req.item = srcKey
 
-		event.stopPropagation()
+	def onItemReparented(self, req):
+		"""
+			Called after a reparent-request finished; run the setIndex request afterwards.
+		"""
+		assert "newIdx" in dir(req)
+		NetworkService.request(self.modul,"setIndex",{"item":req.item,"index":req.newIdx}, secure=True, modifies=True )
+
+
 
 	def toggleExpand(self):
 		"""
@@ -256,7 +271,7 @@ class HierarchyWidget( html5.Div ):
 			@param node: Key of the node to fetch
 			@type node: string
 		"""
-		r = NetworkService.request(self.modul,"list/", {"parent":node}, successHandler=self.onRequestSucceded )
+		r = NetworkService.request(self.modul,"list/", {"parent":node,"orderby":"sortindex"}, successHandler=self.onRequestSucceded )
 		r.node = node
 
 	def onRequestSucceded(self, req):

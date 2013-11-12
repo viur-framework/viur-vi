@@ -14,6 +14,31 @@ class NodeWidget( html5.Div ):
 		self.element.innerHTML = data["name"]
 		self["style"]["border"] = "1px solid blue"
 		self["class"] = "tree treeitem node"
+		self["draggable"] = True
+		self.sinkEvent("onDragOver","onDrop","onDragStart")
+
+	def onDragOver(self, event):
+		try:
+			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
+		except:
+			return
+		event.preventDefault()
+		event.stopPropagation()
+
+	def onDragStart(self, event):
+		print("DRAG START")
+		event.dataTransfer.setData( "Text", "node/"+self.data["id"] )
+		event.stopPropagation()
+
+	def onDrop(self, event):
+		try:
+			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
+		except:
+			return
+		NetworkService.request(self.modul,"move",{"skelType": nodeType, "id":srcKey, "destNode": self.data["id"]}, modifies=True, secure=True)
+		event.preventDefault()
+		event.stopPropagation()
+
 
 
 class LeafWidget( html5.Div ):
@@ -24,8 +49,13 @@ class LeafWidget( html5.Div ):
 		self.element.innerHTML = data["name"]
 		self["style"]["border"] = "1px solid black"
 		self["class"] = "tree treeitem leaf"
+		self["draggable"] = True
+		self.sinkEvent("onDragStart")
 
-
+	def onDragStart(self, event):
+		print("DRAG START")
+		event.dataTransfer.setData( "Text", "leaf/"+self.data["id"] )
+		event.stopPropagation()
 
 def doesEventHitWidget( event, widget ):
 	while widget:
@@ -173,6 +203,20 @@ class TreeWidget( html5.Div ):
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.entryFrame,f))
 		self.actionBar.setActions(["add","edit","delete"])
+
+	def onAttach(self):
+		super( TreeWidget, self ).onAttach()
+		NetworkService.registerChangeListener( self )
+
+	def onDetach(self):
+		super( TreeWidget, self ).onDetach()
+		NetworkService.removeChangeListener( self )
+
+
+	def onDataChanged(self, modul):
+		if modul!=self.modul:
+			return
+		self.reloadData()
 
 	def onSelectionActivated(self, div, selection ):
 		if len(selection)!=1:
