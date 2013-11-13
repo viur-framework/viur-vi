@@ -44,13 +44,18 @@ class SelectMultiEditBone( html5.Div ):
 		return( SelectMultiEditBone( modulName, boneName, readOnly,values ) )
 
 	def unserialize(self, data):
-		return
 		if self.boneName in data.keys():
-			self["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
-			#self.lineEdit.setText( str( data[ self.boneName ] ) if data[ self.boneName ] else "" )
+			self.val = data[ self.boneName ] if data[ self.boneName ] else []
+			for alabel in self._children:
+				if alabel._children[0]["name"] in self.val:
+					alabel._children[0]["checked"]=True
 
 	def serializeForPost(self):
-		return( { self.boneName: self["value"] } )
+		value=[]
+		for alabel in self._children:
+			if alabel._children[0]["checked"]:
+				value.append(alabel._children[0]["name"])
+		return( { self.boneName: value } )
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )
