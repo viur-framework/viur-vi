@@ -108,12 +108,13 @@ class Option( Widget,_Label,Disabled,Value ):
 		super(Option,self).__init__( *args, **kwargs )
 
 	def _getSelected(self):
-		return( True if self.element.hasAttribute("selected") else False )
+		return( True if self.element.selected else False )
+		#return( True if self.element.hasAttribute("selected") else False )
 	def _setSelected(self,val):
 		if val==True:
-			self.element.setAttribute("selected","")
+			self.element.selected=True
 		else:
-			self.element.removeAttribute("selected")
+			self.element.selected=False
 
 class Output( Widget,_Form,Name,__For ):
 	_baseClass = "output"
@@ -131,7 +132,7 @@ class Select( Widget,_Form,Autofocus,Disabled,Name,Required,Multiple,Size ):
 
 
 class Textarea( Widget,_Form ,Autofocus,Disabled,Name,Inputs):
-	_baseClass = "output"
+	_baseClass = "textarea"
 
 	def __init__(self, *args, **kwargs):
 		super(Textarea,self).__init__( *args, **kwargs )

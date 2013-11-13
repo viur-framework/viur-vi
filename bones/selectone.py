@@ -50,12 +50,12 @@ class SelectOneEditBone( html5.Select ):
 			for aoption in self._children:
 				if aoption["selected"]:
 					return( { self.boneName: aoption["value"] } )
+			return ({})
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
 def CheckForSelectOneBone(  modulName, boneName, skelStucture ):
-	print("boneName: "+boneName+" type: "+skelStucture[boneName]["type"])
 	return( skelStucture[boneName]["type"]=="selectone" )
 
 #Register this Bone in the global queue
