@@ -5,3 +5,4 @@ from bones import hierarchy
 from bones import selectmulti
 from bones import selectone
 from bones import text
+from bones import date
