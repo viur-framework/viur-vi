@@ -9,8 +9,9 @@ from pane import Pane
 class ListHandler( Pane ):
 	def __init__(self, modulName, modulInfo, *args, **kwargs):
 		print("INIT LISTHANDLER")
-		super( ListHandler, self ).__init__( modulName )
+		super( ListHandler, self ).__init__( modulInfo["name"] )
 		self.modulName = modulName
+		self.modulInfo = modulInfo
 
 
 

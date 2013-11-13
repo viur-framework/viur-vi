@@ -29,10 +29,10 @@ class TextEditBone( html5.Textarea ):
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
-			self.element.innerHTML = data[ self.boneName ] if data[ self.boneName ] else ""
+			self["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
 
 	def serializeForPost(self):
-			return( { self.boneName: self.element.innerHTML } )
+			return( { self.boneName: self["value"] } )
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )

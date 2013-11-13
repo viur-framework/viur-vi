@@ -5,15 +5,22 @@ from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
 
-
+"""
+	Provides the actions suitable for list applications
+"""
 class AddAction( html5.ext.Button ):
-	def __init__(self, parent, *args, **kwargs):
+	"""
+		Allows adding an entry in a list-modul.
+	"""
+	def __init__(self, *args, **kwargs):
 		super( AddAction, self ).__init__( "Add", *args, **kwargs )
-		self["class"] = "icon add"
+		print("CREATING ADD BUTTON")
+		self["class"] = "icon add list"
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
-		return( (modul == "list" or modul.startswith("list.") and actionName=="add") )
+		print("SUITABKE FOR", modul, actionName)
+		return( (modul == "list" or modul.startswith("list.")) and actionName=="add" )
 
 	def onClick(self, sender=None):
 		pane = Pane("Add", closeable=True)
@@ -26,7 +33,10 @@ actionDelegateSelector.insert( 1, AddAction.isSuitableFor, AddAction )
 
 
 class EditAction( html5.ext.Button ):
-	def __init__(self, parent, *args, **kwargs):
+	"""
+		Allows editing an entry in a list-modul.
+	"""
+	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
 		#self.setEnabled(False)
 		self["class"] = "icon edit"
@@ -50,7 +60,7 @@ class EditAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
-		return( (modul == "list" or modul.startswith("list.") and actionName=="edit") )
+		return( (modul == "list" or modul.startswith("list.")) and actionName=="edit")
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
@@ -103,7 +113,10 @@ class YesNoDialog( html5.Div ):
 
 
 class DeleteAction( html5.ext.Button ):
-	def __init__(self, parent, *args, **kwargs):
+	"""
+		Allows deleting an entry in a list-modul.
+	"""
+	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )
 		self["class"] = "icon delete"
 		#self.setEnabled(False)

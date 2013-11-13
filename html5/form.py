@@ -131,7 +131,7 @@ class Select( Widget,_Form,Autofocus,Disabled,Name,Required,Multiple,Size ):
 		super(Select,self).__init__( *args, **kwargs )
 
 
-class Textarea( Widget,_Form ,Autofocus,Disabled,Name,Inputs):
+class Textarea( Widget,_Form ,Autofocus,Disabled,Name,Inputs,Value):
 	_baseClass = "textarea"
 
 	def __init__(self, *args, **kwargs):

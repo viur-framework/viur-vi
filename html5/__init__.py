@@ -1,3 +1,4 @@
+from html5.textnode import TextNode
 from html5.widget import Widget
 from html5.body import Body
 from html5.div import Div

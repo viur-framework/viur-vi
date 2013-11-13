@@ -67,7 +67,6 @@ class StyleWrapper( dict ):
 	def __init__( self, targetWidget ):
 		super( StyleWrapper, self ).__init__( )
 		self.targetWidget = targetWidget
-		targetWidget.element.style.border = "1px solid black"
 		style = targetWidget.element.style
 		for key in dir(style):
 			# Convert JS-Style-Syntax to CSS Syntax (ie borderTop -> border-top)

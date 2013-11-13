@@ -6,7 +6,7 @@ from pane import Pane
 
 class TreeHandler( Pane ):
 	def __init__(self, modulName, modulInfo, *args, **kwargs):
-		super( TreeHandler, self ).__init__( modulName )
+		super( TreeHandler, self ).__init__( modulInfo["name"] )
 		self.modulName = modulName
 		self.modulInfo = modulInfo
 

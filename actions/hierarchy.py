@@ -7,13 +7,13 @@ from pane import Pane
 
 
 class AddAction( html5.ext.Button ):
-	def __init__(self, parent, *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		super( AddAction, self ).__init__( "Add", *args, **kwargs )
 		self["class"] = "icon add"
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
-		return( (modul == "hierarchy" or modul.startswith("hierarchy.") and actionName=="add") )
+		return( (modul == "hierarchy" or modul.startswith("hierarchy.")) and actionName=="add")
 
 	def onClick(self, sender=None):
 		print("ADD ACTION HIERARCHY", self.parent().parent().rootNode)
@@ -27,7 +27,7 @@ actionDelegateSelector.insert( 1, AddAction.isSuitableFor, AddAction )
 
 
 class EditAction( html5.ext.Button ):
-	def __init__(self, parent, *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
 		#self.setEnabled(False)
 		self["class"] = "icon edit"
@@ -51,7 +51,7 @@ class EditAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
-		return( (modul == "hierarchy" or modul.startswith("hierarchy.") and actionName=="edit") )
+		return( (modul == "hierarchy" or modul.startswith("hierarchy.")) and actionName=="edit")
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
@@ -104,7 +104,7 @@ class YesNoDialog( html5.Div ):
 
 
 class DeleteAction( html5.ext.Button ):
-	def __init__(self, parent, *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )
 		self["class"] = "icon delete"
 		#self.setEnabled(False)
@@ -129,7 +129,7 @@ class DeleteAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
-		return( (modul == "hierarchy" or modul.startswith("hierarchy.") and actionName=="delete") )
+		return( (modul == "hierarchy" or modul.startswith("hierarchy.")) and actionName=="delete")
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()

@@ -22,15 +22,15 @@ class Pane( html5.Li ):
 		self.childPanes = []
 		self.widgetsDomElm = html5.Div()
 		self.childDomElem = None
-		self.label = html5.Span( )
-		self.label.element.innerHTML = descr #FIXME: descr fehlt
+		self.label = html5.A( )
+		self.label.appendChild(html5.TextNode(descr))
+		#self.label.element.innerHTML = descr #FIXME: descr fehlt
 		self.appendChild( self.label )
 		self.sinkEvent("onClick")
 		#self.label.addClickListener( self.onClick )
-		#if closeable:
-		#	self.closeBtn = Button("X", self.onBtnCloseReleased)
-		#	DOM.appendChild(self.getElement(),self.closeBtn.getElement())
-		#	self.closeBtn.onAttach()
+		if closeable:
+			self.closeBtn = html5.ext.Button("X", self.onBtnCloseReleased)
+			self.appendChild(self.closeBtn)
 
 	def onBtnCloseReleased(self, *args, **kwargs):
 		print("CLOSING PANE")
@@ -69,7 +69,7 @@ class Pane( html5.Li ):
 	def onDetach(self):
 		assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
 		#Kill all remaining children
-		for widget in self.widgets[:]:
+		for widget in self.widgetsDomElm._children[:]:
 			self.removeWidget(widget)
 		self.closeBtn = None
 		self.label = None

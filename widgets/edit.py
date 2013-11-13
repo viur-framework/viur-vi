@@ -146,11 +146,14 @@ class EditWidget( html5.Table ):
 				#self.editTaskID = protoWrap.add( self.node, **data )
 		elif self.applicationType == EditWidget.appTree: ## Application: Tree
 			if self.key and not self.clone:
-				self.editTaskID = protoWrap.edit( self.key, self.skelType, **data )
+				NetworkService.request(self.modul,"edit/%s/%s" % (self.skelType,self.key), data, secure=len(data)>0, successHandler=self.setData)
+				#self.editTaskID = protoWrap.edit( self.key, self.skelType, **data )
 			else:
-				self.editTaskID = protoWrap.add( self.node, self.skelType, **data )
+				NetworkService.request(self.modul,"add/%s/%s" % (self.skelType,self.node), data, secure=len(data)>0, successHandler=self.setData)
+				#self.editTaskID = protoWrap.add( self.node, self.skelType, **data )
 		elif self.applicationType == EditWidget.appSingleton: ## Application: Singleton
-			self.editTaskID = protoWrap.edit( **data )
+			#self.editTaskID = protoWrap.edit( **data )
+			NetworkService.request(self.modul,"edit", data, secure=len(data)>0, successHandler=self.setData)
 		else:
 			raise NotImplementedError() #Should never reach this
 
@@ -226,62 +229,17 @@ class EditWidget( html5.Table ):
 				tabName = bone["params"]["category"]
 			else:
 				tabName = "Test"#QtCore.QCoreApplication.translate("EditWidget", "General")
-			"""if not tabName in tabs.keys():
-				scrollArea = QtGui.QScrollArea()
-				containerWidget = QtGui.QWidget( scrollArea )
-				scrollArea.setWidget( containerWidget )
-				tabs[tabName] = QtGui.QFormLayout( containerWidget )
-				containerWidget.setLayout( tabs[tabName] )
-				containerWidget.setSizePolicy( QtGui.QSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred) )
-				self.ui.tabWidget.addTab( scrollArea,  tabName )
-				scrollArea.setWidgetResizable(True)
-			"""
-			#queue = RegisterQueue()
-			#event.emit( QtCore.SIGNAL('requestBoneEditWidget(PyQt_PyObject,PyQt_PyObject,PyQt_PyObject,PyQt_PyObject)'),queue, self.modul, key, tmpDict )
-			#widget = queue.getBest()
 
 			wdgGen = editBoneSelector.select( self.modul, key, tmpDict )
 			widget = wdgGen.fromSkelStructure( self.modul, key, tmpDict )
-			"""
-			if bone["error"] and not ignoreMissing:
-				dataWidget = InlineLabel()
-				layout = QtGui.QHBoxLayout(dataWidget)
-				dataWidget.setLayout( layout )
-				layout.addWidget( widget, stretch=1 )
-				iconLbl = QtGui.QLabel( dataWidget )
-				if bone["required"]:
-					iconLbl.setPixmap( QtGui.QPixmap( "icons/status/error.png" ) )
-				else:
-					iconLbl.setPixmap( QtGui.QPixmap( "icons/status/incomplete.png" ) )
-				layout.addWidget( iconLbl, stretch=0 )
-				iconLbl.setToolTip( str(bone["error"]) )
-			else:
-				dataWidget =  widget
-			## Temporary MacOS Fix
-			import sys
-			if sys.platform.startswith("darwin"):
-				dataWidget.setMaximumWidth(500)
-				dataWidget.setMinimumWidth(500)
-			## Temporary MacOS Fix
 
-			lblWidget = QtGui.QWidget( self )
-			layout = QtGui.QHBoxLayout(lblWidget)
-			if "params" in bone.keys() and isinstance( bone["params"], dict ) and "tooltip" in bone["params"].keys():
-				lblWidget.setToolTip( self.parseHelpText( bone["params"]["tooltip"] ) )
-			descrLbl = QtGui.QLabel( bone["descr"], lblWidget )
-			descrLbl.setWordWrap(True)
-			if bone["required"]:
-				font = descrLbl.font()
-				font.setBold( True )
-				font.setUnderline( True )
-				descrLbl.setFont( font )
-			layout.addWidget( descrLbl )
-			tabs[tabName].addRow( lblWidget , dataWidget )
-			dataWidget.show()
-			self.bones[ key ] = widget
-			"""
 			self.prepareCol(currRow,1)
-			self["cell"][currRow][0] = html5.Label(bone["descr"])
+			descrLbl = html5.Label(bone["descr"])
+			if bone["required"]:
+				descrLbl["class"].append("isrequired")
+			if bone["required"] and bone["error"] is not None:
+				descrLbl["class"].append("isinvalid")
+			self["cell"][currRow][0] = descrLbl
 			self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget

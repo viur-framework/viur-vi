@@ -10,6 +10,7 @@ class Button(Span):
 		self.sinkEvent("onClick")
 
 	def onClick(self, event):
+		event.stopPropagation()
 		if self.callback is not None:
 			self.callback()
 

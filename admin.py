@@ -36,17 +36,18 @@ class CoreWindow( html5.Div ):
 		#self.adopt( self.modulList,self.modulMgr )
 		#self.modulList.onAttach()
 		self.currentPane = None
-		self.panes = []
+		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
 		NetworkService.request( None, "/admin/config", successHandler=self.onCompletion,
 					failureHandler=self.onError, cacheable=True )
 
 	def onCompletion(self, req):
-		print("ONLOAD MODULES")
 		data = NetworkService.decode(req)
-		for modulName, modulInfo in data["modules"].items():
-			conf[modulName] = modulInfo
+		tmpList = [(k,v) for (k,v) in data["modules"].items()]
+		tmpList.sort( key=lambda x:x[1]["name"].lower())
+		for modulName, modulInfo in tmpList:# data["modules"].items():
+			conf["modules"][modulName] = modulInfo
 			handlerCls = HandlerClassSelector.select( modulName, modulInfo )
-			assert handlerCls is not None, "No handler avaiable for modul %s" % modulName
+			assert handlerCls is not None, "No handler available for modul %s" % modulName
 			handler = handlerCls( modulName, modulInfo )
 			self.addPane( handler )
 
@@ -75,8 +76,9 @@ class CoreWindow( html5.Div ):
 		return( self.addPane( pane, parentPane=self.currentPane ) )
 
 	def focusPane(self, pane):
-		print("FOCUS PANE", pane)
 		assert pane in self.panes, "Cannot focus unknown pane!"
+		self.panes.remove( pane ) # Move the pane to the end of the list
+		self.panes.append( pane )
 		if self.currentPane is not None:
 			self.currentPane.widgetsDomElm["style"]["display"] = "none"
 		self.currentPane = pane

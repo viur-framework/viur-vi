@@ -164,13 +164,14 @@ class SelectableDiv( html5.Div ):
 		if len(self._selectedItems)>0:
 			return( self._selectedItems[:] )
 		if self._currentItem:
-			return( self._currentItem )
+			return( [self._currentItem] )
 		return( None )
 
 class TreeWidget( html5.Div ):
 
 	nodeWidget = NodeWidget
 	leafWidget = LeafWidget
+	defaultActions = ["add.node", "add.leaf", "edit", "delete"]
 
 	def __init__( self, modul, rootNode=None, node=None, *args, **kwargs ):
 		"""
@@ -202,7 +203,7 @@ class TreeWidget( html5.Div ):
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.entryFrame,f))
-		self.actionBar.setActions(["add","edit","delete"])
+		self.actionBar.setActions( self.defaultActions )
 
 	def onAttach(self):
 		super( TreeWidget, self ).onAttach()

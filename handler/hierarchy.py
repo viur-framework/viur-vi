@@ -6,7 +6,7 @@ from pane import Pane
 
 class HierarchyHandler( Pane ):
 	def __init__(self, modulName, modulInfo, *args, **kwargs):
-		super( HierarchyHandler, self ).__init__( modulName )
+		super( HierarchyHandler, self ).__init__( modulInfo["name"] )
 		self.modulName = modulName
 
 
