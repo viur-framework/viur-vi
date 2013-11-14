@@ -110,6 +110,7 @@ class Widget( object ):
 		self._children = []
 		self._catchedEvents = []
 		self._disabledState = None
+		self._isAttached = False
 		self._parent = None
 
 	def sinkEvent(self, *args):
@@ -379,20 +380,26 @@ class Widget( object ):
 		return( StyleWrapper( self ) )
 
 	def onAttach(self):
-		pass
+		self._isAttached = True
+		for c in self._children[:]:
+			c.onAttach()
 
 	def onDetach(self):
-		pass
+		self._isAttached = False
+		for c in self._children[:]:
+			c.onDetach()
 
 	def appendChild(self, child):
 		self._children.append( child )
 		self.element.appendChild( child.element )
 		child._parent = self
-		child.onAttach()
+		if self._isAttached:
+			child.onAttach()
 
 	def removeChild(self, child):
 		assert child in self._children, "%s is not a child of %s" % (child, self)
-		child.onDetach()
+		if child._isAttached:
+			child.onDetach()
 		self.element.removeChild( child.element )
 		self._children.remove( child )
 		child._parent = None

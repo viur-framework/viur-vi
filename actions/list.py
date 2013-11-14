@@ -141,7 +141,7 @@ class DeleteAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
-		return( (modul == "list" or modul.startswith("list.") and actionName=="delete") )
+		return( (modul == "list" or modul.startswith("list.")) and actionName=="delete")
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()

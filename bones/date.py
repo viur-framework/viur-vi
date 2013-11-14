@@ -41,7 +41,10 @@ class DateEditBone( html5.Input ):
 			self["value"]=dateobj.strftime( "%Y-%m-%dT%H:%M" )
 
 	def serializeForPost(self):
-		dateobj=datetime.strptime(self["value"], "%Y-%m-%dT%H:%M")
+		try:
+			dateobj=datetime.strptime(self["value"], "%Y-%m-%dT%H:%M")
+		except:
+			return({})
 		return( { self.boneName: dateobj.strftime("%d.%m.%Y %H:%M:00") } )
 
 	def serializeForDocument(self):
