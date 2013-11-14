@@ -1,3 +1,5 @@
 
 conf = { "mainWindow": None,
-	 "modules": {} }
+	 "modules": {},
+	 "currentlanguage":"de"
+	 }
