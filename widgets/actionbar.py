@@ -8,7 +8,7 @@ class ActionBar( html5.Div ):
 	"""
 		Provides the container for actions (add,edit,..) suitable for one modul (eg. for lists).
 	"""
-	def __init__( self, modul, appType, *args, **kwargs ):
+	def __init__( self, modul, appType, currentAction=None, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul were going to handle
 			@type modul: String
@@ -19,7 +19,8 @@ class ActionBar( html5.Div ):
 		self.actions = []
 		self.modul = modul
 		self.appType = appType
-		self.element.innerHTML ="ACTIONS"
+		self.currentAction = currentAction
+		self["class"].append("actionbar")
 
 	def setActions(self, actions):
 		"""
@@ -32,14 +33,16 @@ class ActionBar( html5.Div ):
 		"""
 		for c in self._children[:]:
 			self.removeChild( c )
+		if self.currentAction is not None:
+			h3 = html5.H3()
+			h3.appendChild(html5.TextNode(self.currentAction))
+			self.appendChild(h3)
 		self.actions = actions
 		for action in actions:
 			if action=="|":
 				continue
 			else:
-				print()
 				actionWdg = actionDelegateSelector.select( conf["modules"][self.modul]["handler"], action )
-				print("HAVE ACTION for", action, actionWdg)
 				if actionWdg is not None:
 					actionWdg = actionWdg( )
 					self.appendChild( actionWdg )

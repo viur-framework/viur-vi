@@ -13,7 +13,7 @@ class NodeWidget( html5.Div ):
 		self.data = data
 		self.element.innerHTML = data["name"]
 		self["style"]["border"] = "1px solid blue"
-		self["class"] = "tree treeitem node"
+		self["class"] = "treeitem node"
 		self["draggable"] = True
 		self.sinkEvent("onDragOver","onDrop","onDragStart")
 
@@ -48,7 +48,7 @@ class LeafWidget( html5.Div ):
 		self.data = data
 		self.element.innerHTML = data["name"]
 		self["style"]["border"] = "1px solid black"
-		self["class"] = "tree treeitem leaf"
+		self["class"] = "treeitem leaf"
 		self["draggable"] = True
 		self.sinkEvent("onDragStart")
 
@@ -75,7 +75,7 @@ class SelectableDiv( html5.Div ):
 
 	def __init__(self, nodeWidget, leafWidget, selectionType="both", multiSelection=False, *args, **kwargs ):
 		super( SelectableDiv, self ).__init__(*args, **kwargs)
-		self["class"].append("tree selectioncontainer")
+		self["class"].append("selectioncontainer")
 		self["tabindex"] = 1
 		self.selectionType = selectionType
 		self.multiSelection = multiSelection
@@ -179,6 +179,7 @@ class TreeWidget( html5.Div ):
 			@type modul: string
 		"""
 		super( TreeWidget, self ).__init__( )
+		self["class"].append("tree")
 		print("INIT TREE WIDGET")
 		self.modul = modul
 		self.rootNode = rootNode
@@ -186,6 +187,7 @@ class TreeWidget( html5.Div ):
 		self.actionBar = ActionBar( modul, "tree" )
 		self.appendChild( self.actionBar )
 		self.pathList = html5.Div()
+		self.pathList["class"].append("breadcrumb")
 		self.appendChild( self.pathList )
 		self.entryFrame = SelectableDiv( self.nodeWidget, self.leafWidget )
 		self.appendChild( self.entryFrame )

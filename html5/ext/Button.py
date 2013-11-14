@@ -1,6 +1,6 @@
-from html5.span import Span
+from html5.a import A
 
-class Button(Span):
+class Button(A):
 	def __init__(self, txt=None, callback=None, *args, **kwargs):
 		super(Button,self).__init__(*args, **kwargs)
 		self["class"] = "button"

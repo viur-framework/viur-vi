@@ -8,6 +8,13 @@ class LeafFileWidget( LeafWidget ):
 		super( LeafFileWidget, self ).__init__( modul, data, *args, **kwargs )
 		if "servingurl" in data.keys():
 			self.appendChild( html5.Img( data["servingurl"]) )
+		if "metamime" in data.keys():
+			try:
+				ftype, fformat = data["metamime"].split("/")
+				self["class"].append("type_%s" % ftype )
+				self["class"].append("format_%s" % fformat )
+			except:
+				pass
 		self["class"].append("file")
 
 class Uploader( html5.Progress ):
@@ -59,8 +66,6 @@ class FileWidget( TreeWidget ):
 	def __init__(self,*args, **kwargs):
 		super( FileWidget, self ).__init__( *args, **kwargs)
 		self.sinkEvent("onDragOver", "onDrop")
-		self["style"]["border"] = "5px dotted red"
-		self["style"]["height"] = "500px"
 
 	@staticmethod
 	def canHandle( modul, modulInfo ):

@@ -9,7 +9,10 @@ from pane import Pane
 class ListHandler( Pane ):
 	def __init__(self, modulName, modulInfo, *args, **kwargs):
 		print("INIT LISTHANDLER")
-		super( ListHandler, self ).__init__( modulInfo["name"] )
+		icon = None
+		if "icon" in modulInfo.keys():
+			icon = modulInfo["icon"]
+		super( ListHandler, self ).__init__( modulInfo["name"], icon )
 		self.modulName = modulName
 		self.modulInfo = modulInfo
 

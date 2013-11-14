@@ -64,6 +64,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 		#DOM.setElemAttribute( self.selectionTxt, "type", "text")
 		#DOM.appendChild(self.getElement(), self.selectionTxt )
 		self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
+		self.selectBtn["class"].append("select")
 		self.appendChild( self.selectBtn )
 		#DOM.appendChild( self.getElement(), self.selectBtn.getElement())
 		#self.selectBtn.onAttach()

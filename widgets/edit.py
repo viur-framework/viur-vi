@@ -4,10 +4,12 @@ import html5
 from network import NetworkService
 from config import conf
 from priorityqueue import editBoneSelector
+from widgets.tooltip import ToolTip
 from priorityqueue import protocolWrapperInstanceSelector
+from widgets.actionbar import ActionBar
 
 
-class EditWidget( html5.Table ):
+class EditWidget( html5.Div ):
 	appList = "list"
 	appHierarchy = "hierarchy"
 	appTree = "tree"
@@ -53,36 +55,13 @@ class EditWidget( html5.Table ):
 		self.closeOnSuccess = False
 		self._lastData = {} #Dict of structure and values recived
 		self.editTaskID = None
+		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" )
+		self.appendChild( self.actionbar )
+		self.form = html5.Form()
+		self.appendChild(self.form)
+		self.actionbar.setActions(["save.close","save.continue","reset"])
 		self.reloadData( )
-		#submitBtn = Button( "Save", self.onBtnSaveContinueReleased )
-		#self.add( submitBtn )
-		#Hide Previewbuttons if no PreviewURLs are set
-		#if modul in conf.serverConfig["modules"].keys():
-		#	if not "previewurls" in conf.serverConfig["modules"][ self.modul  ].keys() \
-		#		or not conf.serverConfig["modules"][ self.modul  ][ "previewurls"  ]:
-		#		self.ui.btnPreview.hide()
-		"""
-		if modul == "_tasks":
-			self.ui.btnPreview.hide()
-			self.ui.btnSaveClose.setText( QtCore.QCoreApplication.translate("EditWidget", "Execute") )
-			self.ui.btnSaveContinue.hide()
-			self.ui.btnReset.hide()
-		self.ui.btnReset.released.connect( self.onBtnResetReleased )
-		self.ui.btnSaveContinue.released.connect( self.onBtnSaveContinueReleased )
-		self.ui.btnSaveClose.released.connect( self.onBtnSaveCloseReleased )
-		self.ui.btnPreview.released.connect( self.onBtnPreviewReleased )
-		self.ui.btnClose.released.connect( self.onBtnCloseReleased )
-		if not self.key and not self.clone:
-			self.ui.btnSaveClose.setText( QtCore.QCoreApplication.translate("EditWidget", "Save and Close") )
-			self.ui.btnSaveContinue.setText( QtCore.QCoreApplication.translate("EditWidget", "Save and New") )
-		else:
-			self.ui.btnSaveClose.setText( QtCore.QCoreApplication.translate("EditWidget", "Save and Close") )
-			self.ui.btnSaveContinue.setText( QtCore.QCoreApplication.translate("EditWidget", "Save and Continue") )
-		"""
-		#protoWrap.busyStateChanged.connect( self.onBusyStateChanged )
-		#protoWrap.updatingSucceeded.connect( self.onSaveSuccess )
-		#protoWrap.updatingFailedError.connect(self.onSaveError )
-		#protoWrap.updatingDataAvaiable.connect(self.onDataAvaiable )
+
 
 	def onBusyStateChanged( self, busy ):
 		if busy:
@@ -195,9 +174,14 @@ class EditWidget( html5.Table ):
 			open( fileName, "w+b" ).write( data )	
 		return( fileName )
 
+	def clear(self):
+		for c in self.form._children[ : ]:
+			self.form.removeChild( c )
+
+
 	def setData( self, request=None, data=None, ignoreMissing=False ):
 		"""
-		Rebuilds the UI according to the skeleton recived from server
+		Rebuilds the UI according to the skeleton received from server
 		
 		@type data: dict
 		@param data: The data recived
@@ -212,19 +196,30 @@ class EditWidget( html5.Table ):
 			self.reloadData()
 			return
 		#Clear the UI
-		#for c in self.children[ : ]:
-		#	self.disown( c )
 		self.clear()
 		self.bones = {}
 		self.dataCache = data
 		tmpDict = {}
-		tabs = {}
+		fieldSets = {}
 		for key, bone in data["structure"]:
 			tmpDict[ key ] = bone
 		currRow = 0
 		for key, bone in data["structure"]:
 			if bone["visible"]==False:
 				continue
+			cat = "default"
+			if "params" in bone.keys() and isinstance(bone["params"],dict) and "category" in bone["params"].keys():
+				cat = bone["params"]["category"]
+			if not cat in fieldSets.keys():
+				fs = html5.Fieldset()
+				fs["class"] = cat
+				fs["id"] = "vi_%s_%s_%s" % (self.modul, "edit" if self.key else "add", cat)
+				fs["name"] = cat
+				legend = html5.Legend()
+				legend["id"] = "vi_%s_%s_%s_legend" % (self.modul, "edit" if self.key else "add", cat)
+				legend.appendChild( html5.TextNode(cat))
+				fs.appendChild(legend)
+				fieldSets[ cat ] = fs
 			if "params" in bone.keys() and bone["params"] and "category" in bone["params"].keys():
 				tabName = bone["params"]["category"]
 			else:
@@ -232,32 +227,42 @@ class EditWidget( html5.Table ):
 
 			wdgGen = editBoneSelector.select( self.modul, key, tmpDict )
 			widget = wdgGen.fromSkelStructure( self.modul, key, tmpDict )
-
-			self.prepareCol(currRow,1)
+			widget["id"] = "vi_%s_%s_%s_bn_%s" % (self.modul, "edit" if self.key else "add", cat, key)
+			widget["class"].append(key)
+			widget["class"].append(bone["type"])
+			#self.prepareCol(currRow,1)
 			descrLbl = html5.Label(bone["descr"])
+			descrLbl["class"].append(key)
+			descrLbl["class"].append(bone["type"])
+			descrLbl["for"] = "vi_%s_%s_%s_bn_%s" % (self.modul, "edit" if self.key else "add", cat, key)
 			if bone["required"]:
-				descrLbl["class"].append("isrequired")
+				descrLbl["class"].append("is_required")
 			if bone["required"] and bone["error"] is not None:
-				descrLbl["class"].append("isinvalid")
-			self["cell"][currRow][0] = descrLbl
-			self["cell"][currRow][1] = widget
+				descrLbl["class"].append("is_invalid")
+				descrLbl["title"] = bone["error"]
+			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
+				tmp = html5.Span()
+				tmp.appendChild(descrLbl)
+				tmp.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
+				descrLbl = tmp
+			fieldSets[ cat ].appendChild( descrLbl )
+			#self["cell"][currRow][0] = descrLbl
+			fieldSets[ cat ].appendChild( widget )
+			#self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget
-		submitBtn = html5.ext.Button("Save", self.onBtnSaveContinueReleased)
-		self.prepareCol(currRow,1)
-		self["cell"][currRow][1] = submitBtn
-		#self.add( submitBtn, currRow, 1 )
+		tmpList = [(k,v) for (k,v) in fieldSets.items()]
+		tmpList.sort( key=lambda x:x[0])
+		for k,v in tmpList:
+			self.form.appendChild( v )
 		self.unserialize( data["values"] )
 		self._lastData = data
-		#event.emit( "rebuildBreadCrumbs()" )
-		#if self.overlay.status==self.overlay.BUSY:
-		#	self.overlay.clear()
 
 	def unserialize(self, data):
 		for bone in self.bones.values():
 			bone.unserialize( data )
 
-	def onBtnSaveContinueReleased(self, *args, **kwargs ):
+	"""def onBtnSaveContinueReleased(self, *args, **kwargs ):
 		print( "BTN CLICK RECIVED")
 		self.closeOnSuccess = False
 		#self.overlay.inform( self.overlay.BUSY )
@@ -265,14 +270,15 @@ class EditWidget( html5.Table ):
 		for key, bone in self.bones.items():
 			res.update( bone.serializeForPost( ) )
 		self.save( res )
+	"""
 		
-	def onBtnSaveCloseReleased( self, *args, **kwargs ):
-		self.closeOnSuccess = True
-		#self.overlay.inform( self.overlay.BUSY )
+	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
+		self.closeOnSuccess = closeOnSuccess
 		res = {}
 		for key, bone in self.bones.items():
 			res.update( bone.serializeForPost( ) )
 		self.save( res )
+
 
 	def onBtnPreviewReleased( self, *args, **kwargs ):
 		res = {}
