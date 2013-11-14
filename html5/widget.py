@@ -112,6 +112,7 @@ class Widget( object ):
 		self._disabledState = None
 		self._parent = None
 
+
 	def sinkEvent(self, *args):
 		for eventName in args:
 			if eventName in self._catchedEvents or eventName.lower in ["onattach","ondetach"]:

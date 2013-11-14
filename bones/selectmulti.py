@@ -11,9 +11,16 @@ class SelectMultiViewBoneDelegate( object ):
 		self.modulName=modulName
 
 	def render( self, data, field ):
+		#print(self.skelStructure)
 		if field in data.keys():
-			return( html5.Label(str( data[field])))
-		return( html5.Label("..") )
+			resul=html5.Ul()
+			for d in data[field]:
+				ali=html5.Li()
+				ali.element.innerHTML=d.descr
+				ali["Title"]=d
+				resul.appendChild(ali)
+			return( resul)
+		return( html5.Label("&nbsp; - &nbsp;") )
 
 class SelectMultiEditBone( html5.Div ):
 
