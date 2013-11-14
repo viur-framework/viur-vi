@@ -22,14 +22,20 @@ class Pane( html5.Li ):
 		self.childPanes = []
 		self.widgetsDomElm = html5.Div()
 		self.childDomElem = None
+		if icon is not None:
+			img = html5.Img()
+			img["src"] = icon
+			self.appendChild(img)
 		self.label = html5.A( )
+		self.label["class"].append("button")
 		self.label.appendChild(html5.TextNode(descr))
 		#self.label.element.innerHTML = descr #FIXME: descr fehlt
 		self.appendChild( self.label )
 		self.sinkEvent("onClick")
 		#self.label.addClickListener( self.onClick )
 		if closeable:
-			self.closeBtn = html5.ext.Button("X", self.onBtnCloseReleased)
+			self.closeBtn = html5.ext.Button("Close", self.onBtnCloseReleased)
+			self.closeBtn["class"].append("closebtn")
 			self.appendChild(self.closeBtn)
 
 	def onBtnCloseReleased(self, *args, **kwargs):
@@ -83,7 +89,10 @@ class Pane( html5.Li ):
 			@type widget: widget
 
 		"""
-		self.widgetsDomElm.appendChild( widget )
+		div = html5.Div()
+		div["class"].append("vi_operator")
+		div.appendChild( widget )
+		self.widgetsDomElm.appendChild( div )
 
 	def removeWidget(self, widget):
 		self.widgetsDomElm.removeChild( widget )

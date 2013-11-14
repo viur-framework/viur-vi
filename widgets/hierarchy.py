@@ -18,6 +18,7 @@ class HierarchyItem( html5.Li ):
 		self.isLoaded = False
 		self.isExpanded = False
 		self.ol = html5.Ol()
+		self.ol["class"].append("subhierarchy")
 		self.appendChild(self.ol)
 		self.currentMargin = None
 		self.ol["style"]["display"] = "none"
@@ -33,14 +34,21 @@ class HierarchyItem( html5.Li ):
 		if eventOffset<height*0.10 and self.currentMargin is None:
 			print("x1")
 			self.currentMargin = "top"
-			self["style"]["border-top"] = "1px solid red"
+			self["class"].remove("insert_here")
+			self["class"].append("insert_before")
+			#self["style"]["border-top"] = "1px solid red"
 		elif eventOffset>height*0.90 and self.currentMargin is None:
 			print("x2")
 			self.currentMargin = "bottom"
-			self["style"]["border-bottom"] = "1px solid blue"
+			self["class"].remove("insert_here")
+			self["class"].append("insert_after")
+			#self["style"]["border-bottom"] = "1px solid blue"
 		elif self.currentMargin and eventOffset>height*0.20 and eventOffset<height*0.80:
 			print("x3")
 			self["style"]["border"] = "none"
+			self["class"].remove("insert_before")
+			self["class"].remove("insert_after")
+			self["class"].append("insert_here")
 			self.currentMargin = None
 		#print( self.element.offsetHeight )
 		event.preventDefault()
@@ -49,7 +57,9 @@ class HierarchyItem( html5.Li ):
 
 	def onDragLeave(self, event):
 		print("DRAG LEAVE")
-		self["style"]["border"] = "none"
+		self["class"].remove("insert_before")
+		self["class"].remove("insert_after")
+		self["class"].remove("insert_here")
 		self.currentMargin = None
 		super(HierarchyItem,self).onDragLeave( event )
 
@@ -148,11 +158,10 @@ class HierarchyWidget( html5.Div ):
 		self.actionBar = ActionBar( modul, "hierarchy" )
 		self.appendChild( self.actionBar )
 		self.entryFrame = html5.Ol()
+		self.entryFrame["class"].append("hierarchy")
 		self.appendChild( self.entryFrame )
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
-		self["style"]["margin"] = "10px"
-		self["style"]["padding"] = "10px"
 		self._currentCursor = None
 		self._currentRequests = []
 		if self.rootNode:

@@ -23,7 +23,7 @@ class ListWidget( html5.Div ):
 		"""
 		super( ListWidget, self ).__init__(  )
 		self.modul = modul
-		self.actionBar = ActionBar( modul, "list" )
+		self.actionBar = ActionBar( modul, "list", currentAction="list" )
 		self.appendChild( self.actionBar )
 		self.table = DataTable()
 		self.appendChild( self.table )
