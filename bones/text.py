@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
+from config import conf
 
 class TextViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -12,7 +13,22 @@ class TextViewBoneDelegate( object ):
 
 	def render( self, data, field ):
 		if field in data.keys():
-			return( html5.Label(str( data[field])))
+			##multilangs
+			if isinstance(data[field],dict):
+				resstr=""
+				if "currentlanguage" in conf.keys():
+					if conf["currentlanguage"] in data[field].keys():
+						resstr=data[field][conf["currentlanguage"]]
+					else:
+						if data[field].keys().length>0:
+							resstr=data[field][data[field].keys()[0]]
+				aspan=html5.Span()
+				aspan.appendChild(html5.TextNode(resstr))
+				aspan["Title"]=str( data[field])
+				return (aspan)
+			else:
+				#no langobject
+				return( html5.Label(str( data[field])))
 		return( html5.Label("..") )
 
 class TextEditBone( html5.Textarea ):

@@ -25,8 +25,9 @@ class StringViewBoneDelegate( object ):
 				aspan=html5.Span()
 				aspan.appendChild(html5.TextNode(resstr))
 				aspan["Title"]=str( data[field])
-				return (resstr)
+				return (aspan)
 			else:
+				#no langobject
 				return( html5.Label(str( data[field])))
 		return( html5.Label("..") )
 
@@ -55,7 +56,7 @@ class StringEditBone( html5.Input ):
 		return( self.serialize( ) )
 
 def CheckForStringBone(  modulName, boneName, skelStucture ):
-	return( skelStucture[boneName]["type"]=="string" )
+	return( skelStucture[boneName]["type"]=="str" )
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForStringBone, StringEditBone)
