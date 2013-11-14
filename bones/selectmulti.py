@@ -11,12 +11,14 @@ class SelectMultiViewBoneDelegate( object ):
 		self.modulName=modulName
 
 	def render( self, data, field ):
-		#print(self.skelStructure)
+		print(self.skelStructure[field]["values"])
 		if field in data.keys():
 			resul=html5.Ul()
+
 			for d in data[field]:
+
 				ali=html5.Li()
-				ali.element.innerHTML=d.descr
+				ali.element.innerHTML=self.skelStructure[field]["values"][d]
 				ali["Title"]=d
 				resul.appendChild(ali)
 			return( resul)

@@ -37,13 +37,12 @@ class DateEditBone( html5.Input ):
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
-			parsedval=str(data[ self.boneName ] if data[ self.boneName ] else "").replace(" ","T")
-			dateobj=datetime.strptime(parsedval, "%d.%m.%YT%H:%M:%S")
+			dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y %H:%M:%S")
 			self["value"]=dateobj.strftime( "%Y-%m-%dT%H:%M" )
 
 	def serializeForPost(self):
 		dateobj=datetime.strptime(self["value"], "%Y-%m-%dT%H:%M")
-		return( { self.boneName: dateobj.strftime("%d.%m.%YT%H:%M:00") } )
+		return( { self.boneName: dateobj.strftime("%d.%m.%Y %H:%M:00") } )
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )
