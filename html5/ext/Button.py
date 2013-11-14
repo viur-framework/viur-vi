@@ -1,6 +1,6 @@
-from html5.a import A
+from html5.form import Button as fButton
 
-class Button(A):
+class Button(fButton):
 	def __init__(self, txt=None, callback=None, *args, **kwargs):
 		super(Button,self).__init__(*args, **kwargs)
 		self["class"] = "button"
@@ -12,7 +12,7 @@ class Button(A):
 	def onClick(self, event):
 		event.stopPropagation()
 		if self.callback is not None:
-			self.callback()
+			self.callback(self)
 
 	def onDetach(self):
 		super(Button,self)

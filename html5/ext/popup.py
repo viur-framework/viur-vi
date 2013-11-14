@@ -1,5 +1,5 @@
 import html5
-from html5.ext.Button import Button
+from html5.ext.button import Button
 
 class Popup( html5.Div ):
 	def __init__(self, *args, **kwargs ):

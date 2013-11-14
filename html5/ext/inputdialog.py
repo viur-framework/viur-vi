@@ -1,6 +1,6 @@
 import html5
 from html5.ext.popup import Popup
-from html5.ext.Button import Button
+from html5.ext.button import Button
 
 class InputDialog( Popup ):
 	def __init__(self, text, value="", successHandler=None, abortHandler=None, *args, **kwargs ):
