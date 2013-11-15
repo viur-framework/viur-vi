@@ -130,16 +130,21 @@ class NetworkService( object ):
 				except:
 					type = "application/octet-stream"
 				res += b'\r\nContent-Type: '+type+b'\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+b'"; filename="'+os.path.basename(value.name).decode(sys.getfilesystemencoding())+b'"\r\n\r\n'
-				res += value.read()
+				res += str(value.read())
 				res += b'\r\n--'+boundary
 			elif isinstance( value, list ):
 				for val in value:
 					res += b'\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+b'"\r\n\r\n'
-					res += val
+					res += str(val)
+					res += b'\r\n--'+boundary
+			elif isinstance( value, dict ):
+				for k,v in value.items():
+					res += b'\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+b"."+k+b'"\r\n\r\n'
+					res += str(v)
 					res += b'\r\n--'+boundary
 			else:
 				res += b'\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+b'"\r\n\r\n'
-				res += value
+				res += str(value)
 				res += b'\r\n--'+boundary
 		res += b'--\r\n'
 		return( res, boundary )

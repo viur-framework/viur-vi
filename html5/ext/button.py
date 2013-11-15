@@ -11,6 +11,7 @@ class Button(fButton):
 
 	def onClick(self, event):
 		event.stopPropagation()
+		event.preventDefault()
 		if self.callback is not None:
 			self.callback(self)
 

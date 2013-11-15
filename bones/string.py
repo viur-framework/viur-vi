@@ -58,15 +58,13 @@ class StringEditBone( html5.Div ):
 		self.appendChild(self.input)
 
 	def changeLang(self,btn):
-		if "data" in self.keys():
-			self.data[self.selectedLang]=self.input["value"]
-			self.selectedLang=btn["value"]
-			self.input["value"]=self.data[self.selectedLang]
-			self.refreshLangButContainer()
+		self.valuesdict[self.selectedLang]=self.input["value"]
+		self.selectedLang=btn["value"]
+		self.input["value"]=self.valuesdict[self.selectedLang]
+		self.refreshLangButContainer()
 
 	def refreshLangButContainer(self):
-		return ()
-		for abut in self.langButContainer["children"]:
+		for abut in self.langButContainer._children:
 			if abut["value"]==self.selectedLang:
 				abut["class"].append("is_active")
 			else:
@@ -82,18 +80,27 @@ class StringEditBone( html5.Div ):
 		return( StringEditBone( modulName, boneName, readOnly,skelStructure ) )
 
 	def unserialize(self, data):
-		self.data=False
+		self.valuesdict=False
 		if self.boneName in data.keys():
-			self.data=data
-			if isinstance(self.data[self.boneName],dict) and self.selectedLang:
-				self.input["value"] = self.data[ self.boneName ][self.selectedLang] if self.selectedLang in self.data[ self.boneName].keys() else ""
+			if "languages" in self.skelStructure[self.boneName].keys() and self.skelStructure[self.boneName]["languages"]!=None:
+				print(self.boneName+" : "+str(self.skelStructure[self.boneName]["languages"]))
+				self.valuesdict={}
+				for lang in self.skelStructure[self.boneName]["languages"]:
+					if lang in data[ self.boneName ].keys():
+						self.valuesdict[lang]=data[ self.boneName ][lang]
+					else:
+						self.valuesdict[lang]=""
+				#print("self.valuesdict:" + str(self.valuesdict))
+				#print("self.boneName:" + str(self.boneName))
+				#print("self.selectedLang:" + str(self.selectedLang))
+				self.input["value"] = self.valuesdict[self.selectedLang]
 			else:
-				self.input["value"] = self.data[ self.boneName ] if self.data[ self.boneName ] else ""
+				self.input["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
 
 	def serializeForPost(self):
 		if self.selectedLang:
-			self.data[self.selectedLang]=self.input["value"]
-			return( { self.boneName: self.data } )
+			self.valuesdict[self.selectedLang]=self.input["value"]
+			return( { self.boneName: self.valuesdict } )
 		else:
 			return( { self.boneName: self.input["value"] } )
 

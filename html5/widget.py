@@ -22,7 +22,10 @@ class ClassWrapper( list ):
 		self._updateElem()
 
 	def remove(self, value):
-		list.remove( self, value )
+		try:
+			list.remove( self, value )
+		except:
+			pass
 		self._updateElem()
 
 	def extend(self, iterable):
