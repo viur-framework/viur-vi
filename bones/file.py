@@ -119,7 +119,7 @@ def CheckForFileBoneMultiSelection( modulName, boneName, skelStructure ):
 	return CheckForFileBone( modulName, boneName, skelStructure ) and isMultiple
 
 def CheckForFileBone(  modulName, boneName, skelStucture ):
-	print("CHECKING FILE BONE", skelStucture[boneName]["type"])
+	#print("CHECKING FILE BONE", skelStucture[boneName]["type"])
 	return( skelStucture[boneName]["type"].startswith("treeitem.file") )
 
 #Register this Bone in the global queue

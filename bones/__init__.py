@@ -9,3 +9,4 @@ from bones import date
 from bones import string
 from bones import boolean
 from bones import color
+from bones import email

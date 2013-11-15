@@ -83,7 +83,6 @@ class StringEditBone( html5.Div ):
 		self.valuesdict=False
 		if self.boneName in data.keys():
 			if "languages" in self.skelStructure[self.boneName].keys() and self.skelStructure[self.boneName]["languages"]!=None:
-				print(self.boneName+" : "+str(self.skelStructure[self.boneName]["languages"]))
 				self.valuesdict={}
 				for lang in self.skelStructure[self.boneName]["languages"]:
 					if lang in data[ self.boneName ].keys():
@@ -105,7 +104,7 @@ class StringEditBone( html5.Div ):
 		return( self.serialize( ) )
 
 def CheckForStringBone(  modulName, boneName, skelStucture ):
-	return( skelStucture[boneName]["type"]=="str" )
+	return( str(skelStucture[boneName]["type"]).startswith("str") )
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForStringBone, StringEditBone)
