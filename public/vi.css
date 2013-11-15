@@ -273,7 +273,7 @@ p { margin-bottom:10px;}
 /* #vi_operator
 ================================================== */	
 
-.vi_operator {z-index:20; padding: 80px 30px 45px; float:left; min-width:42,4%; max-width:84,7%; min-height:500px; background:#ddd; overflow:hidden; } 
+.vi_operator {z-index:20; padding: 150px 30px 45px; float:left; min-width:42,4%; max-width:84,7%; min-height:500px; background:#ddd; overflow:hidden; } 
 .vi_operator:first-of-type {background-color:#f6f6f6;}
 
 	.vi_operator:nth-child(n+1):before {
