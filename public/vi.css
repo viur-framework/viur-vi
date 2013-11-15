@@ -689,7 +689,9 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 
 :focus {outline: 1px dotted #ccc;}
 :disabled {}		
-.is_active {}
+.is_active {
+    background-color: #BE1622;
+}
 .is_primary {}
 .is_selected {}
 .is_focused {}

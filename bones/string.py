@@ -47,6 +47,7 @@ class StringEditBone( html5.Div ):
 		self.readOnly = readOnly
 		self.selectedLang=False
 		self.skelStructure=skelStructure
+		self["class"].append("editbonebox")
 		##multilangbone
 		if skelStructure and skelStructure[boneName]["languages"]:
 			if "currentlanguage" in conf and conf["currentlanguage"] in skelStructure[boneName]["languages"]:
@@ -57,6 +58,7 @@ class StringEditBone( html5.Div ):
 			for lang in skelStructure[boneName]["languages"]:
 				abut=html5.ext.Button(lang,self.changeLang)
 				abut["value"]=lang
+				abut["class"].append("choselang")
 				self.langButContainer.appendChild(abut)
 			self.appendChild(self.langButContainer)
 			self.refreshLangButContainer()
