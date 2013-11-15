@@ -16,7 +16,6 @@ class TreeHandler( Pane ):
 		return( modulInfo["handler"]=="tree" or modulInfo["handler"].startswith("tree."))
 
 	def onClick(self, *args, **kwargs ):
-		print("CLICK TREE")
 		if not len(self.widgetsDomElm._children):
 			wdg = displayDelegateSelector.select( self.modulName, self.modulInfo )
 			assert wdg is not None, "Got no handler for %s" % self.modulName

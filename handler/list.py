@@ -8,7 +8,6 @@ from pane import Pane
 
 class ListHandler( Pane ):
 	def __init__(self, modulName, modulInfo, *args, **kwargs):
-		print("INIT LISTHANDLER")
 		icon = None
 		if "icon" in modulInfo.keys():
 			icon = modulInfo["icon"]
@@ -23,9 +22,7 @@ class ListHandler( Pane ):
 		return( True )
 
 	def onClick(self, *args, **kwargs ):
-		print("CLICK")
 		if not len(self.widgetsDomElm._children):
-			print("ADDING WIDGET")
 			self.addWidget( ListWidget(self.modulName ) )
 		super( ListHandler, self ).onClick( *args, **kwargs )
 

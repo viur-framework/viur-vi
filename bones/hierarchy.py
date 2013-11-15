@@ -62,7 +62,6 @@ def CheckForHierarchyBoneMultiSelection( modulName, boneName, skelStructure ):
 	return CheckForHierarchyBone( modulName, boneName, skelStructure ) and isMultiple
 
 def CheckForHierarchyBone(  modulName, boneName, skelStucture ):
-	print("CHECKING FILE BONE", skelStucture[boneName]["type"])
 	return( skelStucture[boneName]["type"].startswith("hierarchy.") )
 
 #Register this Bone in the global queue

@@ -22,14 +22,23 @@ class StringViewBoneDelegate( object ):
 					else:
 						if len(data[field].keys())>0:
 							resstr=data[field][data[field].keys()[0]]
-				aspan=html5.Span()
-				aspan.appendChild(html5.TextNode(resstr))
-				aspan["Title"]=str( data[field])
-				return (aspan)
+				return (self.getViewElement(resstr,data[field]))
+
+
 			else:
 				#no langobject
-				return( html5.Label(str( data[field])))
-		return( html5.Label("..") )
+				return (self.getViewElement(str( data[field]),False))
+		return (self.getViewElement("..",False))
+
+	def getViewElement(self,labelstr,datafield):
+		if not datafield:
+			return( html5.Label(labelstr))
+		else:
+			aspan=html5.Span()
+			aspan.appendChild(html5.TextNode(labelstr))
+			aspan["Title"]=str(datafield)
+			return (aspan)
+
 
 class StringEditBone( html5.Div ):
 	def __init__(self, modulName, boneName,readOnly,skelStructure=False,*args, **kwargs ):

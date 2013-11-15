@@ -16,7 +16,6 @@ class HierarchyHandler( Pane ):
 		return( modulInfo["handler"]=="hierarchy" or modulInfo["handler"].startswith("hierarchy."))
 
 	def onClick(self, *args, **kwargs ):
-		print("CLICK TREE")
 		if not len(self.widgetsDomElm._children):
 			self.addWidget( HierarchyWidget(self.modulName ) )
 		super( HierarchyHandler, self ).onClick( *args, **kwargs )
