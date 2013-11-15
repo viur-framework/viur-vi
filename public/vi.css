@@ -376,11 +376,9 @@ textarea {width:512px; height:120px;}
 
 select {width: 176px;}
 
-input[type="button"], input[type="submit"], input[type="reset"] {}
 
-:focus {
-	outline: 1px dotted #ccc;
-}
+/* #vi_buttons
+================================================== */
 
 button[type="button"] {
 	border: 1px solid #999;
@@ -612,12 +610,14 @@ tr.is_focused:nth-child(even) {background:#ccc;}
 tr.is_focused.is_selected:nth-child(odd) {background:#aa1100;}
 tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 
+
 /* #vi_forest
 ================================================== */	
 .tree {padding:7px 14px;}
 .file img {float:left; margin-right:7px; height:32px; width:auto; max-width:32px; margin-top:-7px; margin-left:-7px;}
 .tree.cursor {background:#bbb;}
 .tree.selected {background:#ccc;}
+
 
 /* #vi_hierarchy
 ================================================== */	
@@ -649,7 +649,7 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 				margin-right:7px;} 
 
 
-/* #vi_labels
+/* #vi_badges
 ================================================== */	
 
 .beta {
@@ -687,7 +687,7 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 /* #States
 ================================================== */		
 
-:focus {}
+:focus {outline: 1px dotted #ccc;}
 :disabled {}		
 .is_active {}
 .is_primary {}
