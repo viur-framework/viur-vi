@@ -26,7 +26,7 @@ body {
 }
 
 
-a {color:#333; text-decoration:none;cursor: pointer}
+a {color:#333; text-decoration:none; cursor:pointer;}
 a:visited {color:#333; text-decoration:none;}
 a:hover {color:#222; text-decoration:underline;}
 
@@ -142,7 +142,7 @@ p { margin-bottom:10px;}
 			}
 			
 			.iconnav li a.icon:before {
-				background-image: url(../../icons/menu/vi_iconnav_sprite.svg);
+				background-image: url(icons/vi_iconnav_sprite.svg);
 				background-repeat: no-repeat;
 				width:32px;
 				height:32px;
@@ -191,16 +191,16 @@ p { margin-bottom:10px;}
 ================================================== */
 .vi_manager {
 	overflow:hidden;
-	overflow-y:scroll;
+	overflow-y:auto;
 	z-index:9;
-	width:298px;
+	width:15.7%; /*298px*/
 	position:fixed;
 	background-color:#eeeeee;
 	height: 100%;
 }
 	.modullist {margin: 45px 0 50px;}
 	.modullist a, .modullist a:visited {
-	    width:268px;
+	    width:100%;
 	    position:relative;
 	    border-bottom:1px dotted #cccccc;
 	    border-right: 1px solid #ccc;
@@ -257,14 +257,26 @@ p { margin-bottom:10px;}
 /* #vi_viewer
 ================================================== */	
 
-.vi_viewer {margin-left:298px; width:auto; min-width:500px; float:left; position:relative; background-color:#f4f4f4;border-left:1px solid #ccc; border-right:1px solid #ccc;padding: 80px 30px 45px;min-height: 400px;z-index:-1;}
+.vi_viewer {margin-left:15.7%; 
+			width:84.3%; 
+			float:left; 
+			position:relative; 
+			z-index:-1;
+			background-color:#f4f4f4;
+			/*border-left:1px solid #ccc; 
+			border-right:1px solid #ccc;
+			padding: 80px 30px 45px;
+			min-height: 400px;
+			min-width:500px; */
+			}
 
 /* #vi_operator
 ================================================== */	
 
-.vi_operator {z-index:20; padding: 80px 30px 45px; float:left; min-width:300px; min-height:500px; background:#ddd; } 
+.vi_operator {z-index:20; padding: 80px 30px 45px; float:left; min-width:42,4%; max-width:84,7%; min-height:500px; background:#ddd; overflow:hidden; } 
+.vi_operator:first-of-type {background-color:#f6f6f6;}
 
-	.vi_operator:before {
+	.vi_operator:nth-child(n+1):before {
 		content:" ";
 		margin-left:-90px;
 		margin-top:50%;
@@ -277,8 +289,20 @@ p { margin-bottom:10px;}
 /* #actionbar
 ================================================== */
 
-.vi_viewer .actionbar, .vi_operator .actionbar {width:auto; min-width:500px; border-bottom:1px solid #BE1622; position:fixed;}
-.vi_viewer .actionbar img, .vi_operator .actionbar img {border: 1px solid #aaa; border-right:0; width:16px; float:left; padding:5px 6px 5px 4px;
+.vi_operator .actionbar {width:43.5%; 
+						min-width:500px; 
+						border-bottom:1px solid #BE1622; 
+						position:fixed;
+						margin-top: -30px;
+						padding:15px;
+						background-color:#eee;
+						background-color:rgba(238,238,238,0.8);
+						background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238,238,238,0.8)), to(rgba(255,255,255,0.2))); /* webkit */
+				        background-image: -moz-linear-gradient(top center, rgba(238,238,238,0.8) 20%, rgba(255,255,255,0.2) 95%); /* mozilla - FF3.6+ */
+				        filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColor=#55eeeeee, endColorStr=#55FFFFFF); /* IE 5.5 - 7 */
+				        -ms-filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColor=#55eeeeee, endColoStr=#55FFFFFF); /* IE8 uses -ms-filter for whatever reason... */
+}
+.vi_operator .actionbar img {border: 1px solid #aaa; border-right:0; width:16px; float:left; padding:5px 6px 5px 4px;
 	background-color: #ddd;
     background: -moz-linear-gradient(top, #fff 0%, #ddd 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(100%, #ddd));
@@ -287,7 +311,7 @@ p { margin-bottom:10px;}
     background: -ms-linear-gradient(top, #fff 0%, #ddd 100%);
     background: linear-gradient(to bottom, #fff 0%, #ddd 100%);
     filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#fff', EndColorStr='#ddd', GradientType=0);	}
-.vi_viewer .actionbar h3, .vi_operator .actionbar h3 {
+.vi_operator .actionbar h3 {
 	line-height:1em;
 	margin-bottom:10px;
 	color:#222;
@@ -308,6 +332,7 @@ p { margin-bottom:10px;}
 	border-left:1px solid #ccc;
 	margin-right:4px;
 	}
+	
 .actionbar .operations {float:right;}
 
 
@@ -394,7 +419,7 @@ button.icon {
 }
 
 button.icon:before {
-	background-image: url(../../icons/actions/vi_actions_sprite.svg);
+	background-image: url(icons/vi_actions_sprite.svg);
 	background-repeat: no-repeat;
 	width:16px;
 	height:16px;
@@ -414,9 +439,9 @@ button.icon:before {
 		button.preview:before{background-position: -96px 0px;}	
 		button.search:before{background-position: -112px 0px;}	
 		
-		button.saveClose:before{background-position: 0px -16px;}	
-		button.saveContinue:before{background-position: -16px -16px;}	
-		button.saveNew:before{background-position: -32px -16px;}	
+		button.save.close:before{background-position: 0px -16px;}	
+		button.save.continue:before{background-position: -16px -16px;}	
+		button.save.new:before{background-position: -32px -16px;}	
 		
 		button.reset:before{background-position: -64px -16px;}
 		button.cancel:before{background-position: 0px 0px;}	
@@ -447,7 +472,7 @@ button.icon.delete[type="button"]:hover {
 
 button.icon.cancel[type="button"]:hover:before,
 button.icon.delete[type="button"]:hover:before {
-	background-image: url(../../icons/actions/vi_actions_sprite_white.svg);
+	background-image: url(icons/vi_actions_sprite_white.svg);
 }
 
 /* Green Buttons */
@@ -467,7 +492,7 @@ button.icon.saveClose[type="button"]:hover {
 
 button.icon.add[type="button"]:hover:before,
 button.icon.saveClose[type="button"]:hover:before {
-	background-image: url(../../icons/actions/vi_actions_sprite_white.svg);
+	background-image: url(icons/vi_actions_sprite_white.svg);
 }
 
 
