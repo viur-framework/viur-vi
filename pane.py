@@ -22,14 +22,17 @@ class Pane( html5.Li ):
 		self.childPanes = []
 		self.widgetsDomElm = html5.Div()
 		self.childDomElem = None
+		self.label = html5.A( )
+		self.label["class"].append("button")
+		h=html5.H3()
+		h.element.innerHTML=descr
+
+		#self.label.element.innerHTML = descr #FIXME: descr fehlt
 		if icon is not None:
 			img = html5.Img()
 			img["src"] = icon
-			self.appendChild(img)
-		self.label = html5.A( )
-		self.label["class"].append("button")
-		self.label.appendChild(html5.TextNode(descr))
-		#self.label.element.innerHTML = descr #FIXME: descr fehlt
+			self.label.appendChild(img)
+		self.label.appendChild(h)
 		self.appendChild( self.label )
 		self.sinkEvent("onClick")
 		#self.label.addClickListener( self.onClick )

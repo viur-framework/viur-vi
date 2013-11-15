@@ -90,9 +90,6 @@ class StringEditBone( html5.Div ):
 						self.valuesdict[lang]=data[ self.boneName ][lang]
 					else:
 						self.valuesdict[lang]=""
-				#print("self.valuesdict:" + str(self.valuesdict))
-				#print("self.boneName:" + str(self.boneName))
-				#print("self.selectedLang:" + str(self.selectedLang))
 				self.input["value"] = self.valuesdict[self.selectedLang]
 			else:
 				self.input["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
