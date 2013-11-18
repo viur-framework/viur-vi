@@ -21,7 +21,7 @@ class Uploader( html5.Progress ):
 	def __init__(self, file, node, *args, **kwargs):
 		super(Uploader, self).__init__( *args, **kwargs )
 		#self.files = files
-		r = NetworkService.request("file","getUploadURL", successHandler=self.onUploadUrlAvaiable)
+		r = NetworkService.request("file","getUploadURL", successHandler=self.onUploadUrlAvaiable, secure=True)
 		r.file = file
 		r.node = node
 

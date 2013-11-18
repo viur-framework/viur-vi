@@ -69,7 +69,7 @@ class EditAction( html5.ext.Button ):
 				i = InputDialog( "Directory Name", successHandler=self.editDir, value=s.data["name"] )
 				i.dirKey = s.data["id"]
 				return
-			pane = Pane("Edit", closeable=True)
+			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			skelType = "leaf"
 			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["id"], skelType=skelType)

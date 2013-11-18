@@ -14,10 +14,11 @@ class Pane( html5.Li ):
 		If a pane is active, _all_ its child widgets are visible
 		(through they might overlap).
 	"""
-	def __init__(self, descr, icon=None, closeable=False ):
+	def __init__(self, descr, iconURL=None, iconClasses=None, closeable=False ):
 		super( Pane, self ).__init__( )
 		self.descr = descr
-		self.icon = icon
+		self.iconURL = iconURL
+		self.iconClasses = iconClasses
 		self.closeable = closeable
 		self.childPanes = []
 		self.widgetsDomElm = html5.Div()
@@ -28,10 +29,13 @@ class Pane( html5.Li ):
 		h.element.innerHTML=descr
 
 		#self.label.element.innerHTML = descr #FIXME: descr fehlt
-		if icon is not None:
+		if iconURL is not None:
 			img = html5.Img()
-			img["src"] = icon
+			img["src"] = iconURL
 			self.label.appendChild(img)
+		if iconClasses is not None:
+			for cls in iconClasses:
+				self.label["class"].append( cls )
 		self.label.appendChild(h)
 		self.appendChild( self.label )
 		self.sinkEvent("onClick")

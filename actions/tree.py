@@ -17,7 +17,7 @@ class AddLeafAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		pane = Pane("Add", closeable=True)
-		conf["mainWindow"].stackPane( pane )
+		conf["mainWindow"].stackPane( pane, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_add_leaf" ] )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
 		pane.addWidget( edwg )
 		pane.focus()
@@ -35,7 +35,7 @@ class AddNodeAction( html5.ext.Button ):
 		return( (modul == "tree" or modul.startswith("tree.")) and actionName=="add.node" )
 
 	def onClick(self, sender=None):
-		pane = Pane("Add", closeable=True)
+		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_add_node" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, node=self.parent().parent().node, skelType="node" )
 		pane.addWidget( edwg )
@@ -85,7 +85,7 @@ class EditAction( html5.ext.Button ):
 				skelType = "leaf"
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(s)))
-			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["id"], skelType=skelType)
+			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["id"], skelType=skelType, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
 			pane.addWidget( edwg )
 			pane.focus()
 

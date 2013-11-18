@@ -185,7 +185,7 @@ class EditWidget( html5.Div ):
 		Rebuilds the UI according to the skeleton received from server
 		
 		@type data: dict
-		@param data: The data recived
+		@param data: The data received
 		"""
 		assert (request or data)
 		if request:
@@ -225,16 +225,15 @@ class EditWidget( html5.Div ):
 				tabName = bone["params"]["category"]
 			else:
 				tabName = "Test"#QtCore.QCoreApplication.translate("EditWidget", "General")
-
 			wdgGen = editBoneSelector.select( self.modul, key, tmpDict )
 			widget = wdgGen.fromSkelStructure( self.modul, key, tmpDict )
 			widget["id"] = "vi_%s_%s_%s_bn_%s" % (self.modul, "edit" if self.key else "add", cat, key)
 			widget["class"].append(key)
-			widget["class"].append(bone["type"])
+			widget["class"].append(bone["type"].replace(".","_"))
 			#self.prepareCol(currRow,1)
 			descrLbl = html5.Label(bone["descr"])
 			descrLbl["class"].append(key)
-			descrLbl["class"].append(bone["type"])
+			descrLbl["class"].append(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_bn_%s" % (self.modul, "edit" if self.key else "add", cat, key)
 			if bone["required"]:
 				descrLbl["class"].append("is_required")

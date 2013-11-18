@@ -23,7 +23,7 @@ class AddAction( html5.ext.Button ):
 		return( (modul == "list" or modul.startswith("list.")) and actionName=="add" )
 
 	def onClick(self, sender=None):
-		pane = Pane("Add", closeable=True)
+		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList)
 		pane.addWidget( edwg )
@@ -67,7 +67,7 @@ class EditAction( html5.ext.Button ):
 		if not selection:
 			return
 		for s in selection:
-			pane = Pane("Edit", closeable=True)
+			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			edwg = EditWidget( self.parent().parent().modul, EditWidget.appList, key=s["id"])
 			pane.addWidget( edwg )

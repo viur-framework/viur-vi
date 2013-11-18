@@ -35,6 +35,10 @@ class ActionBar( html5.Div ):
 			self.removeChild( c )
 		if self.currentAction is not None:
 			h3 = html5.H3()
+			h3["class"].append("modul_%s" % self.modul)
+			h3["class"].append("apptype_%s" %self.appType)
+			h3["class"].append("action_%s" %self.currentAction)
+
 			h3.appendChild(html5.TextNode(self.currentAction))
 			self.appendChild(h3)
 		self.actions = actions

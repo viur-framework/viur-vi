@@ -40,7 +40,7 @@ class AddLeafAction( html5.ext.Button ):
 		self.parent().parent().appendChild( FileSelectUploader() )
 		print("DIALOG DONE")
 		return
-		pane = Pane("Add", closeable=True)
+		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_add_leaf" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
 		pane.addWidget( edwg )

@@ -17,7 +17,7 @@ class AddAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		print("ADD ACTION HIERARCHY", self.parent().parent().rootNode)
-		pane = Pane("Add", closeable=True)
+		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_hierarchy", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appHierarchy, node=self.parent().parent().rootNode )
 		pane.addWidget( edwg )

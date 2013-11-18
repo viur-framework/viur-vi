@@ -249,7 +249,6 @@ class NetworkService( object ):
 
 		"""
 		assert not( cacheable and modifies ), "Cannot cache a request modifying data!"
-		print( params )
 		if cacheable:
 			key = NetworkService.keyFromQuery( modul, url, params )
 			if key in NetworkService._cache.keys():
@@ -293,6 +292,10 @@ class NetworkService( object ):
 				print( type( params ) )
 			HTTPRequest().asyncPost(url, multipart, self, content_type=contentType )
 		else:
+			if "?" in url:
+				url += "&skey=%s" % skey
+			else:
+				url += "?skey=%s" % skey
 			HTTPRequest().asyncGet(url, self)
 
 	def onCompletion(self, text):
