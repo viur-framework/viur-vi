@@ -13,7 +13,7 @@ class NodeWidget( html5.Div ):
 		self.data = data
 		self.element.innerHTML = data["name"]
 		self["style"]["border"] = "1px solid blue"
-		self["class"] = "treeitem node"
+		self["class"] = "treeitem node supports_drag supports_drop"
 		self["draggable"] = True
 		self.sinkEvent("onDragOver","onDrop","onDragStart")
 
@@ -48,7 +48,7 @@ class LeafWidget( html5.Div ):
 		self.data = data
 		self.element.innerHTML = data["name"]
 		self["style"]["border"] = "1px solid black"
-		self["class"] = "treeitem leaf"
+		self["class"] = "treeitem leaf supports_drag"
 		self["draggable"] = True
 		self.sinkEvent("onDragStart")
 

@@ -46,5 +46,8 @@ class AddLeafAction( html5.ext.Button ):
 		pane.addWidget( edwg )
 		pane.focus()
 
+	def resetLoadingState(self):
+		pass
+
 actionDelegateSelector.insert( 3, AddLeafAction.isSuitableFor, AddLeafAction )
 

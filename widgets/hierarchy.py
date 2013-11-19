@@ -24,6 +24,8 @@ class HierarchyItem( html5.Li ):
 		self.ol["style"]["display"] = "none"
 		self["class"].append("hierarchyitem")
 		self["class"].append("unexpaned")
+		self["class"].append("supports_drag")
+		self["class"].append("supports_drop")
 		self["draggable"] = True
 		self.sinkEvent("onDragStart", "onDrop", "onDragOver","onDragLeave")
 

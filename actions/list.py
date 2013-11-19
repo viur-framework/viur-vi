@@ -29,6 +29,9 @@ class AddAction( html5.ext.Button ):
 		pane.addWidget( edwg )
 		pane.focus()
 
+	def resetLoadingState(self):
+		pass
+
 actionDelegateSelector.insert( 1, AddAction.isSuitableFor, AddAction )
 
 
@@ -73,43 +76,11 @@ class EditAction( html5.ext.Button ):
 			pane.addWidget( edwg )
 			pane.focus()
 
+	def resetLoadingState(self):
+		pass
+
 actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
-class YesNoDialog( html5.Div ):
-	def __init__(self, topic, question, funcYes=None, funcNo=None, *args, **kwargs):
-		super( YesNoDialog, self ).__init__( *args, **kwargs )
-		self.yesFunc = funcYes
-		self.noFunc = funcNo
-		self["style"]["z-index"] = 10
-		self["style"]["display"] = "block"
-		self["style"]["width"] = "400px"
-		self["style"]["height"] = "400px"
-		self["style"]["position"] = "absolute"
-		self["style"]["background-color"] = "green"
-		#DOM.setStyleAttribute(self.getElement(),"z-index","99")
-
-		#self.setText( topic )
-		l = html5.Label(question)
-		self.appendChild( html5.Label(question) )
-		self.yesBtn = html5.ext.Button("Yes", self.onYesSelected)
-		self.appendChild( self.yesBtn )
-		self.noBtn = html5.ext.Button("No",self.onNoSelected)
-		self.appendChild( self.noBtn )
-		html5.Body().appendChild( self )
-
-	def onYesSelected(self, *args, **kwargs):
-		if self.yesFunc:
-			self.yesFunc( self )
-		self.yesFunc = None
-		self.noFunc = None
-		html5.Body().removeChild( self )
-
-	def onNoSelected(self, *args, **kwargs ):
-		if self.noFunc:
-			self.noFunc( self )
-		self.yesFunc = None
-		self.noFunc = None
-		html5.Body().removeChild( self )
 
 
 class DeleteAction( html5.ext.Button ):
@@ -148,7 +119,7 @@ class DeleteAction( html5.ext.Button ):
 		if not selection:
 			return
 		print( "Deleting "+str([x["id"] for x in selection]))
-		d = YesNoDialog("Delete %s Entries?" % len(selection),"Delete them?", funcYes=self.doDelete)
+		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete)
 		d.deleteList = [x["id"] for x in selection]
 		return
 		for s in selection:
@@ -162,5 +133,8 @@ class DeleteAction( html5.ext.Button ):
 		deleteList = dialog.deleteList
 		for x in deleteList:
 			NetworkService.request( self.parent().parent().modul, "delete", {"id": x}, secure=True, modifies=True )
+
+	def resetLoadingState(self):
+		pass
 
 actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )

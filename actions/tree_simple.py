@@ -30,6 +30,10 @@ class AddNodeAction( html5.ext.Button ):
 		if len(dirName)==0:
 			return
 		NetworkService.request(self.parent().parent().modul,"add/node",{"node": self.parent().parent().node,"name":dirName}, secure=True, modifies=True)
+
+	def resetLoadingState(self):
+		pass
+
 actionDelegateSelector.insert( 3, AddNodeAction.isSuitableFor, AddNodeAction )
 
 
@@ -78,5 +82,8 @@ class EditAction( html5.ext.Button ):
 
 	def editDir(self, dialog, dirName ):
 		NetworkService.request( self.parent().parent().modul, "edit/node", {"id": dialog.dirKey,"name": dirName}, secure=True, modifies=True)
+
+	def resetLoadingState(self):
+		pass
 
 actionDelegateSelector.insert( 3, EditAction.isSuitableFor, EditAction )

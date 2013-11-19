@@ -16,7 +16,12 @@ class SaveContinue( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		print("SAVE CONTINUE")
+		self["class"].append("is_loading")
 		self.parent().parent().doSave(closeOnSuccess=False)
+
+	def resetLoadingState(self):
+		if "is_loading" in self["class"]:
+			self["class"].remove("is_loading")
 
 actionDelegateSelector.insert( 1, SaveContinue.isSuitableFor, SaveContinue )
 
@@ -31,6 +36,12 @@ class SaveClose( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		print("SAVE CLOSE")
+		self["class"].append("is_loading")
 		self.parent().parent().doSave(closeOnSuccess=True)
+
+	def resetLoadingState(self):
+		if "is_loading" in self["class"]:
+			self["class"].remove("is_loading")
+		pass
 
 actionDelegateSelector.insert( 1, SaveClose.isSuitableFor, SaveClose )

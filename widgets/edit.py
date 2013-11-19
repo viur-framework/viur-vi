@@ -199,6 +199,7 @@ class EditWidget( html5.Div ):
 		#Clear the UI
 		self.clear()
 		self.bones = {}
+		self.actionbar.resetLoadingState()
 		self.dataCache = data
 		tmpDict = {}
 		fieldSets = {}

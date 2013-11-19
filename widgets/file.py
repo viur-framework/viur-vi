@@ -66,6 +66,7 @@ class FileWidget( TreeWidget ):
 	def __init__(self,*args, **kwargs):
 		super( FileWidget, self ).__init__( *args, **kwargs)
 		self.sinkEvent("onDragOver", "onDrop")
+		self["class"].append("supports_upload")
 
 	@staticmethod
 	def canHandle( modul, modulInfo ):

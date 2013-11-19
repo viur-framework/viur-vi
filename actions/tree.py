@@ -22,6 +22,9 @@ class AddLeafAction( html5.ext.Button ):
 		pane.addWidget( edwg )
 		pane.focus()
 
+	def resetLoadingState(self):
+		pass
+
 actionDelegateSelector.insert( 1, AddLeafAction.isSuitableFor, AddLeafAction )
 
 
@@ -40,6 +43,9 @@ class AddNodeAction( html5.ext.Button ):
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, node=self.parent().parent().node, skelType="node" )
 		pane.addWidget( edwg )
 		pane.focus()
+
+	def resetLoadingState(self):
+		pass
 
 actionDelegateSelector.insert( 1, AddNodeAction.isSuitableFor, AddNodeAction )
 
@@ -88,5 +94,8 @@ class EditAction( html5.ext.Button ):
 			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["id"], skelType=skelType, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
 			pane.addWidget( edwg )
 			pane.focus()
+
+	def resetLoadingState(self):
+		pass
 
 actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )

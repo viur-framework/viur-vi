@@ -59,3 +59,8 @@ class ActionBar( html5.Div ):
 			@returns: List of String
 		"""
 		return( self.actions )
+
+	def resetLoadingState(self):
+		for c in self._children[:]:
+			if "resetLoadingState" in dir(c):
+				c.resetLoadingState()
