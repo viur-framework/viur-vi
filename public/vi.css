@@ -97,19 +97,21 @@ p { margin-bottom:10px;}
 			}
 		.iconnav {
 		    position:relative;
-		    font-size:.7em;
+		    font-size:.8em;
+		    line-height:2.4em;
 		    float:right;
 		}
 			.iconnav li {float:left; color:#777;}
+			
 				.iconnav li a, .iconnav li a:link, .iconnav li a:visited {
 					border-left:1px solid #fafafa;
 					border-bottom:2px solid #BE1622;
 					color:#777; 
 					position:relative;
-					padding:11px 12px 12px; 
+					padding:7px 7px 7px;
 					float:left; 
 					text-decoration:none; 
-					text-shadow: 0px 1px 1px #fff;
+					text-shadow: 0px 0px 0px #fff;
 					-webkit-transition: all 0.3s ease;
 					-moz-transition: all 0.3s ease;
 					-o-transition: all 0.3s ease;
@@ -117,6 +119,7 @@ p { margin-bottom:10px;}
 				}
 				.iconnav li a:hover,.iconnav li a:active {
 				    color:#999;
+   					text-shadow: 0px 1px 1px #fff;
 				    background-color:#fff;
 				    text-decoration:none;
 				    border-bottom:2px solid #ff0000;
@@ -248,11 +251,45 @@ p { margin-bottom:10px;}
 	}
 		
 	.modullist .actionlist button {
-		margin-top: -38px;
+		margin-top: -42px;
 		position: relative;
 		float: right;
 		margin-right: 10px;
 	}	
+	
+	.modullist .actionlist button.closebtn {
+		-webkit-border-radius: 15px;
+		-moz-border-radius: 15px;
+		border-radius: 15px;
+		padding:10px 3px 12px;
+		line-height: 0;
+		font-size: .7em;
+		border: 1px solid #BE1622;
+		background-color:#e30613;
+	    background:-moz-linear-gradient(top, #BE1622, #e30613); /* Firefox */
+	    background:-webkit-gradient(linear, left top, left bottom, from(#BE1622), to(#e30613)); /* Safari, Chrome */
+	    color:transparent;
+		letter-spacing:-1em;
+		overflow:hidden;
+	}
+	
+	.modullist .actionlist button.closebtn:before {
+				background-image: url(icons/vi_actions_sprite_white.svg);
+				background-repeat: no-repeat;
+				width:16px;
+				height:16px;
+				content:' ';
+				position:relative;
+				float:left;
+				margin-top:-7px;
+				background-position: 0px 0px;}	
+
+	.modullist .actionlist button.closebtn:hover {
+				overflow:visible;
+				min-width:90px;
+				letter-spacing:normal;
+				color:#eee;
+			}
 
 /* #vi_viewer
 ================================================== */	
