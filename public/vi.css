@@ -201,7 +201,7 @@ p { margin-bottom:10px;}
 	background-color:#eeeeee;
 	height: 100%;
 }
-	.modullist {margin: 45px 0 50px;}
+	.modullist {margin: 45px 0 50px; overflow:hidden; border-right:1px solid #ccc}
 	.modullist a, .modullist a:visited {
 	    width:100%;
 	    position:relative;
@@ -261,7 +261,7 @@ p { margin-bottom:10px;}
 		-webkit-border-radius: 15px;
 		-moz-border-radius: 15px;
 		border-radius: 15px;
-		padding:10px 3px 12px;
+		padding:9px 2px 11px;
 		line-height: 0;
 		font-size: .7em;
 		border: 1px solid #BE1622;
@@ -282,7 +282,7 @@ p { margin-bottom:10px;}
 				position:relative;
 				float:left;
 				margin-top:-7px;
-				background-position: 0px 0px;}	
+				background-position: 0px -64px;}	
 
 	.modullist .actionlist button.closebtn:hover {
 				overflow:visible;
@@ -294,7 +294,7 @@ p { margin-bottom:10px;}
 /* #vi_viewer
 ================================================== */	
 
-.vi_viewer {margin-left:15.7%; 
+.vi_viewer {margin-left:15.7%;
 			width:84.3%; 
 			float:left; 
 			position:relative; 
@@ -374,14 +374,29 @@ p { margin-bottom:10px;}
 .actionbar .operations {float:right;}
 
 
-/* #vi_buttons and #vi_forms
+/* #vi_forms
 ================================================== */
 
-input[type="radio"], input[type="checkbox"] {
-	margin-right: 15px;
+form {
+	overflow: hidden;
+	width:100%;
 }
 
-textarea, .ui-spinner, input[type="text"].viur_text, input[type="email"], input[type="date"] {
+fieldset {
+	width:100%;
+	border: 0;
+	padding: 0;
+}
+
+legend {}
+
+label {
+	width: 25%;
+	float: left;
+	padding-right: 10px;
+}
+
+input, textarea, input[type="text"], input[type="email"], input[type="date"], input[type=url], input[type=password] {
 	display:inline-block;
 	padding:6px 7px 7px;
 	height:16px;
@@ -400,19 +415,96 @@ textarea, .ui-spinner, input[type="text"].viur_text, input[type="email"], input[
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eaeaea', endColorstr='#fafafa',GradientType=0 ); /* IE6-9 */
 }
 
-input[type="text"].viur_numericinput {
-		padding:6px 6px 7px;
-		margin:0;
-		margin-right:15px;
-		border:0;
-}
-
 input[type="date"] {width:162px;}
 
-textarea {width:512px; height:120px;}
+input[type="radio"], input[type="checkbox"] {
+	margin-right: 15px;
+}
 
+textarea {width:512px; height:120px;}
 select {width: 176px;}
 
+form > fieldset > div {
+  width: 75%;
+  float: right;
+}
+
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=url]:focus,
+input[type=password]:focus,
+textarea:focus {
+  outline: 0;
+  border-color: #BE1622;
+}
+
+@media (max-width: 600px) {
+  form > div {
+    margin: 0 0 15px 0; 
+  }
+  form > div > label,
+  legend {
+	  width: 100%;
+    float: none;
+    margin: 0 0 5px 0;
+  }
+  form > div > div,
+  form > div > fieldset > div {
+    width: 100%;
+    float: none;
+  }
+  input[type=text],
+  input[type=email],
+  input[type=url],
+  input[type=password],
+  textarea,
+  select {
+    width: 100%; 
+  }
+}
+
+/* #vi_tooltip
+================================================== */
+
+	a.tooltip {
+		-webkit-border-radius: 15px;
+		-moz-border-radius: 15px;
+		border-radius: 15px;
+		padding:8px 2px 2px;
+		line-height: 0;
+		font-size: .7em;
+		border: 1px solid #00406d;
+		background-color:#00406d;
+	    background:-moz-linear-gradient(top, #009de1, #00406d); /* Firefox */
+	    background:-webkit-gradient(linear, left top, left bottom, from(#009de1), to(#00406d)); /* Safari, Chrome */
+	    color:transparent;
+		letter-spacing:-1em;
+		overflow:hidden;
+		-webkit-transition: all 0.3s ease;
+		-moz-transition: all 0.3s ease;
+		-o-transition: all 0.3s ease;
+		transition: all 0.3s ease;	
+		display:inline-block;
+		width:16px;
+	}
+	
+	a.tooltip:before {
+				background-image: url(icons/vi_actions_sprite_white.svg);
+				background-repeat: no-repeat;
+				width:16px;
+				height:16px;
+				content:' ';
+				position:relative;
+				float:left;
+				margin-top:-7px;
+				background-position: -16px -64px;}	
+
+	a.tooltip:hover {
+				overflow:visible;
+				min-width:90px;
+				letter-spacing:normal;
+				color:#eee;
+			}
 
 /* #vi_buttons
 ================================================== */
@@ -423,7 +515,7 @@ button[type="button"] {
 	height:16px;
 	padding:6px 7px 20px;
 	margin:0;
-	/*margin-right: 6px;*/
+	margin-right: 4px;
 	text-align:center;
 	background-color: #bbb;
     background: -moz-linear-gradient(top, #ddd 0%, #bbb 100%);
@@ -478,9 +570,12 @@ button.icon:before {
 		button.save.close:before{background-position: 0px -16px;}	
 		button.save.continue:before{background-position: -16px -16px;}	
 		button.save.new:before{background-position: -32px -16px;}	
-		
+
 		button.reset:before{background-position: -64px -16px;}
 		button.cancel:before{background-position: 0px 0px;}	
+
+		button.mkdir:before{background-position: -32px -32px;}	
+		button.upload:before{background-position: -48px -32px;}	
 
 button.icon[type="button"]:hover {
 	border: 1px solid #666;
@@ -658,33 +753,56 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 
 /* #vi_hierarchy
 ================================================== */	
-.hierarchyitem {padding:7px;}
-.hierarchyitem.expaned ol {margin-left:14px;}
+.hierarchy {min-width:500px;}
 
-.expaned:before {
-				background-image: url(../../icons/menu/branch-open.png);
-				background-repeat: no-repeat;
-				width:32px;
-				height:32px;
-				content:' ';
-				position:relative;
-				float:left;
-				margin-top:-1px;
-				margin-left:7px;
-				margin-right:7px;} 
+.hierarchyitem {padding:7px; background:#ccc;}
+.hierarchyitem:nth-of-type(odd) {background:#eee;}
+.hierarchyitem.expaned ol {
+				margin-top:7px;
+				border:1px solid #ddd;}
 				
-.unexpaned:before {
-				background-image: url(../../icons/menu/branch-closed.png);
+.hierarchyitem.expaned ol li {				
+				padding-left:14px;
+				}
+
+.expaned:before, .unexpaned:before {
+				background-image: url(icons/vi_actions_sprite.svg);
 				background-repeat: no-repeat;
-				width:32px;
-				height:32px;
+				width:16px;
+				height:16px;
 				content:' ';
 				position:relative;
 				float:left;
-				margin-top:-1px;
-				margin-left:7px;
-				margin-right:7px;} 
+				margin-top:3px;
+				margin-left:4px;
+				margin-right:7px;
+				background-position: -0px -64px;
+				} 
+				
+.expaned:before {background-position: -16px -64px;
+				} 
 
+/* #vi_popups and alerts
+================================================== */	
+
+.popup {
+	position:absolute;
+	width:100%;
+	height:100%;
+	z-index:1000;
+	background:rgba(255,255,255,.5);
+}
+
+.alertbox {
+	width:350px;
+	height:auto;
+	padding:25px 25px 30px;
+	background:#eee;
+	margin:10% auto;
+	box-shadow: 5px 5px 10px rgba(0,0,0,.3);
+	border:1px solid #ccc;
+	border-bottom:1px solid #BE1622;
+}
 
 /* #vi_badges
 ================================================== */	
