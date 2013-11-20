@@ -3,19 +3,34 @@ import pyjd # this is dummy in pyjs.
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
-from priorityqueue import displayDelegateSelector
+from priorityqueue import displayDelegateSelector, viewDelegateSelector
+import utils
 
 
 class NodeWidget( html5.Div ):
-	def __init__(self, modul, data, *args, **kwargs ):
+	def __init__(self, modul, data, structure, *args, **kwargs ):
 		super( NodeWidget, self ).__init__( *args, **kwargs )
 		self.modul = modul
 		self.data = data
-		self.element.innerHTML = data["name"]
+		self.structure = structure
+		self.rebuildDescription()
 		self["style"]["border"] = "1px solid blue"
 		self["class"] = "treeitem node supports_drag supports_drop"
 		self["draggable"] = True
 		self.sinkEvent("onDragOver","onDrop","onDragStart")
+
+	def rebuildDescription(self):
+		hasDescr = False
+		for boneName, boneInfo in self.structure:
+			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
+				params = boneInfo["params"]
+				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
+					wdg = viewDelegateSelector.select( self.modul, boneName, utils.boneListToDict(self.structure) )
+					if wdg is not None:
+						self.appendChild( wdg(self.modul, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
+						hasDescr = True
+		if not hasDescr:
+			self.appendChild( html5.TextNode( self.data["name"]))
 
 	def onDragOver(self, event):
 		try:
@@ -42,15 +57,30 @@ class NodeWidget( html5.Div ):
 
 
 class LeafWidget( html5.Div ):
-	def __init__(self, modul, data, *args, **kwargs ):
+	def __init__(self, modul, data, structure, *args, **kwargs ):
 		super( LeafWidget, self ).__init__( *args, **kwargs )
 		self.modul = modul
 		self.data = data
+		self.structure = structure
+		self.rebuildDescription()
 		self.element.innerHTML = data["name"]
 		self["style"]["border"] = "1px solid black"
 		self["class"] = "treeitem leaf supports_drag"
 		self["draggable"] = True
 		self.sinkEvent("onDragStart")
+
+	def rebuildDescription(self):
+		hasDescr = False
+		for boneName, boneInfo in self.structure:
+			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
+				params = boneInfo["params"]
+				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
+					wdg = viewDelegateSelector.select( self.modul, boneName, utils.boneListToDict(self.structure) )
+					if wdg is not None:
+						self.appendChild( wdg(self.modul, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
+						hasDescr = True
+		if not hasDescr:
+			self.appendChild( html5.TextNode( self.data["name"]))
 
 	def onDragStart(self, event):
 		print("DRAG START")
@@ -263,9 +293,9 @@ class TreeWidget( html5.Div ):
 			self.pathList.removeChild( c )
 		for p in [None]+self.path:
 			if p is None:
-				c = NodeWidget( self.modul, {"id":self.rootNode,"name":"root"} )
+				c = NodeWidget( self.modul, {"id":self.rootNode,"name":"root"}, [] )
 			else:
-				c = NodeWidget( self.modul, p )
+				c = NodeWidget( self.modul, p, [] )
 			self.pathList.appendChild( c )
 			#DOM.appendChild( self.pathList, c.getElement() )
 			#c.onAttach()
@@ -282,9 +312,9 @@ class TreeWidget( html5.Div ):
 		data = NetworkService.decode( req )
 		for skel in data["skellist"]:
 			if req.reqType=="node":
-				n = self.nodeWidget( self.modul, skel )
+				n = self.nodeWidget( self.modul, skel, data["structure"] )
 			else:
-				n = self.leafWidget( self.modul, skel )
+				n = self.leafWidget( self.modul, skel, data["structure"] )
 			self.entryFrame.appendChild(n)
 
 

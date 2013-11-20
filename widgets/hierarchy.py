@@ -4,19 +4,22 @@ from time import time
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
-
+from priorityqueue import viewDelegateSelector
+import utils
 
 class HierarchyItem( html5.Li ):
 	"""
 		Holds one entry in a hierarchy.
 	"""
-	def __init__(self, modul, data, *args, **kwargs ):
+	def __init__(self, modul, data, structure, *args, **kwargs ):
 		super( HierarchyItem, self ).__init__( *args, **kwargs )
 		self.modul = modul
 		self.data = data
-		self.element.innerHTML = "%s %s" % (data["name"], data["sortindex"])
+		self.structure = structure
+		#self.element.innerHTML = "%s %s" % (data["name"], data["sortindex"])
 		self.isLoaded = False
 		self.isExpanded = False
+		self.rebuildDescription()
 		self.ol = html5.Ol()
 		self.ol["class"].append("subhierarchy")
 		self.appendChild(self.ol)
@@ -28,6 +31,19 @@ class HierarchyItem( html5.Li ):
 		self["class"].append("supports_drop")
 		self["draggable"] = True
 		self.sinkEvent("onDragStart", "onDrop", "onDragOver","onDragLeave")
+
+	def rebuildDescription(self):
+		hasDescr = False
+		for boneName, boneInfo in self.structure:
+			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
+				params = boneInfo["params"]
+				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
+					wdg = viewDelegateSelector.select( self.modul, boneName, utils.boneListToDict(self.structure) )
+					if wdg is not None:
+						self.appendChild( wdg(self.modul, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
+						hasDescr = True
+		if not hasDescr:
+			self.appendChild( html5.TextNode( self.data["name"]))
 
 	def onDragOver(self, event):
 		height = self.element.offsetHeight
@@ -294,7 +310,7 @@ class HierarchyWidget( html5.Div ):
 			assert ol is not None
 			ol = tmp.ol
 		for skel in data["skellist"]:
-			ol.appendChild( HierarchyItem( self.modul, skel ) )
+			ol.appendChild( HierarchyItem( self.modul, skel, data["structure"] ) )
 
 	def getCurrentSelection(self):
 		"""

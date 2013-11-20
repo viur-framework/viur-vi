@@ -2,10 +2,12 @@ import html5
 from network import NetworkService, DeferredCall
 from widgets.tree import TreeWidget, LeafWidget
 from priorityqueue import displayDelegateSelector
+from event import EventDispatcher
+import json
 
 class LeafFileWidget( LeafWidget ):
-	def __init__(self, modul, data, *args, **kwargs ):
-		super( LeafFileWidget, self ).__init__( modul, data, *args, **kwargs )
+	def __init__(self, modul, data, structure, *args, **kwargs ):
+		super( LeafFileWidget, self ).__init__( modul, data, structure, *args, **kwargs )
 		if "servingurl" in data.keys():
 			self.appendChild( html5.Img( data["servingurl"]) )
 		if "metamime" in data.keys():
@@ -20,6 +22,8 @@ class LeafFileWidget( LeafWidget ):
 class Uploader( html5.Progress ):
 	def __init__(self, file, node, *args, **kwargs):
 		super(Uploader, self).__init__( *args, **kwargs )
+		self.uploadSuccess = EventDispatcher("uploadSuccess")
+		self.responseValue = None
 		#self.files = files
 		r = NetworkService.request("file","getUploadURL", successHandler=self.onUploadUrlAvaiable, secure=True)
 		r.file = file
@@ -45,6 +49,7 @@ class Uploader( html5.Progress ):
 	def onLoad(self, *args, **kwargs ):
 		if self.xhr.status==200:
 			print("UPLOAD OKAY")
+			self.responseValue = json.loads( self.xhr.responseText )
 			DeferredCall(self.onSuccess, _delay=1000)
 		else:
 			print("UPLOAD FAILED")
@@ -57,6 +62,8 @@ class Uploader( html5.Progress ):
 			self["max"] = 100
 
 	def onSuccess(self, *args, **kwargs):
+		for v in self.responseValue["values"]:
+			self.uploadSuccess.fire( self, v )
 		self.parent().removeChild(self)
 		NetworkService.notifyChange("file")
 

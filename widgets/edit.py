@@ -7,6 +7,7 @@ from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
 from priorityqueue import protocolWrapperInstanceSelector
 from widgets.actionbar import ActionBar
+import utils
 
 
 class EditWidget( html5.Div ):
@@ -192,6 +193,7 @@ class EditWidget( html5.Div ):
 			data = NetworkService.decode( request )
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
 			NetworkService.notifyChange(self.modul)
+			conf["mainWindow"].log("success","Entry saved!")
 			self.clear()
 			self.bones = {}
 			self.reloadData()
@@ -201,10 +203,8 @@ class EditWidget( html5.Div ):
 		self.bones = {}
 		self.actionbar.resetLoadingState()
 		self.dataCache = data
-		tmpDict = {}
+		tmpDict = utils.boneListToDict( data["structure"] )
 		fieldSets = {}
-		for key, bone in data["structure"]:
-			tmpDict[ key ] = bone
 		currRow = 0
 		for key, bone in data["structure"]:
 			if bone["visible"]==False:
@@ -221,6 +221,9 @@ class EditWidget( html5.Div ):
 				legend["id"] = "vi_%s_%s_%s_legend" % (self.modul, "edit" if self.key else "add", cat)
 				legend.appendChild( html5.TextNode(cat))
 				fs.appendChild(legend)
+				section = html5.Section()
+				fs.appendChild(section)
+				fs._section = section
 				fieldSets[ cat ] = fs
 			if "params" in bone.keys() and bone["params"] and "category" in bone["params"].keys():
 				tabName = bone["params"]["category"]
@@ -246,9 +249,12 @@ class EditWidget( html5.Div ):
 				tmp.appendChild(descrLbl)
 				tmp.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
 				descrLbl = tmp
-			fieldSets[ cat ].appendChild( descrLbl )
+			containerDiv = html5.Div()
+			containerDiv.appendChild( descrLbl )
+			containerDiv.appendChild( widget )
+			fieldSets[ cat ]._section.appendChild( containerDiv )
 			#self["cell"][currRow][0] = descrLbl
-			fieldSets[ cat ].appendChild( widget )
+			#fieldSets[ cat ].appendChild( widget )
 			#self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget
@@ -256,6 +262,7 @@ class EditWidget( html5.Div ):
 		tmpList.sort( key=lambda x:x[0])
 		for k,v in tmpList:
 			self.form.appendChild( v )
+			v._section = None
 		self.unserialize( data["values"] )
 		self._lastData = data
 

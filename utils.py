@@ -79,3 +79,9 @@ def formatString( format, skelStructure, data, prefix=None ):
 			if "languages" in bone.keys() and bone[ "languages" ]:
 				res = res.replace( "$(%s)" % key, str(chooseLang( data, bone[ "languages" ], key) ) )
 	return( res )
+
+def boneListToDict( l ):
+	res = {}
+	for key, bone in l:
+		res[ key ] = bone
+	return( res )

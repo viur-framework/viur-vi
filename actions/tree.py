@@ -99,3 +99,55 @@ class EditAction( html5.ext.Button ):
 		pass
 
 actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
+
+
+class DeleteAction( html5.ext.Button ):
+	"""
+		Allows deleting an entry in a list-modul.
+	"""
+	def __init__(self, *args, **kwargs):
+		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )
+		self["class"] = "icon delete"
+		#self.setEnabled(False)
+		#self.setStyleAttribute("opacity","0.5")
+
+
+	def onAttach(self):
+		super(DeleteAction,self).onAttach()
+		self.parent().parent().selectionChangedEvent.register( self )
+
+	def onDetach(self):
+		self.parent().parent().selectionChangedEvent.unregister( self )
+		super(DeleteAction,self).onDetach()
+
+	def onSelectionChanged(self, table, selection ):
+		return
+		if len(selection)>0:
+			self.setEnabled(True)
+		else:
+			self.setEnabled(False)
+
+
+	@staticmethod
+	def isSuitableFor( modul, actionName ):
+		return( (modul == "tree" or modul.startswith("tree.")) and actionName=="delete")
+
+	def onClick(self, sender=None):
+		selection = self.parent().parent().getCurrentSelection()
+		if not selection:
+			return
+		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete)
+		d.deleteList = selection
+
+	def doDelete(self, dialog):
+		deleteList = dialog.deleteList
+		for x in deleteList:
+			if isinstance(x,self.parent().parent().nodeWidget ):
+				NetworkService.request( self.parent().parent().modul, "delete/node", {"id": x.data["id"]}, secure=True, modifies=True )
+			elif isinstance(x,self.parent().parent().leafWidget ):
+				NetworkService.request( self.parent().parent().modul, "delete/leaf", {"id": x.data["id"]}, secure=True, modifies=True )
+
+	def resetLoadingState(self):
+		pass
+
+actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
