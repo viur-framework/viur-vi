@@ -1,0 +1,3 @@
+[submodule "public/icons"]
+	path = public/icons
+	url = https://bitbucket.org/viur/icons.git
