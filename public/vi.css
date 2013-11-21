@@ -111,7 +111,7 @@ p { margin-bottom:10px;}
 					padding:7px 7px 7px;
 					float:left; 
 					text-decoration:none; 
-					text-shadow: 0px 0px 0px #fff;
+					text-shadow:none;
 					-webkit-transition: all 0.3s ease;
 					-moz-transition: all 0.3s ease;
 					-o-transition: all 0.3s ease;
@@ -754,8 +754,25 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 ================================================== */	
 .tree {width:100%; min-height:500px;}
 .treeitem {padding:7px;}
+
 .breadcrumb {min-width: 500px; overflow:hidden;}
 .breadcrumb .treeitem {float:left;}
+
+.treeitem:before {
+	background-image: url(icons/vi_actions_sprite.svg);
+	background-repeat: no-repeat;
+	width:16px;
+	height:16px;
+	content:' ';
+	position:relative;
+	float:left;
+	margin-top:3px;
+	margin-right: 7px
+}
+
+.treeitem.node:before {
+	background-position: -32px -64px;
+}
 
 .selectioncontainer {
 }
@@ -763,7 +780,7 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 .tree.cursor {background:#bbb;}
 .tree.selected {background:#ccc;}
 
-.supports_upload {
+.tree.supports_upload {
 	border:3px dashed #ddd;
 	background:#eee;
 	background-image:url(icons/status/supports_upload.svg);
@@ -771,7 +788,7 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 	background-position:center;
 }
 
-.supports_upload:after {
+.tree.supports_upload:after {
 	content: 'Drag your files here.';
 	display:block;
 	margin-top:5%;
