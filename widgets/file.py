@@ -6,6 +6,9 @@ from event import EventDispatcher
 import json
 
 class LeafFileWidget( LeafWidget ):
+	"""
+		Displays a file inside a tree application.
+	"""
 	def __init__(self, modul, data, structure, *args, **kwargs ):
 		super( LeafFileWidget, self ).__init__( modul, data, structure, *args, **kwargs )
 		if "servingurl" in data.keys():
@@ -20,7 +23,16 @@ class LeafFileWidget( LeafWidget ):
 		self["class"].append("file")
 
 class Uploader( html5.Progress ):
+	"""
+		Uploads a file to the server while providing visual feedback of the progress.
+	"""
 	def __init__(self, file, node, *args, **kwargs):
+		"""
+			@param file: The file to upload
+			@type file: A javascript "File" Object
+			@param node: Key of the desired node of our parents tree application or None for an anonymous upload.
+			@type node: String or None
+		"""
 		super(Uploader, self).__init__( *args, **kwargs )
 		self.uploadSuccess = EventDispatcher("uploadSuccess")
 		self.responseValue = None
@@ -30,12 +42,18 @@ class Uploader( html5.Progress ):
 		r.node = node
 
 	def onUploadUrlAvaiable(self, req ):
+		"""
+			Internal callback - the actual upload url (retrieved by calling /file/getUploadURL) is known.
+		"""
 		r = NetworkService.request("","/skey", successHandler=self.onSkeyAvaiable)
 		r.file = req.file
 		r.node = req.node
 		r.destUrl = req.result
 
 	def onSkeyAvaiable(self, req):
+		"""
+			Internal callback - the Security-Key is known.
+		"""
 		formData = eval("new FormData();")
 		formData.append("file", req.file )
 		formData.append("node", req.node )
@@ -47,6 +65,9 @@ class Uploader( html5.Progress ):
 		self.xhr.send( formData )
 
 	def onLoad(self, *args, **kwargs ):
+		"""
+			Internal callback - The state of our upload changed.
+		"""
 		if self.xhr.status==200:
 			print("UPLOAD OKAY")
 			self.responseValue = json.loads( self.xhr.responseText )
@@ -55,19 +76,27 @@ class Uploader( html5.Progress ):
 			print("UPLOAD FAILED")
 
 	def onProgress(self, event):
-		print(event.lengthComputable)
+		"""
+			Internal callback - further bytes have been transmitted
+		"""
 		if event.lengthComputable:
 			complete = int(event.loaded / event.total * 100 )
 			self["value"] = complete
 			self["max"] = 100
 
 	def onSuccess(self, *args, **kwargs):
+		"""
+			Internal callback - The upload succeeded.
+		"""
 		for v in self.responseValue["values"]:
 			self.uploadSuccess.fire( self, v )
 		self.parent().removeChild(self)
 		NetworkService.notifyChange("file")
 
 class FileWidget( TreeWidget ):
+	"""
+		Extends the TreeWidget to allow drag&drop upload of files to the current node.
+	"""
 	leafWidget = LeafFileWidget
 
 	def __init__(self,*args, **kwargs):
@@ -77,18 +106,15 @@ class FileWidget( TreeWidget ):
 
 	@staticmethod
 	def canHandle( modul, modulInfo ):
-		print(modulInfo["handler"].startswith("tree.simple.file" ))
 		return( modulInfo["handler"].startswith("tree.simple.file" ) )
 
 	def onDragOver(self, event):
-		print("DRAG OVER")
 		event.preventDefault()
 		event.stopPropagation()
 		#print("%s %s" % (event.offsetX, event.offsetY))
 
 
 	def onDrop(self, event):
-		print("DROP EVENT")
 		event.preventDefault()
 		event.stopPropagation()
 		files = event.dataTransfer.files

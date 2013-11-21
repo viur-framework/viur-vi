@@ -1,6 +1,9 @@
 import html5
 
 class ToolTip(html5.A):
+	"""
+		Small utility class for providing tooltips
+	"""
 	def __init__(self, shortText="popup", longText="", *args, **kwargs):
 		super( ToolTip, self ).__init__( *args, **kwargs )
 		self["class"] = "tooltip"

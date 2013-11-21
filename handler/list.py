@@ -14,8 +14,9 @@ class ListHandler( Pane ):
 		super( ListHandler, self ).__init__( modulInfo["name"], icon )
 		self.modulName = modulName
 		self.modulInfo = modulInfo
-
-
+		if "views" in modulInfo.keys():
+			for view in modulInfo["views"]:
+				self.addChildPane( ListHandler(modulName,view) )
 
 	@staticmethod
 	def canHandle( modulName, modulInfo ):

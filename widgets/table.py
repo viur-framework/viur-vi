@@ -22,11 +22,8 @@ class SelectTable( html5.Table ):
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
-
-		#self.sinkEvents(Event.ONCLICK | Event.ONDBLCLICK | Event.ONMOUSEMOVE | Event.ONMOUSEDOWN | Event.ONMOUSEUP | Event.ONKEYPRESS)
 		self.sinkEvent( "onClick", "onDblClick", "onMouseMove", "onMouseDown", "onMouseUp", "onKeyDown", "onKeyUp")
 		self["tabindex"] = 1
-		#DOM.setElemAttribute( self.getElement(), "height", "50px")
 		self._selectedRows = [] # List of row-indexes currently selected
 		self._currentRow = None # Rowindex of the cursor row
 		self._isMouseDown = False # Tracks status of the left mouse button
@@ -124,8 +121,6 @@ class SelectTable( html5.Table ):
 			event.preventDefault()
 
 	def onKeyDown(self, event):
-		print("GOT KEY DOWN")
-		print( dir(event))
 		if event.keyCode==40: #Arrow down
 			if self._currentRow is None:
 				self.setCursorRow(0)
@@ -232,6 +227,10 @@ class SelectTable( html5.Table ):
 			self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 
 	def getCurrentSelection(self):
+		"""
+			Returns a list of currently selected row-numbers
+			@returns: List
+		"""
 		if self._selectedRows:
 			return( self._selectedRows[:])
 		elif self._currentRow is not None:
@@ -268,9 +267,6 @@ class DataTable( html5.Div ):
 		super( DataTable, self ).__init__( )
 		self.table = SelectTable()
 		self.appendChild(self.table)
-		#self.sinkEvents(Event.ONSCROLL)
-		#self.setStyleAttribute("height","300px")
-		#self.setStyleAttribute("overflow","scroll")
 		self._model = [] # List of values where displaying right now
 		self._shownFields = [] # List of keys we display from the model
 		self._modelIdx = 0 # Internal counter to distinguish between 2 rows with identical data

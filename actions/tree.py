@@ -7,6 +7,9 @@ from pane import Pane
 
 
 class AddLeafAction( html5.ext.Button ):
+	"""
+		Creates a new leaf (ie. a file) for a tree application
+	"""
 	def __init__(self, *args, **kwargs):
 		super( AddLeafAction, self ).__init__( "Add", *args, **kwargs )
 		self["class"] = "icon add leaf"
@@ -29,6 +32,9 @@ actionDelegateSelector.insert( 1, AddLeafAction.isSuitableFor, AddLeafAction )
 
 
 class AddNodeAction( html5.ext.Button ):
+	"""
+		Creates a new node (ie. a directory) for a tree application
+	"""
 	def __init__(self, *args, **kwargs):
 		super( AddNodeAction, self ).__init__( "Add", *args, **kwargs )
 		self["class"] = "icon add node"
@@ -51,6 +57,10 @@ actionDelegateSelector.insert( 1, AddNodeAction.isSuitableFor, AddNodeAction )
 
 
 class EditAction( html5.ext.Button ):
+	"""
+		Edits an entry inside a tree application.
+		The type (node or leaf) of the entry is determined dynamically
+	"""
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
 		#self.setEnabled(False)
@@ -103,7 +113,8 @@ actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
 class DeleteAction( html5.ext.Button ):
 	"""
-		Allows deleting an entry in a list-modul.
+		Allows deleting an entry in a tree-modul.
+		The type (node or leaf) of the entry is determined dynamically.
 	"""
 	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )

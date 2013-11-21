@@ -61,6 +61,12 @@ class ActionBar( html5.Div ):
 		return( self.actions )
 
 	def resetLoadingState(self):
+		"""
+			Resets the loading-state of each child.
+			Each child has the ability to provide visual feedback once it has been clicked
+			and started working. This function is called from our parent once that action
+			has finished, so we can tell our children to return to a sane state.
+		"""
 		for c in self._children[:]:
 			if "resetLoadingState" in dir(c):
 				c.resetLoadingState()

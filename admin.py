@@ -78,9 +78,19 @@ class CoreWindow( html5.Div ):
 	def onError(self, req, code):
 		print("ONERROR")
 
+
+	def _registerChildPanes(self, pane ):
+		for childPane in pane.childPanes:
+			self.panes.append(childPane)
+			self.viewport.appendChild(childPane.widgetsDomElm)
+			childPane.widgetsDomElm["style"]["display"] = "none"
+			self._registerChildPanes(childPane)
+
 	def addPane(self, pane, parentPane=None):
 		#paneHandle = "pane_%s" % self.paneIdx
 		#self.paneIdx += 1
+		if len(pane.childPanes)>0:
+			self._registerChildPanes( pane )
 		self.panes.append( pane )
 		if parentPane:
 			parentPane.addChildPane( pane )

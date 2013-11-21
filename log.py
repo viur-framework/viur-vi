@@ -3,12 +3,22 @@ from network import DeferredCall
 from datetime import datetime
 
 class Log( html5.Div ):
+	"""
+		Provides the "messaging" center displayed at the bottom of VI
+	"""
 	def __init__(self):
 		super( Log, self ).__init__()
 		self["class"].append("vi_messenger")
 		#self.backlog = []
 
 	def log(self, type, msg ):
+		"""
+			Adds a message to the log
+			@param type: The type of the message.
+			@type type: "success", "error", "warning", "info", "progress"
+			@param msg: The message to append
+			@type msg: String
+		"""
 		assert type in ["success", "error", "warning", "info", "progress"]
 		spanWrap = html5.Span()
 		spanWrap["class"].append("log_"+type)

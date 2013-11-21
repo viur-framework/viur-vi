@@ -85,3 +85,13 @@ def boneListToDict( l ):
 	for key, bone in l:
 		res[ key ] = bone
 	return( res )
+
+def doesEventHitWidget( event, widget ):
+	"""
+		Test if event 'event' hits widget 'widget' (or *any* of its children)
+	"""
+	while widget:
+		if event.target == widget.element:
+			return( True )
+		widget = widget.parent()
+	return( False )

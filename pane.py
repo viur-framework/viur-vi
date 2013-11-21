@@ -69,6 +69,11 @@ class Pane( html5.Li ):
 		#DOM.appendChild( self.childDomElem, pane.getElement() )
 
 	def removeChildPane(self, pane):
+		"""
+			Removes a subpane.
+			@param pane: The pane to remove. Must be a direct child of this pane
+			@type pane: Pane
+		"""
 		assert pane in self.childPanes, "Cannot remove unknown child-pane %s from %s" % (str(pane),str(self))
 		self.childPanes.remove( pane )
 		self.childDomElem.removeChild( pane )
@@ -93,7 +98,7 @@ class Pane( html5.Li ):
 			Adds a widget to this pane.
 			Note: all widgets of a pane are visible at the same time!
 			@param widget: The widget to add
-			@type widget: widget
+			@type widget: Widget
 
 		"""
 		div = html5.Div()
@@ -102,6 +107,11 @@ class Pane( html5.Li ):
 		self.widgetsDomElm.appendChild( div )
 
 	def removeWidget(self, widget):
+		"""
+			Removes a widget.
+			@param widget: The widget to remove. Must be a direct child of this pane.
+			@type widget: Widget
+		"""
 		for c in self.widgetsDomElm._children:
 			if widget in c._children:
 				self.widgetsDomElm.removeChild( c )
@@ -109,6 +119,10 @@ class Pane( html5.Li ):
 		raise ValueError("Cannot remove unknown widget %s" % str(widget))
 
 	def containsWidget(self, widget ):
+		"""
+			Tests wherever widget is a direct child of this pane.
+			@returns: Bool
+		"""
 		for c in self.widgetsDomElm._children:
 			if widget in c._children:
 				return( True )

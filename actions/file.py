@@ -8,6 +8,12 @@ from widgets.file import Uploader
 
 
 class FileSelectUploader( html5.Input ):
+	"""
+		Small wrapper around <input type="file">.
+		Creates the element; executes the click (=opens the file dialog);
+		runs the callback if a file has been selected and removes itself from its parent.
+
+	"""
 	def __init__(self, *args, **kwargs):
 		super( FileSelectUploader, self ).__init__( *args, **kwargs )
 		self["type"] = "file"
@@ -23,6 +29,9 @@ class FileSelectUploader( html5.Input ):
 
 
 class AddLeafAction( html5.ext.Button ):
+	"""
+		Allows uploading of files using the file dialog.
+	"""
 	def __init__(self, *args, **kwargs):
 		super( AddLeafAction, self ).__init__( "Add", *args, **kwargs )
 		self["class"] = "icon upload"
@@ -33,18 +42,7 @@ class AddLeafAction( html5.ext.Button ):
 		return( modul == "tree.simple.file" and actionName=="add.leaf" )
 
 	def onClick(self, sender=None):
-		print("OPEN FILE DIALOG")
-		#fdiag = html5.Input()
-		#fdiag["type"] = "file"
-		#fdiag.element.click()
 		self.parent().parent().appendChild( FileSelectUploader() )
-		print("DIALOG DONE")
-		return
-		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_add_leaf" ])
-		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
-		pane.addWidget( edwg )
-		pane.focus()
 
 	def resetLoadingState(self):
 		pass

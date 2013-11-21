@@ -40,7 +40,6 @@ class ListWidget( html5.Div ):
 		"""
 			Requests the next rows from the server and feed them to the table.
 		"""
-		print("NEXT BATCH")
 		if self._currentCursor:
 			NetworkService.request(self.modul, "list", {"orderby":"name","amount":"7","cursor":self._currentCursor}, successHandler=self.onCompletion, cacheable=True )
 			self._currentCursor = None
@@ -60,19 +59,21 @@ class ListWidget( html5.Div ):
 		"""
 		if modul and modul!=self.modul:
 			return
-		print("GOT DATA CHANGED EVENT")
-		self.table.clear()
-		self._currentCursor = None
 		self.reloadData( )
 
-	def reloadData(self, modul=None ):
-		print("DIOG RELOAD")
+
+	def reloadData(self):
+		"""
+			Removes all currently displayed data and refetches the first batch from the server.
+		"""
+		self.table.clear()
+		self._currentCursor = None
 		NetworkService.request(self.modul, "list", {"orderby":"name","amount":"7"}, successHandler=self.onCompletion, cacheable=True )
 
 	def onCompletion(self, req):
 		"""
 			Pass the rows received to the datatable.
-			@param req: The network request that succeded.
+			@param req: The network request that succeed.
 		"""
 		data = NetworkService.decode( req )
 		if data["structure"] is None:
@@ -97,21 +98,8 @@ class ListWidget( html5.Div ):
 		for skel in data["skellist"]:
 			self.table.add( skel )
 		self.table.setShownFields( boneList )
-		print("SETTING NEW HEADER", [x["descr"] for x in boneInfoList])
 		self.table.setHeader( [x["descr"] for x in boneInfoList])
 		if "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
 
 
-
-	def onError(self, text, code):
-		l = Label("FAILED")
-		RootPanel().add(l)
-		l = Label(code)
-		RootPanel().add(l)
-
-	def onTimeout(self, text):
-		l = Label("TIMEOUT")
-		RootPanel().add(l)
-		l = Label(unicode(text))
-		RootPanel().add(l)

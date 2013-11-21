@@ -15,6 +15,10 @@ class DeferredCall( object ):
 		before the Network-Call yields results.
 	"""
 	def __init__( self, func, *args, **kwargs ):
+		"""
+			@param func: Callback function
+			@type func: Callable
+		"""
 		super( DeferredCall, self ).__init__()
 		delay = 25
 		if "_delay" in kwargs.keys():
@@ -27,10 +31,15 @@ class DeferredCall( object ):
 		w.setTimeout( self.run, delay )
 
 	def run(self):
-		print("FIREING TIMER")
+		"""
+			Internal callback that executes the callback function
+		"""
 		self._tFunc( *self._tArgs, **self._tKwArgs )
 
 class HTTPRequest(object):
+	"""
+		Wrapper around XMLHttpRequest
+	"""
 	def __init__(self, *args, **kwargs ):
 		super( HTTPRequest, self ).__init__( *args, **kwargs )
 		self.req = eval("new XMLHttpRequest()")
@@ -38,14 +47,27 @@ class HTTPRequest(object):
 		self.cb = None
 
 	def asyncGet(self, url, cb):
+		"""
+			Performs a GET operation on a remote server
+			@param url: The url to fetch. Either absolute or relative to the server
+			@type url: String
+			@param cb: Target object to call "onCompletion" on success
+			@type cb: object
+		"""
 		self.cb = cb
 		self.type = "GET"
 		self.payload = None
 		self.content_type = None
 		self.req.open("GET",url,True)
 
-
 	def asyncPost(self, url, payload, cb, content_type=None ):
+		"""
+			Performs a POST operation on a remote server
+			@param url: The url to fetch. Either absolute or relative to the server
+			@type url: String
+			@param cb: Target object to call "onCompletion" on success
+			@type cb: object
+		"""
 		self.cb = cb
 		self.type = "POST"
 		self.payload = payload
@@ -54,6 +76,9 @@ class HTTPRequest(object):
 
 
 	def onReadyStateChange(self, *args, **kwargs):
+		"""
+			Internal callback.
+		"""
 		if self.req.readyState == 1:
 			if self.type=="POST" and self.content_type is not None:
 				self.req.setRequestHeader('Content-Type', self.content_type)
@@ -80,8 +105,6 @@ class NetworkService( object ):
 			@param modul: Name of the modul where the change occured
 			@type modul: string
 		"""
-		print("NOTIFIYING CHANGES NOW")
-		print( NetworkService.changeListeners )
 		for c in NetworkService.changeListeners:
 			c.onDataChanged( modul )
 
@@ -331,7 +354,6 @@ class NetworkService( object ):
 		"""
 			Internal hook for the AJAX call.
 		"""
-
 		self.status = "failed"
 		self.result = text
 		for s in self.failureHandler:
@@ -350,5 +372,4 @@ class NetworkService( object ):
 		"""
 			Internal hook for the AJAX call.
 		"""
-
 		self.onError( text, -1 )

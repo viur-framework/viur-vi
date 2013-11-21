@@ -2,6 +2,9 @@ import html5
 from network import NetworkService
 
 class TopBarWidget( html5.Header ):
+	"""
+		Provides the top-bar of VI
+	"""
 	def __init__(self):
 		#DOM.setAttribute( self.element, "class", "vi_topbar")
 		super(TopBarWidget,self ).__init__( )
