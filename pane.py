@@ -60,7 +60,7 @@ class Pane( html5.Li ):
 		self.childPanes.append( pane )
 		if not self.childDomElem:
 			self.childDomElem = html5.Ul()
-			self.childDomElem["class"] = "actionlist"
+			#self.childDomElem["class"] = "actionlist"
 			self.appendChild( self.childDomElem )
 			#self.childDomElem = DOM.createElement("ul")
 			#DOM.setElemAttribute(self.childDomElem, "class", "actionlist")
@@ -69,6 +69,11 @@ class Pane( html5.Li ):
 		#DOM.appendChild( self.childDomElem, pane.getElement() )
 
 	def removeChildPane(self, pane):
+		"""
+			Removes a subpane.
+			@param pane: The pane to remove. Must be a direct child of this pane
+			@type pane: Pane
+		"""
 		assert pane in self.childPanes, "Cannot remove unknown child-pane %s from %s" % (str(pane),str(self))
 		self.childPanes.remove( pane )
 		self.childDomElem.removeChild( pane )
@@ -83,7 +88,7 @@ class Pane( html5.Li ):
 		assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
 		#Kill all remaining children
 		for widget in self.widgetsDomElm._children[:]:
-			self.removeWidget(widget)
+			self.widgetsDomElm.removeWidget(widget)
 		self.closeBtn = None
 		self.label = None
 		super(Pane,self).onDetach()
@@ -93,7 +98,7 @@ class Pane( html5.Li ):
 			Adds a widget to this pane.
 			Note: all widgets of a pane are visible at the same time!
 			@param widget: The widget to add
-			@type widget: widget
+			@type widget: Widget
 
 		"""
 		div = html5.Div()
@@ -102,7 +107,26 @@ class Pane( html5.Li ):
 		self.widgetsDomElm.appendChild( div )
 
 	def removeWidget(self, widget):
-		self.widgetsDomElm.removeChild( widget )
+		"""
+			Removes a widget.
+			@param widget: The widget to remove. Must be a direct child of this pane.
+			@type widget: Widget
+		"""
+		for c in self.widgetsDomElm._children:
+			if widget in c._children:
+				self.widgetsDomElm.removeChild( c )
+				return
+		raise ValueError("Cannot remove unknown widget %s" % str(widget))
+
+	def containsWidget(self, widget ):
+		"""
+			Tests wherever widget is a direct child of this pane.
+			@returns: Bool
+		"""
+		for c in self.widgetsDomElm._children:
+			if widget in c._children:
+				return( True )
+		return( False )
 
 	def onClick(self, event, *args, **kwargs ):
 		self.focus()
@@ -110,3 +134,26 @@ class Pane( html5.Li ):
 
 	def focus(self):
 		conf["mainWindow"].focusPane( self )
+
+
+class GroupPane( Pane ):
+	"""
+		This pane groups subpanes; it cannot have direct childrens
+	"""
+
+	def __init__(self, *args, **kwargs ):
+		super( GroupPane, self ).__init__( *args, **kwargs )
+		self.childDomElem = html5.Ul()
+		self.childDomElem["style"]["display"] = "none"
+		self.appendChild( self.childDomElem )
+
+	def onClick(self, event, *args, **kwargs ):
+		if self.childDomElem["style"]["display"] == "none":
+			self.childDomElem["style"]["display"] = "block"
+		else:
+			self.childDomElem["style"]["display"] = "none"
+		event.stopPropagation()
+
+	def onFocus(self,event):
+		if len( self.childPanes )>0:
+			conf["mainWindow"].focusPane( self.childPanes[0] )

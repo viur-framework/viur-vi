@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from event import EventDispatcher
 
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
@@ -7,6 +8,7 @@ from utils import formatString
 from widgets.tree import TreeWidget
 from config import conf
 from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone
+from widgets.file import Uploader
 
 
 class FileViewBoneDelegate(object):
@@ -63,6 +65,31 @@ class FileViewBoneDelegate(object):
 		#return( formatString( self.format, self.structure, value ) ) FIXME!
 
 class FileMultiSelectionBone( RelationalMultiSelectionBone ):
+
+	def __init__(self, *args, **kwargs):
+		super(FileMultiSelectionBone, self).__init__( *args, **kwargs )
+		self.sinkEvent("onDragOver","onDrop")
+		self["class"].append("supports_upload")
+
+	def onDragOver(self, event):
+		super(FileMultiSelectionBone,self).onDragOver(event)
+		event.preventDefault()
+		event.stopPropagation()
+
+	def onDrop(self, event):
+		print("DROP EVENT")
+		event.preventDefault()
+		event.stopPropagation()
+		files = event.dataTransfer.files
+		for x in range(0,files.length):
+			ul = Uploader(files.item(x), None )
+			ul.uploadSuccess.register( self )
+			self.appendChild( ul )
+
+	def onUploadSuccess(self, uploader, file ):
+		self.setSelection( [file] )
+
+
 	def onShowSelector(self, *args, **kwargs):
 		"""
 			Opens a TreeWidget sothat the user can select new values
@@ -89,6 +116,33 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		self.currentSelector = None
 
 class FileSingleSelectionBone( RelationalSingleSelectionBone ):
+
+	def __init__(self, *args, **kwargs):
+		super(FileSingleSelectionBone, self).__init__( *args, **kwargs )
+		self.sinkEvent("onDragOver","onDrop")
+		self["class"].append("supports_upload")
+
+	def onDragOver(self, event):
+		super(FileSingleSelectionBone,self).onDragOver(event)
+		event.preventDefault()
+		event.stopPropagation()
+
+	def onDrop(self, event):
+		print("DROP EVENT")
+		event.preventDefault()
+		event.stopPropagation()
+		files = event.dataTransfer.files
+		if files.length>1:
+			conf["mainWindow"].log("error","You cannot drop more than one file here!")
+			return
+		for x in range(0,files.length):
+			ul = Uploader(files.item(x), None )
+			ul.uploadSuccess.register( self )
+			self.appendChild( ul )
+
+	def onUploadSuccess(self, uploader, file ):
+		self.setSelection( file )
+
 	def onShowSelector(self, *args, **kwargs):
 		"""
 			Opens a TreeWidget sothat the user can select new values

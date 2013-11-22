@@ -4,19 +4,30 @@ from time import time
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
-
+from priorityqueue import viewDelegateSelector
+import utils
 
 class HierarchyItem( html5.Li ):
 	"""
 		Holds one entry in a hierarchy.
 	"""
-	def __init__(self, modul, data, *args, **kwargs ):
+	def __init__(self, modul, data, structure, *args, **kwargs ):
+		"""
+			@param modul: Name of the modul we shall display data for
+			@type modul: String
+			@param data: The data for that entry
+			@type data: Dict
+			@param structure: Skeleton structure for that modul (as received  from the server)
+			@type structure: List
+		"""
 		super( HierarchyItem, self ).__init__( *args, **kwargs )
 		self.modul = modul
 		self.data = data
-		self.element.innerHTML = "%s %s" % (data["name"], data["sortindex"])
+		self.structure = structure
+		#self.element.innerHTML = "%s %s" % (data["name"], data["sortindex"])
 		self.isLoaded = False
 		self.isExpanded = False
+		self.buildDescription()
 		self.ol = html5.Ol()
 		self.ol["class"].append("subhierarchy")
 		self.appendChild(self.ol)
@@ -29,24 +40,40 @@ class HierarchyItem( html5.Li ):
 		self["draggable"] = True
 		self.sinkEvent("onDragStart", "onDrop", "onDragOver","onDragLeave")
 
+	def buildDescription(self):
+		"""
+			Generates the visual representation of this entry.
+		"""
+		hasDescr = False
+		for boneName, boneInfo in self.structure:
+			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
+				params = boneInfo["params"]
+				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
+					wdg = viewDelegateSelector.select( self.modul, boneName, utils.boneListToDict(self.structure) )
+					if wdg is not None:
+						self.appendChild( wdg(self.modul, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
+						hasDescr = True
+		if not hasDescr:
+			self.appendChild( html5.TextNode( self.data["name"]))
+
 	def onDragOver(self, event):
+		"""
+			Test wherever the current drag would mean "make it a child of us", "insert before us" or
+			"insert after us" and apply the correct classes.
+		"""
 		height = self.element.offsetHeight
 		eventOffset = event.offsetY
-		print("OFFSET HEIGHT", height)
 		if eventOffset<height*0.10 and self.currentMargin is None:
-			print("x1")
 			self.currentMargin = "top"
 			self["class"].remove("insert_here")
 			self["class"].append("insert_before")
 			#self["style"]["border-top"] = "1px solid red"
 		elif eventOffset>height*0.90 and self.currentMargin is None:
-			print("x2")
 			self.currentMargin = "bottom"
 			self["class"].remove("insert_here")
 			self["class"].append("insert_after")
 			#self["style"]["border-bottom"] = "1px solid blue"
 		elif self.currentMargin and eventOffset>height*0.20 and eventOffset<height*0.80:
-			print("x3")
 			self["style"]["border"] = "none"
 			self["class"].remove("insert_before")
 			self["class"].remove("insert_after")
@@ -58,7 +85,9 @@ class HierarchyItem( html5.Li ):
 		#print("%s %s" % (event.offsetX, event.offsetY))
 
 	def onDragLeave(self, event):
-		print("DRAG LEAVE")
+		"""
+			Remove all drop indicating classes.
+		"""
 		self["class"].remove("insert_before")
 		self["class"].remove("insert_after")
 		self["class"].remove("insert_here")
@@ -66,11 +95,17 @@ class HierarchyItem( html5.Li ):
 		super(HierarchyItem,self).onDragLeave( event )
 
 	def onDragStart(self, event):
-		print("DRAG START")
+		"""
+			We get dragged, store our id inside the datatransfer object.
+		"""
 		event.dataTransfer.setData( "Text", self.data["id"] )
 		event.stopPropagation()
 
 	def onDrop(self, event):
+		"""
+			We received a drop. Test wherever its means "make it a child of us", "insert before us" or
+			"insert after us" and initiate the corresponding NetworkService requests.
+		"""
 		event.stopPropagation()
 		height = self.element.offsetHeight
 		eventOffset = event.offsetY
@@ -149,14 +184,14 @@ class HierarchyWidget( html5.Div ):
 
 	def __init__( self, modul, rootNode=None, node=None, *args, **kwargs ):
 		"""
-			@param modul: Name of the modul we shall handle. Must be a list application!
+			@param modul: Name of the modul we shall handle. Must be a hierarchy application!
 			@type modul: string
+			@param rootNode: The repository we shall display. If none, we try to select one.
+			@type rootNode: String or None
 		"""
 		super( HierarchyWidget, self ).__init__( )
-		print("INIT HierarchyWidget WIDGET")
 		self.modul = modul
 		self.rootNode = rootNode
-		self.node = node or rootNode
 		self.actionBar = ActionBar( modul, "hierarchy" )
 		self.appendChild( self.actionBar )
 		self.entryFrame = html5.Ol()
@@ -167,10 +202,8 @@ class HierarchyWidget( html5.Div ):
 		self._currentCursor = None
 		self._currentRequests = []
 		if self.rootNode:
-			print("INIT TREE WIDGET X!")
 			self.reloadData()
 		else:
-			print("INIT TREE WIDGET X2")
 			NetworkService.request(self.modul,"listRootNodes", successHandler=self.onSetDefaultRootNode)
 		self.path = []
 		self.sinkEvent( "onClick", "onDblClick" )
@@ -203,9 +236,20 @@ class HierarchyWidget( html5.Div ):
 			elem = self.entryFrame
 		for child in elem._children:
 			if child.element==event.target:
-				return( child )
-			tmp = self.itemForEvent( event, child.ol )
-			if tmp is not None:
+				if isinstance( child, HierarchyItem ):
+					# User clicked directly on one HierarchyItem
+					return( child )
+				else:
+					# User clicked somewhere INTO one HierarchyItem
+					# Return a marker to the outer recursion that this is the correct HierarchyItem
+					return( False )
+			tmp = self.itemForEvent( event, child )
+			if tmp is False:
+				if isinstance(child, HierarchyItem):
+					return( child )
+				else:
+					return( False )
+			elif tmp is not None:
 				return( tmp )
 		return( None )
 
@@ -262,7 +306,6 @@ class HierarchyWidget( html5.Div ):
 			@type rootNode: string
 		"""
 		self.rootNode = rootNode
-		self.node = rootNode
 		self._currentCursor = None
 		self.reloadData()
 
@@ -286,15 +329,19 @@ class HierarchyWidget( html5.Div ):
 		r.node = node
 
 	def onRequestSucceded(self, req):
+		"""
+			The NetworkRequest for a (sub)node finished.
+			Create a new HierarchyItem for each entry received and add them to our view
+		"""
 		data = NetworkService.decode( req )
 		if req.node==self.rootNode:
 			ol = self.entryFrame
 		else:
 			tmp = self.itemForKey( req.node )
-			assert ol is not None
 			ol = tmp.ol
+			assert ol is not None
 		for skel in data["skellist"]:
-			ol.appendChild( HierarchyItem( self.modul, skel ) )
+			ol.appendChild( HierarchyItem( self.modul, skel, data["structure"] ) )
 
 	def getCurrentSelection(self):
 		"""
@@ -306,12 +353,16 @@ class HierarchyWidget( html5.Div ):
 		return( [] )
 
 	def onDrop(self, event):
-		print("OXN DROXP")
+		"""
+			We got a drop event. Make that item a direct child of our rootNode
+		"""
 		srcKey = event.dataTransfer.getData("Text")
 		NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":self.rootNode}, secure=True, modifies=True )
 		event.stopPropagation()
 
 	def onDragOver(self, event):
-		print("drag over")
+		"""
+			Allow dropping children on the rootNode
+		"""
 		event.preventDefault()
 		event.stopPropagation()

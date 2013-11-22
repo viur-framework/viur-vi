@@ -7,6 +7,9 @@ from pane import Pane
 from html5.ext.inputdialog import InputDialog
 
 class AddNodeAction( html5.ext.Button ):
+	"""
+		Adds a new directory to a tree.simple application.
+	"""
 	def __init__(self, *args, **kwargs):
 		super( AddNodeAction, self ).__init__( "Add Node", *args, **kwargs )
 		self["class"] = "icon mkdir"
@@ -18,13 +21,6 @@ class AddNodeAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		i = InputDialog( "Directory Name", successHandler=self.createDir )
-		#self.appendChild( i )
-		#pane = Pane("Add", closeable=True)
-		#conf["mainWindow"].stackPane( pane )
-		#edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
-		#pane.addWidget( edwg )
-		#pane.focus()
-
 
 	def createDir(self, dialog, dirName ):
 		if len(dirName)==0:
@@ -38,11 +34,14 @@ actionDelegateSelector.insert( 3, AddNodeAction.isSuitableFor, AddNodeAction )
 
 
 class EditAction( html5.ext.Button ):
+	"""
+		Provides editing in a tree.simple application.
+		If a directory is selected, it opens a dialog for renaming that directory,
+		otherwise the full editWidget is used.
+	"""
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
-		#self.setEnabled(False)
 		self["class"] = "icon edit"
-		#self.setStyleAttribute("opacity","0.5")
 
 	def onAttach(self):
 		super(EditAction,self).onAttach()

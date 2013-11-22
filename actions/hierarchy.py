@@ -7,6 +7,9 @@ from pane import Pane
 
 
 class AddAction( html5.ext.Button ):
+	"""
+		Adds a new node in a hierarchy application.
+	"""
 	def __init__(self, *args, **kwargs):
 		super( AddAction, self ).__init__( "Add", *args, **kwargs )
 		self["class"] = "icon add"
@@ -30,11 +33,12 @@ actionDelegateSelector.insert( 1, AddAction.isSuitableFor, AddAction )
 
 
 class EditAction( html5.ext.Button ):
+	"""
+		Edits a node in a hierarchy application.
+	"""
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
-		#self.setEnabled(False)
 		self["class"] = "icon edit"
-		#self.setStyleAttribute("opacity","0.5")
 
 	def onAttach(self):
 		super(EditAction,self).onAttach()
@@ -74,11 +78,12 @@ actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
 
 class DeleteAction( html5.ext.Button ):
+	"""
+		Deletes a node from a hierarchy application.
+	"""
 	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )
 		self["class"] = "icon delete"
-		#self.setEnabled(False)
-		#self.setStyleAttribute("opacity","0.5")
 
 
 	def onAttach(self):
@@ -90,7 +95,7 @@ class DeleteAction( html5.ext.Button ):
 		super(DeleteAction,self).onDetach()
 
 	def onSelectionChanged(self, table, selection ):
-		return
+		return #FIXME!
 		if len(selection)>0:
 			self.setEnabled(True)
 		else:

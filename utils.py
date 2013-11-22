@@ -79,3 +79,19 @@ def formatString( format, skelStructure, data, prefix=None ):
 			if "languages" in bone.keys() and bone[ "languages" ]:
 				res = res.replace( "$(%s)" % key, str(chooseLang( data, bone[ "languages" ], key) ) )
 	return( res )
+
+def boneListToDict( l ):
+	res = {}
+	for key, bone in l:
+		res[ key ] = bone
+	return( res )
+
+def doesEventHitWidget( event, widget ):
+	"""
+		Test if event 'event' hits widget 'widget' (or *any* of its children)
+	"""
+	while widget:
+		if event.target == widget.element:
+			return( True )
+		widget = widget.parent()
+	return( False )

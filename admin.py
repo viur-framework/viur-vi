@@ -8,34 +8,9 @@ import handler
 import bones
 import actions
 from priorityqueue import HandlerClassSelector
+from log import Log
+from pane import Pane, GroupPane
 
-def translate( key, **kwargs ):
-	return( key.upper() )
-	try:
-		lang = request.current.get().language
-	except:
-		return( key )
-	res = None
-	lang = lang or conf["viur.defaultLanguage"]
-	if lang in conf["viur.languageAliasMap"].keys():
-		lang = conf["viur.languageAliasMap"][ lang ]
-	if lang and lang in dir( translations ):
-		langDict = getattr(translations,lang)
-		if key.lower() in langDict.keys():
-			res = langDict[ key.lower() ]
-	if res is None and lang and lang in dir( servertrans ):
-		langDict = getattr(servertrans,lang)
-		if key.lower() in langDict.keys():
-			res = langDict[ key.lower() ]
-	if res is None and conf["viur.logMissingTranslations"]:
-		from server import db
-		db.GetOrInsert( key="%s-%s" % (key, str(lang)), kindName="viur-missing-translations", langkey=key, lang=lang )
-	if res is None:
-		res = key
-	for k, v in kwargs.items():
-		res = res.replace("{{%s}}"%k, v )
-	return( res )
-#__builtins__["_"] = translate #Install the global "_"-Function
 
 class CoreWindow( html5.Div ):
 	def __init__(self, *args, **kwargs ):
@@ -57,6 +32,8 @@ class CoreWindow( html5.Div ):
 		self.viewport = html5.Div()
 		self.viewport["class"] = "vi_viewer"
 		self.workSpace.appendChild( self.viewport)
+		self.logWdg = Log()
+		self.appendChild( self.logWdg )
 		#DOM.appendChild( self.modulMgr, self.modulList )
 		#self.modulList = ModulListWidget()
 		#self.adopt( self.modulList,self.modulMgr )
@@ -66,25 +43,54 @@ class CoreWindow( html5.Div ):
 		NetworkService.request( None, "/admin/config", successHandler=self.onCompletion,
 					failureHandler=self.onError, cacheable=True )
 
+	def log(self, type, msg ):
+		self.logWdg.log( type, msg )
+
 	def onCompletion(self, req):
 		data = NetworkService.decode(req)
-		tmpList = [(k,v) for (k,v) in data["modules"].items()]
-		tmpList.sort( key=lambda x:x[1]["name"].lower())
-		for modulName, modulInfo in tmpList:# data["modules"].items():
+		groups = {}
+		panes = []
+		if "configuration" in data.keys() and isinstance( data["configuration"], dict) \
+			and "modulGroups" in data["configuration"].keys() and isinstance( data["configuration"]["modulGroups"], list):
+			for group in data["configuration"]["modulGroups"]:
+				p = GroupPane(group["name"],iconURL=group["icon"])
+				groups[ group["prefix"] ] = p
+				panes.append( (group["name"], p) )
+		for modulName, modulInfo in data["modules"].items():# data["modules"].items():
 			conf["modules"][modulName] = modulInfo
 			handlerCls = HandlerClassSelector.select( modulName, modulInfo )
 			assert handlerCls is not None, "No handler available for modul %s" % modulName
 			handler = handlerCls( modulName, modulInfo )
-			self.addPane( handler )
+			isChild = False
+			for k in groups.keys():
+				if modulInfo["name"].startswith(k):
+					groups[k].addChildPane( handler )
+					isChild = True
+					break
+			if not isChild:
+				panes.append( ( modulInfo["name"], handler ) )
+		panes.sort( key=lambda x: x[0] )
+		for k, pane in panes:
+			self.addPane( pane )
 
 
 
 	def onError(self, req, code):
 		print("ONERROR")
 
+
+	def _registerChildPanes(self, pane ):
+		for childPane in pane.childPanes:
+			self.panes.append(childPane)
+			self.viewport.appendChild(childPane.widgetsDomElm)
+			childPane.widgetsDomElm["style"]["display"] = "none"
+			self._registerChildPanes(childPane)
+
 	def addPane(self, pane, parentPane=None):
 		#paneHandle = "pane_%s" % self.paneIdx
 		#self.paneIdx += 1
+		if len(pane.childPanes)>0:
+			self._registerChildPanes( pane )
 		self.panes.append( pane )
 		if parentPane:
 			parentPane.addChildPane( pane )
@@ -125,6 +131,7 @@ class CoreWindow( html5.Div ):
 		self.viewport.removeChild( pane.widgetsDomElm )
 
 	def addWidget(self, widget, pane ):
+		print("ADDING ", widget)
 		pane.addWidget( widget )
 
 	def stackWidget(self, widget ):
@@ -133,8 +140,10 @@ class CoreWindow( html5.Div ):
 
 
 	def removeWidget(self, widget ):
+		print("REMOVING ", widget)
 		for pane in self.panes:
-			if widget in pane.widgetsDomElm._children:
+			print("testing pane", pane, pane.widgetsDomElm._children)
+			if pane.containsWidget( widget ):
 				pane.removeWidget( widget )
 				return
 		raise AssertionError("Tried to remove unknown widget %s" % str( widget ))

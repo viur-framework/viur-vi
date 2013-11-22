@@ -6,6 +6,9 @@ from priorityqueue import editBoneSelector, viewDelegateSelector
 
 
 class BaseViewBoneDelegate( object ):
+	"""
+		Base "Catch-All" delegate for everything not handled separately.
+	"""
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( BaseViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
@@ -18,7 +21,9 @@ class BaseViewBoneDelegate( object ):
 		return( html5.Label("..") )
 
 class BaseEditBone( html5.Input ):
-
+	"""
+		Base edit widget for everything not handled separately.
+	"""
 	def setParams(self):
 		return
 		if self.readOnly:

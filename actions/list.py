@@ -5,6 +5,9 @@ from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
 
+class EditPane( Pane ):
+	pass
+
 """
 	Provides the actions suitable for list applications
 """
@@ -23,7 +26,7 @@ class AddAction( html5.ext.Button ):
 		return( (modul == "list" or modul.startswith("list.")) and actionName=="add" )
 
 	def onClick(self, sender=None):
-		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_add" ])
+		pane = EditPane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList)
 		pane.addWidget( edwg )

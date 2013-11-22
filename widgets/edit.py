@@ -7,6 +7,7 @@ from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
 from priorityqueue import protocolWrapperInstanceSelector
 from widgets.actionbar import ActionBar
+import utils
 
 
 class EditWidget( html5.Div ):
@@ -44,7 +45,7 @@ class EditWidget( html5.Div ):
 			if applicationType==EditWidget.appHierarchy or applicationType==EditWidget.appTree:
 				assert node is not None #We still need a rootNode for cloning
 			if applicationType==EditWidget.appTree:
-				assert path is not None #We still need a path for cloning #FIXME
+				assert node is not None #We still need a path for cloning #FIXME
 		# End santy-checks
 		self.applicationType = applicationType
 		self.key = key
@@ -62,54 +63,22 @@ class EditWidget( html5.Div ):
 		self.actionbar.setActions(["save.close","save.continue","reset"])
 		self.reloadData( )
 
-
-
-	def onBusyStateChanged( self, busy ):
-		if busy:
-			self.overlay.inform( self.overlay.BUSY )
-		else:
-			self.overlay.clear()
-
-	def getBreadCrumb( self ):
-		if self._lastData:
-			config = conf.serverConfig["modules"][ self.modul ]
-			if "format" in config.keys():
-				format = config["format"]
-			else:
-				format = "$(name)"
-			itemName = formatString( format, self._lastData["structure"], self._lastData["values"] )
-		else:
-			itemName = ""
-		if self.clone:
-			if itemName:
-				descr = QtCore.QCoreApplication.translate("EditWidget", "Clone: %s") % itemName
-			else:
-				descr = QtCore.QCoreApplication.translate("EditWidget", "Clone entry")
-			icon = QtGui.QIcon( "icons/actions/clone.png" )
-		elif self.key or self.applicationType == EditWidget.appSingleton: #Were editing
-			if itemName:
-				descr = QtCore.QCoreApplication.translate("EditWidget", "Edit: %s") % itemName
-			else:
-				descr = QtCore.QCoreApplication.translate("EditWidget", "Edit entry")
-			icon = QtGui.QIcon( "icons/actions/edit.svg" )
-		else: #Were adding 
-			descr = QtCore.QCoreApplication.translate("EditWidget", "Add entry") #We know that we cant know the name yet
-			icon = QtGui.QIcon( "icons/actions/add.svg" )
-		return( descr, icon )
-		
-	
-	def onBtnCloseReleased(self, *args, **kwargs):
-		event.emit( "popWidget", self )
-
 	def reloadData(self):
-		print("--RELOADING--")
 		self.save( {} )
 		return
 
 	def save(self, data ):
+		"""
+			Creates the actual NetworkService request used to transmit our data.
+			If data is None, it fetches a clean add/edit form.
+
+			@param data: The values to transmit or None to fetch a new, clean add/edit form.
+			@type data: Dict or None
+		"""
 		if self.modul=="_tasks":
-			self.editTaskID = protoWrap.edit( self.key, **data )
+			#self.editTaskID = protoWrap.edit( self.key, **data )
 			#request = NetworkService.request("/%s/execute/%s" % ( self.modul, self.id ), data, secure=True, successHandler=self.onSaveResult )
+			return #FIXME!
 		elif self.applicationType == EditWidget.appList: ## Application: List
 			if self.key and (not self.clone or not data):
 				#self.editTaskID = protoWrap.edit( self.key, **data )
@@ -137,53 +106,19 @@ class EditWidget( html5.Div ):
 		else:
 			raise NotImplementedError() #Should never reach this
 
-	def onBtnResetReleased( self, *args, **kwargs ):
-		res = QtGui.QMessageBox.question(	self,
-						QtCore.QCoreApplication.translate("EditWidget", "Confirm reset"),
-						QtCore.QCoreApplication.translate("EditWidget", "Discard all unsaved changes?"),
-						QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, QtGui.QMessageBox.No
-						)
-		if res == QtGui.QMessageBox.Yes:
-			self.setData( data=self.dataCache )
-
-	def parseHelpText( self, txt ):
-		"""Parses the HTML-Text txt and returns it with remote Images replaced with their local copys
-		
-		@type txt: String
-		@param txt: HTML-Text
-		@return: String
-		"""
-		res = ""
-		while txt:
-			idx = txt.find("<img src=")
-			if idx==-1:
-				res += txt
-				return( res )
-			startpos = txt.find( "\"", idx+8)+1
-			endpos = txt.find( "\"", idx+13)
-			url = txt[ startpos:endpos ]
-			res += txt[ : startpos ]
-			res += getFileName( url ) #FIXME: BROKEN
-			txt = txt[ endpos : ]
-		
-		fileName = os.path.join( conf.currentPortalConfigDirectory, sha1(dlkey.encode("UTF-8")).hexdigest() )
-		if not os.path.isfile( fileName ):
-			try:
-				data = NetworkService.request( dlkey )
-			except:
-				return( None )
-			open( fileName, "w+b" ).write( data )	
-		return( fileName )
-
 	def clear(self):
+		"""
+			Removes all visible bones/forms/fieldsets.
+		"""
 		for c in self.form._children[ : ]:
 			self.form.removeChild( c )
-
 
 	def setData( self, request=None, data=None, ignoreMissing=False ):
 		"""
 		Rebuilds the UI according to the skeleton received from server
-		
+
+		@param request: A finished NetworkService request
+		@type request: NetworkService
 		@type data: dict
 		@param data: The data received
 		"""
@@ -192,6 +127,7 @@ class EditWidget( html5.Div ):
 			data = NetworkService.decode( request )
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
 			NetworkService.notifyChange(self.modul)
+			conf["mainWindow"].log("success","Entry saved!")
 			self.clear()
 			self.bones = {}
 			self.reloadData()
@@ -201,10 +137,8 @@ class EditWidget( html5.Div ):
 		self.bones = {}
 		self.actionbar.resetLoadingState()
 		self.dataCache = data
-		tmpDict = {}
+		tmpDict = utils.boneListToDict( data["structure"] )
 		fieldSets = {}
-		for key, bone in data["structure"]:
-			tmpDict[ key ] = bone
 		currRow = 0
 		for key, bone in data["structure"]:
 			if bone["visible"]==False:
@@ -221,6 +155,9 @@ class EditWidget( html5.Div ):
 				legend["id"] = "vi_%s_%s_%s_legend" % (self.modul, "edit" if self.key else "add", cat)
 				legend.appendChild( html5.TextNode(cat))
 				fs.appendChild(legend)
+				section = html5.Section()
+				fs.appendChild(section)
+				fs._section = section
 				fieldSets[ cat ] = fs
 			if "params" in bone.keys() and bone["params"] and "category" in bone["params"].keys():
 				tabName = bone["params"]["category"]
@@ -246,9 +183,12 @@ class EditWidget( html5.Div ):
 				tmp.appendChild(descrLbl)
 				tmp.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
 				descrLbl = tmp
-			fieldSets[ cat ].appendChild( descrLbl )
+			containerDiv = html5.Div()
+			containerDiv.appendChild( descrLbl )
+			containerDiv.appendChild( widget )
+			fieldSets[ cat ]._section.appendChild( containerDiv )
 			#self["cell"][currRow][0] = descrLbl
-			fieldSets[ cat ].appendChild( widget )
+			#fieldSets[ cat ].appendChild( widget )
 			#self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget
@@ -256,71 +196,24 @@ class EditWidget( html5.Div ):
 		tmpList.sort( key=lambda x:x[0])
 		for k,v in tmpList:
 			self.form.appendChild( v )
+			v._section = None
 		self.unserialize( data["values"] )
 		self._lastData = data
 
 	def unserialize(self, data):
+		"""
+			Applies the actual data to the bones.
+		"""
 		for bone in self.bones.values():
 			bone.unserialize( data )
 
-	"""def onBtnSaveContinueReleased(self, *args, **kwargs ):
-		print( "BTN CLICK RECIVED")
-		self.closeOnSuccess = False
-		#self.overlay.inform( self.overlay.BUSY )
-		res = {}
-		for key, bone in self.bones.items():
-			res.update( bone.serializeForPost( ) )
-		self.save( res )
-	"""
-		
 	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
+		"""
+			Starts serializing and transmitting our values to the server.
+		"""
 		self.closeOnSuccess = closeOnSuccess
 		res = {}
 		for key, bone in self.bones.items():
 			res.update( bone.serializeForPost( ) )
 		self.save( res )
 
-
-	def onBtnPreviewReleased( self, *args, **kwargs ):
-		res = {}
-		for key, bone in self.bones.items():
-			res.update( bone.serializeForPost() )
-		self.preview = Preview( self.modul, res )
-	
-	def onSaveSuccess( self, editTaskID ):
-		"""
-			Adding/editing an entry just succeeded
-		"""
-		if editTaskID!=self.editTaskID: #Not our task
-			return
-		self.overlay.inform( self.overlay.SUCCESS, QtCore.QCoreApplication.translate("EditWidget", "Entry saved")  )
-		if self.closeOnSuccess:
-			event.emit( 'popWidget', self )
-		else:
-			self.reloadData()
-	
-	def onDataAvaiable( self, editTaskID, data, wasInitial ):
-		"""
-			Adding/editing failed, cause some required fields are missing/invalid
-		"""
-		if editTaskID!=self.editTaskID: #Not our task
-			return
-		self.setData( data=data, ignoreMissing=wasInitial )
-		if not wasInitial:
-			self.overlay.inform( self.overlay.MISSING, QtCore.QCoreApplication.translate("EditWidget", "Missing data") )
-		
-	
-	def onSaveError( self, error ):
-		"""
-			Unspecified error on saving/editing
-		"""
-		self.overlay.inform( self.overlay.ERROR, QtCore.QCoreApplication.translate("EditWidget", "There was an error saving your changes") )
-		return
-	
-
-	def taskAdded(self):
-		QtGui.QMessageBox.information(	self,
-									QtCore.QCoreApplication.translate("EditWidget", "Task created"), 
-									QtCore.QCoreApplication.translate("EditWidget", "The task was sucessfully created."), 
-									QtCore.QCoreApplication.translate("EditWidget", "Okay") )
-		self.parent().deleteLater()
