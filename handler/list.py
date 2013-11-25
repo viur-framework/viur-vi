@@ -24,7 +24,13 @@ class ListHandler( Pane ):
 
 	def onClick(self, *args, **kwargs ):
 		if not len(self.widgetsDomElm._children):
-			self.addWidget( ListWidget(self.modulName ) )
+			filter = None
+			columns = None
+			if "filter" in self.modulInfo.keys():
+				filter = self.modulInfo["filter"]
+			if "columns" in self.modulInfo.keys():
+				columns = self.modulInfo["columns"]
+			self.addWidget( ListWidget( self.modulName, filter=filter, columns=columns ) )
 		super( ListHandler, self ).onClick( *args, **kwargs )
 
 

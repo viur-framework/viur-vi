@@ -153,7 +153,10 @@ class EditWidget( html5.Div ):
 				fs["name"] = cat
 				legend = html5.Legend()
 				legend["id"] = "vi_%s_%s_%s_legend" % (self.modul, "edit" if self.key else "add", cat)
-				legend.appendChild( html5.TextNode(cat))
+				fshref = html5.A()
+				fshref["href"] = "#vi_%s_%s_%s" % (self.modul, "edit" if self.key else "add", cat)
+				fshref.appendChild(html5.TextNode(cat) )
+				legend.appendChild( fshref )
 				fs.appendChild(legend)
 				section = html5.Section()
 				fs.appendChild(section)

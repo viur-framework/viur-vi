@@ -369,9 +369,9 @@ class DataTable( html5.Div ):
 			if field in self._cellRender.keys():
 				lbl = self._cellRender[ field ].render( obj, field )
 			elif field in obj.keys():
-				lbl = Label(obj[field])
+				lbl = html5.Label(obj[field])
 			else:
-				lbl = Label("...")
+				lbl = html5.Label("...")
 			self.table["cell"][rowIdx][cellIdx] = lbl
 			cellIdx += 1
 
