@@ -347,15 +347,24 @@ p { margin-bottom:10px;}
 				        filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColor=#55eeeeee, endColorStr=#55FFFFFF); /* IE 5.5 - 7 */
 				        -ms-filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColor=#55eeeeee, endColoStr=#55FFFFFF); /* IE8 uses -ms-filter for whatever reason... */
 }
-.vi_operator .actionbar img {border: 1px solid #aaa; border-right:0; width:16px; float:left; padding:5px 6px 5px 4px;
-	background-color: #ddd;
-    background: -moz-linear-gradient(top, #fff 0%, #ddd 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(100%, #ddd));
-    background: -webkit-linear-gradient(top, #fff 0%, #ddd 100%);
-    background: -o-linear-gradient(top, #fff 0%, #ddd 100%);
-    background: -ms-linear-gradient(top, #fff 0%, #ddd 100%);
-    background: linear-gradient(to bottom, #fff 0%, #ddd 100%);
-    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#fff', EndColorStr='#ddd', GradientType=0);	}
+.vi_operator .actionbar h3:before {
+	content:'';
+	margin-top:-4px;
+	margin-left:-10px;
+	margin-right: 10px;
+	border-right:1px solid #ccc;
+ 	width:16px; 
+ 	height:16px;
+ 	float:left; 
+ 	padding:5px 6px 5px 4px;
+ 	background-image: url(icons/vi_actions_view_sprite.svg);
+	background-repeat: no-repeat;
+	}
+.vi_operator .actionbar h3.action_list:before {background-position: 0px 0px;}
+.vi_operator .actionbar h3.action_add:before {background-position: -24px 0px;}
+.vi_operator .actionbar h3.action_edit:before {background-position: -48px 0px;}
+	
+	
 .vi_operator .actionbar h3 {
 	line-height:1em;
 	margin-bottom:10px;
@@ -374,7 +383,6 @@ p { margin-bottom:10px;}
 	float:left;
 	border: 1px solid #aaa;
 	border-right:2px solid #BE1622;
-	border-left:1px solid #ccc;
 	margin-right:4px;
 	}
 	
@@ -384,28 +392,114 @@ p { margin-bottom:10px;}
 /* #vi_forms
 ================================================== */
 
-form {
-	overflow: hidden;
-	width:100%;
-}
 
-fieldset {
-	width:100%;
-	border: 0;
-	padding: 0;
-}
+/*Define Accordion box*/
+form { color:#474747; padding:10px;overflow: hidden; width:100%; }
+form fieldset {width:100%; border: 0; padding: 0;}
+form fieldset legend {min-width:500px; width:100%;}
+form fieldset legend a, legend a:visited {
+	padding: 8px 15px;
+	display: block;
+	font-weight: normal;
+	color: #888;
+	text-decoration: none;
+	background:#ddd;
+	border:1px solid #bbb;
+	}
 
-legend {}
+	legend a:hover {
+		color:#666;
+		background:#ccc;
+		text-decoration:none;
+		cursor:pointer;
+	}
+
+/*General Accordion****************************************************************************/
+/*Set style of open slide*/
+form fieldset:target {}
+form fieldset:target:hover { }
+form fieldset:target legend {}
+form fieldset:target legend a {color:#333; background:#ffffff;}
+form fieldset:target section, form fieldset.default section {display:block;}
+
+/*set style of closed slide*/
+form fieldset{ float:left;	overflow:hidden; color:#333; margin:3px; }
+form fieldset:hover {}
+form fieldset section, form fieldset:target ~ .default section { 
+	display:none;
+	border:1px solid #eee;
+	padding:3% 3% 5%;
+	background:#fcfcfc;
+	overflow:hidden;
+	}
+
+
+/*Vertical Accordion *************************************************************************/
+form fieldset { 
+	width:100%; 
+	height:40px;
+	-webkit-transition:all 0.2s ease-out;
+	-moz-transition:all 0.2s ease-out;
+  	-o-transition:all 0.2s ease-out;
+	-ms-transition:all 0.2s ease-out;
+  	transition:all 0.2s ease-out;
+}
+/*Set height of the slide*/
+form :target, form fieldset.default{ min-height:150px; height:auto; width:97%; }
+
+form fieldset section > div {padding-bottom:20px; margin-bottom:15px; border-bottom:1px dotted #ccc; overflow:hidden;  width: 100%; float: right;}
 
 label {
-	width: 25%;
+	width: 220px;
 	float: left;
-	padding-right: 10px;
+	text-align:right;
+	padding: 4px 10px 6px;
+	height:16px;
+	border:1px dotted #ddd;
+	border-right-width:0;
+	background:#f9f9f9;
+	overflow: hidden;
+	line-height:1.4em;
+	font-size:0.8em
 }
+
+label.text {
+	border-bottom:0;
+	border-right-width: 1px;
+}
+
+label.selectone {
+	border-right-width: 1px;
+}
+
+label.is_required {
+	border-style:solid;
+	border-left-color: #BE1622;
+	border-left-width:2px;	
+	background:#fff;
+}
+
+label.is_invalid {background-color:#1495de; border-color:#073866; color:#fff;}
+label.is_invalid:before {
+	background-image: url(icons/vi_actions_sprite_white.svg);
+	background-repeat: no-repeat;
+	width:16px;
+	height:16px;
+	content:' ';
+	position:relative;
+	float:left;
+	margin-top:1px;
+	margin-left:-4px;
+	margin-right:5px;
+	background-position: -64px 0px;
+	}	
+
 
 input, textarea, input[type="text"], input[type="email"], input[type="date"], input[type=url], input[type=password] {
 	display:inline-block;
-	padding:6px 7px 7px;
+	width:50%;
+	margin-right:15px;
+	padding:4px 1.3% 6px;
 	height:16px;
 	border:1px solid #ccc;
 	border-bottom:1px solid #BE1622;
@@ -424,17 +518,12 @@ input, textarea, input[type="text"], input[type="email"], input[type="date"], in
 
 input[type="date"] {width:162px;}
 
-input[type="radio"], input[type="checkbox"] {
+input[type="radio"], input[type="checkbox"]{
 	margin-right: 15px;
 }
 
-textarea {width:512px; height:120px;}
-select {width: 176px;}
-
-form > fieldset > div {
-  width: 75%;
-  float: right;
-}
+textarea {width:97.3%; height:120px;}
+select {width: 176px; margin-left:15px;}
 
 input[type=text]:focus,
 input[type=email]:focus,
@@ -755,8 +844,23 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 .tree {width:100%; min-height:500px;}
 .treeitem {padding:7px;}
 
-.breadcrumb {min-width: 500px; overflow:hidden;}
-.breadcrumb .treeitem {float:left;}
+.breadcrumb {
+	min-width: 500px;
+	overflow: hidden;
+	border-bottom:1px solid #bbb;
+	background:#fff;
+	margin-bottom: 7px;
+	font-weight: 600;
+	padding:7px;
+}
+.breadcrumb .treeitem {float:left; cursor:pointer;}
+.breadcrumb .treeitem:hover {text-decoration:underline;}
+.breadcrumb .treeitem:after {
+	content:' ›';
+} 
+.breadcrumb .treeitem:last-of-type:after {
+	content:'';
+} 
 
 .treeitem:before {
 	background-image: url(icons/vi_actions_sprite.svg);
@@ -773,6 +877,11 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 .treeitem.node:before {
 	background-position: -32px -64px;
 }
+
+.treeitem.node.is_rootnode:before {
+	background-position: -112px -64px;
+}
+
 
 .selectioncontainer {
 }
