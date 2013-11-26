@@ -13,9 +13,9 @@ class LeafFileWidget( LeafWidget ):
 		super( LeafFileWidget, self ).__init__( modul, data, structure, *args, **kwargs )
 		if "servingurl" in data.keys():
 			self.appendChild( html5.Img( data["servingurl"]) )
-		if "metamime" in data.keys():
+		if "mimetype" in data.keys():
 			try:
-				ftype, fformat = data["metamime"].split("/")
+				ftype, fformat = data["mimetype"].split("/")
 				self["class"].append("type_%s" % ftype )
 				self["class"].append("format_%s" % fformat )
 			except:
