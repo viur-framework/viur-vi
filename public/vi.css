@@ -449,7 +449,7 @@ form :target, form fieldset.default{ min-height:150px; height:auto; width:97%; }
 
 form fieldset section > div {padding-bottom:20px; margin-bottom:15px; border-bottom:1px dotted #ccc; overflow:hidden;  width: 100%; float: right;}
 
-label {
+form label {
 	width: 220px;
 	float: left;
 	text-align:right;
@@ -463,24 +463,24 @@ label {
 	font-size:0.8em
 }
 
-label.text {
+form label.text {
 	border-bottom:0;
 	border-right-width: 1px;
 }
 
-label.selectone {
+form label.selectone {
 	border-right-width: 1px;
 }
 
-label.is_required {
+form label.is_required {
 	border-style:solid;
 	border-left-color: #BE1622;
 	border-left-width:2px;	
 	background:#fff;
 }
 
-label.is_invalid {background-color:#1495de; border-color:#073866; color:#fff;}
-label.is_invalid:before {
+form label.is_invalid {background-color:#1495de; border-color:#073866; color:#fff;}
+form label.is_invalid:before {
 	background-image: url(icons/vi_actions_sprite_white.svg);
 	background-repeat: no-repeat;
 	width:16px;
@@ -582,6 +582,7 @@ textarea:focus {
 		transition: all 0.3s ease;	
 		display:inline-block;
 		width:16px;
+		float:right;
 	}
 	
 	a.tooltip:before {
@@ -670,6 +671,9 @@ button.icon:before, .modullist ul .action_add h3:before, .modullist ul .action_e
 		button.reset:before{background-position: -64px -16px;}
 		button.cancel:before{background-position: 0px 0px;}	
 
+		button.select:before{background-position: -112px -16px;}	
+		button.textedit:before{background-position: -96px -16px;}	
+
 		button.mkdir:before{background-position: -32px -32px;}	
 		button.upload:before{background-position: -48px -32px;}	
 
@@ -757,13 +761,14 @@ tbody tr:last-child td:last-child {
 	border-bottom-right-radius:3px;
 }
 
-thead tr:first-child td:first-child {
+thead tr:first-child th:first-child {
 	-moz-border-radius-topleft:3px;
 	-webkit-border-top-left-radius:3px;
 	border-top-left-radius:3px;
+	border-width: 0px 1px 1px 0px;
 }
 
-thead tr:first-child td:last-child {
+thead tr:first-child th:last-child {
 	-moz-border-radius-topright:3px;
 	-webkit-border-top-right-radius:3px;
 	border-top-right-radius:3px;
@@ -776,8 +781,8 @@ tbody tr:last-child td:first-child {
 } 
 
 tr:hover td{}
-tr:nth-child(odd){ background-color:#e5e5e5; }
-tr:nth-child(even)    { background-color:#ffffff; } 
+tr:nth-child(odd) { background-color:#e5e5e5; }
+tr:nth-child(even) { background-color:#ffffff; } 
  
  td{
 	vertical-align:middle;
@@ -785,8 +790,6 @@ tr:nth-child(even)    { background-color:#ffffff; }
 	border-width:0px 1px 1px 0px;
 	text-align:left;
 	padding:7px;
-	font-size:13px;
-	font-family:Arial;
 	font-weight:normal;
 	color:#000000;
 } tr:last-child td{
@@ -796,21 +799,18 @@ tr:nth-child(even)    { background-color:#ffffff; }
 } tr:last-child td:last-child{
 	border-width:0px 0px 0px 0px;
 }
- thead tr td{
-		background:-o-linear-gradient(bottom, #ff0000 5%, #bf0000 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #bf0000) );
+ thead tr th{
+	background:-o-linear-gradient(bottom, #ff0000 5%, #bf0000 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #bf0000) );
 	background:-moz-linear-gradient( center top, #ff0000 5%, #bf0000 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff0000", endColorstr="#bf0000");	background: -o-linear-gradient(top,#ff0000,bf0000);
-
 	background-color:#ff0000;
 	border:0px solid #cccccc;
 	text-align:center;
-	border-width:0px 0px 1px 1px;
-	font-size:13px;
-	font-family:Arial;
-	font-weight:bold;
+	border-width: 0px 0px 1px 0px;
+	font-weight:600;
 	color:#ffffff;
 }
- thead tr:hover td{
+ thead tr:hover th{
 	background:-o-linear-gradient(bottom, #ff0000 5%, #bf0000 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #bf0000) );
 	background:-moz-linear-gradient( center top, #ff0000 5%, #bf0000 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff0000", endColorstr="#bf0000");	background: -o-linear-gradient(top,#ff0000,bf0000);
@@ -827,11 +827,12 @@ tr:first-child td:last-child{
 } 
 */
 
-tr.is_selected td {color:#fff; border-color:#880000;}
+tr.is_focused td {color:#000; border-color:#bbb;}
+tr.is_selected td, tr.is_focused.is_selected td{color:#fff; border-color:#880000;}
+
 tr.is_selected:nth-child(odd) {background:#aa0000;}
 tr.is_selected:nth-child(even) {background:#dd0000;}
 
-tr.is_selected td {color:#000; border-color:#bbb;}
 tr.is_focused:nth-child(odd) {background:#aaa;}
 tr.is_focused:nth-child(even) {background:#ccc;}
 
@@ -914,7 +915,13 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 ================================================== */	
 .hierarchy {min-width:500px;}
 
-.hierarchyitem {padding:7px; background:#ccc;}
+.hierarchyitem {padding:7px; background:#ccc;					
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+	margin:2px 0;
+	}
 .hierarchyitem:nth-of-type(odd) {background:#eee;}
 .hierarchyitem.expaned ol {
 				margin-top:7px;
@@ -940,6 +947,12 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 				
 .expaned:before {background-position: -16px -64px;
 				} 
+
+/* hierachyitem states */
+.supports_drag {cursor:pointer;}
+.insert_before {border-top:2px solid #BE1622;}
+.insert_here {border:1px solid #BE1622; padding:12px 7px;}
+.insert_after {border-bottom:2px solid #BE1622;}
 
 /* #vi_popups and alerts
 ================================================== */	
