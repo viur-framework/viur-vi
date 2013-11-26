@@ -525,6 +525,7 @@ input[type="radio"], input[type="checkbox"]{
 textarea {width:97.3%; height:120px;}
 select {width: 176px; margin-left:15px;}
 
+form input:focus,
 input[type=text]:focus,
 input[type=email]:focus,
 input[type=url]:focus,
