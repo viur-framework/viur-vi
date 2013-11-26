@@ -115,6 +115,8 @@ class Pane( html5.Li ):
 		for c in self.widgetsDomElm._children:
 			if widget in c._children:
 				self.widgetsDomElm.removeChild( c )
+				if self.closeable and len(self.widgetsDomElm._children)==0:
+					conf["mainWindow"].removePane( self )
 				return
 		raise ValueError("Cannot remove unknown widget %s" % str(widget))
 

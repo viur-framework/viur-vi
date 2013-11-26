@@ -131,6 +131,9 @@ class EditWidget( html5.Div ):
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
 			NetworkService.notifyChange(self.modul)
 			conf["mainWindow"].log("success","Entry saved!")
+			if self.closeOnSuccess:
+				conf["mainWindow"].removeWidget( self )
+				return
 			self.clear()
 			self.bones = {}
 			self.reloadData()
