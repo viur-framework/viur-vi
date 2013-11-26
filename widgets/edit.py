@@ -15,6 +15,7 @@ class EditWidget( html5.Div ):
 	appHierarchy = "hierarchy"
 	appTree = "tree"
 	appSingleton = "singleton"
+	__editIdx_ = 0 #Internal counter to ensure unique ids
 
 	def __init__(self, modul, applicationType, key=0, node=None, skelType=None, clone=False, *args, **kwargs ):
 		"""
@@ -47,6 +48,8 @@ class EditWidget( html5.Div ):
 			if applicationType==EditWidget.appTree:
 				assert node is not None #We still need a path for cloning #FIXME
 		# End santy-checks
+		self.editIdx = EditWidget.__editIdx_ #Iternal counter to ensure unique ids
+		EditWidget.__editIdx_ += 1
 		self.applicationType = applicationType
 		self.key = key
 		self.node = node
@@ -149,12 +152,12 @@ class EditWidget( html5.Div ):
 			if not cat in fieldSets.keys():
 				fs = html5.Fieldset()
 				fs["class"] = cat
-				fs["id"] = "vi_%s_%s_%s" % (self.modul, "edit" if self.key else "add", cat)
+				fs["id"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
 				fs["name"] = cat
 				legend = html5.Legend()
-				legend["id"] = "vi_%s_%s_%s_legend" % (self.modul, "edit" if self.key else "add", cat)
+				legend["id"] = "vi_%s_%s_%s_%s_legend" % (self.editIdx,self.modul, "edit" if self.key else "add", cat)
 				fshref = html5.A()
-				fshref["href"] = "#vi_%s_%s_%s" % (self.modul, "edit" if self.key else "add", cat)
+				fshref["href"] = "#vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
 				fshref.appendChild(html5.TextNode(cat) )
 				legend.appendChild( fshref )
 				fs.appendChild(legend)
@@ -168,14 +171,14 @@ class EditWidget( html5.Div ):
 				tabName = "Test"#QtCore.QCoreApplication.translate("EditWidget", "General")
 			wdgGen = editBoneSelector.select( self.modul, key, tmpDict )
 			widget = wdgGen.fromSkelStructure( self.modul, key, tmpDict )
-			widget["id"] = "vi_%s_%s_%s_bn_%s" % (self.modul, "edit" if self.key else "add", cat, key)
-			widget["class"].append(key)
-			widget["class"].append(bone["type"].replace(".","_"))
+			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat, key)
+			#widget["class"].append(key)
+			#widget["class"].append(bone["type"].replace(".","_"))
 			#self.prepareCol(currRow,1)
 			descrLbl = html5.Label(bone["descr"])
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
-			descrLbl["for"] = "vi_%s_%s_%s_bn_%s" % (self.modul, "edit" if self.key else "add", cat, key)
+			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, self.modul, "edit" if self.key else "add", cat, key)
 			if bone["required"]:
 				descrLbl["class"].append("is_required")
 			if bone["required"] and bone["error"] is not None:
@@ -190,6 +193,12 @@ class EditWidget( html5.Div ):
 			containerDiv.appendChild( descrLbl )
 			containerDiv.appendChild( widget )
 			fieldSets[ cat ]._section.appendChild( containerDiv )
+			containerDiv["class"].append("bone")
+			containerDiv["class"].append("bone_"+key)
+			containerDiv["class"].append( bone["type"].replace(".","_") )
+			if "." in bone["type"]:
+				for t in bone["type"].split("."):
+					containerDiv["class"].append(t)
 			#self["cell"][currRow][0] = descrLbl
 			#fieldSets[ cat ].appendChild( widget )
 			#self["cell"][currRow][1] = widget

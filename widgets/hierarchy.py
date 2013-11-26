@@ -67,14 +67,11 @@ class HierarchyItem( html5.Li ):
 			self.currentMargin = "top"
 			self["class"].remove("insert_here")
 			self["class"].append("insert_before")
-			#self["style"]["border-top"] = "1px solid red"
 		elif eventOffset>height*0.90 and self.currentMargin is None:
 			self.currentMargin = "bottom"
 			self["class"].remove("insert_here")
 			self["class"].append("insert_after")
-			#self["style"]["border-bottom"] = "1px solid blue"
 		elif self.currentMargin and eventOffset>height*0.20 and eventOffset<height*0.80:
-			self["style"]["border"] = "none"
 			self["class"].remove("insert_before")
 			self["class"].remove("insert_after")
 			self["class"].append("insert_here")
