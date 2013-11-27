@@ -24,6 +24,10 @@ class HierarchyItem( html5.Li ):
 		self.modul = modul
 		self.data = data
 		self.structure = structure
+		self.expandLink = html5.A()
+		self.expandLink["class"].append("expandlink")
+		self.expandLink.appendChild(html5.TextNode("Expand/Collapse"))
+		self.appendChild(self.expandLink)
 		#self.element.innerHTML = "%s %s" % (data["name"], data["sortindex"])
 		self.isLoaded = False
 		self.isExpanded = False
@@ -271,20 +275,27 @@ class HierarchyWidget( html5.Div ):
 		item = self.itemForEvent( event )
 		if item is None:
 			return
-		item.toggleExpand()
-		if not item.isLoaded:
-			item.isLoaded = True
-			self.loadNode( item.data["id"] )
-		self._currentCursor = item
-		self.selectionChangedEvent.fire( self, item )
+		if utils.doesEventHitWidgetOrChildren( event, item.expandLink ):
+			item.toggleExpand()
+			if not item.isLoaded:
+				item.isLoaded = True
+				self.loadNode( item.data["id"] )
+		else:
+			self.setCurrentItem( item )
+			self.selectionChangedEvent.fire( self, item )
 
 	def onDblClick(self, event):
 		item = self.itemForEvent( event )
 		if item is None:
 			return
-		self._currentCursor = item
+		self.setCurrentItem( item )
 		self.selectionActivatedEvent.fire( self, [item] )
 
+	def setCurrentItem(self, item):
+		if self._currentCursor:
+			self._currentCursor["class"].remove("is_focused")
+		item["class"].append("is_focused")
+		self._currentCursor = item
 
 	def onSetDefaultRootNode(self, req):
 		"""
@@ -339,6 +350,9 @@ class HierarchyWidget( html5.Div ):
 			assert ol is not None
 		for skel in data["skellist"]:
 			ol.appendChild( HierarchyItem( self.modul, skel, data["structure"] ) )
+		else: #No children received
+			if ol!=self.entryFrame:
+				ol.parent()["class"].append("has_no_childs")
 
 	def getCurrentSelection(self):
 		"""
