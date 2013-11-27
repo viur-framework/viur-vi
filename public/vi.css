@@ -462,7 +462,7 @@ button.icon:before, .btn_yes:before, .btn_no:before, .modullist ul .action_add h
 
 		button.mkdir:before{background-position: -32px -32px;}	
 		button.upload:before{background-position: -48px -32px;}	
-
+		
 button.icon[type="button"]:hover {
 	border: 1px solid #666;
 	overflow:visible;
@@ -510,6 +510,11 @@ button.icon.saveClose[type="button"]:hover {
 button.icon.add[type="button"]:hover:before,
 button.icon.saveClose[type="button"]:hover:before {
 	background-image: url(icons/vi_actions_sprite_white.svg);
+}
+
+button.is_loading:before {
+	background-image: url(icons/is_loading.gif);
+	background-position: 0px 0px;
 }
 
 
@@ -882,7 +887,8 @@ tr:first-child td:last-child{
 */
 
 tr.is_focused td {color:#000; border-color:#bbb;}
-tr.is_selected td, tr.is_focused.is_selected td{color:#fff; border-color:#880000;}
+tr.is_selected td, tr.is_focused.is_selected td{color:#fff; border-color:#880000; }
+tr.is_selected td:first-child, tr.is_focused.is_selected td:first-child {border-left: 3px solid #cc0000;}
 
 tr.is_selected:nth-child(odd) {background:#aa0000;}
 tr.is_selected:nth-child(even) {background:#dd0000;}
@@ -1087,6 +1093,9 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 			background:#fff;
 		}
 
+		.is_new {
+			
+		}
 /* #States
 ================================================== */		
 
