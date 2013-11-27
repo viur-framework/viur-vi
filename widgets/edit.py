@@ -187,6 +187,8 @@ class EditWidget( html5.Div ):
 			if bone["required"] and bone["error"] is not None:
 				descrLbl["class"].append("is_invalid")
 				descrLbl["title"] = bone["error"]
+			if bone["required"] and bone["error"] is None:
+				descrLbl["class"].append("is_valid")
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
 				tmp = html5.Span()
 				tmp.appendChild(descrLbl)
