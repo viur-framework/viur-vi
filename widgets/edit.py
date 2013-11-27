@@ -59,7 +59,7 @@ class EditWidget( html5.Div ):
 		self.closeOnSuccess = False
 		self._lastData = {} #Dict of structure and values recived
 		self.editTaskID = None
-		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" )
+		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" if self.key else "add" )
 		self.appendChild( self.actionbar )
 		self.form = html5.Form()
 		self.appendChild(self.form)
