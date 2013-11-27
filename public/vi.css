@@ -389,19 +389,147 @@ p { margin-bottom:10px;}
 .actionbar .operations {float:right;}
 
 
+/* #vi_buttons
+================================================== */
+
+button[type="button"] {
+	border: 1px solid #999;
+	color:#222;
+	height:16px;
+	padding:6px 7px 20px;
+	margin:0;
+	margin-right: 4px;
+	text-align:center;
+	background-color: #bbb;
+    background: -moz-linear-gradient(top, #ddd 0%, #bbb 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ddd), color-stop(100%, #bbb));
+    background: -webkit-linear-gradient(top, #ddd 0%, #bbb 100%);
+    background: -o-linear-gradient(top, #ddd 0%, #bbb 100%);
+    background: -ms-linear-gradient(top, #ddd 0%, #bbb 100%);
+    background: linear-gradient(to bottom, #ddd 0%, #bbb 100%);
+    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#ddd', EndColorStr='#bbb', GradientType=0);	
+	cursor:pointer;
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
+	transition: all 0.3s ease;	
+}
+
+button[type="button"]:hover {
+	border: 1px solid #666;
+	color:#222;	
+	letter-spacing:normal;	
+}
+
+/* Icon Buttons */
+button.icon, button.btn_yes, button.btn_no {
+	color:transparent;
+	letter-spacing:-1em;
+	overflow:hidden;
+	min-width:28px;
+}
+
+button.icon:before, .btn_yes:before, .btn_no:before, .modullist ul .action_add h3:before, .modullist ul .action_edit h3:before {
+	background-image: url(icons/vi_actions_sprite.svg);
+	background-repeat: no-repeat;
+	width:16px;
+	height:16px;
+	content:' ';
+	position:relative;
+	float:left;
+	margin-left:-1px;
+	margin-top:-1px;
+}
+
+	/* Action Icons */
+		button.add:before, .action_add h3:before {background-position: -16px 0px;}	
+		button.edit:before, .action_edit h3:before {background-position: -64px 0px;}	
+		button.clone:before{background-position: -32px 0px;}	
+		button.delete:before{background-position: -48px 0px;}
+			
+		button.preview:before{background-position: -96px 0px;}	
+		button.search:before{background-position: -112px 0px;}	
+		
+		button.save.close:before, .btn_yes:before {background-position: 0px -16px;}	
+		button.save.continue:before{background-position: -16px -16px;}	
+		button.save.new:before{background-position: -32px -16px;}	
+
+		button.reset:before{background-position: -64px -16px;}
+		button.cancel:before, .btn_no:before{background-position: 0px 0px;}	
+
+		button.select:before{background-position: -112px -16px;}	
+		button.textedit:before{background-position: -96px -16px;}	
+
+		button.mkdir:before{background-position: -32px -32px;}	
+		button.upload:before{background-position: -48px -32px;}	
+		
+button.icon[type="button"]:hover {
+	border: 1px solid #666;
+	overflow:visible;
+	color:#222;	
+	min-width:120px;
+	letter-spacing:normal;	
+}
+
+
+/* Red Buttons */
+button.icon.cancel[type="button"]:hover,
+button.icon.delete[type="button"]:hover {
+	border: 1px solid #c31520;
+	color:#fff;	
+	background-color: #e20614;
+    background: -moz-linear-gradient(top, #c31520 0%, #e20614 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #c31520), color-stop(100%, #e20614));
+    background: -webkit-linear-gradient(top, #c31520 0%, #e20614 100%);
+    background: -o-linear-gradient(top, #c31520 0%, #e20614 100%);
+    background: -ms-linear-gradient(top, #c31520 0%, #e20614 100%);
+    background: linear-gradient(to bottom, #c31520 0%, #e20614 100%);
+    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#c31520', EndColorStr='#e20614', GradientType=0);	
+}
+
+button.icon.cancel[type="button"]:hover:before,
+button.icon.delete[type="button"]:hover:before {
+	background-image: url(icons/vi_actions_sprite_white.svg);
+}
+
+/* Green Buttons */
+button.icon.add[type="button"]:hover,
+button.icon.saveClose[type="button"]:hover {
+	border: 1px solid #479c42;
+	color:#fff;	
+	background-color: #298342;
+    background: -moz-linear-gradient(top, #298342 0%, #479c42 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #298342), color-stop(100%, #479c42));
+    background: -webkit-linear-gradient(top, #298342 0%, #479c42 100%);
+    background: -o-linear-gradient(top, #298342 0%, #479c42 100%);
+    background: -ms-linear-gradient(top, #298342 0%, #479c42 100%);
+    background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
+    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);	
+}
+
+button.icon.add[type="button"]:hover:before,
+button.icon.saveClose[type="button"]:hover:before {
+	background-image: url(icons/vi_actions_sprite_white.svg);
+}
+
+button.is_loading:before {
+	background-image: url(icons/is_loading.gif);
+	background-position: 0px 0px;
+}
+
+
 /* #vi_forms
 ================================================== */
 
-
 /*Define Accordion box*/
 form { color:#474747; padding:10px;overflow: hidden; width:100%; }
-form fieldset {width:100%; border: 0; padding: 0;}
+form fieldset {width:97%; border: 0; padding: 0;}
 form fieldset legend {min-width:500px; width:100%;}
 form fieldset legend a, legend a:visited {
 	padding: 8px 15px;
 	display: block;
 	font-weight: normal;
-	color: #888;
+	color: #555;
 	text-decoration: none;
 	background:#ddd;
 	border:1px solid #bbb;
@@ -436,7 +564,6 @@ form fieldset section, form fieldset:target ~ .default section {
 
 /*Vertical Accordion *************************************************************************/
 form fieldset { 
-	width:100%; 
 	height:40px;
 	-webkit-transition:all 0.2s ease-out;
 	-moz-transition:all 0.2s ease-out;
@@ -447,7 +574,7 @@ form fieldset {
 /*Set height of the slide*/
 form :target, form fieldset.default{ min-height:150px; height:auto; width:97%; }
 
-form fieldset section > div {padding-bottom:20px; margin-bottom:15px; border-bottom:1px dotted #ccc; overflow:hidden;  width: 100%; float: right;}
+form fieldset section > div {padding-bottom:20px; margin-bottom:15px; /*border-bottom:1px dotted #ccc;*/ overflow:hidden;  width: 100%; float: right;}
 
 form label {
 	width: 220px;
@@ -523,16 +650,53 @@ input[type="radio"], input[type="checkbox"]{
 }
 
 textarea {width:97.3%; height:120px;}
-select {width: 176px; margin-left:15px;}
+select {
+	min-width: 175px; 
+	margin-left:15px;
+	border:1px solid #ccc;
+	font-size:.75em;
+	font-weight:100;
+	color:#444;
+}
 
-form input:focus,
+.selectioncontainer {display: inline-block;}
+.selectioncontainer button {margin-right: 15px;}
+.selectioncontainer label {border:1px solid #ccc; border-right-width: 0;}
+.selectioncontainer label, .selectioncontainer button {margin-bottom:5px;}
+
+input:focus,
 input[type=text]:focus,
 input[type=email]:focus,
 input[type=url]:focus,
 input[type=password]:focus,
 textarea:focus {
-  outline: 0;
-  border-color: #BE1622;
+	outline: 0;
+	border-color: #BE1622;
+}
+
+form .treeitem input, form .relational input {
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+ }
+ 
+form .treeitem input:focus, form .relational input:focus {
+	border-color: #939393;
+}
+
+form .treeitem:focus button:after, form .relational:focus button:after {
+				background-image: url(icons/vi_actions_sprite.svg);
+				background-repeat: no-repeat;
+				width:16px;
+				height:16px;
+				content:' ';
+				position:relative;
+				float:right;
+				margin-top:3px;
+				margin-left:4px;
+				margin-right:7px;
+				background-position: -0px -64px;
 }
 
 @media (max-width: 600px) {
@@ -584,8 +748,9 @@ textarea:focus {
 		display:inline-block;
 		width:16px;
 		float:right;
+		margin-right: 10px;
 	}
-	
+	a.tooltip span {display:none}
 	a.tooltip:before {
 				background-image: url(icons/vi_actions_sprite_white.svg);
 				background-repeat: no-repeat;
@@ -603,129 +768,22 @@ textarea:focus {
 				letter-spacing:normal;
 				color:#eee;
 			}
-
-/* #vi_buttons
-================================================== */
-
-button[type="button"] {
-	border: 1px solid #999;
-	color:#222;
-	height:16px;
-	padding:6px 7px 20px;
-	margin:0;
-	margin-right: 4px;
-	text-align:center;
-	background-color: #bbb;
-    background: -moz-linear-gradient(top, #ddd 0%, #bbb 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ddd), color-stop(100%, #bbb));
-    background: -webkit-linear-gradient(top, #ddd 0%, #bbb 100%);
-    background: -o-linear-gradient(top, #ddd 0%, #bbb 100%);
-    background: -ms-linear-gradient(top, #ddd 0%, #bbb 100%);
-    background: linear-gradient(to bottom, #ddd 0%, #bbb 100%);
-    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#ddd', EndColorStr='#bbb', GradientType=0);	
-	cursor:pointer;
-	-webkit-transition: all 0.3s ease;
-	-moz-transition: all 0.3s ease;
-	-o-transition: all 0.3s ease;
-	transition: all 0.3s ease;	
-}
-
-button[type="button"]:hover {
-	border: 1px solid #666;
-	color:#222;	
-	letter-spacing:normal;	
-}
-
-/* Icon Buttons */
-button.icon {
-	color:transparent;
-	letter-spacing:-1em;
-	overflow:hidden;
-	min-width:28px;
-}
-
-button.icon:before, .modullist ul .action_add h3:before, .modullist ul .action_edit h3:before {
-	background-image: url(icons/vi_actions_sprite.svg);
-	background-repeat: no-repeat;
-	width:16px;
-	height:16px;
-	content:' ';
-	position:relative;
-	float:left;
-	margin-left:-1px;
-	margin-top:-1px;
-}
-
-	/* Action Icons */
-		button.add:before, .action_add h3:before {background-position: -16px 0px;}	
-		button.edit:before, .action_edit h3:before {background-position: -64px 0px;}	
-		button.clone:before{background-position: -32px 0px;}	
-		button.delete:before{background-position: -48px 0px;}
-			
-		button.preview:before{background-position: -96px 0px;}	
-		button.search:before{background-position: -112px 0px;}	
+	a.tooltip:hover span {
+		display:block;
+		right:120px;
+		width:auto;
+		background: #eee;
+		color:#666;
+		border:1px solid #bbb;
+		height:auto;
+		position:absolute;
+		margin-top:20px;
+		padding:15px 15px 18px;
+		border-radius: 10px;}
 		
-		button.save.close:before{background-position: 0px -16px;}	
-		button.save.continue:before{background-position: -16px -16px;}	
-		button.save.new:before{background-position: -32px -16px;}	
-
-		button.reset:before{background-position: -64px -16px;}
-		button.cancel:before{background-position: 0px 0px;}	
-
-		button.select:before{background-position: -112px -16px;}	
-		button.textedit:before{background-position: -96px -16px;}	
-
-		button.mkdir:before{background-position: -32px -32px;}	
-		button.upload:before{background-position: -48px -32px;}	
-
-button.icon[type="button"]:hover {
-	border: 1px solid #666;
-	overflow:visible;
-	color:#222;	
-	min-width:120px;
-	letter-spacing:normal;	
-}
-
-
-/* Red Buttons */
-button.icon.cancel[type="button"]:hover,
-button.icon.delete[type="button"]:hover {
-	border: 1px solid #c31520;
-	color:#fff;	
-	background-color: #e20614;
-    background: -moz-linear-gradient(top, #c31520 0%, #e20614 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #c31520), color-stop(100%, #e20614));
-    background: -webkit-linear-gradient(top, #c31520 0%, #e20614 100%);
-    background: -o-linear-gradient(top, #c31520 0%, #e20614 100%);
-    background: -ms-linear-gradient(top, #c31520 0%, #e20614 100%);
-    background: linear-gradient(to bottom, #c31520 0%, #e20614 100%);
-    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#c31520', EndColorStr='#e20614', GradientType=0);	
-}
-
-button.icon.cancel[type="button"]:hover:before,
-button.icon.delete[type="button"]:hover:before {
-	background-image: url(icons/vi_actions_sprite_white.svg);
-}
-
-/* Green Buttons */
-button.icon.add[type="button"]:hover,
-button.icon.saveClose[type="button"]:hover {
-	border: 1px solid #479c42;
-	color:#fff;	
-	background-color: #298342;
-    background: -moz-linear-gradient(top, #298342 0%, #479c42 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #298342), color-stop(100%, #479c42));
-    background: -webkit-linear-gradient(top, #298342 0%, #479c42 100%);
-    background: -o-linear-gradient(top, #298342 0%, #479c42 100%);
-    background: -ms-linear-gradient(top, #298342 0%, #479c42 100%);
-    background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
-    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);	
-}
-
-button.icon.add[type="button"]:hover:before,
-button.icon.saveClose[type="button"]:hover:before {
-	background-image: url(icons/vi_actions_sprite_white.svg);
-}
+	/*
+	a.tooltip span:target {}
+	*/
 
 
 /* #vi_tables
@@ -766,7 +824,7 @@ thead tr:first-child th:first-child {
 	-moz-border-radius-topleft:3px;
 	-webkit-border-top-left-radius:3px;
 	border-top-left-radius:3px;
-	border-width: 0px 1px 1px 0px;
+	border-width: 0px 0px 1px 0px;
 }
 
 thead tr:first-child th:last-child {
@@ -807,7 +865,7 @@ tr:nth-child(even) { background-color:#ffffff; }
 	background-color:#ff0000;
 	border:0px solid #cccccc;
 	text-align:center;
-	border-width: 0px 0px 1px 0px;
+	border-width: 0px 0px 1px 1px;
 	font-weight:600;
 	color:#ffffff;
 }
@@ -829,7 +887,8 @@ tr:first-child td:last-child{
 */
 
 tr.is_focused td {color:#000; border-color:#bbb;}
-tr.is_selected td, tr.is_focused.is_selected td{color:#fff; border-color:#880000;}
+tr.is_selected td, tr.is_focused.is_selected td{color:#fff; border-color:#880000; }
+tr.is_selected td:first-child, tr.is_focused.is_selected td:first-child {border-left: 3px solid #cc0000;}
 
 tr.is_selected:nth-child(odd) {background:#aa0000;}
 tr.is_selected:nth-child(even) {background:#dd0000;}
@@ -844,14 +903,22 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 /* #vi_forest
 ================================================== */	
 .tree {width:100%; min-height:500px;}
-.treeitem {padding:7px;}
+.tree .treeitem {
+	padding:7px; 
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+	}
+.tree .selectioncontainer {display:block;padding-top: 7px;}
+.tree .selectioncontainer .treeitem {margin-bottom:1px;}
+.tree .selectioncontainer:focus {border:0; outline: 0;}
 
 .breadcrumb {
 	min-width: 500px;
 	overflow: hidden;
 	border-bottom:1px solid #bbb;
 	background:#fff;
-	margin-bottom: 7px;
 	font-weight: 600;
 	padding:7px;
 }
@@ -864,7 +931,10 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 	content:'';
 } 
 
-.treeitem:before {
+.tree .treeitem.selected {background: rgba(250,250,250,0.7); border-left: 3px solid #cc0000; margin-left: -8px;}
+.tree .treeitem.cursor {background:rgba(255,255,255,0.85); padding:14px 7px;}
+
+.tree .treeitem:before {
 	background-image: url(icons/vi_actions_sprite.svg);
 	background-repeat: no-repeat;
 	width:16px;
@@ -876,20 +946,11 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 	margin-right: 7px
 }
 
-.treeitem.node:before {
-	background-position: -32px -64px;
-}
+.tree .treeitem.node {}
+.tree .treeitem.node:before {background-position: -32px -64px;}
+.tree .treeitem.node.is_rootnode:before {background-position: -112px -64px;}
 
-.treeitem.node.is_rootnode:before {
-	background-position: -112px -64px;
-}
-
-
-.selectioncontainer {
-}
 .file img {float:left; margin-right:7px; height:32px; width:auto; max-width:32px; margin-top:-7px; margin-left:-7px;}
-.tree.cursor {background:#bbb;}
-.tree.selected {background:#ccc;}
 
 .tree.supports_upload {
 	border:3px dashed #ddd;
@@ -916,17 +977,25 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 ================================================== */	
 .hierarchy {min-width:500px;}
 
-.hierarchyitem {padding:7px; background:#ccc;					
+.hierarchyitem {padding:7px; 
 	-webkit-transition: all 0.3s ease;
 	-moz-transition: all 0.3s ease;
 	-o-transition: all 0.3s ease;
 	transition: all 0.3s ease;
-	margin:2px 0;
+	margin:4px 0 0;
+	background:#fcfcfc;
+	border:1px solid #ddd;
 	}
-.hierarchyitem:nth-of-type(odd) {background:#eee;}
+.hierarchyitem:nth-of-type(odd) {background:#ececec;}
+
+.hierarchyitem:nth-of-type(odd) ol .hierarchyitem:first-child {margin-top:0;}
+.hierarchyitem:nth-of-type(odd) ol .hierarchyitem:nth-of-type(odd) {background:#fcfcfc; border:0;}
+.hierarchyitem:nth-of-type(odd) ol .hierarchyitem:nth-of-type(even) {background:#f5f5f5; border:0;}
+
 .hierarchyitem.expaned ol {
 				margin-top:7px;
-				border:1px solid #ddd;}
+				border:1px solid #ddd;
+				background:#e5e5e5;}
 				
 .hierarchyitem.expaned ol li {				
 				padding-left:14px;
@@ -950,7 +1019,15 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 				} 
 
 /* hierachyitem states */
-.supports_drag {cursor:pointer;}
+.supports_drag {cursor:move;}
+
+[draggable] {
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+ }
+ 
 .insert_before {border-top:2px solid #BE1622;}
 .insert_here {border:1px solid #BE1622; padding:12px 7px;}
 .insert_after {border-bottom:2px solid #BE1622;}
@@ -975,7 +1052,11 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 	box-shadow: 5px 5px 10px rgba(0,0,0,.3);
 	border:1px solid #ccc;
 	border-bottom:1px solid #BE1622;
+	overflow:hidden;
 }
+
+.alertbox span {width:100%; display:block; margin-bottom: 15px;}
+.alertbox button {float:right;}
 
 /* #vi_badges
 ================================================== */	
@@ -1012,6 +1093,9 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 			background:#fff;
 		}
 
+		.is_new {
+			
+		}
 /* #States
 ================================================== */		
 
@@ -1024,6 +1108,7 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 .is_selected {}
 .is_focused {}
 
+input:disabled,
 input[type="submit"]:disabled,
 button:disabled, 
 input[type="text"]:disabled,
