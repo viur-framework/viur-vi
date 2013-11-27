@@ -110,9 +110,9 @@ class DeleteAction( html5.ext.Button ):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		print( "Deleting "+str([x["id"] for x in selection]))
 		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection), title="Delete them?", yesCallback=self.doDelete)
 		d.deleteList = [x["id"] for x in selection]
+		d["class"].append( "delete" )
 		return
 		for s in selection:
 			pane = Pane("Edit", closeable=True)
