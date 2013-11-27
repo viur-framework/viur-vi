@@ -422,14 +422,14 @@ button[type="button"]:hover {
 }
 
 /* Icon Buttons */
-button.icon {
+button.icon, button.btn_yes, button.btn_no {
 	color:transparent;
 	letter-spacing:-1em;
 	overflow:hidden;
 	min-width:28px;
 }
 
-button.icon:before, .modullist ul .action_add h3:before, .modullist ul .action_edit h3:before {
+button.icon:before, .btn_yes:before, .btn_no:before, .modullist ul .action_add h3:before, .modullist ul .action_edit h3:before {
 	background-image: url(icons/vi_actions_sprite.svg);
 	background-repeat: no-repeat;
 	width:16px;
@@ -450,12 +450,12 @@ button.icon:before, .modullist ul .action_add h3:before, .modullist ul .action_e
 		button.preview:before{background-position: -96px 0px;}	
 		button.search:before{background-position: -112px 0px;}	
 		
-		button.save.close:before{background-position: 0px -16px;}	
+		button.save.close:before, .btn_yes:before {background-position: 0px -16px;}	
 		button.save.continue:before{background-position: -16px -16px;}	
 		button.save.new:before{background-position: -32px -16px;}	
 
 		button.reset:before{background-position: -64px -16px;}
-		button.cancel:before{background-position: 0px 0px;}	
+		button.cancel:before, .btn_no:before{background-position: 0px 0px;}	
 
 		button.select:before{background-position: -112px -16px;}	
 		button.textedit:before{background-position: -96px -16px;}	
@@ -524,7 +524,7 @@ form fieldset legend a, legend a:visited {
 	padding: 8px 15px;
 	display: block;
 	font-weight: normal;
-	color: #888;
+	color: #555;
 	text-decoration: none;
 	background:#ddd;
 	border:1px solid #bbb;
@@ -569,7 +569,7 @@ form fieldset {
 /*Set height of the slide*/
 form :target, form fieldset.default{ min-height:150px; height:auto; width:97%; }
 
-form fieldset section > div {padding-bottom:20px; margin-bottom:15px; border-bottom:1px dotted #ccc; overflow:hidden;  width: 100%; float: right;}
+form fieldset section > div {padding-bottom:20px; margin-bottom:15px; /*border-bottom:1px dotted #ccc;*/ overflow:hidden;  width: 100%; float: right;}
 
 form label {
 	width: 220px;
@@ -905,7 +905,7 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 	transition: all 0.3s ease;
 	}
 .tree .selectioncontainer {display:block;padding-top: 7px;}
-.tree .selectioncontainer .treeitem {margin-bottom:4px;}
+.tree .selectioncontainer .treeitem {margin-bottom:1px;}
 .tree .selectioncontainer:focus {border:0; outline: 0;}
 
 .breadcrumb {
@@ -925,8 +925,8 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 	content:'';
 } 
 
-.tree .treeitem.selected {background:#f7f7f7; border-left:3px solid #cc0000; margin-left:-10px;}
-.tree .treeitem.cursor {background:#ffffff; padding:14px 7px;}
+.tree .treeitem.selected {background: rgba(250,250,250,0.7); border-left: 3px solid #cc0000; margin-left: -8px;}
+.tree .treeitem.cursor {background:rgba(255,255,255,0.85); padding:14px 7px;}
 
 .tree .treeitem:before {
 	background-image: url(icons/vi_actions_sprite.svg);
@@ -1046,7 +1046,11 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 	box-shadow: 5px 5px 10px rgba(0,0,0,.3);
 	border:1px solid #ccc;
 	border-bottom:1px solid #BE1622;
+	overflow:hidden;
 }
+
+.alertbox span {width:100%; display:block; margin-bottom: 15px;}
+.alertbox button {float:right;}
 
 /* #vi_badges
 ================================================== */	
@@ -1095,6 +1099,7 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 .is_selected {}
 .is_focused {}
 
+input:disabled,
 input[type="submit"]:disabled,
 button:disabled, 
 input[type="text"]:disabled,
