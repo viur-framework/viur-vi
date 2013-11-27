@@ -389,221 +389,6 @@ p { margin-bottom:10px;}
 .actionbar .operations {float:right;}
 
 
-/* #vi_forms
-================================================== */
-
-
-/*Define Accordion box*/
-form { color:#474747; padding:10px;overflow: hidden; width:100%; }
-form fieldset {width:100%; border: 0; padding: 0;}
-form fieldset legend {min-width:500px; width:100%;}
-form fieldset legend a, legend a:visited {
-	padding: 8px 15px;
-	display: block;
-	font-weight: normal;
-	color: #888;
-	text-decoration: none;
-	background:#ddd;
-	border:1px solid #bbb;
-	}
-
-	legend a:hover {
-		color:#666;
-		background:#ccc;
-		text-decoration:none;
-		cursor:pointer;
-	}
-
-/*General Accordion****************************************************************************/
-/*Set style of open slide*/
-form fieldset:target {}
-form fieldset:target:hover { }
-form fieldset:target legend {}
-form fieldset:target legend a {color:#333; background:#ffffff;}
-form fieldset:target section, form fieldset.default section {display:block;}
-
-/*set style of closed slide*/
-form fieldset{ float:left;	overflow:hidden; color:#333; margin:3px; }
-form fieldset:hover {}
-form fieldset section, form fieldset:target ~ .default section { 
-	display:none;
-	border:1px solid #eee;
-	padding:3% 3% 5%;
-	background:#fcfcfc;
-	overflow:hidden;
-	}
-
-
-/*Vertical Accordion *************************************************************************/
-form fieldset { 
-	width:100%; 
-	height:40px;
-	-webkit-transition:all 0.2s ease-out;
-	-moz-transition:all 0.2s ease-out;
-  	-o-transition:all 0.2s ease-out;
-	-ms-transition:all 0.2s ease-out;
-  	transition:all 0.2s ease-out;
-}
-/*Set height of the slide*/
-form :target, form fieldset.default{ min-height:150px; height:auto; width:97%; }
-
-form fieldset section > div {padding-bottom:20px; margin-bottom:15px; border-bottom:1px dotted #ccc; overflow:hidden;  width: 100%; float: right;}
-
-form label {
-	width: 220px;
-	float: left;
-	text-align:right;
-	padding: 4px 10px 6px;
-	height:16px;
-	border:1px dotted #ddd;
-	border-right-width:0;
-	background:#f9f9f9;
-	overflow: hidden;
-	line-height:1.4em;
-	font-size:0.8em
-}
-
-form label.text {
-	border-bottom:0;
-	border-right-width: 1px;
-}
-
-form label.selectone {
-	border-right-width: 1px;
-}
-
-form label.is_required {
-	border-style:solid;
-	border-left-color: #BE1622;
-	border-left-width:2px;	
-	background:#fff;
-}
-
-form label.is_invalid {background-color:#1495de; border-color:#073866; color:#fff;}
-form label.is_invalid:before {
-	background-image: url(icons/vi_actions_sprite_white.svg);
-	background-repeat: no-repeat;
-	width:16px;
-	height:16px;
-	content:' ';
-	position:relative;
-	float:left;
-	margin-top:1px;
-	margin-left:-4px;
-	margin-right:5px;
-	background-position: -64px 0px;
-	}	
-
-
-input, textarea, input[type="text"], input[type="email"], input[type="date"], input[type=url], input[type=password] {
-	display:inline-block;
-	width:50%;
-	margin-right:15px;
-	padding:4px 1.3% 6px;
-	height:16px;
-	border:1px solid #ccc;
-	border-bottom:1px solid #BE1622;
-	box-shadow: inset 0px 0px 3px #eee;
-	font-weight: lighter;
-	border-radius: 0px;
-	background: #eaeaea; /* Old browsers */
-	background: -moz-linear-gradient(top,  #eaeaea 0%, #fafafa 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eaeaea), color-stop(100%,#fafafa)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, #eaeaea 0%,#fafafa 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #eaeaea 0%,#fafafa 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #eaeaea 0%,#fafafa 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  #eaeaea 0%,#fafafa 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eaeaea', endColorstr='#fafafa',GradientType=0 ); /* IE6-9 */
-}
-
-input[type="date"] {width:162px;}
-
-input[type="radio"], input[type="checkbox"]{
-	margin-right: 15px;
-}
-
-textarea {width:97.3%; height:120px;}
-select {width: 176px; margin-left:15px;}
-
-form input:focus,
-input[type=text]:focus,
-input[type=email]:focus,
-input[type=url]:focus,
-input[type=password]:focus,
-textarea:focus {
-  outline: 0;
-  border-color: #BE1622;
-}
-
-@media (max-width: 600px) {
-  form > div {
-    margin: 0 0 15px 0; 
-  }
-  form > div > label,
-  legend {
-	  width: 100%;
-    float: none;
-    margin: 0 0 5px 0;
-  }
-  form > div > div,
-  form > div > fieldset > div {
-    width: 100%;
-    float: none;
-  }
-  input[type=text],
-  input[type=email],
-  input[type=url],
-  input[type=password],
-  textarea,
-  select {
-    width: 100%; 
-  }
-}
-
-/* #vi_tooltip
-================================================== */
-
-	a.tooltip {
-		-webkit-border-radius: 15px;
-		-moz-border-radius: 15px;
-		border-radius: 15px;
-		padding:8px 1px 1px;
-		line-height: 0;
-		font-size: .7em;
-		border: 1px solid #00406d;
-		background-color:#00406d;
-	    background:-moz-linear-gradient(top, #009de1, #00406d); /* Firefox */
-	    background:-webkit-gradient(linear, left top, left bottom, from(#009de1), to(#00406d)); /* Safari, Chrome */
-	    color:transparent;
-		letter-spacing:-1em;
-		overflow:hidden;
-		-webkit-transition: all 0.3s ease;
-		-moz-transition: all 0.3s ease;
-		-o-transition: all 0.3s ease;
-		transition: all 0.3s ease;	
-		display:inline-block;
-		width:16px;
-		float:right;
-	}
-	
-	a.tooltip:before {
-				background-image: url(icons/vi_actions_sprite_white.svg);
-				background-repeat: no-repeat;
-				width:16px;
-				height:16px;
-				content:' ';
-				position:relative;
-				float:left;
-				margin-top:-7px;
-				background-position: -16px -64px;}	
-
-	a.tooltip:hover {
-				overflow:visible;
-				min-width:90px;
-				letter-spacing:normal;
-				color:#eee;
-			}
-
 /* #vi_buttons
 ================================================== */
 
@@ -728,6 +513,274 @@ button.icon.saveClose[type="button"]:hover:before {
 }
 
 
+/* #vi_forms
+================================================== */
+
+/*Define Accordion box*/
+form { color:#474747; padding:10px;overflow: hidden; width:100%; }
+form fieldset {width:97%; border: 0; padding: 0;}
+form fieldset legend {min-width:500px; width:100%;}
+form fieldset legend a, legend a:visited {
+	padding: 8px 15px;
+	display: block;
+	font-weight: normal;
+	color: #888;
+	text-decoration: none;
+	background:#ddd;
+	border:1px solid #bbb;
+	}
+
+	legend a:hover {
+		color:#666;
+		background:#ccc;
+		text-decoration:none;
+		cursor:pointer;
+	}
+
+/*General Accordion****************************************************************************/
+/*Set style of open slide*/
+form fieldset:target {}
+form fieldset:target:hover { }
+form fieldset:target legend {}
+form fieldset:target legend a {color:#333; background:#ffffff;}
+form fieldset:target section, form fieldset.default section {display:block;}
+
+/*set style of closed slide*/
+form fieldset{ float:left;	overflow:hidden; color:#333; margin:3px; }
+form fieldset:hover {}
+form fieldset section, form fieldset:target ~ .default section { 
+	display:none;
+	border:1px solid #eee;
+	padding:3% 3% 5%;
+	background:#fcfcfc;
+	overflow:hidden;
+	}
+
+
+/*Vertical Accordion *************************************************************************/
+form fieldset { 
+	height:40px;
+	-webkit-transition:all 0.2s ease-out;
+	-moz-transition:all 0.2s ease-out;
+  	-o-transition:all 0.2s ease-out;
+	-ms-transition:all 0.2s ease-out;
+  	transition:all 0.2s ease-out;
+}
+/*Set height of the slide*/
+form :target, form fieldset.default{ min-height:150px; height:auto; width:97%; }
+
+form fieldset section > div {padding-bottom:20px; margin-bottom:15px; border-bottom:1px dotted #ccc; overflow:hidden;  width: 100%; float: right;}
+
+form label {
+	width: 220px;
+	float: left;
+	text-align:right;
+	padding: 4px 10px 6px;
+	height:16px;
+	border:1px dotted #ddd;
+	border-right-width:0;
+	background:#f9f9f9;
+	overflow: hidden;
+	line-height:1.4em;
+	font-size:0.8em
+}
+
+form label.text {
+	border-bottom:0;
+	border-right-width: 1px;
+}
+
+form label.selectone {
+	border-right-width: 1px;
+}
+
+form label.is_required {
+	border-style:solid;
+	border-left-color: #BE1622;
+	border-left-width:2px;	
+	background:#fff;
+}
+
+form label.is_invalid {background-color:#1495de; border-color:#073866; color:#fff;}
+form label.is_invalid:before {
+	background-image: url(icons/vi_actions_sprite_white.svg);
+	background-repeat: no-repeat;
+	width:16px;
+	height:16px;
+	content:' ';
+	position:relative;
+	float:left;
+	margin-top:1px;
+	margin-left:-4px;
+	margin-right:5px;
+	background-position: -64px 0px;
+	}	
+
+
+input, textarea, input[type="text"], input[type="email"], input[type="date"], input[type=url], input[type=password] {
+	display:inline-block;
+	width:50%;
+	margin-right:15px;
+	padding:4px 1.3% 6px;
+	height:16px;
+	border:1px solid #ccc;
+	border-bottom:1px solid #BE1622;
+	box-shadow: inset 0px 0px 3px #eee;
+	font-weight: lighter;
+	border-radius: 0px;
+	background: #eaeaea; /* Old browsers */
+	background: -moz-linear-gradient(top,  #eaeaea 0%, #fafafa 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eaeaea), color-stop(100%,#fafafa)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #eaeaea 0%,#fafafa 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #eaeaea 0%,#fafafa 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #eaeaea 0%,#fafafa 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #eaeaea 0%,#fafafa 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eaeaea', endColorstr='#fafafa',GradientType=0 ); /* IE6-9 */
+}
+
+input[type="date"] {width:162px;}
+
+input[type="radio"], input[type="checkbox"]{
+	margin-right: 15px;
+}
+
+textarea {width:97.3%; height:120px;}
+select {
+	min-width: 175px; 
+	margin-left:15px;
+	border:1px solid #ccc;
+	font-size:.75em;
+	font-weight:100;
+	color:#444;
+}
+
+.selectioncontainer {display: inline-block;}
+.selectioncontainer button {margin-right: 15px;}
+.selectioncontainer label {border:1px solid #ccc; border-right-width: 0;}
+.selectioncontainer label, .selectioncontainer button {margin-bottom:5px;}
+
+input:focus,
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=url]:focus,
+input[type=password]:focus,
+textarea:focus {
+	outline: 0;
+	border-color: #BE1622;
+}
+
+form .treeitem input, form .relational input {
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+ }
+ 
+form .treeitem input:focus, form .relational input:focus {
+	border-color: #939393;
+}
+
+form .treeitem:focus button:after, form .relational:focus button:after {
+				background-image: url(icons/vi_actions_sprite.svg);
+				background-repeat: no-repeat;
+				width:16px;
+				height:16px;
+				content:' ';
+				position:relative;
+				float:right;
+				margin-top:3px;
+				margin-left:4px;
+				margin-right:7px;
+				background-position: -0px -64px;
+}
+
+@media (max-width: 600px) {
+  form > div {
+    margin: 0 0 15px 0; 
+  }
+  form > div > label,
+  legend {
+	  width: 100%;
+    float: none;
+    margin: 0 0 5px 0;
+  }
+  form > div > div,
+  form > div > fieldset > div {
+    width: 100%;
+    float: none;
+  }
+  input[type=text],
+  input[type=email],
+  input[type=url],
+  input[type=password],
+  textarea,
+  select {
+    width: 100%; 
+  }
+}
+
+/* #vi_tooltip
+================================================== */
+
+	a.tooltip {
+		-webkit-border-radius: 15px;
+		-moz-border-radius: 15px;
+		border-radius: 15px;
+		padding:8px 1px 1px;
+		line-height: 0;
+		font-size: .7em;
+		border: 1px solid #00406d;
+		background-color:#00406d;
+	    background:-moz-linear-gradient(top, #009de1, #00406d); /* Firefox */
+	    background:-webkit-gradient(linear, left top, left bottom, from(#009de1), to(#00406d)); /* Safari, Chrome */
+	    color:transparent;
+		letter-spacing:-1em;
+		overflow:hidden;
+		-webkit-transition: all 0.3s ease;
+		-moz-transition: all 0.3s ease;
+		-o-transition: all 0.3s ease;
+		transition: all 0.3s ease;	
+		display:inline-block;
+		width:16px;
+		float:right;
+		margin-right: 10px;
+	}
+	a.tooltip span {display:none}
+	a.tooltip:before {
+				background-image: url(icons/vi_actions_sprite_white.svg);
+				background-repeat: no-repeat;
+				width:16px;
+				height:16px;
+				content:' ';
+				position:relative;
+				float:left;
+				margin-top:-7px;
+				background-position: -16px -64px;}	
+
+	a.tooltip:hover {
+				overflow:visible;
+				min-width:90px;
+				letter-spacing:normal;
+				color:#eee;
+			}
+	a.tooltip:hover span {
+		display:block;
+		right:120px;
+		width:auto;
+		background: #eee;
+		color:#666;
+		border:1px solid #bbb;
+		height:auto;
+		position:absolute;
+		margin-top:20px;
+		padding:15px 15px 18px;
+		border-radius: 10px;}
+		
+	/*
+	a.tooltip span:target {}
+	*/
+
+
 /* #vi_tables
 ================================================== */
 
@@ -766,7 +819,7 @@ thead tr:first-child th:first-child {
 	-moz-border-radius-topleft:3px;
 	-webkit-border-top-left-radius:3px;
 	border-top-left-radius:3px;
-	border-width: 0px 1px 1px 0px;
+	border-width: 0px 0px 1px 0px;
 }
 
 thead tr:first-child th:last-child {
@@ -807,7 +860,7 @@ tr:nth-child(even) { background-color:#ffffff; }
 	background-color:#ff0000;
 	border:0px solid #cccccc;
 	text-align:center;
-	border-width: 0px 0px 1px 0px;
+	border-width: 0px 0px 1px 1px;
 	font-weight:600;
 	color:#ffffff;
 }
@@ -844,14 +897,22 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 /* #vi_forest
 ================================================== */	
 .tree {width:100%; min-height:500px;}
-.treeitem {padding:7px;}
+.tree .treeitem {
+	padding:7px; 
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+	}
+.tree .selectioncontainer {display:block;padding-top: 7px;}
+.tree .selectioncontainer .treeitem {margin-bottom:4px;}
+.tree .selectioncontainer:focus {border:0; outline: 0;}
 
 .breadcrumb {
 	min-width: 500px;
 	overflow: hidden;
 	border-bottom:1px solid #bbb;
 	background:#fff;
-	margin-bottom: 7px;
 	font-weight: 600;
 	padding:7px;
 }
@@ -864,7 +925,10 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 	content:'';
 } 
 
-.treeitem:before {
+.tree .treeitem.selected {background:#f7f7f7; border-left:3px solid #cc0000; margin-left:-10px;}
+.tree .treeitem.cursor {background:#ffffff; padding:14px 7px;}
+
+.tree .treeitem:before {
 	background-image: url(icons/vi_actions_sprite.svg);
 	background-repeat: no-repeat;
 	width:16px;
@@ -876,20 +940,11 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 	margin-right: 7px
 }
 
-.treeitem.node:before {
-	background-position: -32px -64px;
-}
+.tree .treeitem.node {}
+.tree .treeitem.node:before {background-position: -32px -64px;}
+.tree .treeitem.node.is_rootnode:before {background-position: -112px -64px;}
 
-.treeitem.node.is_rootnode:before {
-	background-position: -112px -64px;
-}
-
-
-.selectioncontainer {
-}
 .file img {float:left; margin-right:7px; height:32px; width:auto; max-width:32px; margin-top:-7px; margin-left:-7px;}
-.tree.cursor {background:#bbb;}
-.tree.selected {background:#ccc;}
 
 .tree.supports_upload {
 	border:3px dashed #ddd;
@@ -916,17 +971,25 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 ================================================== */	
 .hierarchy {min-width:500px;}
 
-.hierarchyitem {padding:7px; background:#ccc;					
+.hierarchyitem {padding:7px; 
 	-webkit-transition: all 0.3s ease;
 	-moz-transition: all 0.3s ease;
 	-o-transition: all 0.3s ease;
 	transition: all 0.3s ease;
-	margin:2px 0;
+	margin:4px 0 0;
+	background:#fcfcfc;
+	border:1px solid #ddd;
 	}
-.hierarchyitem:nth-of-type(odd) {background:#eee;}
+.hierarchyitem:nth-of-type(odd) {background:#ececec;}
+
+.hierarchyitem:nth-of-type(odd) ol .hierarchyitem:first-child {margin-top:0;}
+.hierarchyitem:nth-of-type(odd) ol .hierarchyitem:nth-of-type(odd) {background:#fcfcfc; border:0;}
+.hierarchyitem:nth-of-type(odd) ol .hierarchyitem:nth-of-type(even) {background:#f5f5f5; border:0;}
+
 .hierarchyitem.expaned ol {
 				margin-top:7px;
-				border:1px solid #ddd;}
+				border:1px solid #ddd;
+				background:#e5e5e5;}
 				
 .hierarchyitem.expaned ol li {				
 				padding-left:14px;
@@ -950,7 +1013,15 @@ tr.is_focused.is_selected:nth-child(even) {background:#aa2200;}
 				} 
 
 /* hierachyitem states */
-.supports_drag {cursor:pointer;}
+.supports_drag {cursor:move;}
+
+[draggable] {
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+ }
+ 
 .insert_before {border-top:2px solid #BE1622;}
 .insert_here {border:1px solid #BE1622; padding:12px 7px;}
 .insert_after {border-bottom:2px solid #BE1622;}
