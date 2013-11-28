@@ -113,8 +113,10 @@ class CoreWindow( html5.Div ):
 		self.panes.append( pane )
 		if self.currentPane is not None:
 			self.currentPane.widgetsDomElm["style"]["display"] = "none"
+			self.currentPane["class"].remove("is_active")
 		self.currentPane = pane
 		self.currentPane.widgetsDomElm["style"]["display"] = "block"
+		self.currentPane["class"].append("is_active")
 
 	def removePane(self, pane):
 		assert pane in self.panes, "Cannot remove unknown pane!"

@@ -31,6 +31,7 @@ class Popup( html5.Div ):
 class YesNoDialog( Popup ):
 	def __init__(self, question, title=None, yesCallback=None, noCallback=None, *args, **kwargs):
 		super( YesNoDialog, self ).__init__( *args, **kwargs )
+		self["class"].append("yesnodialog")
 		self.yesCallback = yesCallback
 		self.noCallback = noCallback
 		lbl = html5.Span()

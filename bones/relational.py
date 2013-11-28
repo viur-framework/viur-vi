@@ -179,7 +179,7 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		self.data = data
 		txtLbl = html5.Label( data["name"])
 		self.appendChild( txtLbl )
-		remBtn = html5.ext.Button("X", self.onRemove )
+		remBtn = html5.ext.Button("Remove", self.onRemove )
 		remBtn["class"].append("icon")
 		remBtn["class"].append("cancel")
 		self.appendChild( remBtn )
@@ -216,7 +216,6 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.format = format
 		self.entries = []
 		self.currentSelector = None
-		print("kkkkkkkk", boneName)
 		self.selectionDiv = html5.Div()
 		self.selectionDiv["class"].append("selectioncontainer")
 		self.appendChild( self.selectionDiv )

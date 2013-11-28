@@ -17,12 +17,10 @@ class AddAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddAction, self ).__init__( "Add", *args, **kwargs )
-		print("CREATING ADD BUTTON")
 		self["class"] = "icon add list"
 
 	@staticmethod
 	def isSuitableFor( modul, actionName ):
-		print("SUITABKE FOR", modul, actionName)
 		return( (modul == "list" or modul.startswith("list.")) and actionName=="add" )
 
 	def onClick(self, sender=None):
@@ -121,9 +119,9 @@ class DeleteAction( html5.ext.Button ):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		print( "Deleting "+str([x["id"] for x in selection]))
 		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete)
 		d.deleteList = [x["id"] for x in selection]
+		d["class"].append( "delete" )
 		return
 		for s in selection:
 			pane = Pane("Edit", closeable=True)

@@ -59,7 +59,7 @@ class EditWidget( html5.Div ):
 		self.closeOnSuccess = False
 		self._lastData = {} #Dict of structure and values recived
 		self.editTaskID = None
-		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" )
+		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" if self.key else "add" )
 		self.appendChild( self.actionbar )
 		self.form = html5.Form()
 		self.appendChild(self.form)
@@ -187,6 +187,8 @@ class EditWidget( html5.Div ):
 			if bone["required"] and bone["error"] is not None:
 				descrLbl["class"].append("is_invalid")
 				descrLbl["title"] = bone["error"]
+			if bone["required"] and bone["error"] is None:
+				descrLbl["class"].append("is_valid")
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
 				tmp = html5.Span()
 				tmp.appendChild(descrLbl)

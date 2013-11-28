@@ -149,6 +149,7 @@ class DeleteAction( html5.ext.Button ):
 			return
 		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete)
 		d.deleteList = selection
+		d["class"].append( "delete" )
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList

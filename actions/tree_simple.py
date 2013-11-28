@@ -21,6 +21,8 @@ class AddNodeAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		i = InputDialog( "Directory Name", successHandler=self.createDir )
+		i["class"].append( "create" )
+		i["class"].append( "directory" )
 
 	def createDir(self, dialog, dirName ):
 		if len(dirName)==0:
