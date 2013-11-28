@@ -274,7 +274,7 @@ class Widget( object ):
 		Specifies whether the element is draggable.
 		@return: True | False | "auto"
 		"""
-		return(self.element.draggable if str(self.element.draggable)=="auto" else (True if str(self.element.contenteditable).lower()=="true" else False) )
+		return(self.element.draggable if str(self.element.draggable)=="auto" else (True if str(self.element.draggable).lower()=="true" else False) )
 	def _setDraggable(self,val):
 		"""
 		Specifies whether the element is draggable.
@@ -313,13 +313,15 @@ class Widget( object ):
 		Specifies whether the contents of the element are editable.
 		@return: True | False
 		"""
-		return( True if str(self.element.contenteditable).lower()=="true" else False )
+		v = self.element.getAttribute("contenteditable")
+		return( str(v).lower()=="true" )
+
 	def _setContenteditable(self, val):
 		"""
 		Specifies whether the contents of the element are editable.
 		@param val: True | False
 		"""
-		self.element.contenteditable=str(val).lower()
+		self.element.setAttribute("contenteditable",str(val).lower())
 
 	def _getAccesskey(self):
 		"""
