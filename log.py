@@ -37,6 +37,9 @@ class Log( html5.Div ):
 		liwrap.appendChild(spanMsg)
 		DeferredCall(self.removeNewCls, liwrap,_delay=2500)
 		self.logUL.appendChild( liwrap )
+		if len(self.logUL._children)>1:
+			self.logUL.element.removeChild( liwrap.element )
+			self.logUL.element.insertBefore( liwrap.element, self.logUL.element.children.item(0) )
 
 	def removeNewCls(self,span):
 		span["class"].remove("is_new")
