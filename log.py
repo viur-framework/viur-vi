@@ -9,6 +9,10 @@ class Log( html5.Div ):
 	def __init__(self):
 		super( Log, self ).__init__()
 		self["class"].append("vi_messenger")
+		openLink = html5.A()
+		openLink["href"] = "#statuslist"
+		openLink.appendChild(html5.TextNode("Open message center"))
+		self.appendChild(openLink)
 		self.logUL = html5.Ul()
 		self.logUL["id"] = "statuslist"
 		self.logUL["class"].append( "statuslist" )
