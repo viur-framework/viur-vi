@@ -17,6 +17,6 @@ class ToolTip(html5.Div):
 		self.appendChild(a)
 		span = html5.Span()
 		span.element.innerHTML = longText
-		span["id"] = "#tooltip_contents_%s" % self.toolTipIdx
+		span["id"] = "tooltip_contents_%s" % self.toolTipIdx
 		self.appendChild( span )
 
