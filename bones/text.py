@@ -58,7 +58,10 @@ class TextEditBone( html5.Div ):
 		if readOnly:
 			self.input["disabled"]=True
 		self.appendChild(self.input)
-		self.appendChild( html5.ext.Button("Edit Text", self.openTxt ))
+		openEditorBtn = html5.ext.Button("Edit Text", self.openTxt )
+		openEditorBtn["class"].append("textedit")
+		openEditorBtn["class"].append("icon")
+		self.appendChild(openEditorBtn )
 
 	def openTxt(self, *args, **kwargs):
 		assert self.currentEditor is None
