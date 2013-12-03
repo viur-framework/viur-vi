@@ -9,15 +9,21 @@ class Log( html5.Div ):
 	def __init__(self):
 		super( Log, self ).__init__()
 		self["class"].append("vi_messenger")
-		openLink = html5.A()
-		openLink["href"] = "#statuslist"
-		openLink.appendChild(html5.TextNode("Open message center"))
+		openLink = html5.ext.Button("Open message center", self.toggleMsgCenter)
+		#openLink["href"] = "#statuslist"
+		#openLink.appendChild(html5.TextNode("Open message center"))
 		self.appendChild(openLink)
 		self.logUL = html5.Ul()
 		self.logUL["id"] = "statuslist"
 		self.logUL["class"].append( "statuslist" )
 		self.appendChild( self.logUL )
 		#self.backlog = []
+
+	def toggleMsgCenter(self, *args, **kwargs):
+		if "is_open" in self["class"]:
+			self["class"].remove("is_open")
+		else:
+			self["class"].append("is_open")
 
 	def log(self, type, msg ):
 		"""
