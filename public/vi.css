@@ -1172,15 +1172,88 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
         background-image: -moz-linear-gradient(center bottom, rgba(238,238,238,0.9) 20%, rgba(255,255,255,0.2) 95%); /* mozilla example - FF3.6+ */
 		filter: progid:DXImageTransform.Microsoft.gradient( gradientType=0, startColor=#55eeeeee, endColorStr=#55FFFFFF); /* IE 5.5 - 7 */
         -ms-filter: progid:DXImageTransform.Microsoft.gradient( gradientType=0, startColor=#55eeeeee, endColoStr=#55FFFFFF); /* IE8 uses -ms-filter for whatever reason... */
-	    padding:15px 30px;
+	    padding:15px 0;
 	    z-index:10;
         margin-top:-30px;
-	    height:30px;
+	    height:300px;
+		-webkit-transition: all 0.6s ease;
+		-moz-transition: all 0.6s ease;
+		-o-transition: all 0.6s ease;
+		transition: all 0.6s ease;
+		overflow:visible;
 	}
+	
+	.vi_messenger:hover {
+		margin-top:-82px;
+	}
+	
+	.vi_messenger.is_open {
+		margin-top:-300px;
+		overflow-y:scroll;
+	} 
+	
+	.vi_messenger button[type="button"] {
+		height:34px;
+		margin-top:-17px;
+		background:transparent;
+		font-size:.8em;
+		text-decoration:none; 
+		text-shadow:none;
+		border:0;
+		border-right:1px solid #fafafa;
+		border-bottom:1px solid #fafafa;
+		border-top:2px solid #BE1622;
+		padding:6px 7px 80px;
+		-webkit-transition: all 0.3s ease;
+		-moz-transition: all 0.3s ease;
+		-o-transition: all 0.3s ease;
+		transition: all 0.3s ease;
+		color:transparent;
+		letter-spacing:-1em;
+		overflow:hidden;
+		min-width:32px;
+		position: relative;
+		display: block;
+		float:left;
+	}	
+	
+	.vi_messenger.is_open button[type="button"] {
+		position: fixed;
+		padding-bottom:7px;
+	}	
+	
+	.vi_messenger button[type="button"]:hover {
+				    color:#999;
+   					text-shadow: 0px 1px 1px #fff;
+				    background-color:#fff;
+				    text-decoration:none;
+				    border-top:2px solid #ff0000;
+				    overflow:visible;
+					min-width:130px;
+					letter-spacing:normal;
+				}
 		
+	.vi_messenger button[type="button"]:before {
+				background-image: url(icons/vi_iconnav_sprite.svg);
+				background-repeat: no-repeat;
+				width:32px;
+				height:32px;
+				content:' ';
+				position:relative;
+				float:left;
+				margin-top:-1px;
+				margin-left:7px;
+				background-position: -160px 0px;
+			}
+	
+	.vi_messenger.is_open button[type="button"]:before {
+		background-position: -192px 0px;
+	}
+	
 		.statuslist {
 			width:500px;
 			margin:0 auto;
+			padding:0 0 30px;
 		}
 		
 		.statuslist li {
@@ -1192,8 +1265,7 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
 			-o-transition: all 0.6s ease;
 			transition: all 0.6s ease;
 			width:472px;
-			margin-top:0;
-			margin-bottom: 15px;
+			margin:0 auto 15px;
 			background:#f9f9f9;
 			color:#777;
 		}
@@ -1259,6 +1331,21 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
 			margin-top:-21px;
 			margin-bottom: -21px;
 		}
+		
+		.vi_messenger.is_open .statuslist li.is_new {
+			position:relative;
+			padding:20px;
+			width:500px;
+			margin-top:10px;
+			bottom:10px;
+			margin-left:-15px;
+			margin-right:-15px;
+			background:#fff;
+			color:#444;
+			box-shadow:0px 0px 0px rgba(0,0,0,0);
+		}
+		
+
 		
 /* #States
 ================================================== */		
