@@ -1297,7 +1297,7 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
 		}
 
 	
-	.vi_messenger.is_uploading button[type="button"]:hover {
+	.vi_messenger.is_uploading button[type="button"]:hover, .vi_messenger.is_uploading:hover button[type="button"] {
 					color:#fff;
 					text-shadow: none;
 	}
