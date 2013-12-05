@@ -5,7 +5,7 @@ from widgets.actionbar import ActionBar
 from event import EventDispatcher
 from priorityqueue import displayDelegateSelector, viewDelegateSelector
 import utils
-
+from html5.keycodes import *
 
 class NodeWidget( html5.Div ):
 	"""
@@ -25,7 +25,6 @@ class NodeWidget( html5.Div ):
 		self.data = data
 		self.structure = structure
 		self.buildDescription()
-		self["style"]["border"] = "1px solid blue"
 		self["class"] = "treeitem node supports_drag supports_drop"
 		self["draggable"] = True
 		self.sinkEvent("onDragOver","onDrop","onDragStart")
@@ -97,7 +96,6 @@ class LeafWidget( html5.Div ):
 		self.structure = structure
 		self.buildDescription()
 		self.element.innerHTML = data["name"]
-		self["style"]["border"] = "1px solid black"
 		self["class"] = "treeitem leaf supports_drag"
 		self["draggable"] = True
 		self.sinkEvent("onDragStart")
@@ -166,7 +164,7 @@ class SelectableDiv( html5.Div ):
 	def onClick(self, event):
 		self.focus()
 		for child in self._children:
-			if utils.doesEventHitWidget( event, child ):
+			if utils.doesEventHitWidgetOrParents( event, child ):
 				self.setCurrentItem( child )
 				if self._isCtlPressed:
 					self.addSelectedItem( child )
@@ -175,14 +173,14 @@ class SelectableDiv( html5.Div ):
 
 	def onDblClick(self, event):
 		for child in self._children:
-			if utils.doesEventHitWidget( event, child ):
+			if utils.doesEventHitWidgetOrParents( event, child ):
 				if self.selectionType=="node" and isinstance( child, self.nodeWidget ) or \
 				   self.selectionType=="leaf" and isinstance( child, self.leafWidget ) or \
 				   self.selectionType=="both":
 					self.selectionActivatedEvent.fire( self, [child] )
 
 	def onKeyDown(self, event):
-		if event.keyCode==13: # Return
+		if isReturn(event.keyCode): # Return
 			if len( self._selectedItems )>0:
 				self.selectionActivatedEvent.fire( self, self._selectedItems )
 				event.preventDefault()
@@ -191,11 +189,11 @@ class SelectableDiv( html5.Div ):
 				self.selectionActivatedEvent.fire( self, [self._currentItem] )
 				event.preventDefault()
 				return
-		elif event.keyCode==17: #Ctrl
+		elif isSingleSelectionKey(event.keyCode): #Ctrl
 			self._isCtlPressed = True
 
 	def onKeyUp(self, event):
-		if event.keyCode==17:
+		if isSingleSelectionKey(event.keyCode):
 			self._isCtlPressed = False
 
 	def clearSelection(self):
@@ -300,7 +298,7 @@ class TreeWidget( html5.Div ):
 		super( TreeWidget, self ).onClick( event )
 		for c in self.pathList._children:
 			# Test if the user clicked inside the path-list
-			if utils.doesEventHitWidget( event, c ):
+			if utils.doesEventHitWidgetOrParents( event, c ):
 				self.path = self.path[ : self.pathList._children.index( c )]
 				self.rebuildPath()
 				self.setNode( c.data["id"] )

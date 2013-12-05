@@ -3,6 +3,7 @@
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
 from config import conf
+from widgets.wysiwyg import Wysiwyg
 
 class TextViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -38,6 +39,7 @@ class TextEditBone( html5.Div ):
 		self.readOnly = readOnly
 		self.selectedLang=False
 		self.skelStructure=skelStructure
+		self.currentEditor = None
 		##multilangbone
 		if skelStructure and skelStructure[boneName]["languages"]:
 			if "currentlanguage" in conf and conf["currentlanguage"] in skelStructure[boneName]["languages"]:
@@ -56,6 +58,23 @@ class TextEditBone( html5.Div ):
 		if readOnly:
 			self.input["disabled"]=True
 		self.appendChild(self.input)
+		openEditorBtn = html5.ext.Button("Edit Text", self.openTxt )
+		openEditorBtn["class"].append("textedit")
+		openEditorBtn["class"].append("icon")
+		self.appendChild(openEditorBtn )
+
+	def openTxt(self, *args, **kwargs):
+		assert self.currentEditor is None
+		self.currentEditor = Wysiwyg( self.input["value"] )
+		self.currentEditor.saveTextEvent.register( self )
+		conf["mainWindow"].stackWidget( self.currentEditor )
+
+	def onSaveText(self, editor, txt ):
+		assert self.currentEditor is not None
+		self.input["value"] = txt
+		conf["mainWindow"].removeWidget( self.currentEditor )
+		self.currentEditor = None
+
 
 	def changeLang(self,btn):
 		self.valuesdict[self.selectedLang]=self.input["value"]

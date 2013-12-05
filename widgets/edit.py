@@ -15,6 +15,7 @@ class EditWidget( html5.Div ):
 	appHierarchy = "hierarchy"
 	appTree = "tree"
 	appSingleton = "singleton"
+	__editIdx_ = 0 #Internal counter to ensure unique ids
 
 	def __init__(self, modul, applicationType, key=0, node=None, skelType=None, clone=False, *args, **kwargs ):
 		"""
@@ -47,6 +48,8 @@ class EditWidget( html5.Div ):
 			if applicationType==EditWidget.appTree:
 				assert node is not None #We still need a path for cloning #FIXME
 		# End santy-checks
+		self.editIdx = EditWidget.__editIdx_ #Iternal counter to ensure unique ids
+		EditWidget.__editIdx_ += 1
 		self.applicationType = applicationType
 		self.key = key
 		self.node = node
@@ -56,7 +59,7 @@ class EditWidget( html5.Div ):
 		self.closeOnSuccess = False
 		self._lastData = {} #Dict of structure and values recived
 		self.editTaskID = None
-		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" )
+		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" if self.key else "add" )
 		self.appendChild( self.actionbar )
 		self.form = html5.Form()
 		self.appendChild(self.form)
@@ -128,6 +131,9 @@ class EditWidget( html5.Div ):
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
 			NetworkService.notifyChange(self.modul)
 			conf["mainWindow"].log("success","Entry saved!")
+			if self.closeOnSuccess:
+				conf["mainWindow"].removeWidget( self )
+				return
 			self.clear()
 			self.bones = {}
 			self.reloadData()
@@ -149,11 +155,14 @@ class EditWidget( html5.Div ):
 			if not cat in fieldSets.keys():
 				fs = html5.Fieldset()
 				fs["class"] = cat
-				fs["id"] = "vi_%s_%s_%s" % (self.modul, "edit" if self.key else "add", cat)
+				fs["id"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
 				fs["name"] = cat
 				legend = html5.Legend()
-				legend["id"] = "vi_%s_%s_%s_legend" % (self.modul, "edit" if self.key else "add", cat)
-				legend.appendChild( html5.TextNode(cat))
+				legend["id"] = "vi_%s_%s_%s_%s_legend" % (self.editIdx,self.modul, "edit" if self.key else "add", cat)
+				fshref = html5.A()
+				fshref["href"] = "#vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
+				fshref.appendChild(html5.TextNode(cat) )
+				legend.appendChild( fshref )
 				fs.appendChild(legend)
 				section = html5.Section()
 				fs.appendChild(section)
@@ -165,19 +174,21 @@ class EditWidget( html5.Div ):
 				tabName = "Test"#QtCore.QCoreApplication.translate("EditWidget", "General")
 			wdgGen = editBoneSelector.select( self.modul, key, tmpDict )
 			widget = wdgGen.fromSkelStructure( self.modul, key, tmpDict )
-			widget["id"] = "vi_%s_%s_%s_bn_%s" % (self.modul, "edit" if self.key else "add", cat, key)
-			widget["class"].append(key)
-			widget["class"].append(bone["type"].replace(".","_"))
+			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat, key)
+			#widget["class"].append(key)
+			#widget["class"].append(bone["type"].replace(".","_"))
 			#self.prepareCol(currRow,1)
 			descrLbl = html5.Label(bone["descr"])
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
-			descrLbl["for"] = "vi_%s_%s_%s_bn_%s" % (self.modul, "edit" if self.key else "add", cat, key)
+			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, self.modul, "edit" if self.key else "add", cat, key)
 			if bone["required"]:
 				descrLbl["class"].append("is_required")
 			if bone["required"] and bone["error"] is not None:
 				descrLbl["class"].append("is_invalid")
 				descrLbl["title"] = bone["error"]
+			if bone["required"] and bone["error"] is None:
+				descrLbl["class"].append("is_valid")
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
 				tmp = html5.Span()
 				tmp.appendChild(descrLbl)
@@ -187,6 +198,12 @@ class EditWidget( html5.Div ):
 			containerDiv.appendChild( descrLbl )
 			containerDiv.appendChild( widget )
 			fieldSets[ cat ]._section.appendChild( containerDiv )
+			containerDiv["class"].append("bone")
+			containerDiv["class"].append("bone_"+key)
+			containerDiv["class"].append( bone["type"].replace(".","_") )
+			if "." in bone["type"]:
+				for t in bone["type"].split("."):
+					containerDiv["class"].append(t)
 			#self["cell"][currRow][0] = descrLbl
 			#fieldSets[ cat ].appendChild( widget )
 			#self["cell"][currRow][1] = widget

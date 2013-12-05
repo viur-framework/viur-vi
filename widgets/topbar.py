@@ -62,10 +62,18 @@ class Settings(html5.Li):
 class Logout(html5.Li):
 	def __init__(self):
 		super(Logout,self).__init__()
-		##NetworkService.request( "skey", "", successHandler=self.onSkeyAvaiable, cacheable=False )
-
-	##def onSkeyAvaiable(self, req):
 		aa=html5.A()
 		aa["class"].append("icon logout")
 		aa.appendChild(html5.TextNode("Logout"))
 		self.appendChild(aa)
+		self.sinkEvent("onClick")
+
+	def onClick(self, event):
+		event.stopPropagation()
+		event.preventDefault()
+		NetworkService.request( "skey", "", successHandler=self.onSkeyAvaiable, cacheable=False )
+
+	def onSkeyAvaiable(self, req):
+		skey = NetworkService.decode( req )
+		assert not "\"" in skey
+		eval("""window.top.location.href = "/vi/user/logout?skey="""+skey+"""&";""")

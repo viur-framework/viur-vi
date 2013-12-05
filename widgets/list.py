@@ -16,7 +16,8 @@ class ListWidget( html5.Div ):
 		to this table.
 
 	"""
-	def __init__( self, modul, *args, **kwargs ):
+	_batchSize = 20 #How many row we fetch at once
+	def __init__( self, modul, filter=None, columns=None, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
@@ -29,6 +30,8 @@ class ListWidget( html5.Div ):
 		self.appendChild( self.table )
 		self._currentCursor = None
 		self.table.setDataProvider(self)
+		self.filter = filter.copy() if isinstance(filter,dict) else {}
+		self.columns = columns[:] if isinstance(columns,list) else []
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
@@ -41,7 +44,11 @@ class ListWidget( html5.Div ):
 			Requests the next rows from the server and feed them to the table.
 		"""
 		if self._currentCursor:
-			NetworkService.request(self.modul, "list", {"orderby":"name","amount":"7","cursor":self._currentCursor}, successHandler=self.onCompletion, cacheable=True )
+			filter = self.filter.copy()
+			filter["amount"] = self._batchSize
+			if self._currentCursor is not None:
+				filter["cursor"] = self._currentCursor
+			NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, cacheable=True )
 			self._currentCursor = None
 
 
@@ -83,18 +90,23 @@ class ListWidget( html5.Div ):
 				pass
 				#self.element.innerHTML = "<center><strong>Keine Ergebnisse</strong></center>"
 			return
-		boneList = []
-		boneInfoList = []
 		tmpDict = {}
 		for key, bone in data["structure"]:
 			tmpDict[ key ] = bone
-		for boneName, boneInfo in data["structure"]:
+
+		if len(self.columns)==0:
+			boneList = []
+			for boneName, boneInfo in data["structure"]:
+				if boneInfo["visible"]:
+					boneList.append( boneName )
+		else:
+			boneList = [x for x in self.columns if x in tmpDict.keys()]
+		boneInfoList = []
+		for boneName in boneList:
+			boneInfo = tmpDict[boneName]
 			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
 			self.table.setCellRender( boneName, delegateFactory )
-			if boneInfo["visible"]:
-				boneList.append( boneName )
-				boneInfoList.append( boneInfo )
-				#res += "<td>%s</td>" % boneInfo["descr"]
+			boneInfoList.append( boneInfo )
 		for skel in data["skellist"]:
 			self.table.add( skel )
 		self.table.setShownFields( boneList )

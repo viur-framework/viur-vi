@@ -7,7 +7,8 @@ class TextNode( object ):
 
 	def __init__(self, txt=None, *args, **kwargs ):
 		super( TextNode, self ).__init__()
-		self.element = eval("document.createTextNode()")
+		self._children = []
+		self.element = eval("document.createTextNode('')")
 		if txt is not None:
 			self.element.data = txt
 
