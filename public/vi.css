@@ -322,26 +322,29 @@ p { margin-bottom:10px;}
 /* #vi_operator
 ================================================== */	
 
-.vi_operator {z-index:20; padding: 150px 30px 45px; float:left; min-width:42.4%; max-width:84.7%; min-height:500px; background:#ddd; overflow:hidden; } 
+.vi_operator {z-index:20; padding: 150px 1% 45px; float:left; width:98%; min-height:500px; background:#ddd; overflow:hidden; } 
+.has_multiple_children .vi_operator {width:39.15%; height:100%; position:fixed; overflow-y: auto; overflow-x: hidden;}
 .vi_operator:first-of-type {background-color:#f6f6f6;}
 
-	.vi_operator:nth-child(n+1):before {
+.has_multiple_children .vi_operator:first-of-type {}
+.has_multiple_children .vi_operator:nth-of-type(even) {right:0;}
+
+	/*.vi_operator:nth-child(n+1):before {
 		content:" ";
-		margin-left:-90px;
+		margin-left:0px;
 		margin-top:50%;
 		float:left;
 		border-style: solid;
 		border-width: 24px 30px;
-		border-color: rgba(255, 255, 255, 0) #ddd rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
-	}
+		border-color: rgba(255, 255, 255, 0) rgba(255, 255, 255, 0) rgba(255, 255, 255, 0) #f6f6f6;
+	}*/
 
 /* #actionbar
 ================================================== */
 
 .vi_operator .actionbar {
-		width:43.5%; 
+		width:35%; 
 		box-shadow:0px 3px 4px rgba(0,0,0,0.2);
-		min-width:500px; 
 		border:1px solid #ccc;
 		border-bottom: 1px solid #BE1622; 
 		position:fixed;
@@ -416,10 +419,10 @@ button[type="button"] {
     background: linear-gradient(to bottom, #ddd 0%, #bbb 100%);
     filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#ddd', EndColorStr='#bbb', GradientType=0);	
 	cursor:pointer;
-	-webkit-transition: all 0.3s ease;
-	-moz-transition: all 0.3s ease;
-	-o-transition: all 0.3s ease;
-	transition: all 0.3s ease;	
+	-webkit-transition: all 0.3s 0.7s ease;
+	-moz-transition: all 0.3s 0.7s ease;
+	-o-transition: all 0.3s 0.7s ease;
+	transition: all 0.3s 0.7s ease;	
 }
 
 button[type="button"]:hover {
@@ -501,7 +504,7 @@ button.icon.delete[type="button"]:hover:before {
 
 /* Green Buttons */
 button.icon.add[type="button"]:hover,
-button.icon.saveClose[type="button"]:hover {
+button.icon.save.close[type="button"]:hover {
 	border: 1px solid #479c42;
 	color:#fff;	
 	background-color: #298342;
@@ -515,7 +518,7 @@ button.icon.saveClose[type="button"]:hover {
 }
 
 button.icon.add[type="button"]:hover:before,
-button.icon.saveClose[type="button"]:hover:before {
+button.icon.save.close[type="button"]:hover:before {
 	background-image: url(icons/vi_actions_sprite_white.svg);
 }
 
@@ -530,8 +533,8 @@ button.is_loading:before {
 ================================================== */
 
 /*Define Accordion box*/
-form { color:#474747; padding:10px;overflow: hidden; width:100%; }
-form fieldset {width:97%; border: 0; padding: 0;}
+form { color:#474747; overflow: hidden; width:100%; }
+form fieldset {width:100%; float:left;	overflow:hidden; color:#333; border: 0; padding: 0;}
 form fieldset legend {min-width:500px; width:100%;}
 form fieldset legend a, legend a:visited {
 	padding: 8px 15px;
@@ -559,7 +562,6 @@ form fieldset:target legend a {color:#333; background:#ffffff;}
 form fieldset:target section, form fieldset.default section {display:block;}
 
 /*set style of closed slide*/
-form fieldset{ float:left;	overflow:hidden; color:#333; margin:3px; }
 form fieldset:hover {}
 form fieldset section, form fieldset:target ~ .default section { 
 	display:none;
@@ -580,7 +582,7 @@ form fieldset {
   	transition:all 0.2s ease-out;
 }
 /*Set height of the slide*/
-form :target, form fieldset.default{ min-height:150px; height:auto; width:97%; }
+form fieldset:target, form fieldset.default{ min-height:150px; height:auto; width:100%; }
 
 form fieldset section > div {padding-bottom:20px; margin-bottom:15px; /*border-bottom:1px dotted #ccc;*/ overflow:hidden;  width: 100%; float: right;}
 
@@ -750,11 +752,11 @@ form .treeitem:focus button:after, form .relational:focus button:after {
 /* #vi_tooltip
 ================================================== */
 
-	.tooltip a {
+	.tooltip button[type="button"] {
 		-webkit-border-radius: 15px;
 		-moz-border-radius: 15px;
 		border-radius: 15px;
-		padding:8px 1px 1px;
+		padding:7px 1px 1px 2px;
 		line-height: 0;
 		font-size: .7em;
 		border: 1px solid #00406d;
@@ -769,11 +771,12 @@ form .treeitem:focus button:after, form .relational:focus button:after {
 		-o-transition: all 0.3s ease;
 		transition: all 0.3s ease;	
 		display:inline-block;
-		width:16px;
+		width:21px;
+		height:20px;
 		float:right;
 		margin-right: 10px;
 	}
-	.tooltip a:before {
+	.tooltip button[type="button"]:before {
 				background-image: url(icons/vi_actions_sprite_white.svg);
 				background-repeat: no-repeat;
 				width:16px;
@@ -784,30 +787,54 @@ form .treeitem:focus button:after, form .relational:focus button:after {
 				margin-top:-7px;
 				background-position: -16px -64px;}	
 
-	.tooltip a:hover {
+	.tooltip button[type="button"]:hover {
 				overflow:visible;
 				min-width:90px;
 				letter-spacing:normal;
 				color:#eee;
 			}
 	.tooltip span {
-				display:none;
-				background: #eee;
-				color:#666;
-				border:1px solid #bbb;
-				height:auto;
-				min-height:10px;
-				position:relative;
+				display:block; 
+				height:10px;
+				width:97%;
+				min-height:1px;
+				border:0;
+				background: transparent;
+				font-size:0;
+				color:rgba(0,0,0,0);
+				-webkit-transition:all 0.3s ease;
+				-moz-transition:all 0.3s ease;
+			  	-o-transition:all 0.3s ease;
+				-ms-transition:all 0.3s ease;
+			  	transition:all 0.3s ease;
 				float:left;
-				margin-top:20px;
-				padding:15px 15px 18px;
-				-webkit-transition:all 0.3s ease-out;
-				-moz-transition:all 0.3s ease-out;
-			  	-o-transition:all 0.3s ease-out;
-				-ms-transition:all 0.3s ease-out;
-			  	transition:all 0.3s ease-out;
+				padding:0 1%;
 			}
-	.tooltip span:target {display:block; min-height:60px;}
+	.tooltip.is_open span {
+				min-height:60px;
+				background: #eee;
+				font-size:1em;
+				color:#00406d;
+				border:1px solid #009de1;
+				height:auto;
+				position:relative;
+				margin-top:40px;
+				padding:15px 1% 18px;
+			}
+		
+		.tooltip.is_open span:before {
+			content:'';
+			position:absolute;
+			top:-48px;
+			right:-1px;
+			border-style: solid;
+			border-width: 0px;
+			border-color: rgba(255, 255, 255, 0)  rgba(255, 255, 255, 0)#009de1 rgba(255, 255, 255, 0);
+		}
+			
+		.tooltip.is_open span:before {
+			border-width: 24px 14px;
+		}
 		
 
 /* #vi_tables
@@ -937,14 +964,15 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
 	-o-transition: all 0.3s ease;
 	transition: all 0.3s ease;
 	}
-.tree .selectioncontainer {}
-.tree.supports_upload .selectioncontainer, .tree .selectioncontainer:focus {border:3px dashed #ddd;	background:#eee; outline: 0; width:100%;}
+.tree .selectioncontainer {width:100%;}
+.tree.supports_upload .selectioncontainer {border:3px dashed #ddd; background:#eee; }
+.tree .selectioncontainer:focus {border:inherit;  outline: 0;}
 .tree .selectioncontainer .treeitem {margin-bottom:1px; clear:both;}
 .tree .selectioncontainer .treeitem:nth-of-type(odd) {background-color:rgba(255,255,255,0.85);}
 .tree .selectioncontainer .treeitem:nth-of-type(even) {background-color:rgba(250,250,250,0.7);}
 
 .breadcrumb {
-	width:43.5%; 
+	width:35%; 
 	font-weight: 600;
 	box-shadow:0px 3px 4px rgba(0,0,0,0.2);
 	min-width:500px; 
@@ -1222,7 +1250,7 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
 		padding-bottom:7px;
 	}	
 	
-	.vi_messenger button[type="button"]:hover {
+	.vi_messenger button[type="button"]:hover, .vi_messenger:hover button[type="button"] {
 				    color:#999;
    					text-shadow: 0px 1px 1px #fff;
 				    background-color:#fff;
@@ -1244,6 +1272,39 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
 				margin-top:-1px;
 				margin-left:7px;
 				background-position: -160px 0px;
+			}
+	
+	.vi_messenger.is_uploading 		{}
+			
+	.vi_messenger.is_uploading button[type="button"] {	
+					background:rgba(255,0,0,0.2);
+					animation: uploading 5s linear 2s infinite alternate;
+					-webkit-animation: uploading 5s linear 2s infinite alternate;	/* Safari and Chrome: */
+				}
+	
+	@keyframes uploading
+		{
+			0%   {background:rgba(255,0,0,0.1);}
+			50%  {background:rgba(255,0,0,0.3);}
+			100% {background:rgba(255,0,0,0.1);}
+		}
+		
+		@-webkit-keyframes uploading /* Safari and Chrome */
+		{
+			0%   {background:rgba(255,0,0,0.1);}
+			50%  {background:rgba(255,0,0,0.3);}
+			100% {background:rgba(255,0,0,0.1);}
+		}
+
+	
+	.vi_messenger.is_uploading button[type="button"]:hover {
+					color:#fff;
+					text-shadow: none;
+	}
+
+	.vi_messenger.is_uploading button[type="button"]:before {
+				background-image: url(icons/is_uploading.gif);
+				background-position: 0px 0px;
 			}
 	
 	.vi_messenger.is_open button[type="button"]:before {
@@ -1365,7 +1426,7 @@ button:disabled,
 input[type="text"]:disabled,
 select:disabled,
 textarea:disabled {
-	color: #aaa;
+	color: #222;
 	background: #e0e0e0;
 	border: 1px solid #ccc;
 }
