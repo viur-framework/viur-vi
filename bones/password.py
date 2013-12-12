@@ -43,6 +43,6 @@ def CheckForPasswordBone(  modulName, boneName, skelStucture ):
 
 
 #Register this Bone in the global queue
-editBoneSelector.insert( 3, CheckForPasswordBone, PasswordEditBone)
+editBoneSelector.insert( 5, CheckForPasswordBone, PasswordEditBone)
 
 
