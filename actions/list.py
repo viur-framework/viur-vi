@@ -4,6 +4,7 @@ from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
+from widgets.preview import Preview
 
 class EditPane( Pane ):
 	pass
@@ -20,8 +21,8 @@ class AddAction( html5.ext.Button ):
 		self["class"] = "icon add list"
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "list" or modul.startswith("list.")) and actionName=="add" )
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "list" or handler.startswith("list.")) and actionName=="add" )
 
 	def onClick(self, sender=None):
 		pane = EditPane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_add" ])
@@ -63,8 +64,8 @@ class EditAction( html5.ext.Button ):
 
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "list" or modul.startswith("list.")) and actionName=="edit")
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "list" or handler.startswith("list.")) and actionName=="edit")
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
@@ -112,8 +113,8 @@ class DeleteAction( html5.ext.Button ):
 
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "list" or modul.startswith("list.")) and actionName=="delete")
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "list" or handler.startswith("list.")) and actionName=="delete")
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
@@ -139,3 +140,43 @@ class DeleteAction( html5.ext.Button ):
 		pass
 
 actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
+
+class ListPreviewAction( html5.ext.Button ):
+	def __init__(self, *args, **kwargs ):
+		super( ListPreviewAction, self ).__init__( "Preview", *args, **kwargs )
+		self["class"] = "icon preview"
+		self.urls = None
+
+	def onAttach(self):
+		super(ListPreviewAction,self).onAttach()
+		modul = self.parent().parent().modul
+		if modul in conf["modules"].keys():
+			modulConfig = conf["modules"][modul]
+			if "previewurls" in modulConfig.keys() and modulConfig["previewurls"]:
+				self.urls = modulConfig["previewurls"]
+				pass
+			else:
+				self["disabled"] = True
+
+
+	def onClick(self, sender=None):
+		if self.urls is None:
+			return
+		selection = self.parent().parent().getCurrentSelection()
+		if not selection:
+			return
+		if len( selection )>0:
+			widget = Preview( self.urls, selection[0], self.parent().parent().modul )
+			conf["mainWindow"].stackWidget( widget )
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		return( handler == "list" or handler.startswith("list.") and actionName=="preview" )
+		#FIXME: Maybe this test..
+		if modul in conf["modules"].keys():
+			modulConfig = conf["modules"][modul]
+			print( modulConfig )
+			if "previewurls" in modulConfig.keys() and modulConfig["previewurls"]:
+				return( True )
+		return( False )
+
+actionDelegateSelector.insert( 1, ListPreviewAction.isSuitableFor, ListPreviewAction )

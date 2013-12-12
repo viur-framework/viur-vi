@@ -35,7 +35,7 @@ class ListWidget( html5.Div ):
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["add","edit","delete"])
+		self.actionBar.setActions(["add","edit","delete", "preview"])
 		self.reloadData()
 
 

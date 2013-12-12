@@ -15,8 +15,8 @@ class AddLeafAction( html5.ext.Button ):
 		self["class"] = "icon add leaf"
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "tree" or modul.startswith("tree.")) and actionName=="add.leaf" )
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "tree" or handler.startswith("tree.")) and actionName=="add.leaf" )
 
 	def onClick(self, sender=None):
 		pane = Pane("Add", closeable=True)
@@ -40,8 +40,8 @@ class AddNodeAction( html5.ext.Button ):
 		self["class"] = "icon add node"
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "tree" or modul.startswith("tree.")) and actionName=="add.node" )
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "tree" or handler.startswith("tree.")) and actionName=="add.node" )
 
 	def onClick(self, sender=None):
 		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_add_node" ])
@@ -83,8 +83,8 @@ class EditAction( html5.ext.Button ):
 			self.setEnabled(False)
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "tree" or modul.startswith("tree.")) and actionName=="edit")
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "tree" or handler.startswith("tree.")) and actionName=="edit")
 
 	def onClick(self, sender=None):
 		print("EDIT ACTION CLICKED")
@@ -140,8 +140,8 @@ class DeleteAction( html5.ext.Button ):
 
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "tree" or modul.startswith("tree.")) and actionName=="delete")
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "tree" or handler.startswith("tree.")) and actionName=="delete")
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()

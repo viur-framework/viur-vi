@@ -20,23 +20,23 @@ class BasicTextAction( html5.ext.Button ):
 
 class TextStyleBold( BasicTextAction ):
 	cmd = "bold"
-actionDelegateSelector.insert( 1, lambda modul, actionName: actionName=="style.text.bold", TextStyleBold )
+actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.bold", TextStyleBold )
 
 class TextStyleItalic( BasicTextAction ):
 	cmd = "italic"
-actionDelegateSelector.insert( 1, lambda modul, actionName: actionName=="style.text.italic", TextStyleItalic )
+actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.italic", TextStyleItalic )
 
 class TextStyleJustifyCenter( BasicTextAction ):
 	cmd = "justifyCenter"
-actionDelegateSelector.insert( 1, lambda modul, actionName: actionName=="style.text.justifyCenter", TextStyleJustifyCenter )
+actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.justifyCenter", TextStyleJustifyCenter )
 
 class TextStyleJustifyLeft( BasicTextAction ):
 	cmd = "justifyLeft"
-actionDelegateSelector.insert( 1, lambda modul, actionName: actionName=="style.text.justifyLeft", TextStyleJustifyLeft )
+actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.justifyLeft", TextStyleJustifyLeft )
 
 class TextStyleJustifyRight( BasicTextAction ):
 	cmd = "justifyRight"
-actionDelegateSelector.insert( 1, lambda modul, actionName: actionName=="style.text.justifyRight", TextStyleJustifyRight )
+actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.justifyRight", TextStyleJustifyRight )
 
 
 class TextInsertImageAction( html5.ext.Button ):
@@ -49,7 +49,7 @@ class TextInsertImageAction( html5.ext.Button ):
 
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="text.image" )
 
 	def resetLoadingState(self):
@@ -82,7 +82,7 @@ class TextInsertTableAction( html5.ext.Button ):
 
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="text.table" )
 
 	def resetLoadingState(self):
@@ -113,7 +113,7 @@ class TableInsertRowBeforeAction( html5.ext.Button ):
 			node = node.parentElement
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="text.table.newrow.before" )
 
 	def resetLoadingState(self):
@@ -147,7 +147,7 @@ class TableInsertRowAfterAction( html5.ext.Button ):
 			node = node.parentElement
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="text.table.newrow.after" )
 
 	def resetLoadingState(self):
@@ -211,7 +211,7 @@ class TableInsertColBeforeAction( html5.ext.Button ):
 							child.insertBefore( newTd, child.children.item(cellIdx) )
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="text.table.newcol.before" )
 
 	def resetLoadingState(self):
@@ -282,7 +282,7 @@ class TableInsertColAftereAction( html5.ext.Button ):
 								child.appendChild( newTd )
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="text.table.newcol.after" )
 
 	def resetLoadingState(self):
@@ -310,7 +310,7 @@ class TableRemoveRowAction( html5.ext.Button ):
 			node = node.parentElement
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="text.table.remove.row" )
 
 	def resetLoadingState(self):
@@ -374,7 +374,7 @@ class TableRemoveColAction( html5.ext.Button ):
 							child.removeChild(child.children.item(cellIdx))
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="text.table.remove.col" )
 
 	def resetLoadingState(self):

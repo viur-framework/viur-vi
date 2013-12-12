@@ -37,9 +37,8 @@ class AddLeafAction( html5.ext.Button ):
 		self["class"] = "icon upload"
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		print(modul, actionName)
-		return( modul == "tree.simple.file" and actionName=="add.leaf" )
+	def isSuitableFor( modul, handler, actionName ):
+		return( handler == "tree.simple.file" and actionName=="add.leaf" )
 
 	def onClick(self, sender=None):
 		self.parent().parent().appendChild( FileSelectUploader() )

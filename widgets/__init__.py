@@ -7,3 +7,4 @@ from widgets.actionbar import ActionBar
 from widgets.tree import TreeWidget
 from widgets.hierarchy import HierarchyWidget
 from widgets.file import FileWidget
+from widgets.preview import Preview

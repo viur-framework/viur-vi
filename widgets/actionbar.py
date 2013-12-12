@@ -50,7 +50,7 @@ class ActionBar( html5.Div ):
 					handler = conf["modules"][self.modul]["handler"]
 				else:
 					handler = ""
-				actionWdg = actionDelegateSelector.select( handler, action )
+				actionWdg = actionDelegateSelector.select( self.modul, handler, action )
 				if actionWdg is not None:
 					actionWdg = actionWdg( )
 					self.appendChild( actionWdg )
