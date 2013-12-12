@@ -9,6 +9,9 @@ from priorityqueue import protocolWrapperInstanceSelector
 from widgets.actionbar import ActionBar
 import utils
 
+class InvalidBoneValueException(ValueError):
+	pass
+
 
 class EditWidget( html5.Div ):
 	appList = "list"
@@ -231,6 +234,10 @@ class EditWidget( html5.Div ):
 		self.closeOnSuccess = closeOnSuccess
 		res = {}
 		for key, bone in self.bones.items():
-			res.update( bone.serializeForPost( ) )
+			try:
+				res.update( bone.serializeForPost( ) )
+			except InvalidBoneValueException:
+				print("Bone %s is invalid" % key )
+				return
 		self.save( res )
 
