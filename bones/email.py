@@ -4,10 +4,13 @@ import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
 from config import conf
 import bones.string as strBone
+from widgets.edit import InvalidBoneValueException
+import re
 
 class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( EmailViewBoneDelegate, self ).__init__( modulName, boneName, skelStructure, *args, **kwargs)
+
 
 	def getViewElement(self,labelstr,datafield):
 		aa = html5.A()
@@ -23,6 +26,22 @@ class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
 class EmailEditBone( strBone.StringEditBone ):
 	def __init__(self, modulName, boneName,readOnly,skelStructure=False,*args, **kwargs ):
 		super( EmailEditBone,  self ).__init__( modulName, boneName,readOnly,skelStructure, *args, **kwargs )
+
+	@staticmethod
+	def fromSkelStructure( modulName, boneName, skelStructure ):
+		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
+		return( EmailEditBone( modulName, boneName, readOnly ) )
+
+	def unserialize(self, data):
+		if self.boneName in data.keys():
+			self.input["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
+
+	def serializeForPost(self):
+		print self["value"]
+		if re.match("^[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._-]+.[a-zA-Z]{2,6}$",self.input["value"]):
+			return( { self.boneName: self.input["value"] } )
+		raise InvalidBoneValueException()
+
 
 	def setSpecialType(self):
 		self.input["type"]="email"

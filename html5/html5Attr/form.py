@@ -83,7 +83,7 @@ class Size(object):
 
 class __For(object):
 	def _getFor(self):
-		return getattr(self.element,"for")
+		return self.element.getAttribute("for")
 	def _setFor(self,val):
 		self.element.setAttribute("for",val)
 
