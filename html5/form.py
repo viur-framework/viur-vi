@@ -154,6 +154,12 @@ class Select( Widget,_Form,Autofocus,Disabled,Name,Required,Multiple,Size ):
 	def __init__(self, *args, **kwargs):
 		super(Select,self).__init__( *args, **kwargs )
 
+	def _getSelectedIndex(self):
+		return( self.element.selectedIndex )
+
+	def _getOptions(self):
+		return( self.element.options )
+
 
 class Textarea( Disabled, Widget,_Form ,Autofocus,Name,Inputs,Value):
 	_baseClass = "textarea"
