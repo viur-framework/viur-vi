@@ -6,11 +6,19 @@ from html5.html5Attr.href import Target
 from html5.html5Attr.src import Src
 
 
-class Button( Widget,Type,_Form,Autofocus,Disabled,Name,Value,Formhead):
+class Button( Disabled,Widget,Type,_Form,Autofocus,Name,Value,Formhead):
 	_baseClass = "button"
 
 	def __init__(self, *args, **kwargs):
-		super(Button,self).__init__( *args, **kwargs )
+		Disabled.__init__( self, *args, **kwargs )
+		Widget.__init__( self, *args, **kwargs )
+		Type.__init__( self, *args, **kwargs )
+		_Form.__init__( self, *args, **kwargs )
+		Autofocus.__init__( self, *args, **kwargs )
+		Name.__init__( self, *args, **kwargs )
+		Value.__init__( self, *args, **kwargs )
+		Formhead.__init__( self, *args, **kwargs )
+		#super(Button,self).__init__( *args, **kwargs )
 
 class Fieldset(Widget,_Form,Disabled,Name):
 	_baseClass = "fieldset"
@@ -52,11 +60,27 @@ class Form(Widget,Disabled,Name,Target,Autocomplete):
 	def _setAcceptCharset(self,val):
 		self.element.setAttribute("accept-charset",val)
 
-class Input(Widget,Type,_Form,Alt,Autofocus,Disabled,Checked,Name,Dimensions,Value,Formhead,Autocomplete,Inputs,Multiple,Size,Src):
+class Input(Disabled,Widget,Type,_Form,Alt,Autofocus,Checked,Name,Dimensions,Value,Formhead,Autocomplete,Inputs,Multiple,Size,Src):
 	_baseClass = "input"
 
 	def __init__(self, *args, **kwargs):
-		super(Input,self).__init__( *args, **kwargs )
+		Disabled.__init__(self, *args, **kwargs)
+		Widget.__init__(self, *args, **kwargs)
+		Type.__init__(self, *args, **kwargs)
+		_Form.__init__(self, *args, **kwargs)
+		Alt.__init__(self, *args, **kwargs)
+		Autofocus.__init__(self, *args, **kwargs)
+		Checked.__init__(self, *args, **kwargs)
+		Name.__init__(self, *args, **kwargs)
+		Dimensions.__init__(self, *args, **kwargs)
+		Value.__init__(self, *args, **kwargs)
+		Formhead.__init__(self, *args, **kwargs)
+		Autocomplete.__init__(self, *args, **kwargs)
+		Inputs.__init__(self, *args, **kwargs)
+		Multiple.__init__(self, *args, **kwargs)
+		Size.__init__(self, *args, **kwargs)
+		Src.__init__(self, *args, **kwargs)
+		#super(Input,self).__init__( *args, **kwargs )
 
 	def _getAccept(self):
 		return self.element.accept
@@ -131,11 +155,19 @@ class Select( Widget,_Form,Autofocus,Disabled,Name,Required,Multiple,Size ):
 		super(Select,self).__init__( *args, **kwargs )
 
 
-class Textarea( Widget,_Form ,Autofocus,Disabled,Name,Inputs,Value):
+class Textarea( Disabled, Widget,_Form ,Autofocus,Name,Inputs,Value):
 	_baseClass = "textarea"
 
 	def __init__(self, *args, **kwargs):
-		super(Textarea,self).__init__( *args, **kwargs )
+		Disabled.__init__(self, *args, **kwargs )
+		Widget.__init__(self, *args, **kwargs )
+		_Form.__init__(self, *args, **kwargs )
+		Autofocus.__init__(self, *args, **kwargs )
+		Name.__init__(self, *args, **kwargs )
+		Inputs.__init__(self, *args, **kwargs )
+		Value.__init__(self, *args, **kwargs )
+
+		#super(Textarea,self).__init__( *args, **kwargs )
 
 	def _getCols(self):
 		return self.element.cols

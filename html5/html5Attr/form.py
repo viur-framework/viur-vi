@@ -1,3 +1,4 @@
+from html5.widget import Widget
 class _Form(object):
 	def _getForm(self):
 		return self.element.form
@@ -20,13 +21,12 @@ class Autofocus(object):
 			self.element.removeAttribute("autofocus")
 
 class Disabled(object):
-	def _getDisabled(self):
-		return( True if self.element.hasAttribute("disabled") else False )
 	def _setDisabled(self,val):
-		if val==True:
-			self.element.setAttribute("disabled","")
+		Widget._setDisabled( self, val )
+		if self._getDisabled():
+			self.element.disabled = True
 		else:
-			self.element.removeAttribute("disabled")
+			self.element.disabled = False
 
 class Checked(object):
 	def _getChecked(self):
