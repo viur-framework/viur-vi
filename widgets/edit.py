@@ -60,8 +60,9 @@ class EditWidget( html5.Div ):
 		self.clone = clone
 		self.bones = {}
 		self.closeOnSuccess = False
-		self._lastData = {} #Dict of structure and values recived
+		self._lastData = {} #Dict of structure and values received
 		self.editTaskID = None
+		self.wasInitialRequest = True #Wherever the last request attempted to save data or just fetched the form
 		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" if self.key else "add" )
 		self.appendChild( self.actionbar )
 		self.form = html5.Form()
@@ -81,6 +82,7 @@ class EditWidget( html5.Div ):
 			@param data: The values to transmit or None to fetch a new, clean add/edit form.
 			@type data: Dict or None
 		"""
+		self.wasInitialRequest = not len(data)>0
 		if self.modul=="_tasks":
 			#self.editTaskID = protoWrap.edit( self.key, **data )
 			#request = NetworkService.request("/%s/execute/%s" % ( self.modul, self.id ), data, secure=True, successHandler=self.onSaveResult )
@@ -190,7 +192,7 @@ class EditWidget( html5.Div ):
 			if bone["required"] and bone["error"] is not None:
 				descrLbl["class"].append("is_invalid")
 				descrLbl["title"] = bone["error"]
-			if bone["required"] and bone["error"] is None:
+			if bone["required"] and bone["error"] is None and not self.wasInitialRequest:
 				descrLbl["class"].append("is_valid")
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
 				tmp = html5.Span()
