@@ -105,6 +105,8 @@ class Pane( html5.Li ):
 		div = html5.Div()
 		div["class"].append("vi_operator")
 		div.appendChild( widget )
+		for w in self.widgetsDomElm._children[:]:
+			w["disabled"] = True
 		self.widgetsDomElm.appendChild( div )
 		self.rebuildChildrenClassInfo()
 
@@ -133,6 +135,8 @@ class Pane( html5.Li ):
 				self.widgetsDomElm.removeChild( c )
 				if self.closeable and len(self.widgetsDomElm._children)==0:
 					conf["mainWindow"].removePane( self )
+				for w in self.widgetsDomElm._children[:]:
+					w["disabled"] = False
 				self.rebuildChildrenClassInfo()
 				return
 		raise ValueError("Cannot remove unknown widget %s" % str(widget))
