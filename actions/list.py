@@ -170,7 +170,7 @@ class ListPreviewAction( html5.ext.Button ):
 			conf["mainWindow"].stackWidget( widget )
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( handler == "list" or handler.startswith("list.") and actionName=="preview" )
+		return( (handler == "list" or handler.startswith("list.")) and actionName=="preview" )
 		#FIXME: Maybe this test..
 		if modul in conf["modules"].keys():
 			modulConfig = conf["modules"][modul]
