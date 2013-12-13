@@ -322,9 +322,13 @@ p { margin-bottom:10px;}
 /* #vi_operator
 ================================================== */	
 
-.vi_operator {z-index:20; padding: 150px 1% 45px; float:left; width:98%; min-height:500px; background:#ddd; overflow:hidden; } 
+.vi_operator {z-index:20; padding: 150px 1% 45px; float:left; width:98%; min-height:500px; background:#f6f6f6; overflow:hidden; } 
 .has_multiple_children .vi_operator {width:39.15%; height:100%; position:fixed; overflow-y: auto; overflow-x: hidden;}
-.vi_operator:first-of-type {background-color:#f6f6f6;}
+.vi_operator.is_disabled {
+	background-color: #ddd;
+	opacity: .65;
+	padding: 70px 1% 45px;
+	}
 
 .has_multiple_children .vi_operator:first-of-type {}
 .has_multiple_children .vi_operator:nth-of-type(even) {right:0;}
@@ -338,24 +342,26 @@ p { margin-bottom:10px;}
 		border-width: 24px 30px;
 		border-color: rgba(255, 255, 255, 0) rgba(255, 255, 255, 0) rgba(255, 255, 255, 0) #f6f6f6;
 	}*/
-
+	
 /* #actionbar
 ================================================== */
 
 .vi_operator .actionbar {
-		width:35%; 
-		box-shadow:0px 3px 4px rgba(0,0,0,0.2);
-		border:1px solid #ccc;
-		border-bottom: 1px solid #BE1622; 
+		width:82.3%; 
+		min-width:500px;
 		position:fixed;
 		margin-top: -105px;
-		padding:10px;
+		margin-left: -1%;
+		padding:15px 1%;
+		box-shadow:0px 2px 3px rgba(0,0,0,0.2);
+		border:1px solid #ccc;
+		border-bottom: 1px solid #f3a1a1; 
 		background-color:#eee;
 		background-color:rgba(210,210,210,0.7);
-		background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238,238,238,0.8)), to(rgba(255,255,255,0.2))); /* webkit */
-	    background-image: -moz-linear-gradient(top center, rgba(238,238,238,0.8) 20%, rgba(255,255,255,0.2) 95%); /* mozilla - FF3.6+ */
-	    filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColor=#55eeeeee, endColorStr=#55FFFFFF); /* IE 5.5 - 7 */
-	    -ms-filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColor=#55eeeeee, endColoStr=#55FFFFFF); /* IE8 uses -ms-filter for whatever reason... */
+		background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238,238,238,0.8)), to(rgba(255,255,255,0.2))); 
+	    background-image: -moz-linear-gradient(top center, rgba(238,238,238,0.8) 20%, rgba(255,255,255,0.2) 95%); 
+	    filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColor=#55eeeeee, endColorStr=#55FFFFFF);
+	    -ms-filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColor=#55eeeeee, endColoStr=#55FFFFFF); 
 	    z-index:100;
 }
 .vi_operator .actionbar h3:before {
@@ -374,7 +380,7 @@ p { margin-bottom:10px;}
 .vi_operator .actionbar h3.action_list:before {background-position: 0px 0px;}
 .vi_operator .actionbar h3.action_add:before {background-position: -24px 0px;}
 .vi_operator .actionbar h3.action_edit:before {background-position: -48px 0px;}
-	
+.vi_operator .actionbar h3.action_Text:before {background-position: -72px 0px;}
 	
 .vi_operator .actionbar h3 {
 	line-height:1em;
@@ -473,14 +479,47 @@ button.icon:before, .btn_yes:before, .btn_no:before, .modullist ul .action_add h
 		button.mkdir:before{background-position: -32px -32px;}	
 		button.upload:before{background-position: -48px -32px;}	
 		
+	/* Textedit Icons */		
+		button.text.head1:before{background-position: 0px -80px;}	
+		button.text.head2:before{background-position: -16px -80px;}	
+		button.text.head3:before{background-position: -32px -80px;}	
+		button.text.head1,	
+		button.text.head2{margin-right: 0; border-right:0;}
+		
+		button.text.bold:before{background-position: -48px -80px;}	
+		button.text.italic:before{background-position: -64px -80px;}
+		button.text.underline:before{background-position: -80px -80px;}	
+		button.text.bold,	
+		/*button.text.italic*/ {margin-right: 0; border-right:0;}
+		
+		button.text.justifyRight:before{background-position: 0px -96px;}	
+		button.text.justifyCenter:before{background-position: -16px -96px;}	
+		button.text.justifyLeft:before{background-position: -32px -96px;}	
+		button.text.justifyLeft, 
+		button.text.justifyCenter {margin-right: 0; border-right:0;}	
+		
+		button.text.image:before{background-position: -96px -96px;}	
+		
+		button.text.table:before{background-position: 0px -112px;}	
+		button.text.table.remove.col:before{background-position: -16px -112px;}	
+		button.text.table.remove.row:before{background-position: -32px -112px;}	
+		button.text.table.newrow.before:before{background-position: -48px -112px;}	
+		button.text.table.newrow.after:before{background-position: -64px -112px;}	
+		button.text.table.newcol.before:before{background-position: -80px -112px;}	
+		button.text.table.newcol.after:before{background-position: -96px -112px;}	
+		button.text.table.remove.row,	
+		button.text.table.newrow.before,	
+		button.text.table.newrow.after,	
+		button.text.table.newcol.before {margin-right: 0; border-right:0;}	
+
+		
 button.icon[type="button"]:hover {
-	border: 1px solid #666;
+	border-color:#666;
 	overflow:visible;
 	color:#222;	
 	min-width:120px;
 	letter-spacing:normal;	
 }
-
 
 /* Red Buttons */
 button.icon.cancel[type="button"]:hover,
@@ -528,6 +567,21 @@ button.is_loading:before {
 	background-position: 0px 0px;
 }
 
+button.icon.text[type="button"]:hover, button.icon.is_disabled[type="button"]:hover {
+	color:transparent;
+	letter-spacing:-1em;
+	overflow:hidden;
+	min-width:28px;
+	transition-delay:0;
+}
+
+button.icon.is_disabled[type="button"]:hover {
+	border-color:#999;
+}
+button.icon.is_disabled {
+	cursor:default;
+	color:transparent;
+}
 
 /* #vi_forms
 ================================================== */
@@ -646,7 +700,7 @@ form label.is_valid:before {
 	background-position: 0px -16px;
 	}	
 
-input, textarea, input[type="text"], input[type="email"], input[type="date"], input[type=url], input[type=password] {
+input, textarea, input[type="text"], input[type="email"], input[type="date"], input[type=url], input[type=password], [contenteditable] {
 	display:inline-block;
 	font-size:0.9em;
 	width:50%;
@@ -667,6 +721,9 @@ input, textarea, input[type="text"], input[type="email"], input[type="date"], in
 	background: linear-gradient(to bottom,  #eaeaea 0%,#fafafa 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eaeaea', endColorstr='#fafafa',GradientType=0 ); /* IE6-9 */
 }
+
+[contenteditable] {width:97.2%; min-height:500px; margin-bottom:15px; overflow:hidden; display:block;}
+
 
 input[type="date"] {width:162px;}
 
@@ -699,7 +756,7 @@ textarea:focus {
 	border-color: #BE1622;
 }
 
-form .treeitem input, form .relational input {
+select.is_disabled, form .treeitem input, form .relational input {
 	-moz-user-select: none;
 	-khtml-user-select: none;
 	-webkit-user-select: none;
@@ -964,7 +1021,8 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
 	-o-transition: all 0.3s ease;
 	transition: all 0.3s ease;
 	}
-.tree .selectioncontainer {width:100%;}
+	
+.tree .selectioncontainer {width:100%; margin-bottom: 15px;}
 .tree.supports_upload .selectioncontainer {border:3px dashed #ddd; background:#eee; }
 .tree .selectioncontainer:focus {border:inherit;  outline: 0;}
 .tree .selectioncontainer .treeitem {margin-bottom:1px; clear:both;}
@@ -972,23 +1030,26 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
 .tree .selectioncontainer .treeitem:nth-of-type(even) {background-color:rgba(250,250,250,0.7);}
 
 .breadcrumb {
-	width:35%; 
+	width:82.3%; 
 	font-weight: 600;
-	box-shadow:0px 3px 4px rgba(0,0,0,0.2);
 	min-width:500px; 
-	border:1px solid #bbb;
-	border-bottom: 1px solid #dd0000; 
 	border-top:0;
 	position:fixed;
-	padding:3px 20px 0 0;
+	margin-left: -1%;
+	padding:3px 1% 0;
+	box-shadow:0px 2px 3px rgba(0,0,0,0.2);
+	border:1px solid #bbb;
+	border-bottom: 1px solid #f3a1a1;
 	background-color:#eee;
 	background-color:rgba(180,180,180,0.7);
 	background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(220,220,220,0.7)), to(rgba(255,255,255,0.4))); /* webkit */
 	background-image: -moz-linear-gradient(top center, rgba(220,220,220,0.2) 20%, rgba(255,255,255,0.2) 95%); /* mozilla - FF3.6+ */
-	margin-top:-57px;
+	margin-top:-47px;
 	z-index: 10;
 }
 .breadcrumb .treeitem {float:left; cursor:pointer;}
+.breadcrumb .treeitem:first-of-type {padding-left:0;}	
+
 .breadcrumb .treeitem:hover {text-decoration:underline;}
 .breadcrumb .treeitem:after {
 	content:' ›';
@@ -1074,6 +1135,44 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
 	text-align:left;
 	padding-left: 3%;
 	float:right;
+}
+
+progress:not(value) {
+}
+
+progress[value] {
+  /* Reset the default appearance */
+  	-webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  
+  /* Get rid of default border in Firefox. */
+  	border: none;
+	width:100%;
+	padding:6px 7px 7px;
+	height:32px;
+	border:1px solid #ccc;
+	border-radius: 0px;
+	background: #eee;
+	font-size:10px;
+	text-align:center;
+}
+
+progress[value]::-moz-progress-bar,
+progress[value]::-webkit-progress-bar {
+  background-color: #eee;
+}
+
+progress[value]::-webkit-progress-value {
+	position: relative;
+	background-color: #298342;
+    background: -moz-linear-gradient(top, #298342 0%, #479c42 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #298342), color-stop(100%, #479c42));
+    background: -webkit-linear-gradient(top, #298342 0%, #479c42 100%);
+    background: -o-linear-gradient(top, #298342 0%, #479c42 100%);
+    background: -ms-linear-gradient(top, #298342 0%, #479c42 100%);
+    background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
+    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
 
 
@@ -1336,7 +1435,11 @@ tr.is_focused.is_selected:nth-child(even) {background: rgba(250,130,130,0.5);}
 		.statuslist li.log_warning {border-color: #890f01;}
 		.statuslist li.log_info {border-color: #00416e;}
 		.statuslist li.log_progress {border-color: #00416e;}
-
+		
+		.statuslist li.log_progress progress[value]{width:77%;margin-top:-5px;}
+		.statuslist li.log_progress {padding-bottom: 6px;}
+		.statuslist li.log_progress.is_new {padding-bottom: 12px;}
+		
 		.statuslist li .date {
 			display:block;
 			float:right;
@@ -1430,6 +1533,9 @@ textarea:disabled {
 	background: #e0e0e0;
 	border: 1px solid #ccc;
 }
+
+.has_multiple_children .actionbar,
+.has_multiple_children .breadcrumb {width:39%;}
 
 /* #Media Queries
 ================================================== */
