@@ -15,8 +15,8 @@ class AddAction( html5.ext.Button ):
 		self["class"] = "icon add"
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "hierarchy" or modul.startswith("hierarchy.")) and actionName=="add")
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "hierarchy" or handler.startswith("hierarchy.")) and actionName=="add")
 
 	def onClick(self, sender=None):
 		print("ADD ACTION HIERARCHY", self.parent().parent().rootNode)
@@ -57,8 +57,8 @@ class EditAction( html5.ext.Button ):
 
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "hierarchy" or modul.startswith("hierarchy.")) and actionName=="edit")
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "hierarchy" or handler.startswith("hierarchy.")) and actionName=="edit")
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
@@ -103,8 +103,8 @@ class DeleteAction( html5.ext.Button ):
 
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "hierarchy" or modul.startswith("hierarchy.")) and actionName=="delete")
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "hierarchy" or handler.startswith("hierarchy.")) and actionName=="delete")
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()

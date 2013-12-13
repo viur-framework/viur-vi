@@ -21,10 +21,10 @@ class TextNode( object ):
 			raise ValueError("Cannot concatenate TextNode and %s" % str(type(other)))
 	"""
 
-	def setText(self,txt):
+	def _setText(self,txt):
 		self.element.data = txt
 
-	def getText(self):
+	def _getText(self):
 		return( self.element.data )
 
 	def __str__(self):
@@ -35,3 +35,9 @@ class TextNode( object ):
 
 	def onDetach(self):
 		pass
+
+	def _setDisabled(self, disabled):
+		return
+
+	def _getDisabled(self):
+		return( False )

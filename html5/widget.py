@@ -131,22 +131,33 @@ class Widget( object ):
 			self._catchedEvents.remove( eventName )
 			setattr( self.element, eventName.lower(), None )
 
-	def getDisabled(self):
+	def _getDisabled(self):
 		return( self._disabledState is not None )
 
-	def setDisabled(self, disable):
+	def _setDisabled(self, disable):
+		for child in self._children:
+			child._setDisabled( disable )
 		if disable:
 			if self._disabledState is not None:
-				return
+				self._disabledState["recursionCounter"] += 1
 			else:
-				self._disabledState = { "events": self._catchedEvents[:] }
+				self._disabledState = { "events": self._catchedEvents[:], "recursionCounter": 1 }
 				self.unsinkEvent( *self._catchedEvents[:] )
 		else:
 			if self._disabledState is None:
-				return
+				pass #Fixme: Print a warning instead?!
 			else:
-				self.sinkEvent( *self._disabledState["events"] )
-				self._disabledState = None
+				if self._disabledState["recursionCounter"] > 1:
+					self._disabledState["recursionCounter"] -= 1
+				else:
+					self.sinkEvent( *self._disabledState["events"] )
+					self._disabledState = None
+		if self._getDisabled():
+			if not "is_disabled" in self["class"]:
+				self["class"].append("is_disabled")
+		else:
+			if "is_disabled" in self["class"]:
+				self["class"].remove("is_disabled")
 
 	def _getTargetFuncName(self, key, type):
 		assert type in ["get","set"]

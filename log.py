@@ -41,10 +41,15 @@ class Log( html5.Div ):
 		spanDate.appendChild( html5.TextNode( datetime.now().strftime("%H:%M:%S") ))
 		spanDate["class"].append("date")
 		liwrap.appendChild(spanDate)
-		spanMsg = html5.Span()
-		spanMsg.appendChild( html5.TextNode( msg ))
-		spanMsg["class"].append("msg")
-		liwrap.appendChild(spanMsg)
+		if isinstance( msg, html5.Widget ):
+			#Append that widget directly
+			liwrap.appendChild( msg )
+		else:
+			#Create a span element for that message
+			spanMsg = html5.Span()
+			spanMsg.appendChild( html5.TextNode( msg ))
+			spanMsg["class"].append("msg")
+			liwrap.appendChild(spanMsg)
 		DeferredCall(self.removeNewCls, liwrap,_delay=2500)
 		self.logUL.appendChild( liwrap )
 		if len(self.logUL._children)>1:

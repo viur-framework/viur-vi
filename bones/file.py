@@ -22,14 +22,15 @@ class FileViewBoneDelegate(object):
 		self.boneName = boneName
 
 	def renderFileentry(self,fileentry):
-		adiv=html5.Div()
+		adiv=html5.A()
 		adiv["Title"]=str(fileentry)
 		aimg=html5.Img()
-		endig=fileentry["name"][str(fileentry["name"]).rfind('.')+1:]
-		if endig in ['png', 'jpeg','jpg','bmp','svg','gif','xbm']:
-			aimg["src"]=fileentry["servingurl"]+"=s240"
-		elif endig in ["3gp","7zip","aac","ace","aiff","ape","arj","asf","asp","avi","bmp","cab","cgi","css","dat","divx","doc","document","exe","flac","folder","gif","gzip","html","jpg","js","mov","mp3","mp4","mpc","mpeg","mpeg4","ogg","pdf","php","pl","png","psd","rar","rm","rtf","svcd","swf","tar","tga","tiff","txt","vcd","vob","vqf","wav","wma","wmv","wpd","xhtml","xml","xsl","xslx","xvid","zip"]:
-			aimg["src"]="/resources/icons/filetypes/"+endig+".png"
+		#fixme: Mimetypes first!
+		ending=fileentry["name"][str(fileentry["name"]).rfind('.')+1:]
+		if ending in ['png', 'jpeg','jpg','bmp','svg','gif','xbm']:
+			aimg["src"]=fileentry["servingurl"]+"=s350-c"
+		elif ending in ["3gp","7zip","aac","ace","aiff","ape","arj","asf","asp","avi","bmp","cab","cgi","css","dat","divx","doc","document","exe","flac","folder","gif","gzip","html","jpg","js","mov","mp3","mp4","mpc","mpeg","mpeg4","ogg","pdf","php","pl","png","psd","rar","rm","rtf","svcd","swf","tar","tga","tiff","txt","vcd","vob","vqf","wav","wma","wmv","wpd","xhtml","xml","xsl","xslx","xvid","zip"]:
+			aimg["src"]="/resources/icons/filetypes/"+ending+".png"
 		else:
 			aimg["src"]="/resources/icons/filetypes/unknown.png"
 		aimg["alt"]=fileentry["name"]
@@ -37,6 +38,13 @@ class FileViewBoneDelegate(object):
 		aspan=html5.Span()
 		aspan.appendChild(html5.TextNode(fileentry["name"]))#fixme: formatstring!
 		adiv.appendChild(aspan)
+		adiv["class"].append("fileBoneViewCell")
+		adiv["draggable"]=True
+		metamime="application/octet-stream"
+		if "metamime" in fileentry.keys():
+			metamime=str(fileentry["metamime"])
+		adiv["download"]=metamime+":"+str(fileentry["name"])+":"+"/file/download/"+str(fileentry["dlkey"])+"?download=1&fileName="+str(fileentry["name"])
+		adiv["href"]="/file/download/"+str(fileentry["dlkey"])+"?download=1&fileName="+str(fileentry["name"])
 		return (adiv)
 
 	def render(self, data, field ):
@@ -76,7 +84,6 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		for x in range(0,files.length):
 			ul = Uploader(files.item(x), None )
 			ul.uploadSuccess.register( self )
-			self.appendChild( ul )
 
 	def onUploadSuccess(self, uploader, file ):
 		self.setSelection( [file] )

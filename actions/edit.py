@@ -11,7 +11,7 @@ class SaveContinue( html5.ext.Button ):
 		self["class"] = "icon save continue"
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="save.continue" )
 
 	def onClick(self, sender=None):
@@ -31,7 +31,7 @@ class SaveClose( html5.ext.Button ):
 		self["class"] = "icon save close"
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="save.close" )
 
 	def onClick(self, sender=None):

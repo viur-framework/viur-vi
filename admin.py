@@ -10,6 +10,10 @@ import actions
 from priorityqueue import HandlerClassSelector
 from log import Log
 from pane import Pane, GroupPane
+try:
+	import vi_plugins
+except ImportError:
+	pass
 
 
 class CoreWindow( html5.Div ):

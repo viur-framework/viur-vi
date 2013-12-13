@@ -15,9 +15,9 @@ class AddNodeAction( html5.ext.Button ):
 		self["class"] = "icon mkdir"
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
+	def isSuitableFor( modul, handler, actionName ):
 		print(modul, actionName)
-		return( (modul == "tree.simple" or modul.startswith("tree.simple."))  and actionName=="add.node" )
+		return( (handler == "tree.simple" or handler.startswith("tree.simple."))  and actionName=="add.node" )
 
 	def onClick(self, sender=None):
 		i = InputDialog( "Directory Name", successHandler=self.createDir )
@@ -61,8 +61,8 @@ class EditAction( html5.ext.Button ):
 			self.setEnabled(False)
 
 	@staticmethod
-	def isSuitableFor( modul, actionName ):
-		return( (modul == "tree.simple" or modul.startswith("tree.simple.")) and actionName=="edit")
+	def isSuitableFor( modul, handler, actionName ):
+		return( (handler == "tree.simple" or handler.startswith("tree.simple.")) and actionName=="edit")
 
 	def onClick(self, sender=None):
 		print("EDIT ACTION CLICKED")

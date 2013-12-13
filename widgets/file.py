@@ -3,6 +3,7 @@ from network import NetworkService, DeferredCall
 from widgets.tree import TreeWidget, LeafWidget
 from priorityqueue import displayDelegateSelector
 from event import EventDispatcher
+from config import conf
 import json
 
 class LeafFileWidget( LeafWidget ):
@@ -40,6 +41,8 @@ class Uploader( html5.Progress ):
 		r = NetworkService.request("file","getUploadURL", successHandler=self.onUploadUrlAvaiable, secure=True)
 		r.file = file
 		r.node = node
+		conf["mainWindow"].log("progress", self)
+		self.parent()["class"].append( "is_uploading" )
 
 	def onUploadUrlAvaiable(self, req ):
 		"""
@@ -90,9 +93,8 @@ class Uploader( html5.Progress ):
 		"""
 		for v in self.responseValue["values"]:
 			self.uploadSuccess.fire( self, v )
-		self.parent().removeChild(self)
 		NetworkService.notifyChange("file")
-
+		self.parent()["class"].remove("is_uploading")
 class FileWidget( TreeWidget ):
 	"""
 		Extends the TreeWidget to allow drag&drop upload of files to the current node.
@@ -119,6 +121,6 @@ class FileWidget( TreeWidget ):
 		event.stopPropagation()
 		files = event.dataTransfer.files
 		for x in range(0,files.length):
-			self.appendChild( Uploader(files.item(x), self.node ))
+			Uploader(files.item(x), self.node )
 
 displayDelegateSelector.insert( 3, FileWidget.canHandle, FileWidget )
