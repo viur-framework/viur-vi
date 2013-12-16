@@ -430,6 +430,8 @@ class DataTable( html5.Div ):
 			yield actual models, not row-numbers.
 		"""
 		rows = self.table.getCurrentSelection()
+		if not self._model or not rows:
+			return( [] )
 		return( [ self._model[x] for x in rows] )
 
 	def setCellRender(self, field, render):

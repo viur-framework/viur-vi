@@ -37,7 +37,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 		Provides the widget for a relationalBone with multiple=False
 	"""
 
-	def __init__(self, srcModul, boneName, readOnly, destModul, format="$(name)", *args, **kwargs ):
+	def __init__(self, srcModul, boneName, readOnly, destModul, format="$(name)", required=False, *args, **kwargs ):
 		"""
 			@param srcModul: Name of the modul from which is referenced
 			@type srcModul: string
@@ -57,7 +57,6 @@ class RelationalSingleSelectionBone( html5.Div ):
 		self.destModul = destModul
 		self.format = format
 		self.selection = None
-		self.currentSelector = None
 		self.selectionTxt = html5.Input()
 		self.selectionTxt["type"] = "text"
 		self.appendChild( self.selectionTxt )
@@ -67,9 +66,13 @@ class RelationalSingleSelectionBone( html5.Div ):
 		self.selectBtn["class"].append("icon")
 		self.selectBtn["class"].append("select")
 		self.appendChild( self.selectBtn )
+		if not required:
+			remBtn = html5.ext.Button("Remove", self.onRemove )
+			remBtn["class"].append("icon")
+			remBtn["class"].append("cancel")
+			self.appendChild( remBtn )
 		#DOM.appendChild( self.getElement(), self.selectBtn.getElement())
 		#self.selectBtn.onAttach()
-
 
 	@classmethod
 	def fromSkelStructure( cls, modulName, boneName, skelStructure ):
@@ -84,6 +87,10 @@ class RelationalSingleSelectionBone( html5.Div ):
 		"""
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		multiple = skelStructure[boneName]["multiple"]
+		if "required" in skelStructure[boneName].keys() and skelStructure[boneName]["required"]:
+			required=True
+		else:
+			required=False
 		if "modul" in skelStructure[ boneName ].keys():
 			destModul = skelStructure[ boneName ][ "modul" ]
 		else:
@@ -91,7 +98,10 @@ class RelationalSingleSelectionBone( html5.Div ):
 		format= "$(name)"
 		if "format" in skelStructure[ boneName ].keys():
 			format = skelStructure[ boneName ]["format"]
-		return( cls( modulName, boneName, readOnly, destModul=destModul, format=format ) )
+		return( cls( modulName, boneName, readOnly, destModul=destModul, format=format, required=required ) )
+
+	def onRemove(self, *args, **kwargs):
+		self.setSelection( None )
 
 	def unserialize(self, data):
 		"""
@@ -128,19 +138,15 @@ class RelationalSingleSelectionBone( html5.Div ):
 		"""
 			Opens a ListWidget sothat the user can select new values
 		"""
-		assert self.currentSelector is None, "Whoops... Attempt to open a second selector for this bone!"
-		self.currentSelector = ListWidget( self.destModul )
-		self.currentSelector.selectionActivatedEvent.register( self )
-		conf["mainWindow"].stackWidget( self.currentSelector )
+		currentSelector = ListWidget( self.destModul, isSelector=True )
+		currentSelector.selectionActivatedEvent.register( self )
+		conf["mainWindow"].stackWidget( currentSelector )
 
 	def onSelectionActivated(self, table, selection ):
 		"""
 			Merges the selection made in the ListWidget into our value(s)
 		"""
-		assert self.currentSelector is not None, "Whoops... Got a new selection while not having an open selector!"
 		print("GOT NEW SELECTION", selection)
-		conf["mainWindow"].removeWidget( self.currentSelector )
-		self.currentSelector = None
 		if selection:
 			self.setSelection( selection[0] )
 		else:
@@ -215,7 +221,6 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.destModul = destModul
 		self.format = format
 		self.entries = []
-		self.currentSelector = None
 		self.selectionDiv = html5.Div()
 		self.selectionDiv["class"].append("selectioncontainer")
 		self.appendChild( self.selectionDiv )
@@ -276,18 +281,14 @@ class RelationalMultiSelectionBone( html5.Div ):
 		"""
 			Opens a ListWidget sothat the user can select new values
 		"""
-		assert self.currentSelector is None, "Whoops... Attempt to open a second selector for this bone!"
-		self.currentSelector = ListWidget( self.destModul )
-		self.currentSelector.selectionActivatedEvent.register( self )
-		conf["mainWindow"].stackWidget( self.currentSelector )
+		currentSelector = ListWidget( self.destModul, isSelector=True )
+		currentSelector.selectionActivatedEvent.register( self )
+		conf["mainWindow"].stackWidget( currentSelector )
 
 	def onSelectionActivated(self, table, selection ):
 		"""
 			Merges the selection made in the ListWidget into our value(s)
 		"""
-		assert self.currentSelector is not None, "Whoops... Got a new selection while not having an open selector!"
-		conf["mainWindow"].removeWidget( self.currentSelector )
-		self.currentSelector = None
 		self.setSelection( selection )
 
 	def setSelection(self, selection):

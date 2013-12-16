@@ -180,3 +180,32 @@ class ListPreviewAction( html5.ext.Button ):
 		return( False )
 
 actionDelegateSelector.insert( 1, ListPreviewAction.isSuitableFor, ListPreviewAction )
+
+
+class CloseAction( html5.ext.Button ):
+	def __init__(self, *args, **kwargs ):
+		super( CloseAction, self ).__init__( "Close", *args, **kwargs )
+		self["class"] = "icon close"
+
+	def onClick(self, sender=None):
+		conf["mainWindow"].removeWidget( self.parent().parent() )
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		return( actionName=="close" )
+
+actionDelegateSelector.insert( 1, CloseAction.isSuitableFor, CloseAction )
+
+class ActivateSelectionAction( html5.ext.Button ):
+	def __init__(self, *args, **kwargs ):
+		super( ActivateSelectionAction, self ).__init__( "Select", *args, **kwargs )
+		self["class"] = "icon select"
+
+	def onClick(self, sender=None):
+		self.parent().parent().activateCurrentSelection()
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		return( actionName=="select" )
+
+actionDelegateSelector.insert( 1, ActivateSelectionAction.isSuitableFor, ActivateSelectionAction )

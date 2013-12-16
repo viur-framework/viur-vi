@@ -20,7 +20,7 @@ class AddNodeAction( html5.ext.Button ):
 		return( (handler == "tree.simple" or handler.startswith("tree.simple."))  and actionName=="add.node" )
 
 	def onClick(self, sender=None):
-		i = InputDialog( "Directory Name", successHandler=self.createDir )
+		i = InputDialog( "Directory Name", successHandler=self.createDir, title="Create directory",successLbl="Create" )
 		i["class"].append( "create" )
 		i["class"].append( "directory" )
 

@@ -20,17 +20,24 @@ class Button( Disabled,Widget,Type,_Form,Autofocus,Name,Value,Formhead):
 		Formhead.__init__( self, *args, **kwargs )
 		#super(Button,self).__init__( *args, **kwargs )
 
-class Fieldset(Widget,_Form,Disabled,Name):
+class Fieldset(Disabled,Widget,_Form,Name):
 	_baseClass = "fieldset"
 
 	def __init__(self, *args, **kwargs):
-		super(Fieldset,self).__init__( *args, **kwargs )
+		Disabled.__init__( self, *args, **kwargs )
+		Widget.__init__( self, *args, **kwargs )
+		_Form.__init__( self, *args, **kwargs )
+		Name.__init__( self, *args, **kwargs )
 
-class Form(Widget,Disabled,Name,Target,Autocomplete):
+class Form(Disabled,Widget,Name,Target,Autocomplete):
 	_baseClass = "form"
 
 	def __init__(self, *args, **kwargs):
-		super(Form,self).__init__( *args, **kwargs )
+		Disabled.__init__( self, *args, **kwargs )
+		Widget.__init__( self, *args, **kwargs )
+		Name.__init__( self, *args, **kwargs )
+		Target.__init__( self, *args, **kwargs )
+		Autocomplete.__init__( self, *args, **kwargs )
 
 	def _getNovalidate(self):
 		return( True if self.element.hasAttribute("novalidate") else False )
@@ -119,17 +126,23 @@ class Label( Widget,_Form,__For ):
 		super(Label,self).__init__( *args, **kwargs )
 		self.element.innerHTML = txt
 
-class Optgroup( Widget,_Label,Disabled ):
+class Optgroup( Disabled,Widget,_Label ):
 	_baseClass = "optgroup"
 
 	def __init__(self, *args, **kwargs):
-		super(Optgroup,self).__init__( *args, **kwargs )
+		Disabled.__init__( self, *args, **kwargs )
+		Widget.__init__( self, *args, **kwargs )
+		_Label.__init__( self, *args, **kwargs )
 
-class Option( Widget,_Label,Disabled,Value ):
+
+class Option( Disabled,Widget,_Label,Value ):
 	_baseClass = "option"
 
 	def __init__(self, *args, **kwargs):
-		super(Option,self).__init__( *args, **kwargs )
+		Disabled.__init__( self, *args, **kwargs )
+		Widget.__init__( self, *args, **kwargs )
+		_Label.__init__( self, *args, **kwargs )
+		Value.__init__( self, *args, **kwargs )
 
 	def _getSelected(self):
 		return( True if self.element.selected else False )
@@ -148,11 +161,18 @@ class Output( Widget,_Form,Name,__For ):
 
 
 
-class Select( Widget,_Form,Autofocus,Disabled,Name,Required,Multiple,Size ):
+class Select( Disabled,Widget,_Form,Autofocus,Name,Required,Multiple,Size ):
 	_baseClass = "select"
 
 	def __init__(self, *args, **kwargs):
-		super(Select,self).__init__( *args, **kwargs )
+		Disabled.__init__( self, *args, **kwargs )
+		Widget.__init__( self, *args, **kwargs )
+		_Form.__init__( self, *args, **kwargs )
+		Autofocus.__init__( self, *args, **kwargs )
+		Name.__init__( self, *args, **kwargs )
+		Required.__init__( self, *args, **kwargs )
+		Multiple.__init__( self, *args, **kwargs )
+		Size.__init__( self, *args, **kwargs )
 
 	def _getSelectedIndex(self):
 		return( self.element.selectedIndex )

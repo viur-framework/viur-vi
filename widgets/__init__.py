@@ -8,3 +8,4 @@ from widgets.tree import TreeWidget
 from widgets.hierarchy import HierarchyWidget
 from widgets.file import FileWidget
 from widgets.preview import Preview
+from widgets.search import Search

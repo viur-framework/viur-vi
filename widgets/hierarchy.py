@@ -6,6 +6,7 @@ from widgets.actionbar import ActionBar
 from event import EventDispatcher
 from priorityqueue import viewDelegateSelector
 import utils
+from config import conf
 
 class HierarchyItem( html5.Li ):
 	"""
@@ -183,7 +184,7 @@ class HierarchyWidget( html5.Div ):
 		differentiate between nodes/leafs use a TreeApplication instead)
 	"""
 
-	def __init__( self, modul, rootNode=None, node=None, *args, **kwargs ):
+	def __init__( self, modul, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a hierarchy application!
 			@type modul: string
@@ -202,6 +203,7 @@ class HierarchyWidget( html5.Div ):
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 		self._currentCursor = None
 		self._currentRequests = []
+		self.isSelector = isSelector
 		if self.rootNode:
 			self.reloadData()
 		else:
@@ -211,8 +213,9 @@ class HierarchyWidget( html5.Div ):
 		##Proxy some events and functions of the original table
 		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 		#	setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["add","edit","delete"])
+		self.actionBar.setActions(["add","edit","delete"]+(["select","close"] if isSelector else []))
 		self.sinkEvent("onDrop","onDragOver")
+
 		#HTTPRequest().asyncGet("/admin/%s/list" % self.modul, self)
 
 	def onDataChanged(self, modul):
@@ -290,6 +293,8 @@ class HierarchyWidget( html5.Div ):
 			return
 		self.setCurrentItem( item )
 		self.selectionActivatedEvent.fire( self, [item] )
+		if self.isSelector:
+			conf["mainWindow"].removeWidget(self)
 
 	def setCurrentItem(self, item):
 		if self._currentCursor:
@@ -350,7 +355,7 @@ class HierarchyWidget( html5.Div ):
 			assert ol is not None
 		for skel in data["skellist"]:
 			ol.appendChild( HierarchyItem( self.modul, skel, data["structure"] ) )
-		else: #No children received
+		if len(data["skellist"])==0: #No children received
 			if ol!=self.entryFrame:
 				ol.parent()["class"].append("has_no_childs")
 

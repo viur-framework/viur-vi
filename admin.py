@@ -137,7 +137,6 @@ class CoreWindow( html5.Div ):
 		self.viewport.removeChild( pane.widgetsDomElm )
 
 	def addWidget(self, widget, pane ):
-		print("ADDING ", widget)
 		pane.addWidget( widget )
 
 	def stackWidget(self, widget ):
@@ -146,9 +145,7 @@ class CoreWindow( html5.Div ):
 
 
 	def removeWidget(self, widget ):
-		print("REMOVING ", widget)
 		for pane in self.panes:
-			print("testing pane", pane, pane.widgetsDomElm._children)
 			if pane.containsWidget( widget ):
 				pane.removeWidget( widget )
 				return

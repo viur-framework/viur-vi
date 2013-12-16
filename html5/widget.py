@@ -526,11 +526,17 @@ class Widget( object ):
 		return( res )
 
 
-
-
-
-
-
-
+	def sortChildren(self, key):
+		"""
+			Sorts our direct children. They are rearranged on DOM level.
+			Key must be a function accepting one widget as parameter and must return
+			the key used to sort these widgets.
+		"""
+		self._children.sort( key=key )
+		tmpl = self._children[ : ]
+		tmpl.reverse()
+		for c in tmpl:
+			self.element.removeChild( c.element )
+			self.element.insertBefore( c.element, self.element.children.item(0) )
 
 
