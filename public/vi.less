@@ -424,7 +424,7 @@ p {
   border: 1px solid#bbb;
   border-right-width: 0;
   background: #e3e3e3;
-  color: #777;
+  color:#777;
   overflow: hidden;
   line-height: 1.4em;
   font-size: 0.8em;
@@ -661,7 +661,7 @@ button.text.link:before {
   background-position: -48px -48px;
 }
 button.flip:before {
-  background-position: -48px -64px;
+  background-position: -64px -48px;
 }
 button.text.table:before {
   background-position: 0px -112px;
@@ -754,6 +754,7 @@ button.icon.is_disabled[type="button"]:hover {
 button.icon.is_disabled:before {
   opacity: 0.3;
 }
+
 button.icon.is_disabled {
   cursor: default;
   color: transparent;
@@ -953,23 +954,27 @@ input[type=password],
   overflow: hidden;
   display: block;
 }
+
 [contenteditable] a {
-  text-decoration: underline;
+  text-decoration:underline;
 }
+
 [contenteditable] ul {
-  margin-left: 30px;
-  list-style-type: disc;
+  margin-left:30px; list-style-type:disc;
 }
+
 [contenteditable] ul ul {
-  list-style-type: square;
+  list-style-type:square;
 }
+
 [contenteditable] ol {
-  margin-left: 30px;
-  list-style-type: decimal;
+  margin-left:30px; list-style-type:decimal;
 }
+
 [contenteditable] ol ol {
-  list-style-type: lower-latin;
+  list-style-type:lower-latin;
 }
+
 input[type="date"] {
   width: 162px;
 }
@@ -977,13 +982,16 @@ input[type="radio"],
 input[type="checkbox"] {
   margin-right: 15px;
 }
+
 input[type="password"]:nth-of-type(even) {
-  margin-top: 12px;
+  margin-top:12px;  
 }
+
 .password div label {
   margin-top: 40px;
-  margin-left: -240px;
+  margin-left:-240px;
 }
+
 textarea {
   width: 97.2%;
   height: 120px;
