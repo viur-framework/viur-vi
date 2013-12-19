@@ -192,7 +192,7 @@ class NetworkService( object ):
 		if params:
 			tmp = []
 			for k,v in params.items():
-				tmp.append( (k,v) )
+				tmp.append( (k,str(v)) )
 			tmp.sort( key=lambda x: x[0])
 			for k,v in tmp:
 				res += k+v

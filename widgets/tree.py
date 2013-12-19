@@ -2,10 +2,12 @@ import html5
 import pyjd # this is dummy in pyjs.
 from network import NetworkService
 from widgets.actionbar import ActionBar
+from widgets.search import Search
 from event import EventDispatcher
 from priorityqueue import displayDelegateSelector, viewDelegateSelector
 import utils
 from html5.keycodes import *
+from config import conf
 
 class NodeWidget( html5.Div ):
 	"""
@@ -27,7 +29,7 @@ class NodeWidget( html5.Div ):
 		self.buildDescription()
 		self["class"] = "treeitem node supports_drag supports_drop"
 		self["draggable"] = True
-		self.sinkEvent("onDragOver","onDrop","onDragStart")
+		self.sinkEvent("onDragOver","onDrop","onDragStart", "onDragLeave")
 
 	def buildDescription(self):
 		"""
@@ -49,12 +51,19 @@ class NodeWidget( html5.Div ):
 		"""
 			Check if we can handle the drag-data
 		"""
+		if not "insert_here" in self["class"]:
+			self["class"].append("insert_here")
 		try:
 			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
 		except:
 			return( super(NodeWidget,self).onDragOver(event) )
 		event.preventDefault()
 		event.stopPropagation()
+
+	def onDragLeave(self, event):
+		if "insert_here" in self["class"]:
+			self["class"].remove("insert_here")
+		return( super(NodeWidget, self).onDragLeave(event))
 
 	def onDragStart(self, event):
 		"""
@@ -179,16 +188,22 @@ class SelectableDiv( html5.Div ):
 				   self.selectionType=="both":
 					self.selectionActivatedEvent.fire( self, [child] )
 
+	def activateCurrentSelection(self):
+		"""
+			Emits the selectionActivated event if there's currently a selection
+
+		"""
+		if len( self._selectedItems )>0:
+			self.selectionActivatedEvent.fire( self, self._selectedItems )
+
+		elif self._currentItem is not None:
+			self.selectionActivatedEvent.fire( self, [self._currentItem] )
+
 	def onKeyDown(self, event):
 		if isReturn(event.keyCode): # Return
-			if len( self._selectedItems )>0:
-				self.selectionActivatedEvent.fire( self, self._selectedItems )
-				event.preventDefault()
-				return
-			if self._currentItem is not None:
-				self.selectionActivatedEvent.fire( self, [self._currentItem] )
-				event.preventDefault()
-				return
+			self.activateCurrentSelection()
+			event.preventDefault()
+			return
 		elif isSingleSelectionKey(event.keyCode): #Ctrl
 			self._isCtlPressed = True
 
@@ -234,7 +249,7 @@ class TreeWidget( html5.Div ):
 	leafWidget = LeafWidget
 	defaultActions = ["add.node", "add.leaf", "edit", "delete"]
 
-	def __init__( self, modul, rootNode=None, node=None, *args, **kwargs ):
+	def __init__( self, modul, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
@@ -258,6 +273,7 @@ class TreeWidget( html5.Div ):
 		self.entryFrame.selectionActivatedEvent.register( self )
 		self._currentCursor = None
 		self._currentRequests = []
+		self.isSelector = isSelector
 		if self.rootNode:
 			self.reloadData()
 		else:
@@ -267,7 +283,7 @@ class TreeWidget( html5.Div ):
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.entryFrame,f))
-		self.actionBar.setActions( self.defaultActions )
+		self.actionBar.setActions( self.defaultActions+(["select","close"] if isSelector else []) )
 
 	def onAttach(self):
 		super( TreeWidget, self ).onAttach()
@@ -285,6 +301,8 @@ class TreeWidget( html5.Div ):
 
 	def onSelectionActivated(self, div, selection ):
 		if len(selection)!=1:
+			if self.isSelector:
+				conf["mainWindow"].removeWidget(self)
 			return
 		item = selection[0]
 		if isinstance( item, self.nodeWidget ):
@@ -292,7 +310,12 @@ class TreeWidget( html5.Div ):
 			self.rebuildPath()
 			self.setNode( item.data["id"] )
 		elif isinstance(item, self.leafWidget):
-			print("SELECTED LEAF")
+			if self.isSelector:
+				conf["mainWindow"].removeWidget(self)
+				return
+
+	def activateCurrentSelection(self):
+		return( self.entryFrame.activateCurrentSelection())
 
 	def onClick(self, event):
 		super( TreeWidget, self ).onClick( event )
@@ -351,7 +374,18 @@ class TreeWidget( html5.Div ):
 			else:
 				n = self.leafWidget( self.modul, skel, data["structure"] )
 			self.entryFrame.appendChild(n)
+			self.entryFrame.sortChildren( self.getChildKey )
 
+	def getChildKey(self, widget ):
+		"""
+			Derives a string used to sort the entries in our entryframe
+		"""
+		if isinstance( widget, self.nodeWidget ):
+			return("0-%s" % widget.data["name"].lower())
+		elif isinstance( widget, self.leafWidget ):
+			return("1-%s" % widget.data["name"].lower())
+		else:
+			return("2-")
 
 	@staticmethod
 	def canHandle( modul, modulInfo ):

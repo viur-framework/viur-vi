@@ -22,6 +22,18 @@ class LeafFileWidget( LeafWidget ):
 			except:
 				pass
 		self["class"].append("file")
+		self.sinkEvent("onDragOver","onDragLeave")
+
+	def onDragOver(self, event):
+		if not "insert_before" in self["class"]:
+			self["class"].append("insert_before")
+		super(LeafFileWidget, self).onDragOver(event)
+
+	def onDragLeave(self, event):
+		if "insert_before" in self["class"]:
+			self["class"].remove("insert_before")
+		super(LeafFileWidget,self).onDragLeave( event )
+
 
 class Uploader( html5.Progress ):
 	"""

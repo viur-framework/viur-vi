@@ -5,7 +5,7 @@ from event import EventDispatcher
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
 from utils import formatString
-from widgets.tree import TreeWidget
+from widgets.file import FileWidget, LeafFileWidget
 from config import conf
 from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone
 from widgets.file import Uploader
@@ -93,26 +93,22 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		assert self.currentSelector is None, "Whoops... Attempt to open a second selector for this bone!"
-		self.currentSelector = TreeWidget( self.destModul )
-		self.currentSelector.selectionActivatedEvent.register( self )
-		conf["mainWindow"].stackWidget( self.currentSelector )
+		currentSelector = FileWidget( self.destModul, isSelector=True )
+		currentSelector.selectionActivatedEvent.register( self )
+		conf["mainWindow"].stackWidget( currentSelector )
 
 	def onSelectionActivated(self, table, selection ):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""
-		assert self.currentSelector is not None, "Whoops... Got a new selection while not having an open selector!"
 		hasValidSelection = False
 		for s in selection:
-			if isinstance( s, self.currentSelector.leafWidget ):
+			if isinstance( s, LeafFileWidget ):
 				hasValidSelection = True
 				break
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
-		conf["mainWindow"].removeWidget( self.currentSelector )
-		self.setSelection( [x.data for x in selection if isinstance(x,self.currentSelector.leafWidget)] )
-		self.currentSelector = None
+		self.setSelection( [x.data for x in selection if isinstance(x,LeafFileWidget)] )
 
 class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
@@ -146,28 +142,22 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		assert self.currentSelector is None, "Whoops... Attempt to open a second selector for this bone!"
-		self.currentSelector = TreeWidget( self.destModul )
-		self.currentSelector.selectionActivatedEvent.register( self )
-		conf["mainWindow"].stackWidget( self.currentSelector )
+		currentSelector = FileWidget( self.destModul, isSelector=True )
+		currentSelector.selectionActivatedEvent.register( self )
+		conf["mainWindow"].stackWidget( currentSelector )
 
 	def onSelectionActivated(self, table, selection ):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""
-		assert self.currentSelector is not None, "Whoops... Got a new selection while not having an open selector!"
 		hasValidSelection = False
 		for s in selection:
-			if isinstance( s, self.currentSelector.leafWidget ):
+			if isinstance( s, LeafFileWidget ):
 				hasValidSelection = True
 				break
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
-		conf["mainWindow"].removeWidget( self.currentSelector )
-		self.setSelection( [x.data for x in selection if isinstance(x,self.currentSelector.leafWidget)][0] )
-		self.currentSelector = None
-
-
+		self.setSelection( [x.data for x in selection if isinstance(x,LeafFileWidget)][0] )
 
 
 

@@ -135,7 +135,23 @@ class EditWidget( html5.Div ):
 			data = NetworkService.decode( request )
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
 			NetworkService.notifyChange(self.modul)
-			conf["mainWindow"].log("success","Entry saved!")
+			logDiv = html5.Div()
+			logDiv["class"].append("msg")
+			spanMsg = html5.Span()
+			spanMsg.appendChild( html5.TextNode( "Entry saved!" ))
+			spanMsg["class"].append("msgspan")
+			logDiv.appendChild(spanMsg)
+			if self.modul in conf["modules"].keys():
+				spanMsg = html5.Span()
+				spanMsg.appendChild( html5.TextNode( conf["modules"][self.modul]["name"] ))
+				spanMsg["class"].append("modulspan")
+				logDiv.appendChild(spanMsg)
+			if "values" in data.keys() and "name" in data["values"].keys():
+				spanMsg = html5.Span()
+				spanMsg.appendChild( html5.TextNode( str(data["values"]["name"]) ))
+				spanMsg["class"].append("namespan")
+				logDiv.appendChild(spanMsg)
+			conf["mainWindow"].log("success",logDiv)
 			if self.closeOnSuccess:
 				conf["mainWindow"].removeWidget( self )
 				return
@@ -239,7 +255,12 @@ class EditWidget( html5.Div ):
 			try:
 				res.update( bone.serializeForPost( ) )
 			except InvalidBoneValueException:
-				print("Bone %s is invalid" % key )
+				#Fixme: Bad hack..
+				lbl = bone.parent()._children[0]
+				if "is_valid" in lbl["class"]:
+					lbl["class"].remove("is_valid")
+				lbl["class"].append("is_invalid")
+				self.actionbar.resetLoadingState()
 				return
 		self.save( res )
 

@@ -3,7 +3,7 @@ from html5.ext.popup import Popup
 from html5.ext.button import Button
 
 class InputDialog( Popup ):
-	def __init__(self, text, value="", successHandler=None, abortHandler=None, *args, **kwargs ):
+	def __init__(self, text, value="", successHandler=None, abortHandler=None, successLbl="Okay", abortLbl="Cancel", *args, **kwargs ):
 		super( InputDialog, self ).__init__(*args, **kwargs)
 		self["class"].append("inputdialog")
 		self.successHandler = successHandler
@@ -16,9 +16,9 @@ class InputDialog( Popup ):
 		self.inputElem["type"] = "text"
 		self.inputElem["value"] = value
 		self.appendChild( self.inputElem )
-		okayBtn = Button("Okay", self.onOkay)
+		okayBtn = Button(successLbl, self.onOkay)
 		self.appendChild(okayBtn)
-		cancelBtn = Button("Cancel", self.onCancel)
+		cancelBtn = Button(abortLbl, self.onCancel)
 		self.appendChild(cancelBtn)
 
 	def onOkay(self, *args, **kwargs):
