@@ -118,6 +118,7 @@ class CoreWindow( html5.Div ):
 		if self.currentPane is not None:
 			self.currentPane.widgetsDomElm["style"]["display"] = "none"
 			self.currentPane["class"].remove("is_active")
+		self.topBar.setCurrentModulDescr( pane.descr, pane.iconURL, pane.iconClasses )
 		self.currentPane = pane
 		self.currentPane.widgetsDomElm["style"]["display"] = "block"
 		self.currentPane["class"].append("is_active")

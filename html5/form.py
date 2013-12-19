@@ -4,6 +4,7 @@ from html5.html5Attr.media import Type,Dimensions
 from html5.html5Attr.form import _Form,Alt,Autofocus,Disabled,Name,Checked,Value,Formhead,Autocomplete,Inputs,Required,Multiple,Size,__For
 from html5.html5Attr.href import Target
 from html5.html5Attr.src import Src
+from html5.textnode import TextNode
 
 
 class Button( Disabled,Widget,Type,_Form,Autofocus,Name,Value,Formhead):
@@ -121,10 +122,18 @@ class Input(Disabled,Widget,Type,_Form,Alt,Autofocus,Checked,Name,Dimensions,Val
 
 class Label( Widget,_Form,__For ):
 	_baseClass = "label"
-
-	def __init__(self, txt="", *args, **kwargs):
+	autoIdCounter = 0
+	def __init__(self, txt="", forElem=None, *args, **kwargs):
 		super(Label,self).__init__( *args, **kwargs )
-		self.element.innerHTML = txt
+		if txt:
+			self.appendChild(TextNode(txt))
+		if forElem:
+			if not forElem["id"]:
+				idx = Label.autoIdCounter
+				Label.autoIdCounter += 1
+				forElem["id"] = "label-autoid-for-%s" % idx
+			self["for"] = forElem["id"]
+
 
 class Optgroup( Disabled,Widget,_Label ):
 	_baseClass = "optgroup"
