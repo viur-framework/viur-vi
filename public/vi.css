@@ -1,15 +1,15 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic);
 
 @import url('reset.css');
-@charset "UTF-8";
 /* css resets */
-/* Icon-Grey: #939393;*/
+@charset "UTF-8";
 /* #ViUR Standards and fallback
 ================================================== */
 /* ViUR red */
 /* dark red */
 /* light red */
 /* highlight red */
+/* Icon-Grey: #939393;*/
 /* #Custom Colors
 ================================================== */
 /* #Custom Colors
@@ -86,15 +86,17 @@ p {
 
 }
 .vi_topbar h1,
-.vi_topbar h2 {
-  line-height: 2em;
+.vi_topbar h2,
+.vi_topbar span {
+  line-height: 1.7em;
   position: relative;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
   letter-spacing: 1px;
-  font-weight: 400;
+  font-weight: 600;
   float: left;
   width: auto;
-  color: #fff;
+  color: #444;
+  display: block;
 }
 .vi_topbar h1:before {
   content: ' ';
@@ -107,15 +109,15 @@ p {
   float: left;
   margin-right: 15px;
 }
-.centername {
+.vi_topbar .currentmodul {
   position: relative;
   text-align: center;
   float: left;
-  left: 50%;
   width: 460px;
-  margin-left: -460px;
+  margin-left: 15.7%;
+  margin-top: 10px;
 }
-.centername img {
+.vi_topbar .currentmodul img {
   width: 32px;
   height: auto;
   float: left;
@@ -238,14 +240,14 @@ p {
   width: 15.7%;
   /*298px*/
 
+  border-right: 1px solid #cccccc;
   position: fixed;
   background-color: #eeeeee;
   height: 100%;
 }
 .modullist {
   margin: 45px 0 50px;
-  overflow: hidden;
-  border-right: 1px solid #cccccc;
+  min-width: 298px;
 }
 .modullist a,
 .modullist a:visited {
@@ -500,7 +502,9 @@ p {
   border-right: 2px solid #be1622;
   margin-right: 4px;
 }
-.actionbar .operations {
+.actionbar .operations,
+button.text.save[type="button"],
+button.flipview[type="button"] {
   float: right;
 }
 .actionbar.is_disabled {
@@ -583,6 +587,7 @@ button.preview:before {
 button.search:before {
   background-position: -112px 0px;
 }
+button.text.save:before,
 button.save.close:before,
 .btn_yes:before {
   background-position: 0px -16px;
@@ -613,17 +618,17 @@ button.upload:before {
   background-position: -48px -32px;
 }
 /* Textedit Icons */
-button.text.head1:before {
+button.text.H1:before {
   background-position: 0px -80px;
 }
-button.text.head2:before {
+button.text.H2:before {
   background-position: -16px -80px;
 }
-button.text.head3:before {
+button.text.H3:before {
   background-position: -32px -80px;
 }
-button.text.head1,
-button.text.head2 {
+button.text.H1,
+button.text.H2 {
   margin-right: 0;
   border-right: 0;
 }
@@ -636,7 +641,12 @@ button.text.italic:before {
 button.text.underline:before {
   background-position: -80px -80px;
 }
-button.text.bold {
+button.text.strikeThrough:before {
+  background-position: -96px -80px;
+}
+button.text.bold,
+button.text.italic,
+button.text.underline {
   margin-right: 0;
   border-right: 0;
 }
@@ -654,14 +664,32 @@ button.text.justifyCenter {
   margin-right: 0;
   border-right: 0;
 }
-button.text.image:before {
-  background-position: -96px -96px;
+button.text.BLOCKQUOTE:before {
+  background-position: -112px -80px;
+}
+button.text.insertOrderedList:before {
+  background-position: 0px -128px;
+}
+button.text.insertUnorderedList:before {
+  background-position: -16px -128px;
+}
+button.text.insertOrderedList {
+  margin-right: 0;
+  border-right: 0;
 }
 button.text.link:before {
   background-position: -48px -48px;
 }
-button.flip:before {
-  background-position: -48px -64px;
+button.text.image:before {
+  background-position: -96px -96px;
+}
+button.text.image,
+button.text.link {
+  margin-right: 0;
+  border-right: 0;
+}
+button.flipview:before {
+  background-position: -64px -48px;
 }
 button.text.table:before {
   background-position: 0px -112px;
@@ -718,6 +746,7 @@ button.icon.delete[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
 /* Green Buttons */
+button.text.save[type="button"],
 button.icon.add[type="button"]:hover,
 button.icon.save.close[type="button"]:hover {
   border: 1px solid #479c42;
@@ -731,6 +760,7 @@ button.icon.save.close[type="button"]:hover {
   background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
+button.text.save[type="button"]:before,
 button.icon.add[type="button"]:hover:before,
 button.icon.save.close[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
@@ -740,7 +770,9 @@ button.is_loading:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
+button.text.save[type="button"],
 button.icon.text[type="button"]:hover,
+button.icon.flipview[type="button"]:hover,
 button.icon.is_disabled[type="button"]:hover {
   color: transparent;
   letter-spacing: -1em;
@@ -827,7 +859,8 @@ form fieldset {
 /*Set height of the slide*/
 form fieldset:target,
 form fieldset.default {
-  min-height: 150px;
+  /*min-height: 150px;*/
+
   height: auto;
   width: 100%;
 }
@@ -1578,10 +1611,6 @@ progress[value]::-webkit-progress-value {
   padding-top: 14px;
   padding-bottom: 14px;
 }
-/* hierachyitem states */
-.supports_drag {
-  cursor: move;
-}
 [draggable] {
   -moz-user-select: none;
   -khtml-user-select: none;
@@ -1674,7 +1703,7 @@ progress[value]::-webkit-progress-value {
   border-right: 1px solid #fafafa;
   border-bottom: 1px solid #fafafa;
   border-top: 2px solid #be1622;
-  padding: 6px 7px 80px;
+  padding: 6px 8px 80px;
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
   -o-transition: all 0.3s ease;
@@ -1798,6 +1827,12 @@ progress[value]::-webkit-progress-value {
 .statuslist li.log_progress.is_new {
   padding-bottom: 12px;
 }
+.statuslist li span {
+  margin-right: 5px;
+}
+.statuslist li .modulspan:after {
+  content: ':';
+}
 .statuslist li .date {
   display: block;
   float: right;
@@ -1906,7 +1941,31 @@ textarea:disabled {
 ================================================== */
 /* Smaller than standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
-  
+  .vi_manager {
+    width: 56px;
+    border-right: 1px solid #bbb;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+  }
+  .vi_manager:hover {
+    width: 298px;
+    border-right: 1px solid #bbb;
+  }
+  .modullist {
+    width: 298px;
+  }
+  .modullist ul {
+    display: none;
+  }
+  .vi_manager:hover .modullist ul {
+    display: block;
+  }
+  .vi_viewer {
+    width: 900px;
+    margin-left: 56px;
+  }
 }
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (min-width: 768px) and (max-width: 959px) {

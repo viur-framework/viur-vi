@@ -1,19 +1,34 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic);
 
-@import url('reset.css');
-@charset "UTF-8";
 /* css resets */
-/* Icon-Grey: #939393;*/
+@import url('reset.css');
+
+@charset "UTF-8";
+
 /* #ViUR Standards and fallback
 ================================================== */
-/* ViUR red */
-/* dark red */
-/* light red */
-/* highlight red */
+
+@maincolor: #BE1622;      /* ViUR red */
+@darkcolor: #e30613;      /* dark red */
+@lightcolor: #ff0000;      /* light red */
+@highlightcolor: #f3a1a1;  /* highlight red */
+
+@selectionoddcolor: rgba(250,0,0,0.2);
+@selectionevencolor: rgba(250,130,130,0.2);
+
+@focusoddcolor: rgba(230,0,0,.7);
+@focusevencolor: rgba(230,15,15,.7);
+
+@focusselectionoddcolor: rgba(250,0,0,0.5);
+@focusselectionevencolor: rgba(250,130,130,0.5);
+
+/* Icon-Grey: #939393;*/
+
 /* #Custom Colors
 ================================================== */
-/* #Custom Colors
-================================================== */
+
+@import "vi_custom.less";
+
 /* #ViUR Styles
 ================================================== */
 body {
@@ -42,10 +57,7 @@ a:hover {
 em {
   font-style: italic;
 }
-h1 {
-  font-size: 1.4em;
-  color: #be1622;
-}
+h1 { font-size:1.4em; color:@maincolor;}
 h2 {
   font-size: 1.4em;
   color: #ccc;
@@ -75,7 +87,7 @@ p {
   width: 100%;
   position: fixed;
   z-index: 10;
-  border-bottom: 1px solid #be1622;
+  border-bottom:1px solid @maincolor;
   background-color: #eee;
   background-color: rgba(238, 238, 238, 0.8);
   background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.8)), to(rgba(255, 255, 255, 0.2)));
@@ -86,15 +98,17 @@ p {
 
 }
 .vi_topbar h1,
-.vi_topbar h2 {
-  line-height: 2em;
+.vi_topbar h2,
+.vi_topbar span {
+  line-height: 1.7em;
   position: relative;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
   letter-spacing: 1px;
-  font-weight: 400;
+  font-weight: 600;
   float: left;
   width: auto;
-  color: #fff;
+  color: #444;
+  display:block;
 }
 .vi_topbar h1:before {
   content: ' ';
@@ -107,15 +121,15 @@ p {
   float: left;
   margin-right: 15px;
 }
-.centername {
+.vi_topbar .currentmodul {
   position: relative;
   text-align: center;
   float: left;
-  left: 50%;
   width: 460px;
-  margin-left: -460px;
+  margin-left: 15.7%;
+  margin-top:10px;
 }
-.centername img {
+.vi_topbar .currentmodul img {
   width: 32px;
   height: auto;
   float: left;
@@ -135,7 +149,7 @@ p {
 .iconnav li a:link,
 .iconnav li a:visited {
   border-left: 1px solid #fafafa;
-  border-bottom: 2px solid #be1622;
+  border-bottom:2px solid @maincolor;
   color: #777;
   position: relative;
   padding: 7px 7px 7px;
@@ -153,7 +167,7 @@ p {
   text-shadow: 0px 1px 1px #fff;
   background-color: #fff;
   text-decoration: none;
-  border-bottom: 2px solid #be1622;
+  border-bottom:2px solid @maincolor;
   /*-moz-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); -webkit-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6);*/
 
 }
@@ -214,14 +228,14 @@ p {
   -moz-box-shadow: inset 1px 0px 3px rgba(0, 0, 0, 0.2);
   -webkit-box-shadow: inset 1px 0px 3px rgba(0, 0, 0, 0.2);
   box-shadow: inset 1px 0px 3px rgba(0, 0, 0, 0.2);
-  border-bottom: 2px solid #ff0000;
+  border-bottom:2px solid @lightcolor;
 }
 .iconnav li a:hover,
 .iconnav li a:active {
   color: #999;
   background-color: #fff;
   text-decoration: none;
-  border-bottom: 2px solid #ff0000;
+  border-bottom:2px solid @lightcolor;
   /*-moz-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); -webkit-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6);*/
 
 }
@@ -235,17 +249,15 @@ p {
   overflow: hidden;
   overflow-y: auto;
   z-index: 9;
-  width: 15.7%;
-  /*298px*/
-
+  width: 15.7%; /*298px*/
+  border-right: 1px solid #cccccc;
   position: fixed;
   background-color: #eeeeee;
   height: 100%;
 }
 .modullist {
   margin: 45px 0 50px;
-  overflow: hidden;
-  border-right: 1px solid #cccccc;
+  min-width:298px;
 }
 .modullist a,
 .modullist a:visited {
@@ -330,14 +342,10 @@ p {
   padding: 9px 2px 11px;
   line-height: 0;
   font-size: .7em;
-  border: 1px solid #be1622;
-  background-color: #e30613;
-  background: -moz-linear-gradient(top, #be1622, #e30613);
-  /* Firefox */
-
-  background: -webkit-gradient(linear, left top, left bottom, from(#be1622), to(#e30613));
-  /* Safari, Chrome */
-
+  border: 1px solid @maincolor;
+  background-color:@darkcolor;
+  background:-moz-linear-gradient(top, @maincolor, @darkcolor); /* Firefox */
+  background:-webkit-gradient(linear, left top, left bottom, from(@maincolor), to(@darkcolor)); /* Safari, Chrome */
   color: transparent;
   letter-spacing: -1em;
   overflow: hidden;
@@ -359,9 +367,7 @@ p {
   letter-spacing: normal;
   color: #eee;
 }
-.modullist li.is_active a {
-  background: rgba(230, 0, 0, 0.7);
-}
+.modullist li.is_active a {background: @focusoddcolor;}
 .modullist li.is_active h3 {
   color: #fff;
   text-shadow: none;
@@ -449,7 +455,7 @@ p {
   padding: 15px 1%;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #ccc;
-  border-bottom: 1px solid #f3a1a1;
+  border-bottom: 1px solid @highlightcolor; 
   background-color: #eee;
   background-color: rgba(210, 210, 210, 0.7);
   background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.8)), to(rgba(255, 255, 255, 0.2)));
@@ -497,10 +503,10 @@ p {
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#fff', EndColorStr='#ddd', GradientType=0);
   float: left;
   border: 1px solid #aaa;
-  border-right: 2px solid #be1622;
+  border-right:2px solid @maincolor;
   margin-right: 4px;
 }
-.actionbar .operations {
+.actionbar .operations, button.text.save[type="button"], button.flipview[type="button"] {
   float: right;
 }
 .actionbar.is_disabled {
@@ -583,6 +589,7 @@ button.preview:before {
 button.search:before {
   background-position: -112px 0px;
 }
+button.text.save:before,
 button.save.close:before,
 .btn_yes:before {
   background-position: 0px -16px;
@@ -613,17 +620,17 @@ button.upload:before {
   background-position: -48px -32px;
 }
 /* Textedit Icons */
-button.text.head1:before {
+button.text.H1:before {
   background-position: 0px -80px;
 }
-button.text.head2:before {
+button.text.H2:before {
   background-position: -16px -80px;
 }
-button.text.head3:before {
+button.text.H3:before {
   background-position: -32px -80px;
 }
-button.text.head1,
-button.text.head2 {
+button.text.H1,
+button.text.H2 {
   margin-right: 0;
   border-right: 0;
 }
@@ -636,7 +643,10 @@ button.text.italic:before {
 button.text.underline:before {
   background-position: -80px -80px;
 }
-button.text.bold {
+button.text.strikeThrough:before {
+  background-position: -96px -80px;
+}
+button.text.bold, button.text.italic, button.text.underline {
   margin-right: 0;
   border-right: 0;
 }
@@ -654,13 +664,30 @@ button.text.justifyCenter {
   margin-right: 0;
   border-right: 0;
 }
-button.text.image:before {
-  background-position: -96px -96px;
+button.text.BLOCKQUOTE:before {
+  background-position: -112px -80px;
+}
+button.text.insertOrderedList:before {
+  background-position: 0px -128px;
+}
+button.text.insertUnorderedList:before {
+  background-position: -16px -128px;
+}
+button.text.insertOrderedList{
+  margin-right: 0;
+  border-right: 0;
 }
 button.text.link:before {
   background-position: -48px -48px;
 }
-button.flip:before {
+button.text.image:before {
+  background-position: -96px -96px;
+}
+button.text.image, button.text.link {
+  margin-right: 0;
+  border-right: 0;
+}
+button.flipview:before {
   background-position: -64px -48px;
 }
 button.text.table:before {
@@ -718,6 +745,7 @@ button.icon.delete[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
 /* Green Buttons */
+button.text.save[type="button"],
 button.icon.add[type="button"]:hover,
 button.icon.save.close[type="button"]:hover {
   border: 1px solid #479c42;
@@ -731,16 +759,20 @@ button.icon.save.close[type="button"]:hover {
   background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
+button.text.save[type="button"]:before,
 button.icon.add[type="button"]:hover:before,
 button.icon.save.close[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
+
 button.icon.is_loading:before,
 button.is_loading:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
+button.text.save[type="button"],
 button.icon.text[type="button"]:hover,
+button.icon.flipview[type="button"]:hover,
 button.icon.is_disabled[type="button"]:hover {
   color: transparent;
   letter-spacing: -1em;
@@ -828,7 +860,7 @@ form fieldset {
 /*Set height of the slide*/
 form fieldset:target,
 form fieldset.default {
-  min-height: 150px;
+  /*min-height: 150px;*/
   height: auto;
   width: 100%;
 }
@@ -863,7 +895,7 @@ form label.selectone {
 }
 form label.is_required {
   border-style: solid;
-  border-left-color: #be1622;
+  border-left-color: @maincolor;
   border-left-width: 2px;
   background: #fff;
 }
@@ -918,7 +950,7 @@ input[type=password],
   padding: 4px 1.3% 6px;
   height: 16px;
   border: 1px solid #ccc;
-  border-bottom: 1px solid #be1622;
+  border-bottom:1px solid @maincolor;
   box-shadow: inset 0px 0px 3px #eee;
   font-weight: lighter;
   border-radius: 0px;
@@ -1026,7 +1058,7 @@ input[type=url]:focus,
 input[type=password]:focus,
 textarea:focus {
   outline: 0;
-  border-color: #be1622;
+  border-color: @maincolor;
 }
 select.is_disabled,
 form .treeitem input,
@@ -1233,12 +1265,10 @@ tr:last-child td:last-child {
   border-width: 0px 0px 0px 0px;
 }
 thead tr th {
-  background: -o-linear-gradient(bottom, #ff0000 5%, #be1622 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #be1622));
-  background: -moz-linear-gradient(center top, #ff0000 5%, #be1622 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");
-  background: -o-linear-gradient(top, #ff0000, #be1622);
-  background-color: #ff0000;
+  background:-o-linear-gradient(bottom, @lightcolor 5%, @maincolor 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, @lightcolor), color-stop(1, @maincolor) );
+  background:-moz-linear-gradient( center top, @lightcolor 5%, @maincolor 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");  background: -o-linear-gradient(top,@lightcolor,@maincolor);
+  background-color:@lightcolor;
   border: 0px solid #cccccc;
   text-align: center;
   border-width: 0px 0px 1px 1px;
@@ -1246,12 +1276,10 @@ thead tr th {
   color: #ffffff;
 }
 thead tr:hover th {
-  background: -o-linear-gradient(bottom, #ff0000 5%, #be1622 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #be1622));
-  background: -moz-linear-gradient(center top, #ff0000 5%, #be1622 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");
-  background: -o-linear-gradient(top, #ff0000, #be1622);
-  background-color: #ff0000;
+  background:-o-linear-gradient(bottom, @lightcolor 5%, @maincolor 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, @lightcolor), color-stop(1, @maincolor) );
+  background:-moz-linear-gradient( center top, @lightcolor 5%, @maincolor 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");  background: -o-linear-gradient(top,@lightcolor,@maincolor);
+  background-color:@lightcolor;
 }
 /* 
 tr:first-child td:first-child{
@@ -1262,42 +1290,19 @@ tr:first-child td:last-child{
   border-width:0px 0px 1px 1px;
 } 
 */
-tr.is_focused td {
-  color: #fff;
-  padding: 14px 7px;
-}
-tr.is_selected td,
-tr.is_focused.is_selected td {
-  color: #fff;
-}
-tr.is_selected td:first-child,
-tr.is_focused.is_selected td:first-child {
-  border-left: 3px solid #be1622;
-  margin-left: -3px;
-}
-tr.is_selected td:last-child,
-tr.is_focused.is_selected td:last-child {
-  border-right: 3px solid #be1622;
-  margin-right: -3px;
-}
-tr.is_selected:nth-child(odd) {
-  background: rgba(250, 0, 0, 0.2);
-}
-tr.is_selected:nth-child(even) {
-  background: rgba(250, 130, 130, 0.2);
-}
-tr.is_focused:nth-child(odd) {
-  background: rgba(230, 0, 0, 0.7);
-}
-tr.is_focused:nth-child(even) {
-  background: rgba(230, 15, 15, 0.7);
-}
-tr.is_focused.is_selected:nth-child(odd) {
-  background: rgba(250, 0, 0, 0.5);
-}
-tr.is_focused.is_selected:nth-child(even) {
-  background: rgba(250, 130, 130, 0.5);
-}
+tr.is_focused td {color: #fff; padding:14px 7px;}
+tr.is_selected td, tr.is_focused.is_selected td{color:#fff;}
+tr.is_selected td:first-child, tr.is_focused.is_selected td:first-child {border-left: 3px solid @maincolor;margin-left: -3px;}
+tr.is_selected td:last-child, tr.is_focused.is_selected td:last-child {border-right: 3px solid @maincolor;margin-right: -3px;}
+
+tr.is_selected:nth-child(odd) {background:@selectionoddcolor;}
+tr.is_selected:nth-child(even) {background:@selectionevencolor;}
+
+tr.is_focused:nth-child(odd) {background: @focusoddcolor;}
+tr.is_focused:nth-child(even) {background: @focusevencolor;}
+
+tr.is_focused.is_selected:nth-child(odd) {background: @focusselectionoddcolor;}
+tr.is_focused.is_selected:nth-child(even) {background: @focusselectionevencolor;}
 /* #vi_forest
 ================================================== */.tree {
   width: 100%;
@@ -1343,7 +1348,7 @@ tr.is_focused.is_selected:nth-child(even) {
   padding: 3px 1% 0;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #bbb;
-  border-bottom: 1px solid #f3a1a1;
+  border-bottom: 1px solid @highlightcolor;
   background-color: #eee;
   background-color: rgba(180, 180, 180, 0.7);
   background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(220, 220, 220, 0.7)), to(rgba(255, 255, 255, 0.4)));
@@ -1437,19 +1442,8 @@ tr.is_focused.is_selected:nth-child(even) {
   max-width: 32px;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
 }
-.tree .selectioncontainer .treeitem.selected {
-  background: rgba(250, 0, 0, 0.2);
-  color: #fff;
-  border-right: 3px solid #be1622;
-  border-left: 3px solid #be1622;
-  margin-right: -13px;
-  margin-left: -3px;
-}
-.tree .selectioncontainer .treeitem.cursor {
-  background: rgba(230, 0, 0, 0.7);
-  color: #fff;
-  padding: 14px 7px;
-}
+.tree .selectioncontainer .treeitem.selected {background: @selectionoddcolor; color: #fff; border-right: 3px solid @maincolor; border-left: 3px solid @maincolor; margin-right: -13px; margin-left:-3px;}
+.tree .selectioncontainer .treeitem.cursor {background: @focusoddcolor; color: #fff; padding:14px 7px;}
 .tree.supports_upload .selectioncontainer:before,
 .tree.supports_upload .selectioncontainer:after {
   content: 'Drag your files here.';
@@ -1578,34 +1572,17 @@ progress[value]::-webkit-progress-value {
 .has_no_childs > a:before {
   background-position: -32px -64px;
 }
-.hierarchyitem.is_focused,
-.hierarchyitem ol .hierarchyitem.is_focused:nth-of-type(odd),
-.hierarchyitem ol .hierarchyitem.is_focused:nth-of-type(even) {
-  background: rgba(230, 0, 0, 0.7);
-  color: #fff;
-  padding-top: 14px;
-  padding-bottom: 14px;
-}
-/* hierachyitem states */
-.supports_drag {
-  cursor: move;
-}
+.hierarchyitem.is_focused, .hierarchyitem ol .hierarchyitem.is_focused:nth-of-type(odd), .hierarchyitem ol .hierarchyitem.is_focused:nth-of-type(even) {background: @focusoddcolor; color: #fff; padding-top:14px; padding-bottom:14px;}
+
 [draggable] {
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
   user-select: none;
 }
-.insert_before {
-  border-top: 2px solid #be1622;
-}
-.insert_here {
-  border: 1px solid #be1622;
-  padding: 12px 7px;
-}
-.insert_after {
-  border-bottom: 2px solid #be1622;
-}
+.insert_before {border-top:2px solid @maincolor;}
+.insert_here {border:1px solid @maincolor; padding:12px 7px;}
+.insert_after {border-bottom:2px solid @maincolor;}
 /* #vi_popups and alerts
 ================================================== */.popup {
   position: absolute;
@@ -1622,7 +1599,7 @@ progress[value]::-webkit-progress-value {
   margin: 10% auto;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
   border: 1px solid #ccc;
-  border-bottom: 1px solid #be1622;
+  border-bottom:1px solid @maincolor;
   overflow: hidden;
 }
 .alertbox span {
@@ -1644,7 +1621,7 @@ progress[value]::-webkit-progress-value {
   width: 100%;
   position: fixed;
   top: 100%;
-  border-top: 2px solid #be1622;
+  border-top:2px solid @maincolor;
   border-bottom: 1px solid #cccccc;
   background-color: #eee;
   background-color: rgba(238, 238, 238, 0.9);
@@ -1681,8 +1658,8 @@ progress[value]::-webkit-progress-value {
   border: 0;
   border-right: 1px solid #fafafa;
   border-bottom: 1px solid #fafafa;
-  border-top: 2px solid #be1622;
-  padding: 6px 7px 80px;
+  border-top:2px solid @maincolor;
+  padding: 6px 8px 80px;
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
   -o-transition: all 0.3s ease;
@@ -1705,7 +1682,7 @@ progress[value]::-webkit-progress-value {
   text-shadow: 0px 1px 1px #fff;
   background-color: #fff;
   text-decoration: none;
-  border-top: 2px solid #ff0000;
+  border-top:2px solid @lightcolor;
   overflow: visible;
   min-width: 130px;
   letter-spacing: normal;
@@ -1806,6 +1783,13 @@ progress[value]::-webkit-progress-value {
 .statuslist li.log_progress.is_new {
   padding-bottom: 12px;
 }
+.statuslist li span {
+  margin-right:5px;
+}
+
+.statuslist li .modulspan:after {
+  content:':';
+}
 .statuslist li .date {
   display: block;
   float: right;
@@ -1894,7 +1878,7 @@ progress[value]::-webkit-progress-value {
   outline: 1px dotted #ccc;
 }
 .is_active {
-  background-color: #be1622;
+  background-color: @maincolor;
 }
 input:disabled,
 input[type="submit"]:disabled,
@@ -1914,7 +1898,12 @@ textarea:disabled {
 ================================================== */
 /* Smaller than standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
-  
+ .vi_manager {width: 56px; border-right:1px solid #bbb; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; transition: all 0.3s ease;}
+ .vi_manager:hover {width:298px; border-right:1px solid #bbb;}
+ .modullist {width:298px;}
+ .modullist ul {display:none;}
+ .vi_manager:hover .modullist ul {display:block;}
+ .vi_viewer {width:900px;margin-left:56px;}
 }
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (min-width: 768px) and (max-width: 959px) {
