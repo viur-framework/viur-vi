@@ -12,6 +12,13 @@ class TopBarWidget( html5.Header ):
 		anav=html5.Nav()
 		anav["class"].append("iconnav")
 		self.iconnav=html5.Ul()
+		self.modulContainer = html5.Div()
+		self.modulContainer["class"].append("currentmodul")
+		self.appendChild( self.modulContainer )
+		self.modulImg = html5.Label()
+		self.modulContainer.appendChild(self.modulImg)
+		self.modulName = html5.Span()
+		self.modulContainer.appendChild( self.modulName )
 		#self.iconnav.appendChild(DashBoard())
 		#self.iconnav.appendChild(MyFiles())
 		#self.iconnav.appendChild(Settings())
@@ -20,6 +27,21 @@ class TopBarWidget( html5.Header ):
 		anav.appendChild(self.iconnav)
 		self.appendChild(anav)
 
+	def setCurrentModulDescr(self, descr, iconURL=None, iconClasses=None):
+		for c in self.modulImg._children[:]:
+			self.modulImg.removeChild(c)
+		for c in self.modulName._children[:]:
+			self.modulName.removeChild( c )
+		for c in self.modulImg["class"]:
+			self.modulImg["class"].remove(c)
+		self.modulName.appendChild( html5.TextNode(descr))
+		if iconURL is not None:
+			img = html5.Img()
+			img["src"] = iconURL
+			self.modulImg.appendChild(img)
+		if iconClasses is not None:
+			for cls in iconClasses:
+				self.modulImg["class"].append( cls )
 
 class UserState(html5.Li):
 	def __init__(self):

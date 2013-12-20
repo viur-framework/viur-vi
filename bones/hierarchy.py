@@ -16,38 +16,30 @@ class HierarchyMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		assert self.currentSelector is None, "Whoops... Attempt to open a second selector for this bone!"
-		self.currentSelector = HierarchyWidget( self.destModul )
-		self.currentSelector.selectionActivatedEvent.register( self )
-		conf["mainWindow"].stackWidget( self.currentSelector )
+		currentSelector = HierarchyWidget( self.destModul, isSelector=True )
+		currentSelector.selectionActivatedEvent.register( self )
+		conf["mainWindow"].stackWidget( currentSelector )
 
 	def onSelectionActivated(self, table, selection ):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""
-		assert self.currentSelector is not None, "Whoops... Got a new selection while not having an open selector!"
-		conf["mainWindow"].removeWidget( self.currentSelector )
 		self.setSelection( [x.data for x in selection] )
-		self.currentSelector = None
 
 class HierarchySingleSelectionBone( RelationalSingleSelectionBone ):
 	def onShowSelector(self, *args, **kwargs):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		assert self.currentSelector is None, "Whoops... Attempt to open a second selector for this bone!"
-		self.currentSelector = HierarchyWidget( self.destModul )
-		self.currentSelector.selectionActivatedEvent.register( self )
-		conf["mainWindow"].stackWidget( self.currentSelector )
+		currentSelector = HierarchyWidget( self.destModul, isSelector=True )
+		currentSelector.selectionActivatedEvent.register( self )
+		conf["mainWindow"].stackWidget( currentSelector )
 
 	def onSelectionActivated(self, table, selection ):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""
-		assert self.currentSelector is not None, "Whoops... Got a new selection while not having an open selector!"
-		conf["mainWindow"].removeWidget( self.currentSelector )
 		self.setSelection( [x.data for x in selection][0] )
-		self.currentSelector = None
 
 
 

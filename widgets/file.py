@@ -60,7 +60,7 @@ class Uploader( html5.Progress ):
 		"""
 			Internal callback - the actual upload url (retrieved by calling /file/getUploadURL) is known.
 		"""
-		r = NetworkService.request("","/skey", successHandler=self.onSkeyAvaiable)
+		r = NetworkService.request("","/admin/skey", successHandler=self.onSkeyAvaiable)
 		r.file = req.file
 		r.node = req.node
 		r.destUrl = req.result

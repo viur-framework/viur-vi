@@ -23,7 +23,8 @@ class FileSelectUploader( html5.Input ):
 
 	def onChange(self, event):
 		if event.target.files.length>0:
-			self.parent().appendChild( Uploader( event.target.files.item(0), self.parent().node ) )
+			Uploader( event.target.files.item(0), self.parent().node )
+			#self.parent().appendChild(  )
 		self.parent().removeChild( self )
 
 

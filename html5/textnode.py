@@ -9,6 +9,7 @@ class TextNode( object ):
 		super( TextNode, self ).__init__()
 		self._children = []
 		self.element = eval("document.createTextNode('')")
+		self._isAttached = False
 		if txt is not None:
 			self.element.data = txt
 
@@ -31,10 +32,10 @@ class TextNode( object ):
 		return( self.element.data )
 
 	def onAttach(self):
-		pass
+		self._isAttached = True
 
 	def onDetach(self):
-		pass
+		self._isAttached = False
 
 	def _setDisabled(self, disabled):
 		return

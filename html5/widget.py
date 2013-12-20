@@ -11,7 +11,10 @@ class ClassWrapper( list ):
 				list.append( self, c )
 
 	def _updateElem(self):
-		self.targetWidget.element.setAttribute("class", " ".join( self ) )
+		if len(self)==0:
+			self.targetWidget.element.removeAttribute("class")
+		else:
+			self.targetWidget.element.setAttribute("class", " ".join( self ) )
 
 	def append(self, p_object):
 		list.append( self, p_object )
