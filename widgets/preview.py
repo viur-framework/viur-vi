@@ -1,4 +1,5 @@
 import html5
+from config import conf
 
 class Preview( html5.Div ):
 	def __init__(self, urls, entry, modul, *args, **kwargs ):
@@ -10,6 +11,9 @@ class Preview( html5.Div ):
 		self.appendChild(self.urlCb)
 		self.previewFrame = html5.Iframe()
 		self.appendChild(self.previewFrame)
+		btnClose = html5.ext.Button("Close", callback=self.doClose)
+		btnClose["class"].append("icon close")
+		self.appendChild(btnClose)
 		currentUrl = None
 		for name,url in urls.items():
 			o = html5.Option()
@@ -31,4 +35,6 @@ class Preview( html5.Div ):
 		url = url.replace("{{id}}",self.entry["id"]).replace("{{modul}}",self.modul )
 		self.previewFrame["src"] = url
 
+	def doClose(self, *args, **kwargs ):
+		conf["mainWindow"].removeWidget(self)
 
