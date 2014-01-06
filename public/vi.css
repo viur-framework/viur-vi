@@ -1000,30 +1000,42 @@ input[type=password],
   /* IE6-9 */
 
 }
-[contenteditable] {
+/* #vi_texteditor
+================================================== */
+.imageeditor label,
+.linkeditor label,
+.imageeditor input,
+.linkeditor input {
+  width: auto;
+}
+.contentdiv[contenteditable] {
   width: 97.2%;
+  height: 100%;
   min-height: 500px;
-  margin-bottom: 15px;
   overflow: hidden;
+  overflow-y: scroll;
+  margin-bottom: 15px;
   display: block;
 }
-[contenteditable] a {
+.contentdiv[contenteditable] a {
   text-decoration: underline;
 }
-[contenteditable] ul {
+.contentdiv[contenteditable] ul {
   margin-left: 30px;
   list-style-type: disc;
 }
-[contenteditable] ul ul {
+.contentdiv[contenteditable] ul ul {
   list-style-type: square;
 }
-[contenteditable] ol {
+.contentdiv[contenteditable] ol {
   margin-left: 30px;
   list-style-type: decimal;
 }
-[contenteditable] ol ol {
+.contentdiv[contenteditable] ol ol {
   list-style-type: lower-latin;
 }
+/* #vi_input_bones
+================================================== */
 input[type="date"] {
   width: 162px;
 }
@@ -1403,7 +1415,9 @@ tr.is_focused.is_selected:nth-child(even) {
 .tree .selectioncontainer .treeitem:nth-of-type(even) {
   background-color: rgba(250, 250, 250, 0.7);
 }
-.breadcrumb {
+.breadcrumb,
+.imageeditor,
+.linkeditor {
   width: 82.3%;
   font-weight: 600;
   min-width: 500px;
@@ -1979,7 +1993,9 @@ textarea:disabled {
   border: 1px solid #ccc;
 }
 .has_multiple_children .actionbar,
-.has_multiple_children .breadcrumb {
+.has_multiple_children .breadcrumb,
+.has_multiple_children .imageeditor,
+.has_multiple_children .linkeditor {
   width: 39%;
 }
 /* #Media Queries
