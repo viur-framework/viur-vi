@@ -765,8 +765,11 @@ button.icon.add[type="button"]:hover:before,
 button.icon.save.close[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
-button.icon.is_loading:before,
-button.is_loading:before {
+button.icon.is_loading[type="button"]:before,
+button.is_loading[type="button"]:before,
+button.icon.is_loading[type="button"]:hover:before,
+button.is_loading[type="button"]:hover:before,
+button.icon.save.close.is_loading[type="button"]:hover:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
@@ -791,6 +794,17 @@ button.icon.is_disabled {
   color: transparent;
   border: 1px solid #ccc;
   box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+/* #preview
+================================================== */
+.preview {
+  margin-top: -70px;
+}
+.preview iframe {
+  width: 100%;
+  min-height: 80%;
+  border: 1px solid #ccc;
+  overflow: scroll;
 }
 /* #vi_forms
 ================================================== */
@@ -963,6 +977,7 @@ input[type="email"],
 input[type="date"],
 input[type=url],
 input[type=password],
+.text .preview,
 [contenteditable] {
   display: inline-block;
   font-size: 0.9em;
@@ -1020,6 +1035,24 @@ input[type=password],
 .contentdiv[contenteditable] a {
   text-decoration: underline;
 }
+.contentdiv[contenteditable] h1,
+.contentdiv[contenteditable] h2,
+.contentdiv[contenteditable] h3 {
+  color: #222;
+  margin-bottom: 15px;
+}
+.contentdiv[contenteditable] h1 {
+  font-size: 2em;
+  font-weight: 800;
+}
+.contentdiv[contenteditable] h2 {
+  font-size: 1.4em;
+  font-weight: 400;
+}
+.contentdiv[contenteditable] h3 {
+  font-size: 1em;
+  font-weight: 400;
+}
 .contentdiv[contenteditable] ul {
   margin-left: 30px;
   list-style-type: disc;
@@ -1074,10 +1107,17 @@ input[type="password"]:nth-of-type(even) {
   margin-top: 40px;
   margin-left: -240px;
 }
-textarea {
+textarea,
+.text .preview {
   width: 97.2%;
   height: 120px;
   line-height: 1.5em;
+}
+.text .preview {
+  overflow: hidden;
+  overflow-y: scroll;
+  border-bottom: 1px solid #777;
+  background: #f1f1f1;
 }
 select {
   min-width: 175px;
@@ -1709,6 +1749,15 @@ progress[value]::-webkit-progress-value {
   width: 100%;
   display: block;
   margin-bottom: 15px;
+}
+.alertbox span.title {
+  margin-left: -25px;
+  margin-top: -25px;
+  padding: 7px 43px 8px 7px;
+  font-size: .8em;
+  line-height: .8em;
+  background: #ddd;
+  color: #777;
 }
 .alertbox button {
   float: right;
