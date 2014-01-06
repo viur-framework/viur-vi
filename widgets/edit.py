@@ -167,6 +167,7 @@ class EditWidget( html5.Div ):
 		tmpDict = utils.boneListToDict( data["structure"] )
 		fieldSets = {}
 		currRow = 0
+		hasMissing = False
 		for key, bone in data["structure"]:
 			if bone["visible"]==False:
 				continue
@@ -209,6 +210,7 @@ class EditWidget( html5.Div ):
 				descrLbl["class"].append("is_invalid")
 				descrLbl["title"] = bone["error"]
 				fieldSets[ cat ]["class"].append("is_incomplete")
+				hasMissing = True
 			if bone["required"] and bone["error"] is None and not self.wasInitialRequest:
 				descrLbl["class"].append("is_valid")
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
@@ -238,6 +240,8 @@ class EditWidget( html5.Div ):
 			v._section = None
 		self.unserialize( data["values"] )
 		self._lastData = data
+		if hasMissing and not self.wasInitialRequest:
+			conf["mainWindow"].log("warning","Could not save entry!")
 
 	def unserialize(self, data):
 		"""
