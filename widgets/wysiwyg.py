@@ -141,7 +141,7 @@ actionDelegateSelector.insert( 1, TextInsertImageAction.isSuitableFor, TextInser
 class TextInsertLinkAction( html5.ext.Button ):
 	newLinkIdx = 0
 	def __init__(self, *args, **kwargs):
-		super( TextInsertLinkAction, self ).__init__( *args, **kwargs )
+		super( TextInsertLinkAction, self ).__init__( "Insert Link", *args, **kwargs )
 		self["class"] = "icon text link"
 
 	def onClick(self, sender=None):
