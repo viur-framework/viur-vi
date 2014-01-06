@@ -26,9 +26,9 @@ class RelationalViewBoneDelegate( object ):
 		else:
 			val = ""
 		if isinstance(val,list):
-			val = ", ".join( [x["name"] for x in val])
+			val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
 		elif isinstance(val, dict):
-			val = val["name"]
+			val = val["name"] if "name" in val.keys() else val["id"]
 		return( html5.Label( val ) )
 		#return( formatString( self.format, self.structure, value ) ) FIXME!
 
@@ -160,7 +160,10 @@ class RelationalSingleSelectionBone( html5.Div ):
 		"""
 		self.selection = selection
 		if selection:
-			self.selectionTxt["value"] = selection["name"]
+			if "name" in selection.keys():
+				self.selectionTxt["value"] = selection["name"]
+			else:
+				self.selectionTxt["value"] = selection["id"]
 		else:
 			self.selectionTxt["value"] = ""
 
@@ -183,7 +186,10 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		self.parent = parent
 		self.modul = modul
 		self.data = data
-		txtLbl = html5.Label( data["name"])
+		if "name" in data.keys():
+			txtLbl = html5.Label( data["name"])
+		else:
+			txtLbl = html5.Label( data["id"])
 		self.appendChild( txtLbl )
 		remBtn = html5.ext.Button("Remove", self.onRemove )
 		remBtn["class"].append("icon")
