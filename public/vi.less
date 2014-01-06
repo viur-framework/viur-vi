@@ -829,12 +829,35 @@ legend a:hover {
   text-decoration: none;
   cursor: pointer;
 }
+
+form fieldset.is_incomplete:target legend a,
+form fieldset.is_incomplete legend a {
+  background-color: #1495de;
+  border-color: #073866;
+  color: #fff;
+}
+
+form fieldset.is_incomplete legend a:before {
+  background-image: url(icons/vi_actions_sprite_white.svg);
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  position: relative;
+  float: left;
+  margin-top: 1px;
+  margin-left: -4px;
+  margin-right: 5px;
+  background-position: -64px 0px;
+}
+
 /*General Accordion****************************************************************************/
 /*Set style of open slide*/
 form fieldset:target legend a {
   color: #333;
   background: #ffffff;
 }
+form fieldset.is_incomplete section,
 form fieldset:target section,
 form fieldset.default section {
   display: block;
@@ -858,6 +881,7 @@ form fieldset {
   transition: all 0.2s ease-out;
 }
 /*Set height of the slide*/
+form fieldset.is_incomplete,
 form fieldset:target,
 form fieldset.default {
   /*min-height: 150px;*/
@@ -935,6 +959,7 @@ form label.is_valid:before {
   margin-right: 5px;
   background-position: 0px -16px;
 }
+
 input,
 textarea,
 input[type="text"],
@@ -1013,6 +1038,35 @@ input[type="date"] {
 input[type="radio"],
 input[type="checkbox"] {
   margin-right: 15px;
+}
+
+.bone.selectmulti div label {
+  border: 1px solid #ccc;
+  border-top-width:0;
+  clear:left;
+  margin-left:241px;
+  width:320px;
+}
+
+.bone.selectmulti div label:first-of-type {
+  clear:none;
+  margin-left:0;
+  border: 1px solid #ccc;
+}
+
+.bone.selectmulti div label:nth-of-type(even) {
+  background-color:#eee;
+}
+
+.bone.selectmulti div label input {
+  float:right;
+  width:15px;
+  margin-right:0;
+}
+
+.bone.selectmulti div label span {
+  display:block;
+  float:left;
 }
 
 input[type="password"]:nth-of-type(even) {
