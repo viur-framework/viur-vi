@@ -79,7 +79,7 @@ actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=
 class TextStyleBlockQuote( BasicFormatBlockAction ):
 	cmd = "BLOCKQUOTE"
 
-actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.blockquote", TextStyleBlockQuote )
+#actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.blockquote", TextStyleBlockQuote )
 
 
 class TextStyleJustifyCenter( BasicTextAction ):
