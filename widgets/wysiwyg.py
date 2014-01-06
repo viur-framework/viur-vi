@@ -698,6 +698,7 @@ class Wysiwyg( html5.Div ):
 		self.contentDiv = html5.Div()
 		self.contentDiv["contenteditable"] = True
 		self.contentDiv.element.innerHTML = editHtml
+		self.contentDiv["class"].append("contentdiv")
 		self.appendChild( self.contentDiv )
 		self.actionbar.setActions( self.textActions )
 		#btn = html5.ext.Button("Apply", self.saveText)
