@@ -1004,6 +1004,11 @@ input[type=password],
   /* IE6-9 */
 
 }
+
+.imageeditor label, .linkeditor label, .imageeditor input, .linkeditor input {
+  width:auto;
+}
+
 [contenteditable] {
   width: 97.2%;
   min-height: 500px;
@@ -1392,7 +1397,7 @@ tr.is_focused.is_selected:nth-child(even) {background: @focusselectionevencolor;
 .tree .selectioncontainer .treeitem:nth-of-type(even) {
   background-color: rgba(250, 250, 250, 0.7);
 }
-.breadcrumb {
+.breadcrumb, .imageeditor, .linkeditor {
   width: 82.3%;
   font-weight: 600;
   min-width: 500px;
@@ -1945,7 +1950,9 @@ textarea:disabled {
   border: 1px solid #ccc;
 }
 .has_multiple_children .actionbar,
-.has_multiple_children .breadcrumb {
+.has_multiple_children .breadcrumb,
+.has_multiple_children .imageeditor,
+.has_multiple_children .linkeditor {
   width: 39%;
 }
 /* #Media Queries
