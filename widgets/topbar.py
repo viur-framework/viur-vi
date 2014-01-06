@@ -43,6 +43,9 @@ class TopBarWidget( html5.Header ):
 			for cls in iconClasses:
 				self.modulImg["class"].append( cls )
 
+
+		eval("top.document.title='"+descr+"'")
+
 class UserState(html5.Li):
 	def __init__(self):
 		super(UserState,self).__init__()

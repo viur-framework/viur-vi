@@ -59,6 +59,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 		self.selection = None
 		self.selectionTxt = html5.Input()
 		self.selectionTxt["type"] = "text"
+		self.selectionTxt._setReadonly(True)
 		self.appendChild( self.selectionTxt )
 		#DOM.setElemAttribute( self.selectionTxt, "type", "text")
 		#DOM.appendChild(self.getElement(), self.selectionTxt )

@@ -90,7 +90,6 @@ class Table( Widget ):
 	def prepareRow(self, row):
 		assert row>=0, "Cannot create rows with negative index"
 		for child in self.body._children:
-			print("REM COLSPAN", child["rowspan"])
 			row -= child["rowspan"]
 			if row<0:
 				return
@@ -100,7 +99,6 @@ class Table( Widget ):
 
 	def prepareCol(self, row, col ):
 		assert col>=0, "Cannot create cols with negative index"
-		print("PREPARING", row, col)
 		self.prepareRow( row )
 		for rowChild in self.body._children:
 			row -= rowChild["rowspan"]

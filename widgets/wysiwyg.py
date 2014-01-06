@@ -598,16 +598,12 @@ class ImageEditor( html5.Div ):
 	def onChange(self, event):
 		super(ImageEditor,self).onChange( event )
 		aspect = self.currentElem.naturalWidth/self.currentElem.naturalHeight
-		print( aspect )
 		if event.target == self.widthInput.element:
 			if self.keepAspectRatio["checked"]:
-				print( self.widthInput["value"] )
-				self.heightInput["value"] = int(float(self.widthInput["value"])*aspect)
+				self.heightInput["value"] = int(float(self.widthInput["value"])/aspect)
 		elif event.target == self.heightInput.element:
 			if self.keepAspectRatio["checked"]:
-				self.widthInput["value"] = int(float(self.heightInput["value"])/aspect)
-		elif event.target == self.keepAspectRatio.element:
-			print("aspect")
+				self.widthInput["value"] = int(float(self.heightInput["value"])*aspect)
 		self.currentElem.width = int(self.widthInput["value"])
 		self.currentElem.height = int(self.heightInput["value"])
 

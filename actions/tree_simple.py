@@ -27,7 +27,12 @@ class AddNodeAction( html5.ext.Button ):
 	def createDir(self, dialog, dirName ):
 		if len(dirName)==0:
 			return
-		NetworkService.request(self.parent().parent().modul,"add/node",{"node": self.parent().parent().node,"name":dirName}, secure=True, modifies=True)
+		r = NetworkService.request(self.parent().parent().modul,"add/node",{"node": self.parent().parent().node,"name":dirName}, secure=True, modifies=True, successHandler=self.onMkDir)
+		r.dirName = dirName
+
+	def onMkDir(self, req):
+		dirName = req.dirName
+		conf["mainWindow"].log("success","Directory \"%s\" created." % dirName)
 
 	def resetLoadingState(self):
 		pass
