@@ -16,17 +16,24 @@ class DateViewBoneDelegate( object ):
 			return( html5.Label(str( data[field])))
 		return( html5.Label("..") )
 
-class DateEditBone( html5.Input ):
+class DateEditBone( html5.Div ):
 	def __init__(self, modulName, boneName,readOnly,date=True, time=True, *args, **kwargs ):
 		super( DateEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
-		if not date and time:
-			self["type"]="time"
-		elif not time and date:
-			self["type"]="date"
-		else:
-			self["type"]="datetime-local"
+		print time
+		print date
+		if date:
+			self.dateinput=html5.Input()
+			self.dateinput["type"]="date"
+			self.dateinput["style"]["float"]="left"
+			self.appendChild(self.dateinput)
+		if time:
+			self.timeinput=html5.Input()
+			self.timeinput["type"]="time"
+			self.timeinput["style"]["float"]="left"
+			self.timeinput["style"]["width"]="70px"
+			self.appendChild(self.timeinput)
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
@@ -38,11 +45,15 @@ class DateEditBone( html5.Input ):
 	def unserialize(self, data):
 		if self.boneName in data.keys():
 			dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y %H:%M:%S")
-			self["value"]=dateobj.strftime( "%Y-%m-%dT%H:%M" )
+
+			self.dateinput["value"]=dateobj.strftime( "%Y-%m-%dT%H:%M" )
+			self.timeinput["value"]=dateobj.strftime( "%Y-%m-%dT%H:%M" )
 
 	def serializeForPost(self):
 		try:
-			dateobj=datetime.strptime(self["value"], "%Y-%m-%dT%H:%M")
+			dateobj=datetime.strptime(self.dateinput["value"], "%Y-%m-%dT%H:%M")
+			timeobj=datetime.strptime(self.timeinput["value"], "%Y-%m-%dT%H:%M")
+			dateobj.replace(hour=timeobj.hour(),minute=timeobj.minute())
 		except:
 			return({})
 		return( { self.boneName: dateobj.strftime("%d.%m.%Y %H:%M:00") } )

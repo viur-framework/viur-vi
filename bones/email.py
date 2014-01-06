@@ -38,7 +38,7 @@ class EmailEditBone( strBone.StringEditBone ):
 
 	def serializeForPost(self):
 		print self["value"]
-		if re.match("^[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._-]+.[a-zA-Z]{2,6}$",self.input["value"]):
+		if self["value"]=="" or re.match("^[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._-]+.[a-zA-Z]{2,6}$",self.input["value"]):
 			return( { self.boneName: self.input["value"] } )
 		raise InvalidBoneValueException()
 

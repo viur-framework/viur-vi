@@ -132,3 +132,10 @@ class ListWidget( html5.Div ):
 
 	def onSelectionActivated(self, table, selection):
 		conf["mainWindow"].removeWidget(self)
+
+	def activateCurrentSelection(self):
+		"""
+			Emits the selectionActivated event if there's currently a selection
+
+		"""
+		self.table.activateCurrentSelection()
