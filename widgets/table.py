@@ -447,3 +447,12 @@ class DataTable( html5.Div ):
 			assert "render" in dir(render), "The render must provide a 'render' method"
 			self._cellRender[ field ] = render
 		self.rebuildTable()
+
+	def activateCurrentSelection(self):
+		"""
+			Emits the selectionActivated event if there's currently a selection
+
+		"""
+		selection = self.getCurrentSelection()
+		if len( selection )>0:
+			self.selectionActivatedEvent.fire( self, selection )
