@@ -3,6 +3,7 @@
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
 from datetime import datetime
+import re
 
 class DateViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -21,8 +22,8 @@ class DateEditBone( html5.Div ):
 		super( DateEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
-		print time
-		print date
+		self.hasdate =date
+		self.hastime =time
 		if date:
 			self.dateinput=html5.Input()
 			self.dateinput["type"]="date"
@@ -40,23 +41,41 @@ class DateEditBone( html5.Div ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		date = skelStructure[ boneName ]["date"] if "date" in skelStructure[ boneName ].keys() else True
 		time = skelStructure[ boneName ]["time"] if "time" in skelStructure[ boneName ].keys() else True
-		return( DateEditBone( modulName, boneName, readOnly ) )
+		return( DateEditBone( modulName, boneName, readOnly,date,time ) )
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
-			dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y %H:%M:%S")
+			if self.hastime and not self.hasdate:
+				self.timeinput["value"]=data[ self.boneName ]
+			if self.hasdate  and not self.hastime:
+				dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y")
+				self.dateinput["value"]=dateobj.strftime( "%Y-%m-%d" )
+			if self.hasdate  and self.hastime:
+				dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y %H:%M:%S")
+				self.dateinput["value"]=dateobj.strftime( "%Y-%m-%d" )
+				self.timeinput["value"]=dateobj.strftime( "%H:%M:%S" )
 
-			self.dateinput["value"]=dateobj.strftime( "%Y-%m-%dT%H:%M" )
-			self.timeinput["value"]=dateobj.strftime( "%Y-%m-%dT%H:%M" )
 
 	def serializeForPost(self):
-		try:
-			dateobj=datetime.strptime(self.dateinput["value"], "%Y-%m-%dT%H:%M")
-			timeobj=datetime.strptime(self.timeinput["value"], "%Y-%m-%dT%H:%M")
-			dateobj.replace(hour=timeobj.hour(),minute=timeobj.minute())
-		except:
-			return({})
-		return( { self.boneName: dateobj.strftime("%d.%m.%Y %H:%M:00") } )
+		#[day, month, year, hour, min,sec]
+		adatetime=["00","00","0000","00","00","00"]
+
+		if hasattr(self,"timeinput"):
+			result = re.match('(\d+):(\d+)',self.timeinput["value"])
+			if result:
+				adatetime[3] = result.group(1)
+				adatetime[4] = result.group(2)
+		if hasattr(self,"dateinput"):
+			result = re.match('(\d+).(\d+).(\d+)',self.dateinput["value"])
+			if result:
+				adatetime[0] = result.group(3)
+				adatetime[1] = result.group(2)
+				adatetime[2] = result.group(1)
+
+		if adatetime[2]=="0000":
+			return( { self.boneName: adatetime[3]+":"+adatetime[4]+":00" } )
+		returnvalue = adatetime[0]+"."+adatetime[1]+"."+adatetime[2]+" "+adatetime[3]+":"+adatetime[4]+":00"
+		return( { self.boneName: returnvalue } )
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )
