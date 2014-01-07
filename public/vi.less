@@ -112,7 +112,7 @@ p {
 }
 .vi_topbar h1:before {
   content: ' ';
-  background-image: url('../../images/vi_app_logo.png');
+  background-image: url('icons/vi_app_logo.png');
   background-size: cover;
   width: 45px;
   height: 45px;
@@ -607,7 +607,8 @@ button.cancel:before,
 .btn_no:before {
   background-position: 0px 0px;
 }
-button.select:before {
+button.select:before,
+button.selectfields:before {
   background-position: -112px -16px;
 }
 button.textedit:before {
@@ -676,6 +677,19 @@ button.text.insertUnorderedList:before {
 button.text.insertOrderedList{
   margin-right: 0;
   border-right: 0;
+}
+button.text.indent:before {
+  background-position: -32px -128px;
+}
+button.text.outdent:before {
+  background-position: -48px -128px;
+}
+button.text.indent{
+  margin-right: 0;
+  border-right: 0;
+}
+button.text.removeformat:before {
+  background-position: -80px -128px
 }
 button.text.link:before {
   background-position: -48px -48px;
@@ -800,12 +814,11 @@ button.icon.is_disabled {
 /* #preview
 ================================================== */
 
-.preview {
+.vi_operator > .preview {
   margin-top: -70px; 
 }
 
-
-.preview iframe {
+.vi_operator > .preview iframe {
   width: 100%;
   min-height: 80%;
   border: 1px solid #ccc;
@@ -1721,14 +1734,19 @@ progress[value]::-webkit-progress-value {
   color: #777;
 }
 
-.alertbox button {
-  float: right;
-}
+.alertbox input[type="checkbox"] {width:15px}
+.alertbox label {float: right; width: 300px;}
+
+.alertbox button {float: right;}
+
 /* #vi_badges
-================================================== */.beta {
-  background: url(../../images/beta_small.png) no-repeat top right;
+================================================== */
+
+.beta {
+  background: url(icons/beta_small.png) no-repeat top right;
   padding-right: 35px;
 }
+
 /* #vi_messenger
 ================================================== */.vi_messenger {
   box-shadow: 0px -3px 3px rgba(0, 0, 0, 0.2);
