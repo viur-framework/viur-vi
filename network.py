@@ -315,10 +315,11 @@ class NetworkService( object ):
 				print( type( params ) )
 			HTTPRequest().asyncPost(url, multipart, self, content_type=contentType )
 		else:
-			if "?" in url:
-				url += "&skey=%s" % skey
-			else:
-				url += "?skey=%s" % skey
+			if skey:
+				if "?" in url:
+					url += "&skey=%s" % skey
+				else:
+					url += "?skey=%s" % skey
 			HTTPRequest().asyncGet(url, self)
 
 	def onCompletion(self, text):
