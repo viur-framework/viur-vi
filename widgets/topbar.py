@@ -1,7 +1,19 @@
 import html5
 from network import NetworkService
-
 class TopBarWidget( html5.Header ):
+
+	def getConf(self):
+		NetworkService.request( None, "/admin/config", successHandler=self.onCompletion,
+					failureHandler=self.onError, cacheable=True )
+
+	def onCompletion(self, req):
+		data = NetworkService.decode(req)
+		if "configuration" in data.keys() and isinstance( data["configuration"], dict):
+			self.modulH1.appendChild(html5.TextNode(data["configuration"]["vi.name"]))
+			#self.logoContainer["style"]["background-image"]="url('"+data["configuration"]["vi.logo"]+"')"
+	def onError(self, req, code):
+		print("ONERROR")
+
 	"""
 		Provides the top-bar of VI
 	"""
@@ -12,9 +24,22 @@ class TopBarWidget( html5.Header ):
 		anav=html5.Nav()
 		anav["class"].append("iconnav")
 		self.iconnav=html5.Ul()
+
+		#self.logoContainer = html5.Div()
+		#self.logoContainer["class"].append("logo")
+		#self.appendChild( self.logoContainer )
+
+		self.modulH1 = html5.H1()
+		self.modulH1._setClass("beta")
+		self.appendChild(self.modulH1)
+
+
 		self.modulContainer = html5.Div()
 		self.modulContainer["class"].append("currentmodul")
 		self.appendChild( self.modulContainer )
+
+
+
 		self.modulImg = html5.Label()
 		self.modulContainer.appendChild(self.modulImg)
 		self.modulName = html5.Span()
@@ -26,6 +51,7 @@ class TopBarWidget( html5.Header ):
 		self.iconnav.appendChild(Logout())
 		anav.appendChild(self.iconnav)
 		self.appendChild(anav)
+		self.getConf()
 
 	def setCurrentModulDescr(self, descr, iconURL=None, iconClasses=None):
 		for c in self.modulImg._children[:]:
