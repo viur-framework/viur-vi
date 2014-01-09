@@ -281,9 +281,9 @@ class NetworkService( object ):
 					if successHandler:
 						req.successHandler.append( successHandler )
 					if failureHandler:
-						req.successHandler.append( failureHandler )
+						req.failureHandler.append( failureHandler )
 					if finishedHandler:
-						req.successHandler.append( finishedHandler )
+						req.finishedHandler.append( finishedHandler )
 					return( req )
 				elif req.status == "succeeded":
 					if successHandler:
