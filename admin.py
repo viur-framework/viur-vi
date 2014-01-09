@@ -3,11 +3,11 @@ import html5
 from config import conf
 from widgets import TopBarWidget
 import json
-from network import NetworkService
+from network import NetworkService, DeferredCall
 import handler
 import bones
 import actions
-from priorityqueue import HandlerClassSelector
+from priorityqueue import HandlerClassSelector, initialHashHandler
 from log import Log
 from pane import Pane, GroupPane
 try:
@@ -44,23 +44,44 @@ class CoreWindow( html5.Div ):
 		#self.modulList.onAttach()
 		self.currentPane = None
 		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
-		NetworkService.request( None, "/admin/config", successHandler=self.onCompletion,
+		self.config = None
+		self.user = None
+		NetworkService.request( None, "/admin/config", successHandler=self.onConfigAvaiable,
+					failureHandler=self.onError, cacheable=True )
+		NetworkService.request( None, "/admin/user/view/self", successHandler=self.onUserAvaiable,
 					failureHandler=self.onError, cacheable=True )
 
 	def log(self, type, msg ):
 		self.logWdg.log( type, msg )
 
-	def onCompletion(self, req):
+	def onConfigAvaiable(self, req):
 		data = NetworkService.decode(req)
+		self.config = data
+		if self.user is not None:
+			self.postInit()
+	
+	
+	def onUserAvaiable(self, req):
+		data = NetworkService.decode(req)
+		conf["currentUser"] = data["values"]
+		self.user = data
+		if self.config is not None:
+			self.postInit()
+
+	def postInit(self):
 		groups = {}
 		panes = []
-		if "configuration" in data.keys() and isinstance( data["configuration"], dict) \
-			and "modulGroups" in data["configuration"].keys() and isinstance( data["configuration"]["modulGroups"], list):
-			for group in data["configuration"]["modulGroups"]:
+		userAccess = self.user["values"]["access"]
+		if "configuration" in self.config.keys() and isinstance( self.config["configuration"], dict) \
+			and "modulGroups" in self.config["configuration"].keys() and isinstance( self.config["configuration"]["modulGroups"], list):
+			for group in self.config["configuration"]["modulGroups"]:
 				p = GroupPane(group["name"],iconURL=group["icon"])
 				groups[ group["prefix"] ] = p
 				panes.append( (group["name"], p) )
-		for modulName, modulInfo in data["modules"].items():# data["modules"].items():
+		for modulName, modulInfo in self.config["modules"].items():
+			if not "root" in userAccess and not any([x.startswith(modulName) for x in userAccess]):
+				#Skip this modul, as the user couldn't interact with it anyway
+				continue
 			conf["modules"][modulName] = modulInfo
 			handlerCls = HandlerClassSelector.select( modulName, modulInfo )
 			assert handlerCls is not None, "No handler available for modul %s" % modulName
@@ -76,7 +97,20 @@ class CoreWindow( html5.Div ):
 		panes.sort( key=lambda x: x[0] )
 		for k, pane in panes:
 			self.addPane( pane )
+		DeferredCall( self.checkInitialHash )
 
+
+	def checkInitialHash( self, *args, **kwargs ):
+		urlHash = eval("window.top.location.hash")
+		print("-------")
+		print( urlHash )
+		if not urlHash:
+			return
+		urlHash = urlHash[1:].split("/")
+		urlHash = [x for x in urlHash if x]
+		gen = initialHashHandler.select( urlHash )
+		if gen:
+			gen( urlHash )
 
 
 	def onError(self, req, code):

@@ -45,11 +45,7 @@ class ColWrapper( object ):
 		assert isinstance(item,int), "Invalid col-number. Expected int, got %s" % str(type(item))
 		if item < 0 or item> len(self.parentElem._children):
 			return( None )
-		for col in self.parentElem._children:
-			item -= col["rowspan"]
-			if item < 0:
-				return( col )
-		return( None )
+		return( self.parentElem._children[item] )
 
 	def __setitem__(self, key, value):
 		col = self[ key ]
@@ -68,12 +64,7 @@ class RowWrapper( object ):
 		assert isinstance(item,int), "Invalid row-number. Expected int, got %s" % str(type(item))
 		if item < 0 or item> len(self.parentElem._children):
 			return( None )
-		for row in self.parentElem._children:
-			item -= row["rowspan"]
-			if item < 0:
-				return( ColWrapper(row) )
-		return( None )
-
+		return ColWrapper(self.parentElem._children[item])
 
 
 
@@ -112,6 +103,13 @@ class Table( Widget ):
 					col -= 1
 				return
 
+	def prepareGrid(self, rows, cols ):
+		for x in range(0,rows):
+			tr = Tr()
+			self.body.appendChild( tr )
+			for x in range(0,cols):
+				tr.appendChild(Td())
+
 	def clear(self):
 		for row in self.body._children[ : ]:
 			for col in row._children[ : ]:
@@ -122,6 +120,7 @@ class Table( Widget ):
 		return( RowWrapper( self.body ) ) #FIXME: Return wrapper
 
 	def getRowCount(self):
+		print("GET ROWCOUNT")
 		cnt = 0
 		for tr in self.body._children:
 			cnt += tr["rowspan"]

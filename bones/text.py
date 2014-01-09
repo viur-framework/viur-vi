@@ -4,6 +4,7 @@ import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
 from config import conf
 from widgets.wysiwyg import Wysiwyg
+import utils
 
 class TextViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -71,10 +72,14 @@ class TextEditBone( html5.Div ):
 			openEditorBtn["class"].append("textedit")
 			openEditorBtn["class"].append("icon")
 			self.appendChild(openEditorBtn )
+		self.sinkEvent("onClick")
 
 	def openTxt(self, *args, **kwargs):
 		assert self.currentEditor is None
-		self.currentEditor = Wysiwyg( self.input["value"] )
+		actionBarHint = self.boneName
+		if self.skelStructure and self.boneName in self.skelStructure.keys() and "descr" in self.skelStructure[ self.boneName ]:
+			actionBarHint = self.skelStructure[ self.boneName ]["descr"]
+		self.currentEditor = Wysiwyg( self.input["value"], actionBarHint=actionBarHint )
 		self.currentEditor.saveTextEvent.register( self )
 		conf["mainWindow"].stackWidget( self.currentEditor )
 
@@ -134,6 +139,14 @@ class TextEditBone( html5.Div ):
 			return( { self.boneName: self.valuesdict } )
 		else:
 			return( { self.boneName: self.input["value"] } )
+
+	def onClick(self, event):
+		if utils.doesEventHitWidgetOrChildren( event, self.previewDiv ):
+			event.stopPropagation()
+			event.preventDefault()
+			if not self.readOnly:
+				self.openTxt()
+
 
 def CheckForTextBone(  modulName, boneName, skelStucture ):
 	return( skelStucture[boneName]["type"]=="text" )

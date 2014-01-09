@@ -1,4 +1,4 @@
-from priorityqueue import HandlerClassSelector, displayDelegateSelector
+from priorityqueue import HandlerClassSelector, displayDelegateSelector, initialHashHandler
 from widgets import EditWidget
 from config import conf
 from pane import Pane
@@ -6,10 +6,25 @@ from pane import Pane
 
 class SingletonHandler( Pane ):
 	def __init__(self, modulName, modulInfo, *args, **kwargs):
-		super( SingletonHandler, self ).__init__( modulInfo["name"] )
+		icon = "icons/modules/singleton.svg"
+		if "icon" in modulInfo.keys():
+			icon = modulInfo["icon"]
+		super( SingletonHandler, self ).__init__( modulInfo["name"], icon )
 		self.modulName = modulName
 		self.modulInfo = modulInfo
+		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
 
+	def canHandleInitialHash(self, pathList ):
+		if len(pathList)>1:
+			if pathList[0]==self.modulName and pathList[1]=="edit":
+				return( True )
+		return( False )
+
+	def handleInitialHash(self, pathList):
+		assert self.canHandleInitialHash( pathList )
+		edwg = EditWidget( self.modulName, EditWidget.appSingleton)
+		self.addWidget( edwg )
+		self.focus()
 
 	@staticmethod
 	def canHandle( modulName, modulInfo ):

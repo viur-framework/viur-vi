@@ -204,6 +204,7 @@ class HierarchyWidget( html5.Div ):
 		self._currentCursor = None
 		self._currentRequests = []
 		self.isSelector = isSelector
+		self._expandedNodes = []
 		if self.rootNode:
 			self.reloadData()
 		else:
@@ -327,6 +328,15 @@ class HierarchyWidget( html5.Div ):
 		"""
 			Reload the data were displaying.
 		"""
+		def collectExpandedNodes( currNode ):
+			res = []
+			for c in currNode._children[:]:
+				if isinstance( c, HierarchyItem ):
+					if c.isExpanded:
+						res.append( c.data["id"] )
+					res.extend( collectExpandedNodes(c.ol) )
+			return( res )
+		self._expandedNodes = collectExpandedNodes( self.entryFrame )
 		for c in self.entryFrame._children[:]:
 			self.entryFrame.removeChild(c)
 		self.loadNode( self.rootNode )
@@ -354,7 +364,13 @@ class HierarchyWidget( html5.Div ):
 			ol = tmp.ol
 			assert ol is not None
 		for skel in data["skellist"]:
-			ol.appendChild( HierarchyItem( self.modul, skel, data["structure"] ) )
+			hi = HierarchyItem( self.modul, skel, data["structure"] )
+			ol.appendChild( hi )
+			if hi.data["id"] in self._expandedNodes:
+				hi.toggleExpand()
+				if not hi.isLoaded:
+					hi.isLoaded = True
+					self.loadNode( hi.data["id"] )
 		if len(data["skellist"])==0: #No children received
 			if ol!=self.entryFrame:
 				ol.parent()["class"].append("has_no_childs")
@@ -382,3 +398,8 @@ class HierarchyWidget( html5.Div ):
 		"""
 		event.preventDefault()
 		event.stopPropagation()
+
+	def activateCurrentSelection(self):
+		if self._currentCursor:
+			self.selectionActivatedEvent.fire( self, [self._currentCursor] )
+			conf["mainWindow"].removeWidget(self)

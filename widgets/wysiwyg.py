@@ -10,11 +10,30 @@ from widgets.file import FileWidget
 
 class BasicTextAction( html5.ext.Button ):
 	cmd = None
+	isActiveTag = None
 	def __init__(self, *args, **kwargs):
 		assert self.cmd is not None
 		super( BasicTextAction, self ).__init__( self.cmd, *args, **kwargs )
 		self["class"] = "icon text style"
 		self["class"].append( self.cmd )
+
+	def onAttach(self):
+		super(BasicTextAction, self).onAttach( )
+		if self.isActiveTag:
+			self.parent().parent().cursorMovedEvent.register( self )
+
+	def onDetach(self):
+		super(BasicTextAction, self).onDetach( )
+		if self.isActiveTag:
+			self.parent().parent().cursorMovedEvent.unregister( self )
+
+	def onCursorMoved(self, nodeStack):
+		if self.isActiveTag in [(x.tagName if "tagName" in dir(x) else "") for x in nodeStack]:
+			if not "isactive" in self["class"]:
+				self["class"].append("isactive")
+		else:
+			if "isactive" in self["class"]:
+				self["class"].remove("isactive")
 
 	def onClick(self, sender=None):
 		eval("window.top.document.execCommand(\"%s\", false, null)" % self.cmd)
@@ -24,18 +43,24 @@ class BasicTextAction( html5.ext.Button ):
 
 class TextStyleBold( BasicTextAction ):
 	cmd = "bold"
+	isActiveTag = "B"
+
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.bold", TextStyleBold )
 
 class TextStyleItalic( BasicTextAction ):
 	cmd = "italic"
+	isActiveTag = "I"
+
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.italic", TextStyleItalic )
 
 class TextStyleUnderline( BasicTextAction ):
 	cmd = "underline"
+	isActiveTag = "U"
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.underline", TextStyleUnderline )
 
 class TextStyleStrikeThrough( BasicTextAction ):
 	cmd = "strikeThrough"
+	isActiveTag = "STRIKE"
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.strikeThrough", TextStyleStrikeThrough )
 
 
@@ -107,6 +132,40 @@ actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=
 
 
 
+class TextIndent( BasicTextAction ):
+	cmd = "indent"
+actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.indent", TextIndent )
+
+
+class TextOutdent( BasicTextAction ):
+	cmd = "outdent"
+actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.outdent", TextOutdent )
+
+
+
+class TextRemoveFormat( BasicTextAction ):
+	cmd = "removeformat"
+
+	def onClick(self, sender=None):
+		eval("window.top.document.execCommand(\"%s\", false, null)" % self.cmd)
+		node = eval("window.top.getSelection().baseNode")
+		i = 10
+		while i>0 and node and node != self.parent().parent().contentDiv.element:
+			i -= 1
+			if not "tagName" in dir( node ):
+				node = node.parentElement
+				continue
+			if node.tagName in ["H%s" % x for x in range(0,6)]:
+				eval("window.top.document.execCommand(\"formatBlock\", false, 'div')")
+				return
+			node = node.parentElement
+
+actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.removeformat", TextRemoveFormat )
+
+
+
+
+
 class TextInsertImageAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TextInsertImageAction, self ).__init__( "Insert Image", *args, **kwargs )
@@ -166,15 +225,44 @@ class TextInsertLinkAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, TextInsertLinkAction.isSuitableFor, TextInsertLinkAction )
 
 
-class TextInsertTableAction( html5.ext.Button ):
-	def __init__(self, *args, **kwargs):
-		super( TextInsertTableAction, self ).__init__( "Insert Table", *args, **kwargs )
-		self["class"] = "icon text table"
+class CreateTablePopup( html5.ext.Popup ):
+	def __init__(self, targetNode, *args, **kwargs ):
+		super( CreateTablePopup, self ).__init__( *args, **kwargs )
+		while not "innerHTML" in dir(targetNode):
+			targetNode = targetNode.parentElement
+		self.targetNode = targetNode
+		self["class"].append("createtable")
+		self.rowInput = html5.Input()
+		self.rowInput["type"] = "number"
+		self.rowInput["value"] = 3
+		self.appendChild( self.rowInput )
+		l = html5.Label("Rows", forElem=self.rowInput)
+		l["class"].append("rowlbl")
+		self.appendChild( l )
+		self.colInput = html5.Input()
+		self.colInput["type"] = "number"
+		self.colInput["value"] = 4
+		self.appendChild( self.colInput )
+		l = html5.Label("Cols", forElem=self.colInput)
+		l["class"].append("collbl")
+		self.appendChild( l )
+		self.insertHeader = html5.Input()
+		self.insertHeader["type"] = "checkbox"
+		self.appendChild( self.insertHeader )
+		l = html5.Label("Insert Table Header", forElem=self.insertHeader)
+		l["class"].append("headerlbl")
+		self.appendChild( l )
+		self.appendChild( html5.ext.Button( "Cancel", callback=self.doClose ) )
+		self.appendChild( html5.ext.Button( "Create", callback=self.createTable ) )
 
-	def onClick(self, sender=None):
-		rows = 3
-		cols = 5
-		insertHeader = True
+	def doClose(self, *args, **kwargs):
+		self.targetNode = None
+		self.close()
+
+	def createTable(self, *args, **kwargs):
+		rows = int(self.rowInput["value"])
+		cols = int(self.colInput["value"])
+		insertHeader = self.insertHeader["checked"]
 		innerHtml = "<table>"
 		if insertHeader:
 			innerHtml += "<thead>"
@@ -187,8 +275,20 @@ class TextInsertTableAction( html5.ext.Button ):
 				innerHtml += "<td>%s - %s</td>" % (x,y)
 			innerHtml += "</tr>"
 		innerHtml += "</table>"
-		eval("window.top.document.execCommand(\"insertHTML\", false, \"%s\")" % innerHtml )
+		self.targetNode.innerHTML = self.targetNode.innerHTML+innerHtml
+		#eval("window.top.document.execCommand(\"insertHTML\", false, \"%s\")" % innerHtml )
+		self.doClose()
 
+class TextInsertTableAction( html5.ext.Button ):
+	def __init__(self, *args, **kwargs):
+		super( TextInsertTableAction, self ).__init__( "Insert Table", *args, **kwargs )
+		self["class"] = "icon text table"
+
+	def onClick(self, sender=None):
+		node = eval("window.top.getSelection().baseNode")
+		print(node)
+		CreateTablePopup( node )
+		return
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -511,11 +611,15 @@ class LinkEditor( html5.Div ):
 		self.linkTxt = html5.Input()
 		self.linkTxt["type"] = "text"
 		self.appendChild(self.linkTxt)
-		self.appendChild( html5.Label("Href", forElem=self.linkTxt))
+		l = html5.Label("URL", forElem=self.linkTxt)
+		l["class"].append("urllbl")
+		self.appendChild( l )
 		self.newTab = html5.Input()
 		self.newTab["type"] = "checkbox"
 		self.appendChild(self.newTab)
-		self.appendChild( html5.Label("New window", forElem=self.newTab))
+		l = html5.Label("New window", forElem=self.newTab)
+		l["class"].append("newwindowlbl")
+		self.appendChild( l )
 		self.currentElem = None
 
 	def getAFromTagStack(self, tagStack):
@@ -579,19 +683,27 @@ class ImageEditor( html5.Div ):
 		self.widthInput = html5.Input()
 		self.widthInput["type"] = "number"
 		self.appendChild(self.widthInput)
-		self.appendChild( html5.Label("Width", self.widthInput))
+		l = html5.Label("Width", self.widthInput)
+		l["class"].append("widthlbl")
+		self.appendChild( l )
 		self.keepAspectRatio = html5.Input()
 		self.keepAspectRatio["type"] = "checkbox"
 		self.appendChild( self.keepAspectRatio )
-		self.appendChild( html5.Label("Keep aspect ratio", self.keepAspectRatio))
+		l = html5.Label("Keep aspect ratio", self.keepAspectRatio)
+		l["class"].append("aspectlbl")
+		self.appendChild( l )
 		self.heightInput = html5.Input()
 		self.heightInput["type"] = "number"
 		self.appendChild(self.heightInput)
-		self.appendChild( html5.Label("Height", self.heightInput))
+		l = html5.Label("Height", self.heightInput)
+		l["class"].append("heightlbl")
+		self.appendChild( l )
 		self.titleInput = html5.Input()
 		self.titleInput["type"] = "text"
 		self.appendChild(self.titleInput)
-		self.appendChild( html5.Label("Title", self.titleInput))
+		l = html5.Label("Title", self.titleInput)
+		l["class"].append("titlelbl")
+		self.appendChild( l )
 		self.currentElem = None
 		self.sinkEvent("onChange")
 
@@ -617,7 +729,6 @@ class ImageEditor( html5.Div ):
 
 	def onCursorMoved(self, tagStack):
 		newElem = self.getImgFromTagStack(tagStack)
-		print( tagStack)
 		if newElem is not None and self.currentElem is not None:
 			self.doClose()
 			self.doOpen( newElem )
@@ -673,20 +784,22 @@ class FlipViewAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.flipView", FlipViewAction )
 
 class Wysiwyg( html5.Div ):
-	def __init__(self, editHtml, *args, **kwargs ):
+	def __init__(self, editHtml, actionBarHint="Text Editor", *args, **kwargs ):
 		super( Wysiwyg, self ).__init__(*args, **kwargs)
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
 		self.saveTextEvent = EventDispatcher("saveText")
-		self.textActions = ["style.text.bold", "style.text.italic", "style.text.underline", "style.text.strikeThrough"]+["style.text.h%s" % x for x in range(0,4)]+[ "style.text.justifyCenter", "style.text.justifyLeft", "style.text.justifyRight", "style.text.blockquote", "text.orderedList", "text.unorderedList", "text.image", "text.link", "text.table", "text.flipView", "text.save"]
+		self.textActions = ["style.text.bold", "style.text.italic", "style.text.underline", "style.text.strikeThrough"]+["style.text.h%s" % x for x in range(0,4)]+[ "text.removeformat", "style.text.justifyCenter", "style.text.justifyLeft", "style.text.justifyRight", "style.text.blockquote", "text.orderedList", "text.unorderedList", "text.indent", "text.outdent", "text.image", "text.link", "text.table", "text.flipView", "text.save"]
 		#self["type"] = "text"
-		self.actionbar = ActionBar(None, None, "Default")
+		self.actionbar = ActionBar(None, None, actionBarHint)
 		self.isWysiwygMode = True
 		self.discardNextClickEvent = False
 		self.appendChild( self.actionbar )
 		self.tableDiv = html5.Div()
+		self.tableDiv["class"].append("tableeditor")
 		self.appendChild(self.tableDiv)
 		for c in [TableInsertRowBeforeAction,TableInsertRowAfterAction,TableInsertColBeforeAction,TableInsertColAfterAction,TableRemoveRowAction,TableRemoveColAction]:
 			self.tableDiv.appendChild( c() )
+		self.tableDiv["style"]["display"]="none"
 		self.linkEditor = LinkEditor()
 		self.appendChild(self.linkEditor)
 		self.imgEditor = ImageEditor()

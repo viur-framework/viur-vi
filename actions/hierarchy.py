@@ -16,7 +16,10 @@ class AddAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "hierarchy" or handler.startswith("hierarchy.")) and actionName=="add")
+		correctAction = actionName=="add"
+		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		print("ADD ACTION HIERARCHY", self.parent().parent().rootNode)
@@ -58,7 +61,10 @@ class EditAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "hierarchy" or handler.startswith("hierarchy.")) and actionName=="edit")
+		correctAction = actionName=="edit"
+		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
@@ -104,13 +110,16 @@ class DeleteAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "hierarchy" or handler.startswith("hierarchy.")) and actionName=="delete")
+		correctAction = actionName=="delete"
+		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-delete" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection), title="Delete them?", yesCallback=self.doDelete)
+		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection), title="Delete them?", yesCallback=self.doDelete, yesLabel="Delete", noLabel="Keep")
 		d.deleteList = [x["id"] for x in selection]
 		d["class"].append( "delete" )
 		return

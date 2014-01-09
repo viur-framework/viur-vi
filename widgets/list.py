@@ -32,19 +32,28 @@ class ListWidget( html5.Div ):
 		self.appendChild( self.table )
 		self._currentCursor = None
 		self._currentSearchStr = None
+		self._structure = None
+		self.columns = []
 		self.table.setDataProvider(self)
 		self.filter = filter.copy() if isinstance(filter,dict) else {}
 		self.columns = columns[:] if isinstance(columns,list) else []
+		self._tableHeaderIsValid = False
 		self.isSelector = isSelector
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["add","edit","delete", "preview"]+(["select","close"] if isSelector else []))
+		self.actionBar.setActions(["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if isSelector else []))
 		if isSelector:
 			self.selectionActivatedEvent.register( self )
+		self.emptyNotificationDiv = html5.Div()
+		self.emptyNotificationDiv.appendChild(html5.TextNode("Currently no entries"))
+		self.emptyNotificationDiv["class"].append("emptynotification")
+		self.appendChild(self.emptyNotificationDiv)
 		self.search = Search()
 		self.appendChild(self.search)
 		self.search.startSearchEvent.register( self )
+		self.emptyNotificationDiv["style"]["display"] = "none"
+		self.table["style"]["display"] = "none"
 		self.reloadData()
 
 	def onStartSearch(self, searchTxt):
@@ -103,32 +112,52 @@ class ListWidget( html5.Div ):
 			if self.table.getRowCount():
 				self.table.setDataProvider(None) #We cant load any more results
 			else:
-				pass
+				self.table["style"]["display"] = "none"
+				self.emptyNotificationDiv["style"]["display"] = ""
 				#self.element.innerHTML = "<center><strong>Keine Ergebnisse</strong></center>"
 			return
+		self.table["style"]["display"] = ""
+		self.emptyNotificationDiv["style"]["display"] = "none"
+		self._structure = data["structure"]
 		tmpDict = {}
 		for key, bone in data["structure"]:
 			tmpDict[ key ] = bone
+		if not self._tableHeaderIsValid:
+			if not self.columns:
+				self.columns = []
+				for boneName, boneInfo in data["structure"]:
+					if boneInfo["visible"]:
+						self.columns.append( boneName )
+			self.setFields( self.columns )
+		self.table.extend( data["skellist"] )
+		if "cursor" in data.keys():
+			self._currentCursor = data["cursor"]
 
-		if len(self.columns)==0:
-			boneList = []
-			for boneName, boneInfo in data["structure"]:
-				if boneInfo["visible"]:
-					boneList.append( boneName )
-		else:
-			boneList = [x for x in self.columns if x in tmpDict.keys()]
+	def setFields(self, fields):
+		if not self._structure:
+			self._tableHeaderIsValid = False
+			return
+		self.columns = fields
 		boneInfoList = []
-		for boneName in boneList:
+		tmpDict = {}
+		for key, bone in self._structure:
+			tmpDict[ key ] = bone
+		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
 			self.table.setCellRender( boneName, delegateFactory )
 			boneInfoList.append( boneInfo )
-		for skel in data["skellist"]:
-			self.table.add( skel )
-		self.table.setShownFields( boneList )
 		self.table.setHeader( [x["descr"] for x in boneInfoList])
-		if "cursor" in data.keys():
-			self._currentCursor = data["cursor"]
+		self.table.setShownFields( fields )
+		for boneName in fields:
+			boneInfo = tmpDict[boneName]
+			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
+			self.table.setCellRender( boneName, delegateFactory )
+			boneInfoList.append( boneInfo )
+		self._tableHeaderIsValid = True
+
+	def getFields(self):
+		return( self.columns[:] )
 
 	def onSelectionActivated(self, table, selection):
 		conf["mainWindow"].removeWidget(self)

@@ -16,8 +16,11 @@ class AddNodeAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		print(modul, actionName)
-		return( (handler == "tree.simple" or handler.startswith("tree.simple."))  and actionName=="add.node" )
+		correctAction = actionName=="add.node"
+		correctHandler = handler == "tree.simple" or handler.startswith("tree.simple.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
+
 
 	def onClick(self, sender=None):
 		i = InputDialog( "Directory Name", successHandler=self.createDir, title="Create directory",successLbl="Create" )
@@ -67,7 +70,10 @@ class EditAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "tree.simple" or handler.startswith("tree.simple.")) and actionName=="edit")
+		correctAction = actionName=="edit"
+		correctHandler = handler == "tree.simple" or handler.startswith("tree.simple.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		print("EDIT ACTION CLICKED")

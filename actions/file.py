@@ -39,7 +39,10 @@ class AddLeafAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( handler == "tree.simple.file" and actionName=="add.leaf" )
+		correctAction = actionName=="add.leaf"
+		correctHandler = handler == "tree.simple.file" or handler.startswith("tree.simple.file.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		self.parent().parent().appendChild( FileSelectUploader() )

@@ -16,7 +16,10 @@ class AddLeafAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "tree" or handler.startswith("tree.")) and actionName=="add.leaf" )
+		correctAction = actionName=="add.leaf"
+		correctHandler = handler == "tree" or handler.startswith("tree.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		pane = Pane("Add", closeable=True)
@@ -41,7 +44,10 @@ class AddNodeAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "tree" or handler.startswith("tree.")) and actionName=="add.node" )
+		correctAction = actionName=="add.node"
+		correctHandler = handler == "tree" or handler.startswith("tree.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_add_node" ])
@@ -84,7 +90,10 @@ class EditAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "tree" or handler.startswith("tree.")) and actionName=="edit")
+		correctAction = actionName=="edit"
+		correctHandler = handler == "tree" or handler.startswith("tree.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		print("EDIT ACTION CLICKED")
@@ -141,13 +150,16 @@ class DeleteAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "tree" or handler.startswith("tree.")) and actionName=="delete")
+		correctAction = actionName=="delete"
+		correctHandler = handler == "tree" or handler.startswith("tree.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-delete" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete)
+		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete, yesLabel="Delete", noLabel="Keep")
 		d.deleteList = selection
 		d["class"].append( "delete" )
 

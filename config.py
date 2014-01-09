@@ -1,5 +1,8 @@
+from event import EventDispatcher
 
 conf = { "mainWindow": None,
 	 "modules": {},
-	 "currentlanguage":"de"
+	 "currentlanguage":"de",
+	 "currentUser": None,
+	 "initialHashEvent": EventDispatcher("initialHash")
 	 }

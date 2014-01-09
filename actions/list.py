@@ -22,7 +22,10 @@ class AddAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "list" or handler.startswith("list.")) and actionName=="add" )
+		correctAction = actionName=="add"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		pane = EditPane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_add" ])
@@ -65,7 +68,10 @@ class EditAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "list" or handler.startswith("list.")) and actionName=="edit")
+		correctAction = actionName=="edit"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
@@ -114,13 +120,16 @@ class DeleteAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "list" or handler.startswith("list.")) and actionName=="delete")
+		correctAction = actionName=="delete"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-delete" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete)
+		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete, yesLabel="Delete", noLabel="Keep" )
 		d.deleteList = [x["id"] for x in selection]
 		d["class"].append( "delete" )
 		return
@@ -170,7 +179,10 @@ class ListPreviewAction( html5.ext.Button ):
 			conf["mainWindow"].stackWidget( widget )
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( (handler == "list" or handler.startswith("list.")) and actionName=="preview" )
+		correctAction = actionName=="preview"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-view" in conf["currentUser"]["access"])
+		return(  correctAction and correctHandler and hasAccess )
 		#FIXME: Maybe this test..
 		if modul in conf["modules"].keys():
 			modulConfig = conf["modules"][modul]
@@ -209,3 +221,46 @@ class ActivateSelectionAction( html5.ext.Button ):
 		return( actionName=="select" )
 
 actionDelegateSelector.insert( 1, ActivateSelectionAction.isSuitableFor, ActivateSelectionAction )
+
+
+class SelectFieldsPopup( html5.ext.Popup ):
+	def __init__(self, listWdg, *args, **kwargs):
+		super( SelectFieldsPopup, self ).__init__( title="Select fields", *args, **kwargs )
+		self["class"].append("selectfields")
+		self.listWdg = listWdg
+		for key, bone in self.listWdg._structure:
+			chkBox = html5.Input()
+			chkBox["type"] = "checkbox"
+			chkBox["value"] = key
+			self.appendChild(chkBox)
+			if key in self.listWdg.getFields():
+				chkBox["checked"] = True
+			lbl = html5.Label(bone["descr"],forElem=chkBox)
+			self.appendChild(lbl)
+		applyBtn = html5.ext.Button("Apply", callback=self.doApply)
+		self.appendChild(applyBtn)
+
+
+	def doApply(self, *args, **kwargs):
+		res = []
+		for c in self._children:
+			if isinstance(c,html5.Input) and c["checked"]:
+				res.append( c["value"] )
+		print("___NEW FIELDS", res)
+		self.listWdg.setFields( res )
+		self.close()
+
+class SelelectFieldsAction( html5.ext.Button ):
+	def __init__(self, *args, **kwargs ):
+		super( SelelectFieldsAction, self ).__init__( "Select fields", *args, **kwargs )
+		self["class"] = "icon selectfields"
+
+	def onClick(self, sender=None):
+		SelectFieldsPopup( self.parent().parent() )
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		return( actionName=="selectfields" )
+
+actionDelegateSelector.insert( 1, SelelectFieldsAction.isSuitableFor, SelelectFieldsAction )
+

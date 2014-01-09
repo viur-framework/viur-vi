@@ -26,6 +26,7 @@ HandlerClassSelector = PriorityQueue() # Used during startup to select an Wrappe
 editBoneSelector = PriorityQueue() # Queried by editWidget to locate its bones
 actionDelegateSelector = PriorityQueue() # Locates an QAction for a given modul/action-name
 displayDelegateSelector = PriorityQueue() # Selects a widget used to display data from a certain modul
+initialHashHandler = PriorityQueue() # Provides the handler for the initial hash given in the url
 #OLD
 
 

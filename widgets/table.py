@@ -275,10 +275,6 @@ class DataTable( html5.Div ):
 		self._dataProvider = None # Which object to call if we need more data
 		self._cellRender = {} # Map of renders for a given field
 		# We re-emit some events with custom parameters
-		self.emptyNotificationDiv = html5.Div()
-		self.emptyNotificationDiv["class"].append("emptynotification")
-		self.emptyNotificationDiv.appendChild( html5.TextNode("Currently no entries") )
-		self.appendChild(self.emptyNotificationDiv)
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 		self.table.selectionChangedEvent.register( self )
@@ -287,18 +283,13 @@ class DataTable( html5.Div ):
 		for f in ["cursorMovedEvent","setHeader"]:
 			setattr( self, f, getattr(self.table,f))
 		self.cursorMovedEvent.register( self )
-		self.checkIfEmpty()
-		self["style"]["height"] = "%spx" % (int(eval("window.top.innerWidth"))-700)
 		self["style"]["overflow"] = "scroll"
+		self.recalcHeight()
 		self.sinkEvent("onScroll")
 
-	def checkIfEmpty(self):
-		if not len(self._model) or not len(self._shownFields):
-			self.emptyNotificationDiv["style"]["display"] = ""
-			self.table["style"]["display"] = "none"
-		else:
-			self.table["style"]["display"] = ""
-			self.emptyNotificationDiv["style"]["display"] = "none"
+
+	def recalcHeight(self, *args, **kwargs):
+		self["style"]["max-height"] = "%spx" % (int(eval("window.top.innerHeight"))-280)
 
 	def setDataProvider(self,obj):
 		"""
@@ -312,7 +303,6 @@ class DataTable( html5.Div ):
 		assert obj==None or "onNextBatchNeeded" in dir(obj),"The dataProvider must provide a 'onNextBatchNeeded' function"
 		self._dataProvider = obj
 		self._isAjaxLoading = False
-		self.checkIfEmpty()
 
 	def onCursorMoved(self, table, row):
 		"""
@@ -346,7 +336,19 @@ class DataTable( html5.Div ):
 		self._model.append( obj )
 		self._renderObject( obj )
 		self._isAjaxLoading = False
-		self.checkIfEmpty()
+
+	def extend(self, objList):
+		"""
+			Adds multiple rows at once.
+			Much faster than callind add() multiple times.
+		"""
+		self.table.prepareGrid( len(objList), len(self._shownFields) )
+		for obj in objList:
+			obj["_uniqeIndex"] = self._modelIdx
+			self._modelIdx += 1
+			self._model.append( obj )
+			self._renderObject( obj, tableIsPrepared=True )
+			self._isAjaxLoading = False
 
 	def remove(self, objOrIndex):
 		"""
@@ -363,7 +365,6 @@ class DataTable( html5.Div ):
 			self.table.removeRow( objOrIndex )
 		else:
 			raise TypeError("Expected int or dict, got %s" % str(type(objOrIndex)))
-		self.checkIfEmpty()
 
 	def clear(self, keepModel=False):
 		"""
@@ -372,9 +373,8 @@ class DataTable( html5.Div ):
 		self.table.clear()
 		if not keepModel:
 			self._model = []
-		self.checkIfEmpty()
 
-	def _renderObject(self, obj):
+	def _renderObject(self, obj, tableIsPrepared=False):
 		"""
 			Renders the object to into the table.
 			Does nothing if the list of _shownFields is empty.
@@ -384,7 +384,8 @@ class DataTable( html5.Div ):
 		if not self._shownFields:
 			return
 		rowIdx = self._model.index(obj)
-		self.table.prepareCol( rowIdx, len(self._shownFields)-1 )
+		if not tableIsPrepared:
+			self.table.prepareCol( rowIdx, len(self._shownFields)-1 )
 		cellIdx = 0
 		for field in self._shownFields:
 			if field in self._cellRender.keys():
@@ -401,16 +402,16 @@ class DataTable( html5.Div ):
 			Rebuilds the entire table.
 			Useful if something fundamental changed (ie. the cell renderer or the list of visible fields)
 		"""
-
 		self.clear( keepModel=True )
+		self.table.prepareGrid( len(self._model), len(self._shownFields))
 		for obj in self._model:
-			self._renderObject( obj )
+			self._renderObject( obj, tableIsPrepared=True )
 
 	def setShownFields(self,fields):
 		"""
 			Sets the list of _shownFields.
 			This causes the whole table to be rebuild.
-			Be carefull if calling this function often on a large table!
+			Be careful if calling this function often on a large table!
 			@param fields: List of model-keys which will be displayed.
 			@type fields: list
 		"""
@@ -421,7 +422,7 @@ class DataTable( html5.Div ):
 		"""
 			Check if we got a scroll event and need to fetch another set of rows from our dataProvider
 		"""
-		print("ONSCROLL")
+		self.recalcHeight()
 		if (self.element.scrollTop+self.element.clientHeight)>=self.element.scrollHeight and not self._isAjaxLoading:
 			if self._dataProvider:
 				self._isAjaxLoading = True
@@ -474,3 +475,4 @@ class DataTable( html5.Div ):
 		selection = self.getCurrentSelection()
 		if len( selection )>0:
 			self.selectionActivatedEvent.fire( self, selection )
+

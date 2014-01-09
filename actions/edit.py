@@ -15,7 +15,6 @@ class SaveContinue( html5.ext.Button ):
 		return( actionName=="save.continue" )
 
 	def onClick(self, sender=None):
-		print("SAVE CONTINUE")
 		self["class"].append("is_loading")
 		self.parent().parent().doSave(closeOnSuccess=False)
 
@@ -35,7 +34,6 @@ class SaveClose( html5.ext.Button ):
 		return( actionName=="save.close" )
 
 	def onClick(self, sender=None):
-		print("SAVE CLOSE")
 		self["class"].append("is_loading")
 		self.parent().parent().doSave(closeOnSuccess=True)
 
