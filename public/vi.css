@@ -25,6 +25,9 @@ body {
   overflow-y: scroll;
   overflow-x: hidden;
   background-color: #ddd;
+  background-image: url('icons/vi_bg.svg');
+  background-repeat: no-repeat;
+  background-position: center 100px;
 }
 a {
   color: #333;
@@ -43,7 +46,8 @@ em {
   font-style: italic;
 }
 h1 {
-  font-size: 1.4em;
+  font-size: 1.1em;
+  line-height: 2.5em;
   color: #be1622;
 }
 h2 {
@@ -88,7 +92,8 @@ p {
 .vi_topbar h1,
 .vi_topbar h2,
 .vi_topbar span {
-  line-height: 1.7em;
+  /*line-height: 1.9em;*/
+
   position: relative;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
   letter-spacing: 1px;
@@ -113,7 +118,7 @@ p {
   position: relative;
   text-align: center;
   float: left;
-  width: 460px;
+  width: auto;
   margin-left: 15.7%;
   margin-top: 10px;
 }
@@ -247,7 +252,8 @@ p {
 }
 .modullist {
   margin: 45px 0 50px;
-  min-width: 298px;
+  /*min-width:298px;*/
+
 }
 .modullist a,
 .modullist a:visited {
@@ -290,6 +296,11 @@ p {
   margin-left: 15px;
   line-height: 32px;
   text-shadow: 0px 1px 1px #fff;
+  min-width: 20%;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .modullist ul img {
   width: 16px;
@@ -605,9 +616,11 @@ button.cancel:before,
 .btn_no:before {
   background-position: 0px 0px;
 }
-button.select:before,
-button.selectfields:before {
+button.select:before {
   background-position: -112px -16px;
+}
+button.selectfields:before {
+  background-position: -112px -112px;
 }
 button.textedit:before {
   background-position: -96px -16px;
@@ -619,6 +632,9 @@ button.upload:before {
   background-position: -48px -32px;
 }
 /* Textedit Icons */
+button.text {
+  margin-bottom: 10px;
+}
 button.text.H1:before {
   background-position: 0px -80px;
 }
@@ -881,6 +897,23 @@ form fieldset:target legend a {
   color: #333;
   background: #ffffff;
 }
+form fieldset legend a:before {
+  background-image: url(icons/vi_actions_sprite.svg);
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  position: relative;
+  float: left;
+  margin-top: 3px;
+  margin-left: 4px;
+  margin-right: 7px;
+  background-position: 0px -64px;
+}
+form fieldset.default legend a:before,
+form fieldset:target legend a:before {
+  background-position: -16px -64px;
+}
 form fieldset.is_incomplete section,
 form fieldset:target section,
 form fieldset.default section {
@@ -1036,6 +1069,44 @@ input[type=password],
 .imageeditor input,
 .linkeditor input {
   width: auto;
+  margin-bottom: 10px;
+}
+.linkeditor input[type="checkbox"] {
+  width: 15px;
+}
+.linkeditor .newwindowlbl {
+  font-size: 0.8em;
+}
+.imageeditor input[type="checkbox"] {
+  margin-top: 7px;
+  margin-right: 50%;
+}
+.imageeditor input[type="number"] {
+  margin-right: 50%;
+}
+.imageeditor label.widthlbl,
+.imageeditor label.heightlbl,
+.imageeditor label.titlelbl,
+.linkeditor label.urllbl {
+  float: left;
+  width: 70px;
+  font-size: 0.8em;
+  padding: 2px 7px;
+  border: 1px solid #aaa;
+  background: #fdfdfd;
+  border-right-width: 0;
+  margin-bottom: 10px;
+  margin-right: -2px;
+}
+.imageeditor .aspectlbl {
+  float: left;
+  font-size: 0.8em;
+  margin-right: 10px;
+}
+.imageeditor input:after {
+  content: '';
+  display: block;
+  clear: both;
 }
 .contentdiv[contenteditable] {
   width: 97.2%;
@@ -1493,6 +1564,11 @@ tr.is_focused.is_selected:nth-child(even) {
   margin-top: -47px;
   z-index: 10;
 }
+.imageeditor,
+.linkeditor {
+  padding: 10px 1% 10px;
+  z-index: 1000;
+}
 .breadcrumb .treeitem {
   float: left;
   cursor: pointer;
@@ -1759,6 +1835,16 @@ progress[value]::-webkit-progress-value {
   border-bottom: 1px solid #be1622;
   overflow: hidden;
 }
+.alertbox.browsersupport a:link {
+  font-size: 0.9em;
+  color: #be1622;
+  text-decoration: underline;
+}
+.alertbox.browsersupport small {
+  font-size: 0.7em;
+  line-height: 0.9em;
+  color: #777;
+}
 .alertbox span {
   width: 100%;
   display: block;
@@ -1776,9 +1862,28 @@ progress[value]::-webkit-progress-value {
 .alertbox input[type="checkbox"] {
   width: 15px;
 }
+.alertbox input[type="number"] {
+  margin-bottom: 10px;
+}
 .alertbox label {
   float: right;
   width: 300px;
+}
+.alertbox label.headerlbl {
+  float: left;
+  font-size: 0.8em;
+  margin-bottom: 10px;
+}
+.alertbox label.rowlbl,
+.alertbox label.collbl {
+  float: left;
+  width: 120px;
+  font-size: 0.8em;
+  padding: 2px 7px;
+  border: 1px solid #ccc;
+  background: #fdfdfd;
+  border-right-width: 0;
+  margin-bottom: 10px;
 }
 .alertbox button {
   float: right;
