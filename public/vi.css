@@ -616,9 +616,11 @@ button.cancel:before,
 .btn_no:before {
   background-position: 0px 0px;
 }
-button.select:before,
-button.selectfields:before {
+button.select:before {
   background-position: -112px -16px;
+}
+button.selectfields:before {
+  background-position: -112px -112px;
 }
 button.textedit:before {
   background-position: -96px -16px;
@@ -1067,6 +1069,44 @@ input[type=password],
 .imageeditor input,
 .linkeditor input {
   width: auto;
+  margin-bottom: 10px;
+}
+.linkeditor input[type="checkbox"] {
+  width: 15px;
+}
+.linkeditor .newwindowlbl {
+  font-size: 0.8em;
+}
+.imageeditor input[type="checkbox"] {
+  margin-top: 7px;
+  margin-right: 50%;
+}
+.imageeditor input[type="number"] {
+  margin-right: 50%;
+}
+.imageeditor label.widthlbl,
+.imageeditor label.heightlbl,
+.imageeditor label.titlelbl,
+.linkeditor label.urllbl {
+  float: left;
+  width: 70px;
+  font-size: 0.8em;
+  padding: 2px 7px;
+  border: 1px solid #aaa;
+  background: #fdfdfd;
+  border-right-width: 0;
+  margin-bottom: 10px;
+  margin-right: -2px;
+}
+.imageeditor .aspectlbl {
+  float: left;
+  font-size: 0.8em;
+  margin-right: 10px;
+}
+.imageeditor input:after {
+  content: '';
+  display: block;
+  clear: both;
 }
 .contentdiv[contenteditable] {
   width: 97.2%;
@@ -1822,9 +1862,28 @@ progress[value]::-webkit-progress-value {
 .alertbox input[type="checkbox"] {
   width: 15px;
 }
+.alertbox input[type="number"] {
+  margin-bottom: 10px;
+}
 .alertbox label {
   float: right;
   width: 300px;
+}
+.alertbox label.headerlbl {
+  float: left;
+  font-size: 0.8em;
+  margin-bottom: 10px;
+}
+.alertbox label.rowlbl,
+.alertbox label.collbl {
+  float: left;
+  width: 120px;
+  font-size: 0.8em;
+  padding: 2px 7px;
+  border: 1px solid #ccc;
+  background: #fdfdfd;
+  border-right-width: 0;
+  margin-bottom: 10px;
 }
 .alertbox button {
   float: right;
