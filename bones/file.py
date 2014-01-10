@@ -7,7 +7,7 @@ from priorityqueue import editBoneSelector, viewDelegateSelector
 from utils import formatString
 from widgets.file import FileWidget, LeafFileWidget
 from config import conf
-from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone
+from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry
 from widgets.file import Uploader
 
 
@@ -64,6 +64,16 @@ class FileViewBoneDelegate(object):
 		return( html5.Label( val ) )
 		#return( formatString( self.format, self.structure, value ) ) FIXME!
 
+class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
+	def __init__(self, *args, **kwargs):
+		super( FileMultiSelectionBoneEntry, self ).__init__( *args, **kwargs )
+		self["class"].append("fileentry")
+		if "servingurl" in self.data.keys():
+			img = html5.Img()
+			img["src"] = self.data["servingurl"]
+			img["class"].append("previewimg")
+			self.appendChild(img)
+
 class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 
 	def __init__(self, *args, **kwargs):
@@ -110,12 +120,27 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 			return
 		self.setSelection( [x.data for x in selection if isinstance(x,LeafFileWidget)] )
 
+	def setSelection(self, selection):
+		"""
+			Set our current value to 'selection'
+			@param selection: The new entry that this bone should reference
+			@type selection: dict
+		"""
+		if selection is None:
+			return
+		for data in selection:
+			entry = FileMultiSelectionBoneEntry( self, self.destModul, data)
+			self.addEntry( entry )
+
 class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 	def __init__(self, *args, **kwargs):
 		super(FileSingleSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
 		self["class"].append("supports_upload")
+		self.previewImg = html5.Img()
+		self.previewImg["class"].append("previewimg")
+		self.appendChild( self.previewImg )
 
 	def onDragOver(self, event):
 		super(FileSingleSelectionBone,self).onDragOver(event)
@@ -123,7 +148,6 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		event.stopPropagation()
 
 	def onDrop(self, event):
-		print("DROP EVENT")
 		event.preventDefault()
 		event.stopPropagation()
 		files = event.dataTransfer.files
@@ -158,6 +182,22 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
 		self.setSelection( [x.data for x in selection if isinstance(x,LeafFileWidget)][0] )
+
+	def setSelection(self, selection):
+		"""
+			Set our current value to 'selection'
+			@param selection: The new entry that this bone should reference
+			@type selection: dict
+		"""
+		super( FileSingleSelectionBone, self).setSelection( selection )
+		if self.selection:
+			if "servingurl" in self.selection.keys():
+				self.previewImg["src"] = self.selection["servingurl"]
+				self.previewImg["style"]["display"] = ""
+			else:
+				self.previewImg["style"]["display"] = "none"
+		else:
+			self.previewImg["style"]["display"] = "none"
 
 
 

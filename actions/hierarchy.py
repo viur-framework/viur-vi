@@ -19,10 +19,11 @@ class AddAction( html5.ext.Button ):
 		correctAction = actionName=="add"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
-		return(  correctAction and correctHandler and hasAccess )
+		isDisabled = "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add" in conf["modules"][modul]["disabledFunctions"]
+		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+
 
 	def onClick(self, sender=None):
-		print("ADD ACTION HIERARCHY", self.parent().parent().rootNode)
 		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_hierarchy", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appHierarchy, node=self.parent().parent().rootNode )
@@ -64,7 +65,9 @@ class EditAction( html5.ext.Button ):
 		correctAction = actionName=="edit"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		return(  correctAction and correctHandler and hasAccess )
+		isDisabled = "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
+		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
@@ -113,7 +116,9 @@ class DeleteAction( html5.ext.Button ):
 		correctAction = actionName=="delete"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-delete" in conf["currentUser"]["access"])
-		return(  correctAction and correctHandler and hasAccess )
+		isDisabled = "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "delete" in conf["modules"][modul]["disabledFunctions"]
+		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
