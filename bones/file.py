@@ -157,7 +157,6 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		for x in range(0,files.length):
 			ul = Uploader(files.item(x), None )
 			ul.uploadSuccess.register( self )
-			self.appendChild( ul )
 
 	def onUploadSuccess(self, uploader, file ):
 		self.setSelection( file )
