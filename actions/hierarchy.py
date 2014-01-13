@@ -19,7 +19,7 @@ class AddAction( html5.ext.Button ):
 		correctAction = actionName=="add"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
-		isDisabled = "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add" in conf["modules"][modul]["disabledFunctions"]
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add" in conf["modules"][modul]["disabledFunctions"]
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 
@@ -65,7 +65,7 @@ class EditAction( html5.ext.Button ):
 		correctAction = actionName=="edit"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		isDisabled = "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 
@@ -116,7 +116,7 @@ class DeleteAction( html5.ext.Button ):
 		correctAction = actionName=="delete"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-delete" in conf["currentUser"]["access"])
-		isDisabled = "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "delete" in conf["modules"][modul]["disabledFunctions"]
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "delete" in conf["modules"][modul]["disabledFunctions"]
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 

@@ -25,7 +25,7 @@ class AddAction( html5.ext.Button ):
 		correctAction = actionName=="add"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
-		isDisabled = "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add" in conf["modules"][modul]["disabledFunctions"]
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add" in conf["modules"][modul]["disabledFunctions"]
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 	def onClick(self, sender=None):
@@ -72,7 +72,7 @@ class EditAction( html5.ext.Button ):
 		correctAction = actionName=="edit"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		isDisabled = "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 	def onClick(self, sender=None):
@@ -125,7 +125,7 @@ class DeleteAction( html5.ext.Button ):
 		correctAction = actionName=="delete"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-delete" in conf["currentUser"]["access"])
-		isDisabled = "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "delete" in conf["modules"][modul]["disabledFunctions"]
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "delete" in conf["modules"][modul]["disabledFunctions"]
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 
@@ -186,16 +186,8 @@ class ListPreviewAction( html5.ext.Button ):
 		correctAction = actionName=="preview"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-view" in conf["currentUser"]["access"])
-		isDisabled = "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "view" in conf["modules"][modul]["disabledFunctions"]
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "view" in conf["modules"][modul]["disabledFunctions"]
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
-
-		#FIXME: Maybe this test..
-		if modul in conf["modules"].keys():
-			modulConfig = conf["modules"][modul]
-			print( modulConfig )
-			if "previewurls" in modulConfig.keys() and modulConfig["previewurls"]:
-				return( True )
-		return( False )
 
 actionDelegateSelector.insert( 1, ListPreviewAction.isSuitableFor, ListPreviewAction )
 
