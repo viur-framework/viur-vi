@@ -95,7 +95,10 @@ class TextEditBone( html5.Div ):
 	def changeLang(self,btn):
 		self.valuesdict[self.selectedLang]=self.input["value"]
 		self.selectedLang=btn["value"]
-		self.input["value"]=self.valuesdict[self.selectedLang]
+		if self.selectedLang in self.valuesdict.keys():
+			self.input["value"]=self.valuesdict[self.selectedLang]
+		else:
+			self.input["value"] = ""
 		if not self.isPlainText:
 			self.previewDiv.element.innerHTML = self.input["value"]
 		self.refreshLangButContainer()
@@ -118,12 +121,11 @@ class TextEditBone( html5.Div ):
 		return( TextEditBone( modulName, boneName, readOnly, isPlainText, skelStructure ) )
 
 	def unserialize(self, data):
-		self.valuesdict=False
+		self.valuesdict={}
 		if self.boneName in data.keys():
 			if "languages" in self.skelStructure[self.boneName].keys() and self.skelStructure[self.boneName]["languages"]!=None:
-				self.valuesdict={}
 				for lang in self.skelStructure[self.boneName]["languages"]:
-					if lang in data[ self.boneName ].keys():
+					if self.boneName in data.keys() and isinstance(data[self.boneName],dict) and lang in data[ self.boneName ].keys():
 						self.valuesdict[lang]=data[ self.boneName ][lang]
 					else:
 						self.valuesdict[lang]=""
