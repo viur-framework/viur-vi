@@ -19,7 +19,8 @@ class AddNodeAction( html5.ext.Button ):
 		correctAction = actionName=="add.node"
 		correctHandler = handler == "tree.simple" or handler.startswith("tree.simple.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
-		return(  correctAction and correctHandler and hasAccess )
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add-node" in conf["modules"][modul]["disabledFunctions"]
+		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 
 	def onClick(self, sender=None):
@@ -73,7 +74,8 @@ class EditAction( html5.ext.Button ):
 		correctAction = actionName=="edit"
 		correctHandler = handler == "tree.simple" or handler.startswith("tree.simple.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		return(  correctAction and correctHandler and hasAccess )
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
+		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 	def onClick(self, sender=None):
 		print("EDIT ACTION CLICKED")

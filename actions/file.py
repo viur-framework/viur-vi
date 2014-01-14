@@ -42,7 +42,9 @@ class AddLeafAction( html5.ext.Button ):
 		correctAction = actionName=="add.leaf"
 		correctHandler = handler == "tree.simple.file" or handler.startswith("tree.simple.file.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
-		return(  correctAction and correctHandler and hasAccess )
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add-leaf" in conf["modules"][modul]["disabledFunctions"]
+		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+
 
 	def onClick(self, sender=None):
 		self.parent().parent().appendChild( FileSelectUploader() )
