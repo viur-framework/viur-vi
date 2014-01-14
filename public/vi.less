@@ -42,7 +42,7 @@ body {
   background-color: #ddd;
   background-image: url('icons/vi_bg.svg');
   background-repeat:no-repeat;
-  background-position:center 100px;
+  background-position:center 111px;
 }
 a {
   color: #333;
@@ -132,6 +132,7 @@ p { margin-bottom: 10px;}
   float: left;
   margin: -5px 15px 0;
 }
+
 .iconnav {
   position: relative;
   font-size: .8em;
@@ -409,8 +410,10 @@ p { margin-bottom: 10px;}
 }
 .vi_operator.is_disabled {
   background-color: #ddd;
-  opacity: .65;
   padding: 70px 1% 45px;
+}
+.vi_operator > .is_disabled {
+  opacity: .7;
 }
 .has_multiple_children .vi_operator:nth-of-type(even) {
   right: 0;
@@ -450,7 +453,7 @@ p { margin-bottom: 10px;}
 ================================================== */
 .vi_operator .actionbar {
   width: 82.3%;
-  min-width: 500px;
+  /*min-width: 500px;*/
   position: fixed;
   margin-top: -105px;
   margin-left: -1%;
@@ -911,19 +914,19 @@ form fieldset legend a:before {
   background-position: 0px -64px;
 }
 
-form fieldset.default legend a:before,
+/*form fieldset.default legend a:before,*/
 form fieldset:target legend a:before {
   background-position: -16px -64px;
 }
 
 form fieldset.is_incomplete section,
-form fieldset:target section,
-form fieldset.default section {
+form fieldset:target section
+/*form fieldset.default section*/ {
   display: block;
 }
 /*set style of closed slide*/
 form fieldset section,
-form fieldset:target ~ .default section {
+/*form fieldset:target ~ .default section*/ {
   display: none;
   border: 1px solid #eee;
   padding: 3% 3% 5%;
@@ -942,7 +945,7 @@ form fieldset {
 /*Set height of the slide*/
 form fieldset.is_incomplete,
 form fieldset:target,
-form fieldset.default {
+/*form fieldset.default*/ {
   /*min-height: 150px;*/
   height: auto;
   width: 100%;
@@ -1016,6 +1019,17 @@ form label.is_valid:before {
   margin-left: -4px;
   margin-right: 5px;
   background-position: 0px -16px;
+}
+
+.file .fileentry img {
+float: left;
+margin-right: 0px;
+height: 26px;
+width: auto;
+width: 26px;
+border: 1px solid #ccc;
+border-right-width: 0;
+box-shadow: none;
 }
 
 input,
@@ -1473,6 +1487,20 @@ tr.is_focused:nth-child(even) {background: @focusevencolor;}
 
 tr.is_focused.is_selected:nth-child(odd) {background: @focusselectionoddcolor;}
 tr.is_focused.is_selected:nth-child(even) {background: @focusselectionevencolor;}
+
+.emptynotification {
+  width:20%;
+  margin:0 35% 55px; 
+  text-align: center;
+  padding:10px 5% 10px;
+  border:1px solid #ccc;
+  background:#eee;
+  border-radius: 3px;
+  color:#888;
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.1)
+}
+
+
 /* #vi_forest
 ================================================== */.tree {
   width: 100%;
@@ -2116,6 +2144,57 @@ textarea:disabled {
 }
 /* #Media Queries
 ================================================== */
+
+  /* Smaller than 1441px (devices and browsers) */
+  @media only screen and (max-width: 1440px) {
+    .modullist h3 {
+      font-size:0.8em;
+    }
+    .has_multiple_children .vi_operator {
+      width:20%;
+    }
+    .has_multiple_children .vi_operator:nth-of-type(even) {
+      width:60%;   
+    }
+    .has_multiple_children .actionbar,
+    .has_multiple_children .breadcrumb,
+    .has_multiple_children .imageeditor,
+    .has_multiple_children .linkeditor {
+      width: 20%;
+    }
+    .has_multiple_children .vi_operator:nth-of-type(even) .actionbar,
+    .has_multiple_children .vi_operator:nth-of-type(even) .breadcrumb,
+    .has_multiple_children .vi_operator:nth-of-type(even) .imageeditor,
+    .has_multiple_children .vi_operator:nth-of-type(even) .linkeditor {
+      width: 60%;
+    }
+    .has_multiple_children form label, .has_multiple_children form label.text {
+      border: 1px dotted #ddd;
+      text-align: left;
+      width: 93%;
+      padding: 4px 3% 6px;
+    }
+    .selectioncontainer label {
+      border: 1px solid #ccc;
+      width: 193px;
+    }
+    .has_multiple_children form fieldset legend {
+     min-width:0; 
+    }
+    .has_multiple_children form fieldset legend a {
+      font-size:0.8em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;    
+    }
+    .has_multiple_children form fieldset section > div {
+      padding-bottom:0;
+    }
+    input:disabled, .preview.is_disabled, input[type="submit"]:disabled, button:disabled, input[type="text"]:disabled, select:disabled, textarea:disabled {
+      display:none;
+    }
+}
+
 /* Smaller than standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
  .vi_manager {width: 56px; border-right:1px solid #bbb; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; transition: all 0.3s ease;}
@@ -2123,7 +2202,11 @@ textarea:disabled {
  .modullist {width:298px;}
  .modullist ul {display:none;}
  .vi_manager:hover .modullist ul {display:block;}
- .vi_viewer {width:900px;margin-left:56px;}
+ .vi_viewer {max-width:900px;margin-left:56px;}
+ .has_multiple_children .vi_operator {width: 20%; max-width:210px;}
+ .has_multiple_children .vi_operator:nth-of-type(even) {width: 70%;max-width:750px;}
+ .has_multiple_children .vi_operator:nth-of-type(even) .actionbar, .has_multiple_children .vi_operator:nth-of-type(even) .breadcrumb, .has_multiple_children .vi_operator:nth-of-type(even) .imageeditor, .has_multiple_children .vi_operator:nth-of-type(even) .linkeditor {width: 70%;}
+ .vi_operator .actionbar h3 {display:none;}
 }
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (min-width: 768px) and (max-width: 959px) {
