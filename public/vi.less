@@ -27,7 +27,7 @@
 /* #Custom Colors
 ================================================== */
 
-@import "../../vi_customizing/static/vi_custom.less";
+@import "vi_custom.less";
 
 /* #ViUR Styles
 ================================================== */
@@ -402,7 +402,7 @@ p { margin-bottom: 10px;}
   overflow: hidden;
 }
 .has_multiple_children .vi_operator {
-  width: 39.15%;
+  width: 40.3%;
   height: 100%;
   position: fixed;
   overflow-y: auto;
@@ -1784,9 +1784,9 @@ progress[value]::-webkit-progress-value {
   -webkit-user-select: none;
   user-select: none;
 }
-.insert_before {border-top:2px solid @maincolor;}
-.insert_here {border:1px solid @maincolor; padding:12px 7px;}
-.insert_after {border-bottom:2px solid @maincolor;}
+.hierarchyitem .insert_before {border-top:2px solid @maincolor !important;}
+.hierarchyitem .insert_here {border:1px solid @maincolor !important; padding:12px 7px !important;}
+.hierarchyitem .insert_after {border-bottom:2px solid @maincolor !important;}
 /* #vi_popups and alerts
 ================================================== */.popup {
   position: absolute;
@@ -2140,7 +2140,7 @@ textarea:disabled {
 .has_multiple_children .breadcrumb,
 .has_multiple_children .imageeditor,
 .has_multiple_children .linkeditor {
-  width: 39%;
+  width: 40.3%;
 }
 /* #Media Queries
 ================================================== */
@@ -2203,10 +2203,17 @@ textarea:disabled {
  .modullist ul {display:none;}
  .vi_manager:hover .modullist ul {display:block;}
  .vi_viewer {max-width:900px;margin-left:56px;}
- .has_multiple_children .vi_operator {width: 20%; max-width:210px;}
- .has_multiple_children .vi_operator:nth-of-type(even) {width: 70%;max-width:750px;}
- .has_multiple_children .vi_operator:nth-of-type(even) .actionbar, .has_multiple_children .vi_operator:nth-of-type(even) .breadcrumb, .has_multiple_children .vi_operator:nth-of-type(even) .imageeditor, .has_multiple_children .vi_operator:nth-of-type(even) .linkeditor {width: 70%;}
- .vi_operator .actionbar h3 {display:none;}
+  .has_multiple_children .actionbar,
+  .has_multiple_children .breadcrumb,
+  .has_multiple_children .imageeditor,
+  .has_multiple_children .linkeditor,
+  .has_multiple_children .vi_operator {width: 20%; max-width:210px;}
+  .has_multiple_children .vi_operator:nth-of-type(even) .actionbar,
+  .has_multiple_children .vi_operator:nth-of-type(even) .breadcrumb,
+  .has_multiple_children .vi_operator:nth-of-type(even) .imageeditor,
+  .has_multiple_children .vi_operator:nth-of-type(even) .linkeditor,
+  .has_multiple_children .vi_operator:nth-of-type(even) {width: 70%;max-width:750px;}
+  .vi_operator .actionbar h3 {display:none;}
 }
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (min-width: 768px) and (max-width: 959px) {
