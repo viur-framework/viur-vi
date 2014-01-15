@@ -179,6 +179,12 @@ class SelectableDiv( html5.Div ):
 					self.addSelectedItem( child )
 		if not self._isCtlPressed:
 			self.clearSelection()
+		if self._selectedItems:
+			self.selectionChangedEvent.fire( self, self._selectedItems[:])
+		elif self._currentItem:
+			self.selectionChangedEvent.fire( self, [self._currentItem])
+		else:
+			self.selectionChangedEvent.fire( self, [])
 
 	def onDblClick(self, event):
 		for child in self._children:
@@ -235,6 +241,7 @@ class SelectableDiv( html5.Div ):
 		self.clearSelection()
 		for child in self._children[:]:
 			self.removeChild( child )
+		self.selectionChangedEvent.fire( self, [] )
 
 	def getCurrentSelection(self):
 		if len(self._selectedItems)>0:

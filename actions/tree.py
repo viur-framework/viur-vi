@@ -71,24 +71,43 @@ class EditAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
-		#self.setEnabled(False)
 		self["class"] = "icon edit"
-		#self.setStyleAttribute("opacity","0.5")
+		self["disabled"]= True
+		self.isDisabled=True
 
 	def onAttach(self):
 		super(EditAction,self).onAttach()
 		self.parent().parent().selectionChangedEvent.register( self )
+		self.parent().parent().selectionActivatedEvent.register( self )
 
 	def onDetach(self):
 		self.parent().parent().selectionChangedEvent.unregister( self )
+		self.parent().parent().selectionActivatedEvent.unregister( self )
 		super(EditAction,self).onDetach()
 
+	def onSelectionActivated(self, table, selection ):
+		if not self.parent().parent().isSelector and len(selection)==1:
+			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
+			conf["mainWindow"].stackPane( pane )
+			if isinstance( selection[0], self.parent().parent().nodeWidget):
+				skelType = "node"
+			elif isinstance( selection[0], self.parent().parent().leafWidget):
+				skelType = "leaf"
+			else:
+				raise ValueError("Unknown selection type: %s" % str(type(selection[0])))
+			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=selection[0].data["id"], skelType=skelType)
+			pane.addWidget( edwg )
+			pane.focus()
+
 	def onSelectionChanged(self, table, selection ):
-		return
 		if len(selection)>0:
-			self.setEnabled(True)
+			if self.isDisabled:
+				self.isDisabled = False
+			self["disabled"]= False
 		else:
-			self.setEnabled(False)
+			if not self.isDisabled:
+				self["disabled"]= True
+				self.isDisabled = True
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -131,8 +150,8 @@ class DeleteAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )
 		self["class"] = "icon delete"
-		#self.setEnabled(False)
-		#self.setStyleAttribute("opacity","0.5")
+		self["disabled"]= True
+		self.isDisabled=True
 
 
 	def onAttach(self):
@@ -144,11 +163,14 @@ class DeleteAction( html5.ext.Button ):
 		super(DeleteAction,self).onDetach()
 
 	def onSelectionChanged(self, table, selection ):
-		return
 		if len(selection)>0:
-			self.setEnabled(True)
+			if self.isDisabled:
+				self.isDisabled = False
+			self["disabled"]= False
 		else:
-			self.setEnabled(False)
+			if not self.isDisabled:
+				self["disabled"]= True
+				self.isDisabled = True
 
 
 	@staticmethod
