@@ -285,8 +285,8 @@ class TextInsertTableAction( html5.ext.Button ):
 		self["class"] = "icon text table"
 
 	def onClick(self, sender=None):
+		self.parent().parent().contentDiv.focus()
 		node = eval("window.top.getSelection().baseNode")
-		print(node)
 		CreateTablePopup( node )
 		return
 
