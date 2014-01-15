@@ -41,6 +41,7 @@ class BasicTextAction( html5.ext.Button ):
 	def resetLoadingState(self):
 		pass
 
+
 class TextStyleBold( BasicTextAction ):
 	cmd = "bold"
 	isActiveTag = "B"
@@ -771,13 +772,42 @@ class ImageEditor( html5.Div ):
 		self.linkTxt["value"] = ""
 		self.linkTxt.focus()
 
+
+class TextUndoAction( BasicTextAction ):
+	cmd = "undo"
+
+actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.undo", TextUndoAction )
+
+class TextRedoAction( BasicTextAction ):
+	cmd = "redo"
+
+actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.redo", TextRedoAction )
+
+
+
+
 class FlipViewAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( FlipViewAction, self ).__init__( "Flip View", *args, **kwargs )
 		self["class"] = "icon flipview"
 
+	def onAttach(self):
+		super( FlipViewAction, self ).onAttach()
+		if self.parent().parent().isWysiwygMode:
+			self["class"].append("is_wysiwyg")
+		else:
+			self["class"].append("is_htmlview")
+
 	def onClick(self, sender=None):
 		self.parent().parent().flipView()
+		if "is_wysiwyg" in self["class"]:
+			self["class"].remove("is_wysiwyg")
+		if "is_htmlview" in self["class"]:
+			self["class"].remove("is_htmlview")
+		if self.parent().parent().isWysiwygMode:
+			self["class"].append("is_wysiwyg")
+		else:
+			self["class"].append("is_htmlview")
 
 	def resetLoadingState(self):
 		pass
@@ -788,7 +818,7 @@ class Wysiwyg( html5.Div ):
 		super( Wysiwyg, self ).__init__(*args, **kwargs)
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
 		self.saveTextEvent = EventDispatcher("saveText")
-		self.textActions = ["style.text.bold", "style.text.italic", "style.text.underline", "style.text.strikeThrough"]+["style.text.h%s" % x for x in range(0,4)]+[ "text.removeformat", "style.text.justifyCenter", "style.text.justifyLeft", "style.text.justifyRight", "style.text.blockquote", "text.orderedList", "text.unorderedList", "text.indent", "text.outdent", "text.image", "text.link", "text.table", "text.flipView", "text.save"]
+		self.textActions = ["style.text.bold", "style.text.italic", "style.text.underline", "style.text.strikeThrough"]+["style.text.h%s" % x for x in range(0,4)]+[ "text.removeformat", "style.text.justifyCenter", "style.text.justifyLeft", "style.text.justifyRight", "style.text.blockquote", "text.orderedList", "text.unorderedList", "text.indent", "text.outdent", "text.image", "text.link", "text.table", "text.flipView", "text.undo", "text.redo","text.save"]
 		#self["type"] = "text"
 		self.actionbar = ActionBar(None, None, actionBarHint)
 		self.isWysiwygMode = True
@@ -881,13 +911,15 @@ class Wysiwyg( html5.Div ):
 				outStr += inStr[0]
 				inStr = inStr[ 1: ]
 			self.contentDiv.element.innerHTML = outStr
+			self.isWysiwygMode = not self.isWysiwygMode
 			self.actionbar.setActions( ["text.flipView"] )
 		else:
 			htmlStr = re.sub(r'<[^>]*?>', '', htmlStr)
 			htmlStr = htmlStr.replace("&nbsp;","").replace("&nbsp;","")
 			self.contentDiv.element.innerHTML = htmlStr.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
+			self.isWysiwygMode = not self.isWysiwygMode
 			self.actionbar.setActions( self.textActions )
-		self.isWysiwygMode = not self.isWysiwygMode
+
 
 	def saveText(self, *args, **kwargs):
 		self.saveTextEvent.fire( self, self.contentDiv.element.innerHTML )
