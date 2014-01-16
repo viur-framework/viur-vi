@@ -83,8 +83,12 @@ class HTTPRequest(object):
 			if self.type=="POST" and self.content_type is not None:
 				self.req.setRequestHeader('Content-Type', self.content_type)
 			self.req.send( self.payload )
-		if self.req.readyState == 4 and self.req.status == 200:
-			self.cb.onCompletion( self.req.responseText)
+		if self.req.readyState == 4:
+			if self.req.status >= 200 and self.req.status < 300:
+				self.cb.onCompletion( self.req.responseText )
+			else:
+				self.cb.onError( self.req.status, self.req.responseText )
+
 
 
 class NetworkService( object ):
