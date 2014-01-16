@@ -581,6 +581,7 @@ button.icon:before,
 }
 /* Action Icons */
 button.add:before,
+button.new:before,
 .action_add h3:before {
   background-position: -16px 0px;
 }
@@ -1235,10 +1236,12 @@ select {
   font-weight: 100;
   color: #444;
 }
-.selectioncontainer {
+.selectioncontainer,
+.tagcontainer {
   display: inline-block;
 }
-.selectioncontainer button {
+.selectioncontainer button,
+.tagcontainer button {
   margin-right: 15px;
 }
 .selectioncontainer label {
@@ -1257,6 +1260,15 @@ input[type=password]:focus,
 textarea:focus {
   outline: 0;
   border-color: #be1622;
+}
+span.tag {
+  display: block;
+}
+.tag input[type=text] {
+  margin-right: 0;
+  border-right-width: 0;
+  margin-bottom: 5px;
+  width: 220px;
 }
 select.is_disabled,
 form .treeitem input,
