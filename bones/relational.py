@@ -80,8 +80,8 @@ class RelationalSingleSelectionBone( html5.Div ):
 			Reset the is_active flag (if any)
 		"""
 		super(RelationalSingleSelectionBone, self)._setDisabled( disable )
-		if not disable and not self._disabledState and "is_active" in self["class"]:
-			self["class"].remove("is_active")
+		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
+			self.parent()["class"].remove("is_active")
 
 
 	@classmethod
@@ -151,7 +151,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 		currentSelector = ListWidget( self.destModul, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self["class"].append("is_active")
+		self.parent()["class"].append("is_active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""
@@ -250,8 +250,8 @@ class RelationalMultiSelectionBone( html5.Div ):
 			Reset the is_active flag (if any)
 		"""
 		super(RelationalMultiSelectionBone, self)._setDisabled( disable )
-		if not disable and not self._disabledState and "is_active" in self["class"]:
-			self["class"].remove("is_active")
+		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
+			self.parent()["class"].remove("is_active")
 
 
 	@classmethod
@@ -308,7 +308,7 @@ class RelationalMultiSelectionBone( html5.Div ):
 		currentSelector = ListWidget( self.destModul, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self["class"].append("is_active")
+		self.parent()["class"].append("is_active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""

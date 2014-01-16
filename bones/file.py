@@ -109,7 +109,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		currentSelector = FileWidget( self.destModul, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self["class"].append("is_active")
+		self.parent()["class"].append("is_active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""
@@ -172,7 +172,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		currentSelector = FileWidget( self.destModul, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self["class"].append("is_active")
+		self.parent()["class"].append("is_active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""

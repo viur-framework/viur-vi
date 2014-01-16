@@ -7,7 +7,7 @@ from network import NetworkService, DeferredCall
 import handler
 import bones
 import actions
-from priorityqueue import HandlerClassSelector, initialHashHandler
+from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from log import Log
 from pane import Pane, GroupPane
 try:
@@ -46,6 +46,9 @@ class CoreWindow( html5.Div ):
 		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
 		self.config = None
 		self.user = None
+		startupQueue.setFinalElem( self.startup )
+
+	def startup(self):
 		NetworkService.request( None, "/admin/config", successHandler=self.onConfigAvaiable,
 					failureHandler=self.onError, cacheable=True )
 		NetworkService.request( None, "/admin/user/view/self", successHandler=self.onUserAvaiable,
@@ -194,4 +197,5 @@ if __name__ == '__main__':
 	#RootPanel().add( conf["mainWindow"] )
 	#t.setFocus( True )
 	#conf["mainWindow"].addWidget(None,"test")
+	startupQueue.run()
 	pyjd.run()
