@@ -80,8 +80,8 @@ class TextEditBone( html5.Div ):
 			Reset the is_active flag (if any)
 		"""
 		super(TextEditBone, self)._setDisabled( disable )
-		if not disable and not self._disabledState and "is_active" in self["class"]:
-			self["class"].remove("is_active")
+		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
+			self.parent()["class"].remove("is_active")
 
 	def openTxt(self, *args, **kwargs):
 		assert self.currentEditor is None
@@ -91,7 +91,7 @@ class TextEditBone( html5.Div ):
 		self.currentEditor = Wysiwyg( self.input["value"], actionBarHint=actionBarHint )
 		self.currentEditor.saveTextEvent.register( self )
 		conf["mainWindow"].stackWidget( self.currentEditor )
-		self["class"].append("is_active")
+		self.parent()["class"].append("is_active")
 
 	def onSaveText(self, editor, txt ):
 		assert self.currentEditor is not None

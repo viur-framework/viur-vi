@@ -74,7 +74,7 @@ class StringEditBone( html5.Div ):
 			self.languagesContainer["languagescontainer"]
 			self.appendChild( self.languagesContainer )
 			self.buttonContainer = html5.Div()
-			self.buttonContainer["buttoncontainer"]
+			self.buttonContainer["class"] = "languagebuttons"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
 			for lang in self.languages:
@@ -96,7 +96,7 @@ class StringEditBone( html5.Div ):
 			self.languagesContainer["languagescontainer"]
 			self.appendChild( self.languagesContainer )
 			self.buttonContainer = html5.Div()
-			self.buttonContainer["buttoncontainer"]
+			self.buttonContainer["class"] = "languagebuttons"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
 			for lang in self.languages:
