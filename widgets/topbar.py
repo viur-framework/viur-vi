@@ -9,7 +9,8 @@ class TopBarWidget( html5.Header ):
 	def onCompletion(self, req):
 		data = NetworkService.decode(req)
 		if "configuration" in data.keys() and isinstance( data["configuration"], dict):
-			self.modulH1.appendChild(html5.TextNode(data["configuration"]["vi.name"]))
+			if "vi.name" in data["configuration"].keys():
+				self.modulH1.appendChild(html5.TextNode(data["configuration"]["vi.name"]))
 			#self.logoContainer["style"]["background-image"]="url('"+data["configuration"]["vi.logo"]+"')"
 	def onError(self, req, code):
 		print("ONERROR")
