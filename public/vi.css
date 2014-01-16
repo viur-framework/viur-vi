@@ -713,6 +713,16 @@ button.text.removeformat:before {
 button.text.link:before {
   background-position: -48px -48px;
 }
+button.text.redo:before {
+  background-position: -48px -16px;
+}
+button.text.undo:before {
+  background-position: -64px -16px;
+}
+button.text.undo {
+  margin-right: 0;
+  border-right: 0;
+}
 button.text.image:before {
   background-position: -96px -96px;
 }
@@ -723,6 +733,9 @@ button.text.link {
 }
 button.flipview:before {
   background-position: -64px -48px;
+}
+button.flipview.is_htmlview:before {
+  background-position: -96px -16px;
 }
 button.text.table:before {
   background-position: 0px -112px;
@@ -1792,9 +1805,9 @@ progress[value]::-webkit-progress-value {
 }
 .hierarchyitem.expaned ol {
   margin-top: 7px;
-  /*border:1px solid #ddd;
-        background:#e5e5e5;*/
+  /*border:1px solid #ddd;*/
 
+  background: #e5e5e5;
 }
 .hierarchyitem.expaned ol li {
   padding-left: 35px;
@@ -2187,9 +2200,12 @@ progress[value]::-webkit-progress-value {
 ================================================== */:focus {
   outline: 1px dotted #ccc;
 }
-.is_active {
-  background-color: #be1622;
-}
+/*.is_active {
+  background-color: @maincolor;
+}*/
+/*.is_active {
+  background-color: @maincolor;
+}*/
 input:disabled,
 input[type="submit"]:disabled,
 button:disabled,
@@ -2254,14 +2270,26 @@ textarea:disabled {
   .has_multiple_children form fieldset section > div {
     padding-bottom: 0;
   }
-  input:disabled,
-  .preview.is_disabled,
-  input[type="submit"]:disabled,
-  button:disabled,
-  input[type="text"]:disabled,
-  select:disabled,
-  textarea:disabled {
+  .has_multiple_children form fieldset input:disabled,
+  .has_multiple_children form fieldset .preview.is_disabled,
+  .has_multiple_children form fieldset input[type="submit"]:disabled,
+  .has_multiple_children form fieldset button:disabled,
+  .has_multiple_children form fieldset input[type="text"]:disabled,
+  .has_multiple_children form fieldset select:disabled,
+  .has_multiple_children form fieldset textarea:disabled {
     display: none;
+  }
+  .has_multiple_children form fieldset .file .fileentry label {
+    width: 154px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    border-top-width: 0;
+    margin-bottom: 0;
+  }
+  .has_multiple_children form fieldset .file .fileentry img {
+    border-top-width: 0;
   }
 }
 /* Smaller than standard 960 (devices and browsers) */
