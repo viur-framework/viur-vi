@@ -2,6 +2,42 @@
 # -*- coding: utf-8 -*-
 
 
+class StartupQueue( object ):
+	def __init__(self):
+		super(StartupQueue, self).__init__()
+		self.isRunning = False
+		self.q = []
+		self.currentElem = -1
+		self.finalElem = None
+
+	def setFinalElem(self, elem):
+		assert self.finalElem is None
+		assert not self.isRunning
+		self.finalElem = elem
+
+	def insertElem(self, priority, elem):
+		assert not self.isRunning
+		self.q.append( (priority,elem) )
+
+	def run(self):
+		assert not self.isRunning
+		assert self.finalElem is not None
+		self.isRunning = True
+		self.next()
+
+	def next(self):
+		self.currentElem += 1
+		if self.currentElem < len( self.q ): #This index is still valid
+			cb = self.q[self.currentElem][1]
+			print("Running startup callback #%s" % str(self.currentElem))
+			cb()
+		elif self.currentElem == len( self.q ): #We should call the final element
+			self.finalElem()
+		else:
+			raise RuntimeError("StartupQueue has no more elements to call. Someone called next() twice!")
+
+startupQueue = StartupQueue()
+
 class PriorityQueue( object ):
 	def __init__( self ):
 		super( PriorityQueue, self ).__init__()
