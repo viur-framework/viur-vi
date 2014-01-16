@@ -11,11 +11,14 @@ from widgets.file import FileWidget
 class BasicTextAction( html5.ext.Button ):
 	cmd = None
 	isActiveTag = None
+	title = None
 	def __init__(self, *args, **kwargs):
 		assert self.cmd is not None
 		super( BasicTextAction, self ).__init__( self.cmd, *args, **kwargs )
 		self["class"] = "icon text style"
 		self["class"].append( self.cmd )
+		if self.title:
+			self["title"] = self.title
 
 	def onAttach(self):
 		super(BasicTextAction, self).onAttach( )
@@ -45,23 +48,28 @@ class BasicTextAction( html5.ext.Button ):
 class TextStyleBold( BasicTextAction ):
 	cmd = "bold"
 	isActiveTag = "B"
+	title = "Bold"
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.bold", TextStyleBold )
 
 class TextStyleItalic( BasicTextAction ):
 	cmd = "italic"
 	isActiveTag = "I"
+	title = "Italic"
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.italic", TextStyleItalic )
 
 class TextStyleUnderline( BasicTextAction ):
 	cmd = "underline"
 	isActiveTag = "U"
+	title = "Underline"
+
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.underline", TextStyleUnderline )
 
 class TextStyleStrikeThrough( BasicTextAction ):
 	cmd = "strikeThrough"
 	isActiveTag = "STRIKE"
+	title = "Strike through"
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.strikeThrough", TextStyleStrikeThrough )
 
 
@@ -73,61 +81,72 @@ class BasicFormatBlockAction( BasicTextAction ):
 
 class TextStyleH1( BasicFormatBlockAction ):
 	cmd = "H1"
+	title = "H1"
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h1", TextStyleH1 )
 
 class TextStyleH2( BasicFormatBlockAction ):
 	cmd = "H2"
+	title = "H2"
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h2", TextStyleH2 )
 
 class TextStyleH3( BasicFormatBlockAction ):
 	cmd = "H3"
+	title = "H3"
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h3", TextStyleH3 )
 
 class TextStyleH4( BasicFormatBlockAction ):
 	cmd = "H4"
+	title = "H4"
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h4", TextStyleH4 )
 
 class TextStyleH5( BasicFormatBlockAction ):
 	cmd = "H5"
+	title = "H5"
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h5", TextStyleH5 )
 
 class TextStyleH6( BasicFormatBlockAction ):
 	cmd = "H6"
+	title = "H6"
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h6", TextStyleH6 )
 
 
 class TextStyleBlockQuote( BasicFormatBlockAction ):
 	cmd = "BLOCKQUOTE"
-
+	title = "Blockqoute"
 #actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.blockquote", TextStyleBlockQuote )
 
 
 class TextStyleJustifyCenter( BasicTextAction ):
 	cmd = "justifyCenter"
+	title = "Justifiy Center"
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.justifyCenter", TextStyleJustifyCenter )
 
 class TextStyleJustifyLeft( BasicTextAction ):
 	cmd = "justifyLeft"
+	title = "Justifiy Left"
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.justifyLeft", TextStyleJustifyLeft )
 
 class TextStyleJustifyRight( BasicTextAction ):
 	cmd = "justifyRight"
+	title = "Justifiy Right"
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.justifyRight", TextStyleJustifyRight )
 
 
 
 class TextInsertOrderedList( BasicTextAction ):
 	cmd = "insertOrderedList"
+	title = "Insert a ordered List"
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.orderedList", TextInsertOrderedList )
 
 class TextInsertUnorderedList( BasicTextAction ):
 	cmd = "insertUnorderedList"
+	title = "Insert a unordered List"
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.unorderedList", TextInsertUnorderedList )
 
 
@@ -135,17 +154,20 @@ actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=
 
 class TextIndent( BasicTextAction ):
 	cmd = "indent"
+	title = "Indent more"
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.indent", TextIndent )
 
 
 class TextOutdent( BasicTextAction ):
 	cmd = "outdent"
+	title = "Indent less"
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.outdent", TextOutdent )
 
 
 
 class TextRemoveFormat( BasicTextAction ):
 	cmd = "removeformat"
+	title = "Remove all formatting"
 
 	def onClick(self, sender=None):
 		eval("window.top.document.execCommand(\"%s\", false, null)" % self.cmd)
@@ -171,6 +193,7 @@ class TextInsertImageAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TextInsertImageAction, self ).__init__( "Insert Image", *args, **kwargs )
 		self["class"] = "icon text image"
+		self["title"] = "Insert image"
 
 	def onClick(self, sender=None):
 		currentSelector = FileWidget( "file", isSelector=True )
@@ -203,6 +226,7 @@ class TextInsertLinkAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TextInsertLinkAction, self ).__init__( "Insert Link", *args, **kwargs )
 		self["class"] = "icon text link"
+		self["title"] = "Insert link"
 
 	def onClick(self, sender=None):
 		newLinkTarget = "#linkidx-%s-%s" % (TextInsertLinkAction.newLinkIdx, time() )
@@ -284,6 +308,7 @@ class TextInsertTableAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TextInsertTableAction, self ).__init__( "Insert Table", *args, **kwargs )
 		self["class"] = "icon text table"
+		self["title"] = "Insert table"
 
 	def onClick(self, sender=None):
 		self.parent().parent().contentDiv.focus()
@@ -304,6 +329,7 @@ class TableInsertRowBeforeAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TableInsertRowBeforeAction, self ).__init__( "Insert Table Row before", *args, **kwargs )
 		self["class"] = "icon text table newrow before"
+		self["title"] = "Insert a new row before the current one"
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -335,6 +361,7 @@ class TableInsertRowAfterAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TableInsertRowAfterAction, self ).__init__( "Insert Table Row after", *args, **kwargs )
 		self["class"] = "icon text table newrow after"
+		self["title"] = "Insert a new row after the current row"
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -369,6 +396,7 @@ class TableInsertColBeforeAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TableInsertColBeforeAction, self ).__init__( "Insert Table Col before", *args, **kwargs )
 		self["class"] = "icon text table newcol before"
+		self["title"] = "Insert a new col before the current one"
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -433,6 +461,7 @@ class TableInsertColAfterAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TableInsertColAfterAction, self ).__init__( "Insert Table Col after", *args, **kwargs )
 		self["class"] = "icon text table newcol after"
+		self["title"] = "Insert a new col after the current one"
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -503,6 +532,7 @@ class TableRemoveRowAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TableRemoveRowAction, self ).__init__( "Remove Table Row", *args, **kwargs )
 		self["class"] = "icon text table remove row"
+		self["title"] = "Remove the current row"
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -532,6 +562,7 @@ class TableRemoveColAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TableRemoveColAction, self ).__init__( "Remove Table Col", *args, **kwargs )
 		self["class"] = "icon text table remove col"
+		self["title"] = "Remove the current col"
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -593,6 +624,7 @@ class TextSaveAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( TextSaveAction, self ).__init__( "Save", *args, **kwargs )
 		self["class"] = "icon text save"
+		self["title"] = "Save the text"
 
 	def onClick(self, event):
 		self.parent().parent().saveText()
@@ -775,11 +807,13 @@ class ImageEditor( html5.Div ):
 
 class TextUndoAction( BasicTextAction ):
 	cmd = "undo"
+	title = "Undo the last action"
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.undo", TextUndoAction )
 
 class TextRedoAction( BasicTextAction ):
 	cmd = "redo"
+	title = "Redo the last undone action"
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.redo", TextRedoAction )
 
@@ -790,6 +824,7 @@ class FlipViewAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( FlipViewAction, self ).__init__( "Flip View", *args, **kwargs )
 		self["class"] = "icon flipview"
+		self["title"] = "Flip the current view"
 
 	def onAttach(self):
 		super( FlipViewAction, self ).onAttach()
