@@ -73,6 +73,9 @@ class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 			img["src"] = self.data["servingurl"]
 			img["class"].append("previewimg")
 			self.appendChild(img)
+			# Move the img in front of the lbl
+			self.element.removeChild( img.element )
+			self.element.insertBefore( img.element, self.element.children.item(0) )
 
 class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 
@@ -106,6 +109,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		currentSelector = FileWidget( self.destModul, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
+		self.parent()["class"].append("is_active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""
@@ -168,6 +172,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		currentSelector = FileWidget( self.destModul, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
+		self.parent()["class"].append("is_active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""

@@ -24,8 +24,8 @@ class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
 		return(aa)
 
 class EmailEditBone( strBone.StringEditBone ):
-	def __init__(self, modulName, boneName,readOnly,skelStructure=False,*args, **kwargs ):
-		super( EmailEditBone,  self ).__init__( modulName, boneName,readOnly,skelStructure, *args, **kwargs )
+	def __init__(self, modulName, boneName,readOnly,*args, **kwargs ):
+		super( EmailEditBone,  self ).__init__( modulName, boneName,readOnly, *args, **kwargs )
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
@@ -37,7 +37,6 @@ class EmailEditBone( strBone.StringEditBone ):
 			self.input["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
 
 	def serializeForPost(self):
-		print self["value"]
 		if not self["value"] or re.match("^[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._-]+.[a-zA-Z]{2,6}$",self.input["value"]):
 			return( { self.boneName: self.input["value"] } )
 		raise InvalidBoneValueException()

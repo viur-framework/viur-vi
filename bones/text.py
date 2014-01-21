@@ -34,22 +34,23 @@ class TextViewBoneDelegate( object ):
 		return( html5.Label("..") )
 
 class TextEditBone( html5.Div ):
-	def __init__(self, modulName, boneName,readOnly, isPlainText, skelStructure=False,*args, **kwargs ):
+	def __init__(self, modulName, boneName,readOnly, isPlainText, languages=None, descrHint=None, *args, **kwargs ):
 		super( TextEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.selectedLang=False
 		self.isPlainText = isPlainText
-		self.skelStructure=skelStructure
+		self.languages = languages
+		self.descrHint = descrHint
 		self.currentEditor = None
 		##multilangbone
-		if skelStructure and skelStructure[boneName]["languages"]:
-			if "currentlanguage" in conf and conf["currentlanguage"] in skelStructure[boneName]["languages"]:
+		if self.languages:
+			if "currentlanguage" in conf and conf["currentlanguage"] in self.languages:
 				self.selectedLang=conf["currentlanguage"]
-			elif len(skelStructure[boneName]["languages"])>0:
-				self.selectedLang=skelStructure[boneName]["languages"][0]
+			elif len(self.languages)>0:
+				self.selectedLang=self.languages[0]
 			self.langButContainer=html5.Div()
-			for lang in skelStructure[boneName]["languages"]:
+			for lang in self.languages:
 				abut=html5.ext.Button(lang,self.changeLang)
 				abut["value"]=lang
 				self.langButContainer.appendChild(abut)
@@ -74,14 +75,23 @@ class TextEditBone( html5.Div ):
 			self.appendChild(openEditorBtn )
 		self.sinkEvent("onClick")
 
+	def _setDisabled(self, disable):
+		"""
+			Reset the is_active flag (if any)
+		"""
+		super(TextEditBone, self)._setDisabled( disable )
+		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
+			self.parent()["class"].remove("is_active")
+
 	def openTxt(self, *args, **kwargs):
 		assert self.currentEditor is None
 		actionBarHint = self.boneName
-		if self.skelStructure and self.boneName in self.skelStructure.keys() and "descr" in self.skelStructure[ self.boneName ]:
-			actionBarHint = self.skelStructure[ self.boneName ]["descr"]
+		if self.descrHint:
+			actionBarHint = self.descrHint
 		self.currentEditor = Wysiwyg( self.input["value"], actionBarHint=actionBarHint )
 		self.currentEditor.saveTextEvent.register( self )
 		conf["mainWindow"].stackWidget( self.currentEditor )
+		self.parent()["class"].append("is_active")
 
 	def onSaveText(self, editor, txt ):
 		assert self.currentEditor is not None
@@ -95,7 +105,10 @@ class TextEditBone( html5.Div ):
 	def changeLang(self,btn):
 		self.valuesdict[self.selectedLang]=self.input["value"]
 		self.selectedLang=btn["value"]
-		self.input["value"]=self.valuesdict[self.selectedLang]
+		if self.selectedLang in self.valuesdict.keys():
+			self.input["value"]=self.valuesdict[self.selectedLang]
+		else:
+			self.input["value"] = ""
 		if not self.isPlainText:
 			self.previewDiv.element.innerHTML = self.input["value"]
 		self.refreshLangButContainer()
@@ -107,23 +120,20 @@ class TextEditBone( html5.Div ):
 			else:
 				abut["class"].remove("is_active")
 
-	def setSpecialType(self):
-		pass
-	  #maybe documentbone etc..
-
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		isPlainText = "validHtml" in skelStructure[ boneName ].keys() and not skelStructure[ boneName ]["validHtml"]
-		return( TextEditBone( modulName, boneName, readOnly, isPlainText, skelStructure ) )
+		langs = skelStructure[ boneName ]["languages"] if ("languages" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["languages"]) else None
+		descr = skelStructure[ boneName ]["descr"] if "descr" in skelStructure[ boneName ].keys() else None
+		return( TextEditBone( modulName, boneName, readOnly, isPlainText, langs, descrHint=descr ) )
 
 	def unserialize(self, data):
-		self.valuesdict=False
+		self.valuesdict={}
 		if self.boneName in data.keys():
-			if "languages" in self.skelStructure[self.boneName].keys() and self.skelStructure[self.boneName]["languages"]!=None:
-				self.valuesdict={}
-				for lang in self.skelStructure[self.boneName]["languages"]:
-					if lang in data[ self.boneName ].keys():
+			if self.languages:
+				for lang in self.languages:
+					if self.boneName in data.keys() and isinstance(data[self.boneName],dict) and lang in data[ self.boneName ].keys():
 						self.valuesdict[lang]=data[ self.boneName ][lang]
 					else:
 						self.valuesdict[lang]=""

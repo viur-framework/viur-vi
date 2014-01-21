@@ -27,7 +27,7 @@
 /* #Custom Colors
 ================================================== */
 
-@import "../../vi_customizing/static/vi_custom.less";
+@import "vi_custom.less";
 
 /* #ViUR Styles
 ================================================== */
@@ -42,7 +42,7 @@ body {
   background-color: #ddd;
   background-image: url('icons/vi_bg.svg');
   background-repeat:no-repeat;
-  background-position:center 100px;
+  background-position:center 111px;
 }
 a {
   color: #333;
@@ -132,6 +132,7 @@ p { margin-bottom: 10px;}
   float: left;
   margin: -5px 15px 0;
 }
+
 .iconnav {
   position: relative;
   font-size: .8em;
@@ -401,7 +402,7 @@ p { margin-bottom: 10px;}
   overflow: hidden;
 }
 .has_multiple_children .vi_operator {
-  width: 39.15%;
+  width: 40.3%;
   height: 100%;
   position: fixed;
   overflow-y: auto;
@@ -409,8 +410,10 @@ p { margin-bottom: 10px;}
 }
 .vi_operator.is_disabled {
   background-color: #ddd;
-  opacity: .65;
   padding: 70px 1% 45px;
+}
+.vi_operator > .is_disabled {
+  opacity: .7;
 }
 .has_multiple_children .vi_operator:nth-of-type(even) {
   right: 0;
@@ -450,7 +453,7 @@ p { margin-bottom: 10px;}
 ================================================== */
 .vi_operator .actionbar {
   width: 82.3%;
-  min-width: 500px;
+  /*min-width: 500px;*/
   position: fixed;
   margin-top: -105px;
   margin-left: -1%;
@@ -571,6 +574,7 @@ button.icon:before,
 }
 /* Action Icons */
 button.add:before,
+button.new:before,
 .action_add h3:before {
   background-position: -16px 0px;
 }
@@ -702,6 +706,17 @@ button.text.removeformat:before {
 button.text.link:before {
   background-position: -48px -48px;
 }
+button.text.redo:before {
+background-position: -48px -16px;
+}
+button.text.undo:before {
+background-position: -64px -16px;
+}
+button.text.undo {
+  margin-right: 0;
+  border-right: 0;
+}
+
 button.text.image:before {
   background-position: -96px -96px;
 }
@@ -711,6 +726,9 @@ button.text.image, button.text.link {
 }
 button.flipview:before {
   background-position: -64px -48px;
+}
+button.flipview.is_htmlview:before {
+  background-position: -96px -16px;
 }
 button.text.table:before {
   background-position: 0px -112px;
@@ -911,19 +929,19 @@ form fieldset legend a:before {
   background-position: 0px -64px;
 }
 
-form fieldset.default legend a:before,
+/*form fieldset.default legend a:before,*/
 form fieldset:target legend a:before {
   background-position: -16px -64px;
 }
 
 form fieldset.is_incomplete section,
-form fieldset:target section,
-form fieldset.default section {
+form fieldset:target section
+/*form fieldset.default section*/ {
   display: block;
 }
 /*set style of closed slide*/
 form fieldset section,
-form fieldset:target ~ .default section {
+/*form fieldset:target ~ .default section*/ {
   display: none;
   border: 1px solid #eee;
   padding: 3% 3% 5%;
@@ -942,7 +960,7 @@ form fieldset {
 /*Set height of the slide*/
 form fieldset.is_incomplete,
 form fieldset:target,
-form fieldset.default {
+/*form fieldset.default*/ {
   /*min-height: 150px;*/
   height: auto;
   width: 100%;
@@ -1016,6 +1034,17 @@ form label.is_valid:before {
   margin-left: -4px;
   margin-right: 5px;
   background-position: 0px -16px;
+}
+
+.file .fileentry img {
+float: left;
+margin-right: 0px;
+height: 26px;
+width: auto;
+width: 26px;
+border: 1px solid #ccc;
+border-right-width: 0;
+box-shadow: none;
 }
 
 input,
@@ -1207,10 +1236,11 @@ select {
   font-weight: 100;
   color: #444;
 }
-.selectioncontainer {
+.selectioncontainer, .tagcontainer {
   display: inline-block;
 }
-.selectioncontainer button {
+.selectioncontainer button,
+.tagcontainer button {
   margin-right: 15px;
 }
 .selectioncontainer label {
@@ -1230,6 +1260,17 @@ textarea:focus {
   outline: 0;
   border-color: @maincolor;
 }
+
+span.tag {
+  display:block;
+}
+.tag input[type=text] {
+  margin-right:0;
+  border-right-width: 0;
+  margin-bottom: 5px;
+  width: 220px;
+}
+
 select.is_disabled,
 form .treeitem input,
 form .relational input {
@@ -1425,6 +1466,17 @@ td {
   font-weight: normal;
   color: #000000;
 }
+td img {
+  max-height: 80px;
+  width: auto;
+  border: 1px solid #aaa;
+  background: #fff;
+}
+td img ~ span {
+  display: block;
+  font-size: 0.7em;
+  line-height: 1;
+}
 tr:last-child td {
   border-width: 0px 1px 0px 0px;
 }
@@ -1473,6 +1525,20 @@ tr.is_focused:nth-child(even) {background: @focusevencolor;}
 
 tr.is_focused.is_selected:nth-child(odd) {background: @focusselectionoddcolor;}
 tr.is_focused.is_selected:nth-child(even) {background: @focusselectionevencolor;}
+
+.emptynotification {
+  width:20%;
+  margin:0 35% 55px; 
+  text-align: center;
+  padding:10px 5% 10px;
+  border:1px solid #ccc;
+  background:#eee;
+  border-radius: 3px;
+  color:#888;
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.1)
+}
+
+
 /* #vi_forest
 ================================================== */.tree {
   width: 100%;
@@ -1716,9 +1782,8 @@ progress[value]::-webkit-progress-value {
 }
 .hierarchyitem.expaned ol {
   margin-top: 7px;
-  /*border:1px solid #ddd;
-        background:#e5e5e5;*/
-
+  /*border:1px solid #ddd;*/
+  background:#e5e5e5;
 }
 .hierarchyitem.expaned ol li {
   padding-left: 35px;
@@ -1756,9 +1821,9 @@ progress[value]::-webkit-progress-value {
   -webkit-user-select: none;
   user-select: none;
 }
-.insert_before {border-top:2px solid @maincolor;}
-.insert_here {border:1px solid @maincolor; padding:12px 7px;}
-.insert_after {border-bottom:2px solid @maincolor;}
+.hierarchyitem .insert_before {border-top:2px solid @maincolor !important;}
+.hierarchyitem .insert_here {border:1px solid @maincolor !important; padding:12px 7px !important;}
+.hierarchyitem .insert_after {border-bottom:2px solid @maincolor !important;}
 /* #vi_popups and alerts
 ================================================== */.popup {
   position: absolute;
@@ -2095,9 +2160,13 @@ progress[value]::-webkit-progress-value {
 ================================================== */:focus {
   outline: 1px dotted #ccc;
 }
-.is_active {
+/*.is_active {
   background-color: @maincolor;
-}
+}*/
+
+/*.is_active {
+  background-color: @maincolor;
+}*/
 input:disabled,
 input[type="submit"]:disabled,
 button:disabled,
@@ -2112,10 +2181,73 @@ textarea:disabled {
 .has_multiple_children .breadcrumb,
 .has_multiple_children .imageeditor,
 .has_multiple_children .linkeditor {
-  width: 39%;
+  width: 40.3%;
 }
 /* #Media Queries
 ================================================== */
+
+  /* Smaller than 1441px (devices and browsers) */
+  @media only screen and (max-width: 1440px) {
+    .modullist h3 {
+      font-size:0.8em;
+    }
+    .has_multiple_children .vi_operator {
+      width:20%;
+    }
+    .has_multiple_children .vi_operator:nth-of-type(even) {
+      width:60%;   
+    }
+    .has_multiple_children .actionbar,
+    .has_multiple_children .breadcrumb,
+    .has_multiple_children .imageeditor,
+    .has_multiple_children .linkeditor {
+      width: 20%;
+    }
+    .has_multiple_children .vi_operator:nth-of-type(even) .actionbar,
+    .has_multiple_children .vi_operator:nth-of-type(even) .breadcrumb,
+    .has_multiple_children .vi_operator:nth-of-type(even) .imageeditor,
+    .has_multiple_children .vi_operator:nth-of-type(even) .linkeditor {
+      width: 60%;
+    }
+    .has_multiple_children form label, .has_multiple_children form label.text {
+      border: 1px dotted #ddd;
+      text-align: left;
+      width: 93%;
+      padding: 4px 3% 6px;
+    }
+    .selectioncontainer label {
+      border: 1px solid #ccc;
+      width: 193px;
+    }
+    .has_multiple_children form fieldset legend {
+     min-width:0; 
+    }
+    .has_multiple_children form fieldset legend a {
+      font-size:0.8em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;    
+    }
+    .has_multiple_children form fieldset section > div {
+      padding-bottom:0;
+    }
+    .has_multiple_children form fieldset input:disabled, .has_multiple_children form fieldset .preview.is_disabled, .has_multiple_children form fieldset input[type="submit"]:disabled, .has_multiple_children form fieldset button:disabled, .has_multiple_children form fieldset input[type="text"]:disabled, .has_multiple_children form fieldset select:disabled, .has_multiple_children form fieldset textarea:disabled {
+      display:none;
+    }
+    .has_multiple_children form fieldset .file .fileentry label {
+      width: 154px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+      border-top-width: 0;
+      margin-bottom: 0;
+    }
+    .has_multiple_children form fieldset .file .fileentry img {
+      border-top-width: 0;
+    }
+}
+
 /* Smaller than standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
  .vi_manager {width: 56px; border-right:1px solid #bbb; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; transition: all 0.3s ease;}
@@ -2123,7 +2255,18 @@ textarea:disabled {
  .modullist {width:298px;}
  .modullist ul {display:none;}
  .vi_manager:hover .modullist ul {display:block;}
- .vi_viewer {width:900px;margin-left:56px;}
+ .vi_viewer {max-width:900px;margin-left:56px;}
+  .has_multiple_children .actionbar,
+  .has_multiple_children .breadcrumb,
+  .has_multiple_children .imageeditor,
+  .has_multiple_children .linkeditor,
+  .has_multiple_children .vi_operator {width: 20%; max-width:210px;}
+  .has_multiple_children .vi_operator:nth-of-type(even) .actionbar,
+  .has_multiple_children .vi_operator:nth-of-type(even) .breadcrumb,
+  .has_multiple_children .vi_operator:nth-of-type(even) .imageeditor,
+  .has_multiple_children .vi_operator:nth-of-type(even) .linkeditor,
+  .has_multiple_children .vi_operator:nth-of-type(even) {width: 70%;max-width:750px;}
+  .vi_operator .actionbar h3 {display:none;}
 }
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (min-width: 768px) and (max-width: 959px) {

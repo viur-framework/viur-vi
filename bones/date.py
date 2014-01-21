@@ -8,14 +8,44 @@ import re
 class DateViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( DateViewBoneDelegate, self ).__init__()
+		print("NEW DATEBONE DELETEGATE")
 		self.skelStructure = skelStructure
 		self.boneName = boneName
 		self.modulName=modulName
 
 	def render( self, data, field ):
-		if field in data.keys():
-			return( html5.Label(str( data[field])))
-		return( html5.Label("..") )
+		if not self.boneName in self.skelStructure or not data or not field in data.keys():
+			return( html5.Label("..") )
+		structure = self.skelStructure[self.boneName]
+		val = data[field]
+		try:
+			if structure["date"] and structure["time"]:
+				dt = datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
+				span = html5.Span()
+				span["class"].append("datetime")
+				dateSpan = html5.Span()
+				dateSpan["class"].append("date")
+				dateSpan.appendChild( html5.TextNode( dt.strftime("%d.%m.%Y") ))
+				timeSpan = html5.Span()
+				timeSpan["class"].append("time")
+				timeSpan.appendChild( html5.TextNode( dt.strftime("%H:%M:%S") ))
+				span.appendChild(dateSpan)
+				span.appendChild(timeSpan)
+				return( span )
+			elif structure["date"] and not structure["time"]:
+				dt = datetime.strptime( val, "%d.%m.%Y")
+				dateSpan = html5.Span()
+				dateSpan["class"].append("date")
+				dateSpan.appendChild( html5.TextNode( dt.strftime("%d.%m.%Y") ))
+				return( dateSpan )
+			elif not structure["date"] and structure["time"]:
+				dt = datetime.strptime( val, "%H:%M:%S")
+				timeSpan = html5.Span()
+				timeSpan["class"].append("time")
+				timeSpan.appendChild( html5.TextNode( dt.strftime("%H:%M:%S") ))
+				return( timeSpan )
+		except: #Something got wrong parsing the date
+			return( html5.Label(str(val)))
 
 class DateEditBone( html5.Div ):
 	def __init__(self, modulName, boneName,readOnly,date=True, time=True, *args, **kwargs ):

@@ -7,13 +7,16 @@ class Preview( html5.Div ):
 		self.urls = urls
 		self.entry = entry
 		self.modul = modul
+		containerDiv = html5.Div()
+		containerDiv["class"].append("actionbar")
+		self.appendChild(containerDiv)
 		self.urlCb = html5.Select()
-		self.appendChild(self.urlCb)
+		containerDiv.appendChild(self.urlCb)
 		self.previewFrame = html5.Iframe()
 		self.appendChild(self.previewFrame)
 		btnClose = html5.ext.Button("Close", callback=self.doClose)
 		btnClose["class"].append("icon close")
-		self.appendChild(btnClose)
+		containerDiv.appendChild(btnClose)
 		currentUrl = None
 		for name,url in urls.items():
 			o = html5.Option()

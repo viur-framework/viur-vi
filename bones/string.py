@@ -39,82 +39,185 @@ class StringViewBoneDelegate( object ):
 			aspan["Title"]=str(datafield)
 			return (aspan)
 
+def unescapeHtml( html ): #FIXME!
+	return( html )
+
+class Tag( html5.Span ):
+	def __init__(self, tag, isEditMode, *args, **kwargs ):
+		super( Tag, self ).__init__( *args, **kwargs )
+		self["class"].append("tag")
+		self.input = html5.Input()
+		self.input["type"] = "text"
+		self.input["value"] = tag
+		self.appendChild(self.input)
+		delBtn = html5.ext.Button("Delete", self.removeMe)
+		delBtn["class"].append("icon delete tag")
+		self.appendChild(delBtn)
+
+	def removeMe(self, *args, **kwargs):
+		self.parent().removeChild( self )
+
+
 
 class StringEditBone( html5.Div ):
-	def __init__(self, modulName, boneName,readOnly,skelStructure=False,*args, **kwargs ):
+	def __init__(self, modulName, boneName, readOnly, multiple=False, languages=None, *args, **kwargs ):
 		super( StringEditBone,  self ).__init__( *args, **kwargs )
+		self.modulName = modulName
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self.selectedLang=False
-		self.skelStructure=skelStructure
-		self["class"].append("editbonebox")
-		##multilangbone
-		if skelStructure and skelStructure[boneName]["languages"]:
-			if "currentlanguage" in conf and conf["currentlanguage"] in skelStructure[boneName]["languages"]:
-				self.selectedLang=conf["currentlanguage"]
-			elif len(skelStructure[boneName]["languages"])>0:
-				self.selectedLang=skelStructure[boneName]["languages"][0]
-			self.langButContainer=html5.Div()
-			for lang in skelStructure[boneName]["languages"]:
-				abut=html5.ext.Button(lang,self.changeLang)
-				abut["value"]=lang
-				abut["class"].append("choselang")
-				self.langButContainer.appendChild(abut)
-			self.appendChild(self.langButContainer)
-			self.refreshLangButContainer()
-		self.input=html5.Input()
-		self.setSpecialType()
-		if readOnly:
-			self.input["disabled"]=True
-		self.appendChild(self.input)
-
-	def changeLang(self,btn):
-		self.valuesdict[self.selectedLang]=self.input["value"]
-		self.selectedLang=btn["value"]
-		self.input["value"]=self.valuesdict[self.selectedLang]
-		self.refreshLangButContainer()
-
-	def refreshLangButContainer(self):
-		for abut in self.langButContainer._children:
-			if abut["value"]==self.selectedLang:
-				abut["class"].append("is_active")
-			else:
-				abut["class"].remove("is_active")
-
-	def setSpecialType(self):
-		pass
-	  #emailbone may set self.input["type"]="email"
+		self.multiple = multiple
+		self.languages = languages
+		self.boneName = boneName
+		self.currentLanguage = None
+		if self.languages and self.multiple: #FIXME: Multiple and readOnly...
+			self.languagesContainer = html5.Div()
+			self.languagesContainer["languagescontainer"]
+			self.appendChild( self.languagesContainer )
+			self.buttonContainer = html5.Div()
+			self.buttonContainer["class"] = "languagebuttons"
+			self.appendChild( self.buttonContainer )
+			self.langEdits = {}
+			for lang in self.languages:
+				tagContainer = html5.Div()
+				tagContainer["class"].append("tagcontainer")
+				tagContainer["style"]["display"] = "none"
+				btn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
+				btn.lang = lang
+				self.buttonContainer.appendChild( btn )
+				addBtn = html5.ext.Button("New", callback=self.onBtnGenTag)
+				addBtn["class"].append("icon new tag")
+				addBtn.lang = lang
+				tagContainer.appendChild(addBtn)
+				self.languagesContainer.appendChild(tagContainer)
+				self.langEdits[lang] = tagContainer
+			self.setLang(self.languages[0])
+		elif self.languages and not self.multiple:
+			self.languagesContainer = html5.Div()
+			self.languagesContainer["languagescontainer"]
+			self.appendChild( self.languagesContainer )
+			self.buttonContainer = html5.Div()
+			self.buttonContainer["class"] = "languagebuttons"
+			self.appendChild( self.buttonContainer )
+			self.langEdits = {}
+			for lang in self.languages:
+				btn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
+				btn.lang = lang
+				self.buttonContainer.appendChild( btn )
+				inputField = html5.Input()
+				inputField["type"] = "text"
+				inputField["style"]["display"] = "none"
+				self.languagesContainer.appendChild( inputField )
+				self.langEdits[lang] = inputField
+			self.setLang(self.languages[0])
+		elif not self.languages and self.multiple:
+			self.tagContainer = html5.Div()
+			self.tagContainer["class"].append("tagcontainer")
+			self.appendChild(self.tagContainer)
+			addBtn = html5.ext.Button("New", callback=self.onBtnGenTag)
+			addBtn.lang = None
+			addBtn["class"].append("icon new tag")
+			self.tagContainer.appendChild(addBtn)
+		else: #not languages and not multiple:
+			self.input = html5.Input()
+			self.input["type"] = "text"
+			self.appendChild( self.input )
+			self.input["disabled"] = self.readOnly
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( StringEditBone( modulName, boneName, readOnly,skelStructure ) )
-
-	def unserialize(self, data):
-		self.valuesdict=False
-		if self.boneName in data.keys():
-			if "languages" in self.skelStructure[self.boneName].keys() and self.skelStructure[self.boneName]["languages"]!=None:
-				self.valuesdict={}
-				for lang in self.skelStructure[self.boneName]["languages"]:
-					if lang in data[ self.boneName ].keys():
-						self.valuesdict[lang]=data[ self.boneName ][lang]
-					else:
-						self.valuesdict[lang]=""
-				self.input["value"] = self.valuesdict[self.selectedLang]
+		if boneName in skelStructure.keys():
+			if "multiple" in skelStructure[ boneName ].keys():
+				multiple = skelStructure[ boneName ]["multiple"]
 			else:
-				self.input["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
+				multiple = False
+			if "languages" in skelStructure[ boneName ].keys():
+				languages = skelStructure[ boneName ]["languages"]
+			else:
+				languages = None
+		return( StringEditBone( modulName, boneName, readOnly, multiple=multiple, languages=languages ) )
+
+
+	def onLangBtnClicked(self, btn):
+		self.setLang( btn.lang )
+
+	def setLang(self, lang):
+		if self.currentLanguage:
+			self.langEdits[ self.currentLanguage ]["style"]["display"] = "none"
+		self.currentLanguage = lang
+		self.langEdits[ self.currentLanguage ]["style"]["display"] = ""
+
+	def onBtnGenTag(self, btn):
+		self.genTag( "", lang=btn.lang )
+
+
+	def unserialize( self, data ):
+		if not self.boneName in data.keys():
+			return
+		data = data[ self.boneName ]
+		if not data:
+			return
+		if self.languages and self.multiple:
+			assert isinstance(data,dict)
+			for lang in self.languages:
+				if lang in data.keys():
+					val = data[ lang ]
+					if isinstance( val, str ):
+						self.genTag( unescapeHtml(val), lang=lang )
+					elif isinstance( val, list ):
+						for v in val:
+							self.genTag( unescapeHtml(v), lang=lang )
+		elif self.languages and not self.multiple:
+			assert isinstance(data,dict)
+			for lang in self.languages:
+				if lang in data.keys() and data[ lang ]:
+					self.langEdits[ lang ]["value"] = unescapeHtml(str(data[ lang ]))
+				else:
+					self.langEdits[ lang ]["value"] = ""
+		elif not self.languages and self.multiple:
+			if isinstance( data,list ):
+				for tagStr in data:
+					self.genTag( unescapeHtml(tagStr) )
+			else:
+				self.genTag( unescapeHtml(data) )
+		else:
+			self.input["value"] = unescapeHtml(str(data))
 
 	def serializeForPost(self):
-		if self.selectedLang:
-			self.valuesdict[self.selectedLang]=self.input["value"]
-			return( { self.boneName: self.valuesdict } )
-		else:
-			return( { self.boneName: self.input["value"] } )
+		res = {}
+		if self.languages and self.multiple:
+			for lang in self.languages:
+				res[ "%s.%s" % (self.boneName, lang ) ] = []
+				for child in self.langEdits[ lang ]._children:
+					if isinstance( child, Tag ):
+						res[ "%s.%s" % (self.boneName, lang ) ].append( child.input["value"] )
+		elif self.languages and not self.multiple:
+			for lang in self.languages:
+				txt = self.langEdits[ lang ]["value"]
+				if txt:
+					res[ "%s.%s" % (self.boneName, lang) ] = txt
+		elif not self.languages and self.multiple:
+			res[ self.boneName ] = []
+			for child in self.tagContainer._children:
+				if isinstance( child, Tag ):
+					res[ self.boneName ].append( child.input["value"] )
+		elif not self.languages and not self.multiple:
+			res[ self.boneName ] = self.input["value"]
+		return( res )
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
-def CheckForStringBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+	def genTag( self, tag, editMode=False, lang=None ):
+		tag =  Tag( tag, editMode )
+		if lang is not None:
+			self.langEdits[ lang ].appendChild( tag )
+		else:
+			self.tagContainer.appendChild( tag )
+
+
+
+def CheckForStringBone(  modulName, boneName, skelStucture, *args. **kwargs ):
 	return( str(skelStucture[boneName]["type"]).startswith("str") )
 
 #Register this Bone in the global queue

@@ -75,6 +75,15 @@ class RelationalSingleSelectionBone( html5.Div ):
 		#DOM.appendChild( self.getElement(), self.selectBtn.getElement())
 		#self.selectBtn.onAttach()
 
+	def _setDisabled(self, disable):
+		"""
+			Reset the is_active flag (if any)
+		"""
+		super(RelationalSingleSelectionBone, self)._setDisabled( disable )
+		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
+			self.parent()["class"].remove("is_active")
+
+
 	@classmethod
 	def fromSkelStructure( cls, modulName, boneName, skelStructure ):
 		"""
@@ -142,12 +151,12 @@ class RelationalSingleSelectionBone( html5.Div ):
 		currentSelector = ListWidget( self.destModul, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
+		self.parent()["class"].append("is_active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""
 			Merges the selection made in the ListWidget into our value(s)
 		"""
-		print("GOT NEW SELECTION", selection)
 		if selection:
 			self.setSelection( selection[0] )
 		else:
@@ -236,6 +245,14 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.selectBtn["class"].append("select")
 		self.appendChild( self.selectBtn )
 
+	def _setDisabled(self, disable):
+		"""
+			Reset the is_active flag (if any)
+		"""
+		super(RelationalMultiSelectionBone, self)._setDisabled( disable )
+		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
+			self.parent()["class"].remove("is_active")
+
 
 	@classmethod
 	def fromSkelStructure( cls, modulName, boneName, skelStructure ):
@@ -291,6 +308,7 @@ class RelationalMultiSelectionBone( html5.Div ):
 		currentSelector = ListWidget( self.destModul, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
+		self.parent()["class"].append("is_active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""
