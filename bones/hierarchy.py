@@ -45,15 +45,15 @@ class HierarchySingleSelectionBone( RelationalSingleSelectionBone ):
 
 
 
-def CheckForHierarchyBoneSingleSelection( modulName, boneName, skelStructure ):
+def CheckForHierarchyBoneSingleSelection( modulName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
 	return CheckForHierarchyBone( modulName, boneName, skelStructure ) and not isMultiple
 
-def CheckForHierarchyBoneMultiSelection( modulName, boneName, skelStructure ):
+def CheckForHierarchyBoneMultiSelection( modulName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
 	return CheckForHierarchyBone( modulName, boneName, skelStructure ) and isMultiple
 
-def CheckForHierarchyBone(  modulName, boneName, skelStucture ):
+def CheckForHierarchyBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"].startswith("hierarchy.") )
 
 #Register this Bone in the global queue

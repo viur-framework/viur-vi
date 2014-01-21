@@ -48,7 +48,7 @@ class NumericEditBone( html5.Input ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
-def CheckForNumericBone(  modulName, boneName, skelStucture ):
+def CheckForNumericBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="numeric" )
 
 #Register this Bone in the global queue

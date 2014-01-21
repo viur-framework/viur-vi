@@ -69,7 +69,7 @@ class SelectMultiEditBone( html5.Div ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
-def CheckForSelectMultiBone(  modulName, boneName, skelStucture ):
+def CheckForSelectMultiBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="selectmulti" )
 
 #Register this Bone in the global queue

@@ -148,7 +148,7 @@ class TextEditBone( html5.Div ):
 				self.openTxt()
 
 
-def CheckForTextBone(  modulName, boneName, skelStucture ):
+def CheckForTextBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="text" )
 
 #Register this Bone in the global queue

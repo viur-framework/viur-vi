@@ -45,7 +45,7 @@ class BooleanEditBone( html5.Input ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
-def CheckForBooleanBone(  modulName, boneName, skelStucture ):
+def CheckForBooleanBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="bool" )
 
 #Register this Bone in the global queue

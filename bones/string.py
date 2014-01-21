@@ -114,7 +114,7 @@ class StringEditBone( html5.Div ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
-def CheckForStringBone(  modulName, boneName, skelStucture ):
+def CheckForStringBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( str(skelStucture[boneName]["type"]).startswith("str") )
 
 #Register this Bone in the global queue

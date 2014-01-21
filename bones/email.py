@@ -46,7 +46,7 @@ class EmailEditBone( strBone.StringEditBone ):
 	def setSpecialType(self):
 		self.input["type"]="email"
 
-def CheckForEmailBone(  modulName, boneName, skelStucture ):
+def CheckForEmailBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="str.email" )
 
 #Register this Bone in the global queue

@@ -58,7 +58,7 @@ class SelectOneEditBone( html5.Select ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
-def CheckForSelectOneBone(  modulName, boneName, skelStucture ):
+def CheckForSelectOneBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="selectone" )
 
 #Register this Bone in the global queue

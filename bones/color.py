@@ -58,7 +58,7 @@ class ColorEditBone( html5.Input ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
-def CheckForColorBone(  modulName, boneName, skelStucture ):
+def CheckForColorBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="color" )
 
 #Register this Bone in the global queue

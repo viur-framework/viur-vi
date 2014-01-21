@@ -80,7 +80,7 @@ class DateEditBone( html5.Div ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
-def CheckForDateBone(  modulName, boneName, skelStucture ):
+def CheckForDateBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="date" )
 
 #Register this Bone in the global queue

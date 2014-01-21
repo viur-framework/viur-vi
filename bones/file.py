@@ -200,15 +200,15 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 
 
-def CheckForFileBoneSingleSelection( modulName, boneName, skelStructure ):
+def CheckForFileBoneSingleSelection( modulName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
 	return CheckForFileBone( modulName, boneName, skelStructure ) and not isMultiple
 
-def CheckForFileBoneMultiSelection( modulName, boneName, skelStructure ):
+def CheckForFileBoneMultiSelection( modulName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
 	return CheckForFileBone( modulName, boneName, skelStructure ) and isMultiple
 
-def CheckForFileBone(  modulName, boneName, skelStucture ):
+def CheckForFileBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	#print("CHECKING FILE BONE", skelStucture[boneName]["type"])
 	return( skelStucture[boneName]["type"].startswith("treeitem.file") )
 

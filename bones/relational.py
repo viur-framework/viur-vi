@@ -328,15 +328,15 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.selectionDiv.removeChild( entry )
 		self.entries.remove( entry )
 
-def CheckForRelationalBoneSingleSelection( modulName, boneName, skelStructure ):
+def CheckForRelationalBoneSingleSelection( modulName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
 	return CheckForRelationalBone( modulName, boneName, skelStructure ) and not isMultiple
 
-def CheckForRelationalBoneMultiSelection( modulName, boneName, skelStructure ):
+def CheckForRelationalBoneMultiSelection( modulName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
 	return CheckForRelationalBone( modulName, boneName, skelStructure ) and isMultiple
 
-def CheckForRelationalBone(  modulName, boneName, skelStucture ):
+def CheckForRelationalBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"].startswith("relational.") )
 
 #Register this Bone in the global queue
