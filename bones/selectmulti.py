@@ -41,6 +41,8 @@ class SelectMultiEditBone( html5.Div ):
 			aspan.element.innerHTML=value
 			alabel.appendChild(aspan)
 			self.appendChild(alabel)
+		if self.readOnly:
+			self["disabled"] = True
 
 
 	@staticmethod

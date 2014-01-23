@@ -72,6 +72,8 @@ class RelationalSingleSelectionBone( html5.Div ):
 			remBtn["class"].append("icon")
 			remBtn["class"].append("cancel")
 			self.appendChild( remBtn )
+		if self.readOnly:
+			self["disabled"] = True
 		#DOM.appendChild( self.getElement(), self.selectBtn.getElement())
 		#self.selectBtn.onAttach()
 
@@ -206,6 +208,7 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		remBtn["class"].append("cancel")
 		self.appendChild( remBtn )
 
+
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry( self )
 
@@ -244,6 +247,8 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.selectBtn["class"].append("icon")
 		self.selectBtn["class"].append("select")
 		self.appendChild( self.selectBtn )
+		if self.readOnly:
+			self["disabled"] = True
 
 	def _setDisabled(self, disable):
 		"""

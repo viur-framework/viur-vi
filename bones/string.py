@@ -121,7 +121,8 @@ class StringEditBone( html5.Div ):
 			self.input = html5.Input()
 			self.input["type"] = "text"
 			self.appendChild( self.input )
-			self.input["disabled"] = self.readOnly
+		if self.readOnly:
+			self["disabled"] = True
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
@@ -217,7 +218,7 @@ class StringEditBone( html5.Div ):
 
 
 
-def CheckForStringBone(  modulName, boneName, skelStucture, *args. **kwargs ):
+def CheckForStringBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( str(skelStucture[boneName]["type"]).startswith("str") )
 
 #Register this Bone in the global queue

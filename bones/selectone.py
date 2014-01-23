@@ -31,6 +31,8 @@ class SelectOneEditBone( html5.Select ):
 			aoption["value"]=key
 			aoption.element.innerHTML=value
 			self.appendChild(aoption)
+		if self.readOnly:
+			self["disabled"] = True
 
 
 	@staticmethod

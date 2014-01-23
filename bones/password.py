@@ -20,6 +20,8 @@ class PasswordEditBone( html5.Div ):
 		self.appendChild(lbl)
 		self.secondinput["name"]=modulName+"_"+boneName+"_reenterpwd"
 		self.appendChild(self.secondinput)
+		if self.readOnly:
+			self["disabled"] = True
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):

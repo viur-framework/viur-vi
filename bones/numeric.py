@@ -27,6 +27,8 @@ class NumericEditBone( html5.Input ):
 			self["max"]=_max
 		if precision:
 			self["step"]=precision
+		if self.readOnly:
+			self["disabled"] = True
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):

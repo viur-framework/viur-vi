@@ -65,6 +65,8 @@ class DateEditBone( html5.Div ):
 			self.timeinput["style"]["float"]="left"
 			self.timeinput["style"]["width"]="70px"
 			self.appendChild(self.timeinput)
+		if self.readOnly:
+			self["disabled"] = True
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):

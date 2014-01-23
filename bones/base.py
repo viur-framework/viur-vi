@@ -25,11 +25,8 @@ class BaseEditBone( html5.Input ):
 		Base edit widget for everything not handled separately.
 	"""
 	def setParams(self):
-		return
 		if self.readOnly:
-			self.lineEdit.setReadOnly( True )
-		else:
-			self.lineEdit.setReadOnly( False )
+			self["disabled"] = True
 
 	def __init__(self, modulName, boneName, readOnly, *args, **kwargs ):
 		super( BaseEditBone,  self ).__init__( *args, **kwargs )

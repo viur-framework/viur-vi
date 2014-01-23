@@ -74,6 +74,8 @@ class TextEditBone( html5.Div ):
 			openEditorBtn["class"].append("icon")
 			self.appendChild(openEditorBtn )
 		self.sinkEvent("onClick")
+		if self.readOnly:
+			self["disabled"] = True
 
 	def _setDisabled(self, disable):
 		"""
