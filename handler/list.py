@@ -83,7 +83,7 @@ class ListHandlerPreview( ListHandler ):
 
 	@staticmethod
 	def canHandle( modulName, modulInfo ):
-		return( True )
+		return( modulInfo["handler"]=="list" or modulInfo["handler"].startswith("list."))
 
 
 HandlerClassSelector.insert( 3, ListHandlerPreview.canHandle, ListHandlerPreview )
