@@ -152,11 +152,13 @@ class ListWidget( html5.Div ):
 			boneInfoList.append( boneInfo )
 		self.table.setHeader( [x["descr"] for x in boneInfoList])
 		self.table.setShownFields( fields )
+		rendersDict = {}
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
-			self.table.setCellRender( boneName, delegateFactory )
+			rendersDict[ boneName ] = delegateFactory
 			boneInfoList.append( boneInfo )
+		self.table.setCellRenders( rendersDict )
 		self._tableHeaderIsValid = True
 
 	def getFields(self):

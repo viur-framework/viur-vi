@@ -486,6 +486,21 @@ class DataTable( html5.Div ):
 			self._cellRender[ field ] = render
 		self.rebuildTable()
 
+	def setCellRenders(self, renders ):
+		"""
+			Like setCellRender, but sets multiple renders at one.
+			Much faster than calling setCellRender repeatedly.
+		"""
+		assert isinstance( renders, dict )
+		for field, render in renders.items():
+			if render is None:
+				if field in self._cellRender.keys():
+					del self._cellRender[ field ]
+			else:
+				assert "render" in dir(render), "The render must provide a 'render' method"
+				self._cellRender[ field ] = render
+		self.rebuildTable()
+
 	def activateCurrentSelection(self):
 		"""
 			Emits the selectionActivated event if there's currently a selection

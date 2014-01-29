@@ -238,25 +238,30 @@ class SelectFieldsPopup( html5.ext.Popup ):
 		super( SelectFieldsPopup, self ).__init__( title="Select fields", *args, **kwargs )
 		self["class"].append("selectfields")
 		self.listWdg = listWdg
-		for key, bone in self.listWdg._structure:
-			chkBox = html5.Input()
-			chkBox["type"] = "checkbox"
-			chkBox["value"] = key
-			self.appendChild(chkBox)
-			if key in self.listWdg.getFields():
-				chkBox["checked"] = True
-			lbl = html5.Label(bone["descr"],forElem=chkBox)
-			self.appendChild(lbl)
-		applyBtn = html5.ext.Button("Apply", callback=self.doApply)
-		self.appendChild(applyBtn)
+		if self.listWdg._structure:
+			for key, bone in self.listWdg._structure:
+				chkBox = html5.Input()
+				chkBox["type"] = "checkbox"
+				chkBox["value"] = key
+				self.appendChild(chkBox)
+				if key in self.listWdg.getFields():
+					chkBox["checked"] = True
+				lbl = html5.Label(bone["descr"],forElem=chkBox)
+				self.appendChild(lbl)
+		else:
+			self.close()
+			return
+		self.applyBtn = html5.ext.Button("Apply", callback=self.doApply)
+		self.appendChild(self.applyBtn)
 
 
 	def doApply(self, *args, **kwargs):
+		self.applyBtn["class"].append("is_loading")
+		self.applyBtn["disabled"] = True
 		res = []
 		for c in self._children:
 			if isinstance(c,html5.Input) and c["checked"]:
 				res.append( c["value"] )
-		print("___NEW FIELDS", res)
 		self.listWdg.setFields( res )
 		self.close()
 
