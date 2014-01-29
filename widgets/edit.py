@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import html5
+from html5.a import A
+from html5.form import Fieldset
 from network import NetworkService
 from config import conf
 from priorityqueue import editBoneSelector
@@ -177,12 +179,14 @@ class EditWidget( html5.Div ):
 			if not cat in fieldSets.keys():
 				fs = html5.Fieldset()
 				fs["class"] = cat
-				fs["id"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
+				if cat=="default":
+					fs["class"].append("active")
+				#fs["id"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
 				fs["name"] = cat
 				legend = html5.Legend()
-				legend["id"] = "vi_%s_%s_%s_%s_legend" % (self.editIdx,self.modul, "edit" if self.key else "add", cat)
-				fshref = html5.A()
-				fshref["href"] = "#vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
+				#legend["id"] = "vi_%s_%s_%s_%s_legend" % (self.editIdx,self.modul, "edit" if self.key else "add", cat)
+				fshref = fieldset_A()
+				#fshref["href"] = "#vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
 				fshref.appendChild(html5.TextNode(cat) )
 				legend.appendChild( fshref )
 				fs.appendChild(legend)
@@ -233,6 +237,10 @@ class EditWidget( html5.Div ):
 			#self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget
+		if len(fieldSets)==1:
+			for (k,v) in fieldSets.items():
+				if not "active" in v["class"]:
+					v["class"].append("active")
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort( key=lambda x:x[0])
 		for k,v in tmpList:
@@ -269,3 +277,31 @@ class EditWidget( html5.Div ):
 				return
 		self.save( res )
 
+class fieldset_A(A):
+	_baseClass = "a"
+
+	def __init__(self, *args, **kwargs):
+		super(fieldset_A,self).__init__(*args, **kwargs )
+		self.sinkEvent("onClick")
+
+	def onClick(self,event):
+		for element in self.parent().parent().parent()._children:
+			if isinstance(element,Fieldset):
+				if utils.doesEventHitWidgetOrChildren( event, element ):
+					if not "active" in element["class"]:
+						element["class"].append("active")
+						element["class"].remove("inactive")
+					else:
+						if not "inactive" in element["class"]:
+							element["class"].append("inactive")
+						element["class"].remove("active")
+				else:
+					if not "inactive" in element["class"] and isinstance(element,fieldset_A):
+						element["class"].append("inactive")
+					element["class"].remove("active")
+					if len(element._children)>0 and isinstance(element,fieldset_A) and hasattr(element._children[1],"_children"): #subelement crawler
+						for sube in element._children[1]._children:
+							if isinstance(sube,fieldset_A):
+								if not "inactive" in sube["class"]:
+									sube.parent["class"].append("inactive")
+								sube["class"].remove("active")
