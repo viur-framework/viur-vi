@@ -137,11 +137,12 @@ class ListWidget( html5.Div ):
 		if not self._structure:
 			self._tableHeaderIsValid = False
 			return
-		self.columns = fields
 		boneInfoList = []
 		tmpDict = {}
 		for key, bone in self._structure:
 			tmpDict[ key ] = bone
+		fields = [x for x in fields if x in tmpDict.keys()]
+		self.columns = fields
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
