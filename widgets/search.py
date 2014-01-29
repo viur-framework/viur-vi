@@ -13,15 +13,21 @@ class Search( html5.Div ):
 		self.searchInput = html5.Input()
 		self.searchInput["type"] = "text"
 		self.appendChild(self.searchInput)
-		btn = html5.ext.Button("Search", callback=self.doSearch)
-		self.appendChild(btn)
+		self.btn = html5.ext.Button("Search", callback=self.doSearch)
+		self.appendChild(self.btn)
 		self.sinkEvent("onKeyDown")
 
 	def doSearch(self, *args, **kwargs):
 		self.startSearchEvent.fire(self.searchInput["value"] or None)
+		if not "is_loading" in self.btn["class"]:
+			self.btn["class"].append("is_loading")
 
 	def onKeyDown(self, event):
 		if isReturn(event.keyCode):
 			self.doSearch()
 			event.preventDefault()
 			event.stopPropagation()
+
+	def resetLoadingState(self):
+		if "is_loading" in self.btn["class"]:
+			self.btn["class"].remove("is_loading")

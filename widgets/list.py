@@ -107,6 +107,8 @@ class ListWidget( html5.Div ):
 			Pass the rows received to the datatable.
 			@param req: The network request that succeed.
 		"""
+		self.actionBar.resetLoadingState()
+		self.search.resetLoadingState()
 		data = NetworkService.decode( req )
 		if data["structure"] is None:
 			if self.table.getRowCount():
