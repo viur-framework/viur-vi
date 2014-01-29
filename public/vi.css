@@ -10,10 +10,6 @@
 /* light red */
 /* highlight red */
 /* Icon-Grey: #939393;*/
-/* #Custom Colors
-================================================== */
-/* #Custom Colors
-================================================== */
 /* #ViUR Styles
 ================================================== */
 body {
@@ -252,6 +248,7 @@ p {
 }
 .modullist {
   margin: 45px 0 50px;
+  overflow: hidden;
   /*min-width:298px;*/
 
 }

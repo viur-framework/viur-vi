@@ -49,10 +49,8 @@ class DataWrapper(dict):
 		super(DataWrapper,self).__init__()
 		self.targetWidget = targetWidget
 		alldata =targetWidget.element
-		for data in dir(alldata):
-			if re.search("^data-",data):
-				val=targetWidget.element.getAttribute( "data-"+re.search("^data-",data).string())
-				dict.__setitem__(self,data,val)
+		for data in dir(alldata.dataset):
+			dict.__setitem__(self,data,getattr(alldata.dataset,data))
 
 	def __setitem__(self,key,value):
 		dict.__setitem__(self,key,value)

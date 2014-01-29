@@ -5,6 +5,7 @@ from widgets import ListWidget
 from config import conf
 from pane import Pane
 from widgets.edit import EditWidget
+from widgets.list import ListWidgetPreview
 
 
 class ListHandler( Pane ):
@@ -65,6 +66,27 @@ class ListHandler( Pane ):
 				columns = self.modulInfo["columns"]
 			self.addWidget( ListWidget( self.modulName, filter=filter, columns=columns ) )
 		super( ListHandler, self ).onClick( *args, **kwargs )
+
+
+class ListHandlerPreview( ListHandler ):
+
+	def onClick(self, *args, **kwargs ):
+		if not len(self.widgetsDomElm._children):
+			filter = None
+			columns = None
+			if "filter" in self.modulInfo.keys():
+				filter = self.modulInfo["filter"]
+			if "columns" in self.modulInfo.keys():
+				columns = self.modulInfo["columns"]
+			self.addWidget( ListWidgetPreview( self.modulName, filter=filter, columns=columns ) ) ##load alternative Widget
+		super( ListHandlerPreview, self ).onClick( *args, **kwargs )
+
+	@staticmethod
+	def canHandle( modulName, modulInfo ):
+		return( True )
+
+
+HandlerClassSelector.insert( 3, ListHandlerPreview.canHandle, ListHandlerPreview )
 
 
 HandlerClassSelector.insert( 1, ListHandler.canHandle, ListHandler )

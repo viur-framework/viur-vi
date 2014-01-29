@@ -137,12 +137,11 @@ class ListWidget( html5.Div ):
 		if not self._structure:
 			self._tableHeaderIsValid = False
 			return
+		self.columns = fields
 		boneInfoList = []
 		tmpDict = {}
 		for key, bone in self._structure:
 			tmpDict[ key ] = bone
-		fields = [x for x in fields if x in tmpDict.keys()]
-		self.columns = fields
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
@@ -169,3 +168,45 @@ class ListWidget( html5.Div ):
 
 		"""
 		self.table.activateCurrentSelection()
+
+class ListWidgetPreview(html5.Div):
+	def __init__( self, modul, filter=None, columns=None, isSelector=False, *args, **kwargs ):
+		super( ListWidgetPreview, self ).__init__( )
+		self.modul = modul
+
+		self.modullist = ListWidget( modul, filter,columns,isSelector,args,kwargs )
+		self.modullist.selectionChangedEvent.register( self )
+
+		self.appendChild( self.modullist )
+		self.viewwrap = html5.Div()
+		self.itemview= html5.Ul()
+
+		self.viewwrap.appendChild(self.itemview)
+		self.appendChild(self.viewwrap)
+
+	def onSelectionChanged(self,table,row):
+		if self.modullist._structure:
+			self.modullist["class"]="halfview"
+			for c in self.itemview._children[:]:
+				self.itemview.removeChild(c)
+			tmpDict = {}
+			for key, bone in self.modullist._structure:
+				tmpDict[ key ] = bone
+
+			for key, bone in self.modullist._structure:
+				self.ali= html5.Li()
+				self.ali["class"]=[self.modul,"type_"+bone["type"],"bone_"+key]
+				self.adl= html5.Dl()
+
+				self.adt=html5.Dt()
+				self.adt.appendChild(html5.TextNode(bone["descr"]))
+
+				self.aadd=html5.Dd()
+				delegateFactory = viewDelegateSelector.select( self.modul, key, tmpDict )( self.modul, key, tmpDict )
+				self.aadd.appendChild(delegateFactory.render(row[0],key))
+
+				self.adl.appendChild(self.adt)
+				self.adl.appendChild(self.aadd)
+				self.ali.appendChild(self.adl)
+
+				self.itemview.appendChild(self.ali)
