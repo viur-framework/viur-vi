@@ -42,7 +42,7 @@ class ListWidget( html5.Div ):
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if isSelector else []))
+		self.actionBar.setActions(["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if isSelector else [])+["reload"])
 		if isSelector:
 			self.selectionActivatedEvent.register( self )
 		self.emptyNotificationDiv = html5.Div()

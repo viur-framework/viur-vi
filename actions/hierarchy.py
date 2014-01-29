@@ -161,3 +161,25 @@ class DeleteAction( html5.ext.Button ):
 		pass
 
 actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
+
+class ReloadAction( html5.ext.Button ):
+	"""
+		Allows adding an entry in a list-modul.
+	"""
+	def __init__(self, *args, **kwargs):
+		super( ReloadAction, self ).__init__( "Reload", *args, **kwargs )
+		self["class"] = "icon reload hierarchy"
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		correctAction = actionName=="reload"
+		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
+		return(  correctAction and correctHandler )
+
+	def onClick(self, sender=None):
+		NetworkService.notifyChange( self.parent().parent().modul )
+
+	def resetLoadingState(self):
+		pass
+
+actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )

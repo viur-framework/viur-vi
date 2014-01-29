@@ -274,3 +274,24 @@ class SelelectFieldsAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, SelelectFieldsAction.isSuitableFor, SelelectFieldsAction )
 
+class ReloadAction( html5.ext.Button ):
+	"""
+		Allows adding an entry in a list-modul.
+	"""
+	def __init__(self, *args, **kwargs):
+		super( ReloadAction, self ).__init__( "Reload", *args, **kwargs )
+		self["class"] = "icon reload list"
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		correctAction = actionName=="reload"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		return(  correctAction and correctHandler )
+
+	def onClick(self, sender=None):
+		NetworkService.notifyChange( self.parent().parent().modul )
+
+	def resetLoadingState(self):
+		pass
+
+actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )

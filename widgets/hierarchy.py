@@ -214,7 +214,7 @@ class HierarchyWidget( html5.Div ):
 		##Proxy some events and functions of the original table
 		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 		#	setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["add","edit","delete"]+(["select","close"] if isSelector else []))
+		self.actionBar.setActions(["add","edit","delete"]+(["select","close"] if isSelector else [])+["reload"])
 		self.sinkEvent("onDrop","onDragOver")
 
 		#HTTPRequest().asyncGet("/admin/%s/list" % self.modul, self)

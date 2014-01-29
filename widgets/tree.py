@@ -254,7 +254,7 @@ class TreeWidget( html5.Div ):
 
 	nodeWidget = NodeWidget
 	leafWidget = LeafWidget
-	defaultActions = ["add.node", "add.leaf", "edit", "delete"]
+	defaultActions = ["add.node", "add.leaf", "edit", "delete", "reload"]
 
 	def __init__( self, modul, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
 		"""
