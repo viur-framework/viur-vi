@@ -336,6 +336,7 @@ class DataTable( html5.Div ):
 		self._model.append( obj )
 		self._renderObject( obj )
 		self._isAjaxLoading = False
+		self.testIfNextBatchNeededImmediately()
 
 	def extend(self, objList):
 		"""
@@ -349,6 +350,24 @@ class DataTable( html5.Div ):
 			self._model.append( obj )
 			self._renderObject( obj, tableIsPrepared=True )
 			self._isAjaxLoading = False
+		self.testIfNextBatchNeededImmediately()
+
+	def testIfNextBatchNeededImmediately(self):
+		"""
+			Test if we display enough entries so that our contents are scrollable.
+			Otherwise, we'll never request a second batch
+		"""
+		sumHeight = 0
+		for c in self.table._children:
+			if "clientHeight" in dir(c.element):
+				sumHeight += c.element.clientHeight
+			else:
+				print( c )
+		if not sumHeight>int(self["style"]["max-height"][:-2]) and not self._isAjaxLoading:
+			if self._dataProvider:
+				self._isAjaxLoading = True
+				self._dataProvider.onNextBatchNeeded()
+
 
 	def remove(self, objOrIndex):
 		"""

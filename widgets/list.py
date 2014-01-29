@@ -18,7 +18,7 @@ class ListWidget( html5.Div ):
 		to this table.
 
 	"""
-	_batchSize = 20 #How many row we fetch at once
+	_batchSize = 20  #How many row we fetch at once
 	def __init__( self, modul, filter=None, columns=None, isSelector=False, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
@@ -129,9 +129,9 @@ class ListWidget( html5.Div ):
 					if boneInfo["visible"]:
 						self.columns.append( boneName )
 			self.setFields( self.columns )
-		self.table.extend( data["skellist"] )
 		if "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
+		self.table.extend( data["skellist"] )
 
 	def setFields(self, fields):
 		if not self._structure:
