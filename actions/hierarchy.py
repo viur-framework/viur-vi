@@ -118,7 +118,7 @@ class DeleteAction( html5.ext.Button ):
 		super(DeleteAction,self).onDetach()
 
 	def onSelectionChanged(self, table, selection ):
-		if len(selection)>0:
+		if selection:
 			if self.isDisabled:
 				self.isDisabled = False
 			self["disabled"]= False
