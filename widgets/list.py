@@ -34,6 +34,14 @@ class ListWidget( html5.Div ):
 		self._currentSearchStr = None
 		self._structure = None
 		self.columns = []
+		if isSelector and filter is None and columns is None:
+			#Try to select a reasonable set of cols / filter
+			if conf["modules"] and modul in conf["modules"].keys():
+				tmpData = conf["modules"][modul]
+				if "columns" in tmpData.keys():
+					columns = tmpData["columns"]
+				if "filter" in tmpData.keys():
+					filter = tmpData["filter"]
 		self.table.setDataProvider(self)
 		self.filter = filter.copy() if isinstance(filter,dict) else {}
 		self.columns = columns[:] if isinstance(columns,list) else []
