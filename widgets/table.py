@@ -336,6 +336,7 @@ class DataTable( html5.Div ):
 		self._model.append( obj )
 		self._renderObject( obj )
 		self._isAjaxLoading = False
+		self.testIfNextBatchNeededImmediately()
 
 	def extend(self, objList):
 		"""
@@ -349,6 +350,24 @@ class DataTable( html5.Div ):
 			self._model.append( obj )
 			self._renderObject( obj, tableIsPrepared=True )
 			self._isAjaxLoading = False
+		self.testIfNextBatchNeededImmediately()
+
+	def testIfNextBatchNeededImmediately(self):
+		"""
+			Test if we display enough entries so that our contents are scrollable.
+			Otherwise, we'll never request a second batch
+		"""
+		sumHeight = 0
+		for c in self.table._children:
+			if "clientHeight" in dir(c.element):
+				sumHeight += c.element.clientHeight
+			else:
+				print( c )
+		if not sumHeight>int(self["style"]["max-height"][:-2]) and not self._isAjaxLoading:
+			if self._dataProvider:
+				self._isAjaxLoading = True
+				self._dataProvider.onNextBatchNeeded()
+
 
 	def remove(self, objOrIndex):
 		"""
@@ -465,6 +484,21 @@ class DataTable( html5.Div ):
 		else:
 			assert "render" in dir(render), "The render must provide a 'render' method"
 			self._cellRender[ field ] = render
+		self.rebuildTable()
+
+	def setCellRenders(self, renders ):
+		"""
+			Like setCellRender, but sets multiple renders at one.
+			Much faster than calling setCellRender repeatedly.
+		"""
+		assert isinstance( renders, dict )
+		for field, render in renders.items():
+			if render is None:
+				if field in self._cellRender.keys():
+					del self._cellRender[ field ]
+			else:
+				assert "render" in dir(render), "The render must provide a 'render' method"
+				self._cellRender[ field ] = render
 		self.rebuildTable()
 
 	def activateCurrentSelection(self):

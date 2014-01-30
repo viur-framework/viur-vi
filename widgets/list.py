@@ -18,7 +18,7 @@ class ListWidget( html5.Div ):
 		to this table.
 
 	"""
-	_batchSize = 20 #How many row we fetch at once
+	_batchSize = 20  #How many row we fetch at once
 	def __init__( self, modul, filter=None, columns=None, isSelector=False, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
@@ -42,7 +42,7 @@ class ListWidget( html5.Div ):
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if isSelector else []))
+		self.actionBar.setActions(["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if isSelector else [])+["reload"])
 		if isSelector:
 			self.selectionActivatedEvent.register( self )
 		self.emptyNotificationDiv = html5.Div()
@@ -107,6 +107,8 @@ class ListWidget( html5.Div ):
 			Pass the rows received to the datatable.
 			@param req: The network request that succeed.
 		"""
+		self.actionBar.resetLoadingState()
+		self.search.resetLoadingState()
 		data = NetworkService.decode( req )
 		if data["structure"] is None:
 			if self.table.getRowCount():
@@ -129,19 +131,20 @@ class ListWidget( html5.Div ):
 					if boneInfo["visible"]:
 						self.columns.append( boneName )
 			self.setFields( self.columns )
-		self.table.extend( data["skellist"] )
 		if "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
+		self.table.extend( data["skellist"] )
 
 	def setFields(self, fields):
 		if not self._structure:
 			self._tableHeaderIsValid = False
 			return
-		self.columns = fields
 		boneInfoList = []
 		tmpDict = {}
 		for key, bone in self._structure:
 			tmpDict[ key ] = bone
+		fields = [x for x in fields if x in tmpDict.keys()]
+		self.columns = fields
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
@@ -149,11 +152,13 @@ class ListWidget( html5.Div ):
 			boneInfoList.append( boneInfo )
 		self.table.setHeader( [x["descr"] for x in boneInfoList])
 		self.table.setShownFields( fields )
+		rendersDict = {}
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
-			self.table.setCellRender( boneName, delegateFactory )
+			rendersDict[ boneName ] = delegateFactory
 			boneInfoList.append( boneInfo )
+		self.table.setCellRenders( rendersDict )
 		self._tableHeaderIsValid = True
 
 	def getFields(self):

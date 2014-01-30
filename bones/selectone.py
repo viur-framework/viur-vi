@@ -13,9 +13,10 @@ class SelectOneViewBoneDelegate( object ):
 	def render( self, data, field ):
 		if field in data.keys():
 			aspan=html5.Span()
-			aspan.appendChild(html5.TextNode(self.skelStructure[field]["values"][data[field]]))
-			aspan["Title"]=data[field]
-			return(aspan)
+			if data and field and field in self.skelStructure and data[field] and data[field] in self.skelStructure[field]["values"]:
+				aspan.appendChild(html5.TextNode(self.skelStructure[field]["values"][data[field]]))
+				aspan["Title"]=data[field]
+				return(aspan)
 		return( html5.Label("..") )
 
 class SelectOneEditBone( html5.Select ):
