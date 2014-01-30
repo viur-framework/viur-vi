@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="/vi/s/login.css" />
         <!--SCRIPTS-->
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
-		 <script type="text/javascript" src="/vi/s/canvas-ani-bg.js"></script>
+		<script type="text/javascript" src="/vi/s/canvas-ani-bg.js"></script>
         <!--Slider-in icons-->
         <script type="text/javascript">
             $(document).ready(function() {
@@ -47,14 +47,15 @@
             document.getElementById("username").disabled = true;
             document.getElementById("password").disabled = true;
             document.getElementById("submitbtn").disabled = true;
-            document.getElementById("loadingstate").style.display = "";
+			document.getElementById("submitbtn").setAttribute( "class", "button is_loading" );			
+            //document.getElementById("loadingstate").style.display = "block";
         }
 
         function resetLoadingState() {
             document.getElementById("username").disabled = false;
             document.getElementById("password").disabled = false;
             document.getElementById("submitbtn").disabled = false;
-            document.getElementById("loadingstate").style.display = "none";
+            document.getElementById("submitbtn").setAttribute( "class", "button" );
         }
 
         function login() {
@@ -62,7 +63,7 @@
 
             var username = document.getElementById("username").value;
             var password = document.getElementById("password").value;
-
+			document.getElementById("wrapper").setAttribute( "class", "" );
 
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.open('GET', '/vi/skey', true);
@@ -75,9 +76,12 @@
                     innerXmlHttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
                     innerXmlHttp.onreadystatechange = function () {
                         if (innerXmlHttp.readyState == 4) {
+							
                             if ( innerXmlHttp.responseText=="OKAY" ) {
                                 window.location.href="/vi";
                             } else {
+								document.getElementById("logindatamsg").style.display='block';
+								document.getElementById("wrapper").setAttribute( "class", "formwasincorrect" );
                                 resetLoadingState();
                             }
                         };
@@ -93,13 +97,14 @@
             <div class="user-icon"></div>
             <div class="pass-icon"></div>
 
-            <div id="loadingstate" class="loadingstate" style="display: none">Im loading...</div>
+
 			<div class="login-form">
                 <div class="header">
                     <h1>Login</h1>
                     <a href="#"><img src="/vi/s/login/login-logo.png" /></a>
                 </div>
                 <div class="content">
+				<span id="logindatamsg" style="display:none;">The inserted username and password combination was wrong.</span>
                     <form>
                         <table border="0">
                             <input id="username" name="username" type="text" class="input username" value="adm1in@paxchristi-viur.appspot.com" /> <!-- onfocus="this.value=''" -->
@@ -107,8 +112,9 @@
                         </table>
                     </form>
                 </div>
+                <!-- <div id="loadingstate" class="loadingstate" style="display: none">Im loading...</div> -->
                 <div class="footer">
-                    <input id="submitbtn" type="submit" name="submit" value="Login" class="button" onclick="login(); return false;" />
+                    <button id="submitbtn" class="button" onclick="login(); return false;">Login</button>
                     <!--
                     <input type="submit" name="submit" value="Register" class="register" />
                     -->

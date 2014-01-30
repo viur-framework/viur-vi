@@ -2,6 +2,7 @@ import pyjd
 import html5
 from config import conf
 from widgets import TopBarWidget
+from widgets.userlogoutmsg import userLogoutMsg
 import json
 from network import NetworkService, DeferredCall
 import handler
@@ -10,6 +11,7 @@ import actions
 from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from log import Log
 from pane import Pane, GroupPane
+
 try:
 	import vi_plugins
 except ImportError:
@@ -19,6 +21,7 @@ except ImportError:
 class CoreWindow( html5.Div ):
 	def __init__(self, *args, **kwargs ):
 		super( CoreWindow, self ).__init__( *args, **kwargs )
+		self["id"]="CoreWindow"
 		self.topBar = TopBarWidget()
 		self.appendChild( self.topBar )
 		self.workSpace = html5.Div()
@@ -46,13 +49,18 @@ class CoreWindow( html5.Div ):
 		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
 		self.config = None
 		self.user = None
+		self.userLoggedOutMsg=userLogoutMsg()
 		startupQueue.setFinalElem( self.startup )
+		self.sinkEvent('onUserTryedToLogin')
+
+	def onUserTryedToLogin(self,event):
+		self.userLoggedOutMsg.testUserAvaiable()
 
 	def startup(self):
 		NetworkService.request( None, "/admin/config", successHandler=self.onConfigAvaiable,
 					failureHandler=self.onError, cacheable=True )
 		NetworkService.request( None, "/admin/user/view/self", successHandler=self.onUserAvaiable,
-					failureHandler=self.onError, cacheable=True )
+					failureHandler=self.userLoggedOutMsg.onUserTestFail, cacheable=True )
 
 	def log(self, type, msg ):
 		self.logWdg.log( type, msg )
@@ -70,6 +78,7 @@ class CoreWindow( html5.Div ):
 		self.user = data
 		if self.config is not None:
 			self.postInit()
+
 
 	def postInit(self):
 		groups = {}
@@ -199,3 +208,4 @@ if __name__ == '__main__':
 	#conf["mainWindow"].addWidget(None,"test")
 	startupQueue.run()
 	pyjd.run()
+

@@ -1,6 +1,11 @@
 
 /** prevent unloading! **/
-window.onbeforeunload = function() { return "Alle nicht gespeicherte Daten gehen verloren!"; };
+if (window.name!="fenster1") {
+    window.onbeforeunload = function() { return "Alle nicht gespeicherte Daten gehen verloren!"; };
+} else {
+    window.close();
+}
+
 
 function preventBack(){window.history.forward();}
     setTimeout("preventBack()", 0);

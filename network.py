@@ -334,7 +334,7 @@ class NetworkService( object ):
 			self.waitingForSkey = False
 			self.doFetch( NetworkService.urlForArgs(self.modul,self.url), self.params, json.loads(text) )
 		else:
-			print("IM COMPLETE", self)
+			#print("IM COMPLETE", self)
 			self.result = text
 			self.status = "succeeded"
 			try:
