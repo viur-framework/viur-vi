@@ -208,7 +208,7 @@ class ReloadAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( ReloadAction, self ).__init__( "Reload", *args, **kwargs )
-		self["class"] = "icon reload tree"
+		self["class"] = "icon reload"
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
