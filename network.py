@@ -87,7 +87,7 @@ class HTTPRequest(object):
 			if self.req.status >= 200 and self.req.status < 300:
 				self.cb.onCompletion( self.req.responseText )
 			else:
-				self.cb.onError( self.req.status, self.req.responseText )
+				self.cb.onError( self.req.responseText, self.req.status )
 
 
 
