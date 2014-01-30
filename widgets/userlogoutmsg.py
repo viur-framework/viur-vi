@@ -5,7 +5,7 @@ class userLogoutMsg( html5.ext.Popup):
 	def __init__(self, *args, **kwargs):
 		super( userLogoutMsg, self ).__init__( title="user is logged out", *args, **kwargs )
 		self["class"].append("userloggendoutmsg")
-		self.lbl = html5.Label("userloggendoutmsg_descr")
+		self.lbl = html5.Label("Your Session was terminated by the Server. Maybe your Computer sleeped and broked the Connection ?\n Please relogin to continue your mission.")
 		self.appendChild(self.lbl)
 		applyBtn = html5.ext.Button("Login", callback=self.doApply)
 		self.appendChild(applyBtn)
@@ -20,7 +20,9 @@ class userLogoutMsg( html5.ext.Popup):
 
 	def doRefresh(self,*args,**kwargs):
 		#eval("window.onbeforeunload=None;")
-		eval("location.reload();")
+		print("REFRESH !!")
+		eval("window.onbeforeunload = null;")
+		eval("window.top.location.href='/vi';")
 
 	def testUserAvaiable(self):
 		NetworkService.request( None, "/vi/user/view/self", successHandler=self.onUserTestSuccess,failureHandler=self.onUserTestFail, cacheable=False )
@@ -39,7 +41,7 @@ class userLogoutMsg( html5.ext.Popup):
 				conf["mainWindow"].log("success","relogin success :-)")
 			else:
 				if conf["currentUser"]!=None and data["values"]!=None:
-					self.lbl.element.innerHTML="userwrongusermsg_descr<br />olduser: "+conf["currentUser"]["name"]+"<br />newuser: "+data["values"]["name"]
+					self.lbl.element.innerHTML="The user you choosed to login differs from the user vi started with.\nolduser: "+conf["currentUser"]["name"]+"\nnewuser: "+data["values"]["name"]
 					applyBtn = html5.ext.Button("refresh", callback=self.doRefresh)
 				else:
 					self.doRefresh()

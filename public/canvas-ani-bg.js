@@ -72,7 +72,7 @@ $(document).ready(function(){
 			var	$canvas3 = $('#canvas3');
 			var	ctx3 = $canvas3[0].getContext('2d');
 			$(img).bind('load',null, function() {  ctx3.drawImage(img, 0,0, 1920, 1080);	loop(); });
-			img.src = '/vi/s/bg-login.jpg';
+			img.src = '/vi/s/login/bg-login.jpg';
 		
 	})(jQuery);	 
 });
