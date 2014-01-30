@@ -23,26 +23,27 @@ class FileViewBoneDelegate(object):
 
 	def renderFileentry(self,fileentry):
 		adiv=html5.A()
-		adiv["Title"]=str(fileentry)
-		aimg=html5.Img()
-		#fixme: Mimetypes first!
-		ending=fileentry["name"][str(fileentry["name"]).rfind('.')+1:]
-		if ending in ['png', 'jpeg','jpg','bmp','svg','gif','xbm']:
+		adiv["Title"]=str(fileentry["name"])
+		if "mimetype" in fileentry.keys():
+			try:
+				ftype, fformat = fileentry["mimetype"].split("/")
+				adiv["class"].append("type_%s" % ftype )
+				adiv["class"].append("format_%s" % fformat )
+			except:
+				pass
+		if "servingurl" in fileentry.keys() and fileentry["servingurl"]:
+			aimg=html5.Img()
 			aimg["src"]=fileentry["servingurl"]+"=s350-c"
-		elif ending in ["3gp","7zip","aac","ace","aiff","ape","arj","asf","asp","avi","bmp","cab","cgi","css","dat","divx","doc","document","exe","flac","folder","gif","gzip","html","jpg","js","mov","mp3","mp4","mpc","mpeg","mpeg4","ogg","pdf","php","pl","png","psd","rar","rm","rtf","svcd","swf","tar","tga","tiff","txt","vcd","vob","vqf","wav","wma","wmv","wpd","xhtml","xml","xsl","xslx","xvid","zip"]:
-			aimg["src"]="/resources/icons/filetypes/"+ending+".png"
-		else:
-			aimg["src"]="/resources/icons/filetypes/unknown.png"
-		aimg["alt"]=fileentry["name"]
-		adiv.appendChild(aimg)
+			aimg["alt"]=fileentry["name"]
+			adiv.appendChild(aimg)
 		aspan=html5.Span()
 		aspan.appendChild(html5.TextNode(fileentry["name"]))#fixme: formatstring!
 		adiv.appendChild(aspan)
 		adiv["class"].append("fileBoneViewCell")
 		adiv["draggable"]=True
 		metamime="application/octet-stream"
-		if "metamime" in fileentry.keys():
-			metamime=str(fileentry["metamime"])
+		if "mimetype" in fileentry.keys():
+			metamime=str(fileentry["mimetype"])
 		adiv["download"]=metamime+":"+str(fileentry["name"])+":"+"/file/download/"+str(fileentry["dlkey"])+"?download=1&fileName="+str(fileentry["name"])
 		adiv["href"]="/file/download/"+str(fileentry["dlkey"])+"?download=1&fileName="+str(fileentry["name"])
 		return (adiv)
