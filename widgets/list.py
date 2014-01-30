@@ -64,6 +64,23 @@ class ListWidget( html5.Div ):
 		self.table["style"]["display"] = "none"
 		self.reloadData()
 
+	def showErrorMsg(self, req=None, code=None):
+		"""
+			Removes all currently visible elements and displayes an error message
+		"""
+		self.actionBar["style"]["display"] = "none"
+		self.table["style"]["display"] = "none"
+		self.search["style"]["display"] = "none"
+		errorDiv = html5.Div()
+		errorDiv["class"].append("error_msg")
+		if code and (code==401 or code==403):
+			txt = "Access denied!"
+		else:
+			txt = "An unknown error occurred!"
+		errorDiv["class"].append("error_code_%s" % (code or 0))
+		errorDiv.appendChild( html5.TextNode( txt ) )
+		self.appendChild( errorDiv )
+
 	def onStartSearch(self, searchTxt):
 		self._currentSearchStr = searchTxt
 		self.reloadData()
@@ -77,7 +94,7 @@ class ListWidget( html5.Div ):
 			filter["amount"] = self._batchSize
 			if self._currentCursor is not None:
 				filter["cursor"] = self._currentCursor
-			NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, cacheable=True )
+			NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True )
 			self._currentCursor = None
 
 
@@ -108,7 +125,7 @@ class ListWidget( html5.Div ):
 		filter["amount"] = self._batchSize
 		if self._currentSearchStr:
 			filter["search"] = self._currentSearchStr
-		NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, cacheable=True )
+		NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True )
 
 	def onCompletion(self, req):
 		"""

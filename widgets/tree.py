@@ -292,6 +292,22 @@ class TreeWidget( html5.Div ):
 			setattr( self, f, getattr(self.entryFrame,f))
 		self.actionBar.setActions( self.defaultActions+(["select","close"] if isSelector else []) )
 
+	def showErrorMsg(self, req=None, code=None):
+		"""
+			Removes all currently visible elements and displayes an error message
+		"""
+		self.actionBar["style"]["display"] = "none"
+		self.entryFrame["style"]["display"] = "none"
+		errorDiv = html5.Div()
+		errorDiv["class"].append("error_msg")
+		if code and (code==401 or code==403):
+			txt = "Access denied!"
+		else:
+			txt = "An unknown error occurred!"
+		errorDiv["class"].append("error_code_%s" % (code or 0))
+		errorDiv.appendChild( html5.TextNode( txt ) )
+		self.appendChild( errorDiv )
+
 	def onAttach(self):
 		super( TreeWidget, self ).onAttach()
 		NetworkService.registerChangeListener( self )
@@ -368,9 +384,9 @@ class TreeWidget( html5.Div ):
 	def reloadData(self):
 		assert self.node is not None, "reloadData called while self.node is None"
 		self.entryFrame.clear()
-		r = NetworkService.request(self.modul,"list/node", {"node":self.node}, successHandler=self.onRequestSucceded )
+		r = NetworkService.request(self.modul,"list/node", {"node":self.node}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
 		r.reqType = "node"
-		r = NetworkService.request(self.modul,"list/leaf", {"node":self.node}, successHandler=self.onRequestSucceded )
+		r = NetworkService.request(self.modul,"list/leaf", {"node":self.node}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
 		r.reqType = "leaf"
 
 	def onRequestSucceded(self, req):

@@ -208,7 +208,7 @@ class HierarchyWidget( html5.Div ):
 		if self.rootNode:
 			self.reloadData()
 		else:
-			NetworkService.request(self.modul,"listRootNodes", successHandler=self.onSetDefaultRootNode)
+			NetworkService.request(self.modul,"listRootNodes", successHandler=self.onSetDefaultRootNode, failureHandler=self.showErrorMsg )
 		self.path = []
 		self.sinkEvent( "onClick", "onDblClick" )
 		##Proxy some events and functions of the original table
@@ -217,7 +217,22 @@ class HierarchyWidget( html5.Div ):
 		self.actionBar.setActions(["add","edit","delete"]+(["select","close"] if isSelector else [])+["reload"])
 		self.sinkEvent("onDrop","onDragOver")
 
-		#HTTPRequest().asyncGet("/admin/%s/list" % self.modul, self)
+
+	def showErrorMsg(self, req=None, code=None):
+		"""
+			Removes all currently visible elements and displayes an error message
+		"""
+		self.actionBar["style"]["display"] = "none"
+		self.entryFrame["style"]["display"] = "none"
+		errorDiv = html5.Div()
+		errorDiv["class"].append("error_msg")
+		if code and (code==401 or code==403):
+			txt = "Access denied!"
+		else:
+			txt = "An unknown error occurred!"
+		errorDiv["class"].append("error_code_%s" % (code or 0))
+		errorDiv.appendChild( html5.TextNode( txt ) )
+		self.appendChild( errorDiv )
 
 	def onDataChanged(self, modul):
 		if modul!=self.modul:
@@ -348,7 +363,7 @@ class HierarchyWidget( html5.Div ):
 			@param node: Key of the node to fetch
 			@type node: string
 		"""
-		r = NetworkService.request(self.modul,"list/", {"parent":node,"orderby":"sortindex"}, successHandler=self.onRequestSucceded )
+		r = NetworkService.request(self.modul,"list/", {"parent":node,"orderby":"sortindex"}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
 		r.node = node
 
 	def onRequestSucceded(self, req):

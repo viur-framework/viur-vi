@@ -72,6 +72,22 @@ class EditWidget( html5.Div ):
 		self.actionbar.setActions(["save.close","save.continue","reset"])
 		self.reloadData( )
 
+	def showErrorMsg(self, req=None, code=None):
+		"""
+			Removes all currently visible elements and displayes an error message
+		"""
+		self.actionbar["style"]["display"] = "none"
+		self.form["style"]["display"] = "none"
+		errorDiv = html5.Div()
+		errorDiv["class"].append("error_msg")
+		if code and (code==401 or code==403):
+			txt = "Access denied!"
+		else:
+			txt = "An unknown error occurred!"
+		errorDiv["class"].append("error_code_%s" % (code or 0))
+		errorDiv.appendChild( html5.TextNode( txt ) )
+		self.appendChild( errorDiv )
+
 	def reloadData(self):
 		self.save( {} )
 		return
@@ -92,27 +108,27 @@ class EditWidget( html5.Div ):
 		elif self.applicationType == EditWidget.appList: ## Application: List
 			if self.key and (not self.clone or not data):
 				#self.editTaskID = protoWrap.edit( self.key, **data )
-				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData)
+				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
 			else:
-				NetworkService.request(self.modul, "add", data, secure=len(data)>0, successHandler=self.setData )
+				NetworkService.request(self.modul, "add", data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg )
 				#self.editTaskID = protoWrap.add( **data )
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
 			if self.key and not self.clone:
-				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData)
+				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
 				#self.editTaskID = protoWrap.edit( self.key, **data )
 			else:
-				NetworkService.request(self.modul, "add/%s" % self.node, data, secure=len(data)>0, successHandler=self.setData )
+				NetworkService.request(self.modul, "add/%s" % self.node, data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg )
 				#self.editTaskID = protoWrap.add( self.node, **data )
 		elif self.applicationType == EditWidget.appTree: ## Application: Tree
 			if self.key and not self.clone:
-				NetworkService.request(self.modul,"edit/%s/%s" % (self.skelType,self.key), data, secure=len(data)>0, successHandler=self.setData)
+				NetworkService.request(self.modul,"edit/%s/%s" % (self.skelType,self.key), data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
 				#self.editTaskID = protoWrap.edit( self.key, self.skelType, **data )
 			else:
-				NetworkService.request(self.modul,"add/%s/%s" % (self.skelType,self.node), data, secure=len(data)>0, successHandler=self.setData)
+				NetworkService.request(self.modul,"add/%s/%s" % (self.skelType,self.node), data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
 				#self.editTaskID = protoWrap.add( self.node, self.skelType, **data )
 		elif self.applicationType == EditWidget.appSingleton: ## Application: Singleton
 			#self.editTaskID = protoWrap.edit( **data )
-			NetworkService.request(self.modul,"edit", data, secure=len(data)>0, successHandler=self.setData)
+			NetworkService.request(self.modul,"edit", data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
 		else:
 			raise NotImplementedError() #Should never reach this
 
