@@ -2,7 +2,6 @@
 
 /* css resets */
 @import url('reset.css');
-
 @charset "UTF-8";
 
 /* #ViUR Standards and fallback
@@ -27,7 +26,6 @@
 /* #ViUR Styles
 ================================================== */
 
-
 fieldset.active{
   height: inherit;
 }
@@ -40,8 +38,6 @@ fieldset.inactive{
 fieldset.inactive section{
   display: none;
 }
-
-
 
 body {
   font-family: 'Open Sans', Geneva, Arial, Helvetica, sans-serif;
@@ -883,6 +879,7 @@ form fieldset {
 form fieldset legend {
   min-width: 500px;
   width: 100%;
+  position: relative;
 }
 form fieldset legend a,
 legend a:visited {
@@ -1539,6 +1536,15 @@ tr.is_focused:nth-child(even) {background: @focusevencolor;}
 tr.is_focused.is_selected:nth-child(odd) {background: @focusselectionoddcolor;}
 tr.is_focused.is_selected:nth-child(even) {background: @focusselectionevencolor;}
 
+td span.date {
+  margin-right: 10px;
+  font-weight: 600;
+}
+
+td span.time {
+  font-weight: 100;
+}
+
 .emptynotification {
   width:20%;
   margin:0 35% 55px; 
@@ -1551,6 +1557,60 @@ tr.is_focused.is_selected:nth-child(even) {background: @focusselectionevencolor;
   box-shadow: 2px 2px 3px rgba(0,0,0,0.1)
 }
 
+.halfview {
+  width: 60%;
+  float: left;
+}
+
+.halfview ~ div > ul {
+  width: 30%;
+  float: left;
+  padding: 10px 1%;
+  margin-left: 2%;
+  border-radius: 5px;
+  background: #eee;
+  border: 1px solid #ddd; 
+}
+
+.halfview ~ div > ul > li {
+  padding:3px;
+  border-bottom: 1px solid #ddd;
+  font-size:0.9em;
+  color:#444;
+}
+
+.halfview ~ div > ul > li dd ul {
+overflow: hidden;
+height: 25px;
+}
+
+.halfview ~ div > ul > li dd ul li {
+  float: right;
+  margin-left: 10px;
+}
+
+.halfview ~ div > ul > li dl {
+  height: 23px;
+}
+
+.halfview ~ div > ul > li dt {
+  display: inline-block;
+  max-width: 30%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: @maincolor;
+  font-weight:600;
+}
+
+.halfview ~ div > ul > li dd {
+  display: inline-block;
+  float: right;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* #vi_forest
 ================================================== */.tree {
@@ -1834,7 +1894,7 @@ progress[value]::-webkit-progress-value {
   -webkit-user-select: none;
   user-select: none;
 }
-.hierarchyitem .insert_before {border-top:2px solid @maincolor !important;}
+.hierarchyitem .insert_before {border-top:2px solid @maincolor !important;} /* Deine Mudda stinkt */
 .hierarchyitem .insert_here {border:1px solid @maincolor !important; padding:12px 7px !important;}
 .hierarchyitem .insert_after {border-bottom:2px solid @maincolor !important;}
 /* #vi_popups and alerts
