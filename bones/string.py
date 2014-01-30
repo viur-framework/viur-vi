@@ -73,7 +73,6 @@ class StringEditBone( html5.Div ):
 			self["class"].append("is_translated")
 			self["class"].append("is_multiple")
 			self.languagesContainer = html5.Div()
-			self.languagesContainer["languagescontainer"]
 			self.appendChild( self.languagesContainer )
 			self.buttonContainer = html5.Div()
 			self.buttonContainer["class"] = "languagebuttons"
@@ -97,7 +96,6 @@ class StringEditBone( html5.Div ):
 		elif self.languages and not self.multiple:
 			self["class"].append("is_translated")
 			self.languagesContainer = html5.Div()
-			self.languagesContainer["languagescontainer"]
 			self.appendChild( self.languagesContainer )
 			self.buttonContainer = html5.Div()
 			self.buttonContainer["class"] = "languagebuttons"
