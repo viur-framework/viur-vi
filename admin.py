@@ -2,12 +2,13 @@ import pyjd
 import html5
 from config import conf
 from widgets import TopBarWidget
-from widgets.userlogoutmsg import userLogoutMsg
+from widgets.userlogoutmsg import UserLogoutMsg
 import json
 from network import NetworkService, DeferredCall
 import handler
 import bones
 import actions
+import i18n
 from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from log import Log
 from pane import Pane, GroupPane
@@ -49,7 +50,7 @@ class CoreWindow( html5.Div ):
 		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
 		self.config = None
 		self.user = None
-		self.userLoggedOutMsg=userLogoutMsg()
+		self.userLoggedOutMsg=UserLogoutMsg()
 		startupQueue.setFinalElem( self.startup )
 		self.sinkEvent('onUserTryedToLogin')
 
@@ -202,7 +203,7 @@ if __name__ == '__main__':
 	pyjd.setup("public/admin.html")
 	conf["mainWindow"] = CoreWindow()
 	html5.Body().appendChild( conf["mainWindow"] )
-
+	print( i18n.translate( "TestStr") )
 	#RootPanel().add( conf["mainWindow"] )
 	#t.setFocus( True )
 	#conf["mainWindow"].addWidget(None,"test")
