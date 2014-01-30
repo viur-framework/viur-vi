@@ -69,7 +69,9 @@ class StringEditBone( html5.Div ):
 		self.languages = languages
 		self.boneName = boneName
 		self.currentLanguage = None
-		if self.languages and self.multiple: #FIXME: Multiple and readOnly...
+		if self.languages and self.multiple:
+			self["class"].append("is_translated")
+			self["class"].append("is_multiple")
 			self.languagesContainer = html5.Div()
 			self.languagesContainer["languagescontainer"]
 			self.appendChild( self.languagesContainer )
@@ -79,6 +81,7 @@ class StringEditBone( html5.Div ):
 			self.langEdits = {}
 			for lang in self.languages:
 				tagContainer = html5.Div()
+				tagContainer["class"].append("lang_%s" % lang )
 				tagContainer["class"].append("tagcontainer")
 				tagContainer["style"]["display"] = "none"
 				btn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
@@ -92,6 +95,7 @@ class StringEditBone( html5.Div ):
 				self.langEdits[lang] = tagContainer
 			self.setLang(self.languages[0])
 		elif self.languages and not self.multiple:
+			self["class"].append("is_translated")
 			self.languagesContainer = html5.Div()
 			self.languagesContainer["languagescontainer"]
 			self.appendChild( self.languagesContainer )
@@ -106,10 +110,12 @@ class StringEditBone( html5.Div ):
 				inputField = html5.Input()
 				inputField["type"] = "text"
 				inputField["style"]["display"] = "none"
+				inputField["class"].append("lang_%s" % lang)
 				self.languagesContainer.appendChild( inputField )
 				self.langEdits[lang] = inputField
 			self.setLang(self.languages[0])
 		elif not self.languages and self.multiple:
+			self["class"].append("is_multiple")
 			self.tagContainer = html5.Div()
 			self.tagContainer["class"].append("tagcontainer")
 			self.appendChild(self.tagContainer)
