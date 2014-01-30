@@ -21,7 +21,7 @@ class userLogoutMsg( html5.ext.Popup):
 	def doRefresh(self,*args,**kwargs):
 		#eval("window.onbeforeunload=None;")
 		print("REFRESH !!")
-		eval("window.onbeforeunload = null;")
+		eval("window.onbeforeunload = void(0);")
 		eval("window.top.location.href='/vi';")
 
 	def testUserAvaiable(self):
