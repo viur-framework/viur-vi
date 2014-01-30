@@ -1,5 +1,4 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic);
-
 @import url('reset.css');
 /* css resets */
 @charset "UTF-8";
@@ -12,6 +11,18 @@
 /* Icon-Grey: #939393;*/
 /* #ViUR Styles
 ================================================== */
+fieldset.active {
+  height: inherit;
+}
+fieldset.active section {
+  display: block;
+}
+fieldset.inactive {
+  height: 40px;
+}
+fieldset.inactive section {
+  display: none;
+}
 body {
   font-family: 'Open Sans', Geneva, Arial, Helvetica, sans-serif;
   height: 100%;
@@ -80,16 +91,13 @@ p {
   background-color: rgba(238, 238, 238, 0.8);
   background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.8)), to(rgba(255, 255, 255, 0.2)));
   /* webkit */
-
   background-image: -moz-linear-gradient(top center, rgba(238, 238, 238, 0.8) 20%, rgba(255, 255, 255, 0.2) 95%);
   /* mozilla - FF3.6+ */
-
 }
 .vi_topbar h1,
 .vi_topbar h2,
 .vi_topbar span {
   /*line-height: 1.9em;*/
-
   position: relative;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
   letter-spacing: 1px;
@@ -158,7 +166,6 @@ p {
   text-decoration: none;
   border-bottom: 2px solid #be1622;
   /*-moz-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); -webkit-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6);*/
-
 }
 .iconnav li.inactive a,
 .iconnav li.inactive a:link {
@@ -226,7 +233,6 @@ p {
   text-decoration: none;
   border-bottom: 2px solid #ff0000;
   /*-moz-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); -webkit-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6);*/
-
 }
 .iconnav li.inactive a,
 .iconnav li.inactive a:link {
@@ -240,7 +246,6 @@ p {
   z-index: 9;
   width: 15.7%;
   /*298px*/
-
   border-right: 1px solid #cccccc;
   position: fixed;
   background-color: #eeeeee;
@@ -250,7 +255,6 @@ p {
   margin: 45px 0 50px;
   overflow: hidden;
   /*min-width:298px;*/
-
 }
 .modullist a,
 .modullist a:visited {
@@ -263,10 +267,8 @@ p {
   background-color: #f7f7f7;
   background: -moz-linear-gradient(top, #f2f2f2, #f7f7f7);
   /* Firefox */
-
   background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#f7f7f7));
   /* Safari, Chrome */
-
   padding: 12px 13px;
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
@@ -278,9 +280,7 @@ p {
   background: #fff;
   text-decoration: none;
   /*background:-moz-linear-gradient(top, #eee, #ddd); /* Firefox */
-
   /*background:-webkit-gradient(linear, left top, left bottom, from(#eee), to(#ddd)); /* Safari, Chrome */
-
 }
 .modullist img {
   width: 32px;
@@ -322,10 +322,8 @@ p {
   background-color: #e9e9e9;
   background: -moz-linear-gradient(top, #e4e4e4, #e9e9e9);
   /* Firefox */
-
   background: -webkit-gradient(linear, left top, left bottom, from(#e4e4e4), to(#e9e9e9));
   /* Safari, Chrome */
-
 }
 .modullist ul button {
   margin-top: -32px;
@@ -344,10 +342,8 @@ p {
   background-color: #e30613;
   background: -moz-linear-gradient(top, #be1622, #e30613);
   /* Firefox */
-
   background: -webkit-gradient(linear, left top, left bottom, from(#be1622), to(#e30613));
   /* Safari, Chrome */
-
   color: transparent;
   letter-spacing: -1em;
   overflow: hidden;
@@ -377,7 +373,8 @@ p {
   text-shadow: none;
 }
 /* #vi_viewer
-================================================== */.vi_viewer {
+================================================== */
+.vi_viewer {
   margin-left: 15.7%;
   width: 84.3%;
   float: left;
@@ -389,7 +386,6 @@ p {
       padding: 80px 30px 45px;
       min-height: 400px;
       min-width:500px; */
-
 }
 /* #vi_operator
 ================================================== */
@@ -455,7 +451,6 @@ p {
 .vi_operator .actionbar {
   width: 82.3%;
   /*min-width: 500px;*/
-
   position: fixed;
   margin-top: -105px;
   margin-left: -1%;
@@ -953,7 +948,6 @@ form fieldset {
 form fieldset.is_incomplete,
 form fieldset:target {
   /*min-height: 150px;*/
-
   height: auto;
   width: 100%;
 }
@@ -961,7 +955,6 @@ form fieldset section > div {
   padding-bottom: 20px;
   margin-bottom: 15px;
   /*border-bottom:1px dotted #ccc;*/
-
   overflow: hidden;
   width: 100%;
   float: right;
@@ -1060,28 +1053,20 @@ input[type=password],
   border-radius: 0px;
   background: #eaeaea;
   /* Old browsers */
-
   background: -moz-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
   /* FF3.6+ */
-
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eaeaea), color-stop(100%, #fafafa));
   /* Chrome,Safari4+ */
-
   background: -webkit-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
   /* Chrome10+,Safari5.1+ */
-
   background: -o-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
   /* Opera 11.10+ */
-
   background: -ms-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
   /* IE10+ */
-
   background: linear-gradient(to bottom, #eaeaea 0%, #fafafa 100%);
   /* W3C */
-
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eaeaea', endColorstr='#fafafa', GradientType=0);
   /* IE6-9 */
-
 }
 /* #vi_texteditor
 ================================================== */
@@ -1330,10 +1315,8 @@ form .relational:focus button:after {
   background-color: #00406d;
   background: -moz-linear-gradient(top, #009de1, #00406d);
   /* Firefox */
-
   background: -webkit-gradient(linear, left top, left bottom, from(#009de1), to(#00406d));
   /* Safari, Chrome */
-
   color: transparent;
   letter-spacing: -1em;
   overflow: hidden;
@@ -1560,7 +1543,8 @@ tr.is_focused.is_selected:nth-child(even) {
   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
 }
 /* #vi_forest
-================================================== */.tree {
+================================================== */
+.tree {
   width: 100%;
   min-height: 500px;
 }
@@ -1611,10 +1595,8 @@ tr.is_focused.is_selected:nth-child(even) {
   background-color: rgba(180, 180, 180, 0.7);
   background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(220, 220, 220, 0.7)), to(rgba(255, 255, 255, 0.4)));
   /* webkit */
-
   background-image: -moz-linear-gradient(top center, rgba(220, 220, 220, 0.2) 20%, rgba(255, 255, 255, 0.2) 95%);
   /* mozilla - FF3.6+ */
-
   margin-top: -47px;
   z-index: 10;
 }
@@ -1726,17 +1708,13 @@ tr.is_focused.is_selected:nth-child(even) {
   background-position: center;
   display: block;
   /* height:100px; */
-
   /* margin-top: 15px; */
-
   /* margin-bottom: 15px; */
-
   font-size: .8em;
   line-height: 7em;
   font-weight: 800;
   color: #777;
   /* text-shadow:0px -1px 1px rgba(0,0,0,0.5); */
-
   width: 97%;
   text-align: left;
   padding-left: 3%;
@@ -1744,12 +1722,10 @@ tr.is_focused.is_selected:nth-child(even) {
 }
 progress[value] {
   /* Reset the default appearance */
-
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   /* Get rid of default border in Firefox. */
-
   border: none;
   width: 100%;
   padding: 6px 7px 7px;
@@ -1776,7 +1752,8 @@ progress[value]::-webkit-progress-value {
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
 /* #vi_hierarchy
-================================================== */.hierarchy {
+================================================== */
+.hierarchy {
   min-width: 500px;
 }
 .hierarchyitem {
@@ -1815,7 +1792,6 @@ progress[value]::-webkit-progress-value {
 .hierarchyitem.expaned ol {
   margin-top: 7px;
   /*border:1px solid #ddd;*/
-
   background: #e5e5e5;
 }
 .hierarchyitem.expaned ol li {
@@ -1871,7 +1847,8 @@ progress[value]::-webkit-progress-value {
   border-bottom: 2px solid #be1622 !important;
 }
 /* #vi_popups and alerts
-================================================== */.popup {
+================================================== */
+.popup {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -1949,7 +1926,8 @@ progress[value]::-webkit-progress-value {
   padding-right: 35px;
 }
 /* #vi_messenger
-================================================== */.vi_messenger {
+================================================== */
+.vi_messenger {
   box-shadow: 0px -3px 3px rgba(0, 0, 0, 0.2);
   width: 100%;
   position: fixed;
@@ -1960,10 +1938,8 @@ progress[value]::-webkit-progress-value {
   background-color: rgba(238, 238, 238, 0.9);
   background-image: -webkit-gradient(linear, right bottom, right top, from(rgba(238, 238, 238, 0.9)), to(rgba(255, 255, 255, 0.2)));
   /* webkit example */
-
   background-image: -moz-linear-gradient(center bottom, rgba(238, 238, 238, 0.9) 20%, rgba(255, 255, 255, 0.2) 95%);
   /* mozilla example - FF3.6+ */
-
   padding: 15px 0;
   z-index: 10;
   margin-top: -30px;
@@ -2037,7 +2013,6 @@ progress[value]::-webkit-progress-value {
   animation: uploading 5s linear 2s infinite alternate;
   -webkit-animation: uploading 5s linear 2s infinite alternate;
   /* Safari and Chrome: */
-
 }
 @keyframes uploading {
   0% {
@@ -2206,7 +2181,8 @@ progress[value]::-webkit-progress-value {
   box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
 }
 /* #States
-================================================== */:focus {
+================================================== */
+:focus {
   outline: 1px dotted #ccc;
 }
 /*.is_active {
@@ -2231,6 +2207,25 @@ textarea:disabled {
 .has_multiple_children .linkeditor {
   width: 40.3%;
 }
+/* #Custom Styles
+================================================== */
+/* #Custom Colors
+==================================================
+
+@maincolor: #BE1622;      
+@darkcolor: #e30613;      
+@lightcolor: #ff0000;
+@highlightcolor: #f3a1a1;
+
+@selectionoddcolor: rgba(250,0,0,0.2);
+@selectionevencolor: rgba(250,130,130,0.2);
+
+@focusoddcolor: rgba(230,0,0,.7);
+@focusevencolor: rgba(230,15,15,.7);
+
+@focusselectionoddcolor: rgba(250,0,0,0.5);
+@focusselectionevencolor: rgba(250,130,130,0.5);
+*/
 /* #Media Queries
 ================================================== */
 /* Smaller than 1441px (devices and browsers) */
@@ -2349,18 +2344,6 @@ textarea:disabled {
   }
 }
 /* Tablet Portrait size to standard 960 (devices and browsers) */
-@media only screen and (min-width: 768px) and (max-width: 959px) {
-  
-}
 /* All Mobile Sizes (devices and browser) */
-@media only screen and (max-width: 767px) {
-  
-}
 /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
-@media only screen and (min-width: 480px) and (max-width: 767px) {
-  
-}
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
-@media only screen and (max-width: 479px) {
-  
-}

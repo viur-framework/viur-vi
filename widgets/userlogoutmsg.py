@@ -15,7 +15,7 @@ class userLogoutMsg( html5.ext.Popup):
 	def doApply(self, *args, **kwargs):
 		eval("""var fenster = window.open("/vi/s/login.html", "fenster1", "width=800,height=600,status=yes,scrollbars=yes,resizable=yes");""")
 		#eval("""fenster.onload(function () { document.getElementById("CoreWindow").dispatchEvent(new Event('UserTryedToLogin'))});""")
-		eval("""fenster.onclose(function () { document.getElementById("CoreWindow").dispatchEvent(new Event('UserTryedToLogin'))});""")
+		#eval("""fenster.onclose(function () { document.getElementById("CoreWindow").dispatchEvent(new Event('UserTryedToLogin'))});""")
 		eval("""fenster.focus();""")
 
 	def doRefresh(self,*args,**kwargs):
@@ -31,7 +31,7 @@ class userLogoutMsg( html5.ext.Popup):
 
 	def onUserTestSuccess(self,req):
 		data = NetworkService.decode(req)
-		print ("keep Alive!")
+		#print ("keep Alive!")
 		if (self.parent()["style"]["display"]=="block"):
 			eval("""fenster.close();""")
 			if conf["currentUser"]!=None and conf["currentUser"]["id"]==data["values"]["id"]:
