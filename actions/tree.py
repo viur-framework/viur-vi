@@ -16,6 +16,8 @@ class AddLeafAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="add.leaf"
 		correctHandler = handler == "tree" or handler.startswith("tree.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
@@ -45,6 +47,8 @@ class AddNodeAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="add.node"
 		correctHandler = handler == "tree" or handler.startswith("tree.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
@@ -111,6 +115,8 @@ class EditAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="edit"
 		correctHandler = handler == "tree" or handler.startswith("tree.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
@@ -175,6 +181,8 @@ class DeleteAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="delete"
 		correctHandler = handler == "tree" or handler.startswith("tree.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-delete" in conf["currentUser"]["access"])

@@ -16,6 +16,8 @@ class AddNodeAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="add.node"
 		correctHandler = handler == "tree.simple" or handler.startswith("tree.simple.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
@@ -86,6 +88,8 @@ class EditAction( html5.ext.Button ):
 				self.isDisabled = True
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="edit"
 		correctHandler = handler == "tree.simple" or handler.startswith("tree.simple.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])

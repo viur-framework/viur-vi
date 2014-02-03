@@ -39,6 +39,8 @@ class AddLeafAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="add.leaf"
 		correctHandler = handler == "tree.simple.file" or handler.startswith("tree.simple.file.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])

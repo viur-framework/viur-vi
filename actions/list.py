@@ -22,6 +22,8 @@ class AddAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="add"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
@@ -77,6 +79,8 @@ class EditAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="edit"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
@@ -134,6 +138,8 @@ class DeleteAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="delete"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-delete" in conf["currentUser"]["access"])
@@ -148,13 +154,6 @@ class DeleteAction( html5.ext.Button ):
 		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete, yesLabel="Delete", noLabel="Keep" )
 		d.deleteList = [x["id"] for x in selection]
 		d["class"].append( "delete" )
-		return
-		for s in selection:
-			pane = Pane("Edit", closeable=True)
-			conf["mainWindow"].stackPane( pane )
-			edwg = EditWidget( self.parent.modul, EditWidget.appList, key=s["id"])
-			pane.addWidget( edwg )
-			pane.focus()
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
@@ -195,6 +194,8 @@ class ListPreviewAction( html5.ext.Button ):
 			conf["mainWindow"].stackWidget( widget )
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
 		correctAction = actionName=="preview"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-view" in conf["currentUser"]["access"])
