@@ -7,7 +7,7 @@ class UserLogoutMsg( html5.ext.Popup):
 	def __init__(self, *args, **kwargs):
 		super( UserLogoutMsg, self ).__init__( title="user is logged out", *args, **kwargs )
 		self["class"].append("userloggendoutmsg")
-		self.lbl = html5.Label("Your Session was terminated by the Server. Maybe your Computer sleeped and broked the Connection ?\n Please relogin to continue your mission.")
+		self.lbl = html5.Label("Your session was terminated by our server. Perhaps your computer fall asleep and broke connection?\n Please relogin to continue your mission.")
 		self.appendChild(self.lbl)
 		applyBtn = html5.ext.Button("Login", callback=self.doApply)
 		self.appendChild(applyBtn)
@@ -43,7 +43,7 @@ class UserLogoutMsg( html5.ext.Popup):
 				conf["mainWindow"].log("success","relogin success :-)")
 			else:
 				if conf["currentUser"]!=None and data["values"]!=None:
-					self.lbl.element.innerHTML="The user you choosed to login differs from the user vi started with.\nolduser: "+conf["currentUser"]["name"]+"\nnewuser: "+data["values"]["name"]
+					self.lbl.element.innerHTML="The user you choose to login differs from the user vi started with.\nolduser: "+conf["currentUser"]["name"]+"\nnewuser: "+data["values"]["name"]
 					applyBtn = html5.ext.Button("refresh", callback=self.doRefresh)
 				else:
 					self.doRefresh()

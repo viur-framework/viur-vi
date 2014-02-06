@@ -618,6 +618,9 @@ button.save.new:before {
 button.reset:before {
   background-position: -64px -16px;
 }
+button.reload:before {
+  background-position: -80px -16px;
+}
 button.cancel:before,
 .btn_no:before {
   background-position: 0px 0px;
@@ -992,9 +995,11 @@ form label {
   border: 1px dotted #ddd;
   border-right-width: 0;
   background: #f9f9f9;
-  overflow: hidden;
   line-height: 1.4em;
   font-size: 0.8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 form label.text {
   border-bottom: 0;
@@ -1536,12 +1541,12 @@ tr.is_focused:nth-child(even) {background: @focusevencolor;}
 tr.is_focused.is_selected:nth-child(odd) {background: @focusselectionoddcolor;}
 tr.is_focused.is_selected:nth-child(even) {background: @focusselectionevencolor;}
 
-td span.date {
+span.date {
   margin-right: 10px;
   font-weight: 600;
 }
 
-td span.time {
+span.time {
   font-weight: 100;
 }
 
@@ -1587,6 +1592,11 @@ height: 25px;
 .halfview ~ div > ul > li dd ul li {
   float: right;
   margin-left: 10px;
+}
+
+.halfview ~ div > ul > li dd img {
+  width:16px; 
+  margin-right: 10px;
 }
 
 .halfview ~ div > ul > li dl {
