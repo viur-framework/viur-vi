@@ -410,6 +410,14 @@ p { margin-bottom: 10px;}
   background: #f6f6f6;
   overflow: hidden;
 }
+
+.vi_operator > div.supports_drop {
+border-top: 1px dashed #ccc;
+padding: 10px 0;
+border-bottom: 1px dashed #ccc;
+margin-top: -10px;
+}
+
 .has_multiple_children .vi_operator {
   width: 40.3%;
   height: 100%;
@@ -995,11 +1003,9 @@ form label {
   border: 1px dotted #ddd;
   border-right-width: 0;
   background: #f9f9f9;
+  overflow: hidden;
   line-height: 1.4em;
   font-size: 0.8em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 form label.text {
   border-bottom: 0;
@@ -1541,12 +1547,12 @@ tr.is_focused:nth-child(even) {background: @focusevencolor;}
 tr.is_focused.is_selected:nth-child(odd) {background: @focusselectionoddcolor;}
 tr.is_focused.is_selected:nth-child(even) {background: @focusselectionevencolor;}
 
-span.date {
+td span.date {
   margin-right: 10px;
   font-weight: 600;
 }
 
-span.time {
+td span.time {
   font-weight: 100;
 }
 
@@ -1592,11 +1598,6 @@ height: 25px;
 .halfview ~ div > ul > li dd ul li {
   float: right;
   margin-left: 10px;
-}
-
-.halfview ~ div > ul > li dd img {
-  width:16px; 
-  margin-right: 10px;
 }
 
 .halfview ~ div > ul > li dl {
@@ -1827,7 +1828,9 @@ progress[value]::-webkit-progress-value {
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
 /* #vi_hierarchy
-================================================== */.hierarchy {
+================================================== */
+
+.hierarchy {
   min-width: 500px;
 }
 .hierarchyitem {
