@@ -50,7 +50,7 @@ class ListWidget( html5.Div ):
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if isSelector else [])+["reload"])
+		self.actionBar.setActions( self.getDefaultActions() )
 		if isSelector:
 			self.selectionActivatedEvent.register( self )
 		self.emptyNotificationDiv = html5.Div()
@@ -63,6 +63,12 @@ class ListWidget( html5.Div ):
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		self.table["style"]["display"] = "none"
 		self.reloadData()
+
+	def getDefaultActions(self):
+		"""
+			Returns the list of actions available in our actionBar
+		"""
+		return( ["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if self.isSelector else [])+["reload"] )
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
