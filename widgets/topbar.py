@@ -48,7 +48,7 @@ class TopBarWidget( html5.Header ):
 		#self.iconnav.appendChild(DashBoard())
 		#self.iconnav.appendChild(MyFiles())
 		#self.iconnav.appendChild(Settings())
-		#self.iconnav.appendChild(UserState())
+		self.iconnav.appendChild(UserState())
 		self.iconnav.appendChild(Logout())
 		anav.appendChild(self.iconnav)
 		self.appendChild(anav)
