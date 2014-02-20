@@ -254,7 +254,7 @@ class TreeWidget( html5.Div ):
 
 	nodeWidget = NodeWidget
 	leafWidget = LeafWidget
-	defaultActions = ["add.node", "add.leaf", "edit", "delete", "reload"]
+	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload"]
 
 	def __init__( self, modul, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
 		"""
@@ -280,6 +280,8 @@ class TreeWidget( html5.Div ):
 		self.entryFrame.selectionActivatedEvent.register( self )
 		self._currentCursor = None
 		self._currentRequests = []
+		self.rootNodeChangedEvent = EventDispatcher("rootNodeChanged")
+		self.nodeChangedEvent = EventDispatcher("nodeChanged")
 		self.isSelector = isSelector
 		if self.rootNode:
 			self.reloadData()
@@ -358,11 +360,13 @@ class TreeWidget( html5.Div ):
 	def setRootNode(self, rootNode):
 		self.rootNode = rootNode
 		self.node = rootNode
+		self.rootNodeChangedEvent.fire( rootNode )
 		self.rebuildPath()
 		self.reloadData()
 
 	def setNode(self, node):
 		self.node = node
+		self.nodeChangedEvent.fire( node )
 		self.reloadData()
 
 	def rebuildPath(self):
