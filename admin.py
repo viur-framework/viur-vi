@@ -203,7 +203,6 @@ if __name__ == '__main__':
 	pyjd.setup("public/admin.html")
 	conf["mainWindow"] = CoreWindow()
 	html5.Body().appendChild( conf["mainWindow"] )
-	print( i18n.translate( "TestStr") )
 	#RootPanel().add( conf["mainWindow"] )
 	#t.setFocus( True )
 	#conf["mainWindow"].addWidget(None,"test")
