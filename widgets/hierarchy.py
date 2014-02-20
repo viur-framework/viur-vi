@@ -201,6 +201,7 @@ class HierarchyWidget( html5.Div ):
 		self.appendChild( self.entryFrame )
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
+		self.rootNodeChangedEvent = EventDispatcher("rootNodeChanged")
 		self._currentCursor = None
 		self._currentRequests = []
 		self["class"].append("supports_drop")
@@ -215,7 +216,7 @@ class HierarchyWidget( html5.Div ):
 		##Proxy some events and functions of the original table
 		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 		#	setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["add","edit","delete"]+(["select","close"] if isSelector else [])+["reload"])
+		self.actionBar.setActions(["selectrootnode","add","edit","delete"]+(["select","close"] if isSelector else [])+["reload"])
 		self.sinkEvent("onDrop","onDragOver")
 
 
@@ -337,6 +338,7 @@ class HierarchyWidget( html5.Div ):
 		"""
 		self.rootNode = rootNode
 		self._currentCursor = None
+		self.rootNodeChangedEvent.fire( rootNode )
 		self.reloadData()
 
 
