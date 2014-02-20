@@ -98,7 +98,7 @@ def doesEventHitWidgetOrParents( event, widget ):
 
 def doesEventHitWidgetOrChildren( event, widget ):
 	"""
-		Test if event 'event' hits widget 'widget' (or *any* of its parents)
+		Test if event 'event' hits widget 'widget' (or *any* of its children)
 	"""
 	if event.target==widget.element:
 		return( True )
