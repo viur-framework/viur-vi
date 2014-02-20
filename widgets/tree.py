@@ -173,7 +173,7 @@ class SelectableDiv( html5.Div ):
 	def onClick(self, event):
 		self.focus()
 		for child in self._children:
-			if utils.doesEventHitWidgetOrParents( event, child ):
+			if utils.doesEventHitWidgetOrChildren( event, child ):
 				self.setCurrentItem( child )
 				if self._isCtlPressed:
 					self.addSelectedItem( child )
@@ -188,7 +188,7 @@ class SelectableDiv( html5.Div ):
 
 	def onDblClick(self, event):
 		for child in self._children:
-			if utils.doesEventHitWidgetOrParents( event, child ):
+			if utils.doesEventHitWidgetOrChildren( event, child ):
 				if self.selectionType=="node" and isinstance( child, self.nodeWidget ) or \
 				   self.selectionType=="leaf" and isinstance( child, self.leafWidget ) or \
 				   self.selectionType=="both":
