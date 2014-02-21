@@ -388,12 +388,18 @@ class TreeWidget( html5.Div ):
 	def reloadData(self):
 		assert self.node is not None, "reloadData called while self.node is None"
 		self.entryFrame.clear()
+		self._currentRequests = []
 		r = NetworkService.request(self.modul,"list/node", {"node":self.node}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
 		r.reqType = "node"
+		self._currentRequests.append( r )
 		r = NetworkService.request(self.modul,"list/leaf", {"node":self.node}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
 		r.reqType = "leaf"
+		self._currentRequests.append( r )
 
 	def onRequestSucceded(self, req):
+		if not req in self._currentRequests:
+			return
+		self._currentRequests.remove( req )
 		data = NetworkService.decode( req )
 		for skel in data["skellist"]:
 			if req.reqType=="node":

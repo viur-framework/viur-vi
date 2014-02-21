@@ -355,6 +355,7 @@ class HierarchyWidget( html5.Div ):
 					res.extend( collectExpandedNodes(c.ol) )
 			return( res )
 		self._expandedNodes = collectExpandedNodes( self.entryFrame )
+		self._currentRequests = []
 		for c in self.entryFrame._children[:]:
 			self.entryFrame.removeChild(c)
 		self.loadNode( self.rootNode )
@@ -368,12 +369,17 @@ class HierarchyWidget( html5.Div ):
 		"""
 		r = NetworkService.request(self.modul,"list/", {"parent":node,"orderby":"sortindex"}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
 		r.node = node
+		self._currentRequests.append( r )
 
 	def onRequestSucceded(self, req):
 		"""
 			The NetworkRequest for a (sub)node finished.
 			Create a new HierarchyItem for each entry received and add them to our view
 		"""
+		if not req in self._currentRequests:
+			#Prevent inserting old (stale) data
+			return
+		self._currentRequests.remove( req )
 		data = NetworkService.decode( req )
 		if req.node==self.rootNode:
 			ol = self.entryFrame

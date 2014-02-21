@@ -33,6 +33,7 @@ class ListWidget( html5.Div ):
 		self._currentCursor = None
 		self._currentSearchStr = None
 		self._structure = None
+		self._currentRequests = []
 		self.columns = []
 		if isSelector and filter is None and columns is None:
 			#Try to select a reasonable set of cols / filter
@@ -100,7 +101,7 @@ class ListWidget( html5.Div ):
 			filter["amount"] = self._batchSize
 			if self._currentCursor is not None:
 				filter["cursor"] = self._currentCursor
-			NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True )
+			self._currentRequests.append( NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True ) )
 			self._currentCursor = None
 
 
@@ -127,17 +128,21 @@ class ListWidget( html5.Div ):
 		"""
 		self.table.clear()
 		self._currentCursor = None
+		self._currentRequests = []
 		filter = self.filter.copy()
 		filter["amount"] = self._batchSize
 		if self._currentSearchStr:
 			filter["search"] = self._currentSearchStr
-		NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True )
+		self._currentRequests.append( NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True ) )
 
 	def onCompletion(self, req):
 		"""
 			Pass the rows received to the datatable.
 			@param req: The network request that succeed.
 		"""
+		if not req in self._currentRequests:
+			return
+		self._currentRequests.remove( req )
 		self.actionBar.resetLoadingState()
 		self.search.resetLoadingState()
 		data = NetworkService.decode( req )
