@@ -5,6 +5,8 @@ from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
 from widgets.preview import Preview
+from sidebar.internalpreview import InternalPreview
+from sidebar.filterselector import FilterSelector
 
 class EditPane( Pane ):
 	pass
@@ -202,7 +204,55 @@ class ListPreviewAction( html5.ext.Button ):
 		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "view" in conf["modules"][modul]["disabledFunctions"]
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
-actionDelegateSelector.insert( 1, ListPreviewAction.isSuitableFor, ListPreviewAction )
+#actionDelegateSelector.insert( 1, ListPreviewAction.isSuitableFor, ListPreviewAction )
+
+
+class ListPreviewInlineAction( html5.ext.Button ):
+	def __init__(self, *args, **kwargs ):
+		print("SELECTION PREVIEW UP")
+		super( ListPreviewInlineAction, self ).__init__( "Preview", *args, **kwargs )
+		self["class"] = "icon preview"
+		self.urls = None
+
+	def onAttach(self):
+		super( ListPreviewInlineAction,self ).onAttach()
+		modul = self.parent().parent().modul
+		self.parent().parent().selectionChangedEvent.register( self )
+		return
+		if modul in conf["modules"].keys():
+			modulConfig = conf["modules"][modul]
+			if "previewurls" in modulConfig.keys() and modulConfig["previewurls"]:
+				self.urls = modulConfig["previewurls"]
+				pass
+			else:
+				self["disabled"] = True
+
+	def onDetach(self):
+		self.parent().parent().selectionChangedEvent.unregister( self )
+		super( ListPreviewInlineAction, self ).onDetach()
+
+
+	def onSelectionChanged(self, table, selection):
+		if self.parent().parent().isSelector:
+			return
+		if len(selection)==1:
+			preview = InternalPreview( self.parent().parent().modul, self.parent().parent()._structure, selection[0])
+			self.parent().parent().sideBar.setWidget( preview )
+		else:
+			if isinstance( self.parent().parent().sideBar.getWidget(), InternalPreview ):
+				self.parent().parent().sideBar.setWidget( None )
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
+		correctAction = actionName=="preview"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-view" in conf["currentUser"]["access"])
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "view" in conf["modules"][modul]["disabledFunctions"]
+		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+
+actionDelegateSelector.insert( 1, ListPreviewInlineAction.isSuitableFor, ListPreviewInlineAction )
 
 
 class CloseAction( html5.ext.Button ):
@@ -301,3 +351,36 @@ class ReloadAction( html5.ext.Button ):
 		pass
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
+
+
+class ListSelectFilterAction( html5.ext.Button ):
+	def __init__(self, *args, **kwargs ):
+		super( ListSelectFilterAction, self ).__init__( "Select Filter", *args, **kwargs )
+		self["class"] = "icon selectfilter"
+		self.urls = None
+
+	def onAttach(self):
+		super(ListSelectFilterAction,self).onAttach()
+		modul = self.parent().parent().modul
+		if modul in conf["modules"].keys():
+			modulConfig = conf["modules"][modul]
+			print("-------LISTFILTERSELECT----")
+			print( modulConfig )
+
+
+	def onClick(self, sender=None):
+		if self.parent().parent().isSelector:
+			return
+		self.parent().parent().sideBar.setWidget( FilterSelector( self.parent().parent().modul ) )
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
+		correctAction = actionName=="selectfilter"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-view" in conf["currentUser"]["access"])
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "view" in conf["modules"][modul]["disabledFunctions"]
+		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+
+actionDelegateSelector.insert( 1, ListSelectFilterAction.isSuitableFor, ListSelectFilterAction )

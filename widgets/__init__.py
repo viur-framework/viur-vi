@@ -9,4 +9,5 @@ from widgets.hierarchy import HierarchyWidget
 from widgets.file import FileWidget
 from widgets.preview import Preview
 from widgets.search import Search
+from widgets.sidebar import SideBar
 from widgets.userlogoutmsg import UserLogoutMsg
