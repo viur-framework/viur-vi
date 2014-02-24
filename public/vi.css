@@ -638,6 +638,27 @@ button.mkdir:before {
 button.upload:before {
   background-position: -48px -32px;
 }
+
+/* Billing Icons */
+button.markpayed:before {
+  background-position: 0px -48px;
+}
+button.marksend:before {
+  background-position: 0px -32px;
+}
+button.getbill:before {
+  background-position: -16px -48px;
+}
+button.getdeliverynote:before {
+  background-position: -16px -32px;
+}
+button.getbuchungsbestaetigung:before {
+  background-position: -64px -32px;
+}
+button.resend:before {
+  background-position: -80px -32px;
+}
+
 /* Textedit Icons */
 button.text {
   margin-bottom: 10px;
