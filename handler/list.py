@@ -68,25 +68,4 @@ class ListHandler( Pane ):
 		super( ListHandler, self ).onClick( *args, **kwargs )
 
 
-class ListHandlerPreview( ListHandler ):
-
-	def onClick(self, *args, **kwargs ):
-		if not len(self.widgetsDomElm._children):
-			filter = None
-			columns = None
-			if "filter" in self.modulInfo.keys():
-				filter = self.modulInfo["filter"]
-			if "columns" in self.modulInfo.keys():
-				columns = self.modulInfo["columns"]
-			self.addWidget( ListWidgetPreview( self.modulName, filter=filter, columns=columns ) ) ##load alternative Widget
-		super( ListHandlerPreview, self ).onClick( *args, **kwargs )
-
-	@staticmethod
-	def canHandle( modulName, modulInfo ):
-		return( modulInfo["handler"]=="list" or modulInfo["handler"].startswith("list."))
-
-
-HandlerClassSelector.insert( 3, ListHandlerPreview.canHandle, ListHandlerPreview )
-
-
 HandlerClassSelector.insert( 1, ListHandler.canHandle, ListHandler )

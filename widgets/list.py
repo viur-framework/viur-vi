@@ -6,6 +6,7 @@ from priorityqueue import viewDelegateSelector
 from widgets.table import DataTable
 from widgets.actionbar import ActionBar
 from widgets.search import Search
+from widgets.sidebar import SideBar
 import html5
 
 
@@ -28,6 +29,8 @@ class ListWidget( html5.Div ):
 		self.modul = modul
 		self.actionBar = ActionBar( modul, "list", currentAction="list" )
 		self.appendChild( self.actionBar )
+		self.sideBar = SideBar()
+		self.appendChild( self.sideBar )
 		self.table = DataTable()
 		self.appendChild( self.table )
 		self._currentCursor = None
@@ -69,7 +72,7 @@ class ListWidget( html5.Div ):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
-		return( ["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if self.isSelector else [])+["reload"] )
+		return( ["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if self.isSelector else [])+["reload","selectfilter"] )
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -134,6 +137,14 @@ class ListWidget( html5.Div ):
 		if self._currentSearchStr:
 			filter["search"] = self._currentSearchStr
 		self._currentRequests.append( NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True ) )
+
+
+	def setFilter(self, filter):
+		"""
+			Applies a new filter.
+		"""
+		self.filter = filter
+		self.reloadData()
 
 	def onCompletion(self, req):
 		"""
