@@ -136,6 +136,7 @@ class ListWidget( html5.Div ):
 		filter["amount"] = self._batchSize
 		if self._currentSearchStr:
 			filter["search"] = self._currentSearchStr
+		self.table.setDataProvider( self )
 		self._currentRequests.append( NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True ) )
 
 
