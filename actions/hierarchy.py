@@ -182,3 +182,49 @@ class ReloadAction( html5.ext.Button ):
 		pass
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
+
+
+class SelectRootNode( html5.Select ):
+	"""
+		Allows adding an entry in a list-modul.
+	"""
+	def __init__(self, *args, **kwargs):
+		super( SelectRootNode, self ).__init__( *args, **kwargs )
+		self.sinkEvent("onChange")
+
+	def onAttach(self):
+		super( SelectRootNode, self ).onAttach()
+		NetworkService.request( self.parent().parent().modul, "listRootNodes", successHandler=self.onRootNodesAvaiable, cacheable=True )
+		self.parent().parent().rootNodeChangedEvent.register( self )
+
+	def onDetach(self):
+		self.parent().parent().rootNodeChangedEvent.unregister( self )
+		super( SelectRootNode, self ).onDetach()
+
+	def onRootNodeChanged(self, newNode):
+		for option in self._children:
+			if option["value"] == newNode:
+				option["selected"] = True
+				return
+
+	def onRootNodesAvaiable(self, req):
+		res = NetworkService.decode( req )
+		for node in res:
+			option = html5.Option()
+			option["value"] = node["key"]
+			option.appendChild( html5.TextNode(node["name"][:32]))
+			if node["key"] == self.parent().parent().rootNode:
+				option["selected"] = True
+			self.appendChild( option )
+
+	def onChange(self, event):
+		newRootNode = self["options"].item(self["selectedIndex"]).value
+		self.parent().parent().setRootNode( newRootNode )
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		correctAction = actionName=="selectrootnode"
+		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
+		return(  correctAction and correctHandler )
+
+actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )

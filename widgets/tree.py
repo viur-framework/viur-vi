@@ -173,7 +173,7 @@ class SelectableDiv( html5.Div ):
 	def onClick(self, event):
 		self.focus()
 		for child in self._children:
-			if utils.doesEventHitWidgetOrParents( event, child ):
+			if utils.doesEventHitWidgetOrChildren( event, child ):
 				self.setCurrentItem( child )
 				if self._isCtlPressed:
 					self.addSelectedItem( child )
@@ -188,7 +188,7 @@ class SelectableDiv( html5.Div ):
 
 	def onDblClick(self, event):
 		for child in self._children:
-			if utils.doesEventHitWidgetOrParents( event, child ):
+			if utils.doesEventHitWidgetOrChildren( event, child ):
 				if self.selectionType=="node" and isinstance( child, self.nodeWidget ) or \
 				   self.selectionType=="leaf" and isinstance( child, self.leafWidget ) or \
 				   self.selectionType=="both":
@@ -254,7 +254,7 @@ class TreeWidget( html5.Div ):
 
 	nodeWidget = NodeWidget
 	leafWidget = LeafWidget
-	defaultActions = ["add.node", "add.leaf", "edit", "delete", "reload"]
+	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload"]
 
 	def __init__( self, modul, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
 		"""
@@ -280,6 +280,8 @@ class TreeWidget( html5.Div ):
 		self.entryFrame.selectionActivatedEvent.register( self )
 		self._currentCursor = None
 		self._currentRequests = []
+		self.rootNodeChangedEvent = EventDispatcher("rootNodeChanged")
+		self.nodeChangedEvent = EventDispatcher("nodeChanged")
 		self.isSelector = isSelector
 		if self.rootNode:
 			self.reloadData()
@@ -358,11 +360,13 @@ class TreeWidget( html5.Div ):
 	def setRootNode(self, rootNode):
 		self.rootNode = rootNode
 		self.node = rootNode
+		self.rootNodeChangedEvent.fire( rootNode )
 		self.rebuildPath()
 		self.reloadData()
 
 	def setNode(self, node):
 		self.node = node
+		self.nodeChangedEvent.fire( node )
 		self.reloadData()
 
 	def rebuildPath(self):
@@ -384,12 +388,18 @@ class TreeWidget( html5.Div ):
 	def reloadData(self):
 		assert self.node is not None, "reloadData called while self.node is None"
 		self.entryFrame.clear()
+		self._currentRequests = []
 		r = NetworkService.request(self.modul,"list/node", {"node":self.node}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
 		r.reqType = "node"
+		self._currentRequests.append( r )
 		r = NetworkService.request(self.modul,"list/leaf", {"node":self.node}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
 		r.reqType = "leaf"
+		self._currentRequests.append( r )
 
 	def onRequestSucceded(self, req):
+		if not req in self._currentRequests:
+			return
+		self._currentRequests.remove( req )
 		data = NetworkService.decode( req )
 		for skel in data["skellist"]:
 			if req.reqType=="node":

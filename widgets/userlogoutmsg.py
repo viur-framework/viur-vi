@@ -15,7 +15,7 @@ class UserLogoutMsg( html5.ext.Popup):
 		DeferredCall(self.testUserTick,_delay=self.checkInterval)
 
 	def doApply(self, *args, **kwargs):
-		eval("""var fenster = window.open("/vi/s/login.html", "fenster1", "width=800,height=600,status=yes,scrollbars=yes,resizable=yes");""")
+		eval("""var fenster = window.open("/vi/user/login", "fenster1", "width=800,height=600,status=yes,scrollbars=yes,resizable=yes");""")
 		#eval("""fenster.onload(function () { document.getElementById("CoreWindow").dispatchEvent(new Event('UserTryedToLogin'))});""")
 		#eval("""fenster.onclose(function () { document.getElementById("CoreWindow").dispatchEvent(new Event('UserTryedToLogin'))});""")
 		eval("""fenster.focus();""")

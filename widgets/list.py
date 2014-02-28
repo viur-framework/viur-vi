@@ -6,6 +6,7 @@ from priorityqueue import viewDelegateSelector
 from widgets.table import DataTable
 from widgets.actionbar import ActionBar
 from widgets.search import Search
+from widgets.sidebar import SideBar
 import html5
 
 
@@ -28,11 +29,14 @@ class ListWidget( html5.Div ):
 		self.modul = modul
 		self.actionBar = ActionBar( modul, "list", currentAction="list" )
 		self.appendChild( self.actionBar )
+		self.sideBar = SideBar()
+		self.appendChild( self.sideBar )
 		self.table = DataTable()
 		self.appendChild( self.table )
 		self._currentCursor = None
 		self._currentSearchStr = None
 		self._structure = None
+		self._currentRequests = []
 		self.columns = []
 		if isSelector and filter is None and columns is None:
 			#Try to select a reasonable set of cols / filter
@@ -50,7 +54,7 @@ class ListWidget( html5.Div ):
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if isSelector else [])+["reload"])
+		self.actionBar.setActions( self.getDefaultActions() )
 		if isSelector:
 			self.selectionActivatedEvent.register( self )
 		self.emptyNotificationDiv = html5.Div()
@@ -63,6 +67,12 @@ class ListWidget( html5.Div ):
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		self.table["style"]["display"] = "none"
 		self.reloadData()
+
+	def getDefaultActions(self):
+		"""
+			Returns the list of actions available in our actionBar
+		"""
+		return( ["add", "edit", "delete", "preview", "selectfields"]+(["select","close"] if self.isSelector else [])+["reload","selectfilter"] )
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -94,7 +104,7 @@ class ListWidget( html5.Div ):
 			filter["amount"] = self._batchSize
 			if self._currentCursor is not None:
 				filter["cursor"] = self._currentCursor
-			NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True )
+			self._currentRequests.append( NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True ) )
 			self._currentCursor = None
 
 
@@ -121,17 +131,30 @@ class ListWidget( html5.Div ):
 		"""
 		self.table.clear()
 		self._currentCursor = None
+		self._currentRequests = []
 		filter = self.filter.copy()
 		filter["amount"] = self._batchSize
 		if self._currentSearchStr:
 			filter["search"] = self._currentSearchStr
-		NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True )
+		self.table.setDataProvider( self )
+		self._currentRequests.append( NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True ) )
+
+
+	def setFilter(self, filter):
+		"""
+			Applies a new filter.
+		"""
+		self.filter = filter
+		self.reloadData()
 
 	def onCompletion(self, req):
 		"""
 			Pass the rows received to the datatable.
 			@param req: The network request that succeed.
 		"""
+		if not req in self._currentRequests:
+			return
+		self._currentRequests.remove( req )
 		self.actionBar.resetLoadingState()
 		self.search.resetLoadingState()
 		data = NetworkService.decode( req )

@@ -23,7 +23,7 @@ class SelectTable( html5.Table ):
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
-		self.sinkEvent( "onClick", "onDblClick", "onMouseMove", "onMouseDown", "onMouseUp", "onKeyDown", "onKeyUp")
+		self.sinkEvent( "onClick", "onDblClick", "onMouseMove", "onMouseDown", "onMouseUp", "onKeyDown", "onKeyUp", "onMouseOut")
 		self["tabindex"] = 1
 		self._selectedRows = [] # List of row-indexes currently selected
 		self._currentRow = None # Rowindex of the cursor row
@@ -109,6 +109,9 @@ class SelectTable( html5.Table ):
 			self.setCursorRow( self.getIndexByTr(tr) )
 			event.preventDefault()
 		self.focus()
+
+	def onMouseOut(self, event):
+		self._isMouseDown = False
 
 	def onMouseUp(self, event):
 		self._isMouseDown = False

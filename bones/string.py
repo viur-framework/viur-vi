@@ -1,8 +1,10 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
 from config import conf
+from event import EventDispatcher
+from html5.keycodes import *
 
 class StringViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -225,6 +227,56 @@ class StringEditBone( html5.Div ):
 def CheckForStringBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( str(skelStucture[boneName]["type"]).startswith("str") )
 
+
+class ExtendedStringSearch( html5.Div ):
+	def __init__(self, extension, view, modul, *args, **kwargs ):
+		super( ExtendedStringSearch, self ).__init__( *args, **kwargs )
+		self.view = view
+		self.extension = extension
+		self.modul = modul
+		self.opMode = extension["mode"]
+		self.filterChangedEvent = EventDispatcher("filterChanged")
+		assert self.opMode in ["equals","from", "to", "prefix","range"]
+		self.appendChild( html5.TextNode("STRING SEARCH"))
+		self.appendChild( html5.TextNode(extension["name"]))
+		self.sinkEvent("onKeyDown")
+		if self.opMode in ["equals","from", "to", "prefix"]:
+			self.input = html5.Input()
+			self.input["type"] = "text"
+			self.appendChild( self.input )
+		elif self.opMode == "range":
+			self.input1 = html5.Input()
+			self.input1["type"] = "text"
+			self.appendChild( self.input1 )
+			self.appendChild( html5.TextNode("to") )
+			self.input2 = html5.Input()
+			self.input2["type"] = "text"
+			self.appendChild( self.input2 )
+
+	def onKeyDown(self, event):
+		if isReturn(event.keyCode):
+			self.filterChangedEvent.fire()
+
+	def updateFilter(self, filter):
+		if self.opMode=="equals":
+			filter[ self.extension["target"] ] = self.input["value"]
+		elif self.opMode=="from":
+			filter[ self.extension["target"]+"$gt" ] = self.input["value"]
+		elif self.opMode=="to":
+			filter[ self.extension["target"]+"$lt" ] = self.input["value"]
+		elif self.opMode=="prefix":
+			filter[ self.extension["target"]+"$lk" ] = self.input["value"]
+		elif self.opMode=="range":
+			filter[ self.extension["target"]+"$gt" ] = self.input1["value"]
+			filter[ self.extension["target"]+"$lt" ] = self.input2["value"]
+		return( filter )
+
+	@staticmethod
+	def canHandleExtension( extension, view, modul ):
+		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="string" or extension["type"].startswith("string.") ) )
+
+
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForStringBone, StringEditBone)
 viewDelegateSelector.insert( 3, CheckForStringBone, StringViewBoneDelegate)
+extendedSearchWidgetSelector.insert( 1, ExtendedStringSearch.canHandleExtension, ExtendedStringSearch )
