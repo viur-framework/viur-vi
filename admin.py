@@ -66,7 +66,7 @@ class CoreWindow( html5.Div ):
 			versionDiv.appendChild( revspan )
 		except:
 			versionDiv.appendChild( html5.TextNode( "unknown build" ) )
-		self.appendChild( versionDiv )
+		#self.appendChild( versionDiv )
 		startupQueue.setFinalElem( self.startup )
 		self.sinkEvent('onUserTryedToLogin')
 

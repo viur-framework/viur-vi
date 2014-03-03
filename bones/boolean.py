@@ -1,8 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
 from config import conf
+from event import EventDispatcher
 
 class BooleanViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -45,9 +46,56 @@ class BooleanEditBone( html5.Input ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
+
+class ExtendedBooleanSearch( html5.Div ):
+	def __init__(self, extension, view, modul, *args, **kwargs ):
+		super( ExtendedBooleanSearch, self ).__init__( *args, **kwargs )
+		self.view = view
+		self.extension = extension
+		self.modul = modul
+		self.filterChangedEvent = EventDispatcher("filterChanged")
+		self.appendChild( html5.TextNode("BOOLEAN SEARCH"))
+		self.appendChild( html5.TextNode(extension["name"]))
+		self.selectionCb = html5.Select()
+		self.appendChild( self.selectionCb )
+		o = html5.Option()
+		o["value"] = ""
+		o.appendChild(html5.TextNode("Ignore"))
+		self.selectionCb.appendChild(o)
+		o = html5.Option()
+		o["value"] = "0"
+		o.appendChild(html5.TextNode("No"))
+		self.selectionCb.appendChild(o)
+		o = html5.Option()
+		o["value"] = "1"
+		o.appendChild(html5.TextNode("Yes"))
+		self.selectionCb.appendChild(o)
+		self.sinkEvent("onChange")
+
+	def onChange(self, event):
+		event.stopPropagation()
+		self.filterChangedEvent.fire()
+
+
+	def updateFilter(self, filter):
+		val = self.selectionCb["options"].item(self.selectionCb["selectedIndex"]).value
+		if not val:
+			if self.extension["target"] in filter.keys():
+				del filter[ self.extension["target"] ]
+		else:
+			filter[ self.extension["target"] ] = val
+		return( filter )
+
+	@staticmethod
+	def canHandleExtension( extension, view, modul ):
+		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="boolean" or extension["type"].startswith("boolean.") ) )
+
+
+
 def CheckForBooleanBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="bool" )
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForBooleanBone, BooleanEditBone)
 viewDelegateSelector.insert( 3, CheckForBooleanBone, BooleanViewBoneDelegate)
+extendedSearchWidgetSelector.insert( 1, ExtendedBooleanSearch.canHandleExtension, ExtendedBooleanSearch )

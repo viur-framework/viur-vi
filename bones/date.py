@@ -20,7 +20,10 @@ class DateViewBoneDelegate( object ):
 		val = data[field]
 		try:
 			if structure["date"] and structure["time"]:
-				dt = datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
+				try:
+					dt = datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
+				except:
+					return(html5.TextNode("Error parsing Date"))
 				span = html5.Span()
 				span["class"].append("datetime")
 				dateSpan = html5.Span()
@@ -33,13 +36,19 @@ class DateViewBoneDelegate( object ):
 				span.appendChild(timeSpan)
 				return( span )
 			elif structure["date"] and not structure["time"]:
-				dt = datetime.strptime( val, "%d.%m.%Y")
+				try:
+					dt = datetime.strptime( val, "%d.%m.%Y")
+				except:
+					return(html5.TextNode("Error parsing Date"))
 				dateSpan = html5.Span()
 				dateSpan["class"].append("date")
 				dateSpan.appendChild( html5.TextNode( dt.strftime("%d.%m.%Y") ))
 				return( dateSpan )
 			elif not structure["date"] and structure["time"]:
-				dt = datetime.strptime( val, "%H:%M:%S")
+				try:
+					dt = datetime.strptime( val, "%H:%M:%S")
+				except:
+					return(html5.TextNode("Error parsing Date"))
 				timeSpan = html5.Span()
 				timeSpan["class"].append("time")
 				timeSpan.appendChild( html5.TextNode( dt.strftime("%H:%M:%S") ))

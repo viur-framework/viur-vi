@@ -1,7 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from event import EventDispatcher
+from html5.keycodes import *
 
 class NumericViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -50,9 +52,60 @@ class NumericEditBone( html5.Input ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
+class ExtendedNumericSearch( html5.Div ):
+	def __init__(self, extension, view, modul, *args, **kwargs ):
+		super( ExtendedNumericSearch, self ).__init__( *args, **kwargs )
+		self.view = view
+		self.extension = extension
+		self.modul = modul
+		self.opMode = extension["mode"]
+		self.filterChangedEvent = EventDispatcher("filterChanged")
+		assert self.opMode in ["equals","from", "to","range"]
+		self.appendChild( html5.TextNode("NUMERIC SEARCH"))
+		self.appendChild( html5.TextNode(extension["name"]))
+		self.sinkEvent("onKeyDown")
+		if self.opMode in ["equals","from", "to"]:
+			self.input = html5.Input()
+			self.input["type"] = "number"
+			self.appendChild( self.input )
+		elif self.opMode == "range":
+			self.input1 = html5.Input()
+			self.input1["type"] = "number"
+			self.appendChild( self.input1 )
+			self.appendChild( html5.TextNode("to") )
+			self.input2 = html5.Input()
+			self.input2["type"] = "number"
+			self.appendChild( self.input2 )
+
+	def onKeyDown(self, event):
+		if isReturn(event.keyCode):
+			self.filterChangedEvent.fire()
+
+	def updateFilter(self, filter):
+		if self.opMode=="equals":
+			filter[ self.extension["target"] ] = self.input["value"]
+		elif self.opMode=="from":
+			filter[ self.extension["target"]+"$gt" ] = self.input["value"]
+		elif self.opMode=="to":
+			filter[ self.extension["target"]+"$lt" ] = self.input["value"]
+		elif self.opMode=="prefix":
+			filter[ self.extension["target"]+"$lk" ] = self.input["value"]
+		elif self.opMode=="range":
+			filter[ self.extension["target"]+"$gt" ] = self.input1["value"]
+			filter[ self.extension["target"]+"$lt" ] = self.input2["value"]
+		return( filter )
+
+	@staticmethod
+	def canHandleExtension( extension, view, modul ):
+		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="numeric" or extension["type"].startswith("numeric.") ) )
+
+
+
+
 def CheckForNumericBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="numeric" )
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForNumericBone, NumericEditBone)
 viewDelegateSelector.insert( 3, CheckForNumericBone, NumericViewBoneDelegate)
+extendedSearchWidgetSelector.insert( 1, ExtendedNumericSearch.canHandleExtension, ExtendedNumericSearch )

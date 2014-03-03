@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from event import EventDispatcher
 from utils import formatString
 from widgets.list import ListWidget
 from config import conf
@@ -351,6 +352,50 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.selectionDiv.removeChild( entry )
 		self.entries.remove( entry )
 
+class ExtendedRelationalSearch( html5.Div ):
+	def __init__(self, extension, view, modul, *args, **kwargs ):
+		super( ExtendedRelationalSearch, self ).__init__( *args, **kwargs )
+		self.view = view
+		self.extension = extension
+		self.modul = modul
+		self.currentSelection = None
+		self.filterChangedEvent = EventDispatcher("filterChanged")
+		self.appendChild( html5.TextNode("RELATIONAL SEARCH"))
+		self.appendChild( html5.TextNode(extension["name"]))
+		self.currentEntry = html5.Span()
+		self.appendChild(self.currentEntry)
+		btn = html5.ext.Button("Select", self.openSelector)
+		self.appendChild( btn )
+		btn = html5.ext.Button("Clear", self.clearSelection)
+		self.appendChild( btn )
+
+	def clearSelection(self, *args, **kwargs):
+		self.currentSelection = None
+		self.filterChangedEvent.fire()
+
+	def openSelector(self, *args, **kwargs):
+		currentSelector = ListWidget( self.extension["modul"], isSelector=True )
+		currentSelector.selectionActivatedEvent.register( self )
+		conf["mainWindow"].stackWidget( currentSelector )
+
+	def onSelectionActivated(self, table,selection):
+		self.currentSelection = selection
+		self.filterChangedEvent.fire()
+
+
+	def updateFilter(self, filter):
+		if self.currentSelection:
+			self.currentEntry.element.innerHTML = self.currentSelection[0]["name"]
+			newId = self.currentSelection[0]["id"]
+			filter[ self.extension["target"]+".id" ] = newId
+		else:
+			self.currentEntry.element.innerHTML = ""
+		return( filter )
+
+	@staticmethod
+	def canHandleExtension( extension, view, modul ):
+		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="relational" or extension["type"].startswith("relational.") ) )
+
 def CheckForRelationalBoneSingleSelection( modulName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
 	return CheckForRelationalBone( modulName, boneName, skelStructure ) and not isMultiple
@@ -366,3 +411,4 @@ def CheckForRelationalBone(  modulName, boneName, skelStucture, *args, **kwargs 
 editBoneSelector.insert( 3, CheckForRelationalBoneSingleSelection, RelationalSingleSelectionBone)
 editBoneSelector.insert( 3, CheckForRelationalBoneMultiSelection, RelationalMultiSelectionBone)
 viewDelegateSelector.insert( 3, CheckForRelationalBone, RelationalViewBoneDelegate)
+extendedSearchWidgetSelector.insert( 1, ExtendedRelationalSearch.canHandleExtension, ExtendedRelationalSearch )
