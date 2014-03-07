@@ -84,7 +84,7 @@ class DateEditBone( html5.Div ):
 		time = skelStructure[ boneName ]["time"] if "time" in skelStructure[ boneName ].keys() else True
 		return( DateEditBone( modulName, boneName, readOnly,date,time ) )
 
-	def unserialize(self, data):
+	def unserialize(self, data, extendedErrorInformation=None):
 		if self.boneName in data.keys():
 			if self.hastime and not self.hasdate:
 				self.timeinput["value"]=data[ self.boneName ]

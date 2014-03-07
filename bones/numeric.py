@@ -36,9 +36,9 @@ class NumericEditBone( html5.Input ):
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		if "params" in skelStructure[ boneName ].keys():
-			_min=skelStructure[ boneName ]["params"]["min"] if "min" in skelStructure[ boneName ]["params"].keys() else False
-			_max=skelStructure[ boneName ]["params"]["max"] if "max" in skelStructure[ boneName ]["params"].keys() else False
-			precision=skelStructure[ boneName ]["params"]["precision"] if "precision" in skelStructure[ boneName ]["params"].keys() else False
+			_min=skelStructure[ boneName ]["params"]["min"] if (isinstance(skelStructure[ boneName ]["params"],dict) and "min" in skelStructure[ boneName ]["params"].keys()) else False
+			_max=skelStructure[ boneName ]["params"]["max"] if (isinstance(skelStructure[ boneName ]["params"],dict) and "max" in skelStructure[ boneName ]["params"].keys()) else False
+			precision=skelStructure[ boneName ]["params"]["precision"] if (isinstance(skelStructure[ boneName ]["params"],dict) and "precision" in skelStructure[ boneName ]["params"].keys()) else False
 			return( NumericEditBone( modulName, boneName, readOnly,_min,_max,precision ) )
 		return( NumericEditBone( modulName, boneName, readOnly ) )
 
@@ -51,6 +51,10 @@ class NumericEditBone( html5.Input ):
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )
+
+	def setExtendedErrorInformation(self, errorInfo ):
+		pass
+
 
 class ExtendedNumericSearch( html5.Div ):
 	def __init__(self, extension, view, modul, *args, **kwargs ):

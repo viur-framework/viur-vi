@@ -34,7 +34,7 @@ class BooleanEditBone( html5.Input ):
 		return( BooleanEditBone( modulName, boneName, readOnly ) )
 
 	##read
-	def unserialize(self, data):
+	def unserialize(self, data, extendedErrorInformation=None):
 		if self.boneName in data.keys():
 			self._setChecked(data[self.boneName])
 

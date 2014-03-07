@@ -41,6 +41,10 @@ class PasswordEditBone( html5.Div ):
 			return( { self.boneName: self.primeinput["value"] } )
 		raise InvalidBoneValueException()
 
+	def setExtendedErrorInformation(self, errorInfo ):
+		pass
+
+
 def CheckForPasswordBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( str(skelStucture[boneName]["type"]).startswith("password") )
 

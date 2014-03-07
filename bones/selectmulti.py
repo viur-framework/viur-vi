@@ -72,6 +72,10 @@ class SelectMultiEditBone( html5.Div ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
+	def setExtendedErrorInformation(self, errorInfo ):
+		pass
+
+
 class ExtendedSelectMultiSearch( html5.Div ):
 	def __init__(self, extension, view, modul, *args, **kwargs ):
 		super( ExtendedSelectMultiSearch, self ).__init__( *args, **kwargs )
