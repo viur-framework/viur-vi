@@ -1,7 +1,8 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from event import EventDispatcher
 
 class SelectOneViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -61,9 +62,50 @@ class SelectOneEditBone( html5.Select ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
+class ExtendedSelectOneSearch( html5.Div ):
+	def __init__(self, extension, view, modul, *args, **kwargs ):
+		super( ExtendedSelectOneSearch, self ).__init__( *args, **kwargs )
+		self.view = view
+		self.extension = extension
+		self.modul = modul
+		self.filterChangedEvent = EventDispatcher("filterChanged")
+		self.appendChild( html5.TextNode("SELECT ONE SEARCH"))
+		self.appendChild( html5.TextNode(extension["name"]))
+		self.selectionCb = html5.Select()
+		self.appendChild( self.selectionCb )
+		o = html5.Option()
+		o["value"] = ""
+		o.appendChild(html5.TextNode("Ignore"))
+		self.selectionCb.appendChild(o)
+		for k,v in extension["values"].items():
+			o = html5.Option()
+			o["value"] = k
+			o.appendChild(html5.TextNode(v))
+			self.selectionCb.appendChild(o)
+		self.sinkEvent("onChange")
+
+	def onChange(self, event):
+		event.stopPropagation()
+		self.filterChangedEvent.fire()
+
+
+	def updateFilter(self, filter):
+		val = self.selectionCb["options"].item(self.selectionCb["selectedIndex"]).value
+		if not val:
+			if self.extension["target"] in filter.keys():
+				del filter[ self.extension["target"] ]
+		else:
+			filter[ self.extension["target"] ] = val
+		return( filter )
+
+	@staticmethod
+	def canHandleExtension( extension, view, modul ):
+		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="selectone" or extension["type"].startswith("selectone.") ) )
+
 def CheckForSelectOneBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="selectone" )
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForSelectOneBone, SelectOneEditBone)
 viewDelegateSelector.insert( 3, CheckForSelectOneBone, SelectOneViewBoneDelegate)
+extendedSearchWidgetSelector.insert( 1, ExtendedSelectOneSearch.canHandleExtension, ExtendedSelectOneSearch )

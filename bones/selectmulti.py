@@ -1,7 +1,8 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from event import EventDispatcher
 
 class SelectMultiViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -71,9 +72,50 @@ class SelectMultiEditBone( html5.Div ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
+class ExtendedSelectMultiSearch( html5.Div ):
+	def __init__(self, extension, view, modul, *args, **kwargs ):
+		super( ExtendedSelectMultiSearch, self ).__init__( *args, **kwargs )
+		self.view = view
+		self.extension = extension
+		self.modul = modul
+		self.filterChangedEvent = EventDispatcher("filterChanged")
+		self.appendChild( html5.TextNode("SELECT MULTI SEARCH"))
+		self.appendChild( html5.TextNode(extension["name"]))
+		self.selectionCb = html5.Select()
+		self.appendChild( self.selectionCb )
+		o = html5.Option()
+		o["value"] = ""
+		o.appendChild(html5.TextNode("Ignore"))
+		self.selectionCb.appendChild(o)
+		for k,v in extension["values"].items():
+			o = html5.Option()
+			o["value"] = k
+			o.appendChild(html5.TextNode(v))
+			self.selectionCb.appendChild(o)
+		self.sinkEvent("onChange")
+
+	def onChange(self, event):
+		event.stopPropagation()
+		self.filterChangedEvent.fire()
+
+
+	def updateFilter(self, filter):
+		val = self.selectionCb["options"].item(self.selectionCb["selectedIndex"]).value
+		if not val:
+			if self.extension["target"] in filter.keys():
+				del filter[ self.extension["target"] ]
+		else:
+			filter[ self.extension["target"] ] = val
+		return( filter )
+
+	@staticmethod
+	def canHandleExtension( extension, view, modul ):
+		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="selectmulti" or extension["type"].startswith("selectmulti.") ) )
+
 def CheckForSelectMultiBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="selectmulti" )
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForSelectMultiBone, SelectMultiEditBone)
 viewDelegateSelector.insert( 3, CheckForSelectMultiBone, SelectMultiViewBoneDelegate)
+extendedSearchWidgetSelector.insert( 1, ExtendedSelectMultiSearch.canHandleExtension, ExtendedSelectMultiSearch )
