@@ -158,7 +158,7 @@ class StringEditBone( html5.Div ):
 		self.genTag( "", lang=btn.lang )
 
 
-	def unserialize( self, data ):
+	def unserialize( self, data, extendedErrorInformation=None ):
 		if not self.boneName in data.keys():
 			return
 		data = data[ self.boneName ]

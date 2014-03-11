@@ -46,7 +46,7 @@ class ColorEditBone( html5.Input ):
 		return( ColorEditBone( modulName, boneName, readOnly ) )
 
 	##read
-	def unserialize(self, data):
+	def unserialize(self, data, extendedErrorInformation=None):
 		if self.boneName in data.keys():
 			self._setValue(data[self.boneName])
 

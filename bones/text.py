@@ -159,6 +159,9 @@ class TextEditBone( html5.Div ):
 			if not self.readOnly:
 				self.openTxt()
 
+	def setExtendedErrorInformation(self, errorInfo ):
+		pass
+
 
 def CheckForTextBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="text" )

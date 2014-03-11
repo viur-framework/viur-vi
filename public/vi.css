@@ -1172,13 +1172,12 @@ input[type=password],
   clear: both;
 }
 .contentdiv[contenteditable] {
-  width: 97.2%;
-  height: 100%;
-  min-height: 500px;
-  overflow: hidden;
-  overflow-y: scroll;
-  margin-bottom: 15px;
-  display: block;
+	width: 97.2%;
+	height: auto;
+	overflow: hidden;
+	overflow-y: scroll;
+	margin: 25px 0 250px;
+	display: block;
 }
 .contentdiv[contenteditable] a {
   text-decoration: underline;

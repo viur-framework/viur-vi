@@ -39,7 +39,7 @@ class BaseEditBone( html5.Input ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		return( BaseEditBone( modulName, boneName, readOnly ) )
 
-	def unserialize(self, data):
+	def unserialize(self, data, extendedErrorInformation=None):
 		if self.boneName in data.keys():
 			self["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
 			#self.lineEdit.setText( str( data[ self.boneName ] ) if data[ self.boneName ] else "" )
@@ -49,6 +49,9 @@ class BaseEditBone( html5.Input ):
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )
+
+	def setExtendedErrorInformation(self, errorInfo ):
+		pass
 
 
 #Register this Bone in the global queue
