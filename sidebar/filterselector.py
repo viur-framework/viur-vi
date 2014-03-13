@@ -20,8 +20,8 @@ class CompoundFilter( html5.Div ):
 				self.appendChild( container )
 				self.extendedFilters.append( wdg )
 				wdg.filterChangedEvent.register( self )
-		btn = html5.ext.Button("Apply", self.reevaluate)
-		self.appendChild( btn )
+		#btn = html5.ext.Button("Apply", self.reevaluate)
+		#self.appendChild( btn )
 
 	def onFilterChanged(self, *args, **kwargs):
 		self.reevaluate()
@@ -44,11 +44,28 @@ class FilterSelector( html5.Div ):
 					if "extendedFilters" in view.keys() and view["extendedFilters"]:
 						self.appendChild( CompoundFilter( view, modul ) )
 					else:
-						btn = html5.ext.Button(view["name"], self.setView )
+						btn = html5.ext.Button( callback=self.setView )
 						btn.destView = view
+						if "icon" in view.keys() and view["icon"]:
+							img = html5.Img()
+							img["src"] = view["icon"]
+							btn.appendChild(img)
+						btn.appendChild( html5.TextNode(view["name"]))
 						self.appendChild( btn )
 		self.search = Search()
 		self.appendChild(self.search)
+		self.search.startSearchEvent.register( self )
+
+
+	def onStartSearch(self, searchTxt):
+		filter = self.parent().parent().getFilter()
+		if searchTxt:
+			filter["search"] = searchTxt
+		else:
+			if "search" in filter.keys():
+				del filter["search"]
+		self.applyFilter( filter )
+
 
 	def setView(self, btn):
 		print("SETTING VIEW", btn.destView)
@@ -56,6 +73,6 @@ class FilterSelector( html5.Div ):
 
 
 	def applyFilter(self, filter):
-		print( self.parent().parent() )
 		self.parent().parent().setFilter( filter )
+		self.parent().parent().sideBar.setWidget( None )
 

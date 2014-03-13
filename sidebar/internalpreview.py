@@ -1,7 +1,7 @@
 import html5
 from priorityqueue import viewDelegateSelector
 
-class InternalPreview( html5.Div ):
+class InternalPreview( html5.Ul ):
 	def __init__(self, modul, structure, item, *args, **kwargs):
 		super( InternalPreview, self ).__init__( *args, **kwargs )
 
