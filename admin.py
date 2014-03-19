@@ -9,6 +9,7 @@ import handler
 import bones
 import actions
 import i18n
+from event import viInitializedEvent
 from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from log import Log
 from pane import Pane, GroupPane
@@ -20,6 +21,8 @@ except ImportError:
 
 
 class CoreWindow( html5.Div ):
+
+
 	def __init__(self, *args, **kwargs ):
 		super( CoreWindow, self ).__init__( *args, **kwargs )
 		self["id"]="CoreWindow"
@@ -126,6 +129,7 @@ class CoreWindow( html5.Div ):
 		panes.sort( key=lambda x: x[0] )
 		for k, pane in panes:
 			self.addPane( pane )
+		viInitializedEvent.fire()
 		DeferredCall( self.checkInitialHash )
 
 
