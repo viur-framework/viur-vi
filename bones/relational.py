@@ -360,13 +360,16 @@ class ExtendedRelationalSearch( html5.Div ):
 		self.modul = modul
 		self.currentSelection = None
 		self.filterChangedEvent = EventDispatcher("filterChanged")
-		self.appendChild( html5.TextNode("RELATIONAL SEARCH"))
-		self.appendChild( html5.TextNode(extension["name"]))
+		tmpSpan = html5.Span()
+		tmpSpan.appendChild( html5.TextNode(extension["name"]))
+		self.appendChild(tmpSpan)
 		self.currentEntry = html5.Span()
-		self.appendChild(self.currentEntry)
+		#self.appendChild(self.currentEntry) #FIXME: The selector is closed immediately after selecting an entity - you cant see it anyway
 		btn = html5.ext.Button("Select", self.openSelector)
+		btn["class"].append("icon select")
 		self.appendChild( btn )
 		btn = html5.ext.Button("Clear", self.clearSelection)
+		btn["class"].append("icon cancel")
 		self.appendChild( btn )
 
 	def clearSelection(self, *args, **kwargs):

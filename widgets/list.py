@@ -34,7 +34,7 @@ class ListWidget( html5.Div ):
 		self.table = DataTable()
 		self.appendChild( self.table )
 		self._currentCursor = None
-		self._currentSearchStr = None
+		#self._currentSearchStr = None
 		self._structure = None
 		self._currentRequests = []
 		self.columns = []
@@ -61,9 +61,9 @@ class ListWidget( html5.Div ):
 		self.emptyNotificationDiv.appendChild(html5.TextNode("Currently no entries"))
 		self.emptyNotificationDiv["class"].append("emptynotification")
 		self.appendChild(self.emptyNotificationDiv)
-		self.search = Search()
-		self.appendChild(self.search)
-		self.search.startSearchEvent.register( self )
+		#self.search = Search()
+		#self.appendChild(self.search)
+		#self.search.startSearchEvent.register( self )
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		self.table["style"]["display"] = "none"
 		self.reloadData()
@@ -80,7 +80,7 @@ class ListWidget( html5.Div ):
 		"""
 		self.actionBar["style"]["display"] = "none"
 		self.table["style"]["display"] = "none"
-		self.search["style"]["display"] = "none"
+		#self.search["style"]["display"] = "none"
 		errorDiv = html5.Div()
 		errorDiv["class"].append("error_msg")
 		if code and (code==401 or code==403):
@@ -91,9 +91,9 @@ class ListWidget( html5.Div ):
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
 
-	def onStartSearch(self, searchTxt):
-		self._currentSearchStr = searchTxt
-		self.reloadData()
+	#def onStartSearch(self, searchTxt):
+	#	self._currentSearchStr = searchTxt
+	#	self.reloadData()
 
 	def onNextBatchNeeded(self):
 		"""
@@ -134,8 +134,8 @@ class ListWidget( html5.Div ):
 		self._currentRequests = []
 		filter = self.filter.copy()
 		filter["amount"] = self._batchSize
-		if self._currentSearchStr:
-			filter["search"] = self._currentSearchStr
+		#if self._currentSearchStr:
+		#	filter["search"] = self._currentSearchStr
 		self.table.setDataProvider( self )
 		self._currentRequests.append( NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True ) )
 
@@ -147,6 +147,11 @@ class ListWidget( html5.Div ):
 		self.filter = filter
 		self.reloadData()
 
+	def getFilter(self):
+		if self.filter:
+			return( {k:v for k,v in self.filter.items()})
+		return( {} )
+
 	def onCompletion(self, req):
 		"""
 			Pass the rows received to the datatable.
@@ -156,7 +161,7 @@ class ListWidget( html5.Div ):
 			return
 		self._currentRequests.remove( req )
 		self.actionBar.resetLoadingState()
-		self.search.resetLoadingState()
+		#self.search.resetLoadingState()
 		data = NetworkService.decode( req )
 		if data["structure"] is None:
 			if self.table.getRowCount():
