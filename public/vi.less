@@ -1198,15 +1198,14 @@ margin-right: -2px;
 .contentdiv[contenteditable] {
   width: 97.2%;
   height: auto;
+  min-height:300px;
   overflow: hidden;
   overflow-y: scroll;
   margin: 25px 0 250px;
   display: block;
 }
 
-.contentdiv[contenteditable] a {
-  text-decoration:underline;
-}
+.contentdiv[contenteditable] a {text-decoration:underline;}
 
 .contentdiv[contenteditable] h1,
 .contentdiv[contenteditable] h2,
@@ -1216,21 +1215,19 @@ margin-right: -2px;
 .contentdiv[contenteditable] h2 {font-size:1.4em; font-weight:400;}
 .contentdiv[contenteditable] h3 {font-size:1em; font-weight:400;}
 
-.contentdiv[contenteditable] ul {
-  margin-left:30px; list-style-type:disc;
-}
+.contentdiv[contenteditable] strong,
+.contentdiv[contenteditable] b {font-weight:400;} 
 
-.contentdiv[contenteditable] ul ul {
-  list-style-type:square;
-}
+.contentdiv[contenteditable] em,
+.contentdiv[contenteditable] i {font-style:italic;} 
 
-.contentdiv[contenteditable] ol {
-  margin-left:30px; list-style-type:decimal;
-}
+.contentdiv[contenteditable] ul {margin-left:30px; list-style-type:disc;}
 
-.contentdiv[contenteditable] ol ol {
-  list-style-type:lower-latin;
-}
+.contentdiv[contenteditable] ul ul {list-style-type:square;}
+
+.contentdiv[contenteditable] ol {margin-left:30px; list-style-type:decimal;}
+
+.contentdiv[contenteditable] ol ol {list-style-type:lower-latin;}
 
 /* #vi_input_bones
 ================================================== */
