@@ -266,10 +266,10 @@ p { margin-bottom: 10px;}
   /*min-width:298px;*/
 }
 .modullist:first-of-type {
-  margin: 45px 0 0;
+  margin-top: 45px;
 }
 .modullist:last-of-type {
-  margin: 0 0 50px;
+  margin-bottom: 50px;
 }
 .modullist a,
 .modullist a:visited {
@@ -457,7 +457,8 @@ margin-top: -10px;
 .has_multiple_children .vi_operator:nth-of-type(even) {
   right: 0;
 }
-.vi_operator .search {
+.vi_operator .search,
+.vi_operator .extendedfilter {
   width: 96%;
   padding: 15px 1%;
   background: #dcdcdc;
@@ -478,6 +479,7 @@ margin-top: -10px;
   overflow: hidden;
   line-height: 1.4em;
   font-size: 0.8em;
+  margin-left: 7px;
 }
 /*.vi_operator:nth-child(n+1):before {
     content:" ";
@@ -550,7 +552,7 @@ margin-top: -10px;
   border-right:2px solid @maincolor;
   margin-right: 4px;
 }
-.actionbar .operations, button.text.save[type="button"], button.flipview[type="button"] {
+.actionbar .operations, button.selectfilter, button.text.save[type="button"], button.flipview[type="button"] {
   float: right;
 }
 .actionbar.is_disabled {
@@ -631,6 +633,7 @@ button.preview:before {
   background-position: -96px 0px;
 }
 .vi_operator .search button:before,
+button.selectfilter:before,
 button.search:before {
   background-position: -112px 0px;
 }
@@ -1195,15 +1198,14 @@ margin-right: -2px;
 .contentdiv[contenteditable] {
   width: 97.2%;
   height: auto;
+  min-height:300px;
   overflow: hidden;
   overflow-y: scroll;
   margin: 25px 0 250px;
   display: block;
 }
 
-.contentdiv[contenteditable] a {
-  text-decoration:underline;
-}
+.contentdiv[contenteditable] a {text-decoration:underline;}
 
 .contentdiv[contenteditable] h1,
 .contentdiv[contenteditable] h2,
@@ -1213,21 +1215,19 @@ margin-right: -2px;
 .contentdiv[contenteditable] h2 {font-size:1.4em; font-weight:400;}
 .contentdiv[contenteditable] h3 {font-size:1em; font-weight:400;}
 
-.contentdiv[contenteditable] ul {
-  margin-left:30px; list-style-type:disc;
-}
+.contentdiv[contenteditable] strong,
+.contentdiv[contenteditable] b {font-weight:400;} 
 
-.contentdiv[contenteditable] ul ul {
-  list-style-type:square;
-}
+.contentdiv[contenteditable] em,
+.contentdiv[contenteditable] i {font-style:italic;} 
 
-.contentdiv[contenteditable] ol {
-  margin-left:30px; list-style-type:decimal;
-}
+.contentdiv[contenteditable] ul {margin-left:30px; list-style-type:disc;}
 
-.contentdiv[contenteditable] ol ol {
-  list-style-type:lower-latin;
-}
+.contentdiv[contenteditable] ul ul {list-style-type:square;}
+
+.contentdiv[contenteditable] ol {margin-left:30px; list-style-type:decimal;}
+
+.contentdiv[contenteditable] ol ol {list-style-type:lower-latin;}
 
 /* #vi_input_bones
 ================================================== */
@@ -1309,6 +1309,9 @@ select {
 .selectioncontainer label {
   border: 1px solid #ccc;
   border-right-width: 0;
+  width: auto;
+  min-width: 220px;
+  max-width: 50%;
 }
 .selectioncontainer label,
 .selectioncontainer button {
@@ -1610,49 +1613,65 @@ td span.time {
   box-shadow: 2px 2px 3px rgba(0,0,0,0.1)
 }
 
-.halfview {
-  width: 60%;
+.issplitview > div {
+  width: 65%;
   float: left;
 }
 
-.halfview ~ div > ul {
-  width: 30%;
-  float: left;
-  padding: 10px 1%;
+.issplitview .sidebar {
   margin-left: 2%;
+  width: 30%;
+  float:right;
+  padding: 10px 1%;
   border-radius: 5px;
   background: #eee;
   border: 1px solid #ddd; 
 }
 
-.halfview ~ div > ul > li {
+.issplitview .sidebar > div > button {
+  width:98%;
+  margin:0 1% 5px;
+}
+
+.issplitview .sidebar .extendedfilter button {
+  float:right;
+}
+
+.issplitview .sidebar .extendedfilter span {
+  margin-left:7px;
+}
+
+.sidebar > ul {
+}
+
+.sidebar > ul > li {
   padding:3px;
   border-bottom: 1px solid #ddd;
   font-size:0.9em;
   color:#444;
 }
 
-.halfview ~ div > ul > li dd img {
+.sidebar > ul > li dd img {
   width:16px; 
   margin-right: 10px;
 }
 
-.halfview ~ div > ul > li dd ul {
-overflow: hidden;
-height: 25px;
+.sidebar > ul > li dd ul {
+  overflow: hidden;
+  height: 25px;
 }
 
-.halfview ~ div > ul > li dd ul li {
+.sidebar > ul > li dd ul li {
   float: right;
   margin-left: 10px;
 }
 
 
-.halfview ~ div > ul > li dl {
+.sidebar > ul > li dl {
   height: 23px;
 }
 
-.halfview ~ div > ul > li dt {
+.sidebar > ul > li dt {
   display: inline-block;
   max-width: 30%;
   overflow: hidden;
@@ -1662,7 +1681,7 @@ height: 25px;
   font-weight:600;
 }
 
-.halfview ~ div > ul > li dd {
+.sidebar > ul > li dd {
   display: inline-block;
   float: right;
   max-width: 60%;
@@ -1670,6 +1689,7 @@ height: 25px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 
 /* #vi_forest
 ================================================== */.tree {

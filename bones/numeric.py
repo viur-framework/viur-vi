@@ -28,19 +28,20 @@ class NumericEditBone( html5.Input ):
 		if _max:
 			self["max"]=_max
 		if precision:
-			self["step"]=precision
+			self["step"]=pow(10,-precision)
+		else: #Precision is zero, treat as integer input
+			self["step"]=1
 		if self.readOnly:
 			self["disabled"] = True
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		if "params" in skelStructure[ boneName ].keys():
-			_min=skelStructure[ boneName ]["params"]["min"] if (isinstance(skelStructure[ boneName ]["params"],dict) and "min" in skelStructure[ boneName ]["params"].keys()) else False
-			_max=skelStructure[ boneName ]["params"]["max"] if (isinstance(skelStructure[ boneName ]["params"],dict) and "max" in skelStructure[ boneName ]["params"].keys()) else False
-			precision=skelStructure[ boneName ]["params"]["precision"] if (isinstance(skelStructure[ boneName ]["params"],dict) and "precision" in skelStructure[ boneName ]["params"].keys()) else False
-			return( NumericEditBone( modulName, boneName, readOnly,_min,_max,precision ) )
-		return( NumericEditBone( modulName, boneName, readOnly ) )
+		_min=skelStructure[ boneName ]["min"] if ("min" in skelStructure[ boneName ].keys()) else False
+		_max=skelStructure[ boneName ]["max"] if ("max" in skelStructure[ boneName ].keys()) else False
+		precision=skelStructure[ boneName ]["precision"] if ("precision" in skelStructure[ boneName ].keys()) else False
+		return( NumericEditBone( modulName, boneName, readOnly,_min,_max,precision ) )
+
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():

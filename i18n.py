@@ -23,7 +23,7 @@ def translate( key, **kwargs ):
 		for k,v in kwargs.items():
 			inStr = inStr.replace("{%s}" % k, v)
 		return( inStr )
-	assert _currentLanguage is not None and len(_currentLanguage)==2
+	#assert _currentLanguage is not None and len(_currentLanguage)==2 #FIXME: Fails for en-US
 	if _currentLanguage in _runtimeTranslations.keys():
 		if key.lower() in _runtimeTranslations[ _currentLanguage ].keys():
 			return( processTr( _runtimeTranslations[ _currentLanguage ][key.lower()], **kwargs ) )
