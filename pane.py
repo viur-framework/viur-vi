@@ -1,7 +1,7 @@
 from config import conf
 import html5
 
-
+from i18n import translate
 
 
 
@@ -42,7 +42,7 @@ class Pane( html5.Li ):
 		self.sinkEvent("onClick")
 		#self.label.addClickListener( self.onClick )
 		if closeable:
-			self.closeBtn = html5.ext.Button("Close", self.onBtnCloseReleased)
+			self.closeBtn = html5.ext.Button(translate("Close"), self.onBtnCloseReleased)
 			self.closeBtn["class"].append("closebtn")
 			self.appendChild(self.closeBtn)
 

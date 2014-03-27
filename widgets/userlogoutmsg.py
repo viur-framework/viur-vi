@@ -1,15 +1,15 @@
 import html5
 from network import NetworkService, DeferredCall
 from config import conf
-
+from i18n import translate
 class UserLogoutMsg( html5.ext.Popup):
 	checkInterval = 1000*60*5
 	def __init__(self, *args, **kwargs):
-		super( UserLogoutMsg, self ).__init__( title="user is logged out", *args, **kwargs )
+		super( UserLogoutMsg, self ).__init__( title=translate("user is logged out"), *args, **kwargs )
 		self["class"].append("userloggendoutmsg")
-		self.lbl = html5.Label("Your session was terminated by our server. Perhaps your computer fall asleep and broke connection?\n Please relogin to continue your mission.")
+		self.lbl = html5.Label(translate("Your session was terminated by our server. Perhaps your computer fall asleep and broke connection?\n Please relogin to continue your mission."))
 		self.appendChild(self.lbl)
-		applyBtn = html5.ext.Button("Login", callback=self.doApply)
+		applyBtn = html5.ext.Button(translate("Login"), callback=self.doApply)
 		self.appendChild(applyBtn)
 		self.parent()["style"]["display"]="none"
 		DeferredCall(self.testUserTick,_delay=self.checkInterval)
@@ -40,11 +40,11 @@ class UserLogoutMsg( html5.ext.Popup):
 			eval("""fenster.close();""")
 			if conf["currentUser"]!=None and conf["currentUser"]["id"]==data["values"]["id"]:
 				self.parent()["style"]["display"]="none"
-				conf["mainWindow"].log("success","relogin success :-)")
+				conf["mainWindow"].log("success",translate("relogin success :-)"))
 			else:
 				if conf["currentUser"]!=None and data["values"]!=None:
-					self.lbl.element.innerHTML="The user you choose to login differs from the user vi started with.\nolduser: "+conf["currentUser"]["name"]+"\nnewuser: "+data["values"]["name"]
-					applyBtn = html5.ext.Button("refresh", callback=self.doRefresh)
+					self.lbl.element.innerHTML=translate("The user you choose to login differs from the user vi started with.\nolduser: {user} \nnewuser: {newuser}",user=conf["currentUser"]["name"],newuser=data["values"]["name"])
+					applyBtn = html5.ext.Button(translate("refresh"), callback=self.doRefresh)
 				else:
 					self.doRefresh()
 					#self.lbl=html5.Label("please ")

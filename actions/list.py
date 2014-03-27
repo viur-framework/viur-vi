@@ -7,6 +7,7 @@ from pane import Pane
 from widgets.preview import Preview
 from sidebar.internalpreview import InternalPreview
 from sidebar.filterselector import FilterSelector
+from i18n import translate
 
 class EditPane( Pane ):
 	pass
@@ -19,7 +20,7 @@ class AddAction( html5.ext.Button ):
 		Allows adding an entry in a list-modul.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddAction, self ).__init__( "Add", *args, **kwargs )
+		super( AddAction, self ).__init__(translate("Add"), *args, **kwargs )
 		self["class"] = "icon add list"
 
 	@staticmethod
@@ -33,7 +34,7 @@ class AddAction( html5.ext.Button ):
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 	def onClick(self, sender=None):
-		pane = EditPane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_add" ])
+		pane = EditPane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList)
 		pane.addWidget( edwg )
@@ -50,7 +51,7 @@ class EditAction( html5.ext.Button ):
 		Allows editing an entry in a list-modul.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
 		self["class"] = "icon edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -97,7 +98,15 @@ class EditAction( html5.ext.Button ):
 			self.openEditor( s["id"] )
 
 	def openEditor(self, id ):
-		pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
+		selectioname = "%s"
+		selection = self.parent().parent().getCurrentSelection()
+		if not selection:
+			return
+		if selection:
+			for s in selection:
+				if "name" in s.keys() and s["id"]==id:
+					selectioname = s["name"]+" (%s)"
+		pane = Pane(selectioname % translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList, key=id)
 		pane.addWidget( edwg )
@@ -115,7 +124,7 @@ class DeleteAction( html5.ext.Button ):
 		Allows deleting an entry in a list-modul.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )
+		super( DeleteAction, self ).__init__( translate("Delete"), *args, **kwargs )
 		self["class"] = "icon delete"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -153,7 +162,7 @@ class DeleteAction( html5.ext.Button ):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete, yesLabel="Delete", noLabel="Keep" )
+		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = [x["id"] for x in selection]
 		d["class"].append( "delete" )
 
@@ -169,7 +178,7 @@ actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
 class ListPreviewAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
-		super( ListPreviewAction, self ).__init__( "Preview", *args, **kwargs )
+		super( ListPreviewAction, self ).__init__( translate("Preview"), *args, **kwargs )
 		self["class"] = "icon preview"
 		self.urls = None
 
@@ -210,7 +219,7 @@ class ListPreviewAction( html5.ext.Button ):
 class ListPreviewInlineAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
 		print("SELECTION PREVIEW UP")
-		super( ListPreviewInlineAction, self ).__init__( "Preview", *args, **kwargs )
+		super( ListPreviewInlineAction, self ).__init__( translate("Preview"), *args, **kwargs )
 		self["class"] = "icon preview"
 		self.urls = None
 
@@ -257,7 +266,7 @@ actionDelegateSelector.insert( 1, ListPreviewInlineAction.isSuitableFor, ListPre
 
 class CloseAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
-		super( CloseAction, self ).__init__( "Close", *args, **kwargs )
+		super( CloseAction, self ).__init__( translate("Close"), *args, **kwargs )
 		self["class"] = "icon close"
 
 	def onClick(self, sender=None):
@@ -271,7 +280,7 @@ actionDelegateSelector.insert( 1, CloseAction.isSuitableFor, CloseAction )
 
 class ActivateSelectionAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
-		super( ActivateSelectionAction, self ).__init__( "Select", *args, **kwargs )
+		super( ActivateSelectionAction, self ).__init__( translate("Select"), *args, **kwargs )
 		self["class"] = "icon select"
 
 	def onClick(self, sender=None):
@@ -286,7 +295,7 @@ actionDelegateSelector.insert( 1, ActivateSelectionAction.isSuitableFor, Activat
 
 class SelectFieldsPopup( html5.ext.Popup ):
 	def __init__(self, listWdg, *args, **kwargs):
-		super( SelectFieldsPopup, self ).__init__( title="Select fields", *args, **kwargs )
+		super( SelectFieldsPopup, self ).__init__( title=translate("Select fields"), *args, **kwargs )
 		self["class"].append("selectfields")
 		self.listWdg = listWdg
 		if self.listWdg._structure:
@@ -318,7 +327,7 @@ class SelectFieldsPopup( html5.ext.Popup ):
 
 class SelelectFieldsAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
-		super( SelelectFieldsAction, self ).__init__( "Select fields", *args, **kwargs )
+		super( SelelectFieldsAction, self ).__init__( translate("Select fields"), *args, **kwargs )
 		self["class"] = "icon selectfields"
 
 	def onClick(self, sender=None):
@@ -335,7 +344,7 @@ class ReloadAction( html5.ext.Button ):
 		Allows adding an entry in a list-modul.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( "Reload", *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
 		self["class"] = "icon reload"
 
 	@staticmethod
@@ -355,7 +364,7 @@ actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
 class ListSelectFilterAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
-		super( ListSelectFilterAction, self ).__init__( "Select Filter", *args, **kwargs )
+		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), *args, **kwargs )
 		self["class"] = "icon selectfilter"
 		self.urls = None
 

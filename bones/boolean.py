@@ -4,7 +4,7 @@ import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
 from config import conf
 from event import EventDispatcher
-
+from i18n import translate
 class BooleanViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( BooleanViewBoneDelegate, self ).__init__()
@@ -60,15 +60,15 @@ class ExtendedBooleanSearch( html5.Div ):
 		self.appendChild( self.selectionCb )
 		o = html5.Option()
 		o["value"] = ""
-		o.appendChild(html5.TextNode("Ignore"))
+		o.appendChild(html5.TextNode(translate("Ignore")))
 		self.selectionCb.appendChild(o)
 		o = html5.Option()
 		o["value"] = "0"
-		o.appendChild(html5.TextNode("No"))
+		o.appendChild(html5.TextNode(translate("No")))
 		self.selectionCb.appendChild(o)
 		o = html5.Option()
 		o["value"] = "1"
-		o.appendChild(html5.TextNode("Yes"))
+		o.appendChild(html5.TextNode(translate("Yes")))
 		self.selectionCb.appendChild(o)
 		self.sinkEvent("onChange")
 

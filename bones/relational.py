@@ -7,7 +7,7 @@ from event import EventDispatcher
 from utils import formatString
 from widgets.list import ListWidget
 from config import conf
-
+from i18n import translate
 
 class RelationalViewBoneDelegate( object ):
 	cantSort = True
@@ -64,12 +64,12 @@ class RelationalSingleSelectionBone( html5.Div ):
 		self.appendChild( self.selectionTxt )
 		#DOM.setElemAttribute( self.selectionTxt, "type", "text")
 		#DOM.appendChild(self.getElement(), self.selectionTxt )
-		self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
+		self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 		self.selectBtn["class"].append("icon")
 		self.selectBtn["class"].append("select")
 		self.appendChild( self.selectBtn )
 		if not required:
-			remBtn = html5.ext.Button("Remove", self.onRemove )
+			remBtn = html5.ext.Button(translate("Remove"), self.onRemove )
 			remBtn["class"].append("icon")
 			remBtn["class"].append("cancel")
 			self.appendChild( remBtn )
@@ -244,7 +244,7 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.selectionDiv = html5.Div()
 		self.selectionDiv["class"].append("selectioncontainer")
 		self.appendChild( self.selectionDiv )
-		self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
+		self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 		self.selectBtn["class"].append("icon")
 		self.selectBtn["class"].append("select")
 		self.appendChild( self.selectBtn )
@@ -365,10 +365,10 @@ class ExtendedRelationalSearch( html5.Div ):
 		self.appendChild(tmpSpan)
 		self.currentEntry = html5.Span()
 		#self.appendChild(self.currentEntry) #FIXME: The selector is closed immediately after selecting an entity - you cant see it anyway
-		btn = html5.ext.Button("Select", self.openSelector)
+		btn = html5.ext.Button(translate("Select"), self.openSelector)
 		btn["class"].append("icon select")
 		self.appendChild( btn )
-		btn = html5.ext.Button("Clear", self.clearSelection)
+		btn = html5.ext.Button(translate("Clear"), self.clearSelection)
 		btn["class"].append("icon cancel")
 		self.appendChild( btn )
 

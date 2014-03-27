@@ -1,5 +1,7 @@
 import html5
 from network import NetworkService
+from i18n import translate
+
 class TopBarWidget( html5.Header ):
 
 	def getConf(self):
@@ -92,7 +94,7 @@ class DashBoard(html5.Li):
 		super(DashBoard,self).__init__()
 		aa=html5.A()
 		aa["class"].append("icon dashboard")
-		aa.appendChild(html5.TextNode("Dashboard"))
+		aa.appendChild(html5.TextNode(translate("Dashboard")))
 		self.appendChild(aa)
 
 class MyFiles(html5.Li):
@@ -100,7 +102,7 @@ class MyFiles(html5.Li):
 		super(MyFiles,self).__init__()
 		aa=html5.A()
 		aa["class"].append("icon myfiles")
-		aa.appendChild(html5.TextNode("My Files"))
+		aa.appendChild(html5.TextNode(translate("My Files")))
 		self.appendChild(aa)
 
 class Settings(html5.Li):
@@ -108,7 +110,7 @@ class Settings(html5.Li):
 		super(Settings,self).__init__()
 		aa=html5.A()
 		aa["class"].append("icon settings")
-		aa.appendChild(html5.TextNode("Settings"))
+		aa.appendChild(html5.TextNode(translate("Settings")))
 		self.appendChild(aa)
 
 class Logout(html5.Li):
@@ -116,7 +118,7 @@ class Logout(html5.Li):
 		super(Logout,self).__init__()
 		aa=html5.A()
 		aa["class"].append("icon logout")
-		aa.appendChild(html5.TextNode("Logout"))
+		aa.appendChild(html5.TextNode(translate("Logout")))
 		self.appendChild(aa)
 		self.sinkEvent("onClick")
 

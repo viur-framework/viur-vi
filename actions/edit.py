@@ -4,10 +4,11 @@ from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
+from i18n import translate
 
 class SaveContinue( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( SaveContinue, self ).__init__( "Save-Continue", *args, **kwargs )
+		super( SaveContinue, self ).__init__( translate("Save-Continue"), *args, **kwargs )
 		self["class"] = "icon save continue"
 
 	@staticmethod
@@ -26,7 +27,7 @@ actionDelegateSelector.insert( 1, SaveContinue.isSuitableFor, SaveContinue )
 
 class SaveClose( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( SaveClose, self ).__init__( "Save-Close", *args, **kwargs )
+		super( SaveClose, self ).__init__( translate("Save-Close"), *args, **kwargs )
 		self["class"] = "icon save close"
 
 	@staticmethod

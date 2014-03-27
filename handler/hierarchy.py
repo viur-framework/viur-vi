@@ -3,7 +3,7 @@ from widgets import HierarchyWidget
 from config import conf
 from pane import Pane
 from widgets.edit import EditWidget
-
+from i18n import translate
 
 class HierarchyHandler( Pane ):
 	def __init__(self, modulName, modulInfo, *args, **kwargs):
@@ -27,7 +27,7 @@ class HierarchyHandler( Pane ):
 			self.addWidget( HierarchyWidget( self.modulName ) )
 			self.focus()
 		elif pathList[1] == "edit" and len(pathList)>2:
-			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_hierarchy", "action_edit" ])
+			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_hierarchy", "action_edit" ])
 			edwg = EditWidget( self.modulName, EditWidget.appHierarchy, key=pathList[2])
 			pane.addWidget( edwg )
 			conf["mainWindow"].addPane( pane, parentPane=self)

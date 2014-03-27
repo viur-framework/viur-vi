@@ -1,7 +1,7 @@
 import html5
 from network import DeferredCall
 from datetime import datetime
-
+from i18n import translate
 class Log( html5.Div ):
 	"""
 		Provides the "messaging" center displayed at the bottom of VI
@@ -9,7 +9,7 @@ class Log( html5.Div ):
 	def __init__(self):
 		super( Log, self ).__init__()
 		self["class"].append("vi_messenger")
-		openLink = html5.ext.Button("Open message center", self.toggleMsgCenter)
+		openLink = html5.ext.Button(translate("Open message center"), self.toggleMsgCenter)
 		#openLink["href"] = "#statuslist"
 		#openLink.appendChild(html5.TextNode("Open message center"))
 		self.appendChild(openLink)

@@ -4,14 +4,14 @@ from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
-
+from i18n import translate
 
 class AddLeafAction( html5.ext.Button ):
 	"""
 		Creates a new leaf (ie. a file) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddLeafAction, self ).__init__( "Add", *args, **kwargs )
+		super( AddLeafAction, self ).__init__( translate("Add"), *args, **kwargs )
 		self["class"] = "icon add leaf"
 
 	@staticmethod
@@ -42,7 +42,7 @@ class AddNodeAction( html5.ext.Button ):
 		Creates a new node (ie. a directory) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddNodeAction, self ).__init__( "Add", *args, **kwargs )
+		super( AddNodeAction, self ).__init__(  translate("Add"), *args, **kwargs )
 		self["class"] = "icon add node"
 
 	@staticmethod
@@ -56,7 +56,7 @@ class AddNodeAction( html5.ext.Button ):
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 	def onClick(self, sender=None):
-		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_add_node" ])
+		pane = Pane( translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_add_node" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, node=self.parent().parent().node, skelType="node" )
 		pane.addWidget( edwg )
@@ -74,7 +74,7 @@ class EditAction( html5.ext.Button ):
 		The type (node or leaf) of the entry is determined dynamically
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
+		super( EditAction, self ).__init__(  translate("Edit"), *args, **kwargs )
 		self["class"] = "icon edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -91,7 +91,7 @@ class EditAction( html5.ext.Button ):
 
 	def onSelectionActivated(self, table, selection ):
 		if not self.parent().parent().isSelector and len(selection)==1:
-			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
+			pane = Pane( translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			if isinstance( selection[0], self.parent().parent().nodeWidget):
 				skelType = "node"
@@ -130,7 +130,7 @@ class EditAction( html5.ext.Button ):
 			return
 		print(selection)
 		for s in selection:
-			pane = Pane("Edit", closeable=True)
+			pane = Pane(translate("Edit"), closeable=True)
 			conf["mainWindow"].stackPane( pane )
 			if isinstance(s,self.parent().parent().nodeWidget):
 				skelType = "node"
@@ -154,7 +154,7 @@ class DeleteAction( html5.ext.Button ):
 		The type (node or leaf) of the entry is determined dynamically.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )
+		super( DeleteAction, self ).__init__(  translate("Delete"), *args, **kwargs )
 		self["class"] = "icon delete"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -193,7 +193,7 @@ class DeleteAction( html5.ext.Button ):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection),title="Delete them?", yesCallback=self.doDelete, yesLabel="Delete", noLabel="Keep")
+		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = selection
 		d["class"].append( "delete" )
 
@@ -215,7 +215,7 @@ class ReloadAction( html5.ext.Button ):
 		Allows adding an entry in a list-modul.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( "Reload", *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
 		self["class"] = "icon reload"
 
 	@staticmethod
