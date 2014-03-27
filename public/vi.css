@@ -1291,11 +1291,15 @@ select {
 .selectioncontainer label {
   border: 1px solid #ccc;
   border-right-width: 0;
+  width: auto;
+  min-width: 220px;
+  max-width: 50%;
 }
 .selectioncontainer label,
 .selectioncontainer button {
   margin-bottom: 5px;
 }
+
 input:focus,
 input[type=text]:focus,
 input[type=email]:focus,
