@@ -701,6 +701,10 @@ button.getbuchungsbestaetigung:before {
 button.resend:before {
   background-position: -80px -32px;
 }
+button.trans:before {
+  background-image: url(icons/actions/translate.svg);    
+}
+
 /* Textedit Icons */
 button.text {
   margin-bottom: 10px;
@@ -1200,13 +1204,14 @@ input[type=password],
   clear: both;
 }
 .contentdiv[contenteditable] {
-  width: 97.2%;
-  height: auto;
-  min-height:300px;
-  overflow: hidden;
-  overflow-y: scroll;
-  margin: 25px 0 250px;
-  display: block;
+    width: 97.2%;
+    height: auto;
+    min-height: 300px;
+    overflow: hidden;
+    overflow-y: scroll;
+    margin: 0 0 250px;
+    padding-top: 25px;
+    display: block;
 }
 .contentdiv[contenteditable] a {
   text-decoration: underline;
@@ -1232,6 +1237,14 @@ input[type=password],
 .contentdiv[contenteditable] ol {margin-left:30px; list-style-type:decimal;}
 
 .contentdiv[contenteditable] ol ol {list-style-type:lower-latin;}
+
+.getransdiv {
+  padding: 2%;
+  margin-top: -220px;
+  border: 1px solid #ccc;
+  font-weight: 100;
+  background: #eee;
+}
 /* #vi_input_bones
 ================================================== */
 input[type="date"] {
