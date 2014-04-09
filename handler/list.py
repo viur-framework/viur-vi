@@ -54,7 +54,7 @@ class ListHandler( Pane ):
 
 	@staticmethod
 	def canHandle( modulName, modulInfo ):
-		return( True )
+		return( modulInfo["handler"]=="list" or modulInfo["handler"].startswith("list."))
 
 	def onClick(self, *args, **kwargs ):
 		if not len(self.widgetsDomElm._children):

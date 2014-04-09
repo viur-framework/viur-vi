@@ -17,6 +17,22 @@ class Log( html5.Div ):
 		self.logUL["id"] = "statuslist"
 		self.logUL["class"].append( "statuslist" )
 		self.appendChild( self.logUL )
+		versionDiv = html5.Div()
+		versionDiv["class"].append("versiondiv")
+		#Try loading the version number
+		try:
+			from version import builddate,revision
+			revspan = html5.Span()
+			revspan.appendChild( html5.TextNode( "Revision: %s" % revision ))
+			revspan["class"].append("revisionspan")
+			datespan = html5.Span()
+			datespan.appendChild( html5.TextNode( "Build Date: %s" % builddate ))
+			datespan["class"].append("datespan")
+			versionDiv.appendChild( datespan )
+			versionDiv.appendChild( revspan )
+		except:
+			versionDiv.appendChild( html5.TextNode( "unknown build" ) )
+		self.appendChild( versionDiv )
 		#self.backlog = []
 
 	def toggleMsgCenter(self, *args, **kwargs):
