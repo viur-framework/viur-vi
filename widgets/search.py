@@ -8,7 +8,7 @@ class Search( html5.Div ):
 		self.startSearchEvent = EventDispatcher("startSearch")
 		self["class"].append("search")
 		lblSearch = html5.Span()
-		lblSearch.appendChild( html5.TextNode("Search"))
+		lblSearch.appendChild( html5.TextNode(translate("Search")))
 		self.appendChild( lblSearch )
 		self.searchInput = html5.Input()
 		self.searchInput["type"] = "text"

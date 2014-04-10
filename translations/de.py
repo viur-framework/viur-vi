@@ -95,7 +95,8 @@ lngDe = {
 	"Height":u"Höhe",
 	"Title":u"Title",
 	"Flip View":u"Quellcode- / Textansicht wechseln",
-	"Text Editor":u"Text Editor"
+	"Text Editor":u"Text Editor",
+	"Search":u"Suche"
 
 
 

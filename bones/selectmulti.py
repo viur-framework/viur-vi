@@ -84,7 +84,6 @@ class ExtendedSelectMultiSearch( html5.Div ):
 		self.extension = extension
 		self.modul = modul
 		self.filterChangedEvent = EventDispatcher("filterChanged")
-		self.appendChild( html5.TextNode("SELECT MULTI SEARCH"))
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
 		self.appendChild( self.selectionCb )

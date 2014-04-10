@@ -238,7 +238,6 @@ class ExtendedStringSearch( html5.Div ):
 		self.opMode = extension["mode"]
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		assert self.opMode in ["equals","from", "to", "prefix","range"]
-		self.appendChild( html5.TextNode("STRING SEARCH"))
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.sinkEvent("onKeyDown")
 		if self.opMode in ["equals","from", "to", "prefix"]:
