@@ -27,9 +27,11 @@ class RelationalViewBoneDelegate( object ):
 		else:
 			val = ""
 		if isinstance(val,list):
-			val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
+			val = ", ".join( [ (formatString(self.format,self.structure, x) or x["id"]) for x in val] )
+			#val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
 		elif isinstance(val, dict):
-			val = val["name"] if "name" in val.keys() else val["id"]
+			val = formatString(self.format,self.structure, val ) or val["id"]
+			#val = val["name"] if "name" in val.keys() else val["id"]
 		return( html5.Label( val ) )
 		#return( formatString( self.format, self.structure, value ) ) FIXME!
 
@@ -123,7 +125,6 @@ class RelationalSingleSelectionBone( html5.Div ):
 			@type data: dict
 		"""
 		if self.boneName in data.keys():
-			print("USERIALIZING", data[ self.boneName ])
 			val = data[ self.boneName ]
 			if isinstance( val, list ):
 				if len(val)>0:

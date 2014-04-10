@@ -176,10 +176,12 @@ class ReloadAction( html5.ext.Button ):
 		return(  correctAction and correctHandler )
 
 	def onClick(self, sender=None):
+		self["class"].append("is_loading")
 		NetworkService.notifyChange( self.parent().parent().modul )
 
 	def resetLoadingState(self):
-		pass
+		if "is_loading" in self["class"]:
+			self["class"].remove("is_loading")
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 

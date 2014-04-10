@@ -8,11 +8,11 @@ from network import NetworkService, DeferredCall
 import handler
 import bones
 import actions
+import i18n
 from event import viInitializedEvent
 from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from log import Log
 from pane import Pane, GroupPane
-from i18n import translate
 
 try:
 	import vi_plugins
@@ -54,22 +54,6 @@ class CoreWindow( html5.Div ):
 		self.config = None
 		self.user = None
 		self.userLoggedOutMsg=UserLogoutMsg()
-		versionDiv = html5.Div()
-		versionDiv["class"].append("versiondiv")
-		#Try loading the version number
-		try:
-			from version import builddate,revision
-			revspan = html5.Span()
-			revspan.appendChild( html5.TextNode( translate("Revision: {rev}",rev=revision )))
-			revspan["class"].append("revisionspan")
-			datespan = html5.Span()
-			datespan.appendChild( html5.TextNode( translate("Build Date: {date}",date=builddate) ))
-			datespan["class"].append("datespan")
-			versionDiv.appendChild( datespan )
-			versionDiv.appendChild( revspan )
-		except:
-			versionDiv.appendChild( html5.TextNode( translate("unknown build") ) )
-		#self.appendChild( versionDiv )
 		startupQueue.setFinalElem( self.startup )
 		self.sinkEvent('onUserTryedToLogin')
 
