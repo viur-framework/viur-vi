@@ -28,9 +28,9 @@ class ExtendedRelationalViewBoneDelegate( object ):
 		else:
 			val = ""
 		if isinstance(val,list):
-			val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
+			val = ", ".join( [(x["dest"]["name"] if "dest" in x.keys() and "name" in x["dest"].keys() else x["dest"]["id"]) for x in val])
 		elif isinstance(val, dict):
-			val = val["name"] if "name" in val.keys() else val["id"]
+			val = val["dest"]["name"] if "dest" in val.keys() and "name" in val["dest"].keys() else val["dest"]["id"]
 		return( html5.Label( val ) )
 		#return( formatString( self.format, self.structure, value ) ) FIXME!
 
