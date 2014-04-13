@@ -201,12 +201,10 @@ class ListPreviewAction( html5.ext.Button ):
 		if not selection:
 			return
 		if len( selection )>0:
-			eval("""var win=window.open("""+self.urls+""", '_blank');""")
+			#eval("""var win=window.open("""+self.urls+""", '_blank');""")
+			widget = Preview( self.urls, selection[0], self.parent().parent().modul )
+			conf["mainWindow"].stackWidget( widget )
 
-
-
-			#widget = Preview( self.urls, selection[0], self.parent().parent().modul )
-			#conf["mainWindow"].stackWidget( widget )
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
 		if modul is None:
@@ -215,9 +213,14 @@ class ListPreviewAction( html5.ext.Button ):
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-view" in conf["currentUser"]["access"])
 		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "view" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		isAvailable = False
+		if modul in conf["modules"].keys():
+			modulConfig = conf["modules"][modul]
+			if "previewurls" in modulConfig.keys() and modulConfig["previewurls"]:
+				isAvailable = True
+		return(  correctAction and correctHandler and hasAccess and not isDisabled and isAvailable )
 
-actionDelegateSelector.insert( 3, ListPreviewAction.isSuitableFor, ListPreviewAction )
+actionDelegateSelector.insert( 2, ListPreviewAction.isSuitableFor, ListPreviewAction )
 
 
 class ListPreviewInlineAction( html5.ext.Button ):
@@ -225,6 +228,7 @@ class ListPreviewInlineAction( html5.ext.Button ):
 		print("SELECTION PREVIEW UP")
 		super( ListPreviewInlineAction, self ).__init__( translate("Preview"), *args, **kwargs )
 		self["class"] = "icon preview"
+		self["disabled"] = True
 		self.urls = None
 
 	def onAttach(self):
