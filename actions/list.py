@@ -201,8 +201,12 @@ class ListPreviewAction( html5.ext.Button ):
 		if not selection:
 			return
 		if len( selection )>0:
-			widget = Preview( self.urls, selection[0], self.parent().parent().modul )
-			conf["mainWindow"].stackWidget( widget )
+			eval("""var win=window.open("""+self.urls+""", '_blank');""")
+
+
+
+			#widget = Preview( self.urls, selection[0], self.parent().parent().modul )
+			#conf["mainWindow"].stackWidget( widget )
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
 		if modul is None:
@@ -213,7 +217,7 @@ class ListPreviewAction( html5.ext.Button ):
 		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "view" in conf["modules"][modul]["disabledFunctions"]
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
-#actionDelegateSelector.insert( 1, ListPreviewAction.isSuitableFor, ListPreviewAction )
+actionDelegateSelector.insert( 3, ListPreviewAction.isSuitableFor, ListPreviewAction )
 
 
 class ListPreviewInlineAction( html5.ext.Button ):

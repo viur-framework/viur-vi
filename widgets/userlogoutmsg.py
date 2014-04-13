@@ -9,6 +9,10 @@ class UserLogoutMsg( html5.ext.Popup):
 		self["class"].append("userloggendoutmsg")
 		self.lbl = html5.Label(translate("Your session was terminated by our server. Perhaps your computer fall asleep and broke connection?\n Please relogin to continue your mission."))
 		self.appendChild(self.lbl)
+
+		refreshBtn = html5.ext.Button(translate("refresh"), callback=self.doRecheckUserAvaiable)
+		self.appendChild(refreshBtn)
+
 		applyBtn = html5.ext.Button(translate("Login"), callback=self.doApply)
 		self.appendChild(applyBtn)
 		self.parent()["style"]["display"]="none"
@@ -25,6 +29,12 @@ class UserLogoutMsg( html5.ext.Popup):
 		print("REFRESH !!")
 		eval("window.onbeforeunload = void(0);")
 		eval("window.top.location.href='/vi';")
+
+	def doRecheckUserAvaiable(self, *args, **kwargs):
+		if (self.parent()["style"]["display"]=="block"):
+			if conf["currentUser"]!=None:
+				self.parent()["style"]["display"]="none"
+				conf["mainWindow"].log("success",translate("relogin success :-)"))
 
 	def testUserAvaiable(self):
 		NetworkService.request( None, "/vi/user/view/self", successHandler=self.onUserTestSuccess,failureHandler=self.onUserTestFail, cacheable=False )
