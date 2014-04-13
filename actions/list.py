@@ -176,11 +176,32 @@ class DeleteAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
-class ListPreviewAction( html5.ext.Button ):
+class ListPreviewAction( html5.Span ):
 	def __init__(self, *args, **kwargs ):
-		super( ListPreviewAction, self ).__init__( translate("Preview"), *args, **kwargs )
-		self["class"] = "icon preview"
+		super( ListPreviewAction, self ).__init__( *args, **kwargs )
+		self.urlCb = html5.Select()
+		self.appendChild( self.urlCb )
+		btn = html5.ext.Button( translate("Preview"), callback=self.onClick )
+		btn["class"] = "icon preview"
+		self.appendChild(btn)
 		self.urls = None
+
+	def onChange(self, event):
+		event.stopPropagation()
+		newUrl = self.urlCb["options"].item(self.urlCb["selectedIndex"]).value
+		self.setUrl( newUrl )
+
+	def rebuildCB(self, *args, **kwargs):
+		self.urlCb.element.innerHTML = ""
+		for name,url in self.urls.items():
+			o = html5.Option()
+			o["value"] = url
+			o.appendChild(html5.TextNode(name))
+			self.urlCb.appendChild(o)
+		if len( self.urls.keys() ) == 1:
+			self.urlCb["style"]["display"] = "none"
+		else:
+			self.urlCb["style"]["display"] = ""
 
 	def onAttach(self):
 		super(ListPreviewAction,self).onAttach()
@@ -189,9 +210,7 @@ class ListPreviewAction( html5.ext.Button ):
 			modulConfig = conf["modules"][modul]
 			if "previewurls" in modulConfig.keys() and modulConfig["previewurls"]:
 				self.urls = modulConfig["previewurls"]
-				pass
-			else:
-				self["disabled"] = True
+				self.rebuildCB()
 
 
 	def onClick(self, sender=None):
@@ -201,9 +220,17 @@ class ListPreviewAction( html5.ext.Button ):
 		if not selection:
 			return
 		if len( selection )>0:
-			#eval("""var win=window.open("""+self.urls+""", '_blank');""")
-			widget = Preview( self.urls, selection[0], self.parent().parent().modul )
-			conf["mainWindow"].stackWidget( widget )
+			if len( self.urls.keys() )==1:
+				newUrl = self.urls.values()[0]
+			else:
+				newUrl = self.urlCb["options"].item(self.urlCb["selectedIndex"]).value
+			newUrl = newUrl.replace("{{id}}",selection[0]["id"]).replace("{{modul}}", self.parent().parent().modul )
+			if "'" in newUrl:
+				return
+			print( """var win=window.open('"""+newUrl+"""', 'ViPreview');""" )
+			eval("""var win=window.open('"""+newUrl+"""', 'ViPreview');""")
+			#widget = Preview( self.urls, selection[0], self.parent().parent().modul )
+			#conf["mainWindow"].stackWidget( widget )
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -225,7 +252,6 @@ actionDelegateSelector.insert( 2, ListPreviewAction.isSuitableFor, ListPreviewAc
 
 class ListPreviewInlineAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
-		print("SELECTION PREVIEW UP")
 		super( ListPreviewInlineAction, self ).__init__( translate("Preview"), *args, **kwargs )
 		self["class"] = "icon preview"
 		self["disabled"] = True
@@ -236,13 +262,6 @@ class ListPreviewInlineAction( html5.ext.Button ):
 		modul = self.parent().parent().modul
 		self.parent().parent().selectionChangedEvent.register( self )
 		return
-		if modul in conf["modules"].keys():
-			modulConfig = conf["modules"][modul]
-			if "previewurls" in modulConfig.keys() and modulConfig["previewurls"]:
-				self.urls = modulConfig["previewurls"]
-				pass
-			else:
-				self["disabled"] = True
 
 	def onDetach(self):
 		self.parent().parent().selectionChangedEvent.unregister( self )
