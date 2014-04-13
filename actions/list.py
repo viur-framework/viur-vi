@@ -408,8 +408,8 @@ class ListSelectFilterAction( html5.ext.Button ):
 
 
 	def onClick(self, sender=None):
-		if self.parent().parent().isSelector:
-			return
+		#if self.parent().parent().isSelector:
+		#	return
 		self.parent().parent().sideBar.setWidget( FilterSelector( self.parent().parent().modul ) )
 
 	@staticmethod
