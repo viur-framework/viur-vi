@@ -1,3 +1,5 @@
+from config import conf
+
 def formatString( format, skelStructure, data, prefix=None ):
 	""" Parses a String given by format and substitutes Placeholders using values specified by data.
 	Syntax for Placeholders is $(%s). Its possible to traverse to subdictionarys by using a dot as seperator.
@@ -21,13 +23,11 @@ def formatString( format, skelStructure, data, prefix=None ):
 			Value is the dictionary of lang -> text recived from the server,
 			prefs the list of languages (in order of preference) for that bone.
 		"""
-		##FIXME!!!
-		return( str(value))
 		if not isinstance( value, dict ):
 			return( str(value) )
 		# Datastore format. (ie the langdict has been serialized to name.lang pairs
 		try:
-			lang = "%s.%s" % (key,conf.adminConfig["language"])
+			lang = "%s.%s" % (key,conf["currentlanguage"])
 		except:
 			lang = ""
 		if lang in value.keys() and value[ lang ]:
@@ -40,7 +40,7 @@ def formatString( format, skelStructure, data, prefix=None ):
 		if key in value.keys() and isinstance( value[ key ], dict ):
 			langDict = value[ key ]
 			try:
-				lang = conf.adminConfig["language"]
+				lang = conf["currentlanguage"]
 			except:
 				lang = ""
 			if lang in langDict.keys():

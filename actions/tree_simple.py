@@ -5,13 +5,13 @@ from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
 from html5.ext.inputdialog import InputDialog
-
+from i18n import translate
 class AddNodeAction( html5.ext.Button ):
 	"""
 		Adds a new directory to a tree.simple application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddNodeAction, self ).__init__( "Add Node", *args, **kwargs )
+		super( AddNodeAction, self ).__init__( translate("Add Node"), *args, **kwargs )
 		self["class"] = "icon mkdir"
 
 	@staticmethod
@@ -26,7 +26,7 @@ class AddNodeAction( html5.ext.Button ):
 
 
 	def onClick(self, sender=None):
-		i = InputDialog( "Directory Name", successHandler=self.createDir, title="Create directory",successLbl="Create" )
+		i = InputDialog( translate("Directory Name"), successHandler=self.createDir, title=translate("Create directory"),successLbl=translate("Create") )
 		i["class"].append( "create" )
 		i["class"].append( "directory" )
 
@@ -38,7 +38,7 @@ class AddNodeAction( html5.ext.Button ):
 
 	def onMkDir(self, req):
 		dirName = req.dirName
-		conf["mainWindow"].log("success","Directory \"%s\" created." % dirName)
+		conf["mainWindow"].log("success",translate("Directory \"{name}\" created.",name=dirName))
 
 	def resetLoadingState(self):
 		pass
@@ -53,7 +53,7 @@ class EditAction( html5.ext.Button ):
 		otherwise the full editWidget is used.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
 		self["class"] = "icon edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -70,7 +70,7 @@ class EditAction( html5.ext.Button ):
 
 	def onSelectionActivated(self, table, selection ):
 		if not self.parent().parent().isSelector and len(selection)==1 and isinstance(selection[0],self.parent().parent().leafWidget):
-			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
+			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			skelType = "leaf"
 			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=selection[0].data["id"], skelType=skelType)
@@ -102,7 +102,7 @@ class EditAction( html5.ext.Button ):
 			return
 		for s in selection:
 			if isinstance(s,self.parent().parent().nodeWidget):
-				i = InputDialog( "Directory Name", successHandler=self.editDir, value=s.data["name"] )
+				i = InputDialog( translate("Directory Name"), successHandler=self.editDir, value=s.data["name"] )
 				i.dirKey = s.data["id"]
 				return
 			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])

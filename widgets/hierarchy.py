@@ -7,7 +7,7 @@ from event import EventDispatcher
 from priorityqueue import viewDelegateSelector
 import utils
 from config import conf
-
+from i18n import translate
 class HierarchyItem( html5.Li ):
 	"""
 		Holds one entry in a hierarchy.
@@ -27,7 +27,7 @@ class HierarchyItem( html5.Li ):
 		self.structure = structure
 		self.expandLink = html5.A()
 		self.expandLink["class"].append("expandlink")
-		self.expandLink.appendChild(html5.TextNode("Expand/Collapse"))
+		self.expandLink.appendChild(html5.TextNode(translate("Expand/Collapse")))
 		self.appendChild(self.expandLink)
 		#self.element.innerHTML = "%s %s" % (data["name"], data["sortindex"])
 		self.isLoaded = False
@@ -229,9 +229,9 @@ class HierarchyWidget( html5.Div ):
 		errorDiv = html5.Div()
 		errorDiv["class"].append("error_msg")
 		if code and (code==401 or code==403):
-			txt = "Access denied!"
+			txt = translate("Access denied!")
 		else:
-			txt = "An unknown error occurred!"
+			txt = translate("An unknown error occurred!")
 		errorDiv["class"].append("error_code_%s" % (code or 0))
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )

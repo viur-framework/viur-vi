@@ -693,6 +693,9 @@ button.getbuchungsbestaetigung:before {
 button.resend:before {
   background-position: -80px -32px;
 }
+button.trans:before {
+  background-image: url(icons/actions/translate.svg);    
+}
 
 /* Textedit Icons */
 
@@ -1198,10 +1201,11 @@ margin-right: -2px;
 .contentdiv[contenteditable] {
   width: 97.2%;
   height: auto;
-  min-height:300px;
+  min-height: 300px;
   overflow: hidden;
   overflow-y: scroll;
-  margin: 25px 0 250px;
+  margin: 0 0 250px;
+  padding-top: 25px;
   display: block;
 }
 
@@ -1228,6 +1232,14 @@ margin-right: -2px;
 .contentdiv[contenteditable] ol {margin-left:30px; list-style-type:decimal;}
 
 .contentdiv[contenteditable] ol ol {list-style-type:lower-latin;}
+
+.getransdiv {
+  padding: 2%;
+  margin-top: -220px;
+  border: 1px solid #ccc;
+  font-weight: 100;
+  background: #eee;
+}
 
 /* #vi_input_bones
 ================================================== */
@@ -1631,6 +1643,12 @@ td span.time {
 .issplitview .sidebar > div > button {
   width:98%;
   margin:0 1% 5px;
+}
+
+.issplitview .sidebar > div > button img {
+  width: 16px;
+  float: left;
+  margin-top: -2px;
 }
 
 .issplitview .sidebar .extendedfilter button {
@@ -2310,6 +2328,18 @@ progress[value]::-webkit-progress-value {
   color: #444;
   box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
 }
+
+.vi_messenger .versiondiv {
+font-size: .7em;
+color:#777;
+float:right;
+padding:2px 1%;
+}
+
+.vi_messenger .versiondiv span {
+  display:block;
+}
+
 /* #States
 ================================================== */:focus {
   outline: 1px dotted #ccc;

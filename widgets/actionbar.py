@@ -1,7 +1,7 @@
 import html5
 from priorityqueue import actionDelegateSelector
 from config import conf
-
+from i18n import translate
 
 
 class ActionBar( html5.Div ):
@@ -39,7 +39,7 @@ class ActionBar( html5.Div ):
 			h3["class"].append("apptype_%s" %self.appType)
 			h3["class"].append("action_%s" %self.currentAction)
 
-			h3.appendChild(html5.TextNode(self.currentAction))
+			h3.appendChild(html5.TextNode(translate(self.currentAction)))
 			self.appendChild(h3)
 		self.actions = actions
 		for action in actions:

@@ -5,7 +5,7 @@ from priorityqueue import editBoneSelector, viewDelegateSelector
 from config import conf
 from widgets.wysiwyg import Wysiwyg
 import utils
-
+from i18n import translate
 class TextViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( TextViewBoneDelegate, self ).__init__()
@@ -69,7 +69,7 @@ class TextEditBone( html5.Div ):
 		if readOnly:
 			self.input["disabled"]=True
 		elif not readOnly and not self.isPlainText:
-			openEditorBtn = html5.ext.Button("Edit Text", self.openTxt )
+			openEditorBtn = html5.ext.Button(translate("Edit Text"), self.openTxt )
 			openEditorBtn["class"].append("textedit")
 			openEditorBtn["class"].append("icon")
 			self.appendChild(openEditorBtn )

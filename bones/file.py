@@ -9,7 +9,7 @@ from widgets.file import FileWidget, LeafFileWidget
 from config import conf
 from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry
 from widgets.file import Uploader
-
+from i18n import translate
 
 class FileViewBoneDelegate(object):
 	def __init__(self, modul, boneName, structure):
@@ -157,7 +157,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		event.stopPropagation()
 		files = event.dataTransfer.files
 		if files.length>1:
-			conf["mainWindow"].log("error","You cannot drop more than one file here!")
+			conf["mainWindow"].log("error",translate("You cannot drop more than one file here!"))
 			return
 		for x in range(0,files.length):
 			ul = Uploader(files.item(x), None )

@@ -5,7 +5,7 @@ from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
 from widgets.file import Uploader
-
+from i18n import translate
 
 class FileSelectUploader( html5.Input ):
 	"""
@@ -34,7 +34,7 @@ class AddLeafAction( html5.ext.Button ):
 		Allows uploading of files using the file dialog.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddLeafAction, self ).__init__( "Add", *args, **kwargs )
+		super( AddLeafAction, self ).__init__( translate("Add"), *args, **kwargs )
 		self["class"] = "icon upload"
 
 	@staticmethod

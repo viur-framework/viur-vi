@@ -1,7 +1,7 @@
 import html5
 from network import DeferredCall
 from datetime import datetime
-
+from i18n import translate
 class Log( html5.Div ):
 	"""
 		Provides the "messaging" center displayed at the bottom of VI
@@ -9,7 +9,7 @@ class Log( html5.Div ):
 	def __init__(self):
 		super( Log, self ).__init__()
 		self["class"].append("vi_messenger")
-		openLink = html5.ext.Button("Open message center", self.toggleMsgCenter)
+		openLink = html5.ext.Button(translate("Open message center"), self.toggleMsgCenter)
 		#openLink["href"] = "#statuslist"
 		#openLink.appendChild(html5.TextNode("Open message center"))
 		self.appendChild(openLink)
@@ -17,6 +17,22 @@ class Log( html5.Div ):
 		self.logUL["id"] = "statuslist"
 		self.logUL["class"].append( "statuslist" )
 		self.appendChild( self.logUL )
+		versionDiv = html5.Div()
+		versionDiv["class"].append("versiondiv")
+		#Try loading the version number
+		try:
+			from version import builddate,revision
+			revspan = html5.Span()
+			revspan.appendChild( html5.TextNode( "Revision: %s" % revision ))
+			revspan["class"].append("revisionspan")
+			datespan = html5.Span()
+			datespan.appendChild( html5.TextNode( "Build Date: %s" % builddate ))
+			datespan["class"].append("datespan")
+			versionDiv.appendChild( datespan )
+			versionDiv.appendChild( revspan )
+		except:
+			versionDiv.appendChild( html5.TextNode( "unknown build" ) )
+		self.appendChild( versionDiv )
 		#self.backlog = []
 
 	def toggleMsgCenter(self, *args, **kwargs):

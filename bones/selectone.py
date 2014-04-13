@@ -3,7 +3,7 @@
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
 from event import EventDispatcher
-
+from i18n import translate
 class SelectOneViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( SelectOneViewBoneDelegate, self ).__init__()
@@ -69,13 +69,12 @@ class ExtendedSelectOneSearch( html5.Div ):
 		self.extension = extension
 		self.modul = modul
 		self.filterChangedEvent = EventDispatcher("filterChanged")
-		self.appendChild( html5.TextNode("SELECT ONE SEARCH"))
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
 		self.appendChild( self.selectionCb )
 		o = html5.Option()
 		o["value"] = ""
-		o.appendChild(html5.TextNode("Ignore"))
+		o.appendChild(html5.TextNode(translate("Ignore")))
 		self.selectionCb.appendChild(o)
 		for k,v in extension["values"].items():
 			o = html5.Option()

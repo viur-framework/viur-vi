@@ -5,6 +5,7 @@ from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearch
 from config import conf
 from event import EventDispatcher
 from html5.keycodes import *
+from i18n import translate
 
 class StringViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -52,7 +53,7 @@ class Tag( html5.Span ):
 		self.input["type"] = "text"
 		self.input["value"] = tag
 		self.appendChild(self.input)
-		delBtn = html5.ext.Button("Delete", self.removeMe)
+		delBtn = html5.ext.Button(translate("Delete"), self.removeMe)
 		delBtn["class"].append("icon delete tag")
 		self.appendChild(delBtn)
 
@@ -88,7 +89,7 @@ class StringEditBone( html5.Div ):
 				btn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
 				btn.lang = lang
 				self.buttonContainer.appendChild( btn )
-				addBtn = html5.ext.Button("New", callback=self.onBtnGenTag)
+				addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
 				addBtn["class"].append("icon new tag")
 				addBtn.lang = lang
 				tagContainer.appendChild(addBtn)
@@ -119,7 +120,7 @@ class StringEditBone( html5.Div ):
 			self.tagContainer = html5.Div()
 			self.tagContainer["class"].append("tagcontainer")
 			self.appendChild(self.tagContainer)
-			addBtn = html5.ext.Button("New", callback=self.onBtnGenTag)
+			addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
 			addBtn.lang = None
 			addBtn["class"].append("icon new tag")
 			self.tagContainer.appendChild(addBtn)
@@ -237,7 +238,6 @@ class ExtendedStringSearch( html5.Div ):
 		self.opMode = extension["mode"]
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		assert self.opMode in ["equals","from", "to", "prefix","range"]
-		self.appendChild( html5.TextNode("STRING SEARCH"))
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.sinkEvent("onKeyDown")
 		if self.opMode in ["equals","from", "to", "prefix"]:

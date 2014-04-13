@@ -4,7 +4,7 @@ from config import conf
 from pane import Pane
 from widgets.edit import EditWidget
 
-
+from i18n import translate
 class TreeHandler( Pane ):
 	def __init__(self, modulName, modulInfo, *args, **kwargs):
 		icon = "icons/modules/tree.svg"
@@ -30,7 +30,7 @@ class TreeHandler( Pane ):
 			self.addWidget( wdg(self.modulName ) )
 			self.focus()
 		elif pathList[1] == "edit" and len(pathList)>3:
-			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_tree", "action_edit" ])
+			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_tree", "action_edit" ])
 			edwg = EditWidget( self.modulName, EditWidget.appTree, key=pathList[3], skelType=pathList[2])
 			pane.addWidget( edwg )
 			conf["mainWindow"].addPane( pane, parentPane=self)

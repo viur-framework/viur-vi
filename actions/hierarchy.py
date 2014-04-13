@@ -4,14 +4,14 @@ from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
-
+from i18n import translate
 
 class AddAction( html5.ext.Button ):
 	"""
 		Adds a new node in a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddAction, self ).__init__( "Add", *args, **kwargs )
+		super( AddAction, self ).__init__( translate("Add"), *args, **kwargs )
 		self["class"] = "icon add"
 
 	@staticmethod
@@ -26,7 +26,7 @@ class AddAction( html5.ext.Button ):
 
 
 	def onClick(self, sender=None):
-		pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_hierarchy", "action_add" ])
+		pane = Pane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_hierarchy", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appHierarchy, node=self.parent().parent().rootNode )
 		pane.addWidget( edwg )
@@ -43,7 +43,7 @@ class EditAction( html5.ext.Button ):
 		Edits a node in a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( "Edit", *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
 		self["class"] = "icon edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -91,7 +91,7 @@ class EditAction( html5.ext.Button ):
 			self.openEditor( s["id"] )
 
 	def openEditor( self, id ):
-		pane = Pane("Edit", closeable=True)
+		pane = Pane(translate("Edit"), closeable=True)
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appHierarchy, key=id)
 		pane.addWidget( edwg )
@@ -108,7 +108,7 @@ class DeleteAction( html5.ext.Button ):
 		Deletes a node from a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__( "Delete", *args, **kwargs )
+		super( DeleteAction, self ).__init__( translate("Delete"), *args, **kwargs )
 		self["class"] = "icon delete"
 		self["disabled"]= True
 		self.isDisabled = True
@@ -147,7 +147,7 @@ class DeleteAction( html5.ext.Button ):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		d = html5.ext.YesNoDialog("Delete %s Entries?" % len(selection), title="Delete them?", yesCallback=self.doDelete, yesLabel="Delete", noLabel="Keep")
+		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = [x["id"] for x in selection]
 		d["class"].append( "delete" )
 
@@ -166,7 +166,7 @@ class ReloadAction( html5.ext.Button ):
 		Allows adding an entry in a list-modul.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( "Reload", *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
 		self["class"] = "icon reload"
 
 	@staticmethod
@@ -176,10 +176,12 @@ class ReloadAction( html5.ext.Button ):
 		return(  correctAction and correctHandler )
 
 	def onClick(self, sender=None):
+		self["class"].append("is_loading")
 		NetworkService.notifyChange( self.parent().parent().modul )
 
 	def resetLoadingState(self):
-		pass
+		if "is_loading" in self["class"]:
+			self["class"].remove("is_loading")
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 

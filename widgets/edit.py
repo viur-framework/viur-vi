@@ -10,7 +10,7 @@ from widgets.tooltip import ToolTip
 from priorityqueue import protocolWrapperInstanceSelector
 from widgets.actionbar import ActionBar
 import utils
-
+from i18n import translate
 class InvalidBoneValueException(ValueError):
 	pass
 
@@ -214,9 +214,9 @@ class EditWidget( html5.Div ):
 		errorDiv = html5.Div()
 		errorDiv["class"].append("error_msg")
 		if code and (code==401 or code==403):
-			txt = "Access denied!"
+			txt = translate("Access denied!")
 		else:
-			txt = "An unknown error occurred!"
+			txt = translate("An unknown error occurred!")
 		errorDiv["class"].append("error_code_%s" % (code or 0))
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
@@ -289,7 +289,7 @@ class EditWidget( html5.Div ):
 			logDiv = html5.Div()
 			logDiv["class"].append("msg")
 			spanMsg = html5.Span()
-			spanMsg.appendChild( html5.TextNode( "Entry saved!" ))
+			spanMsg.appendChild( html5.TextNode( translate("Entry saved!") ))
 			spanMsg["class"].append("msgspan")
 			logDiv.appendChild(spanMsg)
 			if self.modul in conf["modules"].keys():
@@ -400,7 +400,7 @@ class EditWidget( html5.Div ):
 		self.unserialize( data["values"] )
 		self._lastData = data
 		if hasMissing and not self.wasInitialRequest:
-			conf["mainWindow"].log("warning","Could not save entry!")
+			conf["mainWindow"].log("warning",translate("Could not save entry!"))
 
 	def unserialize(self, data):
 		"""

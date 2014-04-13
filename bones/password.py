@@ -4,7 +4,7 @@
 import html5,re
 from priorityqueue import editBoneSelector, viewDelegateSelector
 from widgets.edit import InvalidBoneValueException
-
+from i18n import translate
 class PasswordEditBone( html5.Div ):
 	def __init__(self, modulName, boneName, readOnly, *args, **kwargs ):
 		super( PasswordEditBone,  self ).__init__( *args, **kwargs )
@@ -15,7 +15,7 @@ class PasswordEditBone( html5.Div ):
 		self.primeinput["type"]="password"
 		self.secondinput["type"]="password"
 		self.appendChild(self.primeinput)
-		lbl=html5.Label("reenter password")
+		lbl=html5.Label(translate("reenter password"))
 		lbl["for"]==modulName+"_"+boneName+"_reenterpwd"
 		self.appendChild(lbl)
 		self.secondinput["name"]=modulName+"_"+boneName+"_reenterpwd"

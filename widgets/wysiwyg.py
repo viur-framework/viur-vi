@@ -7,6 +7,7 @@ from priorityqueue import actionDelegateSelector
 import re
 from config import conf
 from widgets.file import FileWidget
+from i18n import translate
 
 class BasicTextAction( html5.ext.Button ):
 	cmd = None
@@ -48,28 +49,28 @@ class BasicTextAction( html5.ext.Button ):
 class TextStyleBold( BasicTextAction ):
 	cmd = "bold"
 	isActiveTag = "B"
-	title = "Bold"
+	title = translate("Bold")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.bold", TextStyleBold )
 
 class TextStyleItalic( BasicTextAction ):
 	cmd = "italic"
 	isActiveTag = "I"
-	title = "Italic"
+	title = translate("Italic")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.italic", TextStyleItalic )
 
 class TextStyleUnderline( BasicTextAction ):
 	cmd = "underline"
 	isActiveTag = "U"
-	title = "Underline"
+	title = translate("Underline")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.underline", TextStyleUnderline )
 
 class TextStyleStrikeThrough( BasicTextAction ):
 	cmd = "strikeThrough"
 	isActiveTag = "STRIKE"
-	title = "Strike through"
+	title = translate("Strike through")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.strikeThrough", TextStyleStrikeThrough )
 
 
@@ -81,72 +82,72 @@ class BasicFormatBlockAction( BasicTextAction ):
 
 class TextStyleH1( BasicFormatBlockAction ):
 	cmd = "H1"
-	title = "H1"
+	title = translate("H1")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h1", TextStyleH1 )
 
 class TextStyleH2( BasicFormatBlockAction ):
 	cmd = "H2"
-	title = "H2"
+	title = translate("H2")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h2", TextStyleH2 )
 
 class TextStyleH3( BasicFormatBlockAction ):
 	cmd = "H3"
-	title = "H3"
+	title = translate("H3")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h3", TextStyleH3 )
 
 class TextStyleH4( BasicFormatBlockAction ):
 	cmd = "H4"
-	title = "H4"
+	title = translate("H4")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h4", TextStyleH4 )
 
 class TextStyleH5( BasicFormatBlockAction ):
 	cmd = "H5"
-	title = "H5"
+	title = translate("H5")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h5", TextStyleH5 )
 
 class TextStyleH6( BasicFormatBlockAction ):
 	cmd = "H6"
-	title = "H6"
+	title = translate("H6")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.h6", TextStyleH6 )
 
 
 class TextStyleBlockQuote( BasicFormatBlockAction ):
 	cmd = "BLOCKQUOTE"
-	title = "Blockqoute"
+	title = translate("Blockqoute")
 #actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.blockquote", TextStyleBlockQuote )
 
 
 class TextStyleJustifyCenter( BasicTextAction ):
 	cmd = "justifyCenter"
-	title = "Justifiy Center"
+	title = translate("Justifiy Center")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.justifyCenter", TextStyleJustifyCenter )
 
 class TextStyleJustifyLeft( BasicTextAction ):
 	cmd = "justifyLeft"
-	title = "Justifiy Left"
+	title = translate("Justifiy Left")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.justifyLeft", TextStyleJustifyLeft )
 
 class TextStyleJustifyRight( BasicTextAction ):
 	cmd = "justifyRight"
-	title = "Justifiy Right"
+	title = translate("Justifiy Right")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.justifyRight", TextStyleJustifyRight )
 
 
 
 class TextInsertOrderedList( BasicTextAction ):
 	cmd = "insertOrderedList"
-	title = "Insert a ordered List"
+	title = translate("Insert a ordered List")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.orderedList", TextInsertOrderedList )
 
 class TextInsertUnorderedList( BasicTextAction ):
 	cmd = "insertUnorderedList"
-	title = "Insert a unordered List"
+	title = translate("Insert a unordered List")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.unorderedList", TextInsertUnorderedList )
 
 
@@ -154,20 +155,20 @@ actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=
 
 class TextIndent( BasicTextAction ):
 	cmd = "indent"
-	title = "Indent more"
+	title = translate("Indent more")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.indent", TextIndent )
 
 
 class TextOutdent( BasicTextAction ):
 	cmd = "outdent"
-	title = "Indent less"
+	title = translate("Indent less")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.outdent", TextOutdent )
 
 
 
 class TextRemoveFormat( BasicTextAction ):
 	cmd = "removeformat"
-	title = "Remove all formatting"
+	title = translate("Remove all formatting")
 
 	def onClick(self, sender=None):
 		eval("window.top.document.execCommand(\"%s\", false, null)" % self.cmd)
@@ -191,9 +192,9 @@ actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=
 
 class TextInsertImageAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( TextInsertImageAction, self ).__init__( "Insert Image", *args, **kwargs )
+		super( TextInsertImageAction, self ).__init__( translate("Insert Image"), *args, **kwargs )
 		self["class"] = "icon text image"
-		self["title"] = "Insert image"
+		self["title"] = translate("Insert Image")
 
 	def onClick(self, sender=None):
 		currentSelector = FileWidget( "file", isSelector=True )
@@ -224,9 +225,9 @@ actionDelegateSelector.insert( 1, TextInsertImageAction.isSuitableFor, TextInser
 class TextInsertLinkAction( html5.ext.Button ):
 	newLinkIdx = 0
 	def __init__(self, *args, **kwargs):
-		super( TextInsertLinkAction, self ).__init__( "Insert Link", *args, **kwargs )
+		super( TextInsertLinkAction, self ).__init__( translate("Insert Link"), *args, **kwargs )
 		self["class"] = "icon text link"
-		self["title"] = "Insert link"
+		self["title"] = translate("Insert Link")
 
 	def onClick(self, sender=None):
 		newLinkTarget = "#linkidx-%s-%s" % (TextInsertLinkAction.newLinkIdx, time() )
@@ -261,20 +262,20 @@ class CreateTablePopup( html5.ext.Popup ):
 		self.rowInput["type"] = "number"
 		self.rowInput["value"] = 3
 		self.appendChild( self.rowInput )
-		l = html5.Label("Rows", forElem=self.rowInput)
+		l = html5.Label(translate("Rows"), forElem=self.rowInput)
 		l["class"].append("rowlbl")
 		self.appendChild( l )
 		self.colInput = html5.Input()
 		self.colInput["type"] = "number"
 		self.colInput["value"] = 4
 		self.appendChild( self.colInput )
-		l = html5.Label("Cols", forElem=self.colInput)
+		l = html5.Label(translate("Cols"), forElem=self.colInput)
 		l["class"].append("collbl")
 		self.appendChild( l )
 		self.insertHeader = html5.Input()
 		self.insertHeader["type"] = "checkbox"
 		self.appendChild( self.insertHeader )
-		l = html5.Label("Insert Table Header", forElem=self.insertHeader)
+		l = html5.Label(translate("Insert Table Header"), forElem=self.insertHeader)
 		l["class"].append("headerlbl")
 		self.appendChild( l )
 		self.appendChild( html5.ext.Button( "Cancel", callback=self.doClose ) )
@@ -306,9 +307,9 @@ class CreateTablePopup( html5.ext.Popup ):
 
 class TextInsertTableAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( TextInsertTableAction, self ).__init__( "Insert Table", *args, **kwargs )
+		super( TextInsertTableAction, self ).__init__( translate("Insert Table"), *args, **kwargs )
 		self["class"] = "icon text table"
-		self["title"] = "Insert table"
+		self["title"] = translate("Insert Table")
 
 	def onClick(self, sender=None):
 		self.parent().parent().contentDiv.focus()
@@ -327,9 +328,9 @@ actionDelegateSelector.insert( 1, TextInsertTableAction.isSuitableFor, TextInser
 
 class TableInsertRowBeforeAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( TableInsertRowBeforeAction, self ).__init__( "Insert Table Row before", *args, **kwargs )
+		super( TableInsertRowBeforeAction, self ).__init__( translate("Insert Table Row before"), *args, **kwargs )
 		self["class"] = "icon text table newrow before"
-		self["title"] = "Insert a new row before the current one"
+		self["title"] = translate("Insert Table Row before")
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -359,9 +360,9 @@ actionDelegateSelector.insert( 1, TableInsertRowBeforeAction.isSuitableFor, Tabl
 
 class TableInsertRowAfterAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( TableInsertRowAfterAction, self ).__init__( "Insert Table Row after", *args, **kwargs )
+		super( TableInsertRowAfterAction, self ).__init__( translate("Insert Table Row after"), *args, **kwargs )
 		self["class"] = "icon text table newrow after"
-		self["title"] = "Insert a new row after the current row"
+		self["title"] = translate("Insert Table Row after")
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -394,9 +395,9 @@ actionDelegateSelector.insert( 1, TableInsertRowAfterAction.isSuitableFor, Table
 
 class TableInsertColBeforeAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( TableInsertColBeforeAction, self ).__init__( "Insert Table Col before", *args, **kwargs )
+		super( TableInsertColBeforeAction, self ).__init__( translate("Insert Table Col before"), *args, **kwargs )
 		self["class"] = "icon text table newcol before"
-		self["title"] = "Insert a new col before the current one"
+		self["title"] = translate("Insert Table Col before")
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -459,9 +460,9 @@ actionDelegateSelector.insert( 1, TableInsertColBeforeAction.isSuitableFor, Tabl
 
 class TableInsertColAfterAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( TableInsertColAfterAction, self ).__init__( "Insert Table Col after", *args, **kwargs )
+		super( TableInsertColAfterAction, self ).__init__( translate("Insert Table Col after"), *args, **kwargs )
 		self["class"] = "icon text table newcol after"
-		self["title"] = "Insert a new col after the current one"
+		self["title"] = translate("Insert Table Col after")
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -530,9 +531,9 @@ actionDelegateSelector.insert( 1, TableInsertColAfterAction.isSuitableFor, Table
 
 class TableRemoveRowAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( TableRemoveRowAction, self ).__init__( "Remove Table Row", *args, **kwargs )
+		super( TableRemoveRowAction, self ).__init__( translate("Remove Table Row"), *args, **kwargs )
 		self["class"] = "icon text table remove row"
-		self["title"] = "Remove the current row"
+		self["title"] = translate("Remove Table Row")
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -560,9 +561,9 @@ actionDelegateSelector.insert( 1, TableRemoveRowAction.isSuitableFor, TableRemov
 
 class TableRemoveColAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( TableRemoveColAction, self ).__init__( "Remove Table Col", *args, **kwargs )
+		super( TableRemoveColAction, self ).__init__( translate("Remove Table Col"), *args, **kwargs )
 		self["class"] = "icon text table remove col"
-		self["title"] = "Remove the current col"
+		self["title"] = translate("Remove Table Col")
 
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().baseNode")
@@ -622,9 +623,9 @@ actionDelegateSelector.insert( 1, TableRemoveColAction.isSuitableFor, TableRemov
 
 class TextSaveAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( TextSaveAction, self ).__init__( "Save", *args, **kwargs )
+		super( TextSaveAction, self ).__init__( translate("Save"), *args, **kwargs )
 		self["class"] = "icon text save"
-		self["title"] = "Save the text"
+		self["title"] = translate("Save")
 
 	def onClick(self, event):
 		self.parent().parent().saveText()
@@ -644,13 +645,13 @@ class LinkEditor( html5.Div ):
 		self.linkTxt = html5.Input()
 		self.linkTxt["type"] = "text"
 		self.appendChild(self.linkTxt)
-		l = html5.Label("URL", forElem=self.linkTxt)
+		l = html5.Label(translate("URL"), forElem=self.linkTxt)
 		l["class"].append("urllbl")
 		self.appendChild( l )
 		self.newTab = html5.Input()
 		self.newTab["type"] = "checkbox"
 		self.appendChild(self.newTab)
-		l = html5.Label("New window", forElem=self.newTab)
+		l = html5.Label(translate("New window"), forElem=self.newTab)
 		l["class"].append("newwindowlbl")
 		self.appendChild( l )
 		self.currentElem = None
@@ -716,25 +717,25 @@ class ImageEditor( html5.Div ):
 		self.widthInput = html5.Input()
 		self.widthInput["type"] = "number"
 		self.appendChild(self.widthInput)
-		l = html5.Label("Width", self.widthInput)
+		l = html5.Label(translate("Width"), self.widthInput)
 		l["class"].append("widthlbl")
 		self.appendChild( l )
 		self.keepAspectRatio = html5.Input()
 		self.keepAspectRatio["type"] = "checkbox"
 		self.appendChild( self.keepAspectRatio )
-		l = html5.Label("Keep aspect ratio", self.keepAspectRatio)
+		l = html5.Label(translate("Keep aspect ratio"), self.keepAspectRatio)
 		l["class"].append("aspectlbl")
 		self.appendChild( l )
 		self.heightInput = html5.Input()
 		self.heightInput["type"] = "number"
 		self.appendChild(self.heightInput)
-		l = html5.Label("Height", self.heightInput)
+		l = html5.Label(translate("Height"), self.heightInput)
 		l["class"].append("heightlbl")
 		self.appendChild( l )
 		self.titleInput = html5.Input()
 		self.titleInput["type"] = "text"
 		self.appendChild(self.titleInput)
-		l = html5.Label("Title", self.titleInput)
+		l = html5.Label(translate("Title"), self.titleInput)
 		l["class"].append("titlelbl")
 		self.appendChild( l )
 		self.currentElem = None
@@ -807,13 +808,13 @@ class ImageEditor( html5.Div ):
 
 class TextUndoAction( BasicTextAction ):
 	cmd = "undo"
-	title = "Undo the last action"
+	title = translate("Undo the last action")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.undo", TextUndoAction )
 
 class TextRedoAction( BasicTextAction ):
 	cmd = "redo"
-	title = "Redo the last undone action"
+	title = translate("Redo the last undone action")
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.redo", TextRedoAction )
 
@@ -822,9 +823,9 @@ actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=
 
 class FlipViewAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
-		super( FlipViewAction, self ).__init__( "Flip View", *args, **kwargs )
+		super( FlipViewAction, self ).__init__( translate("Flip View"), *args, **kwargs )
 		self["class"] = "icon flipview"
-		self["title"] = "Flip the current view"
+		self["title"] = translate("Flip View")
 
 	def onAttach(self):
 		super( FlipViewAction, self ).onAttach()
@@ -849,7 +850,7 @@ class FlipViewAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.flipView", FlipViewAction )
 
 class Wysiwyg( html5.Div ):
-	def __init__(self, editHtml, actionBarHint="Text Editor", *args, **kwargs ):
+	def __init__(self, editHtml, actionBarHint=translate("Text Editor"), *args, **kwargs ):
 		super( Wysiwyg, self ).__init__(*args, **kwargs)
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
 		self.saveTextEvent = EventDispatcher("saveText")

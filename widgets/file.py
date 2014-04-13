@@ -5,7 +5,7 @@ from priorityqueue import displayDelegateSelector
 from event import EventDispatcher
 from config import conf
 import json
-
+from i18n import translate
 class LeafFileWidget( LeafWidget ):
 	"""
 		Displays a file inside a tree application.

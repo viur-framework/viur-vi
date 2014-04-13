@@ -6,7 +6,7 @@ from config import conf
 from pane import Pane
 from widgets.edit import EditWidget
 from widgets.list import ListWidgetPreview
-
+from i18n import translate
 
 class ListHandler( Pane ):
 	def __init__(self, modulName, modulInfo, *args, **kwargs):
@@ -40,13 +40,13 @@ class ListHandler( Pane ):
 			self.addWidget( ListWidget( self.modulName, filter=filter, columns=columns ) )
 			self.focus()
 		elif pathList[1] == "add":
-			pane = Pane("Add", closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_list", "action_add" ])
+			pane = Pane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_list", "action_add" ])
 			edwg = EditWidget( self.modulName, EditWidget.appList )
 			pane.addWidget( edwg )
 			conf["mainWindow"].addPane( pane, parentPane=self)
 			pane.focus()
 		elif pathList[1] == "edit" and len(pathList)>2:
-			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_list", "action_edit" ])
+			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_list", "action_edit" ])
 			edwg = EditWidget( self.modulName, EditWidget.appList, key=pathList[2])
 			pane.addWidget( edwg )
 			conf["mainWindow"].addPane( pane, parentPane=self)
@@ -54,7 +54,7 @@ class ListHandler( Pane ):
 
 	@staticmethod
 	def canHandle( modulName, modulInfo ):
-		return( True )
+		return( modulInfo["handler"]=="list" or modulInfo["handler"].startswith("list."))
 
 	def onClick(self, *args, **kwargs ):
 		if not len(self.widgetsDomElm._children):

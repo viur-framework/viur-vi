@@ -9,7 +9,7 @@ from widgets.search import Search
 from widgets.sidebar import SideBar
 import html5
 
-
+from i18n import translate
 
 
 class ListWidget( html5.Div ):
@@ -58,7 +58,7 @@ class ListWidget( html5.Div ):
 		if isSelector:
 			self.selectionActivatedEvent.register( self )
 		self.emptyNotificationDiv = html5.Div()
-		self.emptyNotificationDiv.appendChild(html5.TextNode("Currently no entries"))
+		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
 		self.emptyNotificationDiv["class"].append("emptynotification")
 		self.appendChild(self.emptyNotificationDiv)
 		#self.search = Search()
@@ -84,9 +84,9 @@ class ListWidget( html5.Div ):
 		errorDiv = html5.Div()
 		errorDiv["class"].append("error_msg")
 		if code and (code==401 or code==403):
-			txt = "Access denied!"
+			txt = translate("Access denied!")
 		else:
-			txt = "An unknown error occurred!"
+			txt = translate("An unknown error occurred!")
 		errorDiv["class"].append("error_code_%s" % (code or 0))
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
