@@ -71,7 +71,9 @@ class Uploader( html5.Progress ):
 		"""
 		formData = eval("new FormData();")
 		formData.append("file", req.file )
-		formData.append("node", req.node )
+		print(type(req.node))
+		if req.node and str(req.node)!="null":
+			formData.append("node", req.node )
 		formData.append("skey", NetworkService.decode(req) )
 		self.xhr = eval("new XMLHttpRequest()")
 		self.xhr.open("POST", req.destUrl )
