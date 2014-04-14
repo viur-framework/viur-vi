@@ -8,6 +8,7 @@ from utils import formatString
 from widgets.list import ListWidget
 from config import conf
 from i18n import translate
+from network import NetworkService
 
 class RelationalViewBoneDelegate( object ):
 	cantSort = True
@@ -174,12 +175,19 @@ class RelationalSingleSelectionBone( html5.Div ):
 		"""
 		self.selection = selection
 		if selection:
-			if "name" in selection.keys():
-				self.selectionTxt["value"] = selection["name"]
-			else:
-				self.selectionTxt["value"] = selection["id"]
+			NetworkService.request( self.destModul, "view/"+selection["id"], successHandler=self.onSelectionDataAviable, cacheable=True)
+			self.selectionTxt["value"] = translate("Loading...")
 		else:
 			self.selectionTxt["value"] = ""
+
+	def onSelectionDataAviable(self, req):
+		"""
+			We just received the full information for this entry from the server and can start displaying it
+		"""
+		data = NetworkService.decode( req )
+		assert self.selection["id"]==data["values"]["id"]
+		self.selectionTxt["value"] = formatString( self.format ,data["structure"],data["values"] )
+
 
 class RelationalMultiSelectionBoneEntry( html5.Div ):
 	"""
@@ -187,7 +195,7 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		Provides the UI to display its data and a button to remove it from the bone.
 	"""
 
-	def __init__(self, parent, modul, data, *args, **kwargs ):
+	def __init__(self, parent, modul, data, format="$(name)", *args, **kwargs ):
 		"""
 			@param parent: Reference to the RelationalMultiSelectionBone we belong to
 			@type parent: RelationalMultiSelectionBone
@@ -200,19 +208,30 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		self.parent = parent
 		self.modul = modul
 		self.data = data
-		if "name" in data.keys():
-			txtLbl = html5.Label( data["name"])
-		else:
-			txtLbl = html5.Label( data["id"])
-		self.appendChild( txtLbl )
+		self.format = format
+		self.selectionTxt = html5.Span(  )
+		self.selectionTxt.appendChild( html5.TextNode(translate("Loading...")) )
+		self.selectionTxt["class"].append("entrydescription")
+		self.appendChild( self.selectionTxt )
 		remBtn = html5.ext.Button("Remove", self.onRemove )
 		remBtn["class"].append("icon")
 		remBtn["class"].append("cancel")
 		self.appendChild( remBtn )
+		NetworkService.request(self.modul,"view/"+self.data["id"], successHandler=self.onSelectionDataAviable, cacheable=True)
 
 
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry( self )
+
+	def onSelectionDataAviable(self, req):
+		"""
+			We just received the full information for this entry from the server and can start displaying it
+		"""
+		data = NetworkService.decode( req )
+		assert self.data["id"]==data["values"]["id"]
+		for c in self.selectionTxt._children[:]:
+			self.selectionTxt.removeChild( c )
+		self.selectionTxt.appendChild( html5.TextNode( formatString( self.format ,data["structure"],data["values"] ) ) )
 
 
 class RelationalMultiSelectionBone( html5.Div ):
@@ -333,7 +352,7 @@ class RelationalMultiSelectionBone( html5.Div ):
 		if selection is None:
 			return
 		for data in selection:
-			entry = RelationalMultiSelectionBoneEntry( self, self.destModul, data)
+			entry = RelationalMultiSelectionBoneEntry( self, self.destModul, data, self.format)
 			self.addEntry( entry )
 
 	def addEntry(self, entry):
