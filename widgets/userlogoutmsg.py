@@ -3,7 +3,7 @@ from network import NetworkService, DeferredCall
 from config import conf
 from i18n import translate
 class UserLogoutMsg( html5.ext.Popup):
-	checkInterval = 1000*60*5
+	checkInterval = 1000*10
 	def __init__(self, *args, **kwargs):
 		super( UserLogoutMsg, self ).__init__( title=translate("user is logged out"), *args, **kwargs )
 		self["class"].append("userloggendoutmsg")
@@ -17,6 +17,7 @@ class UserLogoutMsg( html5.ext.Popup):
 		self.appendChild(applyBtn)
 		self.parent()["style"]["display"]="none"
 		DeferredCall(self.testUserTick,_delay=self.checkInterval)
+		print("USERLOGOUT TEST !!!")
 
 	def doApply(self, *args, **kwargs):
 		eval("""var fenster = window.open("/vi/user/login", "fenster1", "width=800,height=600,status=yes,scrollbars=yes,resizable=yes");""")
@@ -25,10 +26,9 @@ class UserLogoutMsg( html5.ext.Popup):
 		eval("""fenster.focus();""")
 
 	def doRefresh(self,*args,**kwargs):
+		self.testUserAvaiable()
 		#eval("window.onbeforeunload=None;")
-		print("REFRESH !!")
-		eval("window.onbeforeunload = void(0);")
-		eval("window.top.location.href='/vi';")
+
 
 	def doRecheckUserAvaiable(self, *args, **kwargs):
 		if (self.parent()["style"]["display"]=="block"):
