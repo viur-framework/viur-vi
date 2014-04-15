@@ -15,6 +15,8 @@ class HierarchyHandler( Pane ):
 		else:
 			myDescr = modulInfo["name"]
 		super( HierarchyHandler, self ).__init__( myDescr, icon )
+		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
+			self["style"]["display"] = "none"
 		self.modulName = modulName
 		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
 

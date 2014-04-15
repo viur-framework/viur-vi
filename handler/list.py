@@ -20,9 +20,12 @@ class ListHandler( Pane ):
 		super( ListHandler, self ).__init__( myDescr, icon )
 		self.modulName = modulName
 		self.modulInfo = modulInfo
-		if "views" in modulInfo.keys():
-			for view in modulInfo["views"]:
-				self.addChildPane( ListHandler(modulName,view) )
+		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
+			self["style"]["display"] = "none"
+		else:
+			if "views" in modulInfo.keys():
+				for view in modulInfo["views"]:
+					self.addChildPane( ListHandler(modulName,view) )
 		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
 
 	def canHandleInitialHash(self, pathList ):
