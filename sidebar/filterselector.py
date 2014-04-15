@@ -7,8 +7,13 @@ from priorityqueue import extendedSearchWidgetSelector
 class CompoundFilter( html5.Div ):
 	def __init__(self, view, modul, *args, **kwargs ):
 		super( CompoundFilter, self ).__init__( *args, **kwargs)
+		self["class"].append("compoundfilter")
 		self.view = view
 		self.modul = modul
+		if "name" in view.keys():
+			h2 = html5.H2()
+			h2.appendChild( html5.TextNode( view["name"] ) )
+			self.appendChild( h2 )
 		self.extendedFilters = []
 		for extension in view["extendedFilters"]:
 			wdg = extendedSearchWidgetSelector.select( extension, view, modul)
