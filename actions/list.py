@@ -98,15 +98,7 @@ class EditAction( html5.ext.Button ):
 			self.openEditor( s["id"] )
 
 	def openEditor(self, id ):
-		selectioname = "%s"
-		selection = self.parent().parent().getCurrentSelection()
-		if not selection:
-			return
-		if selection:
-			for s in selection:
-				if "name" in s.keys() and s["id"]==id:
-					selectioname = s["name"]+" (%s)"
-		pane = Pane(selectioname % translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
+		pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList, key=id)
 		pane.addWidget( edwg )
