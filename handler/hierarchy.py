@@ -6,11 +6,15 @@ from widgets.edit import EditWidget
 from i18n import translate
 
 class HierarchyHandler( Pane ):
-	def __init__(self, modulName, modulInfo, *args, **kwargs):
+	def __init__(self, modulName, modulInfo, groupName=None, *args, **kwargs):
 		icon = "icons/modules/hierarchy.svg"
 		if "icon" in modulInfo.keys():
 			icon = modulInfo["icon"]
-		super( HierarchyHandler, self ).__init__( modulInfo["name"], icon )
+		if groupName:
+			myDescr = modulInfo["name"].replace( groupName, "")
+		else:
+			myDescr = modulInfo["name"]
+		super( HierarchyHandler, self ).__init__( myDescr, icon )
 		self.modulName = modulName
 		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
 

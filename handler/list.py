@@ -9,11 +9,15 @@ from widgets.list import ListWidgetPreview
 from i18n import translate
 
 class ListHandler( Pane ):
-	def __init__(self, modulName, modulInfo, *args, **kwargs):
+	def __init__(self, modulName, modulInfo, groupName=None, *args, **kwargs):
 		icon = "icons/modules/list.svg"
 		if "icon" in modulInfo.keys():
 			icon = modulInfo["icon"]
-		super( ListHandler, self ).__init__( modulInfo["name"], icon )
+		if groupName:
+			myDescr = modulInfo["name"].replace( groupName, "")
+		else:
+			myDescr = modulInfo["name"]
+		super( ListHandler, self ).__init__( myDescr, icon )
 		self.modulName = modulName
 		self.modulInfo = modulInfo
 		if "views" in modulInfo.keys():
