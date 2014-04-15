@@ -217,8 +217,10 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		remBtn["class"].append("icon")
 		remBtn["class"].append("cancel")
 		self.appendChild( remBtn )
-		NetworkService.request(self.modul,"view/"+self.data["id"], successHandler=self.onSelectionDataAviable, cacheable=True)
+		self.fetchEntry( self.data["id"] )
 
+	def fetchEntry(self, id):
+		NetworkService.request(self.modul,"view/"+id, successHandler=self.onSelectionDataAviable, cacheable=True)
 
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry( self )
@@ -309,7 +311,6 @@ class RelationalMultiSelectionBone( html5.Div ):
 			@type data: dict
 		"""
 		if self.boneName in data.keys():
-			print("USERIALIZING", data[ self.boneName ])
 			val = data[ self.boneName ]
 			if isinstance( val, dict ):
 				val = [ val ]

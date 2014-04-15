@@ -10,6 +10,7 @@ from config import conf
 from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry
 from widgets.file import Uploader
 from i18n import translate
+from network import NetworkService
 
 class FileViewBoneDelegate(object):
 	def __init__(self, modul, boneName, structure):
@@ -77,6 +78,9 @@ class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 			# Move the img in front of the lbl
 			self.element.removeChild( img.element )
 			self.element.insertBefore( img.element, self.element.children.item(0) )
+
+	def fetchEntry(self, id):
+		NetworkService.request(self.modul,"view/leaf/"+id, successHandler=self.onSelectionDataAviable, cacheable=True)
 
 class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 
@@ -194,7 +198,12 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			@param selection: The new entry that this bone should reference
 			@type selection: dict
 		"""
-		super( FileSingleSelectionBone, self).setSelection( selection )
+		self.selection = selection
+		if selection:
+			NetworkService.request( self.destModul, "view/leaf/"+selection["id"], successHandler=self.onSelectionDataAviable, cacheable=True)
+			self.selectionTxt["value"] = translate("Loading...")
+		else:
+			self.selectionTxt["value"] = ""
 		if self.selection:
 			if "servingurl" in self.selection.keys():
 				self.previewImg["src"] = self.selection["servingurl"]
