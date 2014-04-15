@@ -101,14 +101,15 @@ class CoreWindow( html5.Div ):
 			conf["modules"][modulName] = modulInfo
 			handlerCls = HandlerClassSelector.select( modulName, modulInfo )
 			assert handlerCls is not None, "No handler available for modul %s" % modulName
-			handler = handlerCls( modulName, modulInfo )
 			isChild = False
 			for k in groups.keys():
 				if modulInfo["name"].startswith(k):
+					handler = handlerCls( modulName, modulInfo, groupName=k )
 					groups[k].addChildPane( handler )
 					isChild = True
 					break
 			if not isChild:
+				handler = handlerCls( modulName, modulInfo )
 				panes.append( ( modulInfo["name"], handler ) )
 		panes.sort( key=lambda x: x[0] )
 		for k, pane in panes:
@@ -119,8 +120,6 @@ class CoreWindow( html5.Div ):
 
 	def checkInitialHash( self, *args, **kwargs ):
 		urlHash = eval("window.top.location.hash")
-		print("-------")
-		print( urlHash )
 		if not urlHash:
 			return
 		urlHash = urlHash[1:].split("/")

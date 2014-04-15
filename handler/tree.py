@@ -6,11 +6,15 @@ from widgets.edit import EditWidget
 
 from i18n import translate
 class TreeHandler( Pane ):
-	def __init__(self, modulName, modulInfo, *args, **kwargs):
+	def __init__(self, modulName, modulInfo, groupName=None, *args, **kwargs):
 		icon = "icons/modules/tree.svg"
 		if "icon" in modulInfo.keys():
 			icon = modulInfo["icon"]
-		super( TreeHandler, self ).__init__( modulInfo["name"], icon )
+		if groupName:
+			myDescr = modulInfo["name"].replace( groupName, "")
+		else:
+			myDescr = modulInfo["name"]
+		super( TreeHandler, self ).__init__( myDescr, icon )
 		self.modulName = modulName
 		self.modulInfo = modulInfo
 		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
