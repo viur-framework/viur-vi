@@ -1,7 +1,9 @@
 import html5
 from config import conf
 from widgets.search import Search
+from widgets.list import ListWidget
 from priorityqueue import extendedSearchWidgetSelector
+from pane import Pane
 
 
 class CompoundFilter( html5.Div ):
@@ -38,16 +40,21 @@ class CompoundFilter( html5.Div ):
 		self.parent().applyFilter( filter )
 
 
+
 class FilterSelector( html5.Div ):
 	def __init__(self, modul, *args, **kwargs ):
 		super( FilterSelector, self ).__init__( *args, **kwargs )
 		self.modul = modul
-		if modul in conf["modules"].keys():
-			modulConfig = conf["modules"][modul]
+
+	def onAttach(self):
+		super( FilterSelector, self ).onAttach()
+		activeFilter = self.parent().parent().filterID
+		if self.modul in conf["modules"].keys():
+			modulConfig = conf["modules"][self.modul]
 			if "views" in modulConfig.keys() and modulConfig["views"]:
 				for view in modulConfig["views"]:
-					if "extendedFilters" in view.keys() and view["extendedFilters"]:
-						self.appendChild( CompoundFilter( view, modul ) )
+					if "extendedFilters" in view.keys() and view["extendedFilters"] and view["__id"] == activeFilter:
+						self.appendChild( CompoundFilter( view, self.modul ) )
 					else:
 						btn = html5.ext.Button( callback=self.setView )
 						btn.destView = view
@@ -73,11 +80,28 @@ class FilterSelector( html5.Div ):
 
 
 	def setView(self, btn):
-		print("SETTING VIEW", btn.destView)
-		self.applyFilter( btn.destView["filter"] )
+		self.applyFilter( btn.destView["filter"], btn.destView["__id"], btn.destView["name"]  )
 
 
-	def applyFilter(self, filter):
-		self.parent().parent().setFilter( filter )
+	def applyFilter(self, filter, filterID, filterName):
+		if self.parent().parent().filterID == filterID or self.parent().parent().isSelector:
+			self.parent().parent().setFilter( filter, filterID, filterName )
+		else:
+			filterIcon = None
+			if self.modul in conf["modules"].keys() and conf["modules"][ self.modul ] and \
+			   "views" in conf["modules"][ self.modul ].keys() and conf["modules"][ self.modul ]["views"]:
+				for v in conf["modules"][ self.modul ]["views"]:
+					if v["__id"] == filterID:
+						if "icon" in v.keys() and v["icon"]:
+							filterIcon = v["icon"]
+						break
+			p = Pane( filterName, iconURL=filterIcon, closeable=True )
+			conf["mainWindow"].stackPane( p )
+			## FIXME
+			l = ListWidget( self.parent().parent().modul, self.parent().parent().columns, isSelector=False,
+					filterID=filterID, filterDescr=filterName )
+			p.addWidget( l )
+			p.focus()
 		self.parent().parent().sideBar.setWidget( None )
+
 

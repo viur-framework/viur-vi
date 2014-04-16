@@ -20,7 +20,7 @@ class ListWidget( html5.Div ):
 
 	"""
 	_batchSize = 20  #How many row we fetch at once
-	def __init__( self, modul, filter=None, columns=None, isSelector=False, *args, **kwargs ):
+	def __init__( self, modul, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
@@ -49,6 +49,8 @@ class ListWidget( html5.Div ):
 		self.table.setDataProvider(self)
 		self.filter = filter.copy() if isinstance(filter,dict) else {}
 		self.columns = columns[:] if isinstance(columns,list) else []
+		self.filterID = filterID #Hint for the sidebar which predefined filter is currently active
+		self.filterDescr = filterDescr #Human-readable description of the current filter
 		self._tableHeaderIsValid = False
 		self.isSelector = isSelector
 		#Proxy some events and functions of the original table
@@ -66,7 +68,17 @@ class ListWidget( html5.Div ):
 		#self.search.startSearchEvent.register( self )
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		self.table["style"]["display"] = "none"
+		self.filterDescriptionSpan = html5.Span()
+		self.appendChild( self.filterDescriptionSpan )
+		self.filterDescriptionSpan["class"].append("filterdescription")
+		self.updateFilterDescription( )
 		self.reloadData()
+
+	def updateFilterDescription(self):
+		for c in self.filterDescriptionSpan._children[:]:
+			self.filterDescriptionSpan.removeChild( c )
+		if self.filterDescr:
+			self.filterDescriptionSpan.appendChild( html5.TextNode( self.filterDescr ) )
 
 	def getDefaultActions(self):
 		"""
@@ -140,11 +152,14 @@ class ListWidget( html5.Div ):
 		self._currentRequests.append( NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True ) )
 
 
-	def setFilter(self, filter):
+	def setFilter(self, filter, filterID=None, filterDescr=None):
 		"""
 			Applies a new filter.
 		"""
 		self.filter = filter
+		self.filterID = filterID
+		self.filterDescr = filterDescr
+		self.updateFilterDescription()
 		self.reloadData()
 
 	def getFilter(self):

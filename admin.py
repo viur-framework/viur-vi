@@ -88,6 +88,7 @@ class CoreWindow( html5.Div ):
 		groups = {}
 		panes = []
 		userAccess = self.user["values"]["access"]
+		predefinedFilterCounter = 0
 		if "configuration" in self.config.keys() and isinstance( self.config["configuration"], dict) \
 			and "modulGroups" in self.config["configuration"].keys() and isinstance( self.config["configuration"]["modulGroups"], list):
 			for group in self.config["configuration"]["modulGroups"]:
@@ -99,6 +100,10 @@ class CoreWindow( html5.Div ):
 				#Skip this modul, as the user couldn't interact with it anyway
 				continue
 			conf["modules"][modulName] = modulInfo
+			if "views" in conf["modules"][modulName].keys() and conf["modules"][modulName]["views"]:
+				for v in conf["modules"][modulName]["views"]: #Work-a-round for PyJS not supporting id()
+					v["__id"] = predefinedFilterCounter
+					predefinedFilterCounter += 1
 			handlerCls = HandlerClassSelector.select( modulName, modulInfo )
 			assert handlerCls is not None, "No handler available for modul %s" % modulName
 			isChild = False
@@ -180,7 +185,7 @@ class CoreWindow( html5.Div ):
 			if self.panes:
 				self.focusPane( self.panes[-1])
 			else:
-				self.currentPane == None
+				self.currentPane = None
 		if pane.parent == self:
 			self.modulListUl.removeChild( pane )
 		else:

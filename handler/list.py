@@ -71,7 +71,9 @@ class ListHandler( Pane ):
 				filter = self.modulInfo["filter"]
 			if "columns" in self.modulInfo.keys():
 				columns = self.modulInfo["columns"]
-			self.addWidget( ListWidget( self.modulName, filter=filter, columns=columns ) )
+			filterName = self.modulInfo["name"] if "name" in self.modulInfo.keys() else ""
+			filterID = self.modulInfo["__id"] if "__id" in self.modulInfo.keys() else None
+			self.addWidget( ListWidget( self.modulName, filter=filter, columns=columns, filterID=filterID, filterDescr=filterName ) )
 		super( ListHandler, self ).onClick( *args, **kwargs )
 
 

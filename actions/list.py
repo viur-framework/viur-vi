@@ -395,9 +395,6 @@ class ListSelectFilterAction( html5.ext.Button ):
 		modul = self.parent().parent().modul
 		if modul in conf["modules"].keys():
 			modulConfig = conf["modules"][modul]
-			print("-------LISTFILTERSELECT----")
-			print( modulConfig )
-
 
 	def onClick(self, sender=None):
 		#if self.parent().parent().isSelector:
