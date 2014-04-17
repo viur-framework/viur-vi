@@ -50,6 +50,7 @@ class EditAction( html5.ext.Button ):
 	"""
 		Allows editing an entry in a list-modul.
 	"""
+
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
 		self["class"] = "icon edit"
@@ -108,6 +109,71 @@ class EditAction( html5.ext.Button ):
 		pass
 
 actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
+
+
+class CloneAction( html5.ext.Button ):
+	"""
+		Allows editing an entry in a list-modul.
+	"""
+
+	def __init__(self, *args, **kwargs):
+		super( CloneAction, self ).__init__( translate("Clone"), *args, **kwargs )
+		self["class"] = "icon clone"
+		self["disabled"]= True
+		self.isDisabled=True
+
+	def onAttach(self):
+		super(CloneAction,self).onAttach()
+		self.parent().parent().selectionChangedEvent.register( self )
+		self.parent().parent().selectionActivatedEvent.register( self )
+
+	def onDetach(self):
+		self.parent().parent().selectionChangedEvent.unregister( self )
+		self.parent().parent().selectionActivatedEvent.unregister( self )
+		super(CloneAction,self).onDetach()
+
+	def onSelectionChanged(self, table, selection ):
+		if len(selection)>0:
+			if self.isDisabled:
+				self.isDisabled = False
+			self["disabled"]= False
+		else:
+			if not self.isDisabled:
+				self["disabled"]= True
+				self.isDisabled = True
+
+	def onSelectionActivated(self, table, selection ):
+		if not self.parent().parent().isSelector and len(selection)==1:
+			self.openEditor( selection[0]["id"] )
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
+		correctAction = actionName=="clone"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
+		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+
+	def onClick(self, sender=None):
+		selection = self.parent().parent().getCurrentSelection()
+		if not selection:
+			return
+		for s in selection:
+			self.openEditor( s["id"] )
+
+	def openEditor(self, id ):
+		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
+		conf["mainWindow"].stackPane( pane )
+		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList, key=id, clone=True )
+		pane.addWidget( edwg )
+		pane.focus()
+
+	def resetLoadingState(self):
+		pass
+
+actionDelegateSelector.insert( 1, CloneAction.isSuitableFor, CloneAction )
 
 
 
