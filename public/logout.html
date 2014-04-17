@@ -47,21 +47,34 @@
         <link href="/resources/meta/viur-apple-touch-startup-image-1496x2048.png" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
 
         <!-- CSS -->
-        <link rel="stylesheet" href="vi.css" />
-        <link rel="stylesheet" href="/static/vi_custom.css" />
+        <link rel="stylesheet" href="/vi/s/login.css" />
 
 		
 </head>
 
     <body>
-    	<div class="popup">
-    		<div class="alertbox inputdialog browsersupport">
-    			<span class="title">Logout successful</span>
-    			<span>Will I see you again?</span>
-                <button class=​"button" type=​"button" onclick="window.location='/vi'" title="vi /Login">​Yes</button>​
+    	
+        <div id="wrapper" >
 
-	   		</div>
-    	 </div> 	
+            <div class="login-form">
+                <div class="header">
+                    <h1>Logout erfolgreich<br />
+                        <span style="font-size: 26px;">Logout successful</span></h1>
+                    <a href="#"><img src="/vi/s/login/login-logo.png" /></a>
+                </div>
+                <div class="content">
+                    
+                    Sie haben sich erfolgreich abgemeldet.<br /><br />
+                    You logged out successfully.
+
+
+                </div>
+                <!-- <div id="loadingstate" class="loadingstate" style="display: none">Im loading...</div> -->
+                <div class="footer">
+                    <button id="submitbtn" class="button" onclick="window.location='/vi'" title="vi /Login">Login</button>
+                </div>
+            </div>
+        </div>
 </body>
 </html>
 

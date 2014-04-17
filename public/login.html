@@ -2,39 +2,19 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
         <title>ViUR Login</title>
 
         <link rel="stylesheet" href="/vi/s/login.css" />
-		 <link rel="icon" type="image/png" href="favicon.png" />
+        <link rel="icon" type="image/png" href="favicon.png" />
         <!--SCRIPTS-->
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
-		<script type="text/javascript" src="/vi/s/canvas-ani-bg.js"></script>
-        <!--Slider-in icons-->
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $(".viur_text").focus(function() {
-                    $(".user-icon").css("left","-48px");
-                });
-                $(".viur_text").blur(function() {
-                    $(".user-icon").css("left","0px");
-                });
-
-                $(".viur_password").focus(function() {
-                    $(".pass-icon").css("left","-48px");
-                });
-                $(".viur_password").blur(function() {
-                    $(".pass-icon").css("left","0px");
-                });
-            });
-        </script>
-
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
         <!-- Mit Liebe hergestellt von Mausbrand. -->
         <!-- www.mausbrand.de -->
         <link type="text/plain" rel="author" href="/static/meta/humans.txt" />
-		<!-- Icons -->
-		<link rel="shortcut icon" href="/resources/meta/favicon.png" />
+        <!-- Icons -->
+        <link rel="shortcut icon" href="/resources/meta/favicon.png" />
 
         <!-- iPhone -->
         <link href="/resources/meta/viur-apple-touch-57x57-precomposed.png" sizes="57x57" rel="apple-touch-icon-precomposed" />
@@ -54,32 +34,26 @@
         <link href="/resources/meta/viur-apple-touch-startup-image-1536x2008.png" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
         <link href="/resources/meta/viur-apple-touch-startup-image-1496x2048.png" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
 
-
     </head>
     <body>
 
-        <div id="anibg">
-            <canvas style="display:none" id="canvas" width="960" height="540"></canvas>
-			<canvas style="display:none" id="canvas3" width="1920" height="1080"></canvas>
-			<canvas id="canvas2" width="1920" height="1080">*** THIS BROWSER DOES NOT SUPPORT THE CANVAS ELEMENT ***</canvas>
-        </div>
-    <script type="application/javascript">
-        function setLoadingState() {
+        <script type="application/javascript">
+            function setLoadingState() {
             document.getElementById("username").disabled = true;
             document.getElementById("password").disabled = true;
             document.getElementById("submitbtn").disabled = true;
 			document.getElementById("submitbtn").setAttribute( "class", "button is_loading" );			
             //document.getElementById("loadingstate").style.display = "block";
-        }
+            }
 
-        function resetLoadingState() {
+            function resetLoadingState() {
             document.getElementById("username").disabled = false;
             document.getElementById("password").disabled = false;
             document.getElementById("submitbtn").disabled = false;
             document.getElementById("submitbtn").setAttribute( "class", "button" );
-        }
+            }
 
-        function login() {
+            function login() {
             setLoadingState();
 
             var username = document.getElementById("username").value;
@@ -89,29 +63,29 @@
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.open('GET', '/vi/skey', true);
             xmlHttp.onreadystatechange = function () {
-                if (xmlHttp.readyState == 4) {
-                    var skey = xmlHttp.responseText;
-                    skey = skey.substring(1,skey.length-1);
-                    var innerXmlHttp = new XMLHttpRequest();
-                    innerXmlHttp.open("POST","/vi/user/login",true);
-                    innerXmlHttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-                    innerXmlHttp.onreadystatechange = function () {
-                        if (innerXmlHttp.readyState == 4) {
-							
-                            if ( innerXmlHttp.responseText=="OKAY" ) {
-                                window.location.href="/vi";
-                            } else {
+            if (xmlHttp.readyState == 4) {
+            var skey = xmlHttp.responseText;
+            skey = skey.substring(1,skey.length-1);
+            var innerXmlHttp = new XMLHttpRequest();
+            innerXmlHttp.open("POST","/vi/user/login",true);
+            innerXmlHttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            innerXmlHttp.onreadystatechange = function () {
+            if (innerXmlHttp.readyState == 4) {
+
+            if ( innerXmlHttp.responseText=="OKAY" ) {
+            window.location.href="/vi";
+            } else {
 								document.getElementById("logindatamsg").style.display='block';
 								document.getElementById("wrapper").setAttribute( "class", "formwasincorrect" );
-                                resetLoadingState();
-                            }
-                        };
-                    };
-                    innerXmlHttp.send("name="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&skey="+encodeURIComponent(skey));
-                }
+            resetLoadingState();
+            }
+            };
+            };
+            innerXmlHttp.send("name="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&skey="+encodeURIComponent(skey));
+            }
             };
             xmlHttp.send(null);
-        }
+            }
 
 		$(document).ready(function() {
 			$("input").bind("keyup",function(e){
@@ -120,36 +94,33 @@
 				{
 					login();
 				}
-				
+
 			});
 		});
-		
-    </script>
+
+        </script>
+
         <div id="wrapper" >
-            <div class="user-icon"></div>
-            <div class="pass-icon"></div>
 
-
-			<div class="login-form">
+            <div class="login-form">
                 <div class="header">
                     <h1>Login</h1>
                     <a href="#"><img src="/vi/s/login/login-logo.png" /></a>
                 </div>
                 <div class="content">
-				<span id="logindatamsg" style="display:none;">The inserted username and password combination was wrong.</span>
+                    <span id="logindatamsg" style="display:none;">
+                        <strong>Benutzername und Passwort sind nicht korrekt.</strong><br /><br />
+                        The inserted username and password combination was wrong.<br /><br /></span>
                     <form>
                         <table border="0">
-                            <input id="username" name="username" type="text" class="input username" placeholder="username" /> <!-- onfocus="this.value=''" -->
-                            <input id="password" name="password" type="password" class="input password" placeholder="password" />
+                            <input id="username" name="username" type="text" class="input username" placeholder="Benutzer / Username" /> <!-- onfocus="this.value=''" -->
+                            <input id="password" name="password" type="password" class="input password" placeholder="Passwort / Password" />
                         </table>
                     </form>
                 </div>
                 <!-- <div id="loadingstate" class="loadingstate" style="display: none">Im loading...</div> -->
                 <div class="footer">
                     <button id="submitbtn" class="button" onclick="login(); return false;">Login</button>
-                    <!--
-                    <input type="submit" name="submit" value="Register" class="register" />
-                    -->
                 </div>
             </div>    
         </div>
