@@ -86,11 +86,10 @@ class Uploader( html5.Progress ):
 			Internal callback - The state of our upload changed.
 		"""
 		if self.xhr.status==200:
-			print("UPLOAD OKAY")
 			self.responseValue = json.loads( self.xhr.responseText )
 			DeferredCall(self.onSuccess, _delay=1000)
 		else:
-			print("UPLOAD FAILED")
+			DeferredCall(self.onFailed, self.xhr.status, _delay=1000)
 
 	def onProgress(self, event):
 		"""
@@ -108,7 +107,24 @@ class Uploader( html5.Progress ):
 		for v in self.responseValue["values"]:
 			self.uploadSuccess.fire( self, v )
 		NetworkService.notifyChange("file")
+		self.replaceWithMessage( "Upload complete" , isSuccess=True )
+
+	def onFailed(self, errorCode, *args, **kwargs ):
+		self.replaceWithMessage( "Upload failed with status code %s" % errorCode, isSuccess=False )
+
+	def replaceWithMessage(self, message, isSuccess):
 		self.parent()["class"].remove("is_uploading")
+		self.parent()["class"].remove("log_progress")
+		if isSuccess:
+			self.parent()["class"].append("log_success")
+		else:
+			self.parent()["class"].append("log_failed")
+		msg = html5.Span()
+		msg.appendChild( html5.TextNode( message ) )
+		self.parent().appendChild( msg )
+		self.parent().removeChild( self )
+
+
 class FileWidget( TreeWidget ):
 	"""
 		Extends the TreeWidget to allow drag&drop upload of files to the current node.
