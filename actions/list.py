@@ -366,7 +366,7 @@ actionDelegateSelector.insert( 1, CloseAction.isSuitableFor, CloseAction )
 class ActivateSelectionAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
 		super( ActivateSelectionAction, self ).__init__( translate("Select"), *args, **kwargs )
-		self["class"] = "icon select"
+		self["class"] = "icon activateselection"
 
 	def onClick(self, sender=None):
 		self.parent().parent().activateCurrentSelection()
