@@ -125,11 +125,9 @@ class CloneAction( html5.ext.Button ):
 	def onAttach(self):
 		super(CloneAction,self).onAttach()
 		self.parent().parent().selectionChangedEvent.register( self )
-		self.parent().parent().selectionActivatedEvent.register( self )
 
 	def onDetach(self):
 		self.parent().parent().selectionChangedEvent.unregister( self )
-		self.parent().parent().selectionActivatedEvent.unregister( self )
 		super(CloneAction,self).onDetach()
 
 	def onSelectionChanged(self, table, selection ):
@@ -141,10 +139,6 @@ class CloneAction( html5.ext.Button ):
 			if not self.isDisabled:
 				self["disabled"]= True
 				self.isDisabled = True
-
-	def onSelectionActivated(self, table, selection ):
-		if not self.parent().parent().isSelector and len(selection)==1:
-			self.openEditor( selection[0]["id"] )
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
