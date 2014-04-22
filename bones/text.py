@@ -50,6 +50,7 @@ class TextEditBone( html5.Div ):
 			elif len(self.languages)>0:
 				self.selectedLang=self.languages[0]
 			self.langButContainer=html5.Div()
+			self.langButContainer["class"].append("languagebuttons")
 			for lang in self.languages:
 				abut=html5.ext.Button(lang,self.changeLang)
 				abut["value"]=lang
