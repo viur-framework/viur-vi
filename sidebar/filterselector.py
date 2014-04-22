@@ -38,7 +38,7 @@ class CompoundFilter( html5.Div ):
 		filter = self.view["filter"].copy()
 		for extension in self.extendedFilters:
 			filter = extension.updateFilter( filter )
-		self.parent().applyFilter( filter )
+		self.parent().applyFilter( filter, -1, "Fixme" )
 
 
 
