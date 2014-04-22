@@ -4,6 +4,7 @@ from widgets.search import Search
 from widgets.list import ListWidget
 from priorityqueue import extendedSearchWidgetSelector
 from pane import Pane
+from i18n import translate
 
 
 class CompoundFilter( html5.Div ):
@@ -70,13 +71,16 @@ class FilterSelector( html5.Div ):
 
 
 	def onStartSearch(self, searchTxt):
-		filter = self.parent().parent().getFilter()
-		if searchTxt:
+		if not searchTxt:
+			return
+		if self.modul in conf["modules"].keys():
+			modulConfig = conf["modules"][self.modul]
+			if "filter" in modulConfig.keys():
+				filter = modulConfig["filter"]
+			else:
+				filter = {}
 			filter["search"] = searchTxt
-		else:
-			if "search" in filter.keys():
-				del filter["search"]
-		self.applyFilter( filter )
+			self.applyFilter( filter, -1, translate("Fulltext search: {token}", token=searchTxt) )
 
 
 	def setView(self, btn):
