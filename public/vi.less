@@ -552,7 +552,7 @@ margin-top: -10px;
   border-right:2px solid @maincolor;
   margin-right: 4px;
 }
-.actionbar .operations, button.selectfilter, button.text.save[type="button"], button.flipview[type="button"] {
+.actionbar .operations, button.selectfilter, button.text.save[type="button"], button.flipview[type="button"], button.icon.close[type="button"], button.icon.activateselection[type="button"] {
   float: right;
 }
 .actionbar.is_disabled {
@@ -560,7 +560,8 @@ margin-top: -10px;
 }
 /* #vi_buttons
 ================================================== */
-button[type="button"] {
+button[type="button"],
+button.icon.save.close[type="button"] {
   border: 1px solid #999;
   color: #222;
   height: 16px;
@@ -598,6 +599,7 @@ button.btn_no {
   min-width: 28px;
 }
 button.icon:before,
+button.icon.save.close[type="button"]:before,
 .vi_operator .search button:before,
 .btn_yes:before,
 .btn_no:before,
@@ -642,6 +644,9 @@ button.save.close:before,
 .btn_yes:before {
   background-position: 0px -16px;
 }
+button.activateselection:before {
+  background-position: 0px -32px; 
+}
 button.save.continue:before {
   background-position: -16px -16px;
 }
@@ -654,6 +659,7 @@ button.reset:before {
 button.reload:before {
   background-position: -80px -16px;
 }
+button.close:before,
 button.cancel:before,
 .btn_no:before {
   background-position: 0px 0px;
@@ -838,6 +844,19 @@ button.icon[type="button"]:hover {
   border-color: #666;   
 }
 /* Red Buttons */
+button.icon.close[type="button"] {
+  border: 1px solid #e20614;
+  color: #fff;
+  background-color: #c31520;
+  background: -moz-linear-gradient(top, #e20614 0%, #c31520 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e20614), color-stop(100%, #c31520));
+  background: -webkit-linear-gradient(top, #e20614 0%, #c31520 100%);
+  background: -o-linear-gradient(top, #e20614 0%, #c31520 100%);
+  background: -ms-linear-gradient(top, #e20614 0%, #c31520 100%);
+  background: linear-gradient(to bottom, #e20614 0%, #c31520 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e20614', EndColorStr='#c31520', GradientType=0);
+}
+button.icon.close[type="button"]:hover,
 button.icon.cancel[type="button"]:hover,
 button.icon.delete[type="button"]:hover {
   border: 1px solid #c31520;
@@ -851,11 +870,14 @@ button.icon.delete[type="button"]:hover {
   background: linear-gradient(to bottom, #c31520 0%, #e20614 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#c31520', EndColorStr='#e20614', GradientType=0);
 }
+button.icon.close[type="button"]:before,
 button.icon.cancel[type="button"]:hover:before,
 button.icon.delete[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
+
 /* Green Buttons */
+button.icon.activateselection[type="button"],
 button.text.save[type="button"] {
   border: 1px solid #298342;
   color: #fff;
@@ -868,7 +890,7 @@ button.text.save[type="button"] {
   background: linear-gradient(to bottom, #479c42 0%, #298342 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0); 
 }
-
+button.icon.activateselection[type="button"]:hover,
 button.text.save[type="button"]:hover,
 button.icon.add[type="button"]:hover,
 button.icon.save.close[type="button"]:hover {
@@ -883,7 +905,7 @@ button.icon.save.close[type="button"]:hover {
   background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
-
+button.icon.activateselection[type="button"]:before,
 button.text.save[type="button"]:before,
 button.icon.add[type="button"]:hover:before,
 button.icon.save.close[type="button"]:hover:before {
@@ -899,6 +921,8 @@ button.icon.save.close.is_loading[type="button"]:hover:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
+button.icon.close[type="button"],
+button.icon.activateselection[type="button"],
 button.text.save[type="button"],
 button.icon.text[type="button"]:hover,
 button.icon.flipview[type="button"]:hover,
@@ -908,6 +932,13 @@ button.icon.is_disabled[type="button"]:hover {
   overflow: hidden;
   min-width: 28px;
   transition-delay: 0;
+}
+button.icon.close[type="button"]:hover,
+button.icon.activateselection[type="button"]:hover,
+button.icon.save.close[type="button"]:hover {
+  overflow: visible;
+  min-width: 120px;
+  letter-spacing: normal;
 }
 
 /* Disabled Buttons */
@@ -1181,6 +1212,10 @@ input[type=password],
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eaeaea', endColorstr='#fafafa', GradientType=0);
   /* IE6-9 */
 
+}
+
+.bone.text .languagebuttons {
+    float:left;
 }
 
 .languagebuttons button.is_active {
@@ -1477,7 +1512,7 @@ form .relational:focus button:after {
 }
 .tooltip span {
   display: block;
-  height: 10px;
+  height: 0px;
   width: 97%;
   min-height: 1px;
   border: 0;
