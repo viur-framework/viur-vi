@@ -827,13 +827,15 @@ button.text.table.newcol.before {
   margin-right: 0;
   border-right: 0;
 }
-.vi_operator .search button:hover,
 button.icon[type="button"]:hover {
   border-color: #666;
   overflow: visible;
   color: #222;
   min-width: 120px;
   letter-spacing: normal;
+}
+.vi_operator .search button:hover {
+  border-color: #666;   
 }
 /* Red Buttons */
 button.icon.cancel[type="button"]:hover,
@@ -854,7 +856,20 @@ button.icon.delete[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
 /* Green Buttons */
-button.text.save[type="button"],
+button.text.save[type="button"] {
+  border: 1px solid #298342;
+  color: #fff;
+  background-color: #479c42;
+  background: -moz-linear-gradient(top, #479c42 0%, #298342 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #479c42), color-stop(100%, #298342));
+  background: -webkit-linear-gradient(top, #479c42 0%, #298342 100%);
+  background: -o-linear-gradient(top, #479c42 0%, #298342 100%);
+  background: -ms-linear-gradient(top, #479c42 0%, #298342 100%);
+  background: linear-gradient(to bottom, #479c42 0%, #298342 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0); 
+}
+
+button.text.save[type="button"]:hover,
 button.icon.add[type="button"]:hover,
 button.icon.save.close[type="button"]:hover {
   border: 1px solid #479c42;
@@ -868,17 +883,19 @@ button.icon.save.close[type="button"]:hover {
   background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
+
 button.text.save[type="button"]:before,
 button.icon.add[type="button"]:hover:before,
 button.icon.save.close[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
 
+/* Loading Buttons */
 button.icon.is_loading[type="button"]:before,
 button.is_loading[type="button"]:before,
 button.icon.is_loading[type="button"]:hover:before,
 button.is_loading[type="button"]:hover:before,
-button.icon.save.close.is_loading[type="button"]:hover:before  {
+button.icon.save.close.is_loading[type="button"]:hover:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
@@ -892,6 +909,8 @@ button.icon.is_disabled[type="button"]:hover {
   min-width: 28px;
   transition-delay: 0;
 }
+
+/* Disabled Buttons */
 button.icon.is_disabled[type="button"]:hover {
   border-color: #999;
 }
@@ -1043,6 +1062,7 @@ form fieldset section > div {
   width: 100%;
   float: right;
 }
+.selectioncontainer .entrydescription,
 form label {
   width: 220px;
   float: left;
@@ -1161,6 +1181,13 @@ input[type=password],
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eaeaea', endColorstr='#fafafa', GradientType=0);
   /* IE6-9 */
 
+}
+
+.languagebuttons button.is_active {
+    background: linear-gradient(to bottom, #666 0%, #aaa 100%);
+    box-shadow:inset 1px 1px 2px rgba(0,0,0,0.2);
+    border-color:#666;
+    color:#fff;
 }
 
 /* #vi_texteditor
@@ -1318,6 +1345,7 @@ select {
 .tagcontainer button {
   margin-right: 15px;
 }
+.selectioncontainer .entrydescription,
 .selectioncontainer label {
   border: 1px solid #ccc;
   border-right-width: 0;
@@ -1325,6 +1353,7 @@ select {
   min-width: 220px;
   max-width: 50%;
 }
+.selectioncontainer .entrydescription,
 .selectioncontainer label,
 .selectioncontainer button {
   margin-bottom: 5px;
@@ -2342,6 +2371,7 @@ font-size: .7em;
 color:#777;
 float:right;
 padding:2px 1%;
+border-top:1px dotted #ccc;
 }
 
 .vi_messenger .versiondiv span {
