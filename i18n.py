@@ -30,7 +30,7 @@ def translate( key, **kwargs ):
 	if _currentLanguage in _lngMap.keys():
 		if key.lower() in _lngMap[ _currentLanguage ].keys():
 			return( processTr( _lngMap[ _currentLanguage ][key.lower()], **kwargs) )
-	return( key.upper() ) #FIXME!
+	return( processTr( key, **kwargs ).upper() ) #FIXME!
 
 
 def addTranslation( lang, a, b=None ):

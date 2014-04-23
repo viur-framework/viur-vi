@@ -1011,6 +1011,7 @@ class Wysiwyg( html5.Div ):
 			x,y = self.lastMousePos
 			self.lastMousePos = (event.x, event.y)
 			event.target.width = event.target.clientWidth-(x-event.x)
+			event.target.height = event.target.clientHeight-(y-event.y)
 			event.preventDefault()
 			event.stopPropagation()
 		else:
