@@ -102,8 +102,8 @@ class FilterSelector( html5.Div ):
 			p = Pane( filterName, iconURL=filterIcon, closeable=True )
 			conf["mainWindow"].stackPane( p )
 			## FIXME
-			l = ListWidget( self.parent().parent().modul, self.parent().parent().columns, isSelector=False,
-					filterID=filterID, filterDescr=filterName )
+			l = ListWidget( self.parent().parent().modul, columns=self.parent().parent().columns, isSelector=False,
+					filter=filter, filterID=filterID, filterDescr=filterName )
 			p.addWidget( l )
 			p.focus()
 		self.parent().parent().sideBar.setWidget( None )
