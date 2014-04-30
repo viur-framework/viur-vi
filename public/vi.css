@@ -339,6 +339,9 @@ p {
 .modullist ul h3:before {
   margin-right: 15px;
 }
+.modullist ul ul h3::before {
+    margin-left: 29px !important;    
+}
 .modullist ul a {
   background-color: #e9e9e9;
   background: -moz-linear-gradient(top, #e4e4e4, #e9e9e9);
@@ -346,11 +349,26 @@ p {
   background: -webkit-gradient(linear, left top, left bottom, from(#e4e4e4), to(#e9e9e9));
   /* Safari, Chrome */
 }
+.modullist ul ul a {
+  background-color: #dbdbdc;
+  background: -moz-linear-gradient(top, #d5d5d7, #dbdbdc);
+  /* Firefox */
+    background: -webkit-gradient(linear, left top, left bottom, from(#d5d5d7), to(#dbdbdc));
+    /* Safari, Chrome */
+    padding: 7px 13px;
+    border-bottom: 1px dotted #bbb;
+}
+.modullist ul ul img {
+    margin-left: 44px;
+}
 .modullist ul button {
   margin-top: -32px;
   position: relative;
   float: right;
   margin-right: 10px;
+}
+.modullist ul ul button {
+    margin-top: -27px;
 }
 .modullist ul button.closebtn {
   -webkit-border-radius: 15px;
@@ -443,7 +461,7 @@ p {
   right: 0;
 }
 .vi_operator .search,
-.vi_operator .extendedfilter {
+.vi_operator .compoundfilter {
   width: 96%;
   padding: 15px 1%;
   background: #dcdcdc;
@@ -451,6 +469,14 @@ p {
   border-radius: 3px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
+
+.vi_operator .compoundfilter h2 {
+  color: #777;
+  line-height: 1.4em;
+  font-size: 0.8em;
+  padding:0 15px 10px;
+}
+
 .vi_operator .search span {
   width: 60px;
   float: left;
@@ -550,8 +576,7 @@ button.icon.activateselection[type="button"] {
 }
 /* #vi_buttons
 ================================================== */
-button[type="button"],
-button.icon.save.close[type="button"] {
+button[type="button"] {
   border: 1px solid #999;
   color: #222;
   height: 16px;
@@ -580,7 +605,6 @@ button[type="button"]:hover {
 }
 /* Icon Buttons */
 button.icon,
-button.icon.save.close[type="button"],
 .vi_operator .search button,
 button.btn_yes,
 button.btn_no {
@@ -590,7 +614,6 @@ button.btn_no {
   min-width: 28px;
 }
 button.icon:before,
-button.icon.save.close[type="button"]:before,
 .vi_operator .search button:before,
 .btn_yes:before,
 .btn_no:before,
@@ -870,6 +893,7 @@ button.icon.delete[type="button"]:hover:before {
 }
 
 /* Green Buttons */
+button.icon.save.close[type="button"],
 button.icon.activateselection[type="button"],
 button.text.save[type="button"] {
   border: 1px solid #298342;
@@ -898,9 +922,11 @@ button.icon.save.close[type="button"]:hover {
   background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
+
 button.icon.activateselection[type="button"]:before,
 button.text.save[type="button"]:before,
 button.icon.add[type="button"]:hover:before,
+button.icon.save.close[type="button"]:before,
 button.icon.save.close[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
@@ -914,6 +940,7 @@ button.icon.save.close.is_loading[type="button"]:hover:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
+button.icon.save.close[type="button"],
 button.icon.close[type="button"],
 button.icon.activateselection[type="button"],
 button.text.save[type="button"],
@@ -1699,9 +1726,18 @@ td span.time {
   color: #888;
   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
 }
+.filterdescription {
+    font-size:0.8em;
+    color:#aaa;
+}
 .issplitview > div {
   width: 65%;
   float: left;
+}
+
+.issplitview .emptynotification {
+    width: 20%;
+    margin: 0 18% 55px;
 }
 .issplitview .sidebar {
   margin-left: 2%;
@@ -1725,7 +1761,9 @@ td span.time {
   float: right;
 }
 .issplitview .sidebar .extendedfilter span {
-  margin-left: 7px;
+  margin-top:5px;
+  margin-left: 15px;
+  display: inline-block;
 }
 .sidebar > ul > li {
   padding: 3px;
@@ -1770,6 +1808,7 @@ td span.time {
 .tree {
   width: 100%;
   min-height: 500px;
+  margin-bottom: 250px;
 }
 .tree .treeitem {
   padding: 7px;
