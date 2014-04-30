@@ -14,7 +14,7 @@ class ExtendedRelationalViewBoneDelegate( object ):
 	cantSort = True
 	def __init__(self, modul, boneName, structure):
 		super(ExtendedRelationalViewBoneDelegate, self).__init__()
-		self.format = "$(name)"
+		self.format = "$(dest.name)"
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
 		self.modul = modul
@@ -27,12 +27,13 @@ class ExtendedRelationalViewBoneDelegate( object ):
 			val = data[field]
 		else:
 			val = ""
+		relStructList = self.structure[self.boneName]["using"]
+		relStructDict = { k:v for k,v in relStructList }
 		if isinstance(val,list):
-			val = ", ".join( [(x["dest"]["name"] if "dest" in x.keys() and "name" in x["dest"].keys() else x["dest"]["id"]) for x in val])
+			val = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["id"]) for x in val] )
 		elif isinstance(val, dict):
-			val = val["dest"]["name"] if "dest" in val.keys() and "name" in val["dest"].keys() else val["dest"]["id"]
+			val = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["id"]
 		return( html5.Label( val ) )
-		#return( formatString( self.format, self.structure, value ) ) FIXME!
 
 class ExtendedRelationalSelectionBoneEntry( html5.Div ):
 	"""
