@@ -127,11 +127,27 @@ class CoreWindow( html5.Div ):
 		urlHash = eval("window.top.location.hash")
 		if not urlHash:
 			return
-		urlHash = urlHash[1:].split("/")
-		urlHash = [x for x in urlHash if x]
-		gen = initialHashHandler.select( urlHash )
+		if "?" in urlHash:
+			hashStr = urlHash[ : urlHash.find("?") ]
+			paramsStr = urlHash[ urlHash.find("?")+1: ]
+		else:
+			hashStr = urlHash
+			paramsStr = ""
+		hashList = hashStr[1:].split("/")
+		hashList = [x for x in hashList if x]
+		params = {}
+		if paramsStr:
+			for pair in paramsStr.split("&"):
+				if not "=" in pair:
+					continue
+				key = pair[ :pair.find("=") ]
+				value = pair[ pair.find("=")+1: ]
+				if not (key and value):
+					continue
+				params[ key ] = value
+		gen = initialHashHandler.select( hashList, params )
 		if gen:
-			gen( urlHash )
+			gen( hashList, params )
 
 
 	def onError(self, req, code):

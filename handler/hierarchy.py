@@ -20,21 +20,21 @@ class HierarchyHandler( Pane ):
 		self.modulName = modulName
 		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
 
-	def canHandleInitialHash(self, pathList ):
+	def canHandleInitialHash(self, pathList, params ):
 		if len(pathList)>1:
 			if pathList[0]==self.modulName:
 				if pathList[1] in ["list"] or (pathList[1]=="edit" and len(pathList)>2):
 					return( True )
 		return( False )
 
-	def handleInitialHash(self, pathList):
-		assert self.canHandleInitialHash( pathList )
+	def handleInitialHash(self, pathList, params):
+		assert self.canHandleInitialHash( pathList, params )
 		if pathList[1] == "list":
 			self.addWidget( HierarchyWidget( self.modulName ) )
 			self.focus()
 		elif pathList[1] == "edit" and len(pathList)>2:
 			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_hierarchy", "action_edit" ])
-			edwg = EditWidget( self.modulName, EditWidget.appHierarchy, key=pathList[2])
+			edwg = EditWidget( self.modulName, EditWidget.appHierarchy, key=pathList[2], hashArgs=(params or None))
 			pane.addWidget( edwg )
 			conf["mainWindow"].addPane( pane, parentPane=self)
 			pane.focus()

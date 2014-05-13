@@ -20,15 +20,15 @@ class SingletonHandler( Pane ):
 			self["style"]["display"] = "none"
 		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
 
-	def canHandleInitialHash(self, pathList ):
+	def canHandleInitialHash(self, pathList, params ):
 		if len(pathList)>1:
 			if pathList[0]==self.modulName and pathList[1]=="edit":
 				return( True )
 		return( False )
 
-	def handleInitialHash(self, pathList):
-		assert self.canHandleInitialHash( pathList )
-		edwg = EditWidget( self.modulName, EditWidget.appSingleton)
+	def handleInitialHash(self, pathList, params):
+		assert self.canHandleInitialHash( pathList, params )
+		edwg = EditWidget( self.modulName, EditWidget.appSingleton, hashArgs=(params or None))
 		self.addWidget( edwg )
 		self.focus()
 

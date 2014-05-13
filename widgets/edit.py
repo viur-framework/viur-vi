@@ -147,6 +147,31 @@ class InternalEdit( html5.Div ):
 		for bone in self.bones.values():
 			bone.unserialize( data )
 
+def parseHashParameters( src, prefix="" ):
+	"""
+		Converts a flat dictionary containing dotted properties into a multi-dimensional one.
+
+		Example:
+			{ "a":"a", "b.a":"ba","b.b":"bb" } -> { "a":"a", "b":{"a":"ba","b":"bb"} }
+	"""
+
+	res = {}
+	processedPrefixes = [] #Dont process a prefix twice
+	for k,v in src.items():
+		if prefix and not k.startswith( prefix ):
+			continue
+		if prefix:
+			k = k.replace(prefix,"")
+		if not "." in k:
+			res[ k ] = v
+		else:
+			newPrefix = k[ :k.find(".")  ]
+			if newPrefix in processedPrefixes: #We did this allready
+				continue
+			processedPrefixes.append( newPrefix )
+			res[ newPrefix ] = parseHashParameters( src, prefix="%s%s." %(prefix,newPrefix))
+	return( res )
+
 
 class EditWidget( html5.Div ):
 	appList = "list"
@@ -155,7 +180,7 @@ class EditWidget( html5.Div ):
 	appSingleton = "singleton"
 	__editIdx_ = 0 #Internal counter to ensure unique ids
 
-	def __init__(self, modul, applicationType, key=0, node=None, skelType=None, clone=False, *args, **kwargs ):
+	def __init__(self, modul, applicationType, key=0, node=None, skelType=None, clone=False, hashArgs=None, *args, **kwargs ):
 		"""
 			Initialize a new Edit or Add-Widget for the given modul.
 			@param modul: Name of the modul
@@ -171,6 +196,8 @@ class EditWidget( html5.Div ):
 			@type path: String
 			@param clone: If true, it will load the values from the given id, but will save a new entry (i.e. allows "cloning" an existing entry)
 			@type clone: Bool
+			@param hashArgs: Dictionary of parameters (usually supplied by the window.hash property) which should prefill values.
+			@type hashArgs: Dict
 		"""
 		super( EditWidget, self ).__init__( *args, **kwargs )
 		self.modul = modul
@@ -196,6 +223,16 @@ class EditWidget( html5.Div ):
 		self.bones = {}
 		self.closeOnSuccess = False
 		self._lastData = {} #Dict of structure and values received
+		if hashArgs:
+			self._hashArgs = parseHashParameters( hashArgs )
+			warningNode = html5.TextNode("Warning: Values shown below got overriden by the Link you clicked on and do NOT represent the actual values!\n"+\
+						"Doublecheck them before saving!")
+			warningSpan = html5.Span()
+			warningSpan["class"].append("warning")
+			warningSpan.appendChild( warningNode )
+			self.appendChild( warningSpan )
+		else:
+			self._hashArgs = None
 		self.editTaskID = None
 		self.wasInitialRequest = True #Wherever the last request attempted to save data or just fetched the form
 		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" if self.key else "add" )
@@ -398,6 +435,9 @@ class EditWidget( html5.Div ):
 			self.form.appendChild( v )
 			v._section = None
 		self.unserialize( data["values"] )
+		if self._hashArgs: #Apply the default values (if any)
+			self.unserialize( self._hashArgs )
+			self._hashArgs = None
 		self._lastData = data
 		if hasMissing and not self.wasInitialRequest:
 			conf["mainWindow"].log("warning",translate("Could not save entry!"))
