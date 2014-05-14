@@ -306,6 +306,8 @@ class DataTable( html5.Div ):
 		assert obj==None or "onNextBatchNeeded" in dir(obj),"The dataProvider must provide a 'onNextBatchNeeded' function"
 		self._dataProvider = obj
 		self._isAjaxLoading = False
+		if "is_loading" in self.table["class"]:
+			self.table["class"].remove("is_loading")
 
 	def onCursorMoved(self, table, row):
 		"""
@@ -339,12 +341,14 @@ class DataTable( html5.Div ):
 		self._model.append( obj )
 		self._renderObject( obj )
 		self._isAjaxLoading = False
+		if "is_loading" in self.table["class"]:
+			self.table["class"].remove("is_loading")
 		self.testIfNextBatchNeededImmediately()
 
 	def extend(self, objList):
 		"""
 			Adds multiple rows at once.
-			Much faster than callind add() multiple times.
+			Much faster than calling add() multiple times.
 		"""
 		self.table.prepareGrid( len(objList), len(self._shownFields) )
 		for obj in objList:
@@ -353,6 +357,8 @@ class DataTable( html5.Div ):
 			self._model.append( obj )
 			self._renderObject( obj, tableIsPrepared=True )
 			self._isAjaxLoading = False
+			if "is_loading" in self.table["class"]:
+				self.table["class"].remove("is_loading")
 		self.testIfNextBatchNeededImmediately()
 
 	def testIfNextBatchNeededImmediately(self):
@@ -369,6 +375,8 @@ class DataTable( html5.Div ):
 		if not sumHeight>int(self["style"]["max-height"][:-2]) and not self._isAjaxLoading:
 			if self._dataProvider:
 				self._isAjaxLoading = True
+				if not "is_loading" in self.table["class"]:
+					self.table["class"].append("is_loading")
 				self._dataProvider.onNextBatchNeeded()
 
 
@@ -448,6 +456,8 @@ class DataTable( html5.Div ):
 		if (self.element.scrollTop+self.element.clientHeight)>=self.element.scrollHeight and not self._isAjaxLoading:
 			if self._dataProvider:
 				self._isAjaxLoading = True
+				if not "is_loading" in self.table["class"]:
+					self.table["class"].append("is_loading")
 				self._dataProvider.onNextBatchNeeded()
 
 
@@ -473,7 +483,7 @@ class DataTable( html5.Div ):
 		rows = self.table.getCurrentSelection()
 		if not self._model or not rows:
 			return( [] )
-		return( [ self._model[x] for x in rows] )
+		return( [ self._model[x] for x in rows ] )
 
 	def setCellRender(self, field, render):
 		"""

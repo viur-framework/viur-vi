@@ -54,6 +54,7 @@ class CoreWindow( html5.Div ):
 		self.config = None
 		self.user = None
 		self.userLoggedOutMsg=UserLogoutMsg()
+		self["class"].append("is_loading")
 		startupQueue.setFinalElem( self.startup )
 		self.sinkEvent('onUserTryedToLogin')
 
@@ -121,6 +122,7 @@ class CoreWindow( html5.Div ):
 			self.addPane( pane )
 		viInitializedEvent.fire()
 		DeferredCall( self.checkInitialHash )
+		self["class"].remove("is_loading")
 
 
 	def checkInitialHash( self, *args, **kwargs ):
