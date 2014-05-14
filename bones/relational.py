@@ -132,10 +132,10 @@ class RelationalSingleSelectionBone( html5.Div ):
 					val = val[0]
 				else:
 					val = None
-		if isinstance( val, dict ):
-			self.setSelection( val )
-		else:
-			self.setSelection( None )
+			if isinstance( val, dict ):
+				self.setSelection( val )
+			else:
+				self.setSelection( None )
 			#self.setText( data[ self.boneName ] if data[ self.boneName ] else "" )
 			#self.lineEdit.setText( str( data[ self.boneName ] ) if data[ self.boneName ] else "" )
 
@@ -314,7 +314,7 @@ class RelationalMultiSelectionBone( html5.Div ):
 			val = data[ self.boneName ]
 			if isinstance( val, dict ):
 				val = [ val ]
-		self.setSelection( val )
+			self.setSelection( val )
 			#self.setText( data[ self.boneName ] if data[ self.boneName ] else "" )
 			#self.lineEdit.setText( str( data[ self.boneName ] ) if data[ self.boneName ] else "" )
 

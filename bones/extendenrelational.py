@@ -173,7 +173,7 @@ class ExtendedRelationalSelectionBone( html5.Div ):
 			val = data[ self.boneName ]
 			if isinstance( val, dict ):
 				val = [ val ]
-		self.setSelection( val )
+			self.setSelection( val )
 			#self.setText( data[ self.boneName ] if data[ self.boneName ] else "" )
 			#self.lineEdit.setText( str( data[ self.boneName ] ) if data[ self.boneName ] else "" )
 
