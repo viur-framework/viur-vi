@@ -144,7 +144,12 @@ class CoreWindow( html5.Div ):
 				value = pair[ pair.find("=")+1: ]
 				if not (key and value):
 					continue
-				params[ key ] = value
+				if key in params.keys():
+					if not isinstance( params[ key ], list ):
+						params[ key ] = [ params[ key ] ]
+					params[ key ].append( value )
+				else:
+					params[ key ] = value
 		gen = initialHashHandler.select( hashList, params )
 		if gen:
 			gen( hashList, params )

@@ -153,6 +153,10 @@ def parseHashParameters( src, prefix="" ):
 
 		Example:
 			{ "a":"a", "b.a":"ba","b.b":"bb" } -> { "a":"a", "b":{"a":"ba","b":"bb"} }
+
+		If a dictionary contains only numeric indexes, it will be converted to a list:
+			{ "a.0.a":"a0a", "a.0.b":"a0b",a.1.a":"a1a" } -> { "a":[{"a":"a0a","b":"a0b"},{"a":"a1a"}] }
+
 	"""
 
 	res = {}
@@ -163,13 +167,30 @@ def parseHashParameters( src, prefix="" ):
 		if prefix:
 			k = k.replace(prefix,"")
 		if not "." in k:
-			res[ k ] = v
+			if k in res.keys():
+				if not isinstance( res[k], list ):
+					res[k] = [ res[k] ]
+				res[k].append( v )
+			else:
+				res[ k ] = v
 		else:
 			newPrefix = k[ :k.find(".")  ]
-			if newPrefix in processedPrefixes: #We did this allready
+			if newPrefix in processedPrefixes: #We did this already
 				continue
 			processedPrefixes.append( newPrefix )
-			res[ newPrefix ] = parseHashParameters( src, prefix="%s%s." %(prefix,newPrefix))
+			if newPrefix in res.keys():
+				if not isinstance( res[ newPrefix ], list ):
+					res[ newPrefix ] = [ res[ newPrefix ] ]
+				res[ newPrefix ].append( parseHashParameters( src, prefix="%s%s." %(prefix,newPrefix)) )
+			else:
+				res[ newPrefix ] = parseHashParameters( src, prefix="%s%s." %(prefix,newPrefix))
+	if all( [x.isdigit() for x in res.keys()]):
+		newRes = []
+		keys = [int(x) for x in res.keys()]
+		keys.sort()
+		for k in keys:
+			newRes.append( res[str(k)] )
+		return( newRes )
 	return( res )
 
 
