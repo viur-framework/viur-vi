@@ -439,9 +439,9 @@ p {
 }
 .vi_operator > div.supports_drop {
   border-top: 1px dashed #ccc;
-  padding: 10px 0;
+  padding: 20px 0;
   border-bottom: 1px dashed #ccc;
-  margin-top: -10px;
+  margin-top: -20px;
 }
 .has_multiple_children .vi_operator {
   width: 40.3%;
@@ -907,6 +907,8 @@ button.text.save[type="button"] {
   background: linear-gradient(to bottom, #479c42 0%, #298342 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0); 
 }
+
+
 button.icon.activateselection[type="button"]:hover,
 button.text.save[type="button"]:hover,
 button.icon.add[type="button"]:hover,
@@ -940,7 +942,7 @@ button.icon.save.close.is_loading[type="button"]:hover:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
-button.icon.save.close[type="button"],
+
 button.icon.close[type="button"],
 button.icon.activateselection[type="button"],
 button.text.save[type="button"],
@@ -952,6 +954,13 @@ button.icon.is_disabled[type="button"]:hover {
   overflow: hidden;
   min-width: 28px;
   transition-delay: 0;
+}
+
+button.icon.save.close[type="button"] {
+    color:#fff;
+    overflow: visible;
+    min-width: 120px;
+    letter-spacing: normal;   
 }
 
 button.icon.close[type="button"]:hover,
@@ -2098,15 +2107,17 @@ progress[value]::-webkit-progress-value {
   -webkit-user-select: none;
   user-select: none;
 }
-.hierarchyitem .insert_before {
+.treeitem.insert_before,
+.hierarchyitem.insert_before {
   border-top: 2px solid #be1622 !important;
 }
-/* Deine Mudda stinkt */
-.hierarchyitem .insert_here {
+.treeitem.insert_here,
+.hierarchyitem.insert_here {
   border: 1px solid #be1622 !important;
   padding: 12px 7px !important;
 }
-.hierarchyitem .insert_after {
+.treeitem.insert_after,
+.hierarchyitem.insert_after {
   border-bottom: 2px solid #be1622 !important;
 }
 /* #vi_popups and alerts
@@ -2621,6 +2632,7 @@ button.icon.trans:before,
   .vi_operator .actionbar h3 {
     display: none;
   }
+  .vi_topbar .currentmodul {display:none;}
 }
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 /* All Mobile Sizes (devices and browser) */
