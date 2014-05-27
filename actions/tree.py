@@ -131,7 +131,7 @@ class EditAction( html5.ext.Button ):
 		print(selection)
 		for s in selection:
 			pane = Pane(translate("Edit"), closeable=True)
-			conf["mainWindow"].stackPane( pane )
+			conf["mainWindow"].stackPane( pane, focus=True )
 			if isinstance(s,self.parent().parent().nodeWidget):
 				skelType = "node"
 			elif isinstance(s,self.parent().parent().leafWidget):
@@ -140,7 +140,6 @@ class EditAction( html5.ext.Button ):
 				raise ValueError("Unknown selection type: %s" % str(type(s)))
 			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["id"], skelType=skelType, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
 			pane.addWidget( edwg )
-			pane.focus()
 
 	def resetLoadingState(self):
 		pass

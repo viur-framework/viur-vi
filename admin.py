@@ -50,6 +50,7 @@ class CoreWindow( html5.Div ):
 		#self.adopt( self.modulList,self.modulMgr )
 		#self.modulList.onAttach()
 		self.currentPane = None
+		self.nextPane = None #Which pane gains focus once the deferred call fires
 		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
 		self.config = None
 		self.user = None
@@ -185,9 +186,25 @@ class CoreWindow( html5.Div ):
 
 
 
-	def stackPane(self, pane):
+	def stackPane(self, pane, focus=False):
 		assert self.currentPane is not None, "Cannot stack a pane. There's no current one."
-		return( self.addPane( pane, parentPane=self.currentPane ) )
+		self.addPane( pane, parentPane=self.currentPane )
+		if focus and not self.nextPane:
+			#We defer the call to focus, as some widgets stack more than one pane at once.
+			#If we focus directly, they will stack on each other, instead of the pane that
+			#currently has focus
+			self.nextPane = pane
+			DeferredCall( self.focusNextPane )
+
+	def focusNextPane(self, *args, **kwargs):
+		"""
+			The deferred call just fired. Focus that pane.
+		"""
+		if not self.nextPane:
+			return
+		nextPane = self.nextPane
+		self.nextPane = None
+		self.focusPane( nextPane )
 
 	def focusPane(self, pane):
 		assert pane in self.panes, "Cannot focus unknown pane!"

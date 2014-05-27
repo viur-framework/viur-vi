@@ -92,10 +92,9 @@ class EditAction( html5.ext.Button ):
 
 	def openEditor( self, id ):
 		pane = Pane(translate("Edit"), closeable=True)
-		conf["mainWindow"].stackPane( pane )
+		conf["mainWindow"].stackPane( pane, focus=True )
 		edwg = EditWidget( self.parent().parent().modul, EditWidget.appHierarchy, key=id)
 		pane.addWidget( edwg )
-		pane.focus()
 
 	def resetLoadingState(self):
 		pass

@@ -106,11 +106,10 @@ class EditAction( html5.ext.Button ):
 				i.dirKey = s.data["id"]
 				return
 			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
-			conf["mainWindow"].stackPane( pane )
+			conf["mainWindow"].stackPane( pane, focus=True )
 			skelType = "leaf"
 			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["id"], skelType=skelType)
 			pane.addWidget( edwg )
-			pane.focus()
 
 	def editDir(self, dialog, dirName ):
 		NetworkService.request( self.parent().parent().modul, "edit/node", {"id": dialog.dirKey,"name": dirName}, secure=True, modifies=True)
