@@ -1690,17 +1690,18 @@ tr:last-child td:last-child {
   border-width: 0px 0px 0px 0px;
 }
 thead tr th {
-  background: -o-linear-gradient(bottom, #ff0000 5%, #be1622 100%);
+  /*background: -o-linear-gradient(bottom, #ff0000 5%, #be1622 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #be1622));
   background: -moz-linear-gradient(center top, #ff0000 5%, #be1622 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");
-  background: -o-linear-gradient(top, #ff0000, #be1622);
+  background: -o-linear-gradient(top, #ff0000, #be1622);*/
   background-color: #ff0000;
   border: 0px solid #cccccc;
   text-align: center;
   border-width: 0px 0px 1px 1px;
-  font-weight: 600;
+  font-weight: 300;
   color: #ffffff;
+  padding: 5px 0;
 }
 thead tr:hover th {
   background: -o-linear-gradient(bottom, #ff0000 5%, #be1622 100%);

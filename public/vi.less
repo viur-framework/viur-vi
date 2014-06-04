@@ -1704,15 +1704,16 @@ tr:last-child td:last-child {
   border-width: 0px 0px 0px 0px;
 }
 thead tr th {
-  background:-o-linear-gradient(bottom, @lightcolor 5%, @maincolor 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, @lightcolor), color-stop(1, @maincolor) );
+  /*background:-o-linear-gradient(bottom, @lightcolor 5%, @maincolor 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, @lightcolor), color-stop(1, @maincolor) );
   background:-moz-linear-gradient( center top, @lightcolor 5%, @maincolor 100% );
-  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");  background: -o-linear-gradient(top,@lightcolor,@maincolor);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");  background: -o-linear-gradient(top,@lightcolor,@maincolor);*/
   background-color:@lightcolor;
   border: 0px solid #cccccc;
   text-align: center;
   border-width: 0px 0px 1px 1px;
-  font-weight: 600;
+  font-weight: 300;
   color: #ffffff;
+  padding: 5px 0;
 }
 thead tr:hover th {
   background:-o-linear-gradient(bottom, @lightcolor 5%, @maincolor 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, @lightcolor), color-stop(1, @maincolor) );
