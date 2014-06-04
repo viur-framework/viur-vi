@@ -49,17 +49,12 @@ class HierarchyItem( html5.Li ):
 		"""
 			Generates the visual representation of this entry.
 		"""
-		hasDescr = False
-		for boneName, boneInfo in self.structure:
-			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
-				params = boneInfo["params"]
-				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
-					wdg = viewDelegateSelector.select( self.modul, boneName, utils.boneListToDict(self.structure) )
-					if wdg is not None:
-						self.appendChild( wdg(self.modul, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
-						hasDescr = True
-		if not hasDescr:
-			self.appendChild( html5.TextNode( self.data["name"]))
+		format = "$(name)"
+		if self.modul in conf["modules"].keys():
+			modulInfo = conf["modules"][self.modul]
+			if "format" in modulInfo.keys():
+				format = modulInfo["format"]
+		self.appendChild( html5.TextNode( utils.formatString(format, utils.boneListToDict(self.structure), self.data ) ))
 
 	def onDragOver(self, event):
 		"""
