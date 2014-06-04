@@ -1695,7 +1695,7 @@ thead tr th {
   background: -moz-linear-gradient(center top, #ff0000 5%, #be1622 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");
   background: -o-linear-gradient(top, #ff0000, #be1622);*/
-  background-color: #ff0000;
+  background-color: #be1622;
   border: 0px solid #cccccc;
   text-align: center;
   border-width: 0px 0px 1px 1px;
