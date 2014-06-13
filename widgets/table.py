@@ -2,6 +2,7 @@ import html5
 from event import EventDispatcher
 from html5.keycodes import *
 
+
 class SelectTable( html5.Table ):
 	"""
 		Provides an Html-Table which allows selecting rows.
@@ -165,6 +166,9 @@ class SelectTable( html5.Table ):
 		elif isSingleSelectionKey( event.keyCode ): #Ctrl
 			self._isCtlPressed = True
 			self._ctlStartRow = self._currentRow or 0
+			if self._currentRow is not None and not self._currentRow in self._selectedRows:
+				self.addSelectedRow( self._currentRow )
+				self.setCursorRow( None, removeExistingSelection=False )
 
 	def onKeyUp(self, event):
 		if isSingleSelectionKey( event.keyCode ):
@@ -223,8 +227,9 @@ class SelectTable( html5.Table ):
 		if self._currentRow is not None:
 			self.getTrByIndex(self._currentRow)["class"].remove("is_focused")
 		self._currentRow = row
-		self.getTrByIndex(self._currentRow)["class"].append("is_focused")
-		self.cursorMovedEvent.fire( self, row )
+		if self._currentRow is not None:
+			self.getTrByIndex(self._currentRow)["class"].append("is_focused")
+			self.cursorMovedEvent.fire( self, row )
 		if removeExistingSelection:
 			for row in self._selectedRows[:]:
 				self.removeSelectedRow( row )
@@ -465,7 +470,7 @@ class DataTable( html5.Div ):
 		"""
 			Re-emit the event. Maps row-numbers to actual models.
 		"""
-		vals = [ self._model[x] for x in rows]
+		vals = [ self._model[x] for x in (rows or []) ]
 		self.selectionChangedEvent.fire( self, vals )
 
 	def onSelectionActivated( self, table, rows ):
