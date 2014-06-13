@@ -6,7 +6,7 @@ from priorityqueue import editBoneSelector, viewDelegateSelector
 from utils import formatString
 from widgets.hierarchy import HierarchyWidget
 from config import conf
-from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone
+from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalViewBoneDelegate
 
 
 
@@ -59,3 +59,4 @@ def CheckForHierarchyBone(  modulName, boneName, skelStucture, *args, **kwargs )
 #Register this Bone in the global queue
 editBoneSelector.insert( 5, CheckForHierarchyBoneSingleSelection, HierarchySingleSelectionBone)
 editBoneSelector.insert( 5, CheckForHierarchyBoneMultiSelection, HierarchyMultiSelectionBone)
+viewDelegateSelector.insert( 3, CheckForHierarchyBone, RelationalViewBoneDelegate)
