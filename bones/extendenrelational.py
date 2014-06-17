@@ -29,10 +29,14 @@ class ExtendedRelationalViewBoneDelegate( object ):
 			val = ""
 		relStructList = self.structure[self.boneName]["using"]
 		relStructDict = { k:v for k,v in relStructList }
-		if isinstance(val,list):
-			val = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["id"]) for x in val] )
-		elif isinstance(val, dict):
-			val = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["id"]
+		try:
+			if isinstance(val,list):
+				val = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["id"]) for x in val] )
+			elif isinstance(val, dict):
+				val = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["id"]
+		except:
+			#We probably received some garbage
+			val = ""
 		return( html5.Label( val ) )
 
 class ExtendedRelationalSelectionBoneEntry( html5.Div ):
