@@ -22,13 +22,18 @@ class SelectOneViewBoneDelegate( object ):
 
 class SelectOneEditBone( html5.Select ):
 
-	def __init__(self, modulName, boneName,readOnly,values, *args, **kwargs ):
+	def __init__(self, modulName, boneName, readOnly, values, sortBy="keys", *args, **kwargs ):
 		super( SelectOneEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self["name"]=boneName
 		self.readOnly = readOnly
 		self.values=values
-		for key, value in values.items():
+		tmpList = values.items()
+		if sortBy=="keys":
+			tmpList.sort( key=lambda x: x[0] ) #Sort by keys
+		else:
+			tmpList.sort( key=lambda x: x[1] ) #Values
+		for key, value in tmpList:
 			aoption=html5.Option()
 			aoption["value"]=key
 			aoption.element.innerHTML=value
@@ -40,11 +45,15 @@ class SelectOneEditBone( html5.Select ):
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
+		if "sortBy" in skelStructure[ boneName ].keys():
+			sortBy = skelStructure[ boneName ][ "sortBy" ]
+		else:
+			sortBy = "keys"
 		if "values" in skelStructure[ boneName ].keys():
 			values =skelStructure[ boneName ]["values"]
 		else:
 			values = {}
-		return( SelectOneEditBone( modulName, boneName, readOnly,values ) )
+		return( SelectOneEditBone( modulName, boneName, readOnly, values, sortBy ) )
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():

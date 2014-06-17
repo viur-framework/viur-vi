@@ -28,12 +28,17 @@ class SelectMultiViewBoneDelegate( object ):
 
 class SelectMultiEditBone( html5.Div ):
 
-	def __init__(self, modulName, boneName,readOnly,values, *args, **kwargs ):
+	def __init__(self, modulName, boneName,readOnly, values, sortBy="keys", *args, **kwargs ):
 		super( SelectMultiEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.values=values
-		for key, value in values.items():
+		tmpList = values.items()
+		if sortBy=="keys":
+			tmpList.sort( key=lambda x: x[0] ) #Sort by keys
+		else:
+			tmpList.sort( key=lambda x: x[1] ) #Values
+		for key, value in tmpList:
 			alabel=html5.Label()
 			acheckbox=html5.Input()
 			acheckbox["type"]="checkbox"
@@ -50,11 +55,15 @@ class SelectMultiEditBone( html5.Div ):
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
+		if "sortBy" in skelStructure[ boneName ].keys():
+			sortBy = skelStructure[ boneName ][ "sortBy" ]
+		else:
+			sortBy = "keys"
 		if "values" in skelStructure[ boneName ].keys():
 			values =skelStructure[ boneName ]["values"]
 		else:
 			values = {}
-		return( SelectMultiEditBone( modulName, boneName, readOnly,values ) )
+		return( SelectMultiEditBone( modulName, boneName, readOnly, values, sortBy ) )
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
