@@ -106,6 +106,7 @@ class FilterSelector( html5.Div ):
 					filter=filter, filterID=filterID, filterDescr=filterName )
 			p.addWidget( l )
 			p.focus()
+			l.sideBar.setWidget( FilterSelector( self.modul ) )
 		self.parent().parent().sideBar.setWidget( None )
 
 
