@@ -1,4 +1,5 @@
-@charset "UTF-8";@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic);
+
 @import url('reset.css');
 /* css resets */
 @charset "UTF-8";
@@ -78,24 +79,22 @@ p {
   height: 100%;
   background-color: transparent;
 }
-
 #CoreWindow.is_loading:after {
-    background-image: url(icons/is_loading32.gif);
-    background-position: center 35%;
-    background-repeat: no-repeat;
-    background-color:rgba(255,255,255,0.6);
-    position: absolute;
-    z-index:1000;
-    content:' ';
-    width:100%;
-    height:100%;
-    display:block;
-    left:0;
-    right:0;
-    top:0;
-    bottom:0;
+  background-image: url(icons/is_loading32.gif);
+  background-position: center 35%;
+  background-repeat: no-repeat;
+  background-color: rgba(255, 255, 255, 0.6);
+  position: absolute;
+  z-index: 1000;
+  content: ' ';
+  width: 100%;
+  height: 100%;
+  display: block;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }
-
 /* #vi_topbar
 ================================================== */
 .vi_topbar {
@@ -109,13 +108,16 @@ p {
   background-color: rgba(238, 238, 238, 0.8);
   background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.8)), to(rgba(255, 255, 255, 0.2)));
   /* webkit */
+
   background-image: -moz-linear-gradient(top center, rgba(238, 238, 238, 0.8) 20%, rgba(255, 255, 255, 0.2) 95%);
   /* mozilla - FF3.6+ */
+
 }
 .vi_topbar h1,
 .vi_topbar h2,
 .vi_topbar span {
   /*line-height: 1.9em;*/
+
   position: relative;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
   letter-spacing: 1px;
@@ -124,6 +126,7 @@ p {
   width: auto;
   color: #444;
   display: block;
+  white-space: nowrap;
 }
 .vi_topbar h1:before {
   content: ' ';
@@ -132,7 +135,8 @@ p {
   width: 45px;
   height: 45px;
   display: block;
-  z-index: 11;
+  /*z-index: 11;*/
+
   float: left;
   margin-right: 15px;
 }
@@ -184,6 +188,7 @@ p {
   text-decoration: none;
   border-bottom: 2px solid #be1622;
   /*-moz-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); -webkit-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6);*/
+
 }
 .iconnav li.inactive a,
 .iconnav li.inactive a:link {
@@ -251,6 +256,7 @@ p {
   text-decoration: none;
   border-bottom: 2px solid #ff0000;
   /*-moz-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); -webkit-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6);*/
+
 }
 .iconnav li.inactive a,
 .iconnav li.inactive a:link {
@@ -264,6 +270,7 @@ p {
   z-index: 9;
   width: 15.7%;
   /*298px*/
+
   border-right: 1px solid #cccccc;
   position: fixed;
   background-color: #eeeeee;
@@ -272,6 +279,7 @@ p {
 .modullist {
   overflow: hidden;
   /*min-width:298px;*/
+
 }
 .modullist:first-of-type {
   margin-top: 45px;
@@ -290,8 +298,10 @@ p {
   background-color: #f7f7f7;
   background: -moz-linear-gradient(top, #f2f2f2, #f7f7f7);
   /* Firefox */
+
   background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#f7f7f7));
   /* Safari, Chrome */
+
   padding: 12px 13px;
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
@@ -302,15 +312,19 @@ p {
   background-color: #e9e9e9;
   background: -moz-linear-gradient(top, #e4e4e4, #e9e9e9);
   /* Firefox */
+
   background: -webkit-gradient(linear, left top, left bottom, from(#e4e4e4), to(#e9e9e9));
   /* Safari, Chrome */
+
 }
 .modullist:nth-child(even) ul a {
   background-color: #d6d6d9;
   background: -moz-linear-gradient(top, #d0d0d3, #d6d6d9);
   /* Firefox */
+
   background: -webkit-gradient(linear, left top, left bottom, from(#d0d0d3), to(#d6d6d9));
   /* Safari, Chrome */
+
 }
 .modullist a:hover,
 .modullist a:active,
@@ -319,7 +333,9 @@ p {
   background: #fff;
   text-decoration: none;
   /*background:-moz-linear-gradient(top, #eee, #ddd); /* Firefox */
+
   /*background:-webkit-gradient(linear, left top, left bottom, from(#eee), to(#ddd)); /* Safari, Chrome */
+
 }
 .modullist img {
   width: 32px;
@@ -358,26 +374,31 @@ p {
   margin-right: 15px;
 }
 .modullist ul ul h3::before {
-    margin-left: 29px !important;    
+  margin-left: 29px !important;
 }
 .modullist ul a {
   background-color: #e9e9e9;
   background: -moz-linear-gradient(top, #e4e4e4, #e9e9e9);
   /* Firefox */
+
   background: -webkit-gradient(linear, left top, left bottom, from(#e4e4e4), to(#e9e9e9));
   /* Safari, Chrome */
+
 }
 .modullist ul ul a {
   background-color: #dbdbdc;
   background: -moz-linear-gradient(top, #d5d5d7, #dbdbdc);
   /* Firefox */
-    background: -webkit-gradient(linear, left top, left bottom, from(#d5d5d7), to(#dbdbdc));
-    /* Safari, Chrome */
-    padding: 7px 13px;
-    border-bottom: 1px dotted #bbb;
+
+  background: -webkit-gradient(linear, left top, left bottom, from(#d5d5d7), to(#dbdbdc));
+  /* Safari, Chrome */
+
+  /*padding: 7px 13px;*/
+
+  border-bottom: 1px dotted #bbb;
 }
 .modullist ul ul img {
-    margin-left: 44px;
+  margin-left: 44px;
 }
 .modullist ul button {
   margin-top: -32px;
@@ -386,7 +407,8 @@ p {
   margin-right: 10px;
 }
 .modullist ul ul button {
-    margin-top: -27px;
+  /*margin-top: -27px;*/
+
 }
 .modullist ul button.closebtn {
   -webkit-border-radius: 15px;
@@ -399,8 +421,10 @@ p {
   background-color: #e30613;
   background: -moz-linear-gradient(top, #be1622, #e30613);
   /* Firefox */
+
   background: -webkit-gradient(linear, left top, left bottom, from(#be1622), to(#e30613));
   /* Safari, Chrome */
+
   color: transparent;
   letter-spacing: -1em;
   overflow: hidden;
@@ -430,8 +454,7 @@ p {
   text-shadow: none;
 }
 /* #vi_viewer
-================================================== */
-.vi_viewer {
+================================================== */.vi_viewer {
   margin-left: 15.7%;
   width: 84.3%;
   float: left;
@@ -443,6 +466,7 @@ p {
       padding: 80px 30px 45px;
       min-height: 400px;
       min-width:500px; */
+
 }
 /* #vi_operator
 ================================================== */
@@ -487,14 +511,12 @@ p {
   border-radius: 3px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
-
 .vi_operator .compoundfilter h2 {
   color: #777;
   line-height: 1.4em;
   font-size: 0.8em;
-  padding:0 15px 10px;
+  padding: 0 15px 10px;
 }
-
 .vi_operator .search span {
   width: 60px;
   float: left;
@@ -524,6 +546,7 @@ p {
 .vi_operator .actionbar {
   width: 82.3%;
   /*min-width: 500px;*/
+
   position: fixed;
   margin-top: -105px;
   margin-left: -1%;
@@ -581,11 +604,11 @@ p {
   border-right: 2px solid #be1622;
   margin-right: 4px;
 }
-.actionbar .operations, 
-button.selectfilter, 
-button.text.save[type="button"], 
-button.flipview[type="button"], 
-button.icon.close[type="button"], 
+.actionbar .operations,
+button.selectfilter,
+button.text.save[type="button"],
+button.flipview[type="button"],
+button.icon.close[type="button"],
 button.icon.activateselection[type="button"] {
   float: right;
 }
@@ -677,7 +700,7 @@ button.save.close:before,
   background-position: 0px -16px;
 }
 button.activateselection:before {
-  background-position: 0px -32px; 
+  background-position: 0px -32px;
 }
 button.save.continue:before {
   background-position: -16px -16px;
@@ -864,7 +887,6 @@ button.text.table.newcol.before {
   margin-right: 0;
   border-right: 0;
 }
-
 button.icon[type="button"]:hover {
   border-color: #666;
   overflow: visible;
@@ -872,11 +894,9 @@ button.icon[type="button"]:hover {
   min-width: 120px;
   letter-spacing: normal;
 }
-
 .vi_operator .search button:hover {
-  border-color: #666;   
+  border-color: #666;
 }
-
 /* Red Buttons */
 button.icon.close[type="button"] {
   border: 1px solid #e20614;
@@ -909,7 +929,6 @@ button.icon.cancel[type="button"]:hover:before,
 button.icon.delete[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
-
 /* Green Buttons */
 button.icon.save.close[type="button"],
 button.icon.activateselection[type="button"],
@@ -923,10 +942,8 @@ button.text.save[type="button"] {
   background: -o-linear-gradient(top, #479c42 0%, #298342 100%);
   background: -ms-linear-gradient(top, #479c42 0%, #298342 100%);
   background: linear-gradient(to bottom, #479c42 0%, #298342 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0); 
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0);
 }
-
-
 button.icon.activateselection[type="button"]:hover,
 button.text.save[type="button"]:hover,
 button.icon.add[type="button"]:hover,
@@ -942,7 +959,6 @@ button.icon.save.close[type="button"]:hover {
   background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
-
 button.icon.activateselection[type="button"]:before,
 button.text.save[type="button"]:before,
 button.icon.add[type="button"]:hover:before,
@@ -950,7 +966,6 @@ button.icon.save.close[type="button"]:before,
 button.icon.save.close[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
-
 /* Loading Buttons */
 button.icon.is_loading[type="button"]:before,
 button.is_loading[type="button"]:before,
@@ -960,7 +975,6 @@ button.icon.save.close.is_loading[type="button"]:hover:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
-
 button.icon.close[type="button"],
 button.icon.activateselection[type="button"],
 button.text.save[type="button"],
@@ -973,14 +987,12 @@ button.icon.is_disabled[type="button"]:hover {
   min-width: 28px;
   transition-delay: 0;
 }
-
 button.icon.save.close[type="button"] {
-    color:#fff;
-    overflow: visible;
-    min-width: 120px;
-    letter-spacing: normal;   
+  color: #fff;
+  overflow: visible;
+  min-width: 120px;
+  letter-spacing: normal;
 }
-
 button.icon.close[type="button"]:hover,
 button.icon.activateselection[type="button"]:hover,
 button.icon.save.close[type="button"]:hover {
@@ -988,7 +1000,6 @@ button.icon.save.close[type="button"]:hover {
   min-width: 120px;
   letter-spacing: normal;
 }
-
 /* Disabled Buttons */
 button.icon.is_disabled[type="button"]:hover {
   border-color: #999;
@@ -1030,7 +1041,7 @@ form fieldset {
   padding: 0;
 }
 form fieldset legend {
-  min-width: 500px;
+  min-width: 580px;
   width: 100%;
   position: relative;
 }
@@ -1117,6 +1128,7 @@ form fieldset {
 form fieldset.is_incomplete,
 form fieldset:target {
   /*min-height: 150px;*/
+
   height: auto;
   width: 100%;
 }
@@ -1124,6 +1136,7 @@ form fieldset section > div {
   padding-bottom: 20px;
   margin-bottom: 15px;
   /*border-bottom:1px dotted #ccc;*/
+
   overflow: hidden;
   width: 100%;
   float: right;
@@ -1133,7 +1146,7 @@ form label {
   width: 220px;
   float: left;
   text-align: right;
-  padding: 4px 10px 6px;
+  padding: 4px 10px 5px;
   min-height: 16px;
   border: 1px dotted #ddd;
   border-right-width: 0;
@@ -1223,33 +1236,75 @@ input[type=password],
   border-radius: 0px;
   background: #eaeaea;
   /* Old browsers */
+
   background: -moz-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
   /* FF3.6+ */
+
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eaeaea), color-stop(100%, #fafafa));
   /* Chrome,Safari4+ */
+
   background: -webkit-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
   /* Chrome10+,Safari5.1+ */
+
   background: -o-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
   /* Opera 11.10+ */
+
   background: -ms-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
   /* IE10+ */
+
   background: linear-gradient(to bottom, #eaeaea 0%, #fafafa 100%);
   /* W3C */
+
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eaeaea', endColorstr='#fafafa', GradientType=0);
   /* IE6-9 */
-}
 
+}
 .bone.text .languagebuttons {
-    float:left;
+  float: left;
 }
-
 .languagebuttons button.is_active {
-    background: linear-gradient(to bottom, #666 0%, #aaa 100%);
-    box-shadow:inset 1px 1px 2px rgba(0,0,0,0.2);
-    border-color:#666;
-    color:#fff;
+  background: linear-gradient(to bottom, #666666 0%, #aaaaaa 100%);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+  border-color: #666;
+  color: #fff;
 }
-
+/* #extended relational bone
+================================================== */
+.extendedrelational .selectioncontainer {
+  width: 52.7%;
+  float: left;
+  margin-right: 15px;
+}
+.extendedrelational .labelwrapper button {
+  display: block;
+  margin-top: -28px;
+  float: right;
+  margin-right: 0;
+  margin-bottom: 0;
+}
+.extendedrelational .labelwrapper label {
+  width: 100%;
+  margin-bottom: 0;
+  border-bottom: 1px dotted #ccc;
+  min-width: 97.4%;
+  padding: 3px 1.3% 6px;
+  text-align: left;
+}
+.extendedrelational form fieldset legend {
+  width: 100%;
+  position: relative;
+}
+.extendedrelational form fieldset legend a {
+  padding: 4px 7px;
+  color: #333;
+  font-size: .8em;
+  border: 1px solid #ddd;
+  background: #f9f9f9;
+  border-top: 0px;
+}
+.extendedrelational button.icon.select {
+  float: left;
+}
 /* #vi_texteditor
 ================================================== */
 .imageeditor label,
@@ -1518,8 +1573,10 @@ form .relational:focus button:after {
   background-color: #00406d;
   background: -moz-linear-gradient(top, #009de1, #00406d);
   /* Firefox */
+
   background: -webkit-gradient(linear, left top, left bottom, from(#009de1), to(#00406d));
   /* Safari, Chrome */
+
   color: transparent;
   letter-spacing: -1em;
   overflow: hidden;
@@ -1590,7 +1647,6 @@ form .relational:focus button:after {
 .tooltip.is_open span:before {
   border-width: 24px 14px;
 }
-
 /* #vi_tables
 ================================================== */
 table {
@@ -1613,26 +1669,24 @@ table {
   -webkit-border-top-left-radius: 3px;
   border-top-left-radius: 3px;
 }
-
 table.is_loading:after {
   background-image: url(icons/is_loading.gif);
   background-position: center;
   background-repeat: no-repeat;
-  background-color:#fff;
+  background-color: #fff;
   position: absolute;
-  z-index:1000;
-  content:' ';
-  width:16px;
-  height:16px;
-  border:1px solid #ccc;
-  padding:2px;
-  display:block;
-  left:50%;
+  z-index: 1000;
+  content: ' ';
+  width: 16px;
+  height: 16px;
+  border: 1px solid #ccc;
+  padding: 2px;
+  display: block;
+  left: 50%;
   margin-left: -8px;
   margin-top: 32px;
-  box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
-
 tbody tr:last-child td:last-child {
   -moz-border-radius-bottomright: 3px;
   -webkit-border-bottom-right-radius: 3px;
@@ -1690,11 +1744,10 @@ tr:last-child td:last-child {
   border-width: 0px 0px 0px 0px;
 }
 thead tr th {
-  /*background: -o-linear-gradient(bottom, #ff0000 5%, #be1622 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ff0000), color-stop(1, #be1622));
-  background: -moz-linear-gradient(center top, #ff0000 5%, #be1622 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");
-  background: -o-linear-gradient(top, #ff0000, #be1622);*/
+  /*background:-o-linear-gradient(bottom, @lightcolor 5%, @maincolor 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, @lightcolor), color-stop(1, @maincolor) );
+  background:-moz-linear-gradient( center top, @lightcolor 5%, @maincolor 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");  background: -o-linear-gradient(top,@lightcolor,@maincolor);*/
+
   background-color: #be1622;
   border: 0px solid #cccccc;
   text-align: center;
@@ -1775,17 +1828,16 @@ td span.time {
   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
 }
 .filterdescription {
-    font-size:0.8em;
-    color:#aaa;
+  font-size: 0.8em;
+  color: #aaa;
 }
 .issplitview > div {
   width: 65%;
   float: left;
 }
-
 .issplitview .emptynotification {
-    width: 20%;
-    margin: 0 18% 55px;
+  width: 20%;
+  margin: 0 18% 55px;
 }
 .issplitview .sidebar {
   margin-left: 2%;
@@ -1809,7 +1861,7 @@ td span.time {
   float: right;
 }
 .issplitview .sidebar .extendedfilter span {
-  margin-top:5px;
+  margin-top: 5px;
   margin-left: 15px;
   display: inline-block;
 }
@@ -1905,8 +1957,10 @@ td span.time {
   background-color: rgba(180, 180, 180, 0.7);
   background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(220, 220, 220, 0.7)), to(rgba(255, 255, 255, 0.4)));
   /* webkit */
+
   background-image: -moz-linear-gradient(top center, rgba(220, 220, 220, 0.2) 20%, rgba(255, 255, 255, 0.2) 95%);
   /* mozilla - FF3.6+ */
+
   margin-top: -47px;
   z-index: 10;
 }
@@ -2018,13 +2072,17 @@ td span.time {
   background-position: center;
   display: block;
   /* height:100px; */
+
   /* margin-top: 15px; */
+
   /* margin-bottom: 15px; */
+
   font-size: .8em;
   line-height: 7em;
   font-weight: 800;
   color: #777;
   /* text-shadow:0px -1px 1px rgba(0,0,0,0.5); */
+
   width: 97%;
   text-align: left;
   padding-left: 3%;
@@ -2032,10 +2090,12 @@ td span.time {
 }
 progress[value] {
   /* Reset the default appearance */
+
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   /* Get rid of default border in Firefox. */
+
   border: none;
   width: 100%;
   padding: 6px 7px 7px;
@@ -2102,6 +2162,7 @@ progress[value]::-webkit-progress-value {
 .hierarchyitem.expaned ol {
   margin-top: 7px;
   /*border:1px solid #ddd;*/
+
   background: #e5e5e5;
 }
 .hierarchyitem.expaned ol li {
@@ -2160,8 +2221,7 @@ progress[value]::-webkit-progress-value {
   border-bottom: 2px solid #be1622 !important;
 }
 /* #vi_popups and alerts
-================================================== */
-.popup {
+================================================== */.popup {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -2232,15 +2292,13 @@ progress[value]::-webkit-progress-value {
 .alertbox button {
   float: right;
 }
-
 .alertbox.selectfields label {
-    float: right;
-    width: 300px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  float: right;
+  width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-
 /* #vi_badges
 ================================================== */
 .beta {
@@ -2248,8 +2306,7 @@ progress[value]::-webkit-progress-value {
   padding-right: 35px;
 }
 /* #vi_messenger
-================================================== */
-.vi_messenger {
+================================================== */.vi_messenger {
   box-shadow: 0px -3px 3px rgba(0, 0, 0, 0.2);
   width: 100%;
   position: fixed;
@@ -2260,8 +2317,10 @@ progress[value]::-webkit-progress-value {
   background-color: rgba(238, 238, 238, 0.9);
   background-image: -webkit-gradient(linear, right bottom, right top, from(rgba(238, 238, 238, 0.9)), to(rgba(255, 255, 255, 0.2)));
   /* webkit example */
+
   background-image: -moz-linear-gradient(center bottom, rgba(238, 238, 238, 0.9) 20%, rgba(255, 255, 255, 0.2) 95%);
   /* mozilla example - FF3.6+ */
+
   padding: 15px 0;
   z-index: 10;
   margin-top: -30px;
@@ -2335,6 +2394,7 @@ progress[value]::-webkit-progress-value {
   animation: uploading 5s linear 2s infinite alternate;
   -webkit-animation: uploading 5s linear 2s infinite alternate;
   /* Safari and Chrome: */
+
 }
 @keyframes uploading {
   0% {
@@ -2347,7 +2407,8 @@ progress[value]::-webkit-progress-value {
     background: rgba(255, 0, 0, 0.1);
   }
 }
-@-webkit-keyframes uploading /* Safari and Chrome */ {
+@-webkit-keyframes uploading {
+  /* Safari and Chrome */
   0% {
     background: rgba(255, 0, 0, 0.1);
   }
@@ -2507,14 +2568,13 @@ progress[value]::-webkit-progress-value {
   color: #777;
   float: right;
   padding: 2px 1%;
-  border-top:1px dotted #ccc;
+  border-top: 1px dotted #ccc;
 }
 .vi_messenger .versiondiv span {
   display: block;
 }
 /* #States
-================================================== */
-:focus {
+================================================== */:focus {
   outline: 1px dotted #ccc;
 }
 /*.is_active {
@@ -2541,20 +2601,8 @@ textarea:disabled {
 }
 /* #Custom Styles
 ================================================== */
-/* #Custom Colors
-==================================================*/
-button.icon.trans:before,
-.action_trans h3:before {
-  background-image: url(/vi/s/icons/actions/translate.svg);
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  position: relative;
-  float: left;
-  margin-left: -1px;
-  margin-top: -1px;
-}
+/*@import "../../vi_customizing/static/vi_custom.less";
+
 /* #Media Queries
 ================================================== */
 /* Smaller than 1441px (devices and browsers) */
@@ -2671,9 +2719,23 @@ button.icon.trans:before,
   .vi_operator .actionbar h3 {
     display: none;
   }
-  .vi_topbar .currentmodul {display:none;}
+  .vi_topbar .currentmodul {
+    display: none;
+  }
 }
 /* Tablet Portrait size to standard 960 (devices and browsers) */
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+  
+}
 /* All Mobile Sizes (devices and browser) */
+@media only screen and (max-width: 767px) {
+  
+}
 /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+  
+}
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+@media only screen and (max-width: 479px) {
+  
+}
