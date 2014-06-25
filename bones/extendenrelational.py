@@ -68,16 +68,20 @@ class ExtendedRelationalSelectionBoneEntry( html5.Div ):
 				txtLbl = html5.Label( data["name"])
 			else:
 				txtLbl = html5.Label( data["id"])
-		self.appendChild( txtLbl )
+		wrapperDiv = html5.Div()
+		wrapperDiv.appendChild( txtLbl )
+		wrapperDiv["class"].append("labelwrapper")
 		remBtn = html5.ext.Button("Remove", self.onRemove )
 		remBtn["class"].append("icon")
 		remBtn["class"].append("cancel")
+		wrapperDiv.appendChild( remBtn )
+		self.appendChild( wrapperDiv )
 		if using:
 			self.ie = InternalEdit( using, data["rel"],errorInfo )
 			self.appendChild( self.ie )
 		else:
 			self.ie = None
-		self.appendChild( remBtn )
+
 
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry( self )
