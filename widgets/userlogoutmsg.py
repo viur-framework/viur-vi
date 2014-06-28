@@ -12,6 +12,7 @@ class UserLogoutMsg( html5.ext.Popup):
 		super( UserLogoutMsg, self ).__init__( title=translate("Session terminated"), *args, **kwargs )
 		self["class"].append("userloggendoutmsg")
 		self.isCurrentlyFailed = False
+		self.isInitialTest = True
 		self.loginWindow = None
 		self.lastChecked = datetime.now()
 		self.lbl = html5.Label(translate("Your session was terminated by our server. Perhaps your computer fall asleep and broke connection?\n Please relogin to continue your mission."))
@@ -73,6 +74,7 @@ class UserLogoutMsg( html5.ext.Popup):
 		"""
 			We received a response from the server
 		"""
+		self.isInitialTest = False
 		try:
 			data = NetworkService.decode(req)
 		except:
@@ -87,6 +89,9 @@ class UserLogoutMsg( html5.ext.Popup):
 		"""
 			Error retrieving the current user response from the server
 		"""
+		if self.isInitialTest:
+			eval("window.top.preventViUnloading = false;")
+			eval("window.top.location = '/vi'")
 		self.showMessage()
 
 
