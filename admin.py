@@ -87,6 +87,11 @@ class CoreWindow( html5.Div ):
 
 
 	def postInit(self):
+		def getModulName(argIn):
+			try:
+				return( argIn[1]["name"].lower() )
+			except:
+				return( None )
 		groups = {}
 		panes = []
 		userAccess = self.user["values"]["access"]
@@ -97,7 +102,9 @@ class CoreWindow( html5.Div ):
 				p = GroupPane(group["name"],iconURL=group["icon"])
 				groups[ group["prefix"] ] = p
 				panes.append( (group["name"], p) )
-		for modulName, modulInfo in self.config["modules"].items():
+		tmpList = [(x,y) for x,y in self.config["modules"].items()]
+		tmpList.sort(key=getModulName)
+		for modulName, modulInfo in tmpList:
 			if not "root" in userAccess and not any([x.startswith(modulName) for x in userAccess]):
 				#Skip this modul, as the user couldn't interact with it anyway
 				continue

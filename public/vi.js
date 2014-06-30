@@ -1,7 +1,15 @@
 
+
+var preventViUnloading = true;
 /** prevent unloading! **/
 if (window.name!="fenster1") {
-    window.onbeforeunload = function() { return "Alle nicht gespeicherte Daten gehen verloren!"; };
+    window.onbeforeunload = function() {
+        if( preventViUnloading ) {
+            return "Alle nicht gespeicherte Daten gehen verloren!";
+        } else {
+            return null;
+        }
+    };
 } else {
     window.close();
 }

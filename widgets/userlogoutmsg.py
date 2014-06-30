@@ -2,61 +2,99 @@ import html5
 from network import NetworkService, DeferredCall
 from config import conf
 from i18n import translate
+from datetime import datetime, timedelta
+
 class UserLogoutMsg( html5.ext.Popup):
-	checkInterval = 1000*10
+	pollInterval = 120 # We query the server once a minute
+	checkIntervall = 1000*5 # We test if the system has been suspended every 5 seconds
+
 	def __init__(self, *args, **kwargs):
-		super( UserLogoutMsg, self ).__init__( title=translate("user is logged out"), *args, **kwargs )
+		super( UserLogoutMsg, self ).__init__( title=translate("Session terminated"), *args, **kwargs )
 		self["class"].append("userloggendoutmsg")
+		self.isCurrentlyFailed = False
+		self.isInitialTest = True
+		self.loginWindow = None
+		self.lastChecked = datetime.now()
 		self.lbl = html5.Label(translate("Your session was terminated by our server. Perhaps your computer fall asleep and broke connection?\n Please relogin to continue your mission."))
 		self.appendChild(self.lbl)
+		self.appendChild(html5.ext.Button(translate("Refresh"), callback=self.startPolling) )
+		self.appendChild( html5.ext.Button(translate("Login"), callback=self.showLoginWindow) )
+		setInterval = eval("window.setInterval")
+		setInterval( self.checkForSuspendResume, self.checkIntervall )
+		self.hideMessage()
 
-		refreshBtn = html5.ext.Button(translate("refresh"), callback=self.doRecheckUserAvaiable)
-		self.appendChild(refreshBtn)
-
-		applyBtn = html5.ext.Button(translate("Login"), callback=self.doApply)
-		self.appendChild(applyBtn)
+	def hideMessage(self):
+		"""
+			Make this popup invisible
+		"""
 		self.parent()["style"]["display"]="none"
-		DeferredCall(self.testUserTick,_delay=self.checkInterval)
-		print("USERLOGOUT TEST !!!")
+		self.isCurrentlyFailed = False
 
-	def doApply(self, *args, **kwargs):
-		eval("""var fenster = window.open("/vi/user/login", "fenster1", "width=800,height=600,status=yes,scrollbars=yes,resizable=yes");""")
-		#eval("""fenster.onload(function () { document.getElementById("CoreWindow").dispatchEvent(new Event('UserTryedToLogin'))});""")
-		#eval("""fenster.onclose(function () { document.getElementById("CoreWindow").dispatchEvent(new Event('UserTryedToLogin'))});""")
-		eval("""fenster.focus();""")
+	def showMessage(self):
+		"""
+			Show this popup
+		"""
+		self.parent()["style"]["display"]="block"
+		self.isCurrentlyFailed = True
 
-	def doRefresh(self,*args,**kwargs):
-		self.testUserAvaiable()
-		#eval("window.onbeforeunload=None;")
+	def showLoginWindow(self, *args, **kwargs ):
+		"""
+			Open the login-window sothat the user can sign in again
+		"""
+		self.closeLoginWindow()
+		newWindow = eval("window.open")
+		self.loginWindow = newWindow("/vi/user/login", "loginwindow", "width=800,height=600,status=yes,scrollbars=yes,resizable=yes")
+		self.loginWindow.focus()
 
+	def closeLoginWindow(self, *args, **kwargs ):
+		return #Due to a bug in chrome, we either a) cannot close the window or b) crash the browser
+		if self.loginWindow:
+			self.closeLoginWindow()
+			self.loginWindow = None
+			try:
+				self.closeLoginWindow()
+			except:
+				pass
 
-	def doRecheckUserAvaiable(self, *args, **kwargs):
-		if (self.parent()["style"]["display"]=="block"):
-			if conf["currentUser"]!=None:
-				self.parent()["style"]["display"]="none"
-				conf["mainWindow"].log("success",translate("relogin success :-)"))
+	def checkForSuspendResume(self,*args, **kwargs):
+		"""
+			Test if at least self.pollIntervall seconds have passed and query the server if
+		"""
+		if ((datetime.now()-self.lastChecked).seconds>self.pollInterval) or self.isCurrentlyFailed:
+			self.lastChecked = datetime.now()
+			self.startPolling()
 
-	def testUserAvaiable(self):
+	def startPolling(self, *args, **kwargs ):
+		"""
+			Start querying the server
+		"""
 		NetworkService.request( None, "/vi/user/view/self", successHandler=self.onUserTestSuccess,failureHandler=self.onUserTestFail, cacheable=False )
 
-	def testUserTick(self):
-		self.testUserAvaiable()
-		DeferredCall(self.testUserTick,_delay=self.checkInterval)
-
 	def onUserTestSuccess(self,req):
-		data = NetworkService.decode(req)
-		#print ("keep Alive!")
-		if (self.parent()["style"]["display"]=="block"):
-			eval("""fenster.close();""")
+		"""
+			We received a response from the server
+		"""
+		self.isInitialTest = False
+		try:
+			data = NetworkService.decode(req)
+		except:
+			self.showMessage()
+			return
+		if self.isCurrentlyFailed:
 			if conf["currentUser"]!=None and conf["currentUser"]["id"]==data["values"]["id"]:
-				self.parent()["style"]["display"]="none"
-				conf["mainWindow"].log("success",translate("relogin success :-)"))
-			else:
-				if conf["currentUser"]!=None and data["values"]!=None:
-					self.lbl.element.innerHTML=translate("The user you choose to login differs from the user vi started with.\nolduser: {user} \nnewuser: {newuser}",user=conf["currentUser"]["name"],newuser=data["values"]["name"])
-					applyBtn = html5.ext.Button(translate("refresh"), callback=self.doRefresh)
-				else:
-					self.doRefresh()
-					#self.lbl=html5.Label("please ")
+				self.hideMessage()
+				self.closeLoginWindow()
+
 	def onUserTestFail(self,text, ns):
-		self.parent()["style"]["display"]="block"
+		"""
+			Error retrieving the current user response from the server
+		"""
+		if self.isInitialTest:
+			eval("window.top.preventViUnloading = false;")
+			eval("window.top.location = '/vi'")
+		self.showMessage()
+
+
+
+
+
