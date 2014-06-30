@@ -1100,6 +1100,7 @@ form fieldset legend a:before {
   background-position: 0px -64px;
 }
 /*form fieldset.default legend a:before,*/
+form fieldset.active legend a:before,
 form fieldset:target legend a:before {
   background-position: -16px -64px;
 }
