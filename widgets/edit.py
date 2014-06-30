@@ -426,14 +426,11 @@ class EditWidget( html5.Div ):
 				descrLbl["class"].append("is_valid")
 			if isinstance(bone["error"], dict):
 				widget.setExtendedErrorInformation( bone["error"] )
-			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
-				tmp = html5.Span()
-				tmp.appendChild(descrLbl)
-				tmp.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
-				descrLbl = tmp
 			containerDiv = html5.Div()
 			containerDiv.appendChild( descrLbl )
 			containerDiv.appendChild( widget )
+			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
+				containerDiv.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
 			fieldSets[ cat ]._section.appendChild( containerDiv )
 			containerDiv["class"].append("bone")
 			containerDiv["class"].append("bone_"+key)
