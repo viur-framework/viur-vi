@@ -1473,6 +1473,8 @@ textarea,
   overflow-y: scroll;
   border-bottom: 1px solid #777;
   background: #f1f1f1;
+  text-overflow: ellipsis;
+  max-width: 1300px;
 }
 select {
   min-width: 175px;
@@ -2488,6 +2490,13 @@ progress[value]::-webkit-progress-value {
 .statuslist li span {
   margin-right: 5px;
 }
+
+.statuslist li span.msg {
+margin-right: 55px;
+margin-left: 52px;
+display: block;
+}
+
 .statuslist li .modulspan:after {
   content: ':';
 }
