@@ -129,6 +129,7 @@ class FileWidget( TreeWidget ):
 	"""
 		Extends the TreeWidget to allow drag&drop upload of files to the current node.
 	"""
+	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload", "download"]
 	leafWidget = LeafFileWidget
 
 	def __init__(self,*args, **kwargs):
