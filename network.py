@@ -99,16 +99,19 @@ class NetworkService( object ):
 		currently active widgets of changes made to data on the server.
 	"""
 	changeListeners = [] # All currently active widgets which will be informed of changes made
-	_cache = {} # Result cache of recently made network requests
+	_cache = {} # Modul->Cache index map (for requests that can be cached)
 
 	@staticmethod
 	def notifyChange( modul ):
 		"""
 			Broadcasts a change made to data of modul 'modul' to all currently
 			registered changeListeners.
+			Also invalidates our _cache
 			@param modul: Name of the modul where the change occured
 			@type modul: string
 		"""
+		if modul in NetworkService._cache.keys():
+			NetworkService._cache[ modul ] += 1
 		for c in NetworkService.changeListeners:
 			c.onDataChanged( modul )
 
@@ -187,23 +190,9 @@ class NetworkService( object ):
 		return( json.loads( req.result ) )
 
 
-	@staticmethod
-	def keyFromQuery( modul, url, params ):
-		"""
-			Calculates the cache key for the given parameters.
-		"""
-		res = NetworkService.urlForArgs(modul,url)
-		if params:
-			tmp = []
-			for k,v in params.items():
-				tmp.append( (k,str(v)) )
-			tmp.sort( key=lambda x: x[0])
-			for k,v in tmp:
-				res += k+v
-		return( res )
 
 	@staticmethod
-	def urlForArgs( modul, path ):
+	def urlForArgs( modul, path, cacheable ):
 		"""
 			Constructs the final url for that request.
 			If modul is given, it prepends "/admin" and injects a timestamp
@@ -213,10 +202,17 @@ class NetworkService( object ):
 			@type modul: string or None
 			@param path: Path (either relative to 'modul' or absolute if 'modul' is None
 			@type path: string
+			@param cacheable: If true, allow the browser to cache that request
+			@type cacheable: bool
 			@returns: string
 		"""
+		cacheKey = time.time()
+		if cacheable and modul:
+			if not modul in NetworkService._cache.keys():
+				NetworkService._cache[ modul ] = 1
+			cacheKey = "c%s" % NetworkService._cache[ modul ]
 		if modul:
-			return( "/admin/%s/%s?_unused_time_stamp=%s" % (modul, path, time.time()))
+			return( "/admin/%s/%s?_unused_time_stamp=%s" % (modul, path, cacheKey))
 		else:
 			return( path )
 
@@ -237,17 +233,12 @@ class NetworkService( object ):
 		self.finishedHandler = [finishedHandler] if finishedHandler else []
 		self.modifies = modifies
 		self.cacheable = cacheable
-		if cacheable:
-			self.cacheKey = NetworkService.keyFromQuery( modul, url, params )
-			NetworkService._cache[ self.cacheKey ] = self
-		else:
-			self.cacheKey = None
 		self.secure = secure
 		if secure:
 			self.waitingForSkey = True
 			self.doFetch("/admin/skey",None,None)
 		else:
-			self.doFetch(NetworkService.urlForArgs(modul,url),params, None)
+			self.doFetch(NetworkService.urlForArgs(modul,url,cacheable),params, None)
 
 
 	@staticmethod
@@ -276,25 +267,6 @@ class NetworkService( object ):
 
 		"""
 		assert not( cacheable and modifies ), "Cannot cache a request modifying data!"
-		if cacheable:
-			key = NetworkService.keyFromQuery( modul, url, params )
-			if key in NetworkService._cache.keys():
-				req = NetworkService._cache[ key ]
-				if req.status=="running":
-					# Stack these handlers on that request
-					if successHandler:
-						req.successHandler.append( successHandler )
-					if failureHandler:
-						req.failureHandler.append( failureHandler )
-					if finishedHandler:
-						req.finishedHandler.append( finishedHandler )
-					return( req )
-				elif req.status == "succeeded":
-					if successHandler:
-						DeferredCall( successHandler, req )
-					if finishedHandler:
-						DeferredCall( finishedHandler, req )
-					return( req )
 		#Seems not cacheable or not cached
 		return( NetworkService(modul, url, params, successHandler, failureHandler, finishedHandler,
 				       modifies, cacheable, secure) )
@@ -332,7 +304,7 @@ class NetworkService( object ):
 		"""
 		if self.waitingForSkey:
 			self.waitingForSkey = False
-			self.doFetch( NetworkService.urlForArgs(self.modul,self.url), self.params, json.loads(text) )
+			self.doFetch( NetworkService.urlForArgs(self.modul,self.url,self.cacheable), self.params, json.loads(text) )
 		else:
 			#print("IM COMPLETE", self)
 			self.result = text
@@ -369,9 +341,6 @@ class NetworkService( object ):
 		self.finishedHandler = []
 		self.failureHandler = []
 		self.params = None
-		# As we failed anyway, there's no need to cache this
-		if self.cacheKey and self.cacheKey in NetworkService._cache.keys():
-			del NetworkService._cache[ self.cacheKey ]
 
 	def onTimeout(self, text):
 		"""
