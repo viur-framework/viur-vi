@@ -18,3 +18,8 @@ if (window.name!="fenster1") {
 function preventBack(){window.history.forward();}
     setTimeout("preventBack()", 0);
     window.onunload=function(){null};
+
+
+function logError(msg, url, line, col, error) {
+    Bugsnag.notify(error.toString(), msg.toString());
+}

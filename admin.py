@@ -19,7 +19,6 @@ try:
 except ImportError:
 	pass
 
-
 class CoreWindow( html5.Div ):
 
 
@@ -58,6 +57,11 @@ class CoreWindow( html5.Div ):
 		self["class"].append("is_loading")
 		startupQueue.setFinalElem( self.startup )
 		self.sinkEvent('onUserTryedToLogin')
+		# Register the error-handling for this iframe
+		le = eval("window.top.logError")
+		w = eval("window")
+		w.onerror = le
+
 
 	def onUserTryedToLogin(self,event):
 		self.userLoggedOutMsg.testUserAvaiable()
