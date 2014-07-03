@@ -214,7 +214,10 @@ class NetworkService( object ):
 		if modul:
 			return( "/admin/%s/%s?_unused_time_stamp=%s" % (modul, path, cacheKey))
 		else:
-			return( path )
+			if "?" in path:
+				return( path+"&_unused_time_stamp=%s" % cacheKey)
+			else:
+				return( path+"?_unused_time_stamp=%s" % cacheKey)
 
 	def __init__(self, modul, url, params, successHandler, failureHandler, finishedHandler, modifies, cacheable, secure ):
 		"""
