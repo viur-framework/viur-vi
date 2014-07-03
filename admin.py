@@ -65,7 +65,7 @@ class CoreWindow( html5.Div ):
 	def startup(self):
 		NetworkService.request( None, "/admin/config", successHandler=self.onConfigAvaiable,
 					failureHandler=self.onError, cacheable=True )
-		NetworkService.request( None, "/admin/user/view/self", successHandler=self.onUserAvaiable,
+		NetworkService.request( "user", "view/self", successHandler=self.onUserAvaiable,
 					failureHandler=self.userLoggedOutMsg.onUserTestFail, cacheable=True )
 
 	def log(self, type, msg ):

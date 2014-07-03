@@ -68,7 +68,7 @@ class UserLogoutMsg( html5.ext.Popup):
 		"""
 			Start querying the server
 		"""
-		NetworkService.request( None, "/vi/user/view/self", successHandler=self.onUserTestSuccess,failureHandler=self.onUserTestFail, cacheable=False )
+		NetworkService.request( "user", "view/self", successHandler=self.onUserTestSuccess,failureHandler=self.onUserTestFail, cacheable=False )
 
 	def onUserTestSuccess(self,req):
 		"""
