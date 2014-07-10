@@ -90,6 +90,7 @@ class FilterSelector( html5.Div ):
 	def applyFilter(self, filter, filterID, filterName):
 		if self.parent().parent().filterID == filterID or self.parent().parent().isSelector:
 			self.parent().parent().setFilter( filter, filterID, filterName )
+			self.parent().parent().sideBar.setWidget( type(self)( self.modul ) )
 		else:
 			filterIcon = None
 			if self.modul in conf["modules"].keys() and conf["modules"][ self.modul ] and \
@@ -107,6 +108,6 @@ class FilterSelector( html5.Div ):
 			p.addWidget( l )
 			p.focus()
 			l.sideBar.setWidget( FilterSelector( self.modul ) )
-		self.parent().parent().sideBar.setWidget( None )
+			self.parent().parent().sideBar.setWidget( None )
 
 
