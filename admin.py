@@ -96,6 +96,13 @@ class CoreWindow( html5.Div ):
 				return( argIn[1]["name"].lower() )
 			except:
 				return( None )
+
+		def getModulSortIndex(argIn):
+			try:
+				return( argIn[1]["sortIndex"] )
+			except:
+				return( None )
+
 		groups = {}
 		panes = []
 		userAccess = self.user["values"]["access"]
@@ -108,6 +115,7 @@ class CoreWindow( html5.Div ):
 				panes.append( (group["name"], p) )
 		tmpList = [(x,y) for x,y in self.config["modules"].items()]
 		tmpList.sort(key=getModulName)
+		tmpList.sort(key=getModulSortIndex, reverse=True)
 		for modulName, modulInfo in tmpList:
 			if not "root" in userAccess and not any([x.startswith(modulName) for x in userAccess]):
 				#Skip this modul, as the user couldn't interact with it anyway
@@ -129,7 +137,7 @@ class CoreWindow( html5.Div ):
 			if not isChild:
 				handler = handlerCls( modulName, modulInfo )
 				panes.append( ( modulInfo["name"], handler ) )
-		panes.sort( key=lambda x: x[0] )
+		#panes.sort( key=lambda x: x[0] )
 		for k, pane in panes:
 			self.addPane( pane )
 		viInitializedEvent.fire()
