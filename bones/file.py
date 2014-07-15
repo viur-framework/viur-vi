@@ -11,6 +11,8 @@ from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelec
 from widgets.file import Uploader
 from i18n import translate
 from network import NetworkService
+from widgets.edit import EditWidget
+from pane import Pane
 
 class FileViewBoneDelegate(object):
 	def __init__(self, modul, boneName, structure):
@@ -192,6 +194,19 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			return
 		self.setSelection( [x.data for x in selection if isinstance(x,LeafFileWidget)][0] )
 
+	def onEditSelector(self, *args, **kwargs):
+		"""
+			Edit the image.
+		"""
+		if not self.selection:
+			return
+
+		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
+		                                                                    "apptype_list", "action_edit" ] )
+		conf["mainWindow"].stackPane( pane, focus=True )
+		edwg = EditWidget( self.destModul, EditWidget.appTree, key=self.selection[ "id" ], skelType="leaf"  )
+		pane.addWidget( edwg )
+
 	def setSelection(self, selection):
 		"""
 			Set our current value to 'selection'
@@ -200,18 +215,20 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 		self.selection = selection
 		if selection:
-			NetworkService.request( self.destModul, "view/leaf/"+selection["id"], successHandler=self.onSelectionDataAviable, cacheable=True)
+			NetworkService.request( self.destModul, "view/leaf/"+selection["id"],
+			                                successHandler=self.onSelectionDataAviable, cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
-		else:
-			self.selectionTxt["value"] = ""
-		if self.selection:
+
 			if "servingurl" in self.selection.keys():
 				self.previewImg["src"] = self.selection["servingurl"]
 				self.previewImg["style"]["display"] = ""
 			else:
 				self.previewImg["style"]["display"] = "none"
 		else:
+			self.selectionTxt["value"] = ""
 			self.previewImg["style"]["display"] = "none"
+
+		self.updateButtons()
 
 
 
