@@ -9,6 +9,8 @@ from widgets.list import ListWidget
 from config import conf
 from i18n import translate
 from network import NetworkService
+from widgets.edit import EditWidget
+from pane import Pane
 
 class RelationalViewBoneDelegate( object ):
 	cantSort = True
@@ -67,15 +69,27 @@ class RelationalSingleSelectionBone( html5.Div ):
 		self.appendChild( self.selectionTxt )
 		#DOM.setElemAttribute( self.selectionTxt, "type", "text")
 		#DOM.appendChild(self.getElement(), self.selectionTxt )
+
+		# Selection button
 		self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 		self.selectBtn["class"].append("icon")
 		self.selectBtn["class"].append("select")
 		self.appendChild( self.selectBtn )
+
+		# Edit button
+		self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit )
+		self.editBtn["class"].append("icon")
+		self.editBtn["class"].append("edit")
+		self.appendChild( self.editBtn )
+
 		if not required:
-			remBtn = html5.ext.Button(translate("Remove"), self.onRemove )
-			remBtn["class"].append("icon")
-			remBtn["class"].append("cancel")
-			self.appendChild( remBtn )
+			self.remBtn = html5.ext.Button(translate("Remove"), self.onRemove )
+			self.remBtn["class"].append("icon")
+			self.remBtn["class"].append("cancel")
+			self.appendChild( self.remBtn )
+		else:
+			self.remBtn = None
+
 		if self.readOnly:
 			self["disabled"] = True
 		#DOM.appendChild( self.getElement(), self.selectBtn.getElement())
@@ -116,6 +130,19 @@ class RelationalSingleSelectionBone( html5.Div ):
 			format = skelStructure[ boneName ]["format"]
 		return( cls( modulName, boneName, readOnly, destModul=destModul, format=format, required=required ) )
 
+	def onEdit(self, *args, **kwargs):
+		"""
+			Edit the reference.
+		"""
+		if not self.selection:
+			return
+
+		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
+		                                                                    "apptype_list", "action_edit" ] )
+		conf["mainWindow"].stackPane( pane, focus=True )
+		edwg = EditWidget( self.destModul, EditWidget.appList, key=self.selection[ "id" ] )
+		pane.addWidget( edwg )
+
 	def onRemove(self, *args, **kwargs):
 		self.setSelection( None )
 
@@ -151,7 +178,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
-			Opens a ListWidget sothat the user can select new values
+			Opens a ListWidget so that the user can select new values
 		"""
 		currentSelector = ListWidget( self.destModul, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
@@ -175,10 +202,40 @@ class RelationalSingleSelectionBone( html5.Div ):
 		"""
 		self.selection = selection
 		if selection:
-			NetworkService.request( self.destModul, "view/"+selection["id"], successHandler=self.onSelectionDataAviable, cacheable=True)
+			NetworkService.request( self.destModul, "view/"+selection["id"],
+			                            successHandler=self.onSelectionDataAviable, cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 		else:
 			self.selectionTxt["value"] = ""
+
+		self.updateButtons()
+
+	def updateButtons(self):
+		"""
+		Updates the display style of the Edit and Remove buttons.
+		"""
+		if self.selection:
+			self.editBtn[ "disabled" ] = False
+
+			if self.remBtn:
+				self.remBtn[ "disabled"] = False
+		else:
+			self.editBtn[ "disabled" ] = True
+
+			if self.remBtn:
+				self.remBtn[ "disabled"] = True
+
+	def onAttach(self):
+		super( RelationalSingleSelectionBone,  self ).onAttach()
+		NetworkService.registerChangeListener( self )
+
+	def onDetach(self):
+		NetworkService.removeChangeListener( self )
+		super( RelationalSingleSelectionBone,  self ).onDetach()
+
+	def onDataChanged(self, modul):
+		if modul == self.destModul:
+			self.setSelection(self.selection)
 
 	def onSelectionDataAviable(self, req):
 		"""
@@ -187,7 +244,6 @@ class RelationalSingleSelectionBone( html5.Div ):
 		data = NetworkService.decode( req )
 		assert self.selection["id"]==data["values"]["id"]
 		self.selectionTxt["value"] = formatString( self.format ,data["structure"],data["values"] )
-
 
 class RelationalMultiSelectionBoneEntry( html5.Div ):
 	"""
@@ -213,14 +269,33 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		self.selectionTxt.appendChild( html5.TextNode(translate("Loading...")) )
 		self.selectionTxt["class"].append("entrydescription")
 		self.appendChild( self.selectionTxt )
+
+		#Edit button
+		editBtn = html5.ext.Button("Edit", self.onEdit )
+		editBtn["class"].append("icon")
+		editBtn["class"].append("edit")
+		self.appendChild( editBtn )
+
+		#Remove button
 		remBtn = html5.ext.Button("Remove", self.onRemove )
 		remBtn["class"].append("icon")
 		remBtn["class"].append("cancel")
 		self.appendChild( remBtn )
+
 		self.fetchEntry( self.data["id"] )
 
 	def fetchEntry(self, id):
 		NetworkService.request(self.modul,"view/"+id, successHandler=self.onSelectionDataAviable, cacheable=True)
+
+	def onEdit(self, *args, **kwargs):
+		"""
+			Edit the reference entry.
+		"""
+		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
+		                                                                    "apptype_list", "action_edit" ] )
+		conf["mainWindow"].stackPane( pane, focus=True )
+		edwg = EditWidget( self.parent.destModul, EditWidget.appList, key=self.data[ "id" ] )
+		pane.addWidget( edwg )
 
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry( self )
@@ -266,10 +341,12 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.selectionDiv = html5.Div()
 		self.selectionDiv["class"].append("selectioncontainer")
 		self.appendChild( self.selectionDiv )
+
 		self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 		self.selectBtn["class"].append("icon")
 		self.selectBtn["class"].append("select")
 		self.appendChild( self.selectBtn )
+
 		if self.readOnly:
 			self["disabled"] = True
 
@@ -372,6 +449,21 @@ class RelationalMultiSelectionBone( html5.Div ):
 		assert entry in self.entries, "Cannot remove unknown entry %s from realtionalBone" % str(entry)
 		self.selectionDiv.removeChild( entry )
 		self.entries.remove( entry )
+
+	def onAttach(self):
+		super( RelationalMultiSelectionBone,  self ).onAttach()
+		NetworkService.registerChangeListener( self )
+
+	def onDetach(self):
+		NetworkService.removeChangeListener( self )
+		super( RelationalMultiSelectionBone,  self ).onDetach()
+
+	def onDataChanged(self, modul):
+		if modul == self.destModul:
+			selection = [ x.data for x in self.entries ]
+			for e in self.entries[:]:
+				self.removeEntry( e )
+			self.setSelection( selection )
 
 class ExtendedRelationalSearch( html5.Div ):
 	def __init__(self, extension, view, modul, *args, **kwargs ):
