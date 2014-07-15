@@ -84,6 +84,16 @@ class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 	def fetchEntry(self, id):
 		NetworkService.request(self.modul,"view/leaf/"+id, successHandler=self.onSelectionDataAviable, cacheable=True)
 
+	def onEdit(self, *args, **kwargs):
+		"""
+			Edit the image entry.
+		"""
+		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
+		                                                                    "apptype_list", "action_edit" ] )
+		conf["mainWindow"].stackPane( pane, focus=True )
+		edwg = EditWidget( self.parent.destModul, EditWidget.appTree, key=self.data[ "id" ], skelType="leaf"  )
+		pane.addWidget( edwg )
+
 class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 
 	def __init__(self, *args, **kwargs):
@@ -194,7 +204,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			return
 		self.setSelection( [x.data for x in selection if isinstance(x,LeafFileWidget)][0] )
 
-	def onEditSelector(self, *args, **kwargs):
+	def onEdit(self, *args, **kwargs):
 		"""
 			Edit the image.
 		"""
