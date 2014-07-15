@@ -112,7 +112,12 @@ class CoreWindow( html5.Div ):
 			for group in self.config["configuration"]["modulGroups"]:
 				p = GroupPane(group["name"],iconURL=group["icon"])
 				groups[ group["prefix"] ] = p
-				panes.append( (group["name"], p) )
+				if "sortIndex" in group.keys():
+					sortIndex = group["sortIndex"]
+				else:
+					sortIndex = None
+				panes.append( (group["name"], sortIndex, p) )
+		# Sorting the 2nd level entries
 		tmpList = [(x,y) for x,y in self.config["modules"].items()]
 		tmpList.sort(key=getModulName)
 		tmpList.sort(key=getModulSortIndex, reverse=True)
@@ -136,9 +141,15 @@ class CoreWindow( html5.Div ):
 					break
 			if not isChild:
 				handler = handlerCls( modulName, modulInfo )
-				panes.append( ( modulInfo["name"], handler ) )
-		#panes.sort( key=lambda x: x[0] )
-		for k, pane in panes:
+				if "sortIndex" in modulInfo.keys():
+					sortIndex = modulInfo["sortIndex"]
+				else:
+					sortIndex = None
+				panes.append( ( modulInfo["name"], sortIndex, handler ) )
+		# Sorting our top level entries
+		panes.sort( key=lambda x: x[0] )
+		panes.sort( key=lambda x: x[1], reverse=True )
+		for k, v, pane in panes:
 			self.addPane( pane )
 		viInitializedEvent.fire()
 		DeferredCall( self.checkInitialHash )
