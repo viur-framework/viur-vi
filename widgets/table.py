@@ -84,7 +84,14 @@ class SelectTable( html5.Table ):
 		"""
 			Determines the row number for the given event
 		"""
-		tc = event.srcElement
+
+		try:
+			# Chromium
+			tc = event.srcElement
+		except:
+			# Firefox
+			tc = event.target
+
 		if tc is None:
 			return( None )
 		tr = tc.parentElement

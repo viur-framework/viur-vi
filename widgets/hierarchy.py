@@ -62,24 +62,29 @@ class HierarchyItem( html5.Li ):
 			"insert after us" and apply the correct classes.
 		"""
 		height = self.element.offsetHeight
-		eventOffset = event.offsetY
-		if eventOffset<height*0.10 and self.currentMargin is None:
+		offset = event.pageY - self.element.offsetTop
+
+		# Before
+		if self.currentMargin is None and offset < height * 0.20:
 			self.currentMargin = "top"
 			self["class"].remove("insert_here")
+			self["class"].remove("insert_after")
 			self["class"].append("insert_before")
-		elif eventOffset>height*0.90 and self.currentMargin is None:
+		# After
+		elif self.currentMargin is None and offset > height * 0.80:
 			self.currentMargin = "bottom"
 			self["class"].remove("insert_here")
+			self["class"].remove("insert_before")
 			self["class"].append("insert_after")
-		elif self.currentMargin and eventOffset>height*0.20 and eventOffset<height*0.80:
+		# Within
+		elif self.currentMargin and offset >= height * 0.20 and offset <= height * 0.80:
+			self.currentMargin = None
 			self["class"].remove("insert_before")
 			self["class"].remove("insert_after")
 			self["class"].append("insert_here")
-			self.currentMargin = None
-		#print( self.element.offsetHeight )
+
 		event.preventDefault()
 		event.stopPropagation()
-		#print("%s %s" % (event.offsetX, event.offsetY))
 
 	def onDragLeave(self, event):
 		"""
@@ -103,15 +108,22 @@ class HierarchyItem( html5.Li ):
 			We received a drop. Test wherever its means "make it a child of us", "insert before us" or
 			"insert after us" and initiate the corresponding NetworkService requests.
 		"""
+
 		event.stopPropagation()
+		event.preventDefault()
+
 		height = self.element.offsetHeight
-		eventOffset = event.offsetY
+		offset = event.pageY - self.element.offsetTop
+
 		srcKey = event.dataTransfer.getData("Text")
-		if eventOffset>=height*0.10 and eventOffset<=height*0.90:
+
+		if offset >= height * 0.20 and offset <= height * 0.80:
+			print( "insert into" )
 			# Just make the item a child of us
 			NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":self.data["id"]}, secure=True, modifies=True )
-		elif eventOffset<height*0.10:
+		elif offset < height * 0.20:
 			#Insert this item *before* the current item
+			print( "insert before" )
 			parentID = self.data["parententry"]
 			if parentID:
 				lastIdx = 0
@@ -124,9 +136,11 @@ class HierarchyItem( html5.Li ):
 				req = NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":parentID}, secure=True, successHandler=self.onItemReparented )
 				req.newIdx = newIdx
 				req.item = srcKey
-		elif eventOffset>height*0.90:
+		elif offset > height * 0.80:
 			#Insert this item *after* the current item
+			print( "insert after" )
 			parentID = self.data["parententry"]
+
 			if parentID:
 				lastIdx = time()
 				doUseNextChild = False
@@ -137,8 +151,10 @@ class HierarchyItem( html5.Li ):
 							break
 						if c == self:
 							doUseNextChild = True
+
 				newIdx = str((lastIdx+self.data["sortindex"])/2.0)
-				req = NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":parentID}, secure=True, successHandler=self.onItemReparented )
+				req = NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":parentID},
+				                                secure=True, successHandler=self.onItemReparented )
 				req.newIdx = newIdx
 				req.item = srcKey
 
@@ -149,14 +165,12 @@ class HierarchyItem( html5.Li ):
 		assert "newIdx" in dir(req)
 		NetworkService.request(self.modul,"setIndex",{"item":req.item,"index":req.newIdx}, secure=True, modifies=True )
 
-
-
 	def toggleExpand(self):
 		"""
 			Expands or unexpands this entry.
-			If its expanded, it children (if any) are visible,
+			If its expanded, its children (if any) become visible,
 			otherwise the ol-tag (and all its children) are display: None
-			Does *not* load it children when its first expanding - that has
+			Does *not* load its children when its first expanding - that has
 			to be done by the HierarchyWidget.
 		"""
 		if self.isExpanded:
