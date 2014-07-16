@@ -237,6 +237,12 @@ p {
 .iconnav li a.icon.logout:before {
   background-position: -128px 0px;
 }
+.iconnav li a.icon.share:before {
+  background-position: -224px 0px;
+}
+.iconnav li a.icon.search:before {
+  background-position: -256px 0px;
+}
 .iconnav li a.icon:hover {
   overflow: visible;
   min-width: 130px;
