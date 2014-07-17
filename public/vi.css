@@ -1009,9 +1009,11 @@ button.icon.save.close[type="button"]:hover {
 /* Disabled Buttons */
 button.icon.is_disabled[type="button"]:hover {
   border-color: #999;
+  background: #e0e0e0;
 }
 button.icon.is_disabled:before {
   opacity: 0.3;
+  background-image: url(icons/vi_actions_sprite.svg)!important;
 }
 button.icon.is_disabled {
   cursor: default;
