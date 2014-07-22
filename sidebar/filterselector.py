@@ -5,12 +5,14 @@ from widgets.list import ListWidget
 from priorityqueue import extendedSearchWidgetSelector
 from pane import Pane
 from i18n import translate
+import utils
 
 
 class CompoundFilter( html5.Div ):
 	def __init__(self, view, modul, *args, **kwargs ):
 		super( CompoundFilter, self ).__init__( *args, **kwargs)
 		self["class"].append("compoundfilter")
+		self["class"].append("collapsed")
 		self.view = view
 		self.modul = modul
 		if "name" in view.keys():
@@ -18,7 +20,7 @@ class CompoundFilter( html5.Div ):
 			h2.appendChild( html5.TextNode( view["name"] ) )
 			self.appendChild( h2 )
 		self.extendedFilters = []
-		for extension in view["extendedFilters"]:
+		for extension in (view["extendedFilters"] if "extendedFilters" in view.keys() else []):
 			wdg = extendedSearchWidgetSelector.select( extension, view, modul)
 			if wdg is not None:
 				container = html5.Div()
@@ -43,9 +45,33 @@ class CompoundFilter( html5.Div ):
 
 
 class FilterSelector( html5.Div ):
-	def __init__(self, modul, *args, **kwargs ):
+	def __init__(self, modul, embedd=False, *args, **kwargs ):
+		"""
+		:param modul: The name of the modul were created for
+		:param embedd: If true, we are ebedded directly inside a list, if false were displayed in the sidebar
+		:param args:
+		:param kwargs:
+		:return:
+		"""
 		super( FilterSelector, self ).__init__( *args, **kwargs )
 		self.modul = modul
+		self.embedd = embedd
+		self.currentTarget = None
+		self.sinkEvent("onClick")
+
+	def onClick(self, event):
+		nextTarget=self.currentTarget
+		for c in self._children:
+			if c==self.currentTarget and not utils.doesEventHitWidgetOrChildren(event, c ):
+				c["class"].append("collapsed")
+				c["class"].remove("expanded")
+				if nextTarget==self.currentTarget: #Did not change yet
+					nextTarget = None
+			elif c!=self.currentTarget and utils.doesEventHitWidgetOrChildren(event, c ):
+				c["class"].remove("collapsed")
+				c["class"].append("expanded")
+				nextTarget = c
+		self.currentTarget = nextTarget
 
 	def onAttach(self):
 		super( FilterSelector, self ).onAttach()
@@ -54,18 +80,9 @@ class FilterSelector( html5.Div ):
 			modulConfig = conf["modules"][self.modul]
 			if "views" in modulConfig.keys() and modulConfig["views"]:
 				for view in modulConfig["views"]:
-					if "extendedFilters" in view.keys() and view["extendedFilters"] and view["__id"] == activeFilter:
-						self.appendChild( CompoundFilter( view, self.modul ) )
-					else:
-						btn = html5.ext.Button( callback=self.setView )
-						btn.destView = view
-						if "icon" in view.keys() and view["icon"]:
-							img = html5.Img()
-							img["src"] = view["icon"]
-							btn.appendChild(img)
-						btn.appendChild( html5.TextNode(view["name"]))
-						self.appendChild( btn )
+					self.appendChild( CompoundFilter( view, self.modul ) )
 		self.search = Search()
+		self.search["class"].append("collapsed")
 		self.appendChild(self.search)
 		self.search.startSearchEvent.register( self )
 
@@ -88,26 +105,6 @@ class FilterSelector( html5.Div ):
 
 
 	def applyFilter(self, filter, filterID, filterName):
-		if self.parent().parent().filterID == filterID or self.parent().parent().isSelector:
-			self.parent().parent().setFilter( filter, filterID, filterName )
-			self.parent().parent().sideBar.setWidget( type(self)( self.modul ) )
-		else:
-			filterIcon = None
-			if self.modul in conf["modules"].keys() and conf["modules"][ self.modul ] and \
-			   "views" in conf["modules"][ self.modul ].keys() and conf["modules"][ self.modul ]["views"]:
-				for v in conf["modules"][ self.modul ]["views"]:
-					if v["__id"] == filterID:
-						if "icon" in v.keys() and v["icon"]:
-							filterIcon = v["icon"]
-						break
-			p = Pane( filterName, iconURL=filterIcon, closeable=True )
-			conf["mainWindow"].stackPane( p )
-			## FIXME
-			l = ListWidget( self.parent().parent().modul, columns=self.parent().parent().columns, isSelector=False,
-					filter=filter, filterID=filterID, filterDescr=filterName )
-			p.addWidget( l )
-			p.focus()
-			l.sideBar.setWidget( FilterSelector( self.modul ) )
-			self.parent().parent().sideBar.setWidget( None )
-
+		self.parent().parent().setFilter( filter, filterID, filterName )
+		#self.parent().parent().sideBar.setWidget( type(self)( self.modul ) )
 

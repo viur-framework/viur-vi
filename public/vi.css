@@ -2600,6 +2600,7 @@ display: block;
   color: #777;
   float: right;
   padding: 2px 1%;
+  margin-bottom:50px;
   border-top: 1px dotted #ccc;
 }
 .vi_messenger .versiondiv span {
