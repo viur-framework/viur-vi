@@ -19,8 +19,8 @@ class Search( html5.Div ):
 
 	def doSearch(self, *args, **kwargs):
 		self.startSearchEvent.fire(self.searchInput["value"] or None)
-		if not "is_loading" in self.btn["class"]:
-			self.btn["class"].append("is_loading")
+		#if not "is_loading" in self.btn["class"]:
+		#	self.btn["class"].append("is_loading")
 
 	def onKeyDown(self, event):
 		if isReturn(event.keyCode):

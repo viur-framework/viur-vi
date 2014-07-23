@@ -269,6 +269,7 @@ class NetworkService( object ):
 			@type secure: bool
 
 		"""
+		print("NS REQUEST", modul, url, params )
 		assert not( cacheable and modifies ), "Cannot cache a request modifying data!"
 		#Seems not cacheable or not cached
 		return( NetworkService(modul, url, params, successHandler, failureHandler, finishedHandler,
