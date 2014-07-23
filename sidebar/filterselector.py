@@ -40,15 +40,13 @@ class CompoundFilter( html5.Div ):
 		filter = self.view["filter"].copy()
 		for extension in self.extendedFilters:
 			filter = extension.updateFilter( filter )
-		self.parent().applyFilter( filter, -1, "Erweiterte Suche" )
-
-
+		self.parent().applyFilter( filter, -1, translate( "Extended Search" ) )
 
 class FilterSelector( html5.Div ):
 	def __init__(self, modul, embedd=False, *args, **kwargs ):
 		"""
-		:param modul: The name of the modul were created for
-		:param embedd: If true, we are ebedded directly inside a list, if false were displayed in the sidebar
+		:param modul: The name of the module for which this filter is created for
+		:param embedd: If true, we are embedded directly inside a list, if false were displayed in the sidebar
 		:param args:
 		:param kwargs:
 		:return:
@@ -60,18 +58,27 @@ class FilterSelector( html5.Div ):
 		self.sinkEvent("onClick")
 
 	def onClick(self, event):
+		"""
+		Handle event on filter selection (fold current active filter, expand selected filter and execute, if possible)
+		:param event:
+		:return:
+		"""
 		nextTarget=self.currentTarget
 		for c in self._children:
-			if c==self.currentTarget and not utils.doesEventHitWidgetOrChildren(event, c ):
+			if c == self.currentTarget and not utils.doesEventHitWidgetOrChildren(event, c ):
 				c["class"].append("collapsed")
 				c["class"].remove("expanded")
 				if nextTarget==self.currentTarget: #Did not change yet
 					nextTarget = None
-			elif c!=self.currentTarget and utils.doesEventHitWidgetOrChildren(event, c ):
+			elif c != self.currentTarget and utils.doesEventHitWidgetOrChildren(event, c ):
 				c["class"].remove("collapsed")
 				c["class"].append("expanded")
 				nextTarget = c
-		self.currentTarget = nextTarget
+
+		if self.currentTarget != nextTarget:
+			self.currentTarget = nextTarget
+			nextTarget.reevaluate()
+
 
 	def onAttach(self):
 		super( FilterSelector, self ).onAttach()
