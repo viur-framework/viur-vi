@@ -7,7 +7,7 @@ class SideBar( html5.Div ):
 		super( SideBar, self ).__init__( *args, **kwargs )
 		self.isInit = False
 		self.currentWidget = None
-		self["class"].append("sidebar")
+		self["class"].append("sidebarwidgets")
 		self["class"].append("isempty")
 		self["style"]["float"] = "right"
 

@@ -8,7 +8,7 @@ from widgets.actionbar import ActionBar
 from widgets.search import Search
 from widgets.sidebar import SideBar
 import html5
-
+from sidebarwidgets.filterselector import CompoundFilter
 from i18n import translate
 
 
@@ -31,6 +31,16 @@ class ListWidget( html5.Div ):
 		self.appendChild( self.actionBar )
 		self.sideBar = SideBar()
 		self.appendChild( self.sideBar )
+		if filterID:
+			myView = None
+			if conf["modules"] and modul in conf["modules"].keys():
+				if "views" in conf["modules"][ modul ].keys() and conf["modules"][ modul ]["views"]:
+					for v in conf["modules"][ modul ]["views"]:
+						if v["__id"] == filterID:
+							myView = v
+							break
+			if myView and "extendedFilters" in myView.keys() and myView["extendedFilters"]:
+				self.appendChild( CompoundFilter(myView, modul, embed=True))
 		self.table = DataTable()
 		self.appendChild( self.table )
 		self._currentCursor = None
@@ -49,7 +59,7 @@ class ListWidget( html5.Div ):
 		self.table.setDataProvider(self)
 		self.filter = filter.copy() if isinstance(filter,dict) else {}
 		self.columns = columns[:] if isinstance(columns,list) else []
-		self.filterID = filterID #Hint for the sidebar which predefined filter is currently active
+		self.filterID = filterID #Hint for the sidebarwidgets which predefined filter is currently active
 		self.filterDescr = filterDescr #Human-readable description of the current filter
 		self._tableHeaderIsValid = False
 		self.isSelector = isSelector

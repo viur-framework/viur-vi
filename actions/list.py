@@ -5,8 +5,8 @@ from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
 from widgets.preview import Preview
-from sidebar.internalpreview import InternalPreview
-from sidebar.filterselector import FilterSelector
+from sidebarwidgets.internalpreview import InternalPreview
+from sidebarwidgets.filterselector import FilterSelector
 from i18n import translate
 
 class EditPane( Pane ):
@@ -452,6 +452,9 @@ class ListSelectFilterAction( html5.ext.Button ):
 	def onAttach(self):
 		super(ListSelectFilterAction,self).onAttach()
 		modul = self.parent().parent().modul
+		if self.parent().parent().filterID:
+			#Its a predefined search - we wont override this
+			self["disabled"] = True
 		if modul in conf["modules"].keys():
 			modulConfig = conf["modules"][modul]
 
