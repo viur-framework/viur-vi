@@ -524,6 +524,23 @@ p {
   font-size: 0.8em;
   padding: 0 15px 10px;
 }
+
+.vi_operator .compoundfilter.collapsed h2 {
+    padding:0 15px;
+} 
+
+.vi_operator .compoundfilter.collapsed .extendedfilter {
+    height: 0;
+    opacity: 0;
+    overflow:hidden;
+}
+
+.vi_operator .compoundfilter.collapsed:hover {background-color:#ccc;}
+
+.vi_operator .compoundfilter.embed {
+    width: 98%;
+    margin: 0 0 20px;
+}
 .vi_operator .search span {
   width: 60px;
   float: left;
@@ -1864,7 +1881,7 @@ td span.time {
   width: 20%;
   margin: 0 18% 55px;
 }
-.issplitview .sidebar {
+.issplitview .sidebarwidgets {
   margin-left: 2%;
   width: 30%;
   float: right;
@@ -1873,45 +1890,45 @@ td span.time {
   background: #eee;
   border: 1px solid #ddd;
 }
-.issplitview .sidebar > div > button {
+.issplitview .sidebarwidgets > div > button {
   width: 98%;
   margin: 0 1% 5px;
 }
-.issplitview .sidebar > div > button img {
+.issplitview .sidebarwidgets > div > button img {
   width: 16px;
   float: left;
   margin-top: -2px;
 }
-.issplitview .sidebar .extendedfilter button {
+.issplitview .sidebarwidgets .extendedfilter button {
   float: right;
 }
-.issplitview .sidebar .extendedfilter span {
+.issplitview .sidebarwidgets .extendedfilter span {
   margin-top: 5px;
   margin-left: 15px;
   display: inline-block;
 }
-.sidebar > ul > li {
+.sidebarwidgets > ul > li {
   padding: 3px;
   border-bottom: 1px solid #ddd;
   font-size: 0.9em;
   color: #444;
 }
-.sidebar > ul > li dd img {
+.sidebarwidgets > ul > li dd img {
   width: 16px;
   margin-right: 10px;
 }
-.sidebar > ul > li dd ul {
+.sidebarwidgets > ul > li dd ul {
   overflow: hidden;
   height: 25px;
 }
-.sidebar > ul > li dd ul li {
+.sidebarwidgets > ul > li dd ul li {
   float: right;
   margin-left: 10px;
 }
-.sidebar > ul > li dl {
+.sidebarwidgets > ul > li dl {
   height: 23px;
 }
-.sidebar > ul > li dt {
+.sidebarwidgets > ul > li dt {
   display: inline-block;
   max-width: 30%;
   overflow: hidden;
@@ -1920,7 +1937,7 @@ td span.time {
   color: #be1622;
   font-weight: 600;
 }
-.sidebar > ul > li dd {
+.sidebarwidgets > ul > li dd {
   display: inline-block;
   float: right;
   max-width: 60%;
