@@ -61,6 +61,8 @@ class CoreWindow( html5.Div ):
 		le = eval("window.top.logError")
 		w = eval("window")
 		w.onerror = le
+		w = eval("window.top")
+		w.onerror = le
 
 
 	def onUserTryedToLogin(self,event):
