@@ -385,14 +385,18 @@ class TreeWidget( html5.Div ):
 			#DOM.appendChild( self.pathList, c.getElement() )
 			#c.onAttach()
 
-	def reloadData(self):
+	def reloadData(self, paramsOverride=None):
 		assert self.node is not None, "reloadData called while self.node is None"
 		self.entryFrame.clear()
 		self._currentRequests = []
-		r = NetworkService.request(self.modul,"list/node", {"node":self.node}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
+		if paramsOverride:
+			params = paramsOverride.copy()
+		else:
+			params = {"node":self.node}
+		r = NetworkService.request(self.modul,"list/node", params , successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
 		r.reqType = "node"
 		self._currentRequests.append( r )
-		r = NetworkService.request(self.modul,"list/leaf", {"node":self.node}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
+		r = NetworkService.request(self.modul,"list/leaf", params, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
 		r.reqType = "leaf"
 		self._currentRequests.append( r )
 

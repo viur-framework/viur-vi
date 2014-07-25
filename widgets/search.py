@@ -7,7 +7,7 @@ class Search( html5.Div ):
 		super( Search, self ).__init__( *args, **kwargs )
 		self.startSearchEvent = EventDispatcher("startSearch")
 		self["class"].append("search")
-		lblSearch = html5.Span()
+		lblSearch = html5.H2()
 		lblSearch.appendChild( html5.TextNode(translate("Search")))
 		self.appendChild( lblSearch )
 		self.searchInput = html5.Input()
