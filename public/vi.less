@@ -508,20 +508,19 @@ margin-top: -20px;
   padding: 15px 1%;
   background: #dcdcdc;
   margin: 10px 1%;
-  border-radius: 3px;
+  border-radius: 2px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  border:1px solid #d2d2d2;
+  transition:all .3s ease;
 }
 
-.vi_operator .compoundfilter h2 {
+.vi_operator .compoundfilter h2,
+.vi_operator .search h2 {
   color: #777;
   line-height: 1.4em;
   font-size: 0.8em;
-  padding: 0 15px 10px;
+  padding:0 15px;
 }
-
-.vi_operator .compoundfilter.collapsed h2 {
-    padding:0 15px;
-} 
 
 .vi_operator .compoundfilter.collapsed .extendedfilter {
     height: 0;
@@ -529,14 +528,31 @@ margin-top: -20px;
     overflow:hidden;
 }
 
-.vi_operator .compoundfilter.collapsed:hover {background-color:#ccc;}
+.vi_operator .search.collapsed input,
+.vi_operator .search.collapsed button {display:none;}
+
+.vi_operator .search.expanded input {margin: 10px 15px;}
+
+.vi_operator .search.collapsed:hover,
+.vi_operator .compoundfilter.collapsed:hover {background-color:#e2e2e2; box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);}
+
+.vi_operator .search.expanded,
+.vi_operator .compoundfilter.expanded {
+box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+background-color:#d6d6d6;
+}
+
+.vi_operator .compoundfilter.expanded .extendedfilter {
+    margin-top:15px;
+}
 
 .vi_operator .compoundfilter.embed {
     width: 98%;
     margin: 0 0 20px;
+    background: #eee;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
-
-.vi_operator .search span {
+.vi_operator .tree .search h2 {
   width: 60px;
   float: left;
   text-align: center;
@@ -545,7 +561,7 @@ margin-top: -20px;
   border: 1px solid#bbb;
   border-right-width: 0;
   background: #e3e3e3;
-  color:#777;
+  color: #777;
   overflow: hidden;
   line-height: 1.4em;
   font-size: 0.8em;
