@@ -1,20 +1,26 @@
 import html5
 from config import conf
 from widgets.search import Search
-from widgets.list import ListWidget
 from priorityqueue import extendedSearchWidgetSelector
 from pane import Pane
 from i18n import translate
 import utils
 
 
+
 class CompoundFilter( html5.Div ):
-	def __init__(self, view, modul, *args, **kwargs ):
+	def __init__(self, view, modul, embed=False, *args, **kwargs ):
 		super( CompoundFilter, self ).__init__( *args, **kwargs)
 		self["class"].append("compoundfilter")
-		self["class"].append("collapsed")
 		self.view = view
 		self.modul = modul
+		self.embed = embed
+		if embed:
+			self["class"].append("embed")
+			self["class"].append("expanded")
+		else:
+			self["class"].append("standalone")
+			self["class"].append("collapsed")
 		if "name" in view.keys():
 			h2 = html5.H2()
 			h2.appendChild( html5.TextNode( view["name"] ) )
@@ -40,20 +46,22 @@ class CompoundFilter( html5.Div ):
 		filter = self.view["filter"].copy()
 		for extension in self.extendedFilters:
 			filter = extension.updateFilter( filter )
-		self.parent().applyFilter( filter, -1, translate( "Extended Search" ) )
+		if self.embed:
+			self.parent().setFilter( filter, -1, "" )
+		else:
+			self.parent().applyFilter( filter, -1, translate( "Extended Search" ) )
 
 class FilterSelector( html5.Div ):
-	def __init__(self, modul, embedd=False, *args, **kwargs ):
+	def __init__(self, modul, *args, **kwargs ):
 		"""
 		:param modul: The name of the module for which this filter is created for
-		:param embedd: If true, we are embedded directly inside a list, if false were displayed in the sidebar
+		:param embedd: If true, we are embedded directly inside a list, if false were displayed in the sidebarwidgets
 		:param args:
 		:param kwargs:
 		:return:
 		"""
 		super( FilterSelector, self ).__init__( *args, **kwargs )
 		self.modul = modul
-		self.embedd = embedd
 		self.currentTarget = None
 		self.sinkEvent("onClick")
 
@@ -83,28 +91,33 @@ class FilterSelector( html5.Div ):
 	def onAttach(self):
 		super( FilterSelector, self ).onAttach()
 		activeFilter = self.parent().parent().filterID
+		isSearchDisabled=False
 		if self.modul in conf["modules"].keys():
 			modulConfig = conf["modules"][self.modul]
 			if "views" in modulConfig.keys() and modulConfig["views"]:
 				for view in modulConfig["views"]:
 					self.appendChild( CompoundFilter( view, self.modul ) )
-		self.search = Search()
-		self.search["class"].append("collapsed")
-		self.appendChild(self.search)
-		self.search.startSearchEvent.register( self )
+			if "disabledFunctions" in modulConfig.keys() and modulConfig[ "disabledFunctions" ] and "fulltext-search" in modulConfig[ "disabledFunctions" ]:
+				isSearchDisabled = True
+		if not isSearchDisabled:
+			self.search = Search()
+			self.search["class"].append("collapsed")
+			self.appendChild(self.search)
+			self.search.startSearchEvent.register( self )
 
 
 	def onStartSearch(self, searchTxt):
-		if not searchTxt:
-			return
 		if self.modul in conf["modules"].keys():
 			modulConfig = conf["modules"][self.modul]
 			if "filter" in modulConfig.keys():
 				filter = modulConfig["filter"]
 			else:
 				filter = {}
-			filter["search"] = searchTxt
-			self.applyFilter( filter, -1, translate("Fulltext search: {token}", token=searchTxt) )
+			if searchTxt:
+				filter["search"] = searchTxt
+				self.applyFilter( filter, -1, translate("Fulltext search: {token}", token=searchTxt) )
+			else:
+				self.applyFilter( filter, -1, "" )
 
 
 	def setView(self, btn):

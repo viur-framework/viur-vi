@@ -6,6 +6,8 @@ from event import EventDispatcher
 from config import conf
 import json
 from i18n import translate
+from widgets.search import Search
+
 class LeafFileWidget( LeafWidget ):
 	"""
 		Displays a file inside a tree application.
@@ -136,6 +138,29 @@ class FileWidget( TreeWidget ):
 		super( FileWidget, self ).__init__( *args, **kwargs)
 		self.sinkEvent("onDragOver", "onDrop")
 		self["class"].append("supports_upload")
+		self.search = Search()
+		self.appendChild( self.search )
+		self.search.startSearchEvent.register( self )
+
+	def onStartSearch(self, searchStr, *args, **kwargs):
+		if not searchStr:
+			self.setRootNode( self.rootNode )
+		else:
+			for c in self.pathList._children[:]:
+				self.pathList.removeChild( c )
+			s = html5.Span()
+			s.appendChild(html5.TextNode("Search"))
+			self.pathList.appendChild( s )
+			self.reloadData( {"node":self.rootNode,"search": searchStr} )
+
+	def setNode(self, node):
+		"""
+			Override setNode sothat we can reset our search field if a folder has been clicked
+		:param node:
+		:return:
+		"""
+		self.search.searchInput["value"] = ""
+		super( FileWidget, self ).setNode( node )
 
 	@staticmethod
 	def canHandle( modul, modulInfo ):

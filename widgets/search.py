@@ -7,7 +7,7 @@ class Search( html5.Div ):
 		super( Search, self ).__init__( *args, **kwargs )
 		self.startSearchEvent = EventDispatcher("startSearch")
 		self["class"].append("search")
-		lblSearch = html5.Span()
+		lblSearch = html5.H2()
 		lblSearch.appendChild( html5.TextNode(translate("Search")))
 		self.appendChild( lblSearch )
 		self.searchInput = html5.Input()
@@ -19,8 +19,8 @@ class Search( html5.Div ):
 
 	def doSearch(self, *args, **kwargs):
 		self.startSearchEvent.fire(self.searchInput["value"] or None)
-		if not "is_loading" in self.btn["class"]:
-			self.btn["class"].append("is_loading")
+		#if not "is_loading" in self.btn["class"]:
+		#	self.btn["class"].append("is_loading")
 
 	def onKeyDown(self, event):
 		if isReturn(event.keyCode):

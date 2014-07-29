@@ -508,18 +508,51 @@ margin-top: -20px;
   padding: 15px 1%;
   background: #dcdcdc;
   margin: 10px 1%;
-  border-radius: 3px;
+  border-radius: 2px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  border:1px solid #d2d2d2;
+  transition:all .3s ease;
 }
 
-.vi_operator .compoundfilter h2 {
+.vi_operator .compoundfilter h2,
+.vi_operator .search h2 {
   color: #777;
   line-height: 1.4em;
   font-size: 0.8em;
-  padding:0 15px 10px;
+  padding:0 15px;
 }
 
-.vi_operator .search span {
+.vi_operator .compoundfilter.collapsed .extendedfilter {
+    height: 0;
+    opacity: 0;
+    overflow:hidden;
+}
+
+.vi_operator .search.collapsed input,
+.vi_operator .search.collapsed button {display:none;}
+
+.vi_operator .search.expanded input {margin: 10px 15px;}
+
+.vi_operator .search.collapsed:hover,
+.vi_operator .compoundfilter.collapsed:hover {background-color:#e2e2e2; box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);}
+
+.vi_operator .search.expanded,
+.vi_operator .compoundfilter.expanded {
+box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+background-color:#d6d6d6;
+}
+
+.vi_operator .compoundfilter.expanded .extendedfilter {
+    margin-top:15px;
+}
+
+.vi_operator .compoundfilter.embed {
+    width: 98%;
+    margin: 0 0 20px;
+    background: #eee;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+.vi_operator .tree .search h2 {
   width: 60px;
   float: left;
   text-align: center;
@@ -528,7 +561,7 @@ margin-top: -20px;
   border: 1px solid#bbb;
   border-right-width: 0;
   background: #e3e3e3;
-  color:#777;
+  color: #777;
   overflow: hidden;
   line-height: 1.4em;
   font-size: 0.8em;
@@ -1303,6 +1336,8 @@ input[type=password],
 
 .extendedrelational .selectioncontainer {width:52.7%; float:left; margin-right:15px;}
 
+.extendedrelational > div {overflow: hidden;}
+
 .extendedrelational .labelwrapper button {
   display:block;
   margin-top:-28px;
@@ -1500,13 +1535,20 @@ select {
   font-weight: 100;
   color: #444;
 }
-.selectioncontainer, .tagcontainer {
+.selectioncontainer,
+.tagcontainer {
   display: inline-block;
 }
+
+.tagcontainer {min-width: 50%;}
+
 .selectioncontainer button,
 .tagcontainer button {
   margin-right: 15px;
 }
+
+.tagcontainer button {margin-bottom: 5px;}
+
 .selectioncontainer .entrydescription,
 .selectioncontainer label {
   border: 1px solid #ccc;
@@ -1854,78 +1896,63 @@ td span.time {
     margin: 0 18% 55px;
 }
 
-.issplitview .sidebar {
+.issplitview .sidebarwidgets {
   margin-left: 2%;
   width: 30%;
-  float:right;
+  float: right;
   padding: 10px 1%;
   border-radius: 5px;
   background: #eee;
-  border: 1px solid #ddd; 
+  border: 1px solid #ddd;
 }
-
-.issplitview .sidebar > div > button {
-  width:98%;
-  margin:0 1% 5px;
+.issplitview .sidebarwidgets > div > button {
+  width: 98%;
+  margin: 0 1% 5px;
 }
-
-.issplitview .sidebar > div > button img {
+.issplitview .sidebarwidgets > div > button img {
   width: 16px;
   float: left;
   margin-top: -2px;
 }
-
-.issplitview .sidebar .extendedfilter button {
-  float:right;
+.issplitview .sidebarwidgets .extendedfilter button {
+  float: right;
 }
-
-.issplitview .sidebar .extendedfilter span {
-  margin-top:5px;
+.issplitview .sidebarwidgets .extendedfilter span {
+  margin-top: 5px;
   margin-left: 15px;
   display: inline-block;
 }
-
-.sidebar > ul {
-}
-
-.sidebar > ul > li {
-  padding:3px;
+.sidebarwidgets > ul > li {
+  padding: 3px;
   border-bottom: 1px solid #ddd;
-  font-size:0.9em;
-  color:#444;
+  font-size: 0.9em;
+  color: #444;
 }
-
-.sidebar > ul > li dd img {
-  width:16px; 
+.sidebarwidgets > ul > li dd img {
+  width: 16px;
   margin-right: 10px;
 }
-
-.sidebar > ul > li dd ul {
+.sidebarwidgets > ul > li dd ul {
   overflow: hidden;
   height: 25px;
 }
-
-.sidebar > ul > li dd ul li {
+.sidebarwidgets > ul > li dd ul li {
   float: right;
   margin-left: 10px;
 }
-
-
-.sidebar > ul > li dl {
+.sidebarwidgets > ul > li dl {
   height: 23px;
 }
-
-.sidebar > ul > li dt {
+.sidebarwidgets > ul > li dt {
   display: inline-block;
   max-width: 30%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: @maincolor;
-  font-weight:600;
+  font-weight: 600;
 }
-
-.sidebar > ul > li dd {
+.sidebarwidgets > ul > li dd {
   display: inline-block;
   float: right;
   max-width: 60%;
@@ -1933,7 +1960,6 @@ td span.time {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 
 /* #vi_forest
 ================================================== */
