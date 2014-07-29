@@ -94,7 +94,12 @@ class ListWidget( html5.Div ):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
-		return( ["add", "edit", "clone", "delete", "preview", "selectfields"]+(["select","close"] if self.isSelector else [])+["reload","selectfilter"] )
+		defaultActions = ["add", "edit", "clone", "delete", "preview", "selectfields"]+(["select","close"] if self.isSelector else [])+["reload","selectfilter"]
+		if conf["modules"] and self.modul in conf["modules"].keys():
+			cfg = conf["modules"][ self.modul ]
+			if "actions" in cfg.keys() and cfg["actions"]:
+				defaultActions.extend( cfg["actions"] )
+		return( defaultActions )
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
