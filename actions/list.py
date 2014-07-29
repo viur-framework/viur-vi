@@ -374,14 +374,36 @@ actionDelegateSelector.insert( 1, ActivateSelectionAction.isSuitableFor, Activat
 class SelectFieldsPopup( html5.ext.Popup ):
 	def __init__(self, listWdg, *args, **kwargs):
 		super( SelectFieldsPopup, self ).__init__( title=translate("Select fields"), *args, **kwargs )
+
 		self["class"].append("selectfields")
 		self.listWdg = listWdg
+		self.checkboxes = []
+
+		self.selectAllBtn =  html5.ext.Button( translate( "Select all" ), callback=self.doSelectAll )
+		self.selectAllBtn[ "class" ].append( "selectall" )
+		self.unselectAllBtn =  html5.ext.Button( translate( "Unselect all" ), callback=self.doUnselectAll )
+		self.unselectAllBtn[ "class" ].append( "unselectall" )
+		self.invertSelectionBtn =  html5.ext.Button( translate( "Invert selection" ), callback=self.doInvertSelection )
+		self.invertSelectionBtn[ "class" ].append( "selectinvert" )
+
+		div = html5.Div()
+		div[ "class" ].append( "selectiontools" )
+
+		div.appendChild(self.selectAllBtn)
+		div.appendChild(self.unselectAllBtn)
+		div.appendChild(self.invertSelectionBtn)
+
+		self.appendChild( div )
+
 		if self.listWdg._structure:
 			for key, bone in self.listWdg._structure:
 				chkBox = html5.Input()
 				chkBox["type"] = "checkbox"
 				chkBox["value"] = key
+
 				self.appendChild(chkBox)
+				self.checkboxes.append( chkBox )
+
 				if key in self.listWdg.getFields():
 					chkBox["checked"] = True
 				lbl = html5.Label(bone["descr"],forElem=chkBox)
@@ -389,9 +411,12 @@ class SelectFieldsPopup( html5.ext.Popup ):
 		else:
 			self.close()
 			return
-		self.applyBtn = html5.ext.Button("Apply", callback=self.doApply)
-		self.appendChild(self.applyBtn)
 
+		self.cancelBtn = html5.ext.Button( translate( "Cancel" ), callback=self.doCancel)
+		self.applyBtn = html5.ext.Button( translate( "Apply" ), callback=self.doApply)
+
+		self.appendChild(self.cancelBtn)
+		self.appendChild(self.applyBtn)
 
 	def doApply(self, *args, **kwargs):
 		self.applyBtn["class"].append("is_loading")
@@ -402,6 +427,26 @@ class SelectFieldsPopup( html5.ext.Popup ):
 				res.append( c["value"] )
 		self.listWdg.setFields( res )
 		self.close()
+
+	def doCancel(self, *args, **kwargs):
+		self.close()
+
+	def doSelectAll(self, *args, **kwargs):
+		for cb in self.checkboxes:
+			if cb[ "checked" ] == False:
+				cb[ "checked" ] = True
+
+	def doUnselectAll(self, *args, **kwargs):
+		for cb in self.checkboxes:
+			if cb[ "checked" ] == True:
+				cb[ "checked" ] = False
+
+	def doInvertSelection(self, *args, **kwargs):
+		for cb in self.checkboxes:
+			if cb[ "checked" ] == False:
+				cb[ "checked" ] = True
+			else:
+				cb[ "checked" ] = False
 
 class SelelectFieldsAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
