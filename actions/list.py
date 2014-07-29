@@ -457,6 +457,11 @@ class ListSelectFilterAction( html5.ext.Button ):
 			self["disabled"] = True
 		if modul in conf["modules"].keys():
 			modulConfig = conf["modules"][modul]
+			if "disabledFunctions" in modulConfig.keys() and modulConfig[ "disabledFunctions" ] and "fulltext-search" in modulConfig[ "disabledFunctions" ]:
+				# Fulltext-Search is disabled
+				if not "views" in modulConfig.keys() or not modulConfig["views"]:
+					#And we dont have any views to display
+					self["disabled"] = True
 
 	def onClick(self, sender=None):
 		#if self.parent().parent().isSelector:

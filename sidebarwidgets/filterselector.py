@@ -91,15 +91,19 @@ class FilterSelector( html5.Div ):
 	def onAttach(self):
 		super( FilterSelector, self ).onAttach()
 		activeFilter = self.parent().parent().filterID
+		isSearchDisabled=False
 		if self.modul in conf["modules"].keys():
 			modulConfig = conf["modules"][self.modul]
 			if "views" in modulConfig.keys() and modulConfig["views"]:
 				for view in modulConfig["views"]:
 					self.appendChild( CompoundFilter( view, self.modul ) )
-		self.search = Search()
-		self.search["class"].append("collapsed")
-		self.appendChild(self.search)
-		self.search.startSearchEvent.register( self )
+			if "disabledFunctions" in modulConfig.keys() and modulConfig[ "disabledFunctions" ] and "fulltext-search" in modulConfig[ "disabledFunctions" ]:
+				isSearchDisabled = True
+		if not isSearchDisabled:
+			self.search = Search()
+			self.search["class"].append("collapsed")
+			self.appendChild(self.search)
+			self.search.startSearchEvent.register( self )
 
 
 	def onStartSearch(self, searchTxt):

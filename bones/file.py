@@ -14,6 +14,24 @@ from network import NetworkService
 from widgets.edit import EditWidget
 from pane import Pane
 
+
+class FileHref( html5.A ):
+	"""
+		This subclass drops all its links (href-, download- attributes) if its embedded directly inside a table.
+		This ensures that a click inside the table always results if focusing of that row (and not initializing
+		a download)
+	"""
+
+	def onAttach(self):
+		super( FileHref, self ).onAttach()
+		self.sinkEvent("onClick")
+
+	def onClick(self, event):
+		if isinstance( self.parent(), html5.Td ):
+			event.preventDefault()
+			event.stopPropagation()
+
+
 class FileViewBoneDelegate(object):
 	def __init__(self, modul, boneName, structure):
 		super(FileViewBoneDelegate, self).__init__()
@@ -25,7 +43,7 @@ class FileViewBoneDelegate(object):
 		self.boneName = boneName
 
 	def renderFileentry(self,fileentry):
-		adiv=html5.A()
+		adiv=FileHref()  #Fixme: We need a better method to accomplish this
 		adiv["Title"]=str(fileentry["name"])
 		if "mimetype" in fileentry.keys():
 			try:
@@ -36,7 +54,7 @@ class FileViewBoneDelegate(object):
 				pass
 		if "servingurl" in fileentry.keys() and fileentry["servingurl"]:
 			aimg=html5.Img()
-			aimg["src"]=fileentry["servingurl"]+"=s350-c"
+			aimg["src"]=fileentry["servingurl"]+"=s350"
 			aimg["alt"]=fileentry["name"]
 			adiv.appendChild(aimg)
 		aspan=html5.Span()
