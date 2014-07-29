@@ -1336,6 +1336,8 @@ input[type=password],
 
 .extendedrelational .selectioncontainer {width:52.7%; float:left; margin-right:15px;}
 
+.extendedrelational > div {overflow: hidden;}
+
 .extendedrelational .labelwrapper button {
   display:block;
   margin-top:-28px;
@@ -1533,13 +1535,20 @@ select {
   font-weight: 100;
   color: #444;
 }
-.selectioncontainer, .tagcontainer {
+.selectioncontainer,
+.tagcontainer {
   display: inline-block;
 }
+
+.tagcontainer {min-width: 50%;}
+
 .selectioncontainer button,
 .tagcontainer button {
   margin-right: 15px;
 }
+
+.tagcontainer button {margin-bottom: 5px;}
+
 .selectioncontainer .entrydescription,
 .selectioncontainer label {
   border: 1px solid #ccc;
