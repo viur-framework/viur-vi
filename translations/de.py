@@ -97,6 +97,7 @@ lngDe = {
 	"Flip View":u"Quellcode- / Textansicht wechseln",
 	"Text Editor":u"Text Editor",
 	"Search":u"Suche",
+	"Fulltext search": u"Volltext Suche",
     "Extended Search": u"Erweiterte Suche",
     "Apply": u"Übernehmen",
     "Cancel": u"Abbruch",
