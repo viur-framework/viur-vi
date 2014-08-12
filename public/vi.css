@@ -798,6 +798,18 @@ button.resend:before {
 button.trans:before {
   background-image: url(icons/actions/translate.svg);
 }
+
+/* Newsletter Icons */
+button.send.newsletter:before {
+  background-position: -80px -32px;
+}
+button.send.preview:before {
+  background-position: -96px -32px;
+}
+button.stats:before {
+  background-position: -112px -32px;
+}
+
 /* Textedit Icons */
 button.text {
   margin-bottom: 10px;
