@@ -485,6 +485,7 @@ p {
   min-height: 500px;
   background: #f6f6f6;
   overflow: hidden;
+  transform: translateY(0);
 }
 .vi_operator > div.supports_drop {
   border-top: 1px dashed #ccc;
@@ -742,7 +743,7 @@ button.save.close:before,
   background-position: 0px -16px;
 }
 button.activateselection:before {
-  background-position: 0px -32px;
+  background-position: -112px -16px; 
 }
 button.save.continue:before {
   background-position: -16px -16px;
