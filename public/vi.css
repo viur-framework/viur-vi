@@ -743,7 +743,7 @@ button.save.close:before,
   background-position: 0px -16px;
 }
 button.activateselection:before {
-  background-position: -112px -16px; 
+  background-position: 0px -32px;  
 }
 button.save.continue:before {
   background-position: -16px -16px;
