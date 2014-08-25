@@ -2313,8 +2313,9 @@ progress[value]::-webkit-progress-value {
   border-bottom: 2px solid #be1622 !important;
 }
 /* #vi_popups and alerts
-================================================== */.popup {
-  position: absolute;
+================================================== */
+.popup {
+  position: fixed;
   width: 100%;
   height: 100%;
   z-index: 1000;
