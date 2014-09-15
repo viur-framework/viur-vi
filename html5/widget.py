@@ -421,6 +421,10 @@ class Widget( object ):
 		self._children.remove( child )
 		child._parent = None
 
+	def removeAllChildren(self):
+		for child in self._children[:]:
+			self.removeChild( child )
+
 	def onBlur(self, event):
 		pass
 	def onChange(self, event):
@@ -481,6 +485,14 @@ class Widget( object ):
 		pass
 	def onScroll(self, event):
 		pass
+	def onTouchStart(self, event):
+		pass
+	def onTouchEnd(self, event):
+		pass
+	def onTouchMove(self, event):
+		pass
+	def onTouchCancel(self, event):
+		pass
 
 	def focus(self):
 		self.element.focus()
@@ -522,7 +534,11 @@ class Widget( object ):
 				"onmouseover":"onMouseOver",
 				"onmouseup":"onMouseUp",
 				"onmousewheel":"onMouseWheel",
-				"onscroll":"onScroll"
+				"onscroll":"onScroll",
+		        "ontouchstart":"onTouchStart",
+		        "ontouchend":"onTouchEnd",
+		        "ontouchmove":"onTouchMove",
+		        "ontouchcancel":"onTouchCancel"
 		}
 		return( res )
 
@@ -539,5 +555,4 @@ class Widget( object ):
 		for c in tmpl:
 			self.element.removeChild( c.element )
 			self.element.insertBefore( c.element, self.element.children.item(0) )
-
 

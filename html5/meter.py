@@ -1,10 +1,10 @@
 from html5.widget import Widget
 from html5.html5Attr.form import _Form as Form,Value
 class Meter( Widget,Form ,Value):
-    _baseClass = "meter"
+	_baseClass = "meter"
 
-    def __init__(self, *args, **kwargs):
-        super(Meter,self).__init__( *args, **kwargs )
+	def __init__(self, *args, **kwargs):
+		super(Meter,self).__init__( *args, **kwargs )
 
 	def _getHigh(self):
 		return self.element.high

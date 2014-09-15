@@ -3,13 +3,14 @@ from html5.html5Attr.src import Src
 from html5.html5Attr.form import Name
 from html5.html5Attr.media import Dimensions
 class Iframe( Widget,Src,Name,Dimensions):
-    _baseClass = "iframe"
+	_baseClass = "iframe"
 
-    def __init__(self, *args, **kwargs):
-        super(Iframe,self).__init__( *args, **kwargs )
+	def __init__(self, *args, **kwargs):
+		super(Iframe,self).__init__( *args, **kwargs )
 
 	def _getSandbox(self):
 		return self.element.sandbox
+
 	def _setSandbox(self,val):
 		self.element.sandbox=val
 

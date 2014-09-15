@@ -41,9 +41,9 @@ class Checked(object):
 
 class Name(object):
 	def _getName(self):
-		return self.element.name
+		return self.element.getAttribute( "name" )
 	def _setName(self,val):
-		self.element.name=val
+		self.element.setAttribute( "name", val )
 
 class Value(object):
 	def _getValue(self):

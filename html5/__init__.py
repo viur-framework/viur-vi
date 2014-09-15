@@ -42,4 +42,5 @@ from html5.video import Video
 from html5.elements import Abbr,Address,Article,Aside,B,Bdi,Br,Caption,Cite,Code,Datalist,Dfn,Em,Figcaption,Figure,Footer,Header,H1,H2,H3,H4,H5,H6,Hr,I,Kdb,Legend,Mark,Noscript,P,Rq,Rt,Ruby,S,Samp,Section,Small,Strong,Sub,Summery,Sup,U,Var,Wbr
 from html5._del import _Del as Del
 from html5._script import _Script as Script
-import ext
+
+import html5.ext

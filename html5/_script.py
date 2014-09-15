@@ -3,10 +3,10 @@ from html5.html5Attr.src import Src
 from html5.html5Attr.charset import Charset
 
 class _Script( Widget,Src,Charset ):
-    _baseClass = "script"
+	_baseClass = "script"
 
-    def __init__(self, *args, **kwargs):
-        super(_Script,self).__init__( *args, **kwargs )
+	def __init__(self, *args, **kwargs):
+		super(_Script,self).__init__( *args, **kwargs )
 
 	def _getAsync(self):
 		return( True if self.element.hasAttribute("async") else False )
