@@ -4,6 +4,7 @@ from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
+from widgets.repeatdate import RepeatDatePopup
 from widgets.preview import Preview
 from sidebarwidgets.internalpreview import InternalPreview
 from sidebarwidgets.filterselector import FilterSelector
@@ -524,3 +525,61 @@ class ListSelectFilterAction( html5.ext.Button ):
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 actionDelegateSelector.insert( 1, ListSelectFilterAction.isSuitableFor, ListSelectFilterAction )
+
+class RecurrentDateAction( html5.ext.Button ):
+	"""
+		Allows editing an entry in a list-modul.
+	"""
+
+	def __init__(self, *args, **kwargs):
+		super( RecurrentDateAction, self ).__init__( translate("Recurrent Events"), *args, **kwargs )
+		self["class"] = "icon clone"
+		self["disabled"]= True
+		self.isDisabled=True
+
+	def onAttach(self):
+		super(RecurrentDateAction,self).onAttach()
+		self.parent().parent().selectionChangedEvent.register( self )
+
+	def onDetach(self):
+		self.parent().parent().selectionChangedEvent.unregister( self )
+		super(RecurrentDateAction,self).onDetach()
+
+	def onSelectionChanged(self, table, selection ):
+		if len(selection)>0:
+			if self.isDisabled:
+				self.isDisabled = False
+			self["disabled"]= False
+		else:
+			if not self.isDisabled:
+				self["disabled"]= True
+				self.isDisabled = True
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		if modul is None:
+			return( False )
+		correctAction = actionName=="repeatdate"
+		correctHandler = handler == "list.calendar" or handler.startswith("list.calendar.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
+		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+
+	def onClick(self, sender=None):
+		selection = self.parent().parent().getCurrentSelection()
+		if not selection:
+			return
+		for s in selection:
+			self.openEditor( s["id"] )
+
+	def openEditor(self, id ):
+		pane = Pane(translate("Recurrent Events"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
+		conf["mainWindow"].stackPane( pane )
+		edwg = RepeatDatePopup(self.parent().parent().modul, key=id)
+		pane.addWidget( edwg )
+		pane.focus()
+
+	def resetLoadingState(self):
+		pass
+
+actionDelegateSelector.insert( 1, RecurrentDateAction.isSuitableFor, RecurrentDateAction )

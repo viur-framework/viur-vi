@@ -9,12 +9,13 @@ from i18n import translate
 class DateViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( DateViewBoneDelegate, self ).__init__()
-		print("NEW DATEBONE DELETEGATE")
+		print("NEW DATEBONE DELETEGATE", modulName, boneName, skelStructure)
 		self.skelStructure = skelStructure
 		self.boneName = boneName
 		self.modulName=modulName
 
 	def render( self, data, field ):
+
 		if not self.boneName in self.skelStructure or not data or not field in data.keys():
 			return( html5.Label("..") )
 		structure = self.skelStructure[self.boneName]
