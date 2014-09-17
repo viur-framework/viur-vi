@@ -36,7 +36,7 @@ class RepeatDatePopup(html5.Div):
 		self.appendChild( self.actionbar )
 		self.form = html5.Form()
 		self.appendChild(self.form)
-		self.actionbar.setActions(["save.close", "save.continue", "reset"])
+		self.actionbar.setActions(["create.recurrent"])
 		self.reloadData()
 
 	def reloadData(self):
@@ -66,8 +66,16 @@ class RepeatDatePopup(html5.Div):
 		if request:
 			data = NetworkService.decode( request )
 
-		skelStructure = utils.boneListToDict(data["structure"])
+		try:
+			skelStructure = utils.boneListToDict(data["structure"])
+		except AttributeError:
+			NetworkService.notifyChange(self.modul)
+			conf["mainWindow"].removeWidget( self )
+			return
 
+		print
+		print("data", data)
+		print("action", data["action"])
 		if "action" in data and (data["action"] in ["addSuccess", "editSuccess"]):
 			NetworkService.notifyChange(self.modul)
 			logDiv = html5.Div()
@@ -100,10 +108,10 @@ class RepeatDatePopup(html5.Div):
 		self.dataCache = data
 
 		fieldSets = {}
-		cat = "default"
+		cat = "byweek"
 		fs = html5.Fieldset()
 		fs["class"] = cat
-		if cat=="default":
+		if cat=="byweek":
 			fs["class"].append("active")
 
 		fs["name"] = cat
@@ -117,6 +125,7 @@ class RepeatDatePopup(html5.Div):
 		fs._section = section
 		fieldSets[ cat ] = fs
 
+		self.dtstart = data["values"]["startdate"]
 		startdateLabel = html5.Label("Termin")
 		startdateLabel["class"].append("termin")
 		startdateLabel["class"].append("date")
@@ -138,14 +147,14 @@ class RepeatDatePopup(html5.Div):
 		count_id = "vi_%s_%s_edit_bn_%s" % ( self.editIdx, self.modul, "count")
 		countLabel["for"] = count_id
 
-		count = html5.Input()
-		count["id"] = count_id
+		self.count = html5.Input()
+		self.count["id"] = count_id
 		containerDiv2 = html5.Div()
 		containerDiv2["class"].append("bone")
 		containerDiv2["class"].append("bone_count")
 		containerDiv2["class"].append("date")
 		containerDiv2.appendChild(countLabel)
-		containerDiv2.appendChild(count)
+		containerDiv2.appendChild(self.count)
 		fieldSets[ cat ]._section.appendChild(containerDiv2)
 		for (k,v) in fieldSets.items():
 			if not "active" in v["class"]:
@@ -155,6 +164,7 @@ class RepeatDatePopup(html5.Div):
 		for k,v in tmpList:
 			self.form.appendChild( v )
 			v._section = None
+
 
 	def clear(self):
 		"""
@@ -179,9 +189,8 @@ class RepeatDatePopup(html5.Div):
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
 
-	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
-		print("args", args)
-		print("kwargs", kwargs)
+	def doSave( self, closeOnSuccess=False):
 		self.closeOnSuccess = closeOnSuccess
+		data ={"count": self.count._getValue(), "kind" : "2", "dtstart" : self.dtstart}
 		# r = rrule.rrule(2, dtstart=datetime(2014, 7,1, 18,00), count=7)
-		self.save()
+		NetworkService.request(self.modul, "addrecurrent/%s" % self.key, data, secure=True, successHandler=self.setData, failureHandler=self.showErrorMsg )

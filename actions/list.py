@@ -583,3 +583,25 @@ class RecurrentDateAction( html5.ext.Button ):
 		pass
 
 actionDelegateSelector.insert( 1, RecurrentDateAction.isSuitableFor, RecurrentDateAction )
+
+
+
+class CreateRecurrentAction( html5.ext.Button ):
+	def __init__(self, *args, **kwargs):
+		super(CreateRecurrentAction, self ).__init__( translate("Save-Close"), *args, **kwargs )
+		self["class"] = "icon save close"
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		return( actionName=="create.recurrent" )
+
+	def onClick(self, sender=None):
+		self["class"].append("is_loading")
+		self.parent().parent().doSave(closeOnSuccess=True)
+
+	def resetLoadingState(self):
+		if "is_loading" in self["class"]:
+			self["class"].remove("is_loading")
+		pass
+
+actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRecurrentAction)
