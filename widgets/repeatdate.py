@@ -155,7 +155,26 @@ class RepeatDatePopup(html5.Div):
 		containerDiv2["class"].append("date")
 		containerDiv2.appendChild(countLabel)
 		containerDiv2.appendChild(self.count)
+
+		# containerDiv3 = html5.Div()
+		# self.byweekday = list()
+		# for key, value in [["MO", "Mo"], ["TU", "Di"], ["TH", "Mi"], ["WE", "Do"], ["FR", "Fr"], ["SA", "Sa"], ["SU", "So"]]:
+		# 	alabel=html5.Label()
+		# 	acheckbox=html5.Input()
+		# 	acheckbox["type"]="checkbox"
+		# 	acheckbox["name"]=key
+		# 	alabel.appendChild(acheckbox)
+		# 	aspan=html5.Span()
+		# 	aspan.element.innerHTML=value
+		# 	alabel.appendChild(aspan)
+		# 	containerDiv3.appendChild(alabel)
+		# 	containerDiv2["class"].append("bone")
+		# 	containerDiv2["class"].append("bone_count")
+		# 	containerDiv2["class"].append("byweekday")
+		# 	self.byweekday.append(acheckbox)
+
 		fieldSets[ cat ]._section.appendChild(containerDiv2)
+		# fieldSets[ cat ]._section.appendChild(containerDiv3)
 		for (k,v) in fieldSets.items():
 			if not "active" in v["class"]:
 				v["class"].append("active")
@@ -191,6 +210,8 @@ class RepeatDatePopup(html5.Div):
 
 	def doSave( self, closeOnSuccess=False):
 		self.closeOnSuccess = closeOnSuccess
-		data ={"count": self.count._getValue(), "kind" : "2", "dtstart" : self.dtstart}
+		data ={"count": self.count._getValue(), "kind" : "2", "dtstart" : self.dtstart
+		# , "byweekday" : [box["name"] for box in self.byweekday if box["checked"]]
+		}
 		# r = rrule.rrule(2, dtstart=datetime(2014, 7,1, 18,00), count=7)
 		NetworkService.request(self.modul, "addrecurrent/%s" % self.key, data, secure=True, successHandler=self.setData, failureHandler=self.showErrorMsg )
