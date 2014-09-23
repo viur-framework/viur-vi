@@ -5,6 +5,7 @@ from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
 from widgets.repeatdate import RepeatDatePopup
+from widgets.table import DataTable
 from widgets.preview import Preview
 from sidebarwidgets.internalpreview import InternalPreview
 from sidebarwidgets.filterselector import FilterSelector
@@ -533,7 +534,7 @@ class RecurrentDateAction( html5.ext.Button ):
 
 	def __init__(self, *args, **kwargs):
 		super( RecurrentDateAction, self ).__init__( translate("Recurrent Events"), *args, **kwargs )
-		self["class"] = "icon clone"
+		self["class"] = "icon createrecurrent_small"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -605,3 +606,5 @@ class CreateRecurrentAction( html5.ext.Button ):
 		pass
 
 actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRecurrentAction)
+
+
