@@ -54,7 +54,7 @@ class FileViewBoneDelegate(object):
 				pass
 		if "servingurl" in fileentry.keys() and fileentry["servingurl"]:
 			aimg=html5.Img()
-			aimg["src"]=fileentry["servingurl"]+"=s350"
+			aimg["src"]=fileentry["servingurl"]+"=s150"
 			aimg["alt"]=fileentry["name"]
 			adiv.appendChild(aimg)
 		aspan=html5.Span()
@@ -92,7 +92,7 @@ class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 		self["class"].append("fileentry")
 		if "servingurl" in self.data.keys():
 			img = html5.Img()
-			img["src"] = self.data["servingurl"]
+			img["src"] = self.data["servingurl"]+"=s150"
 			img["class"].append("previewimg")
 			self.appendChild(img)
 			# Move the img in front of the lbl
@@ -248,7 +248,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			self.selectionTxt["value"] = translate("Loading...")
 
 			if "servingurl" in self.selection.keys():
-				self.previewImg["src"] = self.selection["servingurl"]
+				self.previewImg["src"] = self.selection["servingurl"]+"=s150"
 				self.previewImg["style"]["display"] = ""
 			else:
 				self.previewImg["style"]["display"] = "none"
