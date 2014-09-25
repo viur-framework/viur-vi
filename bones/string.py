@@ -15,20 +15,22 @@ class StringBoneExtractor( object ):
 		self.modulName=modulName
 
 	def render( self, data, field ):
+		# print("StringBoneExtractor.render", data, field)
 		if field in data.keys():
 			##multilangs
 			if isinstance(data[field], dict):
 				resstr=""
 				if "currentlanguage" in conf.keys():
 					if conf["currentlanguage"] in data[field].keys():
-						resstr=data[field][conf["currentlanguage"]]
+						resstr=data[field][conf["currentlanguage"]].replace("&quot;", "")
 					else:
 						if len(data[field].keys())>0:
-							resstr=data[field][data[field].keys()[0]]
+							resstr=data[field][data[field].keys()[0]].replace("&quot;", "")
 				return resstr
 			else:
-				return str(data[field])
+				return str(data[field]).replace("&quot;", "").replace(";", " ")
 		return ".."
+
 
 class StringViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):

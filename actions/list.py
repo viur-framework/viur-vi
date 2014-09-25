@@ -601,11 +601,6 @@ class CreateRecurrentAction( html5.ext.Button ):
 		self["class"].append("is_loading")
 		self.parent().parent().doSave(closeOnSuccess=True)
 
-	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
-		pass
-
 actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRecurrentAction)
 
 
@@ -619,16 +614,10 @@ class CsvExportAction( html5.ext.Button ):
 		return( actionName=="exportcsv" and handler == "list" or handler.startswith("list."))
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
 		pane = Pane(translate("Csv Exporter"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "exportcsv" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = CsvExport(self.parent().parent().modul)
 		pane.addWidget( edwg )
 		pane.focus()
-
-	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
-		pass
 
 actionDelegateSelector.insert( 1, CsvExportAction.isSuitableFor, CsvExportAction)

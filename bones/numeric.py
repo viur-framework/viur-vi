@@ -13,9 +13,14 @@ class NumericBoneExtractor( object ):
 		self.modulName=modulName
 
 	def render( self, data, field ):
+		# print("NumericBoneExtractor.render", data, field)
 		if field in data.keys():
-			return str(data[field])
-		return ".."
+			value = data[field]
+			if isinstance(value, int):
+				return str(value)
+			elif isinstance(value, float):
+				return str(round(data[field], self.skelStructure[field].get("precision", 2))).replace(".", ",")
+		return "-23,42"
 
 
 class NumericViewBoneDelegate( object ):
@@ -127,4 +132,4 @@ def CheckForNumericBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 editBoneSelector.insert( 3, CheckForNumericBone, NumericEditBone)
 viewDelegateSelector.insert( 3, CheckForNumericBone, NumericViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedNumericSearch.canHandleExtension, ExtendedNumericSearch )
-extractorBoneSelector.insert( 3, CheckForNumericBone, NumericBoneExtractor)
+extractorDelegateSelector.insert( 3, CheckForNumericBone, NumericBoneExtractor)

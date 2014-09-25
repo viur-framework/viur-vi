@@ -24,17 +24,23 @@ class RelationalBoneExtractor( object ):
 		self.boneName = boneName
 
 	def render(self, data, field ):
+		# print("field", field)
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
 		if field in data.keys():
 			val = data[field]
 		else:
 			val = ""
 		if isinstance(val, list):
-			val = ", ".join( [ (formatString(self.format,self.structure, x) or x["id"]) for x in val] )
+			result = list()
+			for x in val:
+				result.append(formatString(self.format, self.structure, x) or x["id"])
+			return ", ".join(result)
 		#val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
 		elif isinstance(val, dict):
 			val = formatString(self.format,self.structure, val ) or val["id"]
-		return val
+		else:
+			print("warning type:", val, type(val))
+		return val.replace("&quot;", "")
 
 
 class RelationalViewBoneDelegate( object ):
@@ -55,7 +61,7 @@ class RelationalViewBoneDelegate( object ):
 		else:
 			val = ""
 		if isinstance(val,list):
-			val = ", ".join( [ (formatString(self.format,self.structure, x) or x["id"]) for x in val] )
+			val = ", ".join( [ (formatString(self.format, self.structure, x) or x["id"]) for x in val] )
 			#val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
 		elif isinstance(val, dict):
 			val = formatString(self.format,self.structure, val ) or val["id"]

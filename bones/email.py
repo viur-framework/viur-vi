@@ -7,6 +7,18 @@ import bones.string as strBone
 from widgets.edit import InvalidBoneValueException
 import re
 
+class EmailBoneExtractor(object):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+		super( EmailViewBoneDelegate, self ).__init__()
+		self.skelStructure = skelStructure
+		self.boneName = boneName
+		self.modulName=modulName
+
+	def render(self, data, field):
+		if field in data.keys():
+			return data[field]
+
+
 class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( EmailViewBoneDelegate, self ).__init__( modulName, boneName, skelStructure, *args, **kwargs)

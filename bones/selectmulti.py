@@ -1,14 +1,13 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from i18n import translate
 
-
 class SelectMultiBoneExtractor( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
-		super( SelectMultiBoneExtractor, self ).__init__()
+		super(SelectMultiBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
 		self.modulName=modulName
@@ -20,10 +19,11 @@ class SelectMultiBoneExtractor( object ):
 				if not fieldKey in self.skelStructure[field]["values"].keys():
 					result.append(fieldKey)
 				else:
-					result.append(self.skelStructure[field]["values"][fieldKey])
-			return result
-		return "&nbsp; - &nbsp;"
-
+					value = self.skelStructure[field]["values"][fieldKey]
+					if value:
+						result.append(value)
+			return ",".join(result)
+		return ".."
 
 class SelectMultiViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -44,7 +44,7 @@ class SelectMultiViewBoneDelegate( object ):
 				ali["Title"] = fieldKey
 				result.appendChild(ali)
 			return( result)
-		return( html5.Label("&nbsp; - &nbsp;") )
+		return html5.Label("&nbsp; - &nbsp;")
 
 class SelectMultiEditBone( html5.Div ):
 
@@ -70,7 +70,6 @@ class SelectMultiEditBone( html5.Div ):
 			self.appendChild(alabel)
 		if self.readOnly:
 			self["disabled"] = True
-
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
@@ -105,7 +104,6 @@ class SelectMultiEditBone( html5.Div ):
 	def setExtendedErrorInformation(self, errorInfo ):
 		pass
 
-
 class ExtendedSelectMultiSearch( html5.Div ):
 	def __init__(self, extension, view, modul, *args, **kwargs ):
 		super( ExtendedSelectMultiSearch, self ).__init__( *args, **kwargs )
@@ -131,7 +129,6 @@ class ExtendedSelectMultiSearch( html5.Div ):
 		event.stopPropagation()
 		self.filterChangedEvent.fire()
 
-
 	def updateFilter(self, filter):
 		val = self.selectionCb["options"].item(self.selectionCb["selectedIndex"]).value
 		if not val:
@@ -152,3 +149,4 @@ def CheckForSelectMultiBone(  modulName, boneName, skelStucture, *args, **kwargs
 editBoneSelector.insert( 3, CheckForSelectMultiBone, SelectMultiEditBone)
 viewDelegateSelector.insert( 3, CheckForSelectMultiBone, SelectMultiViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedSelectMultiSearch.canHandleExtension, ExtendedSelectMultiSearch )
+extractorDelegateSelector.insert(3, CheckForSelectMultiBone, SelectMultiBoneExtractor)

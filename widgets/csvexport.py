@@ -22,7 +22,7 @@ class FallbackExtractor(object):
 		self.modulName=modulName
 
 	def render( self, data, field ):
-		return str(data)
+		return str(data[field])
 
 
 class CsvExport(Div):
@@ -46,7 +46,7 @@ class CsvExport(Div):
 		self.filter = {"state_rts": "1"}
 		self.columns = list()
 		self.skelData = list()
-		self.cell_renderer = list()
+		self.cell_renderer = dict()
 		# Proxy some events and functions of the original table
 		self.emptyNotificationDiv = Div()
 		self.emptyNotificationDiv.appendChild(TextNode("Currently no entries"))
@@ -74,11 +74,12 @@ class CsvExport(Div):
 		for key, bone in self._structure:
 			if bone["visible"]:
 				self.columns.append(key)
-				extractor = extractorDelegateSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict)
+				extractor = extractorDelegateSelector.select(self.module, key, tmpDict)
 				if not extractor:
-					extractor = FallbackExtractor(self.module, key, tmpDict)
-				self.cell_renderer.append(extractor)
-				print("structure", self.columns)
+					extractor = FallbackExtractor
+				extractor = extractor(self.module, key, tmpDict)
+				self.cell_renderer[key] = extractor
+		# print("structure", self.columns)
 		self.reloadData()
 
 	def onNextBatchNeeded(self, *args, **kwargs):
@@ -104,20 +105,20 @@ class CsvExport(Div):
 		"""
 			Requests the next rows from the server and feed them to the table.
 		"""
-		if self._currentCursor:
+		if self._currentCursor is not None:
 			filter = self.filter.copy()
 			filter["amount"] = self._batchSize
-			if self._currentCursor is not None:
-				filter["cursor"] = self._currentCursor
+			filter["cursor"] = self._currentCursor
 			self._currentRequests.append(
 				NetworkService.request(self.module, "list", filter, successHandler=self.onCompletion,
-				                       failureHandler=self.showErrorMsg))
+					failureHandler=self.showErrorMsg))
 			self._currentCursor = None
 
 	def reloadData(self):
 		"""
 			Removes all currently displayed data and refetches the first batch from the server.
 		"""
+		self.skelData = []
 		self._currentCursor = None
 		self._currentRequests = []
 		filter = self.filter.copy()
@@ -133,20 +134,23 @@ class CsvExport(Div):
 		"""
 		if not req in self._currentRequests:
 			return
+
 		self._currentRequests.remove(req)
-		# self.search.resetLoadingState()
 		data = NetworkService.decode(req)
-		if data["structure"] is None:
-			return
 
 		self.emptyNotificationDiv["style"]["display"] = "none"
-
-		if "cursor" in data.keys():
+		skeldata = data["skellist"]
+		# print("cursors", self._currentCursor, data["cursor"])
+		if skeldata and "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
-		self.skelData.extend(data["skellist"])
-		self.DIS_onNextBatchNeeded()
+			self.skelData.extend(skeldata)
+			self.DIS_onNextBatchNeeded()
+		else:
+			self._currentCursor = None
+
 
 	def on_btnExport_released(self, *args, **kwargs):
+		print("exporting now...")
 		if not self.skelData:
 			return
 
@@ -155,28 +159,30 @@ class CsvExport(Div):
 
 		resStr = ";".join(self.columns) + "\n"
 		count = len(self.columns)
+		# print("renderers", self.cell_renderer)
 		for recipient in data:
 			values = [None for i in range(count)]
 			for key, value in recipient.items():
-				if value is None or value == "None" or value == "none":
+				if key not in self.columns or value is None or value == "None" or value == "none":
 					continue
-				extractor = self.cell_renderer.get(key, fallback_extractor)
+				extractor = self.cell_renderer[key]
 				try:
 					index = self.columns.index(str(key))
-					values[index] = str(value)
+					values[index] = extractor.render(recipient, key)
 				except ValueError:
 					pass
 			line = ";".join(values) + "\n"
 			resStr += line
 
 		tmpA = A()
-		encFunc = eval("encodeURIComponent");
+		encFunc = eval("encodeURIComponent")
 		tmpA["href"] = "data:text/plain;charset=utf-8," + encFunc(resStr)
-		print("conf", conf)
+		# print("conf", conf)
 		tmpA["download"] = "export-%s-%s.csv" % (self.module, datetime.now().strftime("%Y%m%d%H%M"))
 		tmpA.element.click()
-		print( resStr )
+		# print( resStr )
 		conf["mainWindow"].removeWidget(self)
+		# print("exporting finished!")
 
 	def onFinished(self, req):
 		if self.request.isIdle():

@@ -3,7 +3,7 @@
 from event import EventDispatcher
 
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from utils import formatString
 from widgets.file import FileWidget, LeafFileWidget
 from config import conf
@@ -13,6 +13,36 @@ from i18n import translate
 from network import NetworkService
 from widgets.edit import EditWidget
 from pane import Pane
+
+
+class FileBoneExtractor(object):
+	def __init__(self, modul, boneName, structure):
+		super(FileBoneExtractor, self).__init__()
+		self.format = "$(name)"
+		if "format" in structure[boneName].keys():
+			self.format = structure[boneName]["format"]
+		self.modul = modul
+		self.structure = structure
+		self.boneName = boneName
+
+	def renderFileentry(self, fileentry):
+		return fileentry["name"] + " /file/download/" + str(fileentry["dlkey"]) + "?download=1&fileName=" + str(fileentry["name"])
+
+	def render(self, data, field ):
+		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
+		if field in data.keys():
+			val = data[field]
+		else:
+			val = ""
+
+		if isinstance(val, list):
+			result = list()
+			for f in val:
+				result.append(self.renderFileentry(f))
+			return ", ".join(result)
+		elif isinstance(val, dict):
+			return self.renderFileentry(val)
+		return val
 
 
 class FileHref( html5.A ):
@@ -276,3 +306,4 @@ def CheckForFileBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 editBoneSelector.insert( 5, CheckForFileBoneSingleSelection, FileSingleSelectionBone)
 editBoneSelector.insert( 5, CheckForFileBoneMultiSelection, FileMultiSelectionBone)
 viewDelegateSelector.insert( 3, CheckForFileBone, FileViewBoneDelegate)
+extractorDelegateSelector.insert(3, CheckForFileBone, FileBoneExtractor)
