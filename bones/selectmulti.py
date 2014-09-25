@@ -5,6 +5,26 @@ from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearch
 from event import EventDispatcher
 from i18n import translate
 
+
+class SelectMultiBoneExtractor( object ):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+		super( SelectMultiBoneExtractor, self ).__init__()
+		self.skelStructure = skelStructure
+		self.boneName = boneName
+		self.modulName=modulName
+
+	def render( self, data, field ):
+		if field in data.keys():
+			result = list()
+			for fieldKey in data[field]:
+				if not fieldKey in self.skelStructure[field]["values"].keys():
+					result.append(fieldKey)
+				else:
+					result.append(self.skelStructure[field]["values"][fieldKey])
+			return result
+		return "&nbsp; - &nbsp;"
+
+
 class SelectMultiViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( SelectMultiViewBoneDelegate, self ).__init__()

@@ -100,6 +100,7 @@ class CoreWindow( html5.Div ):
 				return( None )
 
 		def getModulSortIndex(argIn):
+			print("argIn", argIn[1])
 			try:
 				return( argIn[1]["sortIndex"] )
 			except:
@@ -122,6 +123,7 @@ class CoreWindow( html5.Div ):
 		# Sorting the 2nd level entries
 		tmpList = [(x,y) for x,y in self.config["modules"].items()]
 		tmpList.sort(key=getModulName)
+		print("tmpList", tmpList)
 		tmpList.sort(key=getModulSortIndex, reverse=True)
 		for modulName, modulInfo in tmpList:
 			if not "root" in userAccess and not any([x.startswith(modulName) for x in userAccess]):

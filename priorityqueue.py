@@ -64,6 +64,7 @@ actionDelegateSelector = PriorityQueue() # Locates an QAction for a given modul/
 displayDelegateSelector = PriorityQueue() # Selects a widget used to display data from a certain modul
 initialHashHandler = PriorityQueue() # Provides the handler for the initial hash given in the url
 extendedSearchWidgetSelector = PriorityQueue() # Selects a widget used to perform user-customizable searches
+extractorDelegateSelector = PriorityQueue() # selects a widget used to extract raw data from bones including special features like multilanguage support
 #OLD
 
 

@@ -1,9 +1,22 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from html5.keycodes import *
+
+class NumericBoneExtractor( object ):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+		super(NumericBoneExtractor, self ).__init__()
+		self.skelStructure = skelStructure
+		self.boneName = boneName
+		self.modulName=modulName
+
+	def render( self, data, field ):
+		if field in data.keys():
+			return str(data[field])
+		return ".."
+
 
 class NumericViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -16,6 +29,7 @@ class NumericViewBoneDelegate( object ):
 		if field in data.keys():
 			return( html5.Label(str( data[field])))
 		return( html5.Label("..") )
+
 
 class NumericEditBone( html5.Input ):
 	def __init__(self, modulName, boneName,readOnly,_min=False,_max=False,precision=False, *args, **kwargs ):
@@ -113,3 +127,4 @@ def CheckForNumericBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 editBoneSelector.insert( 3, CheckForNumericBone, NumericEditBone)
 viewDelegateSelector.insert( 3, CheckForNumericBone, NumericViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedNumericSearch.canHandleExtension, ExtendedNumericSearch )
+extractorBoneSelector.insert( 3, CheckForNumericBone, NumericBoneExtractor)
