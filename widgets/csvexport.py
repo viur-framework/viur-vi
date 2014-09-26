@@ -7,6 +7,8 @@ from event import viInitializedEvent
 from config import conf
 
 from html5.textnode import TextNode
+from html5.form import Input, Label
+from html5.span import Span
 from widgets.table import DataTable
 from network import NetworkService
 from priorityqueue import viewDelegateSelector, actionDelegateSelector, extractorDelegateSelector
@@ -54,13 +56,26 @@ class CsvExport(Div):
 		self.appendChild(self.emptyNotificationDiv)
 
 		self.emptyNotificationDiv["style"]["display"] = "none"
+
+		tmpList = [["de", "Deutsch"], ["en", "Englisch"]]
+		tmp = Div()
+		self.appendChild(tmp)
+		for key, value in tmpList:
+			alabel=Label()
+			acheckbox=Input()
+			acheckbox["type"]="checkbox"
+			acheckbox["name"]=key
+			if key == conf["currentlanguage"]:
+				acheckbox["checked"] = True
+			alabel.appendChild(acheckbox)
+			aspan=Span()
+			aspan.element.innerHTML=value
+			alabel.appendChild(aspan)
+			tmp.appendChild(alabel)
+
 		self.exportBtn = Button("Export", self.on_btnExport_released)
 		self.appendChild(self.exportBtn)
-		filter = self.filter.copy()
-		filter["amount"] = 1
-		self._currentRequests.append(
-			NetworkService.request(self.module, "list", filter, successHandler=self.onSkelStructureCompletion,
-			                       failureHandler=self.showErrorMsg))
+
 
 	def onSkelStructureCompletion(self, req):
 		if not req in self._currentRequests:
@@ -140,16 +155,23 @@ class CsvExport(Div):
 
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		skeldata = data["skellist"]
+		self.skelData.extend(skeldata)
 		# print("cursors", self._currentCursor, data["cursor"])
 		if skeldata and "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
-			self.skelData.extend(skeldata)
 			self.DIS_onNextBatchNeeded()
 		else:
 			self._currentCursor = None
-
+			self.dataArrived()
 
 	def on_btnExport_released(self, *args, **kwargs):
+		filter = self.filter.copy()
+		filter["amount"] = 1
+		self._currentRequests.append(
+			NetworkService.request(self.module, "list", filter, successHandler=self.onSkelStructureCompletion,
+			                       failureHandler=self.showErrorMsg))
+
+	def dataArrived(self):
 		print("exporting now...")
 		if not self.skelData:
 			return

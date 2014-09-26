@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from config import conf
 import bones.string as strBone
 from widgets.edit import InvalidBoneValueException
@@ -67,3 +67,4 @@ def CheckForEmailBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 #Register this Bone in the global queue
 editBoneSelector.insert( 4, CheckForEmailBone, EmailEditBone)
 viewDelegateSelector.insert( 4, CheckForEmailBone, EmailViewBoneDelegate)
+extractorDelegateSelector.insert(4, CheckForEmailBone, EmailBoneExtractor)
