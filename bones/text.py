@@ -1,11 +1,38 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from config import conf
 from widgets.wysiwyg import Wysiwyg
 import utils
 from i18n import translate
+
+
+class TextBoneExtractor( object ):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+		super( TextBoneExtractor, self ).__init__()
+		self.skelStructure = skelStructure
+		self.boneName = boneName
+		self.modulName=modulName
+
+	def render( self, data, field ):
+		if field in data.keys():
+			##multilangs
+			if isinstance(data[field], dict):
+				resstr=""
+				if "currentlanguage" in conf.keys():
+					if conf["currentlanguage"] in data[field].keys():
+						resstr=data[field][conf["currentlanguage"]]
+					else:
+						if data[field].keys().length>0:
+							resstr=data[field][data[field].keys()[0]]
+				return resstr
+			else:
+				#no langobject
+				return str(data[field])
+		return ".."
+
+
 class TextViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( TextViewBoneDelegate, self ).__init__()
@@ -170,3 +197,4 @@ def CheckForTextBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForTextBone, TextEditBone)
 viewDelegateSelector.insert( 3, CheckForTextBone, TextViewBoneDelegate)
+extractorDelegateSelector.insert(3, CheckForTextBone, TextBoneExtractor)

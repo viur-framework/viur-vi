@@ -44,3 +44,4 @@ class SaveClose( html5.ext.Button ):
 		pass
 
 actionDelegateSelector.insert( 1, SaveClose.isSuitableFor, SaveClose )
+

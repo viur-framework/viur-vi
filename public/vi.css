@@ -757,6 +757,9 @@ button.reset:before {
 button.reload:before {
   background-position: -80px -16px;
 }
+button.createrecurrent_small:before {
+    background-position: -96px -16px;
+}
 button.close:before,
 button.cancel:before,
 .btn_no:before {

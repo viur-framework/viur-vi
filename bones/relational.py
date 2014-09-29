@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from utils import formatString
 from widgets.list import ListWidget
@@ -11,6 +11,37 @@ from i18n import translate
 from network import NetworkService
 from widgets.edit import EditWidget
 from pane import Pane
+
+class RelationalBoneExtractor( object ):
+	cantSort = True
+	def __init__(self, modul, boneName, structure):
+		super(RelationalBoneExtractor, self).__init__()
+		self.format = "$(name)"
+		if "format" in structure[boneName].keys():
+			self.format = structure[boneName]["format"]
+		self.modul = modul
+		self.structure = structure
+		self.boneName = boneName
+
+	def render(self, data, field ):
+		# print("field", field)
+		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
+		if field in data.keys():
+			val = data[field]
+		else:
+			val = ""
+		if isinstance(val, list):
+			result = list()
+			for x in val:
+				result.append(formatString(self.format, self.structure, x) or x["id"])
+			return ", ".join(result)
+		#val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
+		elif isinstance(val, dict):
+			val = formatString(self.format,self.structure, val ) or val["id"]
+		else:
+			print("warning type:", val, type(val))
+		return val.replace("&quot;", "")
+
 
 class RelationalViewBoneDelegate( object ):
 	cantSort = True
@@ -30,7 +61,7 @@ class RelationalViewBoneDelegate( object ):
 		else:
 			val = ""
 		if isinstance(val,list):
-			val = ", ".join( [ (formatString(self.format,self.structure, x) or x["id"]) for x in val] )
+			val = ", ".join( [ (formatString(self.format, self.structure, x) or x["id"]) for x in val] )
 			#val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
 		elif isinstance(val, dict):
 			val = formatString(self.format,self.structure, val ) or val["id"]
@@ -528,3 +559,4 @@ editBoneSelector.insert( 3, CheckForRelationalBoneSingleSelection, RelationalSin
 editBoneSelector.insert( 3, CheckForRelationalBoneMultiSelection, RelationalMultiSelectionBone)
 viewDelegateSelector.insert( 3, CheckForRelationalBone, RelationalViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedRelationalSearch.canHandleExtension, ExtendedRelationalSearch )
+extractorDelegateSelector.insert(3, CheckForRelationalBone, RelationalBoneExtractor)

@@ -1,11 +1,23 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from config import conf
 import bones.string as strBone
 from widgets.edit import InvalidBoneValueException
 import re
+
+class EmailBoneExtractor(object):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+		super( EmailViewBoneDelegate, self ).__init__()
+		self.skelStructure = skelStructure
+		self.boneName = boneName
+		self.modulName=modulName
+
+	def render(self, data, field):
+		if field in data.keys():
+			return data[field]
+
 
 class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -55,3 +67,4 @@ def CheckForEmailBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 #Register this Bone in the global queue
 editBoneSelector.insert( 4, CheckForEmailBone, EmailEditBone)
 viewDelegateSelector.insert( 4, CheckForEmailBone, EmailViewBoneDelegate)
+extractorDelegateSelector.insert(4, CheckForEmailBone, EmailBoneExtractor)

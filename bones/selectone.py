@@ -1,9 +1,24 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from i18n import translate
+
+class SelectOneBoneExtractor( object ):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+		super( SelectOneBoneExtractor, self ).__init__()
+		self.skelStructure = skelStructure
+		self.boneName = boneName
+		self.modulName=modulName
+
+	def render( self, data, field ):
+		if field in data.keys():
+			if data and field and field in self.skelStructure and data[field] and data[field] in self.skelStructure[field]["values"]:
+				return self.skelStructure[field]["values"][data[field]]
+		return ".."
+
+
 class SelectOneViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( SelectOneViewBoneDelegate, self ).__init__()
@@ -117,3 +132,4 @@ def CheckForSelectOneBone(  modulName, boneName, skelStucture, *args, **kwargs )
 editBoneSelector.insert( 3, CheckForSelectOneBone, SelectOneEditBone)
 viewDelegateSelector.insert( 3, CheckForSelectOneBone, SelectOneViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedSelectOneSearch.canHandleExtension, ExtendedSelectOneSearch )
+extractorDelegateSelector.insert(3, CheckForSelectOneBone, SelectOneBoneExtractor)

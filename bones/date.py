@@ -1,20 +1,60 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from datetime import datetime
 import re
 from i18n import translate
 
-class DateViewBoneDelegate( object ):
+
+
+class DateBoneExtractor( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
-		super( DateViewBoneDelegate, self ).__init__()
-		print("NEW DATEBONE DELETEGATE")
+		super( DateBoneExtractor, self ).__init__()
+		print("NEW DATEBONE Extractor", modulName, boneName, skelStructure)
 		self.skelStructure = skelStructure
 		self.boneName = boneName
 		self.modulName=modulName
 
 	def render( self, data, field ):
+
+		if not self.boneName in self.skelStructure or not data or not field in data.keys():
+			return ".."
+		structure = self.skelStructure[self.boneName]
+		val = data[field]
+		try:
+			if structure["date"] and structure["time"]:
+				try:
+					dt = datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
+				except:
+					return "Error parsing Date"
+				return dt.strftime("%d.%m.%Y %H:%M:%S")
+			elif structure["date"] and not structure["time"]:
+				try:
+					dt = datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
+				except:
+					return "Error parsing Date"
+				return dt.strftime("%d.%m.%Y")
+			elif not structure["date"] and structure["time"]:
+				try:
+					dt = datetime.strptime( val, "%H:%M:%S")
+				except:
+					return "Error parsing time"
+				return dt.strftime("%H:%M:%S")
+		except:
+			return str(val)
+
+
+class DateViewBoneDelegate( object ):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+		super( DateViewBoneDelegate, self ).__init__()
+		print("NEW DATEBONE DELETEGATE", modulName, boneName, skelStructure)
+		self.skelStructure = skelStructure
+		self.boneName = boneName
+		self.modulName=modulName
+
+	def render( self, data, field ):
+
 		if not self.boneName in self.skelStructure or not data or not field in data.keys():
 			return( html5.Label("..") )
 		structure = self.skelStructure[self.boneName]
@@ -128,3 +168,4 @@ def CheckForDateBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForDateBone, DateEditBone)
 viewDelegateSelector.insert( 3, CheckForDateBone, DateViewBoneDelegate)
+extractorDelegateSelector.insert(3, CheckForDateBone, DateBoneExtractor)

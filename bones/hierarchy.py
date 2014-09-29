@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from utils import formatString
 from widgets.hierarchy import HierarchyWidget
 from config import conf
-from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalViewBoneDelegate
+from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalViewBoneDelegate, RelationalBoneExtractor
 
 
 
@@ -60,3 +60,4 @@ def CheckForHierarchyBone(  modulName, boneName, skelStucture, *args, **kwargs )
 editBoneSelector.insert( 5, CheckForHierarchyBoneSingleSelection, HierarchySingleSelectionBone)
 editBoneSelector.insert( 5, CheckForHierarchyBoneMultiSelection, HierarchyMultiSelectionBone)
 viewDelegateSelector.insert( 3, CheckForHierarchyBone, RelationalViewBoneDelegate)
+extractorDelegateSelector.insert(3, CheckForHierarchyBone, RelationalBoneExtractor)

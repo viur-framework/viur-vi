@@ -1,11 +1,36 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from config import conf
 from event import EventDispatcher
 from html5.keycodes import *
 from i18n import translate
+
+class StringBoneExtractor( object ):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+		super( StringBoneExtractor, self ).__init__()
+		self.skelStructure = skelStructure
+		self.boneName = boneName
+		self.modulName=modulName
+
+	def render( self, data, field ):
+		# print("StringBoneExtractor.render", data, field)
+		if field in data.keys():
+			##multilangs
+			if isinstance(data[field], dict):
+				resstr=""
+				if "currentlanguage" in conf.keys():
+					if conf["currentlanguage"] in data[field].keys():
+						resstr=data[field][conf["currentlanguage"]].replace("&quot;", "")
+					else:
+						if len(data[field].keys())>0:
+							resstr=data[field][data[field].keys()[0]].replace("&quot;", "")
+				return resstr
+			else:
+				return str(data[field]).replace("&quot;", "").replace(";", " ")
+		return ".."
+
 
 class StringViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -280,3 +305,4 @@ class ExtendedStringSearch( html5.Div ):
 editBoneSelector.insert( 3, CheckForStringBone, StringEditBone)
 viewDelegateSelector.insert( 3, CheckForStringBone, StringViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedStringSearch.canHandleExtension, ExtendedStringSearch )
+extractorDelegateSelector.insert(3, CheckForStringBone, StringBoneExtractor)
