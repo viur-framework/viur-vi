@@ -771,6 +771,15 @@ button.select:before {
 button.selectfields:before {
   background-position: -112px -112px;
 }
+button.selectall {
+  background-position: -48px -64px; 
+}
+button.unselectall {
+  background-position: -64px -64px;  
+}
+button.selectinvert {
+  background-position: -80px -64px;   
+}
 button.textedit:before {
   background-position: -96px -16px;
 }
