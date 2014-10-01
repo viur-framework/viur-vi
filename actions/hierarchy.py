@@ -195,6 +195,11 @@ class SelectRootNode( html5.Select ):
 
 	def onAttach(self):
 		super( SelectRootNode, self ).onAttach()
+		self.update()
+
+	def update(self):
+		self.removeAllChildren()
+
 		NetworkService.request( self.parent().parent().modul, "listRootNodes", successHandler=self.onRootNodesAvaiable, cacheable=True )
 		self.parent().parent().rootNodeChangedEvent.register( self )
 

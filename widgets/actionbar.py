@@ -17,6 +17,7 @@ class ActionBar( html5.Div ):
 		"""
 		super( ActionBar, self ).__init__(  )
 		self.actions = []
+		self.widgets = {}
 		self.modul = modul
 		self.appType = appType
 		self.currentAction = currentAction
@@ -41,7 +42,10 @@ class ActionBar( html5.Div ):
 
 			h3.appendChild(html5.TextNode(translate(self.currentAction)))
 			self.appendChild(h3)
+
+		self.widgets = {}
 		self.actions = actions
+
 		for action in actions:
 			if action=="|":
 				continue
@@ -50,10 +54,12 @@ class ActionBar( html5.Div ):
 					handler = conf["modules"][self.modul]["handler"]
 				else:
 					handler = ""
+
 				actionWdg = actionDelegateSelector.select( self.modul, handler, action )
 				if actionWdg is not None:
-					actionWdg = actionWdg( )
+					actionWdg = actionWdg()
 					self.appendChild( actionWdg )
+					self.widgets[ action ] = actionWdg
 
 	def getActions(self):
 		"""

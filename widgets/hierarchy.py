@@ -248,6 +248,8 @@ class HierarchyWidget( html5.Div ):
 	def onDataChanged(self, modul):
 		if modul!=self.modul:
 			return
+
+		self.actionBar.widgets[ "selectrootnode" ].update()
 		self.reloadData()
 
 	def onAttach(self):
@@ -350,7 +352,6 @@ class HierarchyWidget( html5.Div ):
 		self.rootNodeChangedEvent.fire( rootNode )
 		self.reloadData()
 
-
 	def reloadData(self):
 		"""
 			Reload the data were displaying.
@@ -387,6 +388,7 @@ class HierarchyWidget( html5.Div ):
 		"""
 		if not req in self._currentRequests:
 			#Prevent inserting old (stale) data
+			self.actionBar.resetLoadingState()
 			return
 		self._currentRequests.remove( req )
 		data = NetworkService.decode( req )
@@ -407,6 +409,8 @@ class HierarchyWidget( html5.Div ):
 		if len(data["skellist"])==0: #No children received
 			if ol!=self.entryFrame:
 				ol.parent()["class"].append("has_no_childs")
+
+		self.actionBar.resetLoadingState()
 
 	def getCurrentSelection(self):
 		"""
