@@ -149,8 +149,8 @@ class ListWidget( html5.Div ):
 		"""
 		if modul and modul!=self.modul:
 			return
-		self.reloadData( )
 
+		self.reloadData()
 
 	def reloadData(self):
 		"""

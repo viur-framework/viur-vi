@@ -254,6 +254,7 @@ class EditWidget( html5.Div ):
 			self.appendChild( warningSpan )
 		else:
 			self._hashArgs = None
+
 		self.editTaskID = None
 		self.wasInitialRequest = True #Wherever the last request attempted to save data or just fetched the form
 		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" if self.key else "add" )
@@ -261,7 +262,7 @@ class EditWidget( html5.Div ):
 		self.form = html5.Form()
 		self.appendChild(self.form)
 		self.actionbar.setActions(["save.close","save.continue","reset"])
-		self.reloadData( )
+		self.reloadData()
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -343,7 +344,6 @@ class EditWidget( html5.Div ):
 		if request:
 			data = NetworkService.decode( request )
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
-			NetworkService.notifyChange(self.modul)
 			logDiv = html5.Div()
 			logDiv["class"].append("msg")
 			spanMsg = html5.Span()
@@ -360,9 +360,12 @@ class EditWidget( html5.Div ):
 				spanMsg.appendChild( html5.TextNode( str(data["values"]["name"]) ))
 				spanMsg["class"].append("namespan")
 				logDiv.appendChild(spanMsg)
+
 			conf["mainWindow"].log("success",logDiv)
+
 			if self.closeOnSuccess:
 				conf["mainWindow"].removeWidget( self )
+				NetworkService.notifyChange(self.modul)
 				return
 			self.clear()
 			self.bones = {}
