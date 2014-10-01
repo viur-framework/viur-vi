@@ -213,7 +213,7 @@ class SelectRootNode( html5.Select ):
 		for node in res:
 			option = html5.Option()
 			option["value"] = node["key"]
-			option.appendChild( html5.TextNode(node["name"][:32]))
+			option.appendChild( html5.TextNode(node["name"] ) )
 			if node["key"] == self.parent().parent().rootNode:
 				option["selected"] = True
 			self.appendChild( option )
