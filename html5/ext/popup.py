@@ -10,19 +10,9 @@ class Popup( html5.Div ):
 			lbl["class"].append("title")
 			lbl.appendChild( html5.TextNode( title ) )
 			self.appendChild( lbl )
-		#self["style"]["left"] = "50%"
-		#self["style"]["top"] = "50%"
-		#self["style"]["width"] = "400px"
-		#self["style"]["height"] = "200px"
 
 		self.frameDiv = html5.Div()
 		self.frameDiv["class"] = "popup"
-
-		#self.frameDiv["style"]["position"] = "absolute"
-		#self.frameDiv["style"]["z-index"] = "99"
-		#self.frameDiv["style"]["width"] = "100%"
-		#self.frameDiv["style"]["height"] = "100%"
-		#self.frameDiv["style"]["background-color"] = "rgba( 100,100,100,100)"
 
 		self.frameDiv.appendChild( self )
 		html5.Body().appendChild( self.frameDiv )
@@ -62,4 +52,75 @@ class YesNoDialog( Popup ):
 			self.noCallback( self )
 		self.yesCallback = None
 		self.noCallback = None
+		self.close()
+
+class SelectDialog( Popup ):
+
+	def __init__( self, prompt, items=None, title=None, okBtn="OK", cancelBtn="Cancel", forceSelect=False, *args, **kwargs ):
+		super( SelectDialog, self ).__init__( title, *args, **kwargs )
+		self["class"].append("selectdialog")
+
+		# Prompt
+		if prompt:
+			lbl = html5.Span()
+			lbl[ "class" ].append( "prompt" )
+			lbl.appendChild( html5.TextNode( prompt ) )
+			self.appendChild( lbl )
+
+		# Items
+		self.items = []
+
+		if not forceSelect and len( items ) <= 3:
+			for item in items:
+				btn = html5.ext.Button( item.get( "title" ), callback=self.onAnyBtnClick )
+				btn._callback = item.get( "callback" )
+
+				if item.get( "class" ):
+					btn[ "class" ].extend( item[ "class" ] )
+
+				self.appendChild( btn )
+				self.items.append( btn )
+		else:
+			self.select = html5.Select()
+			self.appendChild( self.select )
+
+			for i, item in enumerate( items ):
+				opt = html5.Option()
+
+				opt[ "value" ] = str( i )
+				opt._callback = item.get( "callback" )
+				opt.appendChild( html5.TextNode( item.get( "title" ) ) )
+
+				self.select.appendChild( opt )
+				self.items.append( opt )
+
+			if okBtn:
+				self.appendChild( html5.ext.Button( okBtn, callback=self.onOkClick ) )
+
+			if cancelBtn:
+				self.appendChild( html5.ext.Button( cancelBtn, callback=self.onCancelClick ) )
+
+	def onAnyBtnClick( self, sender = None ):
+		for btn in self.items:
+			if btn == sender:
+				if btn._callback:
+					btn._callback( self )
+				break
+
+		self.items = None
+		self.close()
+
+	def onCancelClick(self, sender = None ):
+		self.close()
+
+	def onOkClick(self, sender = None ):
+		if self.select[ "selectedIndex" ] < 0:
+			return
+
+		item = self.items[ int( self.select[ "options" ].item( self.select[ "selectedIndex" ] ).value ) ]
+		if item._callback:
+			item._callback( self )
+
+		self.items = None
+		self.select = None
 		self.close()
