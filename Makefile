@@ -4,8 +4,8 @@
 
 PYJSBUILD=python `which pyjsbuild`
 OUTPUT=../appengine/vi
-DEPLOYOPTS=-S --enable-signatures -d
-DEBUGOPTS=--disable-debug --dynamic-link -O --enable-speed -S
+DEBUGOPTS=-S --enable-signatures -d
+DEPLOYOPTS=--disable-debug --dynamic-link -O --enable-speed -S
 
 all: debug
 
