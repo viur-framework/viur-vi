@@ -7,6 +7,7 @@ class Button(fButton):
 		self["type"]="button"
 		if txt is not None:
 			self.element.innerHTML = txt
+
 		self.callback = callback
 		self.sinkEvent("onClick")
 
