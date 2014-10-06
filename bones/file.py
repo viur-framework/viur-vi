@@ -26,7 +26,8 @@ class FileBoneExtractor(object):
 		self.boneName = boneName
 
 	def renderFileentry(self, fileentry):
-		return fileentry["name"] + " /file/download/" + str(fileentry["dlkey"]) + "?download=1&fileName=" + str(fileentry["name"])
+		origin = eval("window.location.origin")
+		return fileentry["name"] + " " + origin + "/file/download/" + str(fileentry["dlkey"]) + "?download=1&fileName=" + str(fileentry["name"])
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
