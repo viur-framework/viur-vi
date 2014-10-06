@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os.path
 import re
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
@@ -13,16 +14,20 @@ from network import NetworkService
 from widgets.edit import EditWidget
 from pane import Pane
 
-class RelationalBoneExtractor( object ):
+class RelationalBoneExtractor(object):
 	def __init__(self, modul, boneName, structure):
 		super(RelationalBoneExtractor, self).__init__()
 		self.format = "$(name)"
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
-
 		try:
 			self.format = re.match("\$\((.*?)\)", self.format).group(1)
 		except:
+			pass
+
+		try:
+			self.format, blah = os.path.splitext(self.format)
+		except ValueError:
 			pass
 
 		self.modul = modul
