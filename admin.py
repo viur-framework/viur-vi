@@ -100,7 +100,6 @@ class CoreWindow( html5.Div ):
 				return( None )
 
 		def getModulSortIndex(argIn):
-			print("argIn", argIn[1])
 			try:
 				return( argIn[1]["sortIndex"] )
 			except:
