@@ -48,6 +48,7 @@ lngDe = {
 	"Add Node":u"Knoten hinzufügen",
 	"You cannot drop more than one file here!":u"Es können nicht mehr als eine Datei hinzugefügt werden!",
     "Do you want to clone the entire hierarchy?":u"Soll die gesamte Hierarchie geklont werden?",
+    "Do you want to clone all subentries of this item?":u"Möchten Sie alle Unterelemente dieses Elements ebenfalls klonen?",
     "The hierarchy will be cloned in the background.":"Die Hierarchie wird im Hintergrund geklont.",
 	"reenter password":u"Passwort wiederholen",
 	"Remove":u"Entfernen",

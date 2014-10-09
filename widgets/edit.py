@@ -315,7 +315,7 @@ class EditWidget( html5.Div ):
 
 				#self.editTaskID = protoWrap.add( **data )
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
-			if self.key and not self.clone:
+			if self.key and (not self.clone or not data):
 				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
 				#self.editTaskID = protoWrap.edit( self.key, **data )
 			else:
@@ -354,7 +354,13 @@ class EditWidget( html5.Div ):
 	def doCloneHierarchy(self, sender=None ):
 		# ENTER HERE
 		# alert( "key %s clone %s" % ( self.key, self.clone_of ) )
-		NetworkService.request( conf[ "modules" ][ self.modul ][ "rootNodeOf" ], "clone",
+		if self.applicationType == EditWidget.appHierarchy:
+			NetworkService.request( self.modul, "clone",
+		                            { "from_repo" : self.node, "to_repo" : self.node,
+		                              "from_parent" : self.clone_of, "to_parent" : self.key },
+		                                secure=True, successHandler=self.cloneComplete )
+		else:
+			NetworkService.request( conf[ "modules" ][ self.modul ][ "rootNodeOf" ], "clone",
 		                            { "from_repo" : self.clone_of, "to_repo" : self.key },
 		                                secure=True, successHandler=self.cloneComplete )
 
@@ -403,12 +409,19 @@ class EditWidget( html5.Div ):
 
 			conf["mainWindow"].log("success",logDiv)
 
-			if askHierarchyCloning and self.clone and self.applicationType == EditWidget.appList \
-					and "rootNodeOf" in conf[ "modules" ][ self.modul ]:
-				self.key = data[ "values" ][ "id" ]
-				YesNoDialog( translate( u"Do you want to clone the entire hierarchy?" ),
-				                yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
-				return
+			if askHierarchyCloning and self.clone:
+				# for lists, which are rootNode entries of hierarchies, ask to clone entire hierarchy
+				if self.applicationType == EditWidget.appList and "rootNodeOf" in conf[ "modules" ][ self.modul ]:
+					self.key = data[ "values" ][ "id" ]
+					YesNoDialog( translate( u"Do you want to clone the entire hierarchy?" ),
+				                    yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
+					return
+				# for cloning within a hierarchy, ask for cloning all subentries.
+				elif self.applicationType == EditWidget.appHierarchy:
+					self.key = data[ "values" ][ "id" ]
+					YesNoDialog( translate( u"Do you want to clone all subentries of this item?" ),
+				                    yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
+					return
 
 			self.closeOrContinue()
 			return

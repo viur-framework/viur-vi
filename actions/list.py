@@ -20,7 +20,7 @@ class EditPane( Pane ):
 """
 class AddAction( html5.ext.Button ):
 	"""
-		Allows adding an entry in a list-modul.
+		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddAction, self ).__init__(translate("Add"), *args, **kwargs )
@@ -51,7 +51,7 @@ actionDelegateSelector.insert( 1, AddAction.isSuitableFor, AddAction )
 
 class EditAction( html5.ext.Button ):
 	"""
-		Allows editing an entry in a list-modul.
+		Allows editing an entry in a list-module.
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -115,7 +115,7 @@ actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
 class CloneAction( html5.ext.Button ):
 	"""
-		Allows editing an entry in a list-modul.
+		Allows cloning an entry in a list-module.
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -175,7 +175,7 @@ actionDelegateSelector.insert( 1, CloneAction.isSuitableFor, CloneAction )
 
 class DeleteAction( html5.ext.Button ):
 	"""
-		Allows deleting an entry in a list-modul.
+		Allows deleting an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__( translate("Delete"), *args, **kwargs )
@@ -467,7 +467,7 @@ actionDelegateSelector.insert( 1, SelelectFieldsAction.isSuitableFor, SelelectFi
 
 class ReloadAction( html5.ext.Button ):
 	"""
-		Allows adding an entry in a list-modul.
+		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
 		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
@@ -530,7 +530,7 @@ actionDelegateSelector.insert( 1, ListSelectFilterAction.isSuitableFor, ListSele
 
 class RecurrentDateAction( html5.ext.Button ):
 	"""
-		Allows editing an entry in a list-modul.
+		Allows editing an entry in a list-module.
 	"""
 
 	def __init__(self, *args, **kwargs):
