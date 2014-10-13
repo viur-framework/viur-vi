@@ -7,6 +7,7 @@ from event import viInitializedEvent
 from config import conf
 
 from html5.textnode import TextNode
+from html5.list import Ul, Li
 from html5.form import Input, Label, Select, Option
 from html5.span import Span
 from widgets.table import DataTable
@@ -49,15 +50,48 @@ class CsvExport(Div):
 
 		tmpList = conf["mainWindow"].config["viur.defaultlangsvalues"].items()
 		self.lang_select = Select()
-		self.appendChild(self.lang_select)
+		self.lang_select["id"] = "lang-select"
+		self.encoding_select = Select()
+		self.encoding_select["id"] = "encoding-select"
+
+		label1 = Label("Sprachauswahl")
+		label1["for"] = "lang-select"
+
+		label2 = Label("Encoding")
+		label2["for"] = "lang-select"
+
+		span1 = Div()
+		span1.appendChild(label1)
+		span1.appendChild(self.lang_select)
+		span1["class"] = "bone"
+
+		span2 = Div()
+		span2.appendChild(label2)
+		span2.appendChild(self.encoding_select)
+		span2["class"] = "bone"
+
+		self.appendChild(span1)
+		self.appendChild(span2)
 		for key, value in tmpList:
 			aoption = Option()
-			aoption["value"]=key
-			aoption.element.innerHTML=value
-			self.appendChild(aoption)
+			aoption["value"] = key
+			aoption.element.innerHTML = value
+			# self.appendChild(aoption)
 			if key == conf["currentlanguage"]:
 				aoption["selected"] = True
 			self.lang_select.appendChild(aoption)
+
+
+		tmp1 = Option()
+		tmp1["value"] = "iso-8859-15"
+		tmp1["selected"] = True
+		tmp1.element.innerHTML = "ISO-8859-15"
+		self.encoding_select.appendChild(tmp1)
+
+		tmp2 = Option()
+		tmp2["value"] = "utf-8"
+		tmp2.element.innerHTML = "UTF-8"
+		self.encoding_select.appendChild(tmp2)
 
 		self.exportBtn = Button("Export", self.on_btnExport_released)
 		self.appendChild(self.exportBtn)
@@ -168,9 +202,16 @@ class CsvExport(Div):
 
 		current_lang = conf["currentlanguage"]
 		export_lang = conf["currentlanguage"]
+
+
 		for aoption in self.lang_select._children:
 			if aoption["selected"]:
 				export_lang = aoption["value"]
+
+		encoding = "iso-8859-15"
+		for aoption in self.encoding_select._children:
+			if aoption["selected"]:
+				encoding = aoption["value"]
 
 		try:
 			if export_lang != current_lang:
@@ -195,8 +236,14 @@ class CsvExport(Div):
 
 			tmpA = A()
 			encFunc = eval("encodeURIComponent")
-			tmpA["href"] = "data:text/plain;charset=utf-8," + encFunc(resStr)
-			tmpA["download"] = "export-%s-%s.csv" % (self.module, datetime.now().strftime("%Y%m%d%H%M"))
+			escapeFunc = eval("escape")
+			if encoding == "utf-8":
+				tmpA["href"] = "data:text/csv;charset=utf-8," + encFunc(resStr)
+			elif encoding == "iso-8859-15":
+				tmpA["href"] = "data:text/csv;charset=ISO-8859-15," + escapeFunc(resStr)
+			else:
+				raise ValueError("unknown encoding: %s" % encoding)
+			tmpA["download"] = "export-%s-%s-%s-%s.csv" % (self.module, export_lang, encoding, datetime.now().strftime("%Y%m%d%H%M"))
 			tmpA.element.click()
 			conf["mainWindow"].removeWidget(self)
 		finally:
