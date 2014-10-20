@@ -2288,7 +2288,7 @@ progress[value]::-webkit-progress-value {
   background: rgba(255, 255, 255, 0.5);
 }
 .alertbox {
-  width: 350px;
+  width: 400px;
   height: auto;
   padding: 25px 25px 30px;
   background: #eee;
@@ -2330,7 +2330,7 @@ progress[value]::-webkit-progress-value {
 }
 .alertbox label {
   float: right;
-  width: 300px;
+  width: 400px;
 }
 .alertbox label.headerlbl {
   float: left;
@@ -2353,10 +2353,17 @@ progress[value]::-webkit-progress-value {
 }
 .alertbox.selectfields label {
   float: right;
-  width: 300px;
+  width: 360px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.alertbox.selectfields div.selectiontools {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.alertbox.selectfields div.selectiontools button {
+  float: none;
 }
 /* #vi_badges
 ================================================== */

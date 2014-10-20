@@ -376,6 +376,10 @@ actionDelegateSelector.insert( 1, ActivateSelectionAction.isSuitableFor, Activat
 
 class SelectFieldsPopup( html5.ext.Popup ):
 	def __init__(self, listWdg, *args, **kwargs):
+		if not listWdg._structure:
+			self.close()
+			return
+
 		super( SelectFieldsPopup, self ).__init__( title=translate("Select fields"), *args, **kwargs )
 
 		self["class"].append("selectfields")
@@ -398,22 +402,24 @@ class SelectFieldsPopup( html5.ext.Popup ):
 
 		self.appendChild( div )
 
-		if self.listWdg._structure:
-			for key, bone in self.listWdg._structure:
-				chkBox = html5.Input()
-				chkBox["type"] = "checkbox"
-				chkBox["value"] = key
+		ul = html5.Ul()
+		self.appendChild( ul )
 
-				self.appendChild(chkBox)
-				self.checkboxes.append( chkBox )
+		for key, bone in self.listWdg._structure:
+			li = html5.Li()
+			ul.appendChild( li )
 
-				if key in self.listWdg.getFields():
-					chkBox["checked"] = True
-				lbl = html5.Label(bone["descr"],forElem=chkBox)
-				self.appendChild(lbl)
-		else:
-			self.close()
-			return
+			chkBox = html5.Input()
+			chkBox["type"] = "checkbox"
+			chkBox["value"] = key
+
+			li.appendChild(chkBox)
+			self.checkboxes.append( chkBox )
+
+			if key in self.listWdg.getFields():
+				chkBox["checked"] = True
+			lbl = html5.Label(bone["descr"],forElem=chkBox)
+			li.appendChild(lbl)
 
 		self.cancelBtn = html5.ext.Button( translate( "Cancel" ), callback=self.doCancel)
 		self.applyBtn = html5.ext.Button( translate( "Apply" ), callback=self.doApply)
@@ -424,10 +430,12 @@ class SelectFieldsPopup( html5.ext.Popup ):
 	def doApply(self, *args, **kwargs):
 		self.applyBtn["class"].append("is_loading")
 		self.applyBtn["disabled"] = True
+
 		res = []
-		for c in self._children:
-			if isinstance(c,html5.Input) and c["checked"]:
+		for c in self.checkboxes:
+			if c["checked"]:
 				res.append( c["value"] )
+
 		self.listWdg.setFields( res )
 		self.close()
 
@@ -451,9 +459,9 @@ class SelectFieldsPopup( html5.ext.Popup ):
 			else:
 				cb[ "checked" ] = False
 
-class SelelectFieldsAction( html5.ext.Button ):
+class SelectFieldsAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
-		super( SelelectFieldsAction, self ).__init__( translate("Select fields"), *args, **kwargs )
+		super( SelectFieldsAction, self ).__init__( translate("Select fields"), *args, **kwargs )
 		self["class"] = "icon selectfields"
 
 	def onClick(self, sender=None):
@@ -463,7 +471,7 @@ class SelelectFieldsAction( html5.ext.Button ):
 	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="selectfields" )
 
-actionDelegateSelector.insert( 1, SelelectFieldsAction.isSuitableFor, SelelectFieldsAction )
+actionDelegateSelector.insert( 1, SelectFieldsAction.isSuitableFor, SelectFieldsAction )
 
 class ReloadAction( html5.ext.Button ):
 	"""

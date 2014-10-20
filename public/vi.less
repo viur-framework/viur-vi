@@ -2303,7 +2303,7 @@ progress[value]::-webkit-progress-value {
   background: rgba(255, 255, 255, 0.5);
 }
 .alertbox {
-  width: 350px;
+  width: 400px;
   height: auto;
   padding: 25px 25px 30px;
   background: #eee;
@@ -2345,9 +2345,9 @@ progress[value]::-webkit-progress-value {
 .alertbox input[type="checkbox"] {width:15px}
 .alertbox input[type="number"] {margin-bottom:10px}
 
-.alertbox label {float: right; width: 300px;}
+.alertbox label {float: right; width: 400px;}
 .alertbox label.headerlbl {float: left; font-size:0.8em; margin-bottom:10px;}
-.alertbox label.rowlbl, .alertbox label.collbl,  {
+.alertbox label.rowlbl, .alertbox label.collbl  {
   float: left;
   width:120px;
   font-size:0.8em;
@@ -2362,13 +2362,15 @@ progress[value]::-webkit-progress-value {
 
 .alertbox.selectfields label {
     float: right;
-    width: 300px;
+    width: 360px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-.alertbox.selectiontools {}
+.alertbox.selectfields div.selectiontools { text-align: center; margin-bottom: 10px; }
+
+.alertbox.selectfields div.selectiontools button { float: none; }
 
 /* #vi_badges
 ================================================== */
