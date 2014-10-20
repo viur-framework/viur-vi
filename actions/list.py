@@ -611,7 +611,7 @@ class CsvExportAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( actionName=="exportcsv" and handler == "list" or handler.startswith("list."))
+		return actionName=="exportcsv" and (handler == "list" or handler.startswith("list."))
 
 	def onClick(self, sender=None):
 		pane = Pane(translate("Csv Exporter"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "exportcsv" ])
