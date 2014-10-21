@@ -2353,10 +2353,14 @@ progress[value]::-webkit-progress-value {
 }
 .alertbox.selectfields label {
   float: right;
-  width: 360px;
+  width: 350px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.alertbox.selectfields ul {
+  max-height: 400px;
+  overflow-y: auto;
 }
 .alertbox.selectfields div.selectiontools {
   text-align: center;
