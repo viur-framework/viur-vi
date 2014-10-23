@@ -48,7 +48,6 @@ class DateBoneExtractor( object ):
 class DateViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( DateViewBoneDelegate, self ).__init__()
-		print("NEW DATEBONE DELETEGATE", modulName, boneName, skelStructure)
 		self.skelStructure = skelStructure
 		self.boneName = boneName
 		self.modulName=modulName
