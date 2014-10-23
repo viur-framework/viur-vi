@@ -2,12 +2,30 @@
 # Makefile for ViUR/vi
 #
 
-PYJSBUILD=python `which pyjsbuild`
-OUTPUT=../appengine/vi
-DEBUGOPTS=-S --enable-signatures -d
-DEPLOYOPTS=--disable-debug --dynamic-link -O --enable-speed -S
+# Programs
+PYJSBUILD	=	python `which pyjsbuild`
+LESSC		=	lessc
+
+# Variables
+OUTPUT		=	../appengine/vi
+DEBUGOPTS	=	-S --enable-signatures -d
+DEPLOYOPTS	=	--disable-debug --dynamic-link -O --enable-speed -S
+
+# Targets
+
+LESSFILES	= 	public/vi.less \
+				public/vi_custom.less
+
+CSSFILES	=	$(LESSFILES:.less=.css)
+
+# Rules
 
 all: debug
+
+%.css: %.less
+	$(LESSC) $< >$@
+
+css: $(CSSFILES)
 
 version:
 	./version.sh
@@ -15,7 +33,7 @@ version:
 $(OUTPUT): 
 	mkdir -p $@
 
-debug: $(OUTPUT) version
+debug: $(OUTPUT) css version
 	@echo "--- STARTING DEBUG BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEBUGOPTS) \
@@ -23,7 +41,7 @@ debug: $(OUTPUT) version
 				admin.py
 	@echo "--- FINISHED DEBUG BUILD ---"
 
-deploy: clean version
+deploy: clean css version
 	@echo "--- STARTING DEBUG BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEPLOYOPTS) \
