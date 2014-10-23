@@ -51,4 +51,5 @@ deploy: clean css version
 	
 clean: $(OUTPUT)
 	rm -rf $(OUTPUT)/*
+	rm -f $(CSSFILES)
 
