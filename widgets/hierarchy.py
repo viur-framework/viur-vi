@@ -246,8 +246,16 @@ class HierarchyWidget( html5.Div ):
 		self.appendChild( errorDiv )
 
 	def onDataChanged(self, modul):
-		if modul!=self.modul:
-			return
+
+		if modul != self.modul:
+			isRootNode = False
+			for k, v in conf[ "modules" ].items():
+				if k == modul and v.get( "handler" ) == "list" and v.get( "rootNodeOf" ) == self.modul:
+					isRootNode = True
+					break
+
+			if not isRootNode:
+				return
 
 		self.actionBar.widgets[ "selectrootnode" ].update()
 		self.reloadData()

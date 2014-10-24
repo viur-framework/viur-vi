@@ -252,7 +252,7 @@ actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
 class SelectRootNode( html5.Select ):
 	"""
-		Allows adding an entry in a list-modul.
+		Selector for hierarchy root nodes.
 	"""
 	def __init__(self, *args, **kwargs):
 		super( SelectRootNode, self ).__init__( *args, **kwargs )
@@ -265,7 +265,8 @@ class SelectRootNode( html5.Select ):
 	def update(self):
 		self.removeAllChildren()
 
-		NetworkService.request( self.parent().parent().modul, "listRootNodes", successHandler=self.onRootNodesAvaiable, cacheable=True )
+		NetworkService.request( self.parent().parent().modul, "listRootNodes", successHandler=self.onRootNodesAvaiable,
+		                        cacheable=True )
 		self.parent().parent().rootNodeChangedEvent.register( self )
 
 	def onDetach(self):
@@ -296,6 +297,6 @@ class SelectRootNode( html5.Select ):
 	def isSuitableFor( modul, handler, actionName ):
 		correctAction = actionName=="selectrootnode"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
-		return(  correctAction and correctHandler )
+		return( correctAction and correctHandler )
 
 actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
