@@ -2668,13 +2668,9 @@ textarea:disabled {
   background: #e0e0e0;
   border: 1px solid #ccc;
 }
-.has_multiple_children .actionbar,
-.has_multiple_children .breadcrumb,
-.has_multiple_children .imageeditor,
-.has_multiple_children .linkeditor {
-  width: 40.3%;
-}
 /* #Custom Styles
+================================================== */
+/* #Custom Colors
 ================================================== */
 /* #Media Queries
 ================================================== */

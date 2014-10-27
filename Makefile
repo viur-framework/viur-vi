@@ -7,25 +7,25 @@ PYJSBUILD	=	python `which pyjsbuild`
 LESSC		=	lessc
 
 # Variables
+VI_CUSTOM	= 	../vi_customizing
 OUTPUT		=	../appengine/vi
 DEBUGOPTS	=	-S --enable-signatures -d
 DEPLOYOPTS	=	--disable-debug --dynamic-link -O --enable-speed -S
+LESSCOPTS	=	--include-path="$(VI_CUSTOM)/static:public/default"
 
 # Targets
 
-LESSFILES	= 	public/vi.less \
-				public/vi_custom.less
-
-CSSFILES	=	$(LESSFILES:.less=.css)
+MAIN_CSS	=	public/vi.css
+MAIN_LESS	= 	public/vi.less
+CUSTOM_LESS	=	public/default/vi_custom.less \
+				$(wildcard $(VI_CUSTOM)/static/vi_custom.less)
 
 # Rules
 
 all: debug
 
-%.css: %.less
-	$(LESSC) $< >$@
-
-css: $(CSSFILES)
+$(MAIN_CSS): $(MAIN_LESS) $(CUSTOM_LESS)
+	$(LESSC) $(LESSCOPTS) $(MAIN_LESS) >$@
 
 version:
 	./version.sh
@@ -33,7 +33,7 @@ version:
 $(OUTPUT): 
 	mkdir -p $@
 
-debug: $(OUTPUT) css version
+debug: $(OUTPUT) $(MAIN_CSS) version
 	@echo "--- STARTING DEBUG BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEBUGOPTS) \
@@ -41,7 +41,7 @@ debug: $(OUTPUT) css version
 				admin.py
 	@echo "--- FINISHED DEBUG BUILD ---"
 
-deploy: clean css version
+deploy: clean $(MAIN_CSS) version
 	@echo "--- STARTING DEBUG BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEPLOYOPTS) \
