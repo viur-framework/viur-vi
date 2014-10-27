@@ -1,6 +1,9 @@
-.idea
-
-falkendo
-output
+vi
+vi_plugins
 version.py
+public/vi.css
+
+# Mausbrand specific
+output
+.idea
 *.bak
