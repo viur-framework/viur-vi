@@ -1,4 +1,4 @@
-Welcome to ViUR Vi.
+# Welcome to ViUR Vi. #
 
 Vi is the web-based administration tool for ViUR-based information systems.
 To get Vi run, it has to be built in your projects appengine folder.
@@ -8,14 +8,14 @@ to your repository, and build it within this directory for your ViUR-based
 Google AppEngine appliance.
 
 
-DEPENDENCIES
+## DEPENDENCIES ##
 
 The Vi backend is a HTML5-based web-application implemented on top of PyJS.
 Therefore, a PyJS build-environment must exist. To build all related files,
 there is also a compiler for the LESS overlay language required (lessc).
 
 
-BUILDING VI
+## BUILDING VI ##
 
 Vi comes with a simple Makefile run by GNU make to get the compilation tasks
 and dependencies done.
@@ -31,7 +31,7 @@ After checking out vi, simply move into the working directory and type:
 To get all basic setups done.
 
 
-ADDITIONAL TARGETS
+## ADDITIONAL TARGETS ##
 
 To clean the vi output folder, run
 
