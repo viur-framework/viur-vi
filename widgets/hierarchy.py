@@ -433,9 +433,7 @@ class HierarchyWidget( html5.Div ):
 		"""
 			We got a drop event. Make that item a direct child of our rootNode
 		"""
-		print("----------- DROP EVENT ---" ,event)
 		srcKey = event.dataTransfer.getData("Text")
-		print( srcKey )
 		NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":self.rootNode}, secure=True, modifies=True )
 		event.stopPropagation()
 

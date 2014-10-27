@@ -320,8 +320,17 @@ class TreeWidget( html5.Div ):
 
 
 	def onDataChanged(self, modul):
-		if modul!=self.modul:
-			return
+		if modul != self.modul:
+			isRootNode = False
+			for k, v in conf[ "modules" ].items():
+				if k == modul and v.get( "handler" ) == "list" and v.get( "rootNodeOf" ) == self.modul:
+					isRootNode = True
+					break
+
+			if not isRootNode:
+				return
+
+		self.actionBar.widgets[ "selectrootnode" ].update()
 		self.reloadData()
 
 	def onSelectionActivated(self, div, selection ):
@@ -426,7 +435,6 @@ class TreeWidget( html5.Div ):
 
 	@staticmethod
 	def canHandle( modul, modulInfo ):
-		print("CANHANDLE", modul, modulInfo)
 		return( modulInfo["handler"].startswith("tree." ) )
 
 displayDelegateSelector.insert( 1, TreeWidget.canHandle, TreeWidget )

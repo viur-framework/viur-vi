@@ -124,7 +124,6 @@ class EditAction( html5.ext.Button ):
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 	def onClick(self, sender=None):
-		print("EDIT ACTION CLICKED")
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
@@ -244,12 +243,18 @@ class SelectRootNode( html5.Select ):
 
 	def onAttach(self):
 		super( SelectRootNode, self ).onAttach()
-		NetworkService.request( self.parent().parent().modul, "listRootNodes", successHandler=self.onRootNodesAvaiable, cacheable=True )
+		self.update()
 		self.parent().parent().rootNodeChangedEvent.register( self )
 
 	def onDetach(self):
 		self.parent().parent().rootNodeChangedEvent.unregister( self )
 		super( SelectRootNode, self ).onDetach()
+
+	def update(self):
+		self.removeAllChildren()
+		NetworkService.request( self.parent().parent().modul, "listRootNodes",
+		                            successHandler=self.onRootNodesAvaiable,
+		                                cacheable=True )
 
 	def onRootNodeChanged(self, newNode):
 		for option in self._children:
@@ -262,7 +267,7 @@ class SelectRootNode( html5.Select ):
 		for node in res:
 			option = html5.Option()
 			option["value"] = node["key"]
-			option.appendChild( html5.TextNode(node["name"][:32]))
+			option.appendChild( html5.TextNode( node[ "name"] ) )
 			if node["key"] == self.parent().parent().rootNode:
 				option["selected"] = True
 			self.appendChild( option )

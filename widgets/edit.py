@@ -352,8 +352,6 @@ class EditWidget( html5.Div ):
 		self.reloadData()
 
 	def doCloneHierarchy(self, sender=None ):
-		# ENTER HERE
-		# alert( "key %s clone %s" % ( self.key, self.clone_of ) )
 		if self.applicationType == EditWidget.appHierarchy:
 			NetworkService.request( self.modul, "clone",
 		                            { "from_repo" : self.node, "to_repo" : self.node,
