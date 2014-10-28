@@ -23,8 +23,13 @@ class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( EmailViewBoneDelegate, self ).__init__( modulName, boneName, skelStructure, *args, **kwargs)
 
-
 	def getViewElement(self,labelstr,datafield):
+
+		# check if rendering of EmailBones is wanted as String
+		if "params" in self.skelStructure[ self.boneName ].keys() and \
+				self.skelStructure[ self.boneName ][ "params" ].get( "renderAsString" ):
+			return super( EmailViewBoneDelegate, self ).getViewElement( labelstr, datafield )
+
 		aa = html5.A()
 		aa["href"]="mailto:"+labelstr
 		aa["target"]="_Blank"
