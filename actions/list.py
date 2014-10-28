@@ -386,22 +386,6 @@ class SelectFieldsPopup( html5.ext.Popup ):
 		self.listWdg = listWdg
 		self.checkboxes = []
 
-		self.selectAllBtn =  html5.ext.Button( translate( "Select all" ), callback=self.doSelectAll )
-		self.selectAllBtn[ "class" ].append( "selectall" )
-		self.unselectAllBtn =  html5.ext.Button( translate( "Unselect all" ), callback=self.doUnselectAll )
-		self.unselectAllBtn[ "class" ].append( "unselectall" )
-		self.invertSelectionBtn =  html5.ext.Button( translate( "Invert selection" ), callback=self.doInvertSelection )
-		self.invertSelectionBtn[ "class" ].append( "selectinvert" )
-
-		div = html5.Div()
-		div[ "class" ].append( "selectiontools" )
-
-		div.appendChild(self.selectAllBtn)
-		div.appendChild(self.unselectAllBtn)
-		div.appendChild(self.invertSelectionBtn)
-
-		self.appendChild( div )
-
 		ul = html5.Ul()
 		self.appendChild( ul )
 
@@ -421,6 +405,27 @@ class SelectFieldsPopup( html5.ext.Popup ):
 			lbl = html5.Label(bone["descr"],forElem=chkBox)
 			li.appendChild(lbl)
 
+		# Functions for Selection
+		div = html5.Div()
+		div[ "class" ].append( "selectiontools" )
+
+		self.appendChild( div )
+
+		self.selectAllBtn =  html5.ext.Button( translate( "Select all" ), callback=self.doSelectAll )
+		self.selectAllBtn[ "class" ].append( "icon" )
+		self.selectAllBtn[ "class" ].append( "selectall" )
+		self.unselectAllBtn =  html5.ext.Button( translate( "Unselect all" ), callback=self.doUnselectAll )
+		self.unselectAllBtn[ "class" ].append( "icon" )
+		self.unselectAllBtn[ "class" ].append( "unselectall" )
+		self.invertSelectionBtn =  html5.ext.Button( translate( "Invert selection" ), callback=self.doInvertSelection )
+		self.invertSelectionBtn[ "class" ].append( "icon" )
+		self.invertSelectionBtn[ "class" ].append( "selectinvert" )
+
+		div.appendChild(self.selectAllBtn)
+		div.appendChild(self.unselectAllBtn)
+		div.appendChild(self.invertSelectionBtn)
+
+		# Function for Commit
 		self.cancelBtn = html5.ext.Button( translate( "Cancel" ), callback=self.doCancel)
 		self.applyBtn = html5.ext.Button( translate( "Apply" ), callback=self.doApply)
 
