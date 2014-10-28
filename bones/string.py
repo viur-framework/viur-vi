@@ -180,6 +180,13 @@ class StringEditBone( html5.Div ):
 		self.currentLanguage = lang
 		self.langEdits[ self.currentLanguage ]["style"]["display"] = ""
 
+		for btn in self.buttonContainer._children:
+			if btn.lang == lang:
+				if "is_active" not in btn[ "class" ]:
+					btn[ "class" ].append( "is_active" )
+			else:
+				btn[ "class" ].remove( "is_active" )
+
 	def onBtnGenTag(self, btn):
 		self.genTag( "", lang=btn.lang )
 
