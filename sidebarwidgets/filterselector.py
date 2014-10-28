@@ -85,8 +85,9 @@ class FilterSelector( html5.Div ):
 
 		if self.currentTarget != nextTarget:
 			self.currentTarget = nextTarget
-			nextTarget.reevaluate()
 
+			if "reevaluate" in dir( nextTarget ):
+				nextTarget.reevaluate()
 
 	def onAttach(self):
 		super( FilterSelector, self ).onAttach()
@@ -113,10 +114,14 @@ class FilterSelector( html5.Div ):
 				filter = modulConfig["filter"]
 			else:
 				filter = {}
+
 			if searchTxt:
 				filter["search"] = searchTxt
 				self.applyFilter( filter, -1, translate("Fulltext search: {token}", token=searchTxt) )
 			else:
+				if "search" in filter.keys():
+					filter.pop("search", None )
+
 				self.applyFilter( filter, -1, "" )
 
 

@@ -44,7 +44,6 @@ class ListWidget( html5.Div ):
 		self.table = DataTable()
 		self.appendChild( self.table )
 		self._currentCursor = None
-		#self._currentSearchStr = None
 		self._structure = None
 		self._currentRequests = []
 		self.columns = []
@@ -73,9 +72,6 @@ class ListWidget( html5.Div ):
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
 		self.emptyNotificationDiv["class"].append("emptynotification")
 		self.appendChild(self.emptyNotificationDiv)
-		#self.search = Search()
-		#self.appendChild(self.search)
-		#self.search.startSearchEvent.register( self )
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		self.table["style"]["display"] = "none"
 		self.filterDescriptionSpan = html5.Span()
@@ -118,10 +114,6 @@ class ListWidget( html5.Div ):
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
 
-	#def onStartSearch(self, searchTxt):
-	#	self._currentSearchStr = searchTxt
-	#	self.reloadData()
-
 	def onNextBatchNeeded(self):
 		"""
 			Requests the next rows from the server and feed them to the table.
@@ -129,11 +121,13 @@ class ListWidget( html5.Div ):
 		if self._currentCursor:
 			filter = self.filter.copy()
 			filter["amount"] = self._batchSize
-			if self._currentCursor is not None:
-				filter["cursor"] = self._currentCursor
-			self._currentRequests.append( NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True ) )
+			filter["cursor"] = self._currentCursor
+			self._currentRequests.append( NetworkService.request(self.modul, "list", filter,
+			                                successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
+			                                    cacheable=True ) )
 			self._currentCursor = None
-
+		else:
+			self.table.setDataProvider( None )
 
 	def onAttach(self):
 		super( ListWidget, self ).onAttach()
@@ -161,11 +155,10 @@ class ListWidget( html5.Div ):
 		self._currentRequests = []
 		filter = self.filter.copy()
 		filter["amount"] = self._batchSize
-		#if self._currentSearchStr:
-		#	filter["search"] = self._currentSearchStr
 		self.table.setDataProvider( self )
-		self._currentRequests.append( NetworkService.request(self.modul, "list", filter, successHandler=self.onCompletion, failureHandler=self.showErrorMsg, cacheable=True ) )
-
+		self._currentRequests.append( NetworkService.request(self.modul, "list", filter,
+		                                    successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
+		                                        cacheable=True ) )
 
 	def setFilter(self, filter, filterID=None, filterDescr=None):
 		"""
@@ -191,8 +184,10 @@ class ListWidget( html5.Div ):
 			return
 		self._currentRequests.remove( req )
 		self.actionBar.resetLoadingState()
+
 		#self.search.resetLoadingState()
 		data = NetworkService.decode( req )
+
 		if data["structure"] is None:
 			if self.table.getRowCount():
 				self.table.setDataProvider(None) #We cant load any more results
@@ -201,6 +196,7 @@ class ListWidget( html5.Div ):
 				self.emptyNotificationDiv["style"]["display"] = ""
 				#self.element.innerHTML = "<center><strong>Keine Ergebnisse</strong></center>"
 			return
+
 		self.table["style"]["display"] = ""
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		self._structure = data["structure"]

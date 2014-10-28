@@ -391,7 +391,6 @@ class DataTable( html5.Div ):
 					self.table["class"].append("is_loading")
 				self._dataProvider.onNextBatchNeeded()
 
-
 	def remove(self, objOrIndex):
 		"""
 			Removes 'obj' from the table.

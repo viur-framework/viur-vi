@@ -2,6 +2,7 @@ import html5
 from html5.keycodes import isReturn
 from event import EventDispatcher
 from i18n import translate
+
 class Search( html5.Div ):
 	def __init__(self, *args, **kwargs):
 		super( Search, self ).__init__( *args, **kwargs )
@@ -16,11 +17,19 @@ class Search( html5.Div ):
 		self.btn = html5.ext.Button(translate("Search"), callback=self.doSearch)
 		self.appendChild(self.btn)
 		self.sinkEvent("onKeyDown")
+		self.last_search = ""
 
 	def doSearch(self, *args, **kwargs):
-		self.startSearchEvent.fire(self.searchInput["value"] or None)
-		#if not "is_loading" in self.btn["class"]:
-		#	self.btn["class"].append("is_loading")
+		if self.searchInput["value"] != self.last_search:
+			if len( self.searchInput[ "value" ] ):
+				self.startSearchEvent.fire( self.searchInput["value"] )
+			else:
+				self.resetSearch()
+
+			self.last_search = self.searchInput["value"]
+
+	def resetSearch(self):
+		self.startSearchEvent.fire( None )
 
 	def onKeyDown(self, event):
 		if isReturn(event.keyCode):
@@ -31,3 +40,6 @@ class Search( html5.Div ):
 	def resetLoadingState(self):
 		if "is_loading" in self.btn["class"]:
 			self.btn["class"].remove("is_loading")
+
+	def reevaluate(self):
+		self.doSearch()
