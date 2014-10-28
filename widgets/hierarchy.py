@@ -225,7 +225,7 @@ class HierarchyWidget( html5.Div ):
 		##Proxy some events and functions of the original table
 		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 		#	setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["selectrootnode","add","edit","delete"]+(["select","close"] if isSelector else [])+["reload"])
+		self.actionBar.setActions(["selectrootnode","add","edit","clone","delete"]+(["select","close"] if isSelector else [])+["reload"])
 		self.sinkEvent("onDrop","onDragOver")
 
 
@@ -246,8 +246,18 @@ class HierarchyWidget( html5.Div ):
 		self.appendChild( errorDiv )
 
 	def onDataChanged(self, modul):
-		if modul!=self.modul:
-			return
+
+		if modul != self.modul:
+			isRootNode = False
+			for k, v in conf[ "modules" ].items():
+				if k == modul and v.get( "handler" ) == "list" and v.get( "rootNodeOf" ) == self.modul:
+					isRootNode = True
+					break
+
+			if not isRootNode:
+				return
+
+		self.actionBar.widgets[ "selectrootnode" ].update()
 		self.reloadData()
 
 	def onAttach(self):
@@ -350,7 +360,6 @@ class HierarchyWidget( html5.Div ):
 		self.rootNodeChangedEvent.fire( rootNode )
 		self.reloadData()
 
-
 	def reloadData(self):
 		"""
 			Reload the data were displaying.
@@ -387,6 +396,7 @@ class HierarchyWidget( html5.Div ):
 		"""
 		if not req in self._currentRequests:
 			#Prevent inserting old (stale) data
+			self.actionBar.resetLoadingState()
 			return
 		self._currentRequests.remove( req )
 		data = NetworkService.decode( req )
@@ -408,6 +418,8 @@ class HierarchyWidget( html5.Div ):
 			if ol!=self.entryFrame:
 				ol.parent()["class"].append("has_no_childs")
 
+		self.actionBar.resetLoadingState()
+
 	def getCurrentSelection(self):
 		"""
 			Returns the list of entries currently selected.
@@ -421,9 +433,7 @@ class HierarchyWidget( html5.Div ):
 		"""
 			We got a drop event. Make that item a direct child of our rootNode
 		"""
-		print("----------- DROP EVENT ---" ,event)
 		srcKey = event.dataTransfer.getData("Text")
-		print( srcKey )
 		NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":self.rootNode}, secure=True, modifies=True )
 		event.stopPropagation()
 

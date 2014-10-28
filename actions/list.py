@@ -20,7 +20,7 @@ class EditPane( Pane ):
 """
 class AddAction( html5.ext.Button ):
 	"""
-		Allows adding an entry in a list-modul.
+		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddAction, self ).__init__(translate("Add"), *args, **kwargs )
@@ -39,7 +39,7 @@ class AddAction( html5.ext.Button ):
 	def onClick(self, sender=None):
 		pane = EditPane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList)
+		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList )
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -51,7 +51,7 @@ actionDelegateSelector.insert( 1, AddAction.isSuitableFor, AddAction )
 
 class EditAction( html5.ext.Button ):
 	"""
-		Allows editing an entry in a list-modul.
+		Allows editing an entry in a list-module.
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -104,7 +104,7 @@ class EditAction( html5.ext.Button ):
 	def openEditor(self, id ):
 		pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList, key=id)
+		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList, key=id )
 		pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -115,7 +115,7 @@ actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
 class CloneAction( html5.ext.Button ):
 	"""
-		Allows editing an entry in a list-modul.
+		Allows cloning an entry in a list-module.
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -175,7 +175,7 @@ actionDelegateSelector.insert( 1, CloneAction.isSuitableFor, CloneAction )
 
 class DeleteAction( html5.ext.Button ):
 	"""
-		Allows deleting an entry in a list-modul.
+		Allows deleting an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__( translate("Delete"), *args, **kwargs )
@@ -376,6 +376,10 @@ actionDelegateSelector.insert( 1, ActivateSelectionAction.isSuitableFor, Activat
 
 class SelectFieldsPopup( html5.ext.Popup ):
 	def __init__(self, listWdg, *args, **kwargs):
+		if not listWdg._structure:
+			self.close()
+			return
+
 		super( SelectFieldsPopup, self ).__init__( title=translate("Select fields"), *args, **kwargs )
 
 		self["class"].append("selectfields")
@@ -398,22 +402,24 @@ class SelectFieldsPopup( html5.ext.Popup ):
 
 		self.appendChild( div )
 
-		if self.listWdg._structure:
-			for key, bone in self.listWdg._structure:
-				chkBox = html5.Input()
-				chkBox["type"] = "checkbox"
-				chkBox["value"] = key
+		ul = html5.Ul()
+		self.appendChild( ul )
 
-				self.appendChild(chkBox)
-				self.checkboxes.append( chkBox )
+		for key, bone in self.listWdg._structure:
+			li = html5.Li()
+			ul.appendChild( li )
 
-				if key in self.listWdg.getFields():
-					chkBox["checked"] = True
-				lbl = html5.Label(bone["descr"],forElem=chkBox)
-				self.appendChild(lbl)
-		else:
-			self.close()
-			return
+			chkBox = html5.Input()
+			chkBox["type"] = "checkbox"
+			chkBox["value"] = key
+
+			li.appendChild(chkBox)
+			self.checkboxes.append( chkBox )
+
+			if key in self.listWdg.getFields():
+				chkBox["checked"] = True
+			lbl = html5.Label(bone["descr"],forElem=chkBox)
+			li.appendChild(lbl)
 
 		self.cancelBtn = html5.ext.Button( translate( "Cancel" ), callback=self.doCancel)
 		self.applyBtn = html5.ext.Button( translate( "Apply" ), callback=self.doApply)
@@ -424,10 +430,12 @@ class SelectFieldsPopup( html5.ext.Popup ):
 	def doApply(self, *args, **kwargs):
 		self.applyBtn["class"].append("is_loading")
 		self.applyBtn["disabled"] = True
+
 		res = []
-		for c in self._children:
-			if isinstance(c,html5.Input) and c["checked"]:
+		for c in self.checkboxes:
+			if c["checked"]:
 				res.append( c["value"] )
+
 		self.listWdg.setFields( res )
 		self.close()
 
@@ -451,9 +459,9 @@ class SelectFieldsPopup( html5.ext.Popup ):
 			else:
 				cb[ "checked" ] = False
 
-class SelelectFieldsAction( html5.ext.Button ):
+class SelectFieldsAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
-		super( SelelectFieldsAction, self ).__init__( translate("Select fields"), *args, **kwargs )
+		super( SelectFieldsAction, self ).__init__( translate("Select fields"), *args, **kwargs )
 		self["class"] = "icon selectfields"
 
 	def onClick(self, sender=None):
@@ -463,11 +471,11 @@ class SelelectFieldsAction( html5.ext.Button ):
 	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="selectfields" )
 
-actionDelegateSelector.insert( 1, SelelectFieldsAction.isSuitableFor, SelelectFieldsAction )
+actionDelegateSelector.insert( 1, SelectFieldsAction.isSuitableFor, SelectFieldsAction )
 
 class ReloadAction( html5.ext.Button ):
 	"""
-		Allows adding an entry in a list-modul.
+		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
 		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
@@ -530,7 +538,7 @@ actionDelegateSelector.insert( 1, ListSelectFilterAction.isSuitableFor, ListSele
 
 class RecurrentDateAction( html5.ext.Button ):
 	"""
-		Allows editing an entry in a list-modul.
+		Allows editing an entry in a list-module.
 	"""
 
 	def __init__(self, *args, **kwargs):
@@ -611,7 +619,7 @@ class CsvExportAction( html5.ext.Button ):
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
-		return( actionName=="exportcsv" and handler == "list" or handler.startswith("list."))
+		return actionName=="exportcsv" and (handler == "list" or handler.startswith("list."))
 
 	def onClick(self, sender=None):
 		pane = Pane(translate("Csv Exporter"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "exportcsv" ])

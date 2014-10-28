@@ -2,8 +2,9 @@ from html5.base import Base
 from html5.html5Attr.href import Href
 from html5.html5Attr.media import Media
 from html5.html5Attr.rel import Rel
+from html5.html5Attr.form import Name
 
-class A( Base ,Href,Media,Rel):
+class A( Base, Href, Media, Rel, Name ):
 	_baseClass = "a"
 
 	def __init__(self, *args, **kwargs):

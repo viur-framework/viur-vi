@@ -7,7 +7,8 @@ from event import viInitializedEvent
 from config import conf
 
 from html5.textnode import TextNode
-from html5.form import Input, Label
+from html5.list import Ul, Li
+from html5.form import Input, Label, Select, Option
 from html5.span import Span
 from widgets.table import DataTable
 from network import NetworkService
@@ -15,17 +16,6 @@ from priorityqueue import viewDelegateSelector, actionDelegateSelector, extracto
 from html5.ext.popup import YesNoDialog
 from html5.ext.button import Button
 from html5.a import A
-
-class FallbackExtractor(object):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
-		super(FallbackExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.modulName=modulName
-
-	def render( self, data, field ):
-		return str(data[field])
-
 
 class CsvExport(Div):
 	_batchSize = 99  # How many row we fetch at once
@@ -44,6 +34,7 @@ class CsvExport(Div):
 		self._structure = None
 		self._currentRequests = []
 		self.columns = []
+		self.column_keys = dict()
 
 		self.filter = {"state_rts": "1"}
 		self.columns = list()
@@ -57,21 +48,50 @@ class CsvExport(Div):
 
 		self.emptyNotificationDiv["style"]["display"] = "none"
 
-		tmpList = [["de", "Deutsch"], ["en", "Englisch"]]
-		tmp = Div()
-		self.appendChild(tmp)
+		tmpList = conf["mainWindow"].config["viur.defaultlangsvalues"].items()
+		self.lang_select = Select()
+		self.lang_select["id"] = "lang-select"
+		self.encoding_select = Select()
+		self.encoding_select["id"] = "encoding-select"
+
+		label1 = Label("Sprachauswahl")
+		label1["for"] = "lang-select"
+
+		label2 = Label("Encoding")
+		label2["for"] = "lang-select"
+
+		span1 = Div()
+		span1.appendChild(label1)
+		span1.appendChild(self.lang_select)
+		span1["class"] = "bone"
+
+		span2 = Div()
+		span2.appendChild(label2)
+		span2.appendChild(self.encoding_select)
+		span2["class"] = "bone"
+
+		self.appendChild(span1)
+		self.appendChild(span2)
 		for key, value in tmpList:
-			alabel=Label()
-			acheckbox=Input()
-			acheckbox["type"]="checkbox"
-			acheckbox["name"]=key
+			aoption = Option()
+			aoption["value"] = key
+			aoption.element.innerHTML = value
+			# self.appendChild(aoption)
 			if key == conf["currentlanguage"]:
-				acheckbox["checked"] = True
-			alabel.appendChild(acheckbox)
-			aspan=Span()
-			aspan.element.innerHTML=value
-			alabel.appendChild(aspan)
-			tmp.appendChild(alabel)
+				aoption["selected"] = True
+			self.lang_select.appendChild(aoption)
+
+
+		tmp1 = Option()
+		tmp1["value"] = "iso-8859-15"
+		tmp1["selected"] = True
+		tmp1.element.innerHTML = "ISO-8859-15"
+		self.encoding_select.appendChild(tmp1)
+
+		tmp2 = Option()
+		tmp2["value"] = "utf-8"
+		tmp2.element.innerHTML = "UTF-8"
+		self.encoding_select.appendChild(tmp2)
 
 		self.exportBtn = Button("Export", self.on_btnExport_released)
 		self.appendChild(self.exportBtn)
@@ -86,12 +106,16 @@ class CsvExport(Div):
 		tmpDict = {}
 		for key, bone in self._structure:
 			tmpDict[key] = bone
+
+		count = 0
 		for key, bone in self._structure:
 			if bone["visible"]:
-				self.columns.append(key)
+				self.columns.append(str(bone["descr"]))
+				self.column_keys[key] = count
+				count += 1
 				extractor = extractorDelegateSelector.select(self.module, key, tmpDict)
 				if not extractor:
-					extractor = FallbackExtractor
+					raise TypeError("missing extractor", self.module, key, tmpDict)
 				extractor = extractor(self.module, key, tmpDict)
 				self.cell_renderer[key] = extractor
 		# print("structure", self.columns)
@@ -172,39 +196,59 @@ class CsvExport(Div):
 			                       failureHandler=self.showErrorMsg))
 
 	def dataArrived(self):
-		print("exporting now...")
+		# print("exporting now...")
 		if not self.skelData:
 			return
 
-		data = self.skelData
-		idx = 1
+		current_lang = conf["currentlanguage"]
+		export_lang = conf["currentlanguage"]
 
-		resStr = ";".join(self.columns) + "\n"
-		count = len(self.columns)
-		# print("renderers", self.cell_renderer)
-		for recipient in data:
-			values = [None for i in range(count)]
-			for key, value in recipient.items():
-				if key not in self.columns or value is None or value == "None" or value == "none":
-					continue
-				extractor = self.cell_renderer[key]
-				try:
-					index = self.columns.index(str(key))
-					values[index] = extractor.render(recipient, key)
-				except ValueError:
-					pass
-			line = ";".join(values) + "\n"
-			resStr += line
 
-		tmpA = A()
-		encFunc = eval("encodeURIComponent")
-		tmpA["href"] = "data:text/plain;charset=utf-8," + encFunc(resStr)
-		# print("conf", conf)
-		tmpA["download"] = "export-%s-%s.csv" % (self.module, datetime.now().strftime("%Y%m%d%H%M"))
-		tmpA.element.click()
-		# print( resStr )
-		conf["mainWindow"].removeWidget(self)
-		# print("exporting finished!")
+		for aoption in self.lang_select._children:
+			if aoption["selected"]:
+				export_lang = aoption["value"]
+
+		encoding = "iso-8859-15"
+		for aoption in self.encoding_select._children:
+			if aoption["selected"]:
+				encoding = aoption["value"]
+
+		try:
+			if export_lang != current_lang:
+				conf["currentlanguage"] = export_lang
+
+			data = self.skelData
+			resStr = ";".join([str(i) for i in self.columns]) + "\n"
+			count = len(self.columns)
+			for recipient in data:
+				values = [None for i in range(count)]
+				for key, value in recipient.items():
+					if key not in self.column_keys or value is None or value == "None" or value == "none":
+						continue
+					extractor = self.cell_renderer[key]
+					try:
+						index = self.column_keys[key]
+						values[index] = extractor.render(recipient, key)
+					except ValueError:
+						pass
+				line = ";".join(values) + "\n"
+				resStr += line
+
+			tmpA = A()
+			encFunc = eval("encodeURIComponent")
+			escapeFunc = eval("escape")
+			if encoding == "utf-8":
+				tmpA["href"] = "data:text/csv;charset=utf-8," + encFunc(resStr)
+			elif encoding == "iso-8859-15":
+				tmpA["href"] = "data:text/csv;charset=ISO-8859-15," + escapeFunc(resStr)
+			else:
+				raise ValueError("unknown encoding: %s" % encoding)
+			tmpA["download"] = "export-%s-%s-%s-%s.csv" % (self.module, export_lang, encoding, datetime.now().strftime("%Y%m%d%H%M"))
+			tmpA.element.click()
+			conf["mainWindow"].removeWidget(self)
+		finally:
+			conf["currentlanguage"] = current_lang
+			# print("exporting finished")
 
 	def onFinished(self, req):
 		if self.request.isIdle():

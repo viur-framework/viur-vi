@@ -1,8 +1,22 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from config import conf
+
+
+class ColorBoneExtractor( object ):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+		super( ColorBoneExtractor, self ).__init__()
+		self.skelStructure = skelStructure
+		self.boneName = boneName
+		self.modulName = modulName
+
+	def render( self, data, field ):
+		if field in data.keys():
+			return str(data[field])
+		return ".."
+
 
 class ColorViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -64,3 +78,4 @@ def CheckForColorBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForColorBone, ColorEditBone)
 viewDelegateSelector.insert( 3, CheckForColorBone, ColorViewBoneDelegate)
+extractorDelegateSelector.insert(3, CheckForColorBone, ColorBoneExtractor)

@@ -580,11 +580,11 @@ background-color:#d6d6d6;
 /* #actionbar
 ================================================== */
 .vi_operator .actionbar {
-  width: 98%;
+  width: 82.3%;
   /*min-width: 500px;*/
   position: fixed;
   margin-top: -105px;
-  margin-left: -2%;
+  margin-left: -1%;
   padding: 15px 1%;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #ccc;
@@ -645,6 +645,14 @@ background-color:#d6d6d6;
 .actionbar.is_disabled {
   visibility: hidden;
 }
+
+.actionbar select {
+  height: 28px;
+  padding-top: 4px;
+  padding-bottom: 1px;
+  margin-right: 20px;
+}
+
 /* #vi_buttons
 ================================================== */
 button[type="button"] {
@@ -755,13 +763,13 @@ button.select:before {
 button.selectfields:before {
   background-position: -112px -112px;
 }
-button.selectall:before {
+button.selectall {
   background-position: -48px -64px; 
 }
-button.unselectall:before {
+button.unselectall {
   background-position: -64px -64px;  
 }
-button.selectinvert:before {
+button.selectinvert {
   background-position: -80px -64px;   
 }
 button.textedit:before {
@@ -1214,8 +1222,8 @@ form fieldset:target,
   width: 100%;
 }
 form fieldset section > div {
-  padding-bottom: 10px;
-  margin-bottom: 10px;
+  padding-bottom: 20px;
+  margin-bottom: 15px;
   /*border-bottom:1px dotted #ccc;*/
   overflow: hidden;
   width: 100%;
@@ -2031,12 +2039,12 @@ td span.time {
   background-color: rgba(250, 250, 250, 0.7);
 }
 .breadcrumb, .imageeditor, .linkeditor {
-  width: 98%;
+  width: 82.3%;
   font-weight: 600;
   min-width: 500px;
   border-top: 0;
   position: fixed;
-  margin-left: -2%;
+  margin-left: -1%;
   padding: 3px 1% 0;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #bbb;
@@ -2295,7 +2303,7 @@ progress[value]::-webkit-progress-value {
   background: rgba(255, 255, 255, 0.5);
 }
 .alertbox {
-  width: 350px;
+  width: 400px;
   height: auto;
   padding: 25px 25px 30px;
   background: #eee;
@@ -2337,9 +2345,9 @@ progress[value]::-webkit-progress-value {
 .alertbox input[type="checkbox"] {width:15px}
 .alertbox input[type="number"] {margin-bottom:10px}
 
-.alertbox label {float: right; width: 300px;}
+.alertbox label {float: right; width: 400px;}
 .alertbox label.headerlbl {float: left; font-size:0.8em; margin-bottom:10px;}
-.alertbox label.rowlbl, .alertbox label.collbl,  {
+.alertbox label.rowlbl, .alertbox label.collbl  {
   float: left;
   width:120px;
   font-size:0.8em;
@@ -2350,23 +2358,19 @@ progress[value]::-webkit-progress-value {
   margin-bottom: 10px;
 }
 
-.alertbox > button {float: right;}
+.alertbox button {float: right;}
 
 .alertbox.selectfields label {
     float: right;
-    width: 300px;
+    width: 350px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-.alertbox.selectfields label:last-of-type {
-    margin-bottom:15px;
-}
-
-.alertbox.selectiontools {
-  float:left;
-}
+.alertbox.selectfields ul { max-height: 400px; overflow-y: auto; }
+.alertbox.selectfields div.selectiontools { text-align: center; margin-bottom: 10px; }
+.alertbox.selectfields div.selectiontools button { float: none; }
 
 /* #vi_badges
 ================================================== */
@@ -2655,9 +2659,7 @@ border-top:1px dotted #ccc;
 }
 
 /* #States
-================================================== */
-
-:focus {
+================================================== */:focus {
   outline: 1px dotted #ccc;
 }
 /*.is_active {
@@ -2677,18 +2679,12 @@ textarea:disabled {
   background: #e0e0e0;
   border: 1px solid #ccc;
 }
-/*.has_multiple_children .actionbar,
-.has_multiple_children .breadcrumb,
-.has_multiple_children .imageeditor,
-.has_multiple_children .linkeditor {
-  width: 40.3%;
-}*/
 
 /* #Custom Styles
-================================================== 
+================================================== */
 
-@import "../../vi_customizing/static/vi_custom.less"; */
- 
+@import "vi_custom.less";
+
 /* #Media Queries
 ================================================== */
 

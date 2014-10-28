@@ -3,6 +3,7 @@
 import html5
 from html5.a import A
 from html5.form import Fieldset
+from html5.ext import YesNoDialog
 from network import NetworkService
 from config import conf
 from priorityqueue import editBoneSelector
@@ -224,8 +225,10 @@ class EditWidget( html5.Div ):
 		self.modul = modul
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
 		assert applicationType in [ EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree, EditWidget.appSingleton ] #Invalid Application-Type?
+
 		if applicationType==EditWidget.appHierarchy or applicationType==EditWidget.appTree:
 			assert id is not None or node is not None #Need either an id or an node
+
 		if clone:
 			assert id is not None #Need an id if we should clone an entry
 			assert not applicationType==EditWidget.appSingleton # We cant clone a singleton
@@ -233,6 +236,11 @@ class EditWidget( html5.Div ):
 				assert node is not None #We still need a rootNode for cloning
 			if applicationType==EditWidget.appTree:
 				assert node is not None #We still need a path for cloning #FIXME
+
+			self.clone_of = key
+		else:
+			self.clone_of = None
+
 		# End santy-checks
 		self.editIdx = EditWidget.__editIdx_ #Iternal counter to ensure unique ids
 		EditWidget.__editIdx_ += 1
@@ -254,6 +262,7 @@ class EditWidget( html5.Div ):
 			self.appendChild( warningSpan )
 		else:
 			self._hashArgs = None
+
 		self.editTaskID = None
 		self.wasInitialRequest = True #Wherever the last request attempted to save data or just fetched the form
 		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" if self.key else "add" )
@@ -261,7 +270,7 @@ class EditWidget( html5.Div ):
 		self.form = html5.Form()
 		self.appendChild(self.form)
 		self.actionbar.setActions(["save.close","save.continue","reset"])
-		self.reloadData( )
+		self.reloadData()
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -291,6 +300,7 @@ class EditWidget( html5.Div ):
 			@param data: The values to transmit or None to fetch a new, clean add/edit form.
 			@type data: Dict or None
 		"""
+
 		self.wasInitialRequest = not len(data)>0
 		if self.modul=="_tasks":
 			#self.editTaskID = protoWrap.edit( self.key, **data )
@@ -302,9 +312,10 @@ class EditWidget( html5.Div ):
 				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
 			else:
 				NetworkService.request(self.modul, "add", data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg )
+
 				#self.editTaskID = protoWrap.add( **data )
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
-			if self.key and not self.clone:
+			if self.key and (not self.clone or not data):
 				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
 				#self.editTaskID = protoWrap.edit( self.key, **data )
 			else:
@@ -330,7 +341,39 @@ class EditWidget( html5.Div ):
 		for c in self.form._children[ : ]:
 			self.form.removeChild( c )
 
-	def setData( self, request=None, data=None, ignoreMissing=False ):
+	def closeOrContinue(self, sender=None ):
+		if self.closeOnSuccess:
+			conf["mainWindow"].removeWidget( self )
+			NetworkService.notifyChange(self.modul)
+			return
+
+		self.clear()
+		self.bones = {}
+		self.reloadData()
+
+	def doCloneHierarchy(self, sender=None ):
+		if self.applicationType == EditWidget.appHierarchy:
+			NetworkService.request( self.modul, "clone",
+		                            { "from_repo" : self.node, "to_repo" : self.node,
+		                              "from_parent" : self.clone_of, "to_parent" : self.key },
+		                                secure=True, successHandler=self.cloneComplete )
+		else:
+			NetworkService.request( conf[ "modules" ][ self.modul ][ "rootNodeOf" ], "clone",
+		                            { "from_repo" : self.clone_of, "to_repo" : self.key },
+		                                secure=True, successHandler=self.cloneComplete )
+
+	def cloneComplete(self, request):
+		logDiv = html5.Div()
+		logDiv["class"].append("msg")
+		spanMsg = html5.Span()
+		spanMsg.appendChild( html5.TextNode( translate( u"The hierarchy will be cloned in the background." ) ) )
+		spanMsg["class"].append("msgspan")
+		logDiv.appendChild(spanMsg)
+
+		conf["mainWindow"].log("success",logDiv)
+		self.closeOrContinue()
+
+	def setData( self, request=None, data=None, ignoreMissing=False, askHierarchyCloning=True ):
 		"""
 		Rebuilds the UI according to the skeleton received from server
 
@@ -340,10 +383,11 @@ class EditWidget( html5.Div ):
 		@param data: The data received
 		"""
 		assert (request or data)
+
 		if request:
 			data = NetworkService.decode( request )
+
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
-			NetworkService.notifyChange(self.modul)
 			logDiv = html5.Div()
 			logDiv["class"].append("msg")
 			spanMsg = html5.Span()
@@ -360,14 +404,26 @@ class EditWidget( html5.Div ):
 				spanMsg.appendChild( html5.TextNode( str(data["values"]["name"]) ))
 				spanMsg["class"].append("namespan")
 				logDiv.appendChild(spanMsg)
+
 			conf["mainWindow"].log("success",logDiv)
-			if self.closeOnSuccess:
-				conf["mainWindow"].removeWidget( self )
-				return
-			self.clear()
-			self.bones = {}
-			self.reloadData()
+
+			if askHierarchyCloning and self.clone:
+				# for lists, which are rootNode entries of hierarchies, ask to clone entire hierarchy
+				if self.applicationType == EditWidget.appList and "rootNodeOf" in conf[ "modules" ][ self.modul ]:
+					self.key = data[ "values" ][ "id" ]
+					YesNoDialog( translate( u"Do you want to clone the entire hierarchy?" ),
+				                    yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
+					return
+				# for cloning within a hierarchy, ask for cloning all subentries.
+				elif self.applicationType == EditWidget.appHierarchy:
+					self.key = data[ "values" ][ "id" ]
+					YesNoDialog( translate( u"Do you want to clone all subentries of this item?" ),
+				                    yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
+					return
+
+			self.closeOrContinue()
 			return
+
 		#Clear the UI
 		self.clear()
 		self.bones = {}
@@ -377,6 +433,7 @@ class EditWidget( html5.Div ):
 		fieldSets = {}
 		currRow = 0
 		hasMissing = False
+
 		for key, bone in data["structure"]:
 			if bone["visible"]==False:
 				continue

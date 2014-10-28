@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os.path
+import re
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
@@ -12,32 +14,54 @@ from network import NetworkService
 from widgets.edit import EditWidget
 from pane import Pane
 
-class RelationalBoneExtractor( object ):
-	cantSort = True
+class RelationalBoneExtractor(object):
 	def __init__(self, modul, boneName, structure):
 		super(RelationalBoneExtractor, self).__init__()
 		self.format = "$(name)"
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
+		try:
+			self.format = re.match("\$\((.*?)\)", self.format).group(1)
+		except:
+			pass
+
+		try:
+			self.format, blah = os.path.splitext(self.format)
+		except ValueError:
+			pass
+
 		self.modul = modul
 		self.structure = structure
 		self.boneName = boneName
 
 	def render(self, data, field ):
-		# print("field", field)
+		def localizedRender(val):
+			if "currentlanguage" in conf:
+				i18n_val = "%s.%s" % (self.format, conf["currentlanguage"])
+				if i18n_val in val:
+					val = val[i18n_val].replace("&quot;", "")
+				elif self.format in val:
+					val = val[self.format].replace("&quot;", "")
+				elif val:
+					val = val["id"]
+			else:
+				val = val["id"]
+			return val
+
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
 		if field in data.keys():
 			val = data[field]
 		else:
 			val = ""
+
 		if isinstance(val, list):
 			result = list()
 			for x in val:
-				result.append(formatString(self.format, self.structure, x) or x["id"])
+				print("relation x in val", x)
+				result.append(localizedRender(x))
 			return ", ".join(result)
-		#val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
 		elif isinstance(val, dict):
-			val = formatString(self.format,self.structure, val ) or val["id"]
+			val = localizedRender(val)
 		else:
 			print("warning type:", val, type(val))
 		return val.replace("&quot;", "")

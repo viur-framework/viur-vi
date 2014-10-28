@@ -100,7 +100,6 @@ class CoreWindow( html5.Div ):
 				return( None )
 
 		def getModulSortIndex(argIn):
-			print("argIn", argIn[1])
 			try:
 				return( argIn[1]["sortIndex"] )
 			except:
@@ -108,7 +107,7 @@ class CoreWindow( html5.Div ):
 
 		groups = {}
 		panes = []
-		userAccess = self.user["values"]["access"]
+		userAccess = self.user["values"].get( "access" ) or []
 		predefinedFilterCounter = 1
 		if "configuration" in self.config.keys() and isinstance( self.config["configuration"], dict) \
 			and "modulGroups" in self.config["configuration"].keys() and isinstance( self.config["configuration"]["modulGroups"], list):
