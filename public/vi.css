@@ -420,7 +420,7 @@ p {
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   border-radius: 15px;
-  width:22px;
+  width: 22px;
   padding: 9px 2px 11px;
   line-height: 0;
   font-size: .7em;
@@ -518,47 +518,46 @@ p {
   margin: 10px 1%;
   border-radius: 2px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  border:1px solid #d2d2d2;
-  transition:all .3s ease;
+  border: 1px solid #d2d2d2;
+  transition: all .3s ease;
 }
-
 .vi_operator .compoundfilter h2,
 .vi_operator .search h2 {
   color: #777;
   line-height: 1.4em;
   font-size: 0.8em;
-  padding:0 15px;
+  padding: 0 15px;
 }
-
 .vi_operator .compoundfilter.collapsed .extendedfilter {
-    height: 0;
-    opacity: 0;
-    overflow:hidden;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
 }
-
 .vi_operator .search.collapsed input,
-.vi_operator .search.collapsed button {display:none;}
-
-.vi_operator .search.expanded input {margin: 10px 15px;}
-
+.vi_operator .search.collapsed button {
+  display: none;
+}
+.vi_operator .search.expanded input {
+  margin: 10px 15px;
+}
 .vi_operator .search.collapsed:hover,
-.vi_operator .compoundfilter.collapsed:hover {background-color:#e2e2e2; box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);}
-
+.vi_operator .compoundfilter.collapsed:hover {
+  background-color: #e2e2e2;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
+}
 .vi_operator .search.expanded,
 .vi_operator .compoundfilter.expanded {
-box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
-background-color:#d6d6d6;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+  background-color: #d6d6d6;
 }
-
 .vi_operator .compoundfilter.expanded .extendedfilter {
-    margin-top:15px;
+  margin-top: 15px;
 }
-
 .vi_operator .compoundfilter.embed {
-    width: 98%;
-    margin: 0 0 20px;
-    background: #eee;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  width: 98%;
+  margin: 0 0 20px;
+  background: #eee;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 .vi_operator .tree .search h2 {
   width: 60px;
@@ -587,12 +586,12 @@ background-color:#d6d6d6;
 /* #actionbar
 ================================================== */
 .vi_operator .actionbar {
-  width: 82.3%;
+  width: 98%;
   /*min-width: 500px;*/
 
   position: fixed;
   margin-top: -105px;
-  margin-left: -1%;
+  margin-left: -2%;
   padding: 15px 1%;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #ccc;
@@ -743,7 +742,7 @@ button.save.close:before,
   background-position: 0px -16px;
 }
 button.activateselection:before {
-  background-position: 0px -32px;  
+  background-position: 0px -32px;
 }
 button.save.continue:before {
   background-position: -16px -16px;
@@ -757,9 +756,6 @@ button.reset:before {
 button.reload:before {
   background-position: -80px -16px;
 }
-button.createrecurrent_small:before {
-    background-position: -96px -16px;
-}
 button.close:before,
 button.cancel:before,
 .btn_no:before {
@@ -771,14 +767,14 @@ button.select:before {
 button.selectfields:before {
   background-position: -112px -112px;
 }
-button.selectall {
-  background-position: -48px -64px; 
+button.selectall:before {
+  background-position: -48px -64px;
 }
-button.unselectall {
-  background-position: -64px -64px;  
+button.unselectall:before {
+  background-position: -64px -64px;
 }
-button.selectinvert {
-  background-position: -80px -64px;   
+button.selectinvert:before {
+  background-position: -80px -64px;
 }
 button.textedit:before {
   background-position: -96px -16px;
@@ -811,7 +807,6 @@ button.resend:before {
 button.trans:before {
   background-image: url(icons/actions/translate.svg);
 }
-
 /* Newsletter Icons */
 button.send.newsletter:before {
   background-position: -80px -32px;
@@ -822,7 +817,6 @@ button.send.preview:before {
 button.stats:before {
   background-position: -112px -32px;
 }
-
 /* Textedit Icons */
 button.text {
   margin-bottom: 10px;
@@ -996,6 +990,11 @@ button.icon.cancel[type="button"]:hover:before,
 button.icon.delete[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
+button.icon.close[type="button"]:before,
+button.icon.cancel[type="button"]:hover:before,
+button.icon.delete[type="button"]:hover:before {
+  background-image: url(icons/vi_actions_sprite_white.svg);
+}
 /* Green Buttons */
 button.icon.save.close[type="button"],
 button.icon.activateselection[type="button"],
@@ -1074,7 +1073,7 @@ button.icon.is_disabled[type="button"]:hover {
 }
 button.icon.is_disabled:before {
   opacity: 0.3;
-  background-image: url(icons/vi_actions_sprite.svg)!important;
+  background-image: url(icons/vi_actions_sprite.svg) !important;
 }
 button.icon.is_disabled {
   cursor: default;
@@ -1203,8 +1202,8 @@ form fieldset:target {
   width: 100%;
 }
 form fieldset section > div {
-  padding-bottom: 20px;
-  margin-bottom: 15px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
   /*border-bottom:1px dotted #ccc;*/
 
   overflow: hidden;
@@ -1345,9 +1344,9 @@ input[type=password],
   float: left;
   margin-right: 15px;
 }
-
-.extendedrelational > div {overflow: hidden;}
-
+.extendedrelational > div {
+  overflow: hidden;
+}
 .extendedrelational .labelwrapper button {
   display: block;
   margin-top: -28px;
@@ -1560,16 +1559,16 @@ select {
 .tagcontainer {
   display: inline-block;
 }
-
-.tagcontainer {min-width: 50%;}
-
+.tagcontainer {
+  min-width: 50%;
+}
 .selectioncontainer button,
 .tagcontainer button {
   margin-right: 15px;
 }
-
-.tagcontainer button {margin-bottom: 5px;}
-
+.tagcontainer button {
+  margin-bottom: 5px;
+}
 .selectioncontainer .entrydescription,
 .selectioncontainer label {
   border: 1px solid #ccc;
@@ -1997,16 +1996,13 @@ td span.time {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 .sidebarwidgets dd span.date {
   margin-right: 10px;
   font-weight: 600;
 }
-
 .sidebarwidgets dd span.time {
   font-weight: 100;
 }
-
 /* #vi_forest
 ================================================== */
 .tree {
@@ -2047,12 +2043,12 @@ td span.time {
 .breadcrumb,
 .imageeditor,
 .linkeditor {
-  width: 82.3%;
+  width: 98%;
   font-weight: 600;
   min-width: 500px;
   border-top: 0;
   position: fixed;
-  margin-left: -1%;
+  margin-left: -2%;
   padding: 3px 1% 0;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #bbb;
@@ -2394,7 +2390,7 @@ progress[value]::-webkit-progress-value {
   border-right-width: 0;
   margin-bottom: 10px;
 }
-.alertbox button {
+.alertbox > button {
   float: right;
 }
 .alertbox.selectfields label {
@@ -2403,6 +2399,12 @@ progress[value]::-webkit-progress-value {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.alertbox.selectfields label:last-of-type {
+  margin-bottom: 15px;
+}
+.alertbox.selectiontools {
+  float: left;
 }
 /* #vi_badges
 ================================================== */
@@ -2582,13 +2584,11 @@ progress[value]::-webkit-progress-value {
 .statuslist li span {
   margin-right: 5px;
 }
-
 .statuslist li span.msg {
-margin-right: 55px;
-margin-left: 52px;
-display: block;
+  margin-right: 55px;
+  margin-left: 52px;
+  display: block;
 }
-
 .statuslist li .modulspan:after {
   content: ':';
 }
@@ -2680,14 +2680,15 @@ display: block;
   color: #777;
   float: right;
   padding: 2px 1%;
-  margin-bottom:50px;
+  margin-bottom: 50px;
   border-top: 1px dotted #ccc;
 }
 .vi_messenger .versiondiv span {
   display: block;
 }
 /* #States
-================================================== */:focus {
+================================================== */
+:focus {
   outline: 1px dotted #ccc;
 }
 /*.is_active {
@@ -2706,16 +2707,16 @@ textarea:disabled {
   background: #e0e0e0;
   border: 1px solid #ccc;
 }
-.has_multiple_children .actionbar,
+/*.has_multiple_children .actionbar,
 .has_multiple_children .breadcrumb,
 .has_multiple_children .imageeditor,
 .has_multiple_children .linkeditor {
   width: 40.3%;
-}
+}*/
 /* #Custom Styles
-================================================== */
-/*@import "../../vi_customizing/static/vi_custom.less";
- 
+================================================== 
+
+@import "../../vi_customizing/static/vi_custom.less"; */
 /* #Media Queries
 ================================================== */
 /* Smaller than 1441px (devices and browsers) */
