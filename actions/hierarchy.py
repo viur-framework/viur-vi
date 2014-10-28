@@ -137,7 +137,7 @@ class CloneAction( html5.ext.Button ):
 		correctAction = actionName=="clone"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
+		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "clone" in conf["modules"][modul]["disabledFunctions"]
 		return(  correctAction and correctHandler and hasAccess and not isDisabled )
 
 	def onClick(self, sender=None):
