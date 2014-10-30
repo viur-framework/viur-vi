@@ -6,9 +6,16 @@ class InternalPreview( html5.Ul ):
 		super( InternalPreview, self ).__init__( *args, **kwargs )
 
 		tmpDict = {}
+
 		for key, bone in structure:
 			tmpDict[ key ] = bone
+
 		for key, bone in structure:
+			if "params" in bone.keys() and bone[ "params" ] \
+					and "previewBone" in bone[ "params" ].keys() \
+						and bone[ "params" ][ "previewBone" ] == False:
+				continue
+
 			self.ali= html5.Li()
 			self.ali["class"]=[ modul,"type_"+bone["type"],"bone_"+key]
 			self.adl= html5.Dl()
