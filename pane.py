@@ -44,6 +44,8 @@ class Pane( html5.Li ):
 			self.closeBtn = html5.ext.Button(translate("Close"), self.onBtnCloseReleased)
 			self.closeBtn["class"].append("closebtn")
 			self.appendChild(self.closeBtn)
+		else:
+			self.closeBtn = None
 
 	def onBtnCloseReleased(self, *args, **kwargs):
 		conf["mainWindow"].removePane( self )
@@ -64,6 +66,10 @@ class Pane( html5.Li ):
 			#self.childDomElem = DOM.createElement("ul")
 			#DOM.setElemAttribute(self.childDomElem, "class", "actionlist")
 			#DOM.appendChild( self.getElement(), self.childDomElem )
+
+			if self.closeBtn:
+				self.closeBtn[ "style" ][ "display" ] = "none"
+
 		self.childDomElem.appendChild( pane )
 		#DOM.appendChild( self.childDomElem, pane.getElement() )
 
@@ -82,8 +88,12 @@ class Pane( html5.Li ):
 			#DOM.removeChild( self.getElement(), self.childDomElem )
 			self.childDomElem = None
 
+			if self.closeBtn:
+				self.closeBtn[ "style" ][ "display" ] = "initial"
+
 
 	def onDetach(self):
+		assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
 		#Kill all remaining children
 		for widget in self.widgetsDomElm._children[:]:
 			self.widgetsDomElm.removeChild(widget)
