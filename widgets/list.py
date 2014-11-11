@@ -77,7 +77,7 @@ class ListWidget( html5.Div ):
 		self.filterDescriptionSpan = html5.Span()
 		self.appendChild( self.filterDescriptionSpan )
 		self.filterDescriptionSpan["class"].append("filterdescription")
-		self.updateFilterDescription( )
+		self.updateFilterDescription()
 		self.reloadData()
 
 	def updateFilterDescription(self):
