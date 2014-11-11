@@ -4,13 +4,12 @@ import html5
 from i18n import translate
 
 
-
 class Pane( html5.Li ):
 	"""
 		Base class for Panes.
-		A pane represents a entry in the left menu aswell
+		A pane represents a entry in the left menu as well
 		as a list of widgets associated with this pane.
-		Its possible to stack panes ontop of each other.
+		It is possible to stack panes on-top of each other.
 		If a pane is active, _all_ its child widgets are visible
 		(through they might overlap).
 	"""
@@ -47,7 +46,6 @@ class Pane( html5.Li ):
 			self.appendChild(self.closeBtn)
 
 	def onBtnCloseReleased(self, *args, **kwargs):
-		print("CLOSING PANE")
 		conf["mainWindow"].removePane( self )
 
 	def addChildPane(self, pane):
@@ -86,7 +84,6 @@ class Pane( html5.Li ):
 
 
 	def onDetach(self):
-		assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
 		#Kill all remaining children
 		for widget in self.widgetsDomElm._children[:]:
 			self.widgetsDomElm.removeChild(widget)
