@@ -52,12 +52,12 @@ debug: $(OUTPUT) $(MAIN_CSS) version
 	@echo "--- FINISHED DEBUG BUILD ---"
 
 deploy: clean $(MAIN_CSS) version
-	@echo "--- STARTING DEBUG BUILD ---"
+	@echo "--- STARTING DEPLOY BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEPLOYOPTS) \
 		--bootloader=bootstrap_progress.js \
 				admin.py
-	@echo "--- FINISHED DEBUG BUILD ---"
+	@echo "--- FINISHED DEPLOY BUILD ---"
 	
 clean: $(OUTPUT)
 	rm -rf $(OUTPUT)/*
