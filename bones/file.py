@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from event import EventDispatcher
 
-import html5
+import html5, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from utils import formatString
 from widgets.file import FileWidget, LeafFileWidget
@@ -13,7 +13,6 @@ from i18n import translate
 from network import NetworkService
 from widgets.edit import EditWidget
 from pane import Pane
-
 
 class FileBoneExtractor(object):
 	def __init__(self, modul, boneName, structure):
@@ -83,11 +82,13 @@ class FileViewBoneDelegate(object):
 				adiv["class"].append("format_%s" % fformat )
 			except:
 				pass
-		if "servingurl" in fileentry.keys() and fileentry["servingurl"]:
+
+		if utils.getImagePreview( fileentry ):
 			aimg=html5.Img()
-			aimg["src"]=fileentry["servingurl"]+"=s150"
-			aimg["alt"]=fileentry["name"]
+			aimg["src"] = utils.getImagePreview( fileentry )
+			aimg["alt"] = fileentry["name"]
 			adiv.appendChild(aimg)
+
 		aspan=html5.Span()
 		aspan.appendChild(html5.TextNode(fileentry["name"]))#fixme: formatstring!
 		adiv.appendChild(aspan)
@@ -121,9 +122,10 @@ class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 	def __init__(self, *args, **kwargs):
 		super( FileMultiSelectionBoneEntry, self ).__init__( *args, **kwargs )
 		self["class"].append("fileentry")
-		if "servingurl" in self.data.keys():
+
+		if utils.getImagePreview( self.data ) is not None:
 			img = html5.Img()
-			img["src"] = self.data["servingurl"]+"=s150"
+			img["src"] = utils.getImagePreview( self.data )
 			img["class"].append("previewimg")
 			self.appendChild(img)
 			# Move the img in front of the lbl
@@ -278,8 +280,8 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			                                successHandler=self.onSelectionDataAviable, cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
-			if "servingurl" in self.selection.keys():
-				self.previewImg["src"] = self.selection["servingurl"]+"=s150"
+			if utils.getImagePreview( self.selection ) is not None:
+				self.previewImg["src"] = utils.getImagePreview( self.selection )
 				self.previewImg["style"]["display"] = ""
 			else:
 				self.previewImg["style"]["display"] = "none"

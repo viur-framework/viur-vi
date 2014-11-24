@@ -1,4 +1,4 @@
-import html5
+import html5, utils
 from network import NetworkService, DeferredCall
 from widgets.tree import TreeWidget, LeafWidget
 from priorityqueue import displayDelegateSelector
@@ -14,15 +14,18 @@ class LeafFileWidget( LeafWidget ):
 	"""
 	def __init__(self, modul, data, structure, *args, **kwargs ):
 		super( LeafFileWidget, self ).__init__( modul, data, structure, *args, **kwargs )
-		if "servingurl" in data.keys():
-			self.appendChild( html5.Img( data["servingurl"]) )
+
+		if utils.getImagePreview( data ):
+			self.appendChild( html5.Img( utils.getImagePreview( data ) ) )
+
 		if "mimetype" in data.keys():
 			try:
 				ftype, fformat = data["mimetype"].split("/")
 				self["class"].append("type_%s" % ftype )
-				self["class"].append("format_%s" % fformat )
+				self["class"].append("format_%s" % fformat.replace( "+", "_" ) )
 			except:
 				pass
+
 		self["class"].append("file")
 		self.sinkEvent("onDragOver","onDragLeave")
 
