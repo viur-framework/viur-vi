@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-import html5
+import html5, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from i18n import translate
@@ -150,3 +150,135 @@ editBoneSelector.insert( 3, CheckForSelectMultiBone, SelectMultiEditBone)
 viewDelegateSelector.insert( 3, CheckForSelectMultiBone, SelectMultiViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedSelectMultiSearch.canHandleExtension, ExtendedSelectMultiSearch )
 extractorDelegateSelector.insert(3, CheckForSelectMultiBone, SelectMultiBoneExtractor)
+
+#Class for AccessMultiSelectBone, a special bone to nicely present user access rights for all skeletons.
+class AccessMultiSelectBone( html5.Div ):
+	states = [ "view", "edit", "add", "delete" ]
+
+	def __init__(self, moduleName, boneName, readOnly, values, *args, **kwargs ):
+		super( AccessMultiSelectBone,  self ).__init__( *args, **kwargs )
+		self.boneName = boneName
+		self.modulName = moduleName
+		self.readOnly = readOnly
+		self.values = values
+		self.skels = {}
+		self.flags = {}
+		self.sinkEvent( "onClick" )
+
+		for value in values:
+			skel = self.parseskelaccess( value )
+			if not skel:
+				self.flags[ value ] = None
+			elif not skel[ 0 ] in self.skels.keys():
+				self.skels[ skel[ 0 ] ] = {}
+
+		# Render static flags first
+		for flag in sorted( self.flags.keys() ):
+			label = html5.Label()
+
+			checkbox = html5.Input()
+			checkbox["type"] = "checkbox"
+			checkbox["name"] = flag
+			label.appendChild( checkbox )
+
+			self.flags[ flag ] = checkbox
+
+			span = html5.Span()
+			span.appendChild( html5.TextNode( flag ) )
+			label.appendChild( span )
+
+			self.appendChild( label )
+
+		# Render skeleton access flags then
+		for skel in sorted( self.skels.keys() ):
+			label = html5.Label()
+
+			span = html5.Span()
+			span.appendChild( html5.TextNode( skel ) )
+			label.appendChild( span )
+
+			ul = html5.Ul()
+			for state in self.states:
+				li = html5.Li()
+				li[ "class" ] = [ "access-state", state ]
+				ul.appendChild( li )
+
+				self.skels[ skel ][ state ] = li
+
+			label.appendChild( ul )
+
+			self.appendChild( label )
+
+	def parseskelaccess( self, value ):
+		for state in self.states:
+			if value.endswith( state ):
+				return ( value[ 0 :  -( len( state ) + 1 ) ], state )
+
+		return False
+
+	def onClick( self, event ):
+		for skel, toggles in self.skels.items():
+			for toggle in toggles.values():
+				if utils.doesEventHitWidgetOrChildren( event, toggle ):
+					if "active" in toggle[ "class" ]:
+						toggle[ "class" ].remove( "active" )
+
+						if "view" in toggle[ "class" ]:
+							for rm in [ "add", "delete", "edit" ]:
+								self.skels[ skel ][ rm ][ "class" ].remove( "active" )
+					else:
+						toggle[ "class" ].append( "active" )
+
+					return
+
+	@staticmethod
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
+		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
+
+		if "values" in skelStructure[ boneName ].keys():
+			values = skelStructure[ boneName ]["values"]
+		else:
+			values = {}
+
+		return( AccessMultiSelectBone( moduleName, boneName, readOnly, values ) )
+
+	def unserialize(self, data):
+		if self.boneName in data.keys():
+			values = data[ self.boneName ] if data[ self.boneName ] else []
+
+			for name, elem in self.flags.items():
+				if name in values:
+					elem[ "checked" ] = True
+
+			for skel in self.skels:
+				for state in self.states:
+					if "%s-%s" % ( skel, state ) in values:
+						if not "active" in self.skels[ skel ][ state ][ "class" ]:
+							self.skels[ skel ][ state ][ "class" ].append( "active" )
+
+
+	def serializeForPost(self):
+		ret = []
+
+		for name, elem in self.flags.items():
+			if elem[ "checked" ]:
+				ret.append( name )
+
+		for skel in self.skels:
+			for state in self.states:
+				if "active" in self.skels[ skel ][ state ][ "class" ]:
+					ret.append( "%s-%s" % ( skel, state ) )
+
+		return { self.boneName: ret }
+
+	def serializeForDocument(self):
+		return self.serialize()
+
+def CheckForAccessMultiSelectBone( moduleName, boneName, skelStucture ):
+	if skelStucture[boneName]["type"] == "accessselectmulti":
+		return True
+
+	return False
+
+#Register this Bone in the global queue
+editBoneSelector.insert( 4, CheckForAccessMultiSelectBone, AccessMultiSelectBone )
