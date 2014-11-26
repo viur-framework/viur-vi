@@ -278,7 +278,8 @@ class TreeWidget( html5.Div ):
 		self.entryFrame = SelectableDiv( self.nodeWidget, self.leafWidget )
 		self.appendChild( self.entryFrame )
 		self.entryFrame.selectionActivatedEvent.register( self )
-		self._currentCursor = None
+		self._batchSize = 99
+		self._currentCursor = { "node" : None, "leaf": None }
 		self._currentRequests = []
 		self.rootNodeChangedEvent = EventDispatcher("rootNodeChanged")
 		self.nodeChangedEvent = EventDispatcher("nodeChanged")
@@ -401,11 +402,19 @@ class TreeWidget( html5.Div ):
 		if paramsOverride:
 			params = paramsOverride.copy()
 		else:
-			params = {"node":self.node}
-		r = NetworkService.request(self.modul,"list/node", params , successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
+			params = { "node":self.node }
+
+		if "amount" not in params:
+			params[ "amount" ] = self._batchSize
+
+		r = NetworkService.request(self.modul,"list/node", params,
+		                           successHandler=self.onRequestSucceded,
+		                           failureHandler=self.showErrorMsg )
 		r.reqType = "node"
 		self._currentRequests.append( r )
-		r = NetworkService.request(self.modul,"list/leaf", params, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
+		r = NetworkService.request(self.modul,"list/leaf", params,
+		                           successHandler=self.onRequestSucceded,
+		                           failureHandler=self.showErrorMsg )
 		r.reqType = "leaf"
 		self._currentRequests.append( r )
 
@@ -419,8 +428,21 @@ class TreeWidget( html5.Div ):
 				n = self.nodeWidget( self.modul, skel, data["structure"] )
 			else:
 				n = self.leafWidget( self.modul, skel, data["structure"] )
+
 			self.entryFrame.appendChild(n)
 			self.entryFrame.sortChildren( self.getChildKey )
+
+		if "cursor" in data.keys() and len( data["skellist"] ) == req.params[ "amount" ]:
+			self._currentCursor[ req.reqType ] = data["cursor"]
+
+			req.params[ "cursor" ] = data["cursor"]
+			r = NetworkService.request(self.modul,"list/%s" % req.reqType, req.params,
+		                           successHandler=self.onRequestSucceded,
+		                           failureHandler=self.showErrorMsg )
+			r.reqType = req.reqType
+			self._currentRequests.append( r )
+		else:
+			self._currentCursor[ req.reqType ] = None
 
 	def getChildKey(self, widget ):
 		"""
