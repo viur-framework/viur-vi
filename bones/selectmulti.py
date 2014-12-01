@@ -275,7 +275,7 @@ class AccessMultiSelectBone( html5.Div ):
 		return self.serialize()
 
 def CheckForAccessMultiSelectBone( moduleName, boneName, skelStucture ):
-	if skelStucture[boneName]["type"] == "accessselectmulti":
+	if skelStucture[boneName]["type"] == "selectmulti.access":
 		return True
 
 	return False
