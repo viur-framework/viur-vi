@@ -1,36 +1,11 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
 from config import conf
 from event import EventDispatcher
 from html5.keycodes import *
 from i18n import translate
-
-class StringBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
-		super( StringBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.modulName=modulName
-
-	def render( self, data, field ):
-		# print("StringBoneExtractor.render", data, field)
-		if field in data.keys():
-			##multilangs
-			if isinstance(data[field], dict):
-				resstr=""
-				if "currentlanguage" in conf.keys():
-					if conf["currentlanguage"] in data[field].keys():
-						resstr=data[field][conf["currentlanguage"]].replace("&quot;", "")
-					else:
-						if len(data[field].keys())>0:
-							resstr=data[field][data[field].keys()[0]].replace("&quot;", "")
-				return resstr
-			else:
-				return str(data[field]).replace("&quot;", "").replace(";", " ")
-		return ".."
-
 
 class StringViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -55,7 +30,11 @@ class StringViewBoneDelegate( object ):
 
 			else:
 				#no langobject
-				return (self.getViewElement(str( data[field]),False))
+				if isinstance(data[field],list):
+					output = ", ".join(data[field])
+				else:
+					output=str( data[field])
+				return (self.getViewElement(output,False))
 		return (self.getViewElement("..",False))
 
 	def getViewElement(self,labelstr,datafield):
@@ -179,13 +158,6 @@ class StringEditBone( html5.Div ):
 			self.langEdits[ self.currentLanguage ]["style"]["display"] = "none"
 		self.currentLanguage = lang
 		self.langEdits[ self.currentLanguage ]["style"]["display"] = ""
-
-		for btn in self.buttonContainer._children:
-			if btn.lang == lang:
-				if "is_active" not in btn[ "class" ]:
-					btn[ "class" ].append( "is_active" )
-			else:
-				btn[ "class" ].remove( "is_active" )
 
 	def onBtnGenTag(self, btn):
 		self.genTag( "", lang=btn.lang )
@@ -312,4 +284,3 @@ class ExtendedStringSearch( html5.Div ):
 editBoneSelector.insert( 3, CheckForStringBone, StringEditBone)
 viewDelegateSelector.insert( 3, CheckForStringBone, StringViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedStringSearch.canHandleExtension, ExtendedStringSearch )
-extractorDelegateSelector.insert(3, CheckForStringBone, StringBoneExtractor)

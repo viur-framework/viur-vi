@@ -13,6 +13,7 @@ from event import viInitializedEvent
 from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from log import Log
 from pane import Pane, GroupPane
+from i18n import translate
 
 try:
 	import vi_plugins
@@ -20,7 +21,6 @@ except ImportError:
 	pass
 
 class CoreWindow( html5.Div ):
-
 
 	def __init__(self, *args, **kwargs ):
 		super( CoreWindow, self ).__init__( *args, **kwargs )
@@ -64,7 +64,6 @@ class CoreWindow( html5.Div ):
 		w = eval("window.top")
 		w.onerror = le
 
-
 	def onUserTryedToLogin(self,event):
 		self.userLoggedOutMsg.testUserAvaiable()
 
@@ -78,11 +77,9 @@ class CoreWindow( html5.Div ):
 		self.logWdg.log( type, msg )
 
 	def onConfigAvaiable(self, req):
-		data = NetworkService.decode(req)
-		self.config = data
+		self.config = NetworkService.decode(req)
 		if self.user is not None:
 			self.postInit()
-	
 	
 	def onUserAvaiable(self, req):
 		data = NetworkService.decode(req)
@@ -90,7 +87,6 @@ class CoreWindow( html5.Div ):
 		self.user = data
 		if self.config is not None:
 			self.postInit()
-
 
 	def postInit(self):
 		def getModulName(argIn):
@@ -105,6 +101,7 @@ class CoreWindow( html5.Div ):
 			except:
 				return( None )
 
+		# Modules
 		groups = {}
 		panes = []
 		userAccess = self.user["values"].get( "access" ) or []
@@ -149,15 +146,17 @@ class CoreWindow( html5.Div ):
 				else:
 					sortIndex = None
 				panes.append( ( modulInfo["name"], sortIndex, handler ) )
+
 		# Sorting our top level entries
 		panes.sort( key=lambda x: x[0] )
 		panes.sort( key=lambda x: x[1], reverse=True )
 		for k, v, pane in panes:
 			self.addPane( pane )
+
+		# Finalizing!
 		viInitializedEvent.fire()
 		DeferredCall( self.checkInitialHash )
 		self["class"].remove("is_loading")
-
 
 	def checkInitialHash( self, *args, **kwargs ):
 		urlHash = eval("window.top.location.hash")
@@ -190,10 +189,8 @@ class CoreWindow( html5.Div ):
 		if gen:
 			gen( hashList, params )
 
-
 	def onError(self, req, code):
 		print("ONERROR")
-
 
 	def _registerChildPanes(self, pane ):
 		for childPane in pane.childPanes:
@@ -216,8 +213,6 @@ class CoreWindow( html5.Div ):
 		self.viewport.appendChild(pane.widgetsDomElm)
 		pane.widgetsDomElm["style"]["display"] = "none"
 		#DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
-
-
 
 	def stackPane(self, pane, focus=False):
 		assert self.currentPane is not None, "Cannot stack a pane. There's no current one."
@@ -271,7 +266,6 @@ class CoreWindow( html5.Div ):
 	def stackWidget(self, widget ):
 		assert self.currentPane is not None, "Cannot stack a widget while no pane is active"
 		self.addWidget( widget, self.currentPane )
-
 
 	def removeWidget(self, widget ):
 		for pane in self.panes:

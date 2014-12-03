@@ -98,8 +98,6 @@ class StyleWrapper( dict ):
 		for key in F:
 			self.targetWidget.element.style.setProperty( key, F[key] )
 
-
-
 class Widget( object ):
 	_baseClass = None
 
@@ -395,6 +393,22 @@ class Widget( object ):
 		@return:
 		"""
 		return( StyleWrapper( self ) )
+
+	def hide(self):
+		"""
+		Hide element, if shown.
+		:return:
+		"""
+		if not self._getHidden():
+			self._setHidden( True )
+
+	def show(self):
+		"""
+		Show element, if hidden.
+		:return:
+		"""
+		if self._getHidden():
+			self._setHidden( False )
 
 	def onAttach(self):
 		self._isAttached = True

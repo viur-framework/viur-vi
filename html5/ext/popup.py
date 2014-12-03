@@ -17,10 +17,9 @@ class Popup( html5.Div ):
 		self.frameDiv.appendChild( self )
 		html5.Body().appendChild( self.frameDiv )
 
-	def close(self):
+	def close(self, *args, **kwargs):
 		html5.Body().removeChild( self.frameDiv )
 		self.frameDiv = None
-
 
 class YesNoDialog( Popup ):
 	def __init__(self, question, title=None, yesCallback=None, noCallback=None, yesLabel="Yes", noLabel="No", *args, **kwargs):
@@ -45,7 +44,6 @@ class YesNoDialog( Popup ):
 		self.yesCallback = None
 		self.noCallback = None
 		self.close()
-
 
 	def onNoClicked(self, *args, **kwargs ):
 		if self.noCallback:

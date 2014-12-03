@@ -65,11 +65,9 @@ displayDelegateSelector = PriorityQueue() # Selects a widget used to display dat
 initialHashHandler = PriorityQueue() # Provides the handler for the initial hash given in the url
 extendedSearchWidgetSelector = PriorityQueue() # Selects a widget used to perform user-customizable searches
 extractorDelegateSelector = PriorityQueue() # selects a widget used to extract raw data from bones including special features like multilanguage support
+
 #OLD
-
-
 viewDelegateSelector = PriorityQueue() # Queried by listWidget to determine the viewDelegates for the table
-
 protocolWrapperClassSelector = PriorityQueue() # Used during startup to select an Wrapper-Class
 protocolWrapperInstanceSelector = PriorityQueue() # Used afterwards to get a specific instance
 

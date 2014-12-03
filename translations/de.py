@@ -1,8 +1,5 @@
-'''
-		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
+#-*- coding: utf-8 -*-
 
-from i18n import translate
-'''
 lngDe = {
 	"Save-Continue":u"Speichern & weiter",
 	"Save-Close":u"Speichern & schließen",
@@ -106,26 +103,8 @@ lngDe = {
     "Cancel": u"Abbruch",
     "Select all": u"Alle auswählen",
     "Unselect all": u"Auswahl entfernen",
-    "Invert selection": u"Auswahl umkehren"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    "Invert selection": u"Auswahl umkehren",
+    "Run": u"Ausführen",
+    "Start": u"Starten",
+    "Task completed": u"Aufgabe erledigt"
 }

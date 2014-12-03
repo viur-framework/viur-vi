@@ -237,6 +237,9 @@ p { margin-bottom: 10px;}
 .iconnav li a.icon.accountmgnt:before {
   background-position: -64px 0px;
 }
+.iconnav li a.icon.tasks:before {
+  background-position: -96px 0px;
+}
 .iconnav li a.icon.settings:before {
   background-position: -96px 0px;
 }
@@ -2352,6 +2355,33 @@ progress[value]::-webkit-progress-value {
   border: 1px solid #ccc;
   border-bottom:1px solid @maincolor;
   overflow: hidden;
+}
+
+.alertbox.task
+{
+  width: 60%;
+}
+
+.alertbox.task .task-selector
+{
+  font-size: 14pt;
+  padding: 5px;
+  margin: 0;
+  width: 100%;
+}
+
+.alertbox.task .task-description
+{
+  margin: 5px 0px;
+  padding: 10px;
+  border: 1px solid black;
+}
+
+.alertbox.task .warning
+{
+  color: red;
+  padding: 10px;
+  border: 3px solid red;
 }
 
 .alertbox.browsersupport a:link {

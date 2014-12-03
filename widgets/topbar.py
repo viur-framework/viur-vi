@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
 import html5
 from network import NetworkService
 from i18n import translate
+from config import conf
+from widgets.task import TaskSelectWidget
 
 class TopBarWidget( html5.Header ):
 
@@ -40,9 +43,6 @@ class TopBarWidget( html5.Header ):
 		self.modulContainer = html5.Div()
 		self.modulContainer["class"].append("currentmodul")
 		self.appendChild( self.modulContainer )
-
-
-
 		self.modulImg = html5.Label()
 		self.modulContainer.appendChild(self.modulImg)
 		self.modulName = html5.Span()
@@ -50,6 +50,7 @@ class TopBarWidget( html5.Header ):
 		#self.iconnav.appendChild(DashBoard())
 		#self.iconnav.appendChild(MyFiles())
 		#self.iconnav.appendChild(Settings())
+		self.iconnav.appendChild(Tasks())
 		self.iconnav.appendChild(UserState())
 		self.iconnav.appendChild(Logout())
 		anav.appendChild(self.iconnav)
@@ -72,22 +73,80 @@ class TopBarWidget( html5.Header ):
 			for cls in iconClasses:
 				self.modulImg["class"].append( cls )
 
-
 		eval("top.document.title='"+descr+"'")
 
 class UserState(html5.Li):
 	def __init__(self):
 		super(UserState,self).__init__()
+		self.update()
 
-		NetworkService.request( "user", "view/self", successHandler=self.onCurrentUserAvaiable, cacheable=False )
+	def onCurrentUserAvailable(self, req):
+		data = NetworkService.decode( req )
+		conf[ "currentUser" ] = data[ "values" ]
+		self.update()
 
-	def onCurrentUserAvaiable(self, req):
-		data = NetworkService.decode(req)
-		aa=html5.A()
-		aa["title"]=str(data["values"])
+	def update(self):
+		user = conf.get( "currentUser" )
+		if not user:
+			NetworkService.request( "user", "view/self",
+			                        successHandler=self.onCurrentUserAvailable,
+			                        cacheable=False )
+			return
+
+		aa = html5.A()
+		aa["title"] = str( user )
 		aa["class"].append("icon accountmgnt")
-		aa.appendChild(html5.TextNode(data["values"]["name"]))
+		aa.appendChild( html5.TextNode( user[ "name" ] ) )
 		self.appendChild(aa)
+
+class Tasks(html5.Li):
+	def __init__(self):
+		super(Tasks, self).__init__()
+		self.sinkEvent("onClick")
+		self.hide()
+
+		a = html5.A()
+		a[ "class" ].append( "icon tasks" )
+		a.appendChild( html5.TextNode( translate( "Tasks" ) ) )
+		self.appendChild( a )
+
+		if not conf[ "tasks" ][ "server" ]:
+			NetworkService.request( None, "/admin/_tasks/list",
+		        successHandler=self.onTaskListAvailable,
+		        cacheable=False )
+
+		self.update()
+
+	def onTaskListAvailable(self, req):
+		data = NetworkService.decode(req)
+		if not "skellist" in data.keys() or not data[ "skellist" ]:
+			conf[ "tasks" ][ "server" ] = []
+			self.hide()
+			return
+
+		conf[ "tasks" ][ "server" ] = data[ "skellist" ]
+
+	def onTaskListFailure(self):
+		self.hide()
+
+	def onCurrentUserAvailable(self, req):
+		data = NetworkService.decode( req )
+		conf[ "currentUser" ] = data[ "values" ]
+		self.update()
+
+	def update(self):
+		user = conf.get( "currentUser" )
+		if not user:
+			NetworkService.request( "user", "view/self",
+			                        successHandler=self.onCurrentUserAvailable,
+			                        cacheable=False )
+			return
+
+		if "root" in user[ "access" ]:
+			self.show()
+
+	def onClick(self, event ):
+		TaskSelectWidget()
 
 class DashBoard(html5.Li):
 	def __init__(self):

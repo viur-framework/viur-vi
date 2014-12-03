@@ -12,9 +12,10 @@ from priorityqueue import protocolWrapperInstanceSelector
 from widgets.actionbar import ActionBar
 import utils
 from i18n import translate
+
+
 class InvalidBoneValueException(ValueError):
 	pass
-
 
 class InternalEdit( html5.Div ):
 
@@ -202,7 +203,8 @@ class EditWidget( html5.Div ):
 	appSingleton = "singleton"
 	__editIdx_ = 0 #Internal counter to ensure unique ids
 
-	def __init__(self, modul, applicationType, key=0, node=None, skelType=None, clone=False, hashArgs=None, *args, **kwargs ):
+	def __init__(self, modul, applicationType, key=0, node=None, skelType=None, clone=False,
+	             hashArgs=None, logaction = "Entry saved!", *args, **kwargs ):
 		"""
 			Initialize a new Edit or Add-Widget for the given modul.
 			@param modul: Name of the modul
@@ -251,6 +253,8 @@ class EditWidget( html5.Div ):
 		self.clone = clone
 		self.bones = {}
 		self.closeOnSuccess = False
+		self.logaction = logaction
+
 		self._lastData = {} #Dict of structure and values received
 		if hashArgs:
 			self._hashArgs = parseHashParameters( hashArgs )
@@ -303,34 +307,48 @@ class EditWidget( html5.Div ):
 
 		self.wasInitialRequest = not len(data)>0
 		if self.modul=="_tasks":
-			#self.editTaskID = protoWrap.edit( self.key, **data )
-			#request = NetworkService.request("/%s/execute/%s" % ( self.modul, self.id ), data, secure=True, successHandler=self.onSaveResult )
-			return #FIXME!
+			NetworkService.request( None, "/admin/%s/execute/%s" % ( self.modul, self.key ), data,
+			                        secure=len(data)>0,
+			                        successHandler=self.setData,
+			                        failureHandler=self.showErrorMsg)
 		elif self.applicationType == EditWidget.appList: ## Application: List
 			if self.key and (not self.clone or not data):
-				#self.editTaskID = protoWrap.edit( self.key, **data )
-				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
+				NetworkService.request(self.modul,"edit/%s" % self.key, data,
+				                       secure=len(data)>0,
+				                       successHandler=self.setData,
+				                       failureHandler=self.showErrorMsg)
 			else:
-				NetworkService.request(self.modul, "add", data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg )
-
-				#self.editTaskID = protoWrap.add( **data )
+				NetworkService.request(self.modul, "add", data,
+				                       secure=len(data)>0,
+				                       successHandler=self.setData,
+				                       failureHandler=self.showErrorMsg )
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
 			if self.key and (not self.clone or not data):
-				NetworkService.request(self.modul,"edit/%s" % self.key, data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
-				#self.editTaskID = protoWrap.edit( self.key, **data )
+				NetworkService.request(self.modul,"edit/%s" % self.key, data,
+				                       secure=len(data)>0,
+				                       successHandler=self.setData,
+				                       failureHandler=self.showErrorMsg)
 			else:
-				NetworkService.request(self.modul, "add/%s" % self.node, data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg )
-				#self.editTaskID = protoWrap.add( self.node, **data )
+				NetworkService.request(self.modul, "add/%s" % self.node, data,
+				                       secure=len(data)>0,
+				                       successHandler=self.setData,
+				                       failureHandler=self.showErrorMsg )
 		elif self.applicationType == EditWidget.appTree: ## Application: Tree
 			if self.key and not self.clone:
-				NetworkService.request(self.modul,"edit/%s/%s" % (self.skelType,self.key), data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
-				#self.editTaskID = protoWrap.edit( self.key, self.skelType, **data )
+				NetworkService.request(self.modul,"edit/%s/%s" % (self.skelType,self.key), data,
+				                       secure=len(data)>0,
+				                       successHandler=self.setData,
+				                       failureHandler=self.showErrorMsg)
 			else:
-				NetworkService.request(self.modul,"add/%s/%s" % (self.skelType,self.node), data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
-				#self.editTaskID = protoWrap.add( self.node, self.skelType, **data )
+				NetworkService.request(self.modul,"add/%s/%s" % (self.skelType,self.node), data,
+				                       secure=len(data)>0,
+				                       successHandler=self.setData,
+				                       failureHandler=self.showErrorMsg)
 		elif self.applicationType == EditWidget.appSingleton: ## Application: Singleton
-			#self.editTaskID = protoWrap.edit( **data )
-			NetworkService.request(self.modul,"edit", data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg)
+			NetworkService.request(self.modul,"edit", data,
+			                       secure=len(data)>0,
+			                       successHandler=self.setData,
+			                       failureHandler=self.showErrorMsg)
 		else:
 			raise NotImplementedError() #Should never reach this
 
@@ -343,6 +361,10 @@ class EditWidget( html5.Div ):
 
 	def closeOrContinue(self, sender=None ):
 		if self.closeOnSuccess:
+			if self.modul == "_tasks":
+				self.parent().close()
+				return
+
 			conf["mainWindow"].removeWidget( self )
 			NetworkService.notifyChange(self.modul)
 			return
@@ -391,14 +413,20 @@ class EditWidget( html5.Div ):
 			logDiv = html5.Div()
 			logDiv["class"].append("msg")
 			spanMsg = html5.Span()
-			spanMsg.appendChild( html5.TextNode( translate("Entry saved!") ))
+
+			spanMsg.appendChild( html5.TextNode( translate( self.logaction ) ) )
 			spanMsg["class"].append("msgspan")
 			logDiv.appendChild(spanMsg)
+
 			if self.modul in conf["modules"].keys():
 				spanMsg = html5.Span()
-				spanMsg.appendChild( html5.TextNode( conf["modules"][self.modul]["name"] ))
+				if self.modul.startswith( "_" ):
+					spanMsg.appendChild( html5.TextNode( self.key ) )
+				else:
+					spanMsg.appendChild( html5.TextNode( conf["modules"][self.modul]["name"] ))
 				spanMsg["class"].append("modulspan")
 				logDiv.appendChild(spanMsg)
+
 			if "values" in data.keys() and "name" in data["values"].keys():
 				spanMsg = html5.Span()
 				spanMsg.appendChild( html5.TextNode( str(data["values"]["name"]) ))
