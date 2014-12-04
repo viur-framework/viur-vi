@@ -238,12 +238,26 @@ class CoreWindow( html5.Div ):
 		assert pane in self.panes, "Cannot focus unknown pane!"
 		self.panes.remove( pane ) # Move the pane to the end of the list
 		self.panes.append( pane )
+
+		# Close current Pane
 		if self.currentPane is not None:
 			self.currentPane.widgetsDomElm["style"]["display"] = "none"
+
+			if( self.currentPane.collapseable
+			    and self.currentPane.childDomElem
+				and not self.currentPane.isParentOf( pane ) ):
+				self.currentPane.childDomElem["style"]["display"] = "none"
+
 			self.currentPane["class"].remove("is_active")
+
+		# Focus wanted Pane
 		self.topBar.setCurrentModulDescr( pane.descr, pane.iconURL, pane.iconClasses )
 		self.currentPane = pane
 		self.currentPane.widgetsDomElm["style"]["display"] = "block"
+
+		if self.currentPane.collapseable and self.currentPane.childDomElem:
+			self.currentPane.childDomElem["style"]["display"] = "block"
+
 		self.currentPane["class"].append("is_active")
 
 	def removePane(self, pane):

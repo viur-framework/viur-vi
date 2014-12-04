@@ -13,12 +13,13 @@ class Pane( html5.Li ):
 		If a pane is active, _all_ its child widgets are visible
 		(through they might overlap).
 	"""
-	def __init__(self, descr, iconURL=None, iconClasses=None, closeable=False ):
+	def __init__(self, descr, iconURL=None, iconClasses=None, closeable=False, collapseable=True ):
 		super( Pane, self ).__init__( )
 		self.descr = descr
 		self.iconURL = iconURL
 		self.iconClasses = iconClasses
 		self.closeable = closeable
+		self.collapseable = collapseable
 		self.childPanes = []
 		self.widgetsDomElm = html5.Div()
 		self.widgetsDomElm["class"].append("has_no_child")
@@ -61,17 +62,16 @@ class Pane( html5.Li ):
 		self.childPanes.append( pane )
 		if not self.childDomElem:
 			self.childDomElem = html5.Ul()
-			#self.childDomElem["class"] = "actionlist"
+
+			if self.collapseable:
+				self.childDomElem[ "style" ][ "display" ] = "none"
+
 			self.appendChild( self.childDomElem )
-			#self.childDomElem = DOM.createElement("ul")
-			#DOM.setElemAttribute(self.childDomElem, "class", "actionlist")
-			#DOM.appendChild( self.getElement(), self.childDomElem )
 
 			if self.closeBtn:
 				self.closeBtn[ "style" ][ "display" ] = "none"
 
 		self.childDomElem.appendChild( pane )
-		#DOM.appendChild( self.childDomElem, pane.getElement() )
 
 	def removeChildPane(self, pane):
 		"""
@@ -164,7 +164,6 @@ class Pane( html5.Li ):
 
 	def focus(self):
 		conf["mainWindow"].focusPane( self )
-
 
 class GroupPane( Pane ):
 	"""

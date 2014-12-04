@@ -436,8 +436,55 @@ class Widget( object ):
 		child._parent = None
 
 	def removeAllChildren(self):
+		"""
+		Removes all child widgets of the current widget.
+		"""
 		for child in self._children[:]:
 			self.removeChild( child )
+
+	def isParentOf(self, widget):
+		"""
+		Checks if an object is the parent of widget.
+
+		:type widget: Widget
+		:param widget: The widget to check for.
+		:return: True, if widget is a child of the object, else False.
+		"""
+
+		# You cannot be your own child!
+		if self == widget:
+			return False
+
+		for child in self._children:
+			if child == widget:
+				return True
+
+			if child.isParentOf( widget ):
+				return True
+
+		return False
+
+	def isChildOf(self, widget):
+		"""
+		Checks if an object is the child of widget.
+
+		:type widget: Widget
+		:param widget: The widget to check for.
+		:return: True, if object is a child of widget, else False.
+		"""
+
+		# You cannot be your own parent!
+		if self == widget:
+			return False
+
+		parent = self.parent()
+		while parent:
+			if parent == widget:
+				return True
+
+			parent = widget.parent()
+
+		return False
 
 	def onBlur(self, event):
 		pass

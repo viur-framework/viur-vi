@@ -20,9 +20,11 @@ function preventBack(){window.history.forward();}
     window.onunload=function(){null};
 
 
-function logError(msg, url, line, col, error) {
-    if( url.toLowerCase().indexOf("http://127.0.0.1")==0 || url.toLowerCase().indexOf("http://localhost")==0 ) {
-        return;
-    }
+function logError(msg, url, line, col, error)
+{
+    if( !url || url == "" || !url.indexOf("http://127.0.0.1")
+                                || !url.indexOf("http://localhost") )
+        return; /* Ignore */
+
     Bugsnag.notify(error.toString(), msg.toString());
 }
