@@ -38,19 +38,22 @@ class YesNoDialog( Popup ):
 		btnNo["class"].append("btn_no")
 		self.appendChild(btnNo)
 
-	def onYesClicked(self, *args, **kwargs ):
-		if self.yesCallback:
-			self.yesCallback( self )
+	def drop(self):
 		self.yesCallback = None
 		self.noCallback = None
 		self.close()
 
+	def onYesClicked(self, *args, **kwargs ):
+		if self.yesCallback:
+			self.yesCallback( self )
+
+		self.drop()
+
 	def onNoClicked(self, *args, **kwargs ):
 		if self.noCallback:
 			self.noCallback( self )
-		self.yesCallback = None
-		self.noCallback = None
-		self.close()
+
+		self.drop()
 
 class SelectDialog( Popup ):
 

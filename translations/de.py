@@ -106,5 +106,20 @@ lngDe = {
     "Invert selection": u"Auswahl umkehren",
     "Run": u"Ausführen",
     "Start": u"Starten",
-    "Task completed": u"Aufgabe erledigt"
+    "Task completed": u"Aufgabe erledigt",
+
+	"Mark payed": u"Als bezahlt markieren",
+	"Do you really want to mark {count} orders as payed?": u"Möchten Sie wirklich {count} Bestellungen als bezahlt markieren?",
+	"{count} orders had been successfully set as payed.": u"{count} Bestellungen wurden erfolgreich auf bezahlt gesetzt.",
+	"Failed to mark order payed": u"Bezahlt setzen der Bestellung fehlgeschlagen",
+
+	"Mark sent": u"Als versendet markieren",
+	"Do you really want to mark {count} orders as sent?": u"Möchten Sie wirklich {count} Bestellungen als versendet markieren?",
+	"{count} orders had been successfully set as sent.": u"{count} Bestellungen wurden erfolgreich auf versendet gesetzt.",
+	"Failed to mark order sent": u"Versendet setzen der Bestellung fehlgeschlagen",
+
+	"Mark canceled": u"Stornieren",
+	"Do you really want to cancel {count} orders?": u"Möchten Sie wirklich {count} Bestellungen stornieren?",
+	"{count} orders had been successfully canceled.": u"{count} Bestellungen wurden erfolgreich storniert.",
+	"Failed to cancel order": u"Stornierung der Bestellung fehlgeschlagen"
 }
