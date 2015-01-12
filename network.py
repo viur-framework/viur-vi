@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys, os, time
-#from config import conf
+import sys, os
 import json
 import string, random, time
-
 
 class DeferredCall( object ):
 	"""
@@ -45,6 +43,7 @@ class HTTPRequest(object):
 		self.req = eval("new XMLHttpRequest()")
 		self.req.onreadystatechange = self.onReadyStateChange
 		self.cb = None
+		self.hasBeenSent = False
 
 	def asyncGet(self, url, cb):
 		"""
@@ -74,22 +73,23 @@ class HTTPRequest(object):
 		self.content_type = content_type
 		self.req.open("POST",url,True)
 
-
 	def onReadyStateChange(self, *args, **kwargs):
 		"""
 			Internal callback.
 		"""
-		if self.req.readyState == 1:
+		if self.req.readyState == 1 and not self.hasBeenSent:
+			self.hasBeenSent = True # Internet Explorer calls this function twice!
+
 			if self.type=="POST" and self.content_type is not None:
 				self.req.setRequestHeader('Content-Type', self.content_type)
+
 			self.req.send( self.payload )
+
 		if self.req.readyState == 4:
 			if self.req.status >= 200 and self.req.status < 300:
 				self.cb.onCompletion( self.req.responseText )
 			else:
 				self.cb.onError( self.req.responseText, self.req.status )
-
-
 
 class NetworkService( object ):
 	"""
