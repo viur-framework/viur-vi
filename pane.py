@@ -65,6 +65,8 @@ class Pane( html5.Li ):
 
 			if self.collapseable and not pane.closeable:
 				self.childDomElem[ "style" ][ "display" ] = "none"
+			else:
+				self.childDomElem[ "style" ][ "display" ] = "initial"
 
 			self.appendChild( self.childDomElem )
 
