@@ -1,8 +1,6 @@
 from config import conf
 import html5
-
 from i18n import translate
-
 
 class Pane( html5.Li ):
 	"""
@@ -59,17 +57,23 @@ class Pane( html5.Li ):
 			@type pane: pane
 		"""
 		assert pane != self, "A pane cannot be a child of itself"
+
 		self.childPanes.append( pane )
+
 		if not self.childDomElem:
 			self.childDomElem = html5.Ul()
 
-			if self.collapseable:
+			if self.collapseable and not pane.closeable:
 				self.childDomElem[ "style" ][ "display" ] = "none"
 
 			self.appendChild( self.childDomElem )
 
 			if self.closeBtn:
 				self.closeBtn[ "style" ][ "display" ] = "none"
+
+		if ( self.childDomElem[ "style" ][ "display" ] == "none"
+		     and pane.closeable ):
+			self.childDomElem[ "style" ][ "display" ] = "initial"
 
 		self.childDomElem.appendChild( pane )
 
