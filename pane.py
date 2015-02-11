@@ -73,8 +73,9 @@ class Pane( html5.Li ):
 			if self.closeBtn:
 				self.closeBtn[ "style" ][ "display" ] = "none"
 
-		if ( self.childDomElem[ "style" ][ "display" ] == "none"
-		     and pane.closeable ):
+		if ( pane.closeable
+			 and "display" in self.childDomElem[ "style" ]
+			 and self.childDomElem[ "style" ][ "display" ] == "none" ):
 			self.childDomElem[ "style" ][ "display" ] = "initial"
 
 		self.childDomElem.appendChild( pane )
