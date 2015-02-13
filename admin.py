@@ -106,32 +106,43 @@ class CoreWindow( html5.Div ):
 		panes = []
 		userAccess = self.user["values"].get( "access" ) or []
 		predefinedFilterCounter = 1
-		if "configuration" in self.config.keys() and isinstance( self.config["configuration"], dict) \
-			and "modulGroups" in self.config["configuration"].keys() and isinstance( self.config["configuration"]["modulGroups"], list):
+
+		if ( "configuration" in self.config.keys()
+		     and isinstance( self.config["configuration"], dict )
+		     and "modulGroups" in self.config["configuration"].keys()
+		     and isinstance( self.config["configuration"]["modulGroups"], list) ):
+
 			for group in self.config["configuration"]["modulGroups"]:
-				p = GroupPane(group["name"],iconURL=group["icon"])
+				p = GroupPane( group["name"], iconURL=group["icon"] )
+
 				groups[ group["prefix"] ] = p
 				if "sortIndex" in group.keys():
 					sortIndex = group["sortIndex"]
 				else:
 					sortIndex = None
+
 				panes.append( (group["name"], sortIndex, p) )
+
 		# Sorting the 2nd level entries
 		tmpList = [(x,y) for x,y in self.config["modules"].items()]
 		tmpList.sort(key=getModulName)
-		print("tmpList", tmpList)
 		tmpList.sort(key=getModulSortIndex, reverse=True)
+
 		for modulName, modulInfo in tmpList:
 			if not "root" in userAccess and not any([x.startswith(modulName) for x in userAccess]):
-				#Skip this modul, as the user couldn't interact with it anyway
+				#Skip this module, as the user couldn't interact with it anyway
 				continue
+
 			conf["modules"][modulName] = modulInfo
+
 			if "views" in conf["modules"][modulName].keys() and conf["modules"][modulName]["views"]:
 				for v in conf["modules"][modulName]["views"]: #Work-a-round for PyJS not supporting id()
 					v["__id"] = predefinedFilterCounter
 					predefinedFilterCounter += 1
+
 			handlerCls = HandlerClassSelector.select( modulName, modulInfo )
 			assert handlerCls is not None, "No handler available for modul %s" % modulName
+
 			isChild = False
 			for k in groups.keys():
 				if modulInfo["name"].startswith(k):
@@ -139,6 +150,7 @@ class CoreWindow( html5.Div ):
 					groups[k].addChildPane( handler )
 					isChild = True
 					break
+
 			if not isChild:
 				handler = handlerCls( modulName, modulInfo )
 				if "sortIndex" in modulInfo.keys():
@@ -150,7 +162,15 @@ class CoreWindow( html5.Div ):
 		# Sorting our top level entries
 		panes.sort( key=lambda x: x[0] )
 		panes.sort( key=lambda x: x[1], reverse=True )
+
+		# Push the panes, ignore group panes with no children (due to right restrictions)
 		for k, v, pane in panes:
+			# Don't display GroupPanes without children.
+			if ( ( isinstance( pane, GroupPane ) and not pane.childPanes )
+				or all( child[ "style" ].get( "display" ) == "none"
+				        for child in pane.childPanes ) ):
+				continue
+
 			self.addPane( pane )
 
 		# Finalizing!
