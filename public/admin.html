@@ -54,8 +54,11 @@
 
         <script language="JavaScript">
             /* We support Chrome and Firefox! :D ... more to come */
-            if( !( window.chrome || typeof InstallTrigger !== 'undefined' )
-                    && window.location.hash != "#skipbd" )
+            if( !( window.chrome // Chromium
+                    || typeof InstallTrigger !== 'undefined' //Firefox
+                    || ( ( navigator.userAgent.indexOf("MSIE") != -1 ) //Internet Explorer
+                            || ( !!document.documentMode == true ) ) ) //> 10
+                && window.location.hash != "#skipbd" )
                 window.location.href = "/vi/s/notsupported.html";
         </script>
 

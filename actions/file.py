@@ -19,15 +19,12 @@ class FileSelectUploader( html5.Input ):
 		self["type"] = "file"
 		self["style"]["display"] = "none"
 		self.sinkEvent("onChange")
-		self.element.click()
 
 	def onChange(self, event):
-		if event.target.files.length>0:
+		if event.target.files.length > 0:
 			Uploader( event.target.files.item(0), self.parent().node )
-			#self.parent().appendChild(  )
+
 		self.parent().removeChild( self )
-
-
 
 class AddLeafAction( html5.ext.Button ):
 	"""
@@ -49,7 +46,9 @@ class AddLeafAction( html5.ext.Button ):
 
 
 	def onClick(self, sender=None):
-		self.parent().parent().appendChild( FileSelectUploader() )
+		uploader = FileSelectUploader()
+		self.parent().parent().appendChild( uploader )
+		uploader.element.click()
 
 	def resetLoadingState(self):
 		pass
