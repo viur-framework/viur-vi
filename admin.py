@@ -166,9 +166,9 @@ class CoreWindow( html5.Div ):
 		# Push the panes, ignore group panes with no children (due to right restrictions)
 		for k, v, pane in panes:
 			# Don't display GroupPanes without children.
-			if ( ( isinstance( pane, GroupPane ) and not pane.childPanes )
-				or all( child[ "style" ].get( "display" ) == "none"
-				        for child in pane.childPanes ) ):
+			if ( isinstance( pane, GroupPane )
+			     and ( not pane.childPanes
+			           or all( child[ "style" ].get( "display" ) == "none" for child in pane.childPanes ) ) ):
 				continue
 
 			self.addPane( pane )
