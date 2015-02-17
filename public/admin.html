@@ -3,7 +3,6 @@
     <head>
         <meta charset="utf-8">
 
-
         <!-- Bugsnag -->
         <script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.js" data-apikey="9073c8a610a5c6f2e11f18dfb10f6f85"> </script>
 
@@ -53,18 +52,18 @@
         <link rel="stylesheet" href="vi.css" />
 
         <script language="JavaScript">
-            /* We support Chrome and Firefox! :D ... more to come */
-            if( !( window.chrome // Chromium
-                    || typeof InstallTrigger !== 'undefined' //Firefox
-                    || ( ( navigator.userAgent.indexOf("MSIE") != -1 ) //Internet Explorer
-                            || ( !!document.documentMode == true ) ) ) //> 10
-                && window.location.hash != "#skipbd" )
+            /* We support Chrome, Firefox and MSIE11 */
+            if( window.location.hash != "#skipbd"
+                    && !( window.chrome // Chromium
+                            || typeof InstallTrigger !== 'undefined' //Firefox
+                                || ( Object.hasOwnProperty.call( window, "ActiveXObject" )
+                                        && !window.ActiveXObject ) //MSIE11
+                            ) )
                 window.location.href = "/vi/s/notsupported.html";
         </script>
 
 		<script src="vi.js" type="text/javascript"></script>
     </head>
-
 
     <body>
      </body>
