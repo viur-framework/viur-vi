@@ -105,12 +105,24 @@ class DateEditBone( html5.Div ):
 		self.hastime =time
 		if date:
 			self.dateinput=html5.Input()
-			self.dateinput["type"]="date"
+
+			#IE11
+			try:
+				self.dateinput["type"]="date"
+			except:
+				pass
+
 			self.dateinput["style"]["float"]="left"
 			self.appendChild(self.dateinput)
 		if time:
 			self.timeinput=html5.Input()
-			self.timeinput["type"]="time"
+
+			#IE11
+			try:
+				self.timeinput["type"]="time"
+			except:
+				pass
+
 			self.timeinput["style"]["float"]="left"
 			self.timeinput["style"]["width"]="70px"
 			self.appendChild(self.timeinput)
