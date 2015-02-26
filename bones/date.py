@@ -101,8 +101,9 @@ class DateEditBone( html5.Div ):
 		super( DateEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self.hasdate =date
-		self.hastime =time
+		self.hasdate = date
+		self.hastime = time
+
 		if date:
 			self.dateinput=html5.Input()
 
@@ -113,7 +114,11 @@ class DateEditBone( html5.Div ):
 				pass
 
 			self.dateinput["style"]["float"]="left"
-			self.appendChild(self.dateinput)
+			self.appendChild(self.dateinput)#
+
+			if self.readOnly:
+				self.dateinput["readonly"] = True
+
 		if time:
 			self.timeinput=html5.Input()
 
@@ -126,8 +131,9 @@ class DateEditBone( html5.Div ):
 			self.timeinput["style"]["float"]="left"
 			self.timeinput["style"]["width"]="70px"
 			self.appendChild(self.timeinput)
-		if self.readOnly:
-			self["disabled"] = True
+
+			if self.readOnly:
+				self.timeinput["readonly"] = True
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):

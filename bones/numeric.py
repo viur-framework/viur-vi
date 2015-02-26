@@ -51,7 +51,7 @@ class NumericEditBone( html5.Input ):
 		else: #Precision is zero, treat as integer input
 			self["step"]=1
 		if self.readOnly:
-			self["disabled"] = True
+			self["readonly"] = True
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):

@@ -77,20 +77,24 @@ def unescapeHtml( html ): #FIXME!
 	return( html )
 
 class Tag( html5.Span ):
-	def __init__(self, tag, isEditMode, *args, **kwargs ):
+	def __init__(self, tag, isEditMode, readonly=False, *args, **kwargs ):
 		super( Tag, self ).__init__( *args, **kwargs )
 		self["class"].append("tag")
+
 		self.input = html5.Input()
 		self.input["type"] = "text"
 		self.input["value"] = tag
 		self.appendChild(self.input)
-		delBtn = html5.ext.Button(translate("Delete"), self.removeMe)
-		delBtn["class"].append("icon delete tag")
-		self.appendChild(delBtn)
+
+		if readonly:
+			self.input[ "readonly" ] = True
+		else:
+			delBtn = html5.ext.Button(translate("Delete"), self.removeMe)
+			delBtn["class"].append("icon delete tag")
+			self.appendChild(delBtn)
 
 	def removeMe(self, *args, **kwargs):
 		self.parent().removeChild( self )
-
 
 
 class StringEditBone( html5.Div ):
@@ -103,6 +107,7 @@ class StringEditBone( html5.Div ):
 		self.languages = languages
 		self.boneName = boneName
 		self.currentLanguage = None
+
 		if self.languages and self.multiple:
 			self["class"].append("is_translated")
 			self["class"].append("is_multiple")
@@ -112,21 +117,27 @@ class StringEditBone( html5.Div ):
 			self.buttonContainer["class"] = "languagebuttons"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
+
 			for lang in self.languages:
 				tagContainer = html5.Div()
 				tagContainer["class"].append("lang_%s" % lang )
 				tagContainer["class"].append("tagcontainer")
 				tagContainer["style"]["display"] = "none"
+
 				btn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
 				btn.lang = lang
 				self.buttonContainer.appendChild( btn )
-				addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
-				addBtn["class"].append("icon new tag")
-				addBtn.lang = lang
-				tagContainer.appendChild(addBtn)
+
+				if not self.readOnly:
+					addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
+					addBtn["class"].append("icon new tag")
+					addBtn.lang = lang
+					tagContainer.appendChild(addBtn)
+
 				self.languagesContainer.appendChild(tagContainer)
 				self.langEdits[lang] = tagContainer
 			self.setLang(self.languages[0])
+
 		elif self.languages and not self.multiple:
 			self["class"].append("is_translated")
 			self.languagesContainer = html5.Div()
@@ -135,17 +146,25 @@ class StringEditBone( html5.Div ):
 			self.buttonContainer["class"] = "languagebuttons"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
+
 			for lang in self.languages:
 				btn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
 				btn.lang = lang
 				self.buttonContainer.appendChild( btn )
+
 				inputField = html5.Input()
 				inputField["type"] = "text"
 				inputField["style"]["display"] = "none"
 				inputField["class"].append("lang_%s" % lang)
+
+				if self.readOnly:
+					inputField["readonly"] = True
+
 				self.languagesContainer.appendChild( inputField )
 				self.langEdits[lang] = inputField
+
 			self.setLang(self.languages[0])
+
 		elif not self.languages and self.multiple:
 			self["class"].append("is_multiple")
 			self.tagContainer = html5.Div()
@@ -155,12 +174,14 @@ class StringEditBone( html5.Div ):
 			addBtn.lang = None
 			addBtn["class"].append("icon new tag")
 			self.tagContainer.appendChild(addBtn)
+
 		else: #not languages and not multiple:
 			self.input = html5.Input()
 			self.input["type"] = "text"
 			self.appendChild( self.input )
-		if self.readOnly:
-			self["disabled"] = True
+
+			if self.readOnly:
+				self.input["readonly"] = True
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
@@ -195,7 +216,6 @@ class StringEditBone( html5.Div ):
 
 	def onBtnGenTag(self, btn):
 		self.genTag( "", lang=btn.lang )
-
 
 	def unserialize( self, data, extendedErrorInformation=None ):
 		if not self.boneName in data.keys():
@@ -255,7 +275,7 @@ class StringEditBone( html5.Div ):
 		return( self.serialize( ) )
 
 	def genTag( self, tag, editMode=False, lang=None ):
-		tag =  Tag( tag, editMode )
+		tag =  Tag( tag, editMode, readonly = self.readOnly )
 		if lang is not None:
 			self.langEdits[ lang ].appendChild( tag )
 		else:

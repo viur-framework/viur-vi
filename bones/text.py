@@ -70,18 +70,22 @@ class TextEditBone( html5.Div ):
 		self.languages = languages
 		self.descrHint = descrHint
 		self.currentEditor = None
+
 		##multilangbone
 		if self.languages:
 			if "currentlanguage" in conf and conf["currentlanguage"] in self.languages:
 				self.selectedLang=conf["currentlanguage"]
 			elif len(self.languages)>0:
 				self.selectedLang=self.languages[0]
+
 			self.langButContainer=html5.Div()
 			self.langButContainer["class"].append("languagebuttons")
+
 			for lang in self.languages:
 				abut=html5.ext.Button(lang,self.changeLang)
 				abut["value"]=lang
 				self.langButContainer.appendChild(abut)
+
 			self.appendChild(self.langButContainer)
 			self.refreshLangButContainer()
 
@@ -90,20 +94,22 @@ class TextEditBone( html5.Div ):
 		self.previewDiv = html5.Div()
 		self.previewDiv["class"].append("preview")
 		self.appendChild(self.previewDiv)
+
 		if self.isPlainText:
 			self.previewDiv["style"]["display"] = "none"
 		else:
 			self.input["style"]["display"] = "none"
+
 		if readOnly:
-			self.input["disabled"]=True
+			self.input["readonly"] = True
+
 		elif not readOnly and not self.isPlainText:
 			openEditorBtn = html5.ext.Button(translate("Edit Text"), self.openTxt )
 			openEditorBtn["class"].append("textedit")
 			openEditorBtn["class"].append("icon")
-			self.appendChild(openEditorBtn )
+			self.appendChild( openEditorBtn )
+
 		self.sinkEvent("onClick")
-		if self.readOnly:
-			self["disabled"] = True
 
 	def _setDisabled(self, disable):
 		"""
