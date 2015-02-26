@@ -31,8 +31,10 @@ class ListWidget( html5.Div ):
 		self.appendChild( self.actionBar )
 		self.sideBar = SideBar()
 		self.appendChild( self.sideBar )
+
+		myView = None
+
 		if filterID:
-			myView = None
 			if conf["modules"] and modul in conf["modules"].keys():
 				if "views" in conf["modules"][ modul ].keys() and conf["modules"][ modul ]["views"]:
 					for v in conf["modules"][ modul ]["views"]:
@@ -41,6 +43,7 @@ class ListWidget( html5.Div ):
 							break
 			if myView and "extendedFilters" in myView.keys() and myView["extendedFilters"]:
 				self.appendChild( CompoundFilter(myView, modul, embed=True))
+
 		self.table = DataTable()
 		self.appendChild( self.table )
 		self._currentCursor = None
@@ -65,7 +68,7 @@ class ListWidget( html5.Div ):
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions( self.getDefaultActions() )
+		self.actionBar.setActions( self.getDefaultActions( myView ) )
 		if isSelector:
 			self.selectionActivatedEvent.register( self )
 		self.emptyNotificationDiv = html5.Div()
@@ -86,15 +89,21 @@ class ListWidget( html5.Div ):
 		if self.filterDescr:
 			self.filterDescriptionSpan.appendChild( html5.TextNode( self.filterDescr ) )
 
-	def getDefaultActions(self):
+	def getDefaultActions(self, view = None ):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
 		defaultActions = ["add", "edit", "clone", "delete", "preview", "selectfields"]+(["select","close"] if self.isSelector else [])+["reload","selectfilter"]
-		if conf["modules"] and self.modul in conf["modules"].keys():
+
+		# Extended actions from view?
+		if view and "actions" in view.keys():
+			defaultActions.extend( view[ "actions" ] or [] )
+		# Extended Actions from config?
+		elif conf["modules"] and self.modul in conf["modules"].keys():
 			cfg = conf["modules"][ self.modul ]
 			if "actions" in cfg.keys() and cfg["actions"]:
 				defaultActions.extend( cfg["actions"] )
+
 		return( defaultActions )
 
 	def showErrorMsg(self, req=None, code=None):
