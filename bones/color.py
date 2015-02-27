@@ -4,7 +4,6 @@ import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from config import conf
 
-
 class ColorBoneExtractor( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( ColorBoneExtractor, self ).__init__()
@@ -15,7 +14,7 @@ class ColorBoneExtractor( object ):
 	def render( self, data, field ):
 		if field in data.keys():
 			return str(data[field])
-		return ".."
+		return conf[ "empty_value" ]
 
 
 class ColorViewBoneDelegate( object ):
@@ -41,7 +40,7 @@ class ColorViewBoneDelegate( object ):
 			can.appendChild(adiv)
 			can.appendChild(lbl)
 			return(can)
-		return( html5.Label("..") )
+		return( html5.Label( conf[ "empty_value" ] ) )
 
 class ColorEditBone( html5.Input ):
 

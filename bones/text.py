@@ -30,7 +30,7 @@ class TextBoneExtractor( object ):
 			else:
 				#no langobject
 				return str(data[field])
-		return ".."
+		return conf[ "empty_value" ]
 
 
 class TextViewBoneDelegate( object ):
@@ -58,7 +58,7 @@ class TextViewBoneDelegate( object ):
 			else:
 				#no langobject
 				return( html5.Label(str( data[field])))
-		return( html5.Label("..") )
+		return( html5.Label( conf[ "empty_value" ] ) )
 
 class TextEditBone( html5.Div ):
 	def __init__(self, modulName, boneName,readOnly, isPlainText, languages=None, descrHint=None, *args, **kwargs ):

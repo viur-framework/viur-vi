@@ -29,7 +29,7 @@ class StringBoneExtractor( object ):
 				return resstr
 			else:
 				return str(data[field]).replace("&quot;", "").replace(";", " ")
-		return ".."
+		return conf[ "empty_value" ]
 
 
 class StringViewBoneDelegate( object ):
@@ -62,7 +62,7 @@ class StringViewBoneDelegate( object ):
 
 				return self.getViewElement( output,False )
 
-		return (self.getViewElement("..",False))
+		return self.getViewElement( conf[ "empty_value" ], False )
 
 	def getViewElement(self,labelstr,datafield):
 		if not datafield:

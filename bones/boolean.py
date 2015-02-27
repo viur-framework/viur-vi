@@ -16,7 +16,7 @@ class BooleanBoneExtractor( object ):
 	def render( self, data, field ):
 		if field in data.keys():
 			return str( data[field])
-		return ".."
+		return conf[ "empty_value" ]
 
 
 class BooleanViewBoneDelegate( object ):
@@ -29,7 +29,7 @@ class BooleanViewBoneDelegate( object ):
 	def render( self, data, field ):
 		if field in data.keys():
 			return( html5.Label(str( data[field])))
-		return( html5.Label("..") )
+		return( html5.Label(conf[ "empty_value" ]) )
 
 class BooleanEditBone( html5.Input ):
 

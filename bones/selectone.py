@@ -4,6 +4,7 @@ import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from i18n import translate
+from config import conf
 
 class SelectOneBoneExtractor( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -16,7 +17,7 @@ class SelectOneBoneExtractor( object ):
 		if field in data.keys():
 			if data and field and field in self.skelStructure and data[field] and data[field] in self.skelStructure[field]["values"]:
 				return self.skelStructure[field]["values"][data[field]]
-		return ".."
+		return conf[ "empty_value" ]
 
 
 class SelectOneViewBoneDelegate( object ):
@@ -33,7 +34,7 @@ class SelectOneViewBoneDelegate( object ):
 				aspan.appendChild(html5.TextNode(self.skelStructure[field]["values"][data[field]]))
 				aspan["Title"]=data[field]
 				return(aspan)
-		return( html5.Label("..") )
+		return( html5.Label( conf[ "empty_value" ] ) )
 
 class SelectOneEditBone( html5.Select ):
 

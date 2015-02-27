@@ -4,6 +4,7 @@ import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from html5.keycodes import *
+from config import conf
 
 class NumericBoneExtractor( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -31,10 +32,16 @@ class NumericViewBoneDelegate( object ):
 		self.modulName=modulName
 
 	def render( self, data, field ):
-		if field in data.keys():
-			return( html5.Label(str( data[field])))
-		return( html5.Label("..") )
+		s =  conf[ "empty_value" ]
 
+		if field in data.keys():
+			prec = self.skelStructure[field].get( "precision" )
+			if prec:
+				s = ( "%." + str( prec ) + "f" ) % data[field]
+			else:
+				s = str( data[field] )
+
+		return html5.Label( s )
 
 class NumericEditBone( html5.Input ):
 	def __init__(self, modulName, boneName,readOnly,_min=False,_max=False,precision=False, *args, **kwargs ):

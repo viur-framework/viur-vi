@@ -5,13 +5,11 @@ from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDeleg
 from datetime import datetime
 import re
 from i18n import translate
-
-
+from config import conf
 
 class DateBoneExtractor( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
 		super( DateBoneExtractor, self ).__init__()
-		print("NEW DATEBONE Extractor", modulName, boneName, skelStructure)
 		self.skelStructure = skelStructure
 		self.boneName = boneName
 		self.modulName=modulName
@@ -19,7 +17,8 @@ class DateBoneExtractor( object ):
 	def render( self, data, field ):
 
 		if not self.boneName in self.skelStructure or not data or not field in data.keys():
-			return ".."
+			return conf[ "empty_value" ]
+
 		structure = self.skelStructure[self.boneName]
 		val = data[field]
 		try:
@@ -55,7 +54,8 @@ class DateViewBoneDelegate( object ):
 	def render( self, data, field ):
 
 		if not self.boneName in self.skelStructure or not data or not field in data.keys():
-			return( html5.Label("..") )
+			return( html5.Label( conf[ "empty_value" ] ) )
+
 		structure = self.skelStructure[self.boneName]
 		val = data[field]
 		try:

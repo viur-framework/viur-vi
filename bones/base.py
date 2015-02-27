@@ -3,7 +3,7 @@
 
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
-
+from config import conf
 
 class BaseViewBoneDelegate( object ):
 	"""
@@ -18,7 +18,7 @@ class BaseViewBoneDelegate( object ):
 	def render( self, data, field ):
 		if field in data.keys():
 			return( html5.Label(str( data[field])))
-		return( html5.Label("..") )
+		return( html5.Label( conf[ "empty_value" ] ) )
 
 class BaseEditBone( html5.Input ):
 	"""

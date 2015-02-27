@@ -4,6 +4,7 @@ import html5, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from i18n import translate
+from config import conf
 
 class SelectMultiBoneExtractor( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
@@ -23,7 +24,7 @@ class SelectMultiBoneExtractor( object ):
 					if value:
 						result.append(value)
 			return ",".join(result)
-		return ".."
+		return conf[ "empty_value" ]
 
 class SelectMultiViewBoneDelegate( object ):
 	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
