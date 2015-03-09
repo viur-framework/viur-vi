@@ -464,11 +464,17 @@ class DataTable( html5.Div ):
 			Check if we got a scroll event and need to fetch another set of rows from our dataProvider
 		"""
 		self.recalcHeight()
-		if (self.element.scrollTop+self.element.clientHeight)>=self.element.scrollHeight and not self._isAjaxLoading:
+
+		if ( ( self.element.scrollTop + self.element.clientHeight )
+			     >= self.element.scrollHeight
+		     and not self._isAjaxLoading ):
+
 			if self._dataProvider:
+
 				self._isAjaxLoading = True
 				if not "is_loading" in self.table["class"]:
 					self.table["class"].append("is_loading")
+
 				self._dataProvider.onNextBatchNeeded()
 
 

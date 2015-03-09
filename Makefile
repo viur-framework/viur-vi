@@ -51,13 +51,16 @@ debug: $(OUTPUT) $(MAIN_CSS) version
 				admin.py
 	@echo "--- FINISHED DEBUG BUILD ---"
 
-deploy: clean $(MAIN_CSS) version
+deploy: $(MAIN_CSS) version
 	@echo "--- STARTING DEPLOY BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEPLOYOPTS) \
 		--bootloader=bootstrap_progress.js \
 				admin.py
 	@echo "--- FINISHED DEPLOY BUILD ---"
+
+tarfile: deploy
+	tar cvf "vi_`date +'%Y-%m-%d'`.tar" vi
 	
 clean: $(OUTPUT)
 	rm -rf $(OUTPUT)/*

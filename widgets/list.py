@@ -164,10 +164,12 @@ class ListWidget( html5.Div ):
 		self._currentRequests = []
 		filter = self.filter.copy()
 		filter["amount"] = self._batchSize
-		self.table.setDataProvider( self )
-		self._currentRequests.append( NetworkService.request(self.modul, "list", filter,
-		                                    successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
-		                                        cacheable=True ) )
+
+		self._currentRequests.append(
+			NetworkService.request( self.modul, "list", filter,
+			                        successHandler=self.onCompletion,
+			                        failureHandler=self.showErrorMsg,
+			                        cacheable=True ) )
 
 	def setFilter(self, filter, filterID=None, filterDescr=None):
 		"""
@@ -210,8 +212,10 @@ class ListWidget( html5.Div ):
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		self._structure = data["structure"]
 		tmpDict = {}
+
 		for key, bone in data["structure"]:
 			tmpDict[ key ] = bone
+
 		if not self._tableHeaderIsValid:
 			if not self.columns:
 				self.columns = []
@@ -219,8 +223,12 @@ class ListWidget( html5.Div ):
 					if boneInfo["visible"]:
 						self.columns.append( boneName )
 			self.setFields( self.columns )
+
+
 		if "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
+			self.table.setDataProvider( self )
+
 		self.table.extend( data["skellist"] )
 
 	def setFields(self, fields):
