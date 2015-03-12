@@ -620,7 +620,7 @@ actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRec
 class CsvExportAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super(CsvExportAction, self ).__init__( translate("Export Csv"), *args, **kwargs )
-		self["class"] = "icon createrecurrent_small"
+		self["class"] = "icon download"
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
