@@ -155,7 +155,7 @@ p { margin-bottom: 10px;}
 }
 .vi_topbar .currentmodul img {
   width: 32px;
-  height: auto;
+  height: 32px;
   float: left;
   margin: -5px 15px 0;
 }
@@ -583,9 +583,9 @@ background-color:#d6d6d6;
 /* #actionbar
 ================================================== */
 .vi_operator .actionbar {
-  width: 98%;
+  width: 97%;
   /*min-width: 500px;*/
-  position: fixed;
+  position: absolute; /* Issue VI-20 */
   margin-top: -105px;
   margin-left: -1%;
   padding: 15px 1%;
