@@ -37,13 +37,18 @@ defaultcss: $(MAIN_CSS)
 $(MAIN_CSS): $(MAIN_LESS) $(CUSTOM_LESS)
 	$(LESSC) $(LESSCOPTS) $(MAIN_LESS) >$@
 
+copyfiles:
+	if [ -x $(VI_CUSTOM)/static ]; then \
+		cp -rv $(VI_CUSTOM)/static/* $(OUTPUT); \
+	fi
+
 version:
 	./version.sh
 
 $(OUTPUT): 
 	mkdir -p $@
 
-debug: $(OUTPUT) $(MAIN_CSS) version
+debug: $(OUTPUT) $(MAIN_CSS) version copyfiles
 	@echo "--- STARTING DEBUG BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEBUGOPTS) \
@@ -51,7 +56,7 @@ debug: $(OUTPUT) $(MAIN_CSS) version
 				admin.py
 	@echo "--- FINISHED DEBUG BUILD ---"
 
-deploy: $(MAIN_CSS) version
+deploy: $(MAIN_CSS) version copyfiles
 	@echo "--- STARTING DEPLOY BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEPLOYOPTS) \
