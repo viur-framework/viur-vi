@@ -20,15 +20,12 @@ from html5.a import A
 class CsvExport(Div):
 	_batchSize = 99  # How many row we fetch at once
 
-	def __init__(self, module):
+	def __init__(self, parent):
 		"""
-			@param modul: Name of the modul we shall handle. Must be a list application!
-			@type modul: string
+			@param parent: parent module
 		"""
 		super(CsvExport, self).__init__()
-		print("CsvExport ctor", module)
-		self.module = module
-
+		self.module = parent.modul
 		self._currentCursor = None
 		# self._currentSearchStr = None
 		self._structure = None
@@ -36,7 +33,7 @@ class CsvExport(Div):
 		self.columns = []
 		self.column_keys = dict()
 
-		self.filter = {"state_rts": "1"}
+		self.filter = parent.getFilter()
 		self.columns = list()
 		self.skelData = list()
 		self.cell_renderer = dict()

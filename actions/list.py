@@ -629,7 +629,7 @@ class CsvExportAction( html5.ext.Button ):
 	def onClick(self, sender=None):
 		pane = Pane(translate("Csv Exporter"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "exportcsv" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = CsvExport(self.parent().parent().modul)
+		edwg = CsvExport(self.parent().parent())
 		pane.addWidget( edwg )
 		pane.focus()
 
