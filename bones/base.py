@@ -2,8 +2,23 @@
 # -*- coding: utf-8 -*-
 
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from config import conf
+
+
+class BaseBoneExtractor( object ):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs):
+		super(BaseBoneExtractor, self).__init__()
+		self.skelStructure = skelStructure
+		self.boneName = boneName
+		self.modulName=modulName
+
+	def render( self, data, field ):
+		# print("StringBoneExtractor.render", data, field)
+		if field in data.keys():
+			return str(data[field])
+		return conf["empty_value"]
+
 
 class BaseViewBoneDelegate( object ):
 	"""
@@ -19,6 +34,7 @@ class BaseViewBoneDelegate( object ):
 		if field in data.keys():
 			return( html5.Label(str( data[field])))
 		return( html5.Label( conf[ "empty_value" ] ) )
+
 
 class BaseEditBone( html5.Input ):
 	"""
@@ -54,8 +70,17 @@ class BaseEditBone( html5.Input ):
 		pass
 
 
+
+
+def CheckForBaseBone(modulName, boneName, skelStucture, *args, **kwargs):
+	res = str(skelStucture[boneName]["type"]).startswith("hidden")
+	print("checking basebone", str(skelStucture[boneName]["type"]), res)
+	return res
+
+
 #Register this Bone in the global queue
 editBoneSelector.insert( 0, lambda *args, **kwargs: True, BaseEditBone)
 
 
 viewDelegateSelector.insert( 0, lambda *args, **kwargs: True, BaseViewBoneDelegate)
+extractorDelegateSelector.insert(0, CheckForBaseBone, BaseBoneExtractor)
