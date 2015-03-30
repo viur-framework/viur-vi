@@ -126,18 +126,28 @@ class RelationalSingleSelectionBone( html5.Div ):
 		#DOM.appendChild(self.getElement(), self.selectionTxt )
 
 		# Selection button
-		self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
-		self.selectBtn["class"].append("icon")
-		self.selectBtn["class"].append("select")
-		self.appendChild( self.selectBtn )
+		if destModul + "-view" in conf[ "currentUser" ][ "access" ]:
+			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
+			self.selectBtn["class"].append("icon")
+			self.selectBtn["class"].append("select")
+			self.appendChild( self.selectBtn )
+		else:
+			self.selectBtn = None
 
 		# Edit button
-		self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit )
-		self.editBtn["class"].append("icon")
-		self.editBtn["class"].append("edit")
-		self.appendChild( self.editBtn )
+		if destModul + "-edit" in conf[ "currentUser" ][ "access" ]:
+			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit )
+			self.editBtn["class"].append("icon")
+			self.editBtn["class"].append("edit")
+			self.appendChild( self.editBtn )
+		else:
+			self.editBtn = None
 
-		if not required:
+		# Remove button
+		if not required and destModul + "-view" in conf[ "currentUser" ][ "access" ]:
+			# Yes, we check for "view" on the remove button, because removal of relations
+			# is only useful when viewing the destination module is still allowed.
+
 			self.remBtn = html5.ext.Button(translate("Remove"), self.onRemove )
 			self.remBtn["class"].append("icon")
 			self.remBtn["class"].append("cancel")
@@ -270,13 +280,13 @@ class RelationalSingleSelectionBone( html5.Div ):
 		Updates the display style of the Edit and Remove buttons.
 		"""
 		if self.selection:
-			self.editBtn[ "disabled" ] = False
-
+			if self.editBtn:
+				self.editBtn[ "disabled" ] = False
 			if self.remBtn:
 				self.remBtn[ "disabled"] = False
 		else:
-			self.editBtn[ "disabled" ] = True
-
+			if self.editBtn:
+				self.editBtn[ "disabled" ] = True
 			if self.remBtn:
 				self.remBtn[ "disabled"] = True
 
@@ -326,16 +336,20 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		self.appendChild( self.selectionTxt )
 
 		#Edit button
-		editBtn = html5.ext.Button("Edit", self.onEdit )
-		editBtn["class"].append("icon")
-		editBtn["class"].append("edit")
-		self.appendChild( editBtn )
+		if modul + "-edit" in conf[ "currentUser" ][ "access" ]:
+			editBtn = html5.ext.Button("Edit", self.onEdit )
+			editBtn["class"].append("icon")
+			editBtn["class"].append("edit")
+			self.appendChild( editBtn )
 
 		#Remove button
-		remBtn = html5.ext.Button("Remove", self.onRemove )
-		remBtn["class"].append("icon")
-		remBtn["class"].append("cancel")
-		self.appendChild( remBtn )
+		if modul + "-view" in conf[ "currentUser" ][ "access" ]:
+			# Check on "view" is also correct here - relational
+			# can be removed if entries can be selected!
+			remBtn = html5.ext.Button("Remove", self.onRemove )
+			remBtn["class"].append("icon")
+			remBtn["class"].append("cancel")
+			self.appendChild( remBtn )
 
 		self.fetchEntry( self.data["id"] )
 
@@ -397,10 +411,13 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.selectionDiv["class"].append("selectioncontainer")
 		self.appendChild( self.selectionDiv )
 
-		self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
-		self.selectBtn["class"].append("icon")
-		self.selectBtn["class"].append("select")
-		self.appendChild( self.selectBtn )
+		if destModul + "-view" in conf[ "currentUser" ][ "access" ]:
+			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
+			self.selectBtn["class"].append("icon")
+			self.selectBtn["class"].append("select")
+			self.appendChild( self.selectBtn )
+		else:
+			self.selectBtn = None
 
 		if self.readOnly:
 			self["disabled"] = True
