@@ -126,7 +126,8 @@ class RelationalSingleSelectionBone( html5.Div ):
 		#DOM.appendChild(self.getElement(), self.selectionTxt )
 
 		# Selection button
-		if destModul + "-view" in conf[ "currentUser" ][ "access" ]:
+		if ( "root" in conf[ "currentUser" ][ "access" ]
+		     or destModul + "-view" in conf[ "currentUser" ][ "access" ] ):
 			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 			self.selectBtn["class"].append("icon")
 			self.selectBtn["class"].append("select")
@@ -135,7 +136,8 @@ class RelationalSingleSelectionBone( html5.Div ):
 			self.selectBtn = None
 
 		# Edit button
-		if destModul + "-edit" in conf[ "currentUser" ][ "access" ]:
+		if ( "root" in conf[ "currentUser" ][ "access" ]
+		     or destModul + "-edit" in conf[ "currentUser" ][ "access" ] ):
 			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit )
 			self.editBtn["class"].append("icon")
 			self.editBtn["class"].append("edit")
@@ -144,7 +146,9 @@ class RelationalSingleSelectionBone( html5.Div ):
 			self.editBtn = None
 
 		# Remove button
-		if not required and destModul + "-view" in conf[ "currentUser" ][ "access" ]:
+		if ( not required
+		     and ( "root" in conf[ "currentUser" ][ "access" ]
+		           or destModul + "-view" in conf[ "currentUser" ][ "access" ] ) ):
 			# Yes, we check for "view" on the remove button, because removal of relations
 			# is only useful when viewing the destination module is still allowed.
 
@@ -336,14 +340,17 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		self.appendChild( self.selectionTxt )
 
 		#Edit button
-		if modul + "-edit" in conf[ "currentUser" ][ "access" ]:
+		if ( "root" in conf[ "currentUser" ][ "access" ]
+		     or modul + "-edit" in conf[ "currentUser" ][ "access" ] ):
 			editBtn = html5.ext.Button("Edit", self.onEdit )
 			editBtn["class"].append("icon")
 			editBtn["class"].append("edit")
 			self.appendChild( editBtn )
 
 		#Remove button
-		if modul + "-view" in conf[ "currentUser" ][ "access" ]:
+
+		if ( "root" in conf[ "currentUser" ][ "access" ]
+		     or modul + "-view" in conf[ "currentUser" ][ "access" ] ):
 			# Check on "view" is also correct here - relational
 			# can be removed if entries can be selected!
 			remBtn = html5.ext.Button("Remove", self.onRemove )
@@ -411,7 +418,8 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.selectionDiv["class"].append("selectioncontainer")
 		self.appendChild( self.selectionDiv )
 
-		if destModul + "-view" in conf[ "currentUser" ][ "access" ]:
+		if ( "root" in conf[ "currentUser" ][ "access" ]
+		     or destModul + "-view" in conf[ "currentUser" ][ "access" ] ):
 			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 			self.selectBtn["class"].append("icon")
 			self.selectBtn["class"].append("select")
