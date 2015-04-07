@@ -4,6 +4,7 @@ from network import NetworkService
 from i18n import translate
 from config import conf
 from widgets.task import TaskSelectWidget
+from priorityqueue import toplevelActionSelector
 
 class TopBarWidget( html5.Header ):
 
@@ -39,20 +40,21 @@ class TopBarWidget( html5.Header ):
 		self.modulH1._setClass("beta")
 		self.appendChild(self.modulH1)
 
-
 		self.modulContainer = html5.Div()
 		self.modulContainer["class"].append("currentmodul")
 		self.appendChild( self.modulContainer )
+
 		self.modulImg = html5.Label()
 		self.modulContainer.appendChild(self.modulImg)
+
 		self.modulName = html5.Span()
 		self.modulContainer.appendChild( self.modulName )
-		#self.iconnav.appendChild(DashBoard())
-		#self.iconnav.appendChild(MyFiles())
-		#self.iconnav.appendChild(Settings())
-		self.iconnav.appendChild(Tasks())
-		self.iconnav.appendChild(UserState())
-		self.iconnav.appendChild(Logout())
+
+		for icon in conf[ "toplevelactions" ]:
+			widget = toplevelActionSelector.select( icon )
+			if widget:
+				self.iconnav.appendChild( widget() )
+
 		anav.appendChild(self.iconnav)
 		self.appendChild(anav)
 		self.getConf()
@@ -75,6 +77,7 @@ class TopBarWidget( html5.Header ):
 
 		eval("top.document.title='"+descr+"'")
 
+
 class UserState(html5.Li):
 	def __init__(self):
 		super(UserState,self).__init__()
@@ -94,10 +97,17 @@ class UserState(html5.Li):
 			return
 
 		aa = html5.A()
-		aa["title"] = str( user )
+		aa["title"] = user[ "name" ]
 		aa["class"].append("icon accountmgnt")
 		aa.appendChild( html5.TextNode( user[ "name" ] ) )
 		self.appendChild(aa)
+
+	@staticmethod
+	def canHandle( action ):
+		return action == "userstate"
+
+toplevelActionSelector.insert( 0, UserState.canHandle, UserState )
+
 
 class Tasks(html5.Li):
 	def __init__(self):
@@ -148,29 +158,12 @@ class Tasks(html5.Li):
 	def onClick(self, event ):
 		TaskSelectWidget()
 
-class DashBoard(html5.Li):
-	def __init__(self):
-		super(DashBoard,self).__init__()
-		aa=html5.A()
-		aa["class"].append("icon dashboard")
-		aa.appendChild(html5.TextNode(translate("Dashboard")))
-		self.appendChild(aa)
+	@staticmethod
+	def canHandle( action ):
+		return action == "tasks"
 
-class MyFiles(html5.Li):
-	def __init__(self):
-		super(MyFiles,self).__init__()
-		aa=html5.A()
-		aa["class"].append("icon myfiles")
-		aa.appendChild(html5.TextNode(translate("My Files")))
-		self.appendChild(aa)
+toplevelActionSelector.insert( 0, Tasks.canHandle, Tasks )
 
-class Settings(html5.Li):
-	def __init__(self):
-		super(Settings,self).__init__()
-		aa=html5.A()
-		aa["class"].append("icon settings")
-		aa.appendChild(html5.TextNode(translate("Settings")))
-		self.appendChild(aa)
 
 class Logout(html5.Li):
 	def __init__(self):
@@ -190,3 +183,10 @@ class Logout(html5.Li):
 		skey = NetworkService.decode( req )
 		assert not "\"" in skey
 		eval("""window.top.location.href = "/vi/user/logout?skey="""+skey+"""&";""")
+
+
+	@staticmethod
+	def canHandle( action ):
+		return action == "logout"
+
+toplevelActionSelector.insert( 0, Logout.canHandle, Logout )

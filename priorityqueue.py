@@ -60,11 +60,12 @@ class PriorityQueue( object ):
 
 HandlerClassSelector = PriorityQueue() # Used during startup to select an Wrapper-Class
 editBoneSelector = PriorityQueue() # Queried by editWidget to locate its bones
-actionDelegateSelector = PriorityQueue() # Locates an QAction for a given modul/action-name
+actionDelegateSelector = PriorityQueue() # Locates an action for a given module/action-name
 displayDelegateSelector = PriorityQueue() # Selects a widget used to display data from a certain modul
 initialHashHandler = PriorityQueue() # Provides the handler for the initial hash given in the url
 extendedSearchWidgetSelector = PriorityQueue() # Selects a widget used to perform user-customizable searches
 extractorDelegateSelector = PriorityQueue() # selects a widget used to extract raw data from bones including special features like multilanguage support
+toplevelActionSelector = PriorityQueue() # Top bar actions queue
 
 #OLD
 viewDelegateSelector = PriorityQueue() # Queried by listWidget to determine the viewDelegates for the table
