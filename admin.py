@@ -68,7 +68,7 @@ class CoreWindow( html5.Div ):
 		self.userLoggedOutMsg.testUserAvaiable()
 
 	def startup(self):
-		NetworkService.request( None, "/admin/config", successHandler=self.onConfigAvaiable,
+		NetworkService.request( None, "/admin/config", successHandler=self.onConfigAvailable,
 					failureHandler=self.onError, cacheable=True )
 		NetworkService.request( "user", "view/self", successHandler=self.onUserAvaiable,
 					failureHandler=self.userLoggedOutMsg.onUserTestFail, cacheable=True )
@@ -76,7 +76,7 @@ class CoreWindow( html5.Div ):
 	def log(self, type, msg ):
 		self.logWdg.log( type, msg )
 
-	def onConfigAvaiable(self, req):
+	def onConfigAvailable(self, req):
 		self.config = NetworkService.decode(req)
 		if self.user is not None:
 			self.postInit()
@@ -124,40 +124,40 @@ class CoreWindow( html5.Div ):
 				panes.append( (group["name"], sortIndex, p) )
 
 		# Sorting the 2nd level entries
-		tmpList = [(x,y) for x,y in self.config["modules"].items()]
-		tmpList.sort(key=getModulName)
-		tmpList.sort(key=getModulSortIndex, reverse=True)
+		sorted_modules = [(x,y) for x,y in self.config["modules"].items()]
+		sorted_modules.sort(key=getModulName)
+		sorted_modules.sort(key=getModulSortIndex, reverse=True)
 
-		for modulName, modulInfo in tmpList:
-			if not "root" in userAccess and not any([x.startswith(modulName) for x in userAccess]):
+		for module, info in sorted_modules:
+			if not "root" in userAccess and not any([x.startswith(module) for x in userAccess]):
 				#Skip this module, as the user couldn't interact with it anyway
 				continue
 
-			conf["modules"][modulName] = modulInfo
+			conf["modules"][module] = info
 
-			if "views" in conf["modules"][modulName].keys() and conf["modules"][modulName]["views"]:
-				for v in conf["modules"][modulName]["views"]: #Work-a-round for PyJS not supporting id()
+			if "views" in conf["modules"][module].keys() and conf["modules"][module]["views"]:
+				for v in conf["modules"][module]["views"]: #Work-a-round for PyJS not supporting id()
 					v["__id"] = predefinedFilterCounter
 					predefinedFilterCounter += 1
 
-			handlerCls = HandlerClassSelector.select( modulName, modulInfo )
-			assert handlerCls is not None, "No handler available for modul %s" % modulName
+			handlerCls = HandlerClassSelector.select( module, info )
+			assert handlerCls is not None, "No handler available for modul %s" % module
 
 			isChild = False
 			for k in groups.keys():
-				if modulInfo["name"].startswith(k):
-					handler = handlerCls( modulName, modulInfo, groupName=k )
+				if info["name"].startswith(k):
+					handler = handlerCls( module, info, groupName=k )
 					groups[k].addChildPane( handler )
 					isChild = True
 					break
 
 			if not isChild:
-				handler = handlerCls( modulName, modulInfo )
-				if "sortIndex" in modulInfo.keys():
-					sortIndex = modulInfo["sortIndex"]
+				handler = handlerCls( module, info )
+				if "sortIndex" in info.keys():
+					sortIndex = info["sortIndex"]
 				else:
 					sortIndex = None
-				panes.append( ( modulInfo["name"], sortIndex, handler ) )
+				panes.append( ( info["name"], sortIndex, handler ) )
 
 		# Sorting our top level entries
 		panes.sort( key=lambda x: x[0] )
