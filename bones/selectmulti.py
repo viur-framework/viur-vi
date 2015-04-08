@@ -162,18 +162,18 @@ class AccessMultiSelectBone( html5.Div ):
 		self.modulName = moduleName
 		self.readOnly = readOnly
 		self.values = values
-		self.skels = {}
+		self.modules = {}
 		self.flags = {}
 		self.sinkEvent( "onClick" )
 
 		for value in values:
-			skel = self.parseskelaccess( value )
-			if not skel:
+			module = self.parseskelaccess( value )
+			if not module:
 				self.flags[ value ] = None
-			elif not skel[ 0 ] in self.skels.keys():
-				self.skels[ skel[ 0 ] ] = {}
+			elif not module[ 0 ] in self.modules.keys():
+				self.modules[ module[ 0 ] ] = {}
 
-		# Render static flags first
+		# Render static / singleton flags first
 		for flag in sorted( self.flags.keys() ):
 			label = html5.Label()
 
@@ -190,21 +190,26 @@ class AccessMultiSelectBone( html5.Div ):
 
 			self.appendChild( label )
 
-		# Render skeleton access flags then
-		for skel in sorted( self.skels.keys() ):
+		# Render module access flags then
+		for module in sorted( self.modules.keys() ):
 			label = html5.Label()
 
 			span = html5.Span()
-			span.appendChild( html5.TextNode( skel ) )
+			span.appendChild( html5.TextNode( module ) )
 			label.appendChild( span )
 
 			ul = html5.Ul()
 			for state in self.states:
 				li = html5.Li()
 				li[ "class" ] = [ "access-state", state ]
+
+				# Some modules may not support all states
+				if ( "%s-%s" % (module, state) ) not in self.values:
+					li[ "class" ].append( "disabled" )
+
 				ul.appendChild( li )
 
-				self.skels[ skel ][ state ] = li
+				self.modules[ module ][ state ] = li
 
 			label.appendChild( ul )
 
@@ -218,17 +223,21 @@ class AccessMultiSelectBone( html5.Div ):
 		return False
 
 	def onClick( self, event ):
-		for skel, toggles in self.skels.items():
+		for skel, toggles in self.modules.items():
 			for toggle in toggles.values():
 				if utils.doesEventHitWidgetOrChildren( event, toggle ):
-					if "active" in toggle[ "class" ]:
-						toggle[ "class" ].remove( "active" )
+					if not "disabled" in toggle[ "class" ]:
+						if "active" in toggle[ "class" ]:
+							toggle[ "class" ].remove( "active" )
 
-						if "view" in toggle[ "class" ]:
-							for rm in [ "add", "delete", "edit" ]:
-								self.skels[ skel ][ rm ][ "class" ].remove( "active" )
-					else:
-						toggle[ "class" ].append( "active" )
+							# When disabling "view", disable all other flags also, because
+							# they don't make no sense anymore then.
+							if "view" in toggle[ "class" ]:
+								for rm in [ "add", "delete", "edit" ]:
+									self.modules[ skel ][ rm ][ "class" ].remove( "active" )
+
+						else:
+							toggle[ "class" ].append( "active" )
 
 					return
 
@@ -251,11 +260,11 @@ class AccessMultiSelectBone( html5.Div ):
 				if name in values:
 					elem[ "checked" ] = True
 
-			for skel in self.skels:
+			for skel in self.modules:
 				for state in self.states:
 					if "%s-%s" % ( skel, state ) in values:
-						if not "active" in self.skels[ skel ][ state ][ "class" ]:
-							self.skels[ skel ][ state ][ "class" ].append( "active" )
+						if not "active" in self.modules[ skel ][ state ][ "class" ]:
+							self.modules[ skel ][ state ][ "class" ].append( "active" )
 
 
 	def serializeForPost(self):
@@ -265,9 +274,9 @@ class AccessMultiSelectBone( html5.Div ):
 			if elem[ "checked" ]:
 				ret.append( name )
 
-		for skel in self.skels:
+		for skel in self.modules:
 			for state in self.states:
-				if "active" in self.skels[ skel ][ state ][ "class" ]:
+				if "active" in self.modules[ skel ][ state ][ "class" ]:
 					ret.append( "%s-%s" % ( skel, state ) )
 
 		return { self.boneName: ret }
