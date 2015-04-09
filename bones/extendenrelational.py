@@ -129,10 +129,16 @@ class ExtendedRelationalSelectionBone( html5.Div ):
 		self.selectionDiv = html5.Div()
 		self.selectionDiv["class"].append("selectioncontainer")
 		self.appendChild( self.selectionDiv )
-		self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
-		self.selectBtn["class"].append("icon")
-		self.selectBtn["class"].append("select")
-		self.appendChild( self.selectBtn )
+
+		if ( "root" in conf[ "currentUser" ][ "access" ]
+		     or destModul + "-view" in conf[ "currentUser" ][ "access" ] ):
+			self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
+			self.selectBtn["class"].append("icon")
+			self.selectBtn["class"].append("select")
+			self.appendChild( self.selectBtn )
+		else:
+			self.selectBtn = None
+
 		if self.readOnly:
 			self["disabled"] = True
 
