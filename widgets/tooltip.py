@@ -13,7 +13,7 @@ class ToolTip(html5.Div):
 		#a["href"] = "#tooltip_contents_%s" % self.toolTipIdx
 		self.appendChild(a)
 		span = html5.Span()
-		span.element.innerHTML = longText
+		span.element.innerHTML = longText.replace( "\n", "<br />" )
 		self.appendChild( span )
 
 	def toggleMsgCenter(self, *args, **kwargs):
