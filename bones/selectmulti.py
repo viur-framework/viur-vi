@@ -162,8 +162,11 @@ class AccessMultiSelectBone( html5.Div ):
 		self.modulName = moduleName
 		self.readOnly = readOnly
 		self.values = values
+
 		self.modules = {}
+		self.modulesbox = {}
 		self.flags = {}
+
 		self.sinkEvent( "onClick" )
 
 		for value in values:
@@ -199,6 +202,16 @@ class AccessMultiSelectBone( html5.Div ):
 			label.appendChild( span )
 
 			ul = html5.Ul()
+
+			checkbox = html5.Input()
+			checkbox["type"] = "checkbox"
+			checkbox["name"] = module
+			self.modulesbox[ module ] = checkbox
+
+			li = html5.Li()
+			li.appendChild( checkbox )
+			ul.appendChild( li )
+
 			for state in self.states:
 				li = html5.Li()
 				li[ "class" ] = [ "access-state", state ]
@@ -223,7 +236,7 @@ class AccessMultiSelectBone( html5.Div ):
 		return False
 
 	def onClick( self, event ):
-		for skel, toggles in self.modules.items():
+		for module, toggles in self.modules.items():
 			for toggle in toggles.values():
 				if utils.doesEventHitWidgetOrChildren( event, toggle ):
 					if not "disabled" in toggle[ "class" ]:
@@ -234,12 +247,50 @@ class AccessMultiSelectBone( html5.Div ):
 							# they don't make no sense anymore then.
 							if "view" in toggle[ "class" ]:
 								for rm in [ "add", "delete", "edit" ]:
-									self.modules[ skel ][ rm ][ "class" ].remove( "active" )
+									self.modules[ module ][ rm ][ "class" ].remove( "active" )
 
 						else:
 							toggle[ "class" ].append( "active" )
 
+					self.checkmodulesbox( module )
+
+					event.preventDefault()
 					return
+
+			if utils.doesEventHitWidgetOrChildren( event, self.modulesbox[ module ] ):
+				self.modulesbox[ module ].parent()[ "class" ].remove( "partly" )
+
+				for toggle in toggles.values():
+					if not "disabled" in toggle[ "class" ]:
+						if self.modulesbox[ module ][ "checked" ]:
+							if not "active" in toggle[ "class" ]:
+								toggle[ "class" ].append( "active" )
+						else:
+							toggle[ "class" ].remove( "active" )
+
+				return
+
+	def checkmodulesbox(self, module):
+		on = 0
+		all = 0
+
+		for item in self.modules[ module ].values():
+			if not "disabled" in item[ "class" ]:
+				all += 1
+
+			if "active" in item[ "class" ]:
+				on += 1
+
+		if on == 0 or on == all:
+			self.modulesbox[ module ].parent()[ "class" ].remove( "partly" )
+			self.modulesbox[ module ][ "indeterminate" ] = False
+			self.modulesbox[ module ][ "checked" ] = ( on == all )
+		else:
+			self.modulesbox[ module ][ "checked" ] = False
+			self.modulesbox[ module ][ "indeterminate" ] = True
+
+			if not "partly" in self.modulesbox[ module ].parent()[ "class" ]:
+				self.modulesbox[ module ].parent()[ "class" ].append( "partly" )
 
 	@staticmethod
 	def fromSkelStructure( moduleName, boneName, skelStructure ):
@@ -260,11 +311,13 @@ class AccessMultiSelectBone( html5.Div ):
 				if name in values:
 					elem[ "checked" ] = True
 
-			for skel in self.modules:
+			for module in self.modules:
 				for state in self.states:
-					if "%s-%s" % ( skel, state ) in values:
-						if not "active" in self.modules[ skel ][ state ][ "class" ]:
-							self.modules[ skel ][ state ][ "class" ].append( "active" )
+					if "%s-%s" % ( module, state ) in values:
+						if not "active" in self.modules[ module ][ state ][ "class" ]:
+							self.modules[ module ][ state ][ "class" ].append( "active" )
+
+				self.checkmodulesbox( module )
 
 
 	def serializeForPost(self):
@@ -274,10 +327,10 @@ class AccessMultiSelectBone( html5.Div ):
 			if elem[ "checked" ]:
 				ret.append( name )
 
-		for skel in self.modules:
+		for module in self.modules:
 			for state in self.states:
-				if "active" in self.modules[ skel ][ state ][ "class" ]:
-					ret.append( "%s-%s" % ( skel, state ) )
+				if "active" in self.modules[ module ][ state ][ "class" ]:
+					ret.append( "%s-%s" % ( module, state ) )
 
 		return { self.boneName: ret }
 

@@ -39,6 +39,12 @@ class Checked(object):
 		#else:
 		#	self.element.removeAttribute("checked")
 
+class Indeterminate(object):
+	def _getIndeterminate(self):
+		return (self.element.indeterminate)
+	def _setIndeterminate(self,val):
+		self.element.indeterminate=val
+
 class Name(object):
 	def _getName(self):
 		return self.element.getAttribute( "name" )
