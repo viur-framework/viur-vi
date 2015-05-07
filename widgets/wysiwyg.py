@@ -686,7 +686,12 @@ class LinkEditor( html5.Div ):
 		if self.currentElem is None:
 			return
 		self.currentElem.href = self.linkTxt["value"]
-		self.currentElem.target = "_blank" if self.newTab["checked"] else None
+
+		if self.newTab["checked"]:
+			self.currentElem.target = "_blank"
+		else:
+			self.currentElem.target = "_self"
+
 		self["style"]["display"] = "none"
 		self.currentElem = None
 
@@ -835,12 +840,12 @@ class FlipViewAction( html5.ext.Button ):
 			self["class"].append("is_htmlview")
 
 	def onClick(self, sender=None):
-		self.parent().parent().flipView()
 		if "is_wysiwyg" in self["class"]:
 			self["class"].remove("is_wysiwyg")
 		if "is_htmlview" in self["class"]:
 			self["class"].remove("is_htmlview")
-		if self.parent().parent().isWysiwygMode:
+
+		if self.parent().parent().flipView():
 			self["class"].append("is_wysiwyg")
 		else:
 			self["class"].append("is_htmlview")
@@ -947,14 +952,15 @@ class Wysiwyg( html5.Div ):
 				outStr += inStr[0]
 				inStr = inStr[ 1: ]
 			self.contentDiv.element.innerHTML = outStr
-			self.isWysiwygMode = not self.isWysiwygMode
 			self.actionbar.setActions( ["text.flipView"] )
 		else:
 			htmlStr = re.sub(r'<[^>]*?>', '', htmlStr)
 			htmlStr = htmlStr.replace("&nbsp;","").replace("&nbsp;","")
 			self.contentDiv.element.innerHTML = htmlStr.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
-			self.isWysiwygMode = not self.isWysiwygMode
 			self.actionbar.setActions( self.textActions )
+
+		self.isWysiwygMode = not self.isWysiwygMode
+		return self.isWysiwygMode
 
 
 	def saveText(self, *args, **kwargs):
@@ -977,7 +983,9 @@ class Wysiwyg( html5.Div ):
 		else:
 			self.currentImage = None
 			super( Wysiwyg, self ).onMouseDown(event)
-		node = eval("window.top.getSelection().baseNode")
+
+		node = eval("window.top.getSelection().anchorNode")
+
 		while node and node != self.contentDiv.element:
 			#FIXME.. emit cursormoved event
 			node = node.parentElement
@@ -1024,28 +1032,35 @@ class Wysiwyg( html5.Div ):
 		if self.discardNextClickEvent:
 			self.discardNextClickEvent = False
 			return
+
 		super(Wysiwyg, self).onClick( event )
 		domWdg = event.target
 		isContentDivTarget = False
+
 		while domWdg:
 			if domWdg==self.contentDiv.element:
 				isContentDivTarget = True
 				break
 			domWdg = domWdg.parentElement
+
 		if not isContentDivTarget:
 			return
-		node = eval("window.top.getSelection().baseNode")
+
+		node = eval("window.top.getSelection().anchorNode")
 		nodeStack = []
 		i = 10
+
 		#Try to extract the relevat nodes from the dom
 		while i>0 and node and node != self.contentDiv.element:
 			i -= 1
 			nodeStack.append(node)
 			node = node.parentElement
+
 		if "TABLE" in [(x.tagName if "tagName" in dir(x) else "") for x in nodeStack]:
 			self.tableDiv["style"]["display"] = ""
 		else:
 			self.tableDiv["style"]["display"] = "none"
+
 		self.linkEditor.onCursorMoved(nodeStack)
 		self.imgEditor.onCursorMoved(nodeStack)
 		self.cursorMovedEvent.fire( nodeStack )
