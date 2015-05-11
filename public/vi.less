@@ -21,6 +21,9 @@
 @focusselectionoddcolor: rgba(250,0,0,0.5);
 @focusselectionevencolor: rgba(250,130,130,0.5);
 
+@success: #6cb34d; /* Green */
+@fail: #ED1C24; /* Red */
+
 /* Icon-Grey: #939393;*/
 
 /* #ViUR Styles
@@ -1556,35 +1559,68 @@ input[type="checkbox"] {
   margin: 2px;
   width: 26px;
   height: 26px;
-  border: 1px solid red;
-  background-color: indianred;
+  border: 1px solid @fail;
+  background-color: #ccc;
   display: inline-block;
+  transition: all .3s ease;
+  -webkit-transition: all .3s ease;
+  -moz-transition: all .3s ease;
+  -ms-transition: all .3s ease;
+  transition: all .3s ease;
+  cursor: pointer;
 }
 
 .bone.selectmulti.access .access-state.view {
-  background-position: 0px -52px;
+  background-position: 0px -26px;
 }
 
 .bone.selectmulti.access .access-state.edit {
-  background-position: -26px -52px;
+  background-position: -26px -26px;
 }
 
 .bone.selectmulti.access .access-state.delete {
-  background-position: -52px -52px;
+  background-position: -52px -26px;
 }
 
 .bone.selectmulti.access .access-state.add {
-  background-position: -78px -52px;
+  background-position: -78px -26px;
+}
+
+.bone.selectmulti.access .access-state.view.active,
+.bone.selectmulti.access .access-state.view.disabled {
+  background-position: 0px 0px;
+}
+
+.bone.selectmulti.access .access-state.edit.active,
+.bone.selectmulti.access .access-state.edit.disabled {
+  background-position: -26px 0px;
+}
+
+.bone.selectmulti.access .access-state.delete.active,
+.bone.selectmulti.access .access-state.delete.disabled {
+  background-position: -52px 0px;
+}
+
+.bone.selectmulti.access .access-state.add.active,
+.bone.selectmulti.access .access-state.add.disabled {
+  background-position: -78px 0px;
 }
 
 .bone.selectmulti.access .access-state.active {
-  border-color: #008800;
-  background-color: #87C540;
+  border-color: @success;
+  background-color: lighten(@success, 10%);
 }
 
-.bone.selectmulti.access .access-state.disabled {
-  border-color: #606060;
-  background-color: #AFAFAF;
+.bone.selectmulti.access .access-state:hover,
+.bone.selectmulti.access .access-state.active:hover {
+  border-color:#555;
+  background-color: #aaa;
+}
+
+.bone.selectmulti.access .access-state.disabled,
+.bone.selectmulti.access .access-state.disabled:hover {
+  border-color: #999;
+  background-color: #ccc;
 }
 
 input[type="password"]:nth-of-type(even) {
