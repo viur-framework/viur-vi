@@ -35,14 +35,14 @@ def translate( key, **kwargs ):
 
 def addTranslation( lang, a, b=None ):
 	"""
-		Adds a new translation to
+		Adds or updates new translations.
 	"""
 	if not lang in _runtimeTranslations.keys():
 		_runtimeTranslations[ lang ] = {}
 	if isinstance(a,str) and b is not None:
-		updateDict = { a:b }
+		updateDict = { a.lower() : b }
 	elif isinstance( a, dict ):
-		updateDict = a
+		updateDict = { k.lower(): v for k,v in a.items() }
 	else:
 		raise ValueError("Invalid call to addTranslation")
 	_runtimeTranslations[ lang ].update( updateDict )

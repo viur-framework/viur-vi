@@ -1,7 +1,7 @@
 from html5.widget import Widget
 from html5.html5Attr._label import _Label
 from html5.html5Attr.media import Type,Dimensions
-from html5.html5Attr.form import _Form,Alt,Autofocus,Disabled,Name,Checked,Value,Formhead,Autocomplete,Inputs,Required,Multiple,Size,__For
+from html5.html5Attr.form import _Form,Alt,Autofocus,Disabled,Name,Checked,Indeterminate,Value,Formhead,Autocomplete,Inputs,Required,Multiple,Size,__For
 from html5.html5Attr.href import Target
 from html5.html5Attr.src import Src
 from html5.textnode import TextNode
@@ -68,7 +68,7 @@ class Form(Disabled,Widget,Name,Target,Autocomplete):
 	def _setAcceptCharset(self,val):
 		self.element.setAttribute("accept-charset",val)
 
-class Input(Disabled,Widget,Type,_Form,Alt,Autofocus,Checked,Name,Dimensions,Value,Formhead,Autocomplete,Inputs,Multiple,Size,Src):
+class Input(Disabled,Widget,Type,_Form,Alt,Autofocus,Checked,Indeterminate,Name,Dimensions,Value,Formhead,Autocomplete,Inputs,Multiple,Size,Src):
 	_baseClass = "input"
 
 	def __init__(self, *args, **kwargs):
@@ -79,6 +79,7 @@ class Input(Disabled,Widget,Type,_Form,Alt,Autofocus,Checked,Name,Dimensions,Val
 		Alt.__init__(self, *args, **kwargs)
 		Autofocus.__init__(self, *args, **kwargs)
 		Checked.__init__(self, *args, **kwargs)
+		Indeterminate.__init__(self, *args, **kwargs)
 		Name.__init__(self, *args, **kwargs)
 		Dimensions.__init__(self, *args, **kwargs)
 		Value.__init__(self, *args, **kwargs)
