@@ -11,23 +11,29 @@ import utils
 class CompoundFilter( html5.Div ):
 	def __init__(self, view, modul, embed=False, *args, **kwargs ):
 		super( CompoundFilter, self ).__init__( *args, **kwargs)
+
 		self["class"].append("compoundfilter")
 		self.view = view
 		self.modul = modul
 		self.embed = embed
+
 		if embed:
 			self["class"].append("embed")
 			self["class"].append("expanded")
 		else:
 			self["class"].append("standalone")
 			self["class"].append("collapsed")
+
 		if "name" in view.keys():
 			h2 = html5.H2()
 			h2.appendChild( html5.TextNode( view["name"] ) )
 			self.appendChild( h2 )
+
 		self.extendedFilters = []
+
 		for extension in (view["extendedFilters"] if "extendedFilters" in view.keys() else []):
 			wdg = extendedSearchWidgetSelector.select( extension, view, modul)
+
 			if wdg is not None:
 				container = html5.Div()
 				container["class"].append("extendedfilter")
@@ -44,12 +50,20 @@ class CompoundFilter( html5.Div ):
 
 	def reevaluate(self, *args, **kwargs ):
 		filter = self.view["filter"].copy()
+
 		for extension in self.extendedFilters:
 			filter = extension.updateFilter( filter )
+
 		if self.embed:
 			self.parent().setFilter( filter, -1, "" )
 		else:
 			self.parent().applyFilter( filter, -1, translate( "Extended Search" ) )
+
+	def focus(self):
+		for extension in self.extendedFilters:
+			if ( "focus" in dir( extension )
+			     and callable( extension.focus ) ):
+				extension.focus()
 
 class FilterSelector( html5.Div ):
 	def __init__(self, modul, *args, **kwargs ):
