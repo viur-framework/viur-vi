@@ -31,6 +31,7 @@ class SideBar( html5.Div ):
 		if not self.isInit:
 			self.currentWidget = widget
 			return
+
 		if self.currentWidget:
 			self.removeChild( self.currentWidget )
 			if widget is None:
@@ -38,14 +39,18 @@ class SideBar( html5.Div ):
 				self["class"].append("isempty")
 				self.parent()["class"].remove("issplitview")
 				self.parent()["class"].append("isfullview")
+
 		elif widget is not None:
 			self["class"].append("haschild")
 			self["class"].remove("isempty")
 			self.parent()["class"].append("issplitview")
 			self.parent()["class"].remove("isfullview")
+
 		self.currentWidget = widget
+
 		if widget is not None:
 			self.appendChild( widget )
+
 
 	def getWidget(self):
 		return( self.currentWidget )

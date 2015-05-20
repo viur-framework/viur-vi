@@ -43,3 +43,6 @@ class Search( html5.Div ):
 
 	def reevaluate(self):
 		self.doSearch()
+
+	def focus(self):
+		self.searchInput.focus()

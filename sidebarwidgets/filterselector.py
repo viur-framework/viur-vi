@@ -89,6 +89,10 @@ class FilterSelector( html5.Div ):
 			if "reevaluate" in dir( nextTarget ):
 				nextTarget.reevaluate()
 
+		if ( "focus" in dir( self.currentTarget )
+		     and callable( self.currentTarget.focus ) ):
+			self.currentTarget.focus()
+
 	def onAttach(self):
 		super( FilterSelector, self ).onAttach()
 		activeFilter = self.parent().parent().filterID
