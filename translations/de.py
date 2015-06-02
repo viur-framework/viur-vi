@@ -33,7 +33,7 @@ lngDe = {
 	"No":u"Nein",
 	"Ignore":u"Ignorieren",
 	"Error parsing Date":u"Datum konnte nicht gelesen werden",
-	"Open message center":u"Nachtichten-Center öffnen",
+	"Open message center":u"Nachrichten-Center öffnen",
 	"Entry saved!":u"Eintrag wurde gespeichert!",
 	"Could not save entry!":u"Eintrag konnte nicht gespeichert werden!",
 	"Expand/Collapse":u"Aus-/Einklappen",
