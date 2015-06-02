@@ -7,29 +7,29 @@ from event import EventDispatcher
 from html5.keycodes import *
 from i18n import translate
 
-class StringBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
-		super( StringBoneExtractor, self ).__init__()
+
+class StringBoneExtractor(object):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs):
+		super(StringBoneExtractor, self).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.modulName = modulName
 
-	def render( self, data, field ):
-		# print("StringBoneExtractor.render", data, field)
+	def render(self, data, field):
 		if field in data.keys():
 			##multilangs
 			if isinstance(data[field], dict):
-				resstr=""
+				resstr = ""
 				if "currentlanguage" in conf.keys():
 					if conf["currentlanguage"] in data[field].keys():
-						resstr=data[field][conf["currentlanguage"]].replace("&quot;", "")
+						resstr = data[field][conf["currentlanguage"]].replace("&quot;", "")
 					else:
-						if len(data[field].keys())>0:
-							resstr=data[field][data[field].keys()[0]].replace("&quot;", "")
-				return resstr
+						if len(data[field].keys()) > 0:
+							resstr = data[field][data[field].keys()[0]].replace("&quot;", "")
+				return '"%s"' % resstr
 			else:
-				return str(data[field]).replace("&quot;", "").replace(";", " ")
-		return conf[ "empty_value" ]
+				return str('"%s"' % data[field]).replace("&quot;", "").replace(";", " ")
+		return conf["empty_value"]
 
 
 class StringViewBoneDelegate( object ):

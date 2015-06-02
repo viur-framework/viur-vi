@@ -8,29 +8,29 @@ import utils
 from i18n import translate
 
 
-class TextBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
-		super( TextBoneExtractor, self ).__init__()
+class TextBoneExtractor(object):
+	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs):
+		super(TextBoneExtractor, self).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.modulName = modulName
 
-	def render( self, data, field ):
+	def render(self, data, field):
 		if field in data.keys():
 			##multilangs
 			if isinstance(data[field], dict):
-				resstr=""
+				resstr = ""
 				if "currentlanguage" in conf.keys():
 					if conf["currentlanguage"] in data[field].keys():
-						resstr=data[field][conf["currentlanguage"]]
+						resstr = data[field][conf["currentlanguage"]]
 					else:
-						if data[field].keys().length>0:
-							resstr=data[field][data[field].keys()[0]]
-				return resstr
+						if data[field].keys().length > 0:
+							resstr = data[field][data[field].keys()[0]]
+				return '"%s"' % resstr
 			else:
-				#no langobject
-				return str(data[field])
-		return conf[ "empty_value" ]
+				# no langobject
+				return str('"%s"' % data[field])
+		return conf["empty_value"]
 
 
 class TextViewBoneDelegate( object ):
