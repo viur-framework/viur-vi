@@ -22,13 +22,13 @@ class StringBoneExtractor(object):
 				resstr = ""
 				if "currentlanguage" in conf.keys():
 					if conf["currentlanguage"] in data[field].keys():
-						resstr = data[field][conf["currentlanguage"]].replace("&quot;", "")
+						resstr = data[field][conf["currentlanguage"]].replace("&quot;", "'").replace(";", " ").replace('"', "'")
 					else:
 						if len(data[field].keys()) > 0:
-							resstr = data[field][data[field].keys()[0]].replace("&quot;", "")
+							resstr = data[field][data[field].keys()[0]].replace("&quot;", "'").replace(";", " ").replace('"', "'")
 				return '"%s"' % resstr
 			else:
-				return str('"%s"' % data[field]).replace("&quot;", "").replace(";", " ")
+				return str('"%s"' % data[field].replace("&quot;", "").replace(";", " ").replace('"', "'"))
 		return conf["empty_value"]
 
 
