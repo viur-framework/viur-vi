@@ -15,11 +15,11 @@ from i18n import translate
 class ListWidget( html5.Div ):
 	"""
 		Provides the interface to list-applications.
-		It acts as a dataprovider for a DataTable and binds an actionbar
+		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
-
 	"""
-	_batchSize = 20  #How many row we fetch at once
+	_batchSize = 20  #How many rows do we fetch at once?
+
 	def __init__( self, modul, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
