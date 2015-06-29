@@ -150,7 +150,8 @@ class SelectableDiv( html5.Div ):
 		self.nodeWidget = nodeWidget
 		self.leafWidget = leafWidget
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
-		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
+		self.selectionActivatedEvent = EventDispatcher("selectionActivated") # Double-Click on an currently selected item - ITEM CLICKED !!!!
+		self.selectionReturnEvent = EventDispatcher("selectionReturn") # The current selection should be returned to parent widget
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
 		self._selectedItems = [] # List of row-indexes currently selected
 		self._currentItem = None # Rowindex of the cursor row
@@ -204,6 +205,23 @@ class SelectableDiv( html5.Div ):
 
 		elif self._currentItem is not None:
 			self.selectionActivatedEvent.fire( self, [self._currentItem] )
+
+	def returnCurrentSelection(self):
+		"""
+			Emits the selectionReturn event if there's currently a selection
+
+		"""
+		selection = []
+		if len( self._selectedItems )>0:
+			selection = self._selectedItems
+			#self.selectionReturnEvent.fire( self, self._selectedItems )
+		elif self._currentItem is not None:
+			selection = [self._currentItem]
+		if self.selectionType=="node":
+			selection = [x for x in selection if isinstance(x,self.nodeWidget)]
+		elif self.selectionType=="leaf":
+			selection = [x for x in selection if isinstance(x,self.leafWidget)]
+		self.selectionReturnEvent.fire( self, selection )
 
 	def onKeyDown(self, event):
 		if isReturn(event.keyCode): # Return
@@ -291,7 +309,7 @@ class TreeWidget( html5.Div ):
 		self.path = []
 		self.sinkEvent( "onClick" )
 		#Proxy some events and functions of the original table
-		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
+		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection", "selectionReturnEvent"]:
 			setattr( self, f, getattr(self.entryFrame,f))
 		self.actionBar.setActions( self.defaultActions+(["select","close"] if isSelector else []) )
 
@@ -335,22 +353,31 @@ class TreeWidget( html5.Div ):
 		self.reloadData()
 
 	def onSelectionActivated(self, div, selection ):
+		"""
+		FIXME: Does this make sense anymore?
 		if len(selection)!=1:
 			if self.isSelector:
 				conf["mainWindow"].removeWidget(self)
+			return
+		"""
+		if not selection:
 			return
 		item = selection[0]
 		if isinstance( item, self.nodeWidget ):
 			self.path.append( item.data )
 			self.rebuildPath()
 			self.setNode( item.data["id"] )
-		elif isinstance(item, self.leafWidget):
-			if self.isSelector:
-				conf["mainWindow"].removeWidget(self)
-				return
+		elif isinstance(item, self.leafWidget) and self.isSelector=="leaf":
+			self.returnCurrentSelection()
+			return
 
 	def activateCurrentSelection(self):
 		return( self.entryFrame.activateCurrentSelection())
+
+	def returnCurrentSelection(self):
+		conf["mainWindow"].removeWidget(self)
+		return( self.entryFrame.returnCurrentSelection())
+
 
 	def onClick(self, event):
 		super( TreeWidget, self ).onClick( event )

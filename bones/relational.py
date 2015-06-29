@@ -338,6 +338,8 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		self.selectionTxt.appendChild( html5.TextNode(translate("Loading...")) )
 		self.selectionTxt["class"].append("entrydescription")
 		self.appendChild( self.selectionTxt )
+		self.editBtn = None
+		self.deleteBtn = None
 
 		#Edit button
 		if ( "root" in conf[ "currentUser" ][ "access" ]
@@ -345,6 +347,7 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 			editBtn = html5.ext.Button("Edit", self.onEdit )
 			editBtn["class"].append("icon")
 			editBtn["class"].append("edit")
+			self.editBtn = editBtn
 			self.appendChild( editBtn )
 
 		#Remove button
@@ -356,6 +359,7 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 			remBtn = html5.ext.Button("Remove", self.onRemove )
 			remBtn["class"].append("icon")
 			remBtn["class"].append("cancel")
+			self.deleteBtn = remBtn
 			self.appendChild( remBtn )
 
 		self.fetchEntry( self.data["id"] )

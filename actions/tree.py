@@ -283,3 +283,23 @@ class SelectRootNode( html5.Select ):
 		return(  correctAction and correctHandler )
 
 actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
+
+
+class ReturnSelectionAction( html5.ext.Button ):
+	"""
+		This is the new "activateSelectionAction" for Trees - we need a different event
+		to avoid conflicts with "open that folder" action.
+	"""
+	def __init__(self, *args, **kwargs ):
+		super( ReturnSelectionAction, self ).__init__( translate("Select"), *args, **kwargs )
+		self["class"] = "icon activateselection"
+
+	def onClick(self, sender=None):
+		self.parent().parent().returnCurrentSelection()
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		correctHandler = handler == "tree" or handler.startswith("tree.")
+		return( actionName=="select" and  correctHandler)
+
+actionDelegateSelector.insert( 3, ReturnSelectionAction.isSuitableFor, ReturnSelectionAction )
