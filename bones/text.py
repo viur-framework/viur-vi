@@ -70,6 +70,7 @@ class TextEditBone( html5.Div ):
 		self.languages = languages
 		self.descrHint = descrHint
 		self.currentEditor = None
+		self.valuesdict = dict()
 
 		##multilangbone
 		if self.languages:
@@ -165,7 +166,7 @@ class TextEditBone( html5.Div ):
 		return( TextEditBone( modulName, boneName, readOnly, isPlainText, langs, descrHint=descr ) )
 
 	def unserialize(self, data):
-		self.valuesdict={}
+		self.valuesdict.clear()
 		if self.boneName in data.keys():
 			if self.languages:
 				for lang in self.languages:
