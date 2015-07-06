@@ -18,14 +18,15 @@ class ListWidget( html5.Div ):
 		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
 	"""
-	_batchSize = 20  #How many rows do we fetch at once?
-
-	def __init__( self, modul, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None, *args, **kwargs ):
+	def __init__( self, modul, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
+	                batchSize = None, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
 		"""
 		super( ListWidget, self ).__init__(  )
+
+		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.modul = modul
 		self.actionBar = ActionBar( modul, "list", currentAction="list" )
 		self.appendChild( self.actionBar )
@@ -44,7 +45,7 @@ class ListWidget( html5.Div ):
 			if myView and "extendedFilters" in myView.keys() and myView["extendedFilters"]:
 				self.appendChild( CompoundFilter(myView, modul, embed=True))
 
-		self.table = DataTable()
+		self.table = DataTable( *args, **kwargs )
 		self.appendChild( self.table )
 		self._currentCursor = None
 		self._structure = None

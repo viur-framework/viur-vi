@@ -406,7 +406,7 @@ class DataTable( html5.Div ):
 
 	def __init__( self, *args, **kwargs ):
 		super( DataTable, self ).__init__( )
-		self.table = SelectTable()
+		self.table = SelectTable( *args, **kwargs )
 		self.appendChild(self.table)
 		self._model = [] # List of values we are displaying right now
 		self._shownFields = [] # List of keys we display from the model
