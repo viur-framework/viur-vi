@@ -647,7 +647,7 @@ class SelectAllAction(html5.ext.Button):
 
 	def onClick(self, sender=None):
 		cnt = self.parent().parent().table.table.selectAll()
-		conf["mainWindow"].log("success", translate(u"{items} items had been selected!", items=cnt))
+		conf["mainWindow"].log("info", translate(u"{items} items had been selected", items=cnt))
 
 actionDelegateSelector.insert(1, SelectAllAction.isSuitableFor, SelectAllAction)
 
@@ -663,7 +663,7 @@ class UnSelectAllAction(html5.ext.Button):
 
 	def onClick(self, sender=None):
 		cnt = self.parent().parent().table.table.unSelectAll()
-		conf["mainWindow"].log("success", translate(u"{items} items had been unselected!", items=cnt))
+		conf["mainWindow"].log("info", translate(u"{items} items had been unselected", items=cnt))
 
 actionDelegateSelector.insert(1, UnSelectAllAction.isSuitableFor, UnSelectAllAction)
 
@@ -680,12 +680,12 @@ class SelectInvertAction(html5.ext.Button):
 		(added, removed) = self.parent().parent().table.table.invertSelection()
 
 		if removed and added:
-			conf["mainWindow"].log("success", translate(u"{added} items selected, {removed} items deselected",
+			conf["mainWindow"].log("info", translate(u"{added} items selected, {removed} items deselected",
 			                                            added=added, removed=removed))
 		elif removed == 0:
-			conf["mainWindow"].log("success", translate(u"{items} items had been selected!", items=added))
+			conf["mainWindow"].log("info", translate(u"{items} items had been selected", items=added))
 		elif added == 0:
-			conf["mainWindow"].log("success", translate(u"{items} items had been unselected!", items=removed))
+			conf["mainWindow"].log("info", translate(u"{items} items had been unselected", items=removed))
 
 
 

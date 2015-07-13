@@ -104,8 +104,8 @@ lngDe = {
     "Select all": u"Alle auswählen",
     "Unselect all": u"Auswahl entfernen",
     "Invert selection": u"Auswahl umkehren",
-	"{items} items had been selected!": u"{items} Einträge wurden selektiert!",
-	"{items} items had been unselected!": u"{items} Einträge wurden deselektiert!",
+	"{items} items had been selected": u"{items} Einträge wurden selektiert",
+	"{items} items had been unselected": u"{items} Einträge wurden deselektiert",
 	"{added} items selected, {removed} items deselected":
 		u"{added} Einträge selektiert, {removed} Einträge deselektiert",
 
