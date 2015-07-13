@@ -170,7 +170,14 @@ class SelectTable( html5.Table ):
 
 		else:
 			self._isMouseDown = True
-			self.setCursorRow( self.getIndexByTr(tr) )
+
+			if self.checkboxes:
+				if row in self._selectedRows:
+					self.removeSelectedRow( row )
+				else:
+					self.addSelectedRow( row )
+
+			self.setCursorRow(self.getIndexByTr(tr), removeExistingSelection=not self.checkboxes)
 
 		event.preventDefault()
 		self.focus()
@@ -417,11 +424,13 @@ class SelectTable( html5.Table ):
 				self._checkboxes[ row ][ "checked" ] = True
 
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
+		return len(self._selectedRows)
 
 	def unSelectAll(self):
 		"""
 		Unselects all entries of the table.
 		"""
+		unsel = len(self._selectedRows)
 
 		for row in self._selectedRows:
 			tr = self.getTrByIndex( row )
@@ -432,6 +441,7 @@ class SelectTable( html5.Table ):
 
 		self._selectedRows = []
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
+		return unsel
 
 	def invertSelection(self):
 		"""
@@ -453,6 +463,7 @@ class SelectTable( html5.Table ):
 				self._checkboxes[ row ][ "checked" ] = row in self._selectedRows
 
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
+		return len(self._selectedRows), len(current)
 
 class DataTable( html5.Div ):
 	"""
@@ -572,8 +583,6 @@ class DataTable( html5.Div ):
 		for c in self.table._children:
 			if "clientHeight" in dir(c.element):
 				sumHeight += c.element.clientHeight
-			else:
-				print( c )
 
 		if (not self._isAjaxLoading
 			and (self._loadOnDisplay
