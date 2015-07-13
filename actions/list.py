@@ -654,7 +654,7 @@ actionDelegateSelector.insert(1, SelectAllAction.isSuitableFor, SelectAllAction)
 
 class UnSelectAllAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
-		super(UnSelectAllAction, self ).__init__(translate("Select all"), *args, **kwargs)
+		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), *args, **kwargs)
 		self["class"] = "icon unselectall"
 
 	@staticmethod
@@ -669,7 +669,7 @@ actionDelegateSelector.insert(1, UnSelectAllAction.isSuitableFor, UnSelectAllAct
 
 class SelectInvertAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectInvertAction, self ).__init__(translate("Select all"), *args, **kwargs)
+		super(SelectInvertAction, self ).__init__(translate("Invert selection"), *args, **kwargs)
 		self["class"] = "icon selectinvert"
 
 	@staticmethod
