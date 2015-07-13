@@ -121,5 +121,5 @@ class Table( Widget ):
 		for tr in self.body._children:
 			cnt += tr["rowspan"]
 
-		return( cnt )
+		return cnt
 

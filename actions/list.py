@@ -634,3 +634,47 @@ class CsvExportAction( html5.ext.Button ):
 		pane.focus()
 
 actionDelegateSelector.insert( 1, CsvExportAction.isSuitableFor, CsvExportAction)
+
+
+class SelectAllAction(html5.ext.Button):
+	def __init__(self, *args, **kwargs):
+		super(SelectAllAction, self ).__init__(translate("Select all"), *args, **kwargs)
+		self["class"] = "icon selectall"
+
+	@staticmethod
+	def isSuitableFor(modul, handler, actionName):
+		return actionName == "selectall" and (handler == "list" or handler.startswith("list."))
+
+	def onClick(self, sender=None):
+		self.parent().parent().table.table.selectAll()
+
+actionDelegateSelector.insert(1, SelectAllAction.isSuitableFor, SelectAllAction)
+
+
+class UnSelectAllAction(html5.ext.Button):
+	def __init__(self, *args, **kwargs):
+		super(UnSelectAllAction, self ).__init__(translate("Select all"), *args, **kwargs)
+		self["class"] = "icon unselectall"
+
+	@staticmethod
+	def isSuitableFor(modul, handler, actionName):
+		return actionName == "unselectall" and (handler == "list" or handler.startswith("list."))
+
+	def onClick(self, sender=None):
+		self.parent().parent().table.table.unSelectAll()
+
+actionDelegateSelector.insert(1, UnSelectAllAction.isSuitableFor, UnSelectAllAction)
+
+class SelectInvertAction(html5.ext.Button):
+	def __init__(self, *args, **kwargs):
+		super(SelectInvertAction, self ).__init__(translate("Select all"), *args, **kwargs)
+		self["class"] = "icon selectinvert"
+
+	@staticmethod
+	def isSuitableFor(modul, handler, actionName):
+		return actionName == "selectinvert" and (handler == "list" or handler.startswith("list."))
+
+	def onClick(self, sender=None):
+		self.parent().parent().table.table.invertSelection()
+
+actionDelegateSelector.insert(1, SelectInvertAction.isSuitableFor, SelectInvertAction)

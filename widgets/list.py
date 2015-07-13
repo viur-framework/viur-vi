@@ -18,14 +18,16 @@ class ListWidget( html5.Div ):
 		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
 	"""
-	_batchSize = 20  #How many rows do we fetch at once?
-
-	def __init__( self, modul, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None, *args, **kwargs ):
+	def __init__( self, modul, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
+	                batchSize = None, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
 		"""
 		super( ListWidget, self ).__init__(  )
+
+		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
+
 		self.modul = modul
 		self.actionBar = ActionBar( modul, "list", currentAction="list" )
 		self.appendChild( self.actionBar )
@@ -44,7 +46,7 @@ class ListWidget( html5.Div ):
 			if myView and "extendedFilters" in myView.keys() and myView["extendedFilters"]:
 				self.appendChild( CompoundFilter(myView, modul, embed=True))
 
-		self.table = DataTable()
+		self.table = DataTable( *args, **kwargs )
 		self.appendChild( self.table )
 		self._currentCursor = None
 		self._structure = None
@@ -93,18 +95,28 @@ class ListWidget( html5.Div ):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
-		defaultActions = ["add", "edit", "clone", "delete", "preview", "selectfields"]+(["select","close"] if self.isSelector else [])+["reload","selectfilter"]
+		defaultActions = ["add", "edit", "clone", "delete",
+		                  "|", "preview", "selectfields"]\
+		                 + (["|", "select","close"] if self.isSelector else [])+["|", "reload","selectfilter"]
 
 		# Extended actions from view?
 		if view and "actions" in view.keys():
+			if defaultActions[-1] != "|":
+				defaultActions.append( "|" )
+
 			defaultActions.extend( view[ "actions" ] or [] )
+
 		# Extended Actions from config?
 		elif conf["modules"] and self.modul in conf["modules"].keys():
 			cfg = conf["modules"][ self.modul ]
+
 			if "actions" in cfg.keys() and cfg["actions"]:
+				if defaultActions[-1] != "|":
+					defaultActions.append( "|" )
+
 				defaultActions.extend( cfg["actions"] )
 
-		return( defaultActions )
+		return defaultActions
 
 	def showErrorMsg(self, req=None, code=None):
 		"""

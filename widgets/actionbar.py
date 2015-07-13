@@ -48,7 +48,9 @@ class ActionBar( html5.Div ):
 
 		for action in actions:
 			if action=="|":
-				continue
+				span = html5.Span()
+				span["class"].append( "spacer" )
+				self.appendChild( span )
 			else:
 				if self.modul is not None and self.modul in conf["modules"].keys():
 					handler = conf["modules"][self.modul]["handler"]
