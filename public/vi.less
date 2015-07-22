@@ -77,6 +77,53 @@ h2 { font-size: 1.4em; color: #ccc;}
 h3 { font-size: 1em;  color: #444;}
 p { margin-bottom: 10px;}
 
+/* #Splash Screen
+================================================== */
+
+.splash.progressBar
+{
+  margin: 0px auto;
+  height: 6px;
+  line-height: 6px;
+  font-size: 0px;
+  max-height: 6px;
+  width: 0px;
+  background-color: @maincolor;
+}
+
+.splash.status
+{
+  margin-top: 6px;
+  font-family: sans;
+  font-weight: bold;
+}
+
+.splash.cont
+{
+  background-color: white;
+  color:#333;
+  z-index:10000;
+  text-align:center;
+  position:absolute;
+  top:0px;
+  left:0px;
+  width:100%;
+  height:100%;
+}
+
+.splash.infoCont
+{
+  margin:0px auto;
+  width:40%;
+  border-left:1px solid #333;
+  border-right:1px solid #333;
+}
+
+.splash.header
+{
+  text-align:center;
+}
+
 /* #Site Styles
 ================================================== */
 .wrapper {
@@ -2500,8 +2547,8 @@ progress[value]::-webkit-progress-value {
 /* #vi_badges
 ================================================== */
 
-.beta {
-  background: url(icons/beta_small.png) no-repeat top right;
+h1.module {
+  /*background: url(icons/beta_small.png) no-repeat top right;*/
   padding-right: 35px;
 }
 
