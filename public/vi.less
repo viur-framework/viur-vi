@@ -984,6 +984,8 @@ button.icon.close[type="button"] {
   background: linear-gradient(to bottom, #e20614 0%, #c31520 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e20614', EndColorStr='#c31520', GradientType=0);
 }
+
+/* Red Button Hover */
 button.icon.close[type="button"]:hover,
 button.icon.cancel[type="button"]:hover,
 button.icon.delete[type="button"]:hover {
@@ -998,22 +1000,20 @@ button.icon.delete[type="button"]:hover {
   background: linear-gradient(to bottom, #c31520 0%, #e20614 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#c31520', EndColorStr='#e20614', GradientType=0);
 }
+
+/* White Icon Sprite for Red Buttons */
 button.icon.close[type="button"]:before,
 button.icon.cancel[type="button"]:hover:before,
 button.icon.delete[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
 
-button.icon.close[type="button"]:before,
-button.icon.cancel[type="button"]:hover:before,
-button.icon.delete[type="button"]:hover:before {
-  background-image: url(icons/vi_actions_sprite_white.svg);
-}
 
 /* Green Buttons */
 button.icon.save.close[type="button"],
 button.icon.activateselection[type="button"],
-button.text.save[type="button"] {
+button.text.save[type="button"],
+button.icon.add[type="button"] {
   border: 1px solid #298342;
   color: #fff;
   background-color: #479c42;
@@ -1025,6 +1025,8 @@ button.text.save[type="button"] {
   background: linear-gradient(to bottom, #479c42 0%, #298342 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0); 
 }
+
+/* Green Button Hover */
 button.icon.activateselection[type="button"]:hover,
 button.text.save[type="button"]:hover,
 button.icon.add[type="button"]:hover,
@@ -1041,6 +1043,8 @@ button.icon.save.close[type="button"]:hover {
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
 
+/* White Icon Sprite for Green Buttons */
+button.icon.add[type="button"]:before,
 button.icon.activateselection[type="button"]:before,
 button.text.save[type="button"]:before,
 button.icon.add[type="button"]:hover:before,
@@ -1058,6 +1062,8 @@ button.icon.save.close.is_loading[type="button"]:hover:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
+
+/* Standard Buttons (28px wide, transparent Text) */
 button.icon.close[type="button"],
 button.icon.activateselection[type="button"],
 button.text.save[type="button"],
@@ -1071,14 +1077,16 @@ button.icon.is_disabled[type="button"]:hover {
   transition-delay: 0;
 }
 
-button.icon.save.close[type="button"] {
+/* Primary Buttons (120px wide without hover) */
+button.icon.save.close[type="button"],
+button.icon.add[type="button"] {
     color:#fff;
     overflow: visible;
     min-width: 120px;
     letter-spacing: normal;   
 }
 
-
+/* 120px wide Hover */
 button.icon.close[type="button"]:hover,
 button.icon.activateselection[type="button"]:hover,
 button.icon.save.close[type="button"]:hover {
@@ -1086,6 +1094,7 @@ button.icon.save.close[type="button"]:hover {
   min-width: 120px;
   letter-spacing: normal;
 }
+
 /* Disabled Buttons */
 button.icon.is_disabled[type="button"]:hover {
   border-color: #999;
@@ -2802,7 +2811,7 @@ textarea:disabled {
 /* #Custom Styles
 ================================================== */
 
-@import "vi_custom.less";
+//@import "vi_custom.less";
 
 /* #Media Queries
 ================================================== */
