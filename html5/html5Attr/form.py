@@ -30,10 +30,10 @@ class Disabled(object):
 
 class Checked(object):
 	def _getChecked(self):
-		return (self.element.checked)
+		return self.element.checked
 		#return( True if self.element.hasAttribute("checked") else False )
 	def _setChecked(self,val):
-		self.element.checked=val
+		self.element.checked = val
 		#if val==True:
 		#	self.element.setAttribute("checked","")
 		#else:

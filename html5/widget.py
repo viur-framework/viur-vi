@@ -165,12 +165,14 @@ class Widget( object ):
 	def __getitem__(self, key):
 		funcName = self._getTargetFuncName( key, "get" )
 		if funcName in dir( self ):
+			#print( self._baseClass or str( self ), "get", key, getattr( self, funcName)() )
 			return( getattr( self, funcName)() )
 		return( None )
 
 	def __setitem__(self, key, value):
 		funcName = self._getTargetFuncName( key, "set" )
 		if funcName in dir( self ):
+			#print( self._baseClass or str( self ), "set", key, value )
 			return( getattr( self, funcName )( value ) )
 		raise ValueError( "%s is no valid attribute for %s" % (key, (self._baseClass or str(self))) )
 

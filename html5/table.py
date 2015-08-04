@@ -5,27 +5,27 @@ class Tr( Widget ):
 
 	def _getRowspan(self):
 		span = self.element.getAttribute("rowspan")
-		if not span:
-			return( 1 )
-		else:
-			return( span )
+		return span if span else 1
+
+
+class Th( Widget ):
+	_baseClass = "th"
+
+	def _getRowspan(self):
+		span = self.element.getAttribute("rowspan")
+		return span if span else 1
+
 
 class Td( Widget ):
 	_baseClass = "td"
 
 	def _getColspan(self):
 		span = self.element.getAttribute("colspan")
-		if not span:
-			return( 1 )
-		else:
-			return( span )
+		return span if span else 1
 
 	def _getRowspan(self):
 		span = self.element.getAttribute("rowspan")
-		if not span:
-			return( 1 )
-		else:
-			return( span )
+		return span if span else 1
 
 
 class Thead( Widget ):
@@ -62,10 +62,9 @@ class RowWrapper( object ):
 
 	def __getitem__(self, item):
 		assert isinstance(item,int), "Invalid row-number. Expected int, got %s" % str(type(item))
-		if item < 0 or item> len(self.parentElem._children):
+		if item < 0 or item > len(self.parentElem._children):
 			return( None )
 		return ColWrapper(self.parentElem._children[item])
-
 
 
 class Table( Widget ):
@@ -104,11 +103,8 @@ class Table( Widget ):
 				return
 
 	def prepareGrid(self, rows, cols ):
-		for x in range(0,rows):
-			tr = Tr()
-			self.body.appendChild( tr )
-			for x in range(0,cols):
-				tr.appendChild(Td())
+		for row in range( self.getRowCount(), self.getRowCount() + rows ):
+			self.prepareCol( row, cols )
 
 	def clear(self):
 		for row in self.body._children[ : ]:
@@ -117,12 +113,13 @@ class Table( Widget ):
 			self.body.removeChild( row )
 
 	def _getCell(self):
-		return( RowWrapper( self.body ) ) #FIXME: Return wrapper
+		return RowWrapper( self.body )
 
 	def getRowCount(self):
-		print("GET ROWCOUNT")
 		cnt = 0
+
 		for tr in self.body._children:
 			cnt += tr["rowspan"]
+
 		return( cnt )
 
