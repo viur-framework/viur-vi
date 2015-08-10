@@ -313,18 +313,24 @@ class ListPreviewInlineAction( html5.ext.Button ):
 
 	def onAttach(self):
 		super( ListPreviewInlineAction,self ).onAttach()
-		modul = self.parent().parent().modul
 		self.parent().parent().selectionChangedEvent.register( self )
-		return
 
 	def onDetach(self):
 		self.parent().parent().selectionChangedEvent.unregister( self )
 		super( ListPreviewInlineAction, self ).onDetach()
 
-
 	def onSelectionChanged(self, table, selection):
 		if self.parent().parent().isSelector:
 			return
+
+		# Disable internal Preview by config
+		module = self.parent().parent().modul
+		if ("disableInternalPreview" in conf["modules"][module].keys()
+			and conf["modules"][module]["disableInternalPreview"]):
+			return
+
+		# Show internal preview when one entry is selected; Else, remove sidebar widget if
+		# it refers to an existing, internal preview.
 		if len(selection)==1:
 			preview = InternalPreview( self.parent().parent().modul, self.parent().parent()._structure, selection[0])
 			self.parent().parent().sideBar.setWidget( preview )

@@ -41,12 +41,11 @@ class SelectTable( html5.Table ):
 		self._cursorMovedListeners = [] # All objects getting informed when the cursor moves
 
 		self.indexes = indexes
-		self.indexes_col = 0 if checkboxes else -1
-
+		self.indexes_col = 0 if indexes else -1
 
 		self._checkboxes = {} # The checkbox items per row (better to use a dict!)
 		self.checkboxes = checkboxes
-		self.checkboxes_col = self.indexes_col + 1 if checkboxes else -1
+		self.checkboxes_col = (self.indexes_col + 1) if checkboxes else -1
 
 	def onAttach(self):
 		super(SelectTable, self).onAttach()
