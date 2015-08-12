@@ -1070,6 +1070,8 @@ button.icon.save.close.is_loading[type="button"]:hover:before {
 button.icon.close[type="button"],
 button.icon.activateselection[type="button"],
 button.text.save[type="button"],
+button.icon.delete[type="button"],
+button.icon.delete.is_disabled[type="button"]:hover,
 button.icon.text[type="button"]:hover,
 button.icon.flipview[type="button"]:hover,
 button.icon.is_disabled[type="button"]:hover {
@@ -1090,6 +1092,7 @@ button.icon.add[type="button"] {
 }
 
 /* 120px wide Hover */
+button.icon.delete[type="button"]:hover,
 button.icon.close[type="button"]:hover,
 button.icon.activateselection[type="button"]:hover,
 button.icon.save.close[type="button"]:hover {
@@ -1099,15 +1102,22 @@ button.icon.save.close[type="button"]:hover {
 }
 
 /* Disabled Buttons */
+button.icon.delete.is_disabled[type="button"] {
+  background: #e0e0e0;
+}
+
+button.icon.delete.is_disabled[type="button"]:hover,
 button.icon.is_disabled[type="button"]:hover {
   border-color: #999;
   background: #e0e0e0;
 }
+button.icon.delete.is_disabled[type="button"]:before,
 button.icon.is_disabled:before {
   opacity: 0.3;
   background-image: url(icons/vi_actions_sprite.svg)!important;
 }
 
+button.icon.delete.is_disabled[type="button"],
 button.icon.is_disabled {
   cursor: default;
   color: transparent;
