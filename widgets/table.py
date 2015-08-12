@@ -25,6 +25,8 @@ class SelectTable( html5.Table ):
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
+		self.tableChangedEvent = EventDispatcher("tableChanged")
+
 		self.sinkEvent( "onDblClick", "onMouseMove", "onMouseDown",
 		                "onMouseUp", "onKeyDown", "onKeyUp", "onMouseOut",
 		                "onChange" )
@@ -350,11 +352,11 @@ class SelectTable( html5.Table ):
 			@returns: List
 		"""
 		if self._selectedRows:
-			return( self._selectedRows[:])
+			return self._selectedRows[:]
 		elif self._currentRow is not None:
-			return( [self._currentRow ])
-		else:
-			return( None )
+			return [self._currentRow]
+
+		return None
 
 	def clear(self):
 		"""
@@ -364,6 +366,9 @@ class SelectTable( html5.Table ):
 		self._currentRow = None
 		self._selectedRows = []
 
+		self.selectionChangedEvent.fire(self, self.getCurrentSelection())
+		self.tableChangedEvent.fire(self, self.getRowCount())
+
 	def removeRow(self, row):
 		"""
 			Hook the removeRow method so we can reset some internal states, too
@@ -371,9 +376,12 @@ class SelectTable( html5.Table ):
 		if row in self._selectedRows:
 			self._selectedRows.remove( row )
 			self.selectionChangedEvent.fire( self )
+
 		if self._currentRow == row:
 			self._currentRow = None
 			self.cursorMovedEvent.fire( self )
+
+		self.tableChangedEvent.fire(self, self.getRowCount())
 		super( SelectTable, self ).removeRow( row )
 
 	def _extraCols(self):
@@ -399,6 +407,8 @@ class SelectTable( html5.Table ):
 			lbl = html5.Label( str( row + 1 ) )
 			lbl[ "class" ].append( "index" )
 			self["cell"][ row ][ self.indexes_col ] = lbl
+
+		self.tableChangedEvent.fire(self, self.getRowCount())
 
 	def setCell(self, row, col, val):
 		"""
@@ -464,6 +474,8 @@ class SelectTable( html5.Table ):
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 		return len(self._selectedRows), len(current)
 
+
+
 class DataTable( html5.Div ):
 	"""
 		Provides kind of MVC on top of SelectTable.
@@ -486,8 +498,11 @@ class DataTable( html5.Div ):
 		# We re-emit some events with custom parameters
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
+		self.tableChangedEvent = EventDispatcher("tableChanged")
+
 		self.table.selectionChangedEvent.register( self )
 		self.table.selectionActivatedEvent.register( self )
+		self.table.tableChangedEvent.register( self )
 
 		#Proxy some events and functions of the original table
 		for f in ["cursorMovedEvent","setHeader"]:
@@ -686,7 +701,6 @@ class DataTable( html5.Div ):
 
 				self._dataProvider.onNextBatchNeeded()
 
-
 	def onSelectionChanged( self, table, rows ):
 		"""
 			Re-emit the event. Maps row-numbers to actual models.
@@ -700,6 +714,12 @@ class DataTable( html5.Div ):
 		"""
 		vals = [ self._model[x] for x in rows]
 		self.selectionActivatedEvent.fire( self, vals )
+
+	def onTableChanged( self, table, rowCount ):
+		"""
+			Re-emit the event.
+		"""
+		self.tableChangedEvent.fire(self, rowCount)
 
 	def getCurrentSelection(self):
 		"""

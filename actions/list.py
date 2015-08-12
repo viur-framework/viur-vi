@@ -383,7 +383,6 @@ actionDelegateSelector.insert( 1, ActivateSelectionAction.isSuitableFor, Activat
 class SelectFieldsPopup( html5.ext.Popup ):
 	def __init__(self, listWdg, *args, **kwargs):
 		if not listWdg._structure:
-			self.close()
 			return
 
 		super( SelectFieldsPopup, self ).__init__( title=translate("Select fields"), *args, **kwargs )
@@ -433,10 +432,13 @@ class SelectFieldsPopup( html5.ext.Popup ):
 
 		# Function for Commit
 		self.cancelBtn = html5.ext.Button( translate( "Cancel" ), callback=self.doCancel)
-		self.applyBtn = html5.ext.Button( translate( "Apply" ), callback=self.doApply)
+		self.cancelBtn["class"].append("btn_no")
 
-		self.appendChild(self.cancelBtn)
+		self.applyBtn = html5.ext.Button( translate( "Apply" ), callback=self.doApply)
+		self.applyBtn["class"].append("btn_yes")
+
 		self.appendChild(self.applyBtn)
+		self.appendChild(self.cancelBtn)
 
 	def doApply(self, *args, **kwargs):
 		self.applyBtn["class"].append("is_loading")
@@ -474,9 +476,24 @@ class SelectFieldsAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
 		super( SelectFieldsAction, self ).__init__( translate("Select fields"), *args, **kwargs )
 		self["class"] = "icon selectfields"
+		self["disabled"] = self.isDisabled = True
 
 	def onClick(self, sender=None):
 		SelectFieldsPopup( self.parent().parent() )
+
+	def onAttach(self):
+		super(SelectFieldsAction,self).onAttach()
+		self.parent().parent().tableChangedEvent.register( self )
+
+	def onDetach(self):
+		self.parent().parent().tableChangedEvent.unregister( self )
+		super(SelectFieldsAction,self).onDetach()
+
+	def onTableChanged(self, table, count):
+		if count > 0:
+			self["disabled"] = self.isDisabled = False
+		elif not self.isDisabled:
+			self["disabled"] = self.isDisabled = True
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -646,6 +663,7 @@ class SelectAllAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(SelectAllAction, self ).__init__(translate("Select all"), *args, **kwargs)
 		self["class"] = "icon selectall"
+		self["disabled"] = self.isDisabled = True
 
 	@staticmethod
 	def isSuitableFor(modul, handler, actionName):
@@ -655,6 +673,20 @@ class SelectAllAction(html5.ext.Button):
 		cnt = self.parent().parent().table.table.selectAll()
 		conf["mainWindow"].log("info", translate(u"{items} items had been selected", items=cnt))
 
+	def onAttach(self):
+		super(SelectAllAction,self).onAttach()
+		self.parent().parent().tableChangedEvent.register( self )
+
+	def onDetach(self):
+		self.parent().parent().tableChangedEvent.unregister( self )
+		super(SelectAllAction,self).onDetach()
+
+	def onTableChanged(self, table, count):
+		if count > 0:
+			self["disabled"] = self.isDisabled = False
+		elif not self.isDisabled:
+			self["disabled"] = self.isDisabled = True
+
 actionDelegateSelector.insert(1, SelectAllAction.isSuitableFor, SelectAllAction)
 
 
@@ -662,6 +694,7 @@ class UnSelectAllAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), *args, **kwargs)
 		self["class"] = "icon unselectall"
+		self["disabled"] = self.isDisabled = True
 
 	@staticmethod
 	def isSuitableFor(modul, handler, actionName):
@@ -671,12 +704,27 @@ class UnSelectAllAction(html5.ext.Button):
 		cnt = self.parent().parent().table.table.unSelectAll()
 		conf["mainWindow"].log("info", translate(u"{items} items had been unselected", items=cnt))
 
+	def onAttach(self):
+		super(UnSelectAllAction,self).onAttach()
+		self.parent().parent().tableChangedEvent.register( self )
+
+	def onDetach(self):
+		self.parent().parent().tableChangedEvent.unregister( self )
+		super(UnSelectAllAction,self).onDetach()
+
+	def onTableChanged(self, table, count):
+		if count > 0:
+			self["disabled"] = self.isDisabled = False
+		elif not self.isDisabled:
+			self["disabled"] = self.isDisabled = True
+
 actionDelegateSelector.insert(1, UnSelectAllAction.isSuitableFor, UnSelectAllAction)
 
 class SelectInvertAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(SelectInvertAction, self ).__init__(translate("Invert selection"), *args, **kwargs)
 		self["class"] = "icon selectinvert"
+		self["disabled"] = self.isDisabled = True
 
 	@staticmethod
 	def isSuitableFor(modul, handler, actionName):
@@ -693,6 +741,18 @@ class SelectInvertAction(html5.ext.Button):
 		elif added == 0:
 			conf["mainWindow"].log("info", translate(u"{items} items had been unselected", items=removed))
 
+	def onAttach(self):
+		super(SelectInvertAction,self).onAttach()
+		self.parent().parent().tableChangedEvent.register( self )
 
+	def onDetach(self):
+		self.parent().parent().tableChangedEvent.unregister( self )
+		super(SelectInvertAction,self).onDetach()
+
+	def onTableChanged(self, table, count):
+		if count > 0:
+			self["disabled"] = self.isDisabled = False
+		elif not self.isDisabled:
+			self["disabled"] = self.isDisabled = True
 
 actionDelegateSelector.insert(1, SelectInvertAction.isSuitableFor, SelectInvertAction)

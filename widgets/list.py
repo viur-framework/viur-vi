@@ -61,6 +61,7 @@ class ListWidget( html5.Div ):
 		self._structure = None
 		self._currentRequests = []
 		self.columns = []
+
 		if isSelector and filter is None and columns is None:
 			#Try to select a reasonable set of cols / filter
 			if conf["modules"] and modul in conf["modules"].keys():
@@ -69,6 +70,7 @@ class ListWidget( html5.Div ):
 					columns = tmpData["columns"]
 				if "filter" in tmpData.keys():
 					filter = tmpData["filter"]
+
 		self.table.setDataProvider(self)
 		self.filter = filter.copy() if isinstance(filter,dict) else {}
 		self.columns = columns[:] if isinstance(columns,list) else []
@@ -76,12 +78,20 @@ class ListWidget( html5.Div ):
 		self.filterDescr = filterDescr #Human-readable description of the current filter
 		self._tableHeaderIsValid = False
 		self.isSelector = isSelector
+
 		#Proxy some events and functions of the original table
-		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
+		for f in ["selectionChangedEvent",
+		            "selectionActivatedEvent",
+		            "cursorMovedEvent",
+					"tableChangedEvent",
+		            "getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
+
 		self.actionBar.setActions( self.getDefaultActions( myView ) )
+
 		if isSelector:
 			self.selectionActivatedEvent.register( self )
+
 		self.emptyNotificationDiv = html5.Div()
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
 		self.emptyNotificationDiv["class"].append("emptynotification")
