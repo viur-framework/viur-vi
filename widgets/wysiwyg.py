@@ -177,12 +177,12 @@ class TextRemoveFormat( BasicTextAction ):
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName in ["H%s" % x for x in range(0,6)]:
 				eval("window.top.document.execCommand(\"formatBlock\", false, 'div')")
 				return
-			node = node.parentElement
+			node = node.parentNode
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.removeformat", TextRemoveFormat )
 
@@ -200,8 +200,6 @@ class TextInsertImageAction( html5.ext.Button ):
 		currentSelector = FileWidget( "file", isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		#
-
 
 	def onSelectionActivated(self, selectWdg, selection):
 		if not selection:
@@ -255,7 +253,7 @@ class CreateTablePopup( html5.ext.Popup ):
 	def __init__(self, targetNode, *args, **kwargs ):
 		super( CreateTablePopup, self ).__init__( *args, **kwargs )
 		while not "innerHTML" in dir(targetNode):
-			targetNode = targetNode.parentElement
+			targetNode = targetNode.parentNode
 		self.targetNode = targetNode
 		self["class"].append("createtable")
 		self.rowInput = html5.Input()
@@ -338,7 +336,7 @@ class TableInsertRowBeforeAction( html5.ext.Button ):
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TR":
 				tr = html5.document.createElement("tr")
@@ -347,7 +345,7 @@ class TableInsertRowBeforeAction( html5.ext.Button ):
 					tr.appendChild( td )
 				node.parentNode.insertBefore( tr, node )
 				return
-			node = node.parentElement
+			node = node.parentNode
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -370,7 +368,7 @@ class TableInsertRowAfterAction( html5.ext.Button ):
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TR":
 				tr = html5.document.createElement("tr")
@@ -382,7 +380,7 @@ class TableInsertRowAfterAction( html5.ext.Button ):
 				else:
 					node.parentNode.appendChild( tr )
 				return
-			node = node.parentElement
+			node = node.parentNode
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -409,7 +407,7 @@ class TableInsertColBeforeAction( html5.ext.Button ):
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TD":
 				td = node
@@ -418,7 +416,7 @@ class TableInsertColBeforeAction( html5.ext.Button ):
 			elif node.tagName=="TABLE":
 				table = node
 				break
-			node = node.parentElement
+			node = node.parentNode
 		if td and tr and table:
 			cellIdx = 0 # Before which column shall we insert a new col?
 			for x in range(0, tr.children.length):
@@ -474,7 +472,7 @@ class TableInsertColAfterAction( html5.ext.Button ):
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TD":
 				td = node
@@ -483,7 +481,7 @@ class TableInsertColAfterAction( html5.ext.Button ):
 			elif node.tagName=="TABLE":
 				table = node
 				break
-			node = node.parentElement
+			node = node.parentNode
 		if td and tr and table:
 			cellIdx = 0 # Before which column shall we insert a new col?
 			for x in range(0, tr.children.length):
@@ -541,12 +539,12 @@ class TableRemoveRowAction( html5.ext.Button ):
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TR":
 				node.parentNode.removeChild(node)
 				return
-			node = node.parentElement
+			node = node.parentNode
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -575,7 +573,7 @@ class TableRemoveColAction( html5.ext.Button ):
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TD":
 				td = node
@@ -584,7 +582,7 @@ class TableRemoveColAction( html5.ext.Button ):
 			elif node.tagName=="TABLE":
 				table = node
 				break
-			node = node.parentElement
+			node = node.parentNode
 		if td and tr and table:
 			cellIdx = 0 # Which column shall we delete?
 			for x in range(0, tr.children.length):
@@ -988,7 +986,7 @@ class Wysiwyg( html5.Div ):
 
 		while node and node != self.contentDiv.element:
 			#FIXME.. emit cursormoved event
-			node = node.parentElement
+			node = node.parentNode
 
 	def onMouseUp(self, event):
 		self.currentImage = None
@@ -1041,7 +1039,7 @@ class Wysiwyg( html5.Div ):
 			if domWdg==self.contentDiv.element:
 				isContentDivTarget = True
 				break
-			domWdg = domWdg.parentElement
+			domWdg = domWdg.parentNode
 
 		if not isContentDivTarget:
 			return
@@ -1050,11 +1048,11 @@ class Wysiwyg( html5.Div ):
 		nodeStack = []
 		i = 10
 
-		#Try to extract the relevat nodes from the dom
+		#Try to extract the relevant nodes from the dom
 		while i>0 and node and node != self.contentDiv.element:
 			i -= 1
 			nodeStack.append(node)
-			node = node.parentElement
+			node = node.parentNode
 
 		if "TABLE" in [(x.tagName if "tagName" in dir(x) else "") for x in nodeStack]:
 			self.tableDiv["style"]["display"] = ""
