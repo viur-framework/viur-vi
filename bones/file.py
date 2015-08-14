@@ -103,10 +103,12 @@ class FileViewBoneDelegate(object):
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
+
 		if field in data.keys():
 			val = data[field]
 		else:
 			val = ""
+
 		if isinstance(val,list):
 			#MultiFileBone
 			cell=html5.Div()
@@ -115,8 +117,8 @@ class FileViewBoneDelegate(object):
 			return (cell)
 		elif isinstance(val, dict):
 			return (self.renderFileentry(val))
-		return( html5.Label( val ) )
-		#return( formatString( self.format, self.structure, value ) ) FIXME!
+
+		return( self.renderFileentry( val ) )
 
 class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 	def __init__(self, *args, **kwargs):
