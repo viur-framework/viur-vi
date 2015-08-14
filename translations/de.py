@@ -10,6 +10,7 @@ lngDe = {
 	"Reload":u"Neu laden",
 	"Preview":u"Vorschau",
 	"Close":u"Schließen",
+	"Abort":u"Abbrechen",
 	"Select":u"Auswählen",
 	"Select fields":u"Felder auswählen",
 	"Select Filter":u"Filter auswählen",
@@ -108,6 +109,9 @@ lngDe = {
 	"{items} items had been unselected": u"{items} Einträge wurden deselektiert",
 	"{added} items selected, {removed} items deselected":
 		u"{added} Einträge selektiert, {removed} Einträge deselektiert",
+
+	"Any changes will be lost. Do you really want to abort?":
+		u"Alle Änderungen gehen verloren. Möchten Sie wirklich abbrechen?",
 
     "Run": u"Ausführen",
     "Start": u"Starten",

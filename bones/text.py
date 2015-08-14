@@ -127,17 +127,30 @@ class TextEditBone( html5.Div ):
 			actionBarHint = self.descrHint
 		self.currentEditor = Wysiwyg( self.input["value"], actionBarHint=actionBarHint )
 		self.currentEditor.saveTextEvent.register( self )
+		self.currentEditor.abortTextEvent.register(self)
 		conf["mainWindow"].stackWidget( self.currentEditor )
 		self.parent()["class"].append("is_active")
 
-	def onSaveText(self, editor, txt ):
-		assert self.currentEditor is not None
-		self.input["value"] = txt
-		if not self.isPlainText:
-			self.previewDiv.element.innerHTML = self.input["value"]
+	def closeEditor(self):
+		if not self.currentEditor:
+			return
+
 		conf["mainWindow"].removeWidget( self.currentEditor )
 		self.currentEditor = None
 
+	def onSaveText(self, editor, txt ):
+		assert self.currentEditor is not None
+
+		self.input["value"] = txt
+
+		if not self.isPlainText:
+			self.previewDiv.element.innerHTML = self.input["value"]
+
+		self.closeEditor()
+
+	def onAbortText(self, editor):
+		assert self.currentEditor is not None
+		self.closeEditor()
 
 	def changeLang(self,btn):
 		self.valuesdict[self.selectedLang]=self.input["value"]
