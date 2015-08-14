@@ -641,7 +641,7 @@ class TextAbortAction( html5.ext.Button ):
 		self["title"] = translate("Abort")
 
 	def onClick(self, event):
-		if self.parent().parent().contentDiv.changed:
+		if self.parent().parent().contentDiv.changed():
 			html5.ext.popup.YesNoDialog(translate("Any changes will be lost. Do you really want to abort?"),
 			                            yesCallback=self.doAbort)
 		else:
@@ -878,8 +878,6 @@ class Contentdiv(html5.Div):
 	def __init__(self, html, *args, **kwargs ):
 		super(Contentdiv, self).__init__(*args, **kwargs)
 
-		self.changed = False
-
 		self["contenteditable"] = True
 		self["class"].append("contentdiv")
 
@@ -888,12 +886,8 @@ class Contentdiv(html5.Div):
 		self.sinkEvent("onBlur")
 		self.sinkEvent("onFocus")
 
-	def onBlur(self, event):
-		if self.initial_txt != self.element.innerHTML:
-			self.changed = True
-
-	def onFocus(self, event):
-		self.onBlur(event)
+	def changed(self):
+		return self.initial_txt != self.element.innerHTML
 
 class Wysiwyg( html5.Div ):
 	def __init__(self, editHtml, actionBarHint=translate("Text Editor"), *args, **kwargs ):
