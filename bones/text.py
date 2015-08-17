@@ -165,8 +165,17 @@ class TextEditBone( html5.Div ):
 
 	def refreshLangButContainer(self):
 		for abut in self.langButContainer._children:
+
+			if abut["value"] in self.valuesdict and self.valuesdict[abut["value"]]:
+				if not "is_filled" in abut["class"]:
+					abut["class"].append("is_filled")
+			else:
+				if not "is_unfilled" in abut["class"]:
+					abut["class"].append("is_unfilled")
+
 			if abut["value"]==self.selectedLang:
-				abut["class"].append("is_active")
+				if not "is_active" in abut["class"]:
+					abut["class"].append("is_active")
 			else:
 				abut["class"].remove("is_active")
 
