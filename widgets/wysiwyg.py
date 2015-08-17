@@ -172,7 +172,7 @@ class TextRemoveFormat( BasicTextAction ):
 
 	def onClick(self, sender=None):
 		eval("window.top.document.execCommand(\"%s\", false, null)" % self.cmd)
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		i = 10
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
@@ -252,8 +252,11 @@ actionDelegateSelector.insert( 1, TextInsertLinkAction.isSuitableFor, TextInsert
 class CreateTablePopup( html5.ext.Popup ):
 	def __init__(self, targetNode, *args, **kwargs ):
 		super( CreateTablePopup, self ).__init__( *args, **kwargs )
+		assert targetNode
+
 		while not "innerHTML" in dir(targetNode):
 			targetNode = targetNode.parentNode
+
 		self.targetNode = targetNode
 		self["class"].append("createtable")
 		self.rowInput = html5.Input()
@@ -311,9 +314,10 @@ class TextInsertTableAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		self.parent().parent().contentDiv.focus()
-		node = eval("window.top.getSelection().baseNode")
-		CreateTablePopup( node )
-		return
+		node = eval("window.top.getSelection().anchorNode")
+
+		if node:
+			CreateTablePopup( node )
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -331,7 +335,7 @@ class TableInsertRowBeforeAction( html5.ext.Button ):
 		self["title"] = translate("Insert Table Row before")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		i = 10
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
@@ -363,7 +367,7 @@ class TableInsertRowAfterAction( html5.ext.Button ):
 		self["title"] = translate("Insert Table Row after")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		i = 10
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
@@ -398,7 +402,7 @@ class TableInsertColBeforeAction( html5.ext.Button ):
 		self["title"] = translate("Insert Table Col before")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		td = None
 		tr = None
 		table = None
@@ -463,7 +467,7 @@ class TableInsertColAfterAction( html5.ext.Button ):
 		self["title"] = translate("Insert Table Col after")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		td = None
 		tr = None
 		table = None
@@ -534,7 +538,7 @@ class TableRemoveRowAction( html5.ext.Button ):
 		self["title"] = translate("Remove Table Row")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		i = 10
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
@@ -564,7 +568,7 @@ class TableRemoveColAction( html5.ext.Button ):
 		self["title"] = translate("Remove Table Col")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		td = None
 		tr = None
 		table = None
