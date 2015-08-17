@@ -170,10 +170,13 @@ class StringEditBone( html5.Div ):
 			self.tagContainer = html5.Div()
 			self.tagContainer["class"].append("tagcontainer")
 			self.appendChild(self.tagContainer)
-			addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
-			addBtn.lang = None
-			addBtn["class"].append("icon new tag")
-			self.tagContainer.appendChild(addBtn)
+
+			if not self.readOnly:
+				addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
+				addBtn.lang = None
+				addBtn["class"].append("icon new tag")
+
+				self.tagContainer.appendChild(addBtn)
 
 		else: #not languages and not multiple:
 			self.input = html5.Input()
@@ -186,6 +189,7 @@ class StringEditBone( html5.Div ):
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
+
 		if boneName in skelStructure.keys():
 			if "multiple" in skelStructure[ boneName ].keys():
 				multiple = skelStructure[ boneName ]["multiple"]
