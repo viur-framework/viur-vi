@@ -241,6 +241,7 @@ class CsvExport(Div):
 			else:
 				raise ValueError("unknown encoding: %s" % encoding)
 			tmpA["download"] = "export-%s-%s-%s-%s.csv" % (self.module, export_lang, encoding, datetime.now().strftime("%Y%m%d%H%M"))
+			self.appendChild(tmpA)
 			tmpA.element.click()
 			conf["mainWindow"].removeWidget(self)
 		finally:
