@@ -142,12 +142,12 @@ actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=
 
 class TextInsertOrderedList( BasicTextAction ):
 	cmd = "insertOrderedList"
-	title = translate("Insert a ordered List")
+	title = translate("Insert an ordered List")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.orderedList", TextInsertOrderedList )
 
 class TextInsertUnorderedList( BasicTextAction ):
 	cmd = "insertUnorderedList"
-	title = translate("Insert a unordered List")
+	title = translate("Insert an unordered List")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.unorderedList", TextInsertUnorderedList )
 
 
