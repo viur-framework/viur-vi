@@ -25,6 +25,8 @@ class SelectTable( html5.Table ):
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
+		self.tableChangedEvent = EventDispatcher("tableChanged")
+
 		self.sinkEvent( "onDblClick", "onMouseMove", "onMouseDown",
 		                "onMouseUp", "onKeyDown", "onKeyUp", "onMouseOut",
 		                "onChange" )
@@ -41,12 +43,11 @@ class SelectTable( html5.Table ):
 		self._cursorMovedListeners = [] # All objects getting informed when the cursor moves
 
 		self.indexes = indexes
-		self.indexes_col = 0 if checkboxes else -1
-
+		self.indexes_col = 0 if indexes else -1
 
 		self._checkboxes = {} # The checkbox items per row (better to use a dict!)
 		self.checkboxes = checkboxes
-		self.checkboxes_col = self.indexes_col + 1 if checkboxes else -1
+		self.checkboxes_col = (self.indexes_col + 1) if checkboxes else -1
 
 	def onAttach(self):
 		super(SelectTable, self).onAttach()
@@ -91,9 +92,10 @@ class SelectTable( html5.Table ):
 		"""
 		for c in self.body._children:
 			if idx <= 0:
-				return( c )
+				return c
 			idx -= c["rowspan"]
-		return( None )
+
+		return None
 
 	def getIndexByTr(self,tr):
 		"""
@@ -169,7 +171,14 @@ class SelectTable( html5.Table ):
 
 		else:
 			self._isMouseDown = True
-			self.setCursorRow( self.getIndexByTr(tr) )
+
+			if self.checkboxes:
+				if row in self._selectedRows:
+					self.removeSelectedRow( row )
+				else:
+					self.addSelectedRow( row )
+
+			self.setCursorRow(self.getIndexByTr(tr), removeExistingSelection=not self.checkboxes)
 
 		event.preventDefault()
 		self.focus()
@@ -269,9 +278,10 @@ class SelectTable( html5.Table ):
 			return
 
 		self._selectedRows.append( row )
-		tr = self.getTrByIndex( row )
 
+		tr = self.getTrByIndex( row )
 		tr["class"].append("is_selected")
+
 		if self.checkboxes:
 			self._checkboxes[ row ][ "checked" ] = True
 
@@ -289,9 +299,10 @@ class SelectTable( html5.Table ):
 			return
 
 		self._selectedRows.remove( row )
-		tr = self.getTrByIndex( row )
 
+		tr = self.getTrByIndex( row )
 		tr["class"].remove("is_selected")
+
 		if self.checkboxes:
 			self._checkboxes[ row ][ "checked" ] = False
 
@@ -313,7 +324,6 @@ class SelectTable( html5.Table ):
 		if not newRow in self._selectedRows:
 			self._selectedRows.append( newRow )
 			tr = self.getTrByIndex( newRow )
-
 			tr["class"].append("is_selected")
 
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
@@ -342,11 +352,11 @@ class SelectTable( html5.Table ):
 			@returns: List
 		"""
 		if self._selectedRows:
-			return( self._selectedRows[:])
+			return self._selectedRows[:]
 		elif self._currentRow is not None:
-			return( [self._currentRow ])
-		else:
-			return( None )
+			return [self._currentRow]
+
+		return None
 
 	def clear(self):
 		"""
@@ -356,6 +366,9 @@ class SelectTable( html5.Table ):
 		self._currentRow = None
 		self._selectedRows = []
 
+		self.selectionChangedEvent.fire(self, self.getCurrentSelection())
+		self.tableChangedEvent.fire(self, self.getRowCount())
+
 	def removeRow(self, row):
 		"""
 			Hook the removeRow method so we can reset some internal states, too
@@ -363,9 +376,12 @@ class SelectTable( html5.Table ):
 		if row in self._selectedRows:
 			self._selectedRows.remove( row )
 			self.selectionChangedEvent.fire( self )
+
 		if self._currentRow == row:
 			self._currentRow = None
 			self.cursorMovedEvent.fire( self )
+
+		self.tableChangedEvent.fire(self, self.getRowCount())
 		super( SelectTable, self ).removeRow( row )
 
 	def _extraCols(self):
@@ -392,6 +408,8 @@ class SelectTable( html5.Table ):
 			lbl[ "class" ].append( "index" )
 			self["cell"][ row ][ self.indexes_col ] = lbl
 
+		self.tableChangedEvent.fire(self, self.getRowCount())
+
 	def setCell(self, row, col, val):
 		"""
 		Interface for self["cell"] that directs to the correct cell if extra columns are
@@ -399,26 +417,92 @@ class SelectTable( html5.Table ):
 		"""
 		self[ "cell" ][ row ][ col + self._extraCols() ] = val
 
+	def selectAll(self):
+		"""
+		Selects all entries of the table.
+		"""
+		self._selectedRows = range(0, self.getRowCount() )
+
+		for row in self._selectedRows:
+			tr = self.getTrByIndex( row )
+
+			if not "is_selected" in tr["class"]:
+				tr["class"].append("is_selected")
+
+			if self.checkboxes:
+				self._checkboxes[ row ][ "checked" ] = True
+
+		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
+		return len(self._selectedRows)
+
+	def unSelectAll(self):
+		"""
+		Unselects all entries of the table.
+		"""
+		unsel = len(self._selectedRows)
+
+		for row in self._selectedRows:
+			tr = self.getTrByIndex( row )
+			tr["class"].remove("is_selected")
+
+			if self.checkboxes:
+				self._checkboxes[ row ][ "checked" ] = False
+
+		self._selectedRows = []
+		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
+		return unsel
+
+	def invertSelection(self):
+		"""
+		Inverts the current selection on the whole table currently displayed.
+		"""
+		current = self._selectedRows[:]
+		self._selectedRows = []
+
+		for row in range(0, self.getRowCount() ):
+			tr = self.getTrByIndex( row )
+
+			if row in current:
+				tr["class"].remove("is_selected")
+			else:
+				self._selectedRows.append(row)
+				tr["class"].append("is_selected")
+
+			if self.checkboxes:
+				self._checkboxes[ row ][ "checked" ] = row in self._selectedRows
+
+		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
+		return len(self._selectedRows), len(current)
+
+
+
 class DataTable( html5.Div ):
 	"""
 		Provides kind of MVC on top of SelectTable.
 	"""
 
-	def __init__( self, *args, **kwargs ):
+	def __init__( self, _loadOnDisplay = False, *args, **kwargs ):
 		super( DataTable, self ).__init__( )
-		self.table = SelectTable()
+		self.table = SelectTable( *args, **kwargs )
 		self.appendChild(self.table)
+
+		self._loadOnDisplay = _loadOnDisplay # Load all data content continuously when displaying
+
 		self._model = [] # List of values we are displaying right now
 		self._shownFields = [] # List of keys we display from the model
 		self._modelIdx = 0 # Internal counter to distinguish between 2 rows with identical data
 		self._isAjaxLoading = False # Determines if we already requested the next batch of rows
 		self._dataProvider = None # Which object to call if we need more data
 		self._cellRender = {} # Map of renders for a given field
+
 		# We re-emit some events with custom parameters
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
+		self.tableChangedEvent = EventDispatcher("tableChanged")
+
 		self.table.selectionChangedEvent.register( self )
 		self.table.selectionActivatedEvent.register( self )
+		self.table.tableChangedEvent.register( self )
 
 		#Proxy some events and functions of the original table
 		for f in ["cursorMovedEvent","setHeader"]:
@@ -442,9 +526,12 @@ class DataTable( html5.Div ):
 			Notice: If the bottom of the table is reached, onNextBatchNeeded will only be called once.
 			No further calls will be made until add() or setDataProvider() has been called afterwards.
 		"""
-		assert obj==None or "onNextBatchNeeded" in dir(obj),"The dataProvider must provide a 'onNextBatchNeeded' function"
+		assert obj==None or "onNextBatchNeeded" in dir(obj),\
+			"The dataProvider must provide a 'onNextBatchNeeded' function"
+
 		self._dataProvider = obj
 		self._isAjaxLoading = False
+
 		if "is_loading" in self.table["class"]:
 			self.table["class"].remove("is_loading")
 
@@ -505,14 +592,16 @@ class DataTable( html5.Div ):
 			Test if we display enough entries so that our contents are scrollable.
 			Otherwise, we'll never request a second batch
 		"""
+
 		sumHeight = 0
 		for c in self.table._children:
 			if "clientHeight" in dir(c.element):
 				sumHeight += c.element.clientHeight
-			else:
-				print( c )
 
-		if not sumHeight>int(self["style"]["max-height"][:-2]) and not self._isAjaxLoading:
+		if (not self._isAjaxLoading
+			and (self._loadOnDisplay
+		            or not sumHeight > int(self["style"]["max-height"][:-2]))):
+
 			if self._dataProvider:
 				self._isAjaxLoading = True
 				if not "is_loading" in self.table["class"]:
@@ -595,6 +684,9 @@ class DataTable( html5.Div ):
 		"""
 			Check if we got a scroll event and need to fetch another set of rows from our dataProvider
 		"""
+		if self._loadOnDisplay:
+			return
+
 		self.recalcHeight()
 
 		if ( ( self.element.scrollTop + self.element.clientHeight )
@@ -609,7 +701,6 @@ class DataTable( html5.Div ):
 
 				self._dataProvider.onNextBatchNeeded()
 
-
 	def onSelectionChanged( self, table, rows ):
 		"""
 			Re-emit the event. Maps row-numbers to actual models.
@@ -623,6 +714,12 @@ class DataTable( html5.Div ):
 		"""
 		vals = [ self._model[x] for x in rows]
 		self.selectionActivatedEvent.fire( self, vals )
+
+	def onTableChanged( self, table, rowCount ):
+		"""
+			Re-emit the event.
+		"""
+		self.tableChangedEvent.fire(self, rowCount)
 
 	def getCurrentSelection(self):
 		"""

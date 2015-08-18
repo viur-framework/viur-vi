@@ -77,6 +77,53 @@ h2 { font-size: 1.4em; color: #ccc;}
 h3 { font-size: 1em;  color: #444;}
 p { margin-bottom: 10px;}
 
+/* #Splash Screen
+================================================== */
+
+.splash.progressBar
+{
+  margin: 0px auto;
+  height: 6px;
+  line-height: 6px;
+  font-size: 0px;
+  max-height: 6px;
+  width: 0px;
+  background-color: @maincolor;
+}
+
+.splash.status
+{
+  margin-top: 6px;
+  font-family: sans;
+  font-weight: bold;
+}
+
+.splash.cont
+{
+  background-color: white;
+  color:#333;
+  z-index:10000;
+  text-align:center;
+  position:absolute;
+  top:0px;
+  left:0px;
+  width:100%;
+  height:100%;
+}
+
+.splash.infoCont
+{
+  margin:0px auto;
+  width:40%;
+  border-left:1px solid #333;
+  border-right:1px solid #333;
+}
+
+.splash.header
+{
+  text-align:center;
+}
+
 /* #Site Styles
 ================================================== */
 .wrapper {
@@ -153,7 +200,6 @@ p { margin-bottom: 10px;}
   text-align: center;
   float: left;
   width: auto;
-  margin-left: 15.7%;
   margin-top:10px;
 }
 .vi_topbar .currentmodul img {
@@ -482,7 +528,6 @@ p { margin-bottom: 10px;}
   min-height: 500px;
   background: #f6f6f6;
   overflow: hidden;
-  transform: translateY(0); 
 }
 
 .vi_operator > div.supports_drop {
@@ -586,18 +631,17 @@ background-color:#d6d6d6;
 /* #actionbar
 ================================================== */
 .vi_operator .actionbar {
-  width: 97%;
+  width: 98%;
   /*min-width: 500px;*/
-  position: absolute; /* Issue VI-20 */
+  /* position: fixed; */ /* Issue VI-20 */
   margin-top: -105px;
-  margin-left: -1%;
   padding: 15px 1%;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #ccc;
-  border-bottom: 1px solid @highlightcolor; 
+  border-bottom: 1px solid #bbb;
   background-color: #eee;
-  background-color: rgba(210, 210, 210, 0.7);
-  background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.8)), to(rgba(255, 255, 255, 0.2)));
+  background-color: rgba(210, 210, 210, 0.9);
+  background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.9)), to(rgba(255, 255, 255, 0.2)));
   background-image: -moz-linear-gradient(top center, rgba(238, 238, 238, 0.8) 20%, rgba(255, 255, 255, 0.2) 95%);
   z-index: 100;
 }
@@ -657,6 +701,12 @@ background-color:#d6d6d6;
   padding-top: 4px;
   padding-bottom: 1px;
   margin-right: 20px;
+}
+
+.actionbar .spacer
+{
+  width: 10px;
+  display: inline-block;
 }
 
 /* #vi_buttons
@@ -1029,6 +1079,7 @@ button.icon.add[type="button"] {
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0); 
 }
 
+
 /* Green Button Hover */
 button.icon.activateselection[type="button"]:hover,
 button.text.save[type="button"]:hover,
@@ -1392,7 +1443,11 @@ input[type=password],
     background: linear-gradient(to bottom, #666 0%, #aaa 100%);
     box-shadow:inset 1px 1px 2px rgba(0,0,0,0.2);
     border-color:#666;
-    color:#fff;
+    color:#fff !important;
+}
+
+.languagebuttons button.is_filled {
+    color: #348D42;
 }
 
 /* #extended relational bone
@@ -1973,7 +2028,8 @@ thead tr th {
   border-width: 0px 0px 1px 1px;
   font-weight: 300;
   color: #ffffff;
-  padding: 5px 0;
+  padding: 5px 5px;
+  font-size: .9em;
 }
 thead tr:hover th {
   background:-o-linear-gradient(bottom, @lightcolor 5%, @maincolor 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, @lightcolor), color-stop(1, @maincolor) );
@@ -2011,6 +2067,12 @@ td span.date {
 
 td span.time {
   font-weight: 100;
+}
+
+td span.index
+{
+  font-style: italic;
+  color: @lightcolor;
 }
 
 .emptynotification {
@@ -2520,6 +2582,7 @@ progress[value]::-webkit-progress-value {
   background: url(icons/beta_small.png) no-repeat top right;
   padding-right: 35px;
 }*/
+
 
 /* #vi_messenger
 ================================================== */.vi_messenger {

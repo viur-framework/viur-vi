@@ -9,5 +9,6 @@ conf = {
 	"currentUser": None,
 	"empty_value": translate( "-" ),
 	"initialHashEvent": EventDispatcher("initialHash"),
-    "toplevelactions": [ "tasks", "userstate", "logout" ]
+    "toplevelactions": [ "tasks", "userstate", "logout" ],
+	"batchSize": 20
 }

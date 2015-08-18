@@ -142,12 +142,12 @@ actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=
 
 class TextInsertOrderedList( BasicTextAction ):
 	cmd = "insertOrderedList"
-	title = translate("Insert a ordered List")
+	title = translate("Insert an ordered List")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.orderedList", TextInsertOrderedList )
 
 class TextInsertUnorderedList( BasicTextAction ):
 	cmd = "insertUnorderedList"
-	title = translate("Insert a unordered List")
+	title = translate("Insert an unordered List")
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.unorderedList", TextInsertUnorderedList )
 
 
@@ -172,17 +172,17 @@ class TextRemoveFormat( BasicTextAction ):
 
 	def onClick(self, sender=None):
 		eval("window.top.document.execCommand(\"%s\", false, null)" % self.cmd)
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		i = 10
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName in ["H%s" % x for x in range(0,6)]:
 				eval("window.top.document.execCommand(\"formatBlock\", false, 'div')")
 				return
-			node = node.parentElement
+			node = node.parentNode
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.removeformat", TextRemoveFormat )
 
@@ -200,8 +200,6 @@ class TextInsertImageAction( html5.ext.Button ):
 		currentSelector = FileWidget( "file", isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		#
-
 
 	def onSelectionActivated(self, selectWdg, selection):
 		if not selection:
@@ -254,8 +252,11 @@ actionDelegateSelector.insert( 1, TextInsertLinkAction.isSuitableFor, TextInsert
 class CreateTablePopup( html5.ext.Popup ):
 	def __init__(self, targetNode, *args, **kwargs ):
 		super( CreateTablePopup, self ).__init__( *args, **kwargs )
+		assert targetNode
+
 		while not "innerHTML" in dir(targetNode):
-			targetNode = targetNode.parentElement
+			targetNode = targetNode.parentNode
+
 		self.targetNode = targetNode
 		self["class"].append("createtable")
 		self.rowInput = html5.Input()
@@ -313,9 +314,10 @@ class TextInsertTableAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		self.parent().parent().contentDiv.focus()
-		node = eval("window.top.getSelection().baseNode")
-		CreateTablePopup( node )
-		return
+		node = eval("window.top.getSelection().anchorNode")
+
+		if node:
+			CreateTablePopup( node )
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -333,12 +335,12 @@ class TableInsertRowBeforeAction( html5.ext.Button ):
 		self["title"] = translate("Insert Table Row before")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		i = 10
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TR":
 				tr = html5.document.createElement("tr")
@@ -347,7 +349,7 @@ class TableInsertRowBeforeAction( html5.ext.Button ):
 					tr.appendChild( td )
 				node.parentNode.insertBefore( tr, node )
 				return
-			node = node.parentElement
+			node = node.parentNode
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -365,12 +367,12 @@ class TableInsertRowAfterAction( html5.ext.Button ):
 		self["title"] = translate("Insert Table Row after")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		i = 10
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TR":
 				tr = html5.document.createElement("tr")
@@ -382,7 +384,7 @@ class TableInsertRowAfterAction( html5.ext.Button ):
 				else:
 					node.parentNode.appendChild( tr )
 				return
-			node = node.parentElement
+			node = node.parentNode
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -400,7 +402,7 @@ class TableInsertColBeforeAction( html5.ext.Button ):
 		self["title"] = translate("Insert Table Col before")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		td = None
 		tr = None
 		table = None
@@ -409,7 +411,7 @@ class TableInsertColBeforeAction( html5.ext.Button ):
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TD":
 				td = node
@@ -418,7 +420,7 @@ class TableInsertColBeforeAction( html5.ext.Button ):
 			elif node.tagName=="TABLE":
 				table = node
 				break
-			node = node.parentElement
+			node = node.parentNode
 		if td and tr and table:
 			cellIdx = 0 # Before which column shall we insert a new col?
 			for x in range(0, tr.children.length):
@@ -465,7 +467,7 @@ class TableInsertColAfterAction( html5.ext.Button ):
 		self["title"] = translate("Insert Table Col after")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		td = None
 		tr = None
 		table = None
@@ -474,7 +476,7 @@ class TableInsertColAfterAction( html5.ext.Button ):
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TD":
 				td = node
@@ -483,7 +485,7 @@ class TableInsertColAfterAction( html5.ext.Button ):
 			elif node.tagName=="TABLE":
 				table = node
 				break
-			node = node.parentElement
+			node = node.parentNode
 		if td and tr and table:
 			cellIdx = 0 # Before which column shall we insert a new col?
 			for x in range(0, tr.children.length):
@@ -536,17 +538,17 @@ class TableRemoveRowAction( html5.ext.Button ):
 		self["title"] = translate("Remove Table Row")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		i = 10
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TR":
 				node.parentNode.removeChild(node)
 				return
-			node = node.parentElement
+			node = node.parentNode
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -566,7 +568,7 @@ class TableRemoveColAction( html5.ext.Button ):
 		self["title"] = translate("Remove Table Col")
 
 	def onClick(self, sender=None):
-		node = eval("window.top.getSelection().baseNode")
+		node = eval("window.top.getSelection().anchorNode")
 		td = None
 		tr = None
 		table = None
@@ -575,7 +577,7 @@ class TableRemoveColAction( html5.ext.Button ):
 		while i>0 and node and node != self.parent().parent().contentDiv.element:
 			i -= 1
 			if not "tagName" in dir( node ):
-				node = node.parentElement
+				node = node.parentNode
 				continue
 			if node.tagName=="TD":
 				td = node
@@ -584,7 +586,7 @@ class TableRemoveColAction( html5.ext.Button ):
 			elif node.tagName=="TABLE":
 				table = node
 				break
-			node = node.parentElement
+			node = node.parentNode
 		if td and tr and table:
 			cellIdx = 0 # Which column shall we delete?
 			for x in range(0, tr.children.length):
@@ -635,6 +637,28 @@ class TextSaveAction( html5.ext.Button ):
 		return( actionName=="text.save" )
 
 actionDelegateSelector.insert( 1, TextSaveAction.isSuitableFor, TextSaveAction )
+
+class TextAbortAction( html5.ext.Button ):
+	def __init__(self, *args, **kwargs):
+		super( TextAbortAction, self ).__init__( translate("Abort"), *args, **kwargs )
+		self["class"] = "icon text abort"
+		self["title"] = translate("Abort")
+
+	def onClick(self, event):
+		if self.parent().parent().contentDiv.changed():
+			html5.ext.popup.YesNoDialog(translate("Any changes will be lost. Do you really want to abort?"),
+			                            yesCallback=self.doAbort)
+		else:
+			self.doAbort()
+
+	def doAbort(self, *args, **kwargs):
+		self.parent().parent().abortText()
+
+	@staticmethod
+	def isSuitableFor( modul, handler, actionName ):
+		return( actionName=="text.abort" )
+
+actionDelegateSelector.insert( 1, TextAbortAction.isSuitableFor, TextAbortAction )
 
 class LinkEditor( html5.Div ):
 	newLinkIdx = 0
@@ -854,12 +878,50 @@ class FlipViewAction( html5.ext.Button ):
 		pass
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.flipView", FlipViewAction )
 
+class Contentdiv(html5.Div):
+	def __init__(self, html, *args, **kwargs ):
+		super(Contentdiv, self).__init__(*args, **kwargs)
+
+		self["contenteditable"] = True
+		self["class"].append("contentdiv")
+
+		self.initial_txt = self.element.innerHTML = html
+
+		self.sinkEvent("onBlur")
+		self.sinkEvent("onFocus")
+
+	def changed(self):
+		return self.initial_txt != self.element.innerHTML
+
 class Wysiwyg( html5.Div ):
 	def __init__(self, editHtml, actionBarHint=translate("Text Editor"), *args, **kwargs ):
 		super( Wysiwyg, self ).__init__(*args, **kwargs)
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
 		self.saveTextEvent = EventDispatcher("saveText")
-		self.textActions = ["style.text.bold", "style.text.italic", "style.text.underline", "style.text.strikeThrough"]+["style.text.h%s" % x for x in range(0,4)]+[ "text.removeformat", "style.text.justifyCenter", "style.text.justifyLeft", "style.text.justifyRight", "style.text.blockquote", "text.orderedList", "text.unorderedList", "text.indent", "text.outdent", "text.image", "text.link", "text.table", "text.flipView", "text.undo", "text.redo","text.save"]
+		self.abortTextEvent = EventDispatcher("abortText")
+		self.textActions = ["style.text.bold",
+		                    "style.text.italic",
+		                    "style.text.underline",
+		                    "style.text.strikeThrough"]+\
+		                   ["style.text.h%s" % x for x in range(0,4)]+\
+		                   ["text.removeformat",
+							"style.text.justifyCenter",
+							"style.text.justifyLeft",
+							"style.text.justifyRight",
+			                "style.text.blockquote",
+			                "text.orderedList",
+			                "text.unorderedList",
+			                "text.indent",
+			                "text.outdent",
+			                "text.image",
+			                "text.link",
+			                "text.table",
+			                "text.flipView",
+			                "text.undo",
+			                "text.redo",
+			                "text.abort",
+			                "text.save"]
+
 		#self["type"] = "text"
 		self.actionbar = ActionBar(None, None, actionBarHint)
 		self.isWysiwygMode = True
@@ -875,10 +937,9 @@ class Wysiwyg( html5.Div ):
 		self.appendChild(self.linkEditor)
 		self.imgEditor = ImageEditor()
 		self.appendChild(self.imgEditor)
-		self.contentDiv = html5.Div()
-		self.contentDiv["contenteditable"] = True
-		self.contentDiv.element.innerHTML = editHtml
-		self.contentDiv["class"].append("contentdiv")
+
+		self.contentDiv = Contentdiv(editHtml)
+
 		self.appendChild( self.contentDiv )
 		self.actionbar.setActions( self.textActions )
 		#btn = html5.ext.Button("Apply", self.saveText)
@@ -964,7 +1025,10 @@ class Wysiwyg( html5.Div ):
 
 
 	def saveText(self, *args, **kwargs):
-		self.saveTextEvent.fire( self, self.contentDiv.element.innerHTML )
+		self.saveTextEvent.fire(self, self.contentDiv.element.innerHTML)
+
+	def abortText(self, *args, **kwargs):
+		self.abortTextEvent.fire(self)
 
 	def onMouseDown(self, event):
 		self.lastMousePos = None
@@ -988,7 +1052,7 @@ class Wysiwyg( html5.Div ):
 
 		while node and node != self.contentDiv.element:
 			#FIXME.. emit cursormoved event
-			node = node.parentElement
+			node = node.parentNode
 
 	def onMouseUp(self, event):
 		self.currentImage = None
@@ -1041,7 +1105,7 @@ class Wysiwyg( html5.Div ):
 			if domWdg==self.contentDiv.element:
 				isContentDivTarget = True
 				break
-			domWdg = domWdg.parentElement
+			domWdg = domWdg.parentNode
 
 		if not isContentDivTarget:
 			return
@@ -1050,11 +1114,11 @@ class Wysiwyg( html5.Div ):
 		nodeStack = []
 		i = 10
 
-		#Try to extract the relevat nodes from the dom
+		#Try to extract the relevant nodes from the dom
 		while i>0 and node and node != self.contentDiv.element:
 			i -= 1
 			nodeStack.append(node)
-			node = node.parentElement
+			node = node.parentNode
 
 		if "TABLE" in [(x.tagName if "tagName" in dir(x) else "") for x in nodeStack]:
 			self.tableDiv["style"]["display"] = ""

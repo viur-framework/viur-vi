@@ -18,14 +18,16 @@ class ListWidget( html5.Div ):
 		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
 	"""
-	_batchSize = 20  #How many rows do we fetch at once?
-
-	def __init__( self, modul, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None, *args, **kwargs ):
+	def __init__( self, modul, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
+	                batchSize = None, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
 		"""
 		super( ListWidget, self ).__init__(  )
+
+		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
+
 		self.modul = modul
 		self.actionBar = ActionBar( modul, "list", currentAction="list" )
 		self.appendChild( self.actionBar )
@@ -44,12 +46,22 @@ class ListWidget( html5.Div ):
 			if myView and "extendedFilters" in myView.keys() and myView["extendedFilters"]:
 				self.appendChild( CompoundFilter(myView, modul, embed=True))
 
-		self.table = DataTable()
+		checkboxes = (conf["modules"]
+		                and modul in conf["modules"].keys()
+						and "checkboxSelection" in conf["modules"][modul].keys()
+		                and conf["modules"][modul]["checkboxSelection"])
+		indexes = (conf["modules"]
+		            and modul in conf["modules"].keys()
+					and "indexes" in conf["modules"][modul].keys()
+		            and conf["modules"][modul]["indexes"])
+
+		self.table = DataTable( checkboxes=checkboxes, indexes=indexes, *args, **kwargs )
 		self.appendChild( self.table )
 		self._currentCursor = None
 		self._structure = None
 		self._currentRequests = []
 		self.columns = []
+
 		if isSelector and filter is None and columns is None:
 			#Try to select a reasonable set of cols / filter
 			if conf["modules"] and modul in conf["modules"].keys():
@@ -58,6 +70,7 @@ class ListWidget( html5.Div ):
 					columns = tmpData["columns"]
 				if "filter" in tmpData.keys():
 					filter = tmpData["filter"]
+
 		self.table.setDataProvider(self)
 		self.filter = filter.copy() if isinstance(filter,dict) else {}
 		self.columns = columns[:] if isinstance(columns,list) else []
@@ -65,12 +78,20 @@ class ListWidget( html5.Div ):
 		self.filterDescr = filterDescr #Human-readable description of the current filter
 		self._tableHeaderIsValid = False
 		self.isSelector = isSelector
+
 		#Proxy some events and functions of the original table
-		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
+		for f in ["selectionChangedEvent",
+		            "selectionActivatedEvent",
+		            "cursorMovedEvent",
+					"tableChangedEvent",
+		            "getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
+
 		self.actionBar.setActions( self.getDefaultActions( myView ) )
+
 		if isSelector:
 			self.selectionActivatedEvent.register( self )
+
 		self.emptyNotificationDiv = html5.Div()
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
 		self.emptyNotificationDiv["class"].append("emptynotification")
@@ -93,18 +114,28 @@ class ListWidget( html5.Div ):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
-		defaultActions = ["add", "edit", "clone", "delete", "preview", "selectfields"]+(["select","close"] if self.isSelector else [])+["reload","selectfilter"]
+		defaultActions = ["add", "edit", "clone", "delete",
+		                  "|", "preview", "selectfields"]\
+		                 + (["|", "select","close"] if self.isSelector else [])+["|", "reload","selectfilter"]
 
 		# Extended actions from view?
 		if view and "actions" in view.keys():
+			if defaultActions[-1] != "|":
+				defaultActions.append( "|" )
+
 			defaultActions.extend( view[ "actions" ] or [] )
+
 		# Extended Actions from config?
 		elif conf["modules"] and self.modul in conf["modules"].keys():
 			cfg = conf["modules"][ self.modul ]
+
 			if "actions" in cfg.keys() and cfg["actions"]:
+				if defaultActions[-1] != "|":
+					defaultActions.append( "|" )
+
 				defaultActions.extend( cfg["actions"] )
 
-		return( defaultActions )
+		return defaultActions
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -269,45 +300,3 @@ class ListWidget( html5.Div ):
 
 		"""
 		self.table.activateCurrentSelection()
-
-class ListWidgetPreview(html5.Div):
-	def __init__( self, modul, filter=None, columns=None, isSelector=False, *args, **kwargs ):
-		super( ListWidgetPreview, self ).__init__( )
-		self.modul = modul
-
-		self.modullist = ListWidget( modul, filter,columns,isSelector,args,kwargs )
-		self.modullist.selectionChangedEvent.register( self )
-
-		self.appendChild( self.modullist )
-		self.viewwrap = html5.Div()
-		self.itemview= html5.Ul()
-
-		self.viewwrap.appendChild(self.itemview)
-		self.appendChild(self.viewwrap)
-
-	def onSelectionChanged(self,table,row):
-		if self.modullist._structure:
-			self.modullist["class"]="halfview"
-			for c in self.itemview._children[:]:
-				self.itemview.removeChild(c)
-			tmpDict = {}
-			for key, bone in self.modullist._structure:
-				tmpDict[ key ] = bone
-
-			for key, bone in self.modullist._structure:
-				self.ali= html5.Li()
-				self.ali["class"]=[self.modul,"type_"+bone["type"],"bone_"+key]
-				self.adl= html5.Dl()
-
-				self.adt=html5.Dt()
-				self.adt.appendChild(html5.TextNode(bone["descr"]))
-
-				self.aadd=html5.Dd()
-				delegateFactory = viewDelegateSelector.select( self.modul, key, tmpDict )( self.modul, key, tmpDict )
-				self.aadd.appendChild(delegateFactory.render(row[0],key))
-
-				self.adl.appendChild(self.adt)
-				self.adl.appendChild(self.aadd)
-				self.ali.appendChild(self.adl)
-
-				self.itemview.appendChild(self.ali)

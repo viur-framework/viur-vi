@@ -10,6 +10,7 @@ lngDe = {
 	"Reload":u"Neu laden",
 	"Preview":u"Vorschau",
 	"Close":u"Schließen",
+	"Abort":u"Abbrechen",
 	"Select":u"Auswählen",
 	"Select fields":u"Felder auswählen",
 	"Select Filter":u"Filter auswählen",
@@ -70,8 +71,8 @@ lngDe = {
 	"Justifiy Center":u"Zentrieren",
 	"Justifiy Left":u"Links ausrichten",
 	"Justifiy Right":u"Rechts ausrichten",
-	"Insert a ordered List":u"Sortierte Liste",
-	"Insert a unordered List":u"Unsortierte Liste",
+	"Insert an ordered List":u"Sortierte Liste",
+	"Insert an unordered List":u"Unsortierte Liste",
 	"Indent more":u"Weiter einrücken",
 	"Indent less":u"Weniger einrücken",
 	"Remove all formatting":u"Gesamte Formatierung löschen",
@@ -104,6 +105,14 @@ lngDe = {
     "Select all": u"Alle auswählen",
     "Unselect all": u"Auswahl entfernen",
     "Invert selection": u"Auswahl umkehren",
+	"{items} items had been selected": u"{items} Einträge wurden selektiert",
+	"{items} items had been unselected": u"{items} Einträge wurden deselektiert",
+	"{added} items selected, {removed} items deselected":
+		u"{added} Einträge selektiert, {removed} Einträge deselektiert",
+
+	"Any changes will be lost. Do you really want to abort?":
+		u"Alle Änderungen gehen verloren. Möchten Sie wirklich abbrechen?",
+
     "Run": u"Ausführen",
     "Start": u"Starten",
     "Task completed": u"Aufgabe erledigt",

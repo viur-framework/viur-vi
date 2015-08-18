@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import html5
@@ -8,7 +7,7 @@ from utils import formatString
 from widgets.list import ListWidget
 from widgets.edit import InternalEdit
 from config import conf
-
+from i18n import translate
 
 class ExtendedRelationalViewBoneDelegate( object ):
 	cantSort = True
@@ -71,13 +70,17 @@ class ExtendedRelationalSelectionBoneEntry( html5.Div ):
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild( txtLbl )
 		wrapperDiv["class"].append("labelwrapper")
-		remBtn = html5.ext.Button("Remove", self.onRemove )
-		remBtn["class"].append("icon")
-		remBtn["class"].append("cancel")
-		wrapperDiv.appendChild( remBtn )
+
+		if not parent.readOnly:
+			remBtn = html5.ext.Button(translate("Remove"), self.onRemove )
+			remBtn["class"].append("icon")
+			remBtn["class"].append("cancel")
+			wrapperDiv.appendChild( remBtn )
+
 		self.appendChild( wrapperDiv )
+
 		if using:
-			self.ie = InternalEdit( using, data["rel"],errorInfo )
+			self.ie = InternalEdit( using, data["rel"], errorInfo, readOnly = parent.readOnly )
 			self.appendChild( self.ie )
 		else:
 			self.ie = None

@@ -1,6 +1,18 @@
 import translations
 
 _currentLanguage = eval("navigator.language")
+
+if not _currentLanguage:
+	_currentLanguage = eval("navigator.browserLanguage")
+
+	if not _currentLanguage:
+		_currentLanguage = "en"
+
+if len(_currentLanguage) > 2:
+	_currentLanguage = _currentLanguage[:2]
+
+print("Configured for language: %s" % _currentLanguage)
+
 _runtimeTranslations = {}
 _lngMap = {}
 
@@ -23,13 +35,17 @@ def translate( key, **kwargs ):
 		for k,v in kwargs.items():
 			inStr = inStr.replace("{%s}" % k, v)
 		return( inStr )
+
 	#assert _currentLanguage is not None and len(_currentLanguage)==2 #FIXME: Fails for en-US
+
 	if _currentLanguage in _runtimeTranslations.keys():
 		if key.lower() in _runtimeTranslations[ _currentLanguage ].keys():
 			return( processTr( _runtimeTranslations[ _currentLanguage ][key.lower()], **kwargs ) )
+
 	if _currentLanguage in _lngMap.keys():
 		if key.lower() in _lngMap[ _currentLanguage ].keys():
 			return( processTr( _lngMap[ _currentLanguage ][key.lower()], **kwargs) )
+
 	return( processTr( key, **kwargs ).upper() ) #FIXME!
 
 

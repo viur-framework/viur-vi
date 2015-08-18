@@ -5,10 +5,9 @@ class InternalPreview( html5.Ul ):
 	def __init__(self, modul, structure, item, *args, **kwargs):
 		super( InternalPreview, self ).__init__( *args, **kwargs )
 
-		tmpDict = {}
+		self["class"].append("internalpreview")
 
-		for key, bone in structure:
-			tmpDict[ key ] = bone
+		tmpDict = {key: bone for key, bone in structure}
 
 		for key, bone in structure:
 			if "params" in bone.keys() and bone[ "params" ] \
