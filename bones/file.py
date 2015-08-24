@@ -116,9 +116,12 @@ class FileViewBoneDelegate(object):
 				cell.appendChild(self.renderFileentry(f))
 			return (cell)
 		elif isinstance(val, dict):
-			return (self.renderFileentry(val))
+			return self.renderFileentry(val)
 
-		return( self.renderFileentry( val ) )
+		if val:
+			return self.renderFileentry(val)
+
+		return html5.Div()
 
 class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 	def __init__(self, *args, **kwargs):
