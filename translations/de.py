@@ -5,6 +5,7 @@ lngDe = {
 	"Save-Close":u"Speichern & schließen",
 	"Add":u"Hinzufügen",
 	"Edit":u"Bearbeiten",
+	"Clone":u"Klonen",
 	"List":u"Liste",
 	"Delete":u"Löschen",
 	"Reload":u"Neu laden",
