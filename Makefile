@@ -3,7 +3,7 @@
 #
 
 # Programs
-PYJSBUILD	=	python `which pyjsbuild`
+PYJSBUILD	=	pyjsbuild
 LESSC		=	lessc
 
 # Variables
