@@ -30,7 +30,7 @@ class DateBoneExtractor( object ):
 				return dt.strftime("%d.%m.%Y %H:%M:%S")
 			elif structure["date"] and not structure["time"]:
 				try:
-					dt = datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
+					dt = datetime.strptime( val, "%d.%m.%Y")
 				except:
 					return "Error parsing Date"
 				return dt.strftime("%d.%m.%Y")

@@ -232,6 +232,7 @@ class CsvExport(Div):
 				resStr += line
 
 			tmpA = A()
+			self.appendChild(tmpA)
 			encFunc = eval("encodeURIComponent")
 			escapeFunc = eval("escape")
 			if encoding == "utf-8":
