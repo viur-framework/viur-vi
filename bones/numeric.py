@@ -36,7 +36,7 @@ class NumericViewBoneDelegate( object ):
 
 		if field in data.keys():
 			prec = self.skelStructure[field].get( "precision" )
-			if prec:
+			if prec and data[field] is not None:
 				s = ( "%." + str( prec ) + "f" ) % data[field]
 			else:
 				s = str( data[field] )
