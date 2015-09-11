@@ -5,7 +5,6 @@ from network import NetworkService
 from priorityqueue import viewDelegateSelector
 from widgets.table import DataTable
 from widgets.actionbar import ActionBar
-from widgets.search import Search
 from widgets.sidebar import SideBar
 import html5
 from sidebarwidgets.filterselector import CompoundFilter
@@ -143,7 +142,6 @@ class ListWidget( html5.Div ):
 		"""
 		self.actionBar["style"]["display"] = "none"
 		self.table["style"]["display"] = "none"
-		#self.search["style"]["display"] = "none"
 		errorDiv = html5.Div()
 		errorDiv["class"].append("error_msg")
 		if code and (code==401 or code==403):
@@ -227,7 +225,6 @@ class ListWidget( html5.Div ):
 		self._currentRequests.remove( req )
 		self.actionBar.resetLoadingState()
 
-		#self.search.resetLoadingState()
 		data = NetworkService.decode( req )
 
 		if data["structure"] is None:

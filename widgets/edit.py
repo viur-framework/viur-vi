@@ -19,7 +19,7 @@ class InvalidBoneValueException(ValueError):
 
 class InternalEdit( html5.Div ):
 
-	def __init__(self, skelStructure, values=None, errorInformation=None ):
+	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False):
 		super( InternalEdit, self ).__init__()
 		self.editIdx = 1
 		self.skelStructure = skelStructure
@@ -27,12 +27,12 @@ class InternalEdit( html5.Div ):
 		self.errorInformation = errorInformation
 		self.form = html5.Form()
 		self.appendChild(self.form)
-		self.renderStructure()
+		self.renderStructure(readOnly=readOnly)
 		if values:
 			self.unserialize( values )
 
 
-	def renderStructure(self):
+	def renderStructure(self, readOnly = False):
 		#Clear the UI
 		#self.clear()
 		self.bones = {}
@@ -43,11 +43,22 @@ class InternalEdit( html5.Div ):
 		currRow = 0
 		hasMissing = False
 		for key, bone in self.skelStructure:
-			if bone["visible"]==False:
+
+			#Skip over invisible bones
+			if not bone["visible"]:
 				continue
+
+			#Enforcing readOnly mode
+			if readOnly:
+				tmpDict[key]["readonly"] = True
+
 			cat = "default"
-			if "params" in bone.keys() and isinstance(bone["params"],dict) and "category" in bone["params"].keys():
+
+			if ("params" in bone.keys()
+			    and isinstance(bone["params"],dict)
+			    and "category" in bone["params"].keys()):
 				cat = bone["params"]["category"]
+
 			if not cat in fieldSets.keys():
 				fs = html5.Fieldset()
 				fs["class"] = cat
@@ -66,23 +77,30 @@ class InternalEdit( html5.Div ):
 				fs.appendChild(section)
 				fs._section = section
 				fieldSets[ cat ] = fs
+
 			if "params" in bone.keys() and bone["params"] and "category" in bone["params"].keys():
 				tabName = bone["params"]["category"]
 			else:
-				tabName = "Test"#QtCore.QCoreApplication.translate("EditWidget", "General")
+				tabName = "Test"
+
 			wdgGen = editBoneSelector.select( None, key, tmpDict )
 			widget = wdgGen.fromSkelStructure( None, key, tmpDict )
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat, key)
 			#widget["class"].append(key)
 			#widget["class"].append(bone["type"].replace(".","_"))
 			#self.prepareCol(currRow,1)
+
 			descrLbl = html5.Label(bone["descr"])
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, None, "internal", cat, key)
+
 			if bone["required"]:
 				descrLbl["class"].append("is_required")
-			if bone["required"] and (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
+
+			if (bone["required"]
+			    and (bone["error"] is not None
+			            or (self.errorInformation and key in self.errorInformation.keys()))):
 				descrLbl["class"].append("is_invalid")
 				if bone["error"]:
 					descrLbl["title"] = bone["error"]
@@ -90,38 +108,46 @@ class InternalEdit( html5.Div ):
 					descrLbl["title"] = self.errorInformation[ key ]
 				fieldSets[ cat ]["class"].append("is_incomplete")
 				hasMissing = True
+
 			if bone["required"] and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
 				descrLbl["class"].append("is_valid")
+
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
 				tmp = html5.Span()
 				tmp.appendChild(descrLbl)
 				tmp.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
 				descrLbl = tmp
+
 			containerDiv = html5.Div()
 			containerDiv.appendChild( descrLbl )
 			containerDiv.appendChild( widget )
 			fieldSets[ cat ]._section.appendChild( containerDiv )
+
 			containerDiv["class"].append("bone")
 			containerDiv["class"].append("bone_"+key)
 			containerDiv["class"].append( bone["type"].replace(".","_") )
+
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
 					containerDiv["class"].append(t)
+
 			#self["cell"][currRow][0] = descrLbl
 			#fieldSets[ cat ].appendChild( widget )
 			#self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget
+
 		if len(fieldSets)==1:
 			for (k,v) in fieldSets.items():
 				if not "active" in v["class"]:
 					v["class"].append("active")
+
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort( key=lambda x:x[0])
+
 		for k,v in tmpList:
 			self.form.appendChild( v )
 			v._section = None
-
 
 	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
 		"""

@@ -49,7 +49,10 @@ class CompoundFilter( html5.Div ):
 		self.reevaluate()
 
 	def reevaluate(self, *args, **kwargs ):
-		filter = self.view["filter"].copy()
+		if "filter" in self.view.keys():
+			filter = self.view["filter"].copy()
+		else:
+			filter = {}
 
 		for extension in self.extendedFilters:
 			filter = extension.updateFilter( filter )

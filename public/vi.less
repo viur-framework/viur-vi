@@ -432,12 +432,7 @@ p { margin-bottom: 10px;}
   text-shadow: none;
   color: #666;
 }
-.modullist ul h3:before {
-  margin-right: 15px;
-}
-.modullist ul ul h3::before {
-    margin-left: 29px !important;    
-}
+
 .modullist ul a {
   background-color: #e9e9e9;
   background: -moz-linear-gradient(top, #e4e4e4, #e9e9e9);
@@ -459,6 +454,11 @@ p { margin-bottom: 10px;}
 .modullist ul ul img {
     margin-left: 44px;
 }
+
+.modullist ul ul ul img {
+    margin-left: 64px;
+}
+
 .modullist ul button {
   margin-top: -32px;
   position: relative;
@@ -567,6 +567,7 @@ margin-top: -20px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   border:1px solid #d2d2d2;
   transition:all .3s ease;
+  overflow: hidden;
 }
 
 .vi_operator .compoundfilter h2,
@@ -756,6 +757,7 @@ button.btn_no {
   overflow: hidden;
   min-width: 28px;
 }
+/* Icons for Icon Buttons as Sprite */
 button.icon:before,
 .vi_operator .search button:before,
 .btn_yes:before,
@@ -1030,7 +1032,8 @@ button.icon[type="button"]:hover {
 }
 
 /* Red Buttons */
-button.icon.close[type="button"] {
+button.icon.close[type="button"],
+button.icon.delete[type="button"] {
   border: 1px solid #e20614;
   color: #fff;
   background-color: #c31520;
@@ -1042,6 +1045,8 @@ button.icon.close[type="button"] {
   background: linear-gradient(to bottom, #e20614 0%, #c31520 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e20614', EndColorStr='#c31520', GradientType=0);
 }
+
+/* Red Button Hover */
 button.icon.close[type="button"]:hover,
 button.icon.cancel[type="button"]:hover,
 button.icon.delete[type="button"]:hover {
@@ -1056,22 +1061,21 @@ button.icon.delete[type="button"]:hover {
   background: linear-gradient(to bottom, #c31520 0%, #e20614 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#c31520', EndColorStr='#e20614', GradientType=0);
 }
+
+/* White Icon Sprite for Red Buttons */
 button.icon.close[type="button"]:before,
+button.icon.delete[type="button"]:before,
 button.icon.cancel[type="button"]:hover:before,
 button.icon.delete[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
 
-button.icon.close[type="button"]:before,
-button.icon.cancel[type="button"]:hover:before,
-button.icon.delete[type="button"]:hover:before {
-  background-image: url(icons/vi_actions_sprite_white.svg);
-}
 
 /* Green Buttons */
 button.icon.save.close[type="button"],
 button.icon.activateselection[type="button"],
-button.text.save[type="button"] {
+button.text.save[type="button"],
+button.icon.add[type="button"] {
   border: 1px solid #298342;
   color: #fff;
   background-color: #479c42;
@@ -1084,6 +1088,8 @@ button.text.save[type="button"] {
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0); 
 }
 
+
+/* Green Button Hover */
 button.icon.activateselection[type="button"]:hover,
 button.text.save[type="button"]:hover,
 button.icon.add[type="button"]:hover,
@@ -1100,6 +1106,8 @@ button.icon.save.close[type="button"]:hover {
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
 
+/* White Icon Sprite for Green Buttons */
+button.icon.add[type="button"]:before,
 button.icon.activateselection[type="button"]:before,
 button.text.save[type="button"]:before,
 button.icon.add[type="button"]:hover:before,
@@ -1117,9 +1125,13 @@ button.icon.save.close.is_loading[type="button"]:hover:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
+
+/* Standard Buttons (28px wide, transparent Text) */
 button.icon.close[type="button"],
 button.icon.activateselection[type="button"],
 button.text.save[type="button"],
+button.icon.delete[type="button"],
+button.icon.delete.is_disabled[type="button"]:hover,
 button.icon.text[type="button"]:hover,
 button.icon.flipview[type="button"]:hover,
 button.icon.is_disabled[type="button"]:hover {
@@ -1130,14 +1142,17 @@ button.icon.is_disabled[type="button"]:hover {
   transition-delay: 0;
 }
 
-button.icon.save.close[type="button"] {
+/* Primary Buttons (120px wide without hover) */
+button.icon.save.close[type="button"],
+button.icon.add[type="button"] {
     color:#fff;
     overflow: visible;
     min-width: 120px;
     letter-spacing: normal;   
 }
 
-
+/* 120px wide Hover */
+button.icon.delete[type="button"]:hover,
 button.icon.close[type="button"]:hover,
 button.icon.activateselection[type="button"]:hover,
 button.icon.save.close[type="button"]:hover {
@@ -1145,16 +1160,24 @@ button.icon.save.close[type="button"]:hover {
   min-width: 120px;
   letter-spacing: normal;
 }
+
 /* Disabled Buttons */
+button.icon.delete.is_disabled[type="button"] {
+  background: #e0e0e0;
+}
+
+button.icon.delete.is_disabled[type="button"]:hover,
 button.icon.is_disabled[type="button"]:hover {
   border-color: #999;
   background: #e0e0e0;
 }
+button.icon.delete.is_disabled[type="button"]:before,
 button.icon.is_disabled:before {
   opacity: 0.3;
   background-image: url(icons/vi_actions_sprite.svg)!important;
 }
 
+button.icon.delete.is_disabled[type="button"],
 button.icon.is_disabled {
   cursor: default;
   color: transparent;
@@ -1377,11 +1400,12 @@ box-shadow: none;
 
 input,
 textarea,
+select,
 input[type="text"],
 input[type="email"],
 input[type="date"],
-input[type=url],
-input[type=password],
+input[type="url"],
+input[type="password"],
 .text .preview,
 [contenteditable] {
   display: inline-block;
@@ -1421,6 +1445,12 @@ input[type=password],
 
 }
 
+.compoundfilter select
+{
+  min-width: auto;
+
+}
+
 .bone.text .languagebuttons {
     float:left;
 }
@@ -1429,7 +1459,11 @@ input[type=password],
     background: linear-gradient(to bottom, #666 0%, #aaa 100%);
     box-shadow:inset 1px 1px 2px rgba(0,0,0,0.2);
     border-color:#666;
-    color:#fff;
+    color:#fff !important;
+}
+
+.languagebuttons button.is_filled {
+    color: #348D42;
 }
 
 /* #extended relational bone
@@ -1708,8 +1742,11 @@ textarea, .text .preview {
 }
 
 select {
-  min-width: 175px;
-  margin-left: 15px;
+  width: auto;
+  min-width: 325px;
+  height: 28px;
+  /* margin-left: 15px; */
+  border-radius: 0;
   border: 1px solid #ccc;
   font-size: .75em;
   font-weight: 100;
@@ -2564,14 +2601,13 @@ progress[value]::-webkit-progress-value {
 .alertbox.selectfields div.selectiontools { float:left; }
 
 /* #vi_badges
-================================================== */
+==================================================
 
-h1.module {
-  /*background: url(icons/beta_small.png) no-repeat top right;
-  padding-right: 35px;*/
-  min-width: 14.7%;
-  margin-right: 1%;
-}
+.beta {
+  background: url(icons/beta_small.png) no-repeat top right;
+  padding-right: 35px;
+}*/
+
 
 /* #vi_messenger
 ================================================== */.vi_messenger {
@@ -2875,6 +2911,7 @@ textarea:disabled {
 
 /* #Custom Styles
 ================================================== */
+
 @import "vi_custom.less";
 
 /* #Media Queries

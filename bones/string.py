@@ -96,6 +96,8 @@ class Tag( html5.Span ):
 	def removeMe(self, *args, **kwargs):
 		self.parent().removeChild( self )
 
+	def focus(self):
+		self.input.focus()
 
 class StringEditBone( html5.Div ):
 	def __init__(self, modulName, boneName, readOnly, multiple=False, languages=None, *args, **kwargs ):
@@ -117,6 +119,7 @@ class StringEditBone( html5.Div ):
 			self.buttonContainer["class"] = "languagebuttons"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
+			self.langBtns = {}
 
 			for lang in self.languages:
 				tagContainer = html5.Div()
@@ -124,9 +127,9 @@ class StringEditBone( html5.Div ):
 				tagContainer["class"].append("tagcontainer")
 				tagContainer["style"]["display"] = "none"
 
-				btn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
-				btn.lang = lang
-				self.buttonContainer.appendChild( btn )
+				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
+				langBtn.lang = lang
+				self.buttonContainer.appendChild(langBtn)
 
 				if not self.readOnly:
 					addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
@@ -136,6 +139,8 @@ class StringEditBone( html5.Div ):
 
 				self.languagesContainer.appendChild(tagContainer)
 				self.langEdits[lang] = tagContainer
+				self.langBtns[lang] = langBtn
+
 			self.setLang(self.languages[0])
 
 		elif self.languages and not self.multiple:
@@ -146,11 +151,12 @@ class StringEditBone( html5.Div ):
 			self.buttonContainer["class"] = "languagebuttons"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
+			self.langBtns = {}
 
 			for lang in self.languages:
-				btn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
-				btn.lang = lang
-				self.buttonContainer.appendChild( btn )
+				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
+				langBtn.lang = lang
+				self.buttonContainer.appendChild(langBtn)
 
 				inputField = html5.Input()
 				inputField["type"] = "text"
@@ -162,6 +168,7 @@ class StringEditBone( html5.Div ):
 
 				self.languagesContainer.appendChild( inputField )
 				self.langEdits[lang] = inputField
+				self.langBtns[lang] = langBtn
 
 			self.setLang(self.languages[0])
 
@@ -170,10 +177,13 @@ class StringEditBone( html5.Div ):
 			self.tagContainer = html5.Div()
 			self.tagContainer["class"].append("tagcontainer")
 			self.appendChild(self.tagContainer)
-			addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
-			addBtn.lang = None
-			addBtn["class"].append("icon new tag")
-			self.tagContainer.appendChild(addBtn)
+
+			if not self.readOnly:
+				addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
+				addBtn.lang = None
+				addBtn["class"].append("icon new tag")
+
+				self.tagContainer.appendChild(addBtn)
 
 		else: #not languages and not multiple:
 			self.input = html5.Input()
@@ -186,6 +196,7 @@ class StringEditBone( html5.Div ):
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
+
 		if boneName in skelStructure.keys():
 			if "multiple" in skelStructure[ boneName ].keys():
 				multiple = skelStructure[ boneName ]["multiple"]
@@ -197,15 +208,62 @@ class StringEditBone( html5.Div ):
 				languages = None
 		return( StringEditBone( modulName, boneName, readOnly, multiple=multiple, languages=languages ) )
 
-
 	def onLangBtnClicked(self, btn):
 		self.setLang( btn.lang )
+
+	def isFilled(self, lang=None):
+		if self.languages:
+			if lang is None:
+				lang = self.languages[0]
+
+			if self.multiple:
+				for item in self.langEdits[lang]._children:
+					if isinstance(item, Tag) and item.input["value"]:
+						return True
+
+				return False
+			else:
+				return bool(len(self.langEdits[lang]["value"]))
+
+		elif self.multiple:
+			for item in self.tagContainer._children:
+				if isinstance(item, Tag) and item.input["value"]:
+					return True
+
+			return False
+
+		return bool(len(self.input["value"]))
+
+	def _updateLanguageButtons(self):
+		if not self.languages:
+			return
+
+		for lang in self.languages:
+			if self.isFilled(lang):
+				self.langBtns[lang]["class"].remove("is_unfilled")
+				if not "is_filled" in self.langBtns[lang]["class"]:
+					self.langBtns[lang]["class"].append("is_filled")
+			else:
+				self.langBtns[lang]["class"].remove("is_filled")
+				if not "is_unfilled" in self.langBtns[lang]["class"]:
+					self.langBtns[lang]["class"].append("is_unfilled")
+
+			if lang == self.currentLanguage:
+				#self.langBtns[lang]["class"].remove("is_filled")
+				#self.langBtns[lang]["class"].remove("is_unfilled")
+
+				if not "is_active" in self.langBtns[lang]["class"]:
+					self.langBtns[lang]["class"].append("is_active")
+			else:
+				self.langBtns[lang]["class"].remove("is_active")
 
 	def setLang(self, lang):
 		if self.currentLanguage:
 			self.langEdits[ self.currentLanguage ]["style"]["display"] = "none"
+
 		self.currentLanguage = lang
 		self.langEdits[ self.currentLanguage ]["style"]["display"] = ""
+		self._updateLanguageButtons()
 
 		for btn in self.buttonContainer._children:
 			if btn.lang == lang:
@@ -215,7 +273,8 @@ class StringEditBone( html5.Div ):
 				btn[ "class" ].remove( "is_active" )
 
 	def onBtnGenTag(self, btn):
-		self.genTag( "", lang=btn.lang )
+		tag = self.genTag( "", lang=btn.lang )
+		tag.focus()
 
 	def unserialize( self, data, extendedErrorInformation=None ):
 		if not self.boneName in data.keys():
@@ -249,6 +308,8 @@ class StringEditBone( html5.Div ):
 		else:
 			self.input["value"] = unescapeHtml(str(data))
 
+		self._updateLanguageButtons()
+
 	def serializeForPost(self):
 		res = {}
 		if self.languages and self.multiple:
@@ -275,12 +336,13 @@ class StringEditBone( html5.Div ):
 		return( self.serialize( ) )
 
 	def genTag( self, tag, editMode=False, lang=None ):
-		tag =  Tag( tag, editMode, readonly = self.readOnly )
+		tag = Tag( tag, editMode, readonly = self.readOnly )
 		if lang is not None:
 			self.langEdits[ lang ].appendChild( tag )
 		else:
 			self.tagContainer.appendChild( tag )
 
+		return tag
 
 
 def CheckForStringBone(  modulName, boneName, skelStucture, *args, **kwargs ):

@@ -127,17 +127,30 @@ class TextEditBone( html5.Div ):
 			actionBarHint = self.descrHint
 		self.currentEditor = Wysiwyg( self.input["value"], actionBarHint=actionBarHint )
 		self.currentEditor.saveTextEvent.register( self )
+		self.currentEditor.abortTextEvent.register(self)
 		conf["mainWindow"].stackWidget( self.currentEditor )
 		self.parent()["class"].append("is_active")
 
-	def onSaveText(self, editor, txt ):
-		assert self.currentEditor is not None
-		self.input["value"] = txt
-		if not self.isPlainText:
-			self.previewDiv.element.innerHTML = self.input["value"]
+	def closeEditor(self):
+		if not self.currentEditor:
+			return
+
 		conf["mainWindow"].removeWidget( self.currentEditor )
 		self.currentEditor = None
 
+	def onSaveText(self, editor, txt ):
+		assert self.currentEditor is not None
+
+		self.input["value"] = txt
+
+		if not self.isPlainText:
+			self.previewDiv.element.innerHTML = self.input["value"]
+
+		self.closeEditor()
+
+	def onAbortText(self, editor):
+		assert self.currentEditor is not None
+		self.closeEditor()
 
 	def changeLang(self,btn):
 		self.valuesdict[self.selectedLang]=self.input["value"]
@@ -152,8 +165,17 @@ class TextEditBone( html5.Div ):
 
 	def refreshLangButContainer(self):
 		for abut in self.langButContainer._children:
+
+			if abut["value"] in self.valuesdict and self.valuesdict[abut["value"]]:
+				if not "is_filled" in abut["class"]:
+					abut["class"].append("is_filled")
+			else:
+				if not "is_unfilled" in abut["class"]:
+					abut["class"].append("is_unfilled")
+
 			if abut["value"]==self.selectedLang:
-				abut["class"].append("is_active")
+				if not "is_active" in abut["class"]:
+					abut["class"].append("is_active")
 			else:
 				abut["class"].remove("is_active")
 
