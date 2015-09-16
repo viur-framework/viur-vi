@@ -38,14 +38,17 @@ class RelationalBoneExtractor(object):
 		def localizedRender(val):
 			if "currentlanguage" in conf:
 				i18n_val = "%s.%s" % (self.format, conf["currentlanguage"])
+
 				if i18n_val in val:
-					val = val[i18n_val].replace("&quot;", "")
+					val = html5.utils.unescape(val[i18n_val])
 				elif self.format in val:
-					val = val[self.format].replace("&quot;", "")
+					val = html5.utils.unescape(val[self.format])
 				elif val:
 					val = val["id"]
+
 			else:
 				val = val["id"]
+
 			return val
 
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
@@ -57,14 +60,17 @@ class RelationalBoneExtractor(object):
 		if isinstance(val, list):
 			result = list()
 			for x in val:
-				print("relation x in val", x)
 				result.append(localizedRender(x))
+
 			return ", ".join(result)
+
 		elif isinstance(val, dict):
 			val = localizedRender(val)
+
 		else:
 			print("warning type:", val, type(val))
-		return val.replace("&quot;", "")
+
+		return html5.utils.unescape(val)
 
 
 class RelationalViewBoneDelegate( object ):

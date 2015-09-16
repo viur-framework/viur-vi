@@ -64,17 +64,16 @@ class StringViewBoneDelegate( object ):
 
 		return self.getViewElement( conf[ "empty_value" ], False )
 
-	def getViewElement(self,labelstr,datafield):
+	def getViewElement(self, labelstr, datafield):
+		labelstr = html5.utils.unescape(labelstr)
+
 		if not datafield:
 			return( html5.Label(labelstr))
 		else:
 			aspan=html5.Span()
 			aspan.appendChild(html5.TextNode(labelstr))
-			aspan["Title"]=str(datafield)
-			return (aspan)
-
-def unescapeHtml( html ): #FIXME!
-	return( html )
+			aspan["Title"] = str(datafield)
+			return aspan
 
 class Tag( html5.Span ):
 	def __init__(self, tag, isEditMode, readonly=False, *args, **kwargs ):
@@ -288,25 +287,25 @@ class StringEditBone( html5.Div ):
 				if lang in data.keys():
 					val = data[ lang ]
 					if isinstance( val, str ):
-						self.genTag( unescapeHtml(val), lang=lang )
+						self.genTag( html5.utils.unescape(val), lang=lang )
 					elif isinstance( val, list ):
 						for v in val:
-							self.genTag( unescapeHtml(v), lang=lang )
+							self.genTag( html5.utils.unescape(v), lang=lang )
 		elif self.languages and not self.multiple:
 			assert isinstance(data,dict)
 			for lang in self.languages:
 				if lang in data.keys() and data[ lang ]:
-					self.langEdits[ lang ]["value"] = unescapeHtml(str(data[ lang ]))
+					self.langEdits[ lang ]["value"] = html5.utils.unescape(str(data[ lang ]))
 				else:
 					self.langEdits[ lang ]["value"] = ""
 		elif not self.languages and self.multiple:
 			if isinstance( data,list ):
 				for tagStr in data:
-					self.genTag( unescapeHtml(tagStr) )
+					self.genTag( html5.utils.unescape(tagStr) )
 			else:
-				self.genTag( unescapeHtml(data) )
+				self.genTag( html5.utils.unescape(data) )
 		else:
-			self.input["value"] = unescapeHtml(str(data))
+			self.input["value"] = html5.utils.unescape(str(data))
 
 		self._updateLanguageButtons()
 

@@ -8,6 +8,7 @@ from priorityqueue import viewDelegateSelector
 import utils
 from config import conf
 from i18n import translate
+
 class HierarchyItem( html5.Li ):
 	"""
 		Holds one entry in a hierarchy.
@@ -50,11 +51,16 @@ class HierarchyItem( html5.Li ):
 			Generates the visual representation of this entry.
 		"""
 		format = "$(name)"
+
 		if self.modul in conf["modules"].keys():
 			modulInfo = conf["modules"][self.modul]
 			if "format" in modulInfo.keys():
 				format = modulInfo["format"]
-		self.appendChild( html5.TextNode( utils.formatString(format, utils.boneListToDict(self.structure), self.data ) ))
+
+		self.appendChild(
+				html5.TextNode(
+						utils.formatString(format, utils.boneListToDict(self.structure),
+						                    self.data, unescape=True)))
 
 	def onDragOver(self, event):
 		"""

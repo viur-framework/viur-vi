@@ -44,3 +44,4 @@ from html5._del import _Del as Del
 from html5._script import _Script as Script
 
 import html5.ext
+import html5.utils
