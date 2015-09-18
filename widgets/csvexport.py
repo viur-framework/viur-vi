@@ -1,21 +1,14 @@
-__author__ = 'stefan'
-
 from datetime import datetime
 from html5.div import Div
-from pane import Pane
-from event import viInitializedEvent
 from config import conf
 
 from html5.textnode import TextNode
-from html5.list import Ul, Li
 from html5.form import Input, Label, Select, Option
-from html5.span import Span
-from widgets.table import DataTable
 from network import NetworkService
 from priorityqueue import viewDelegateSelector, actionDelegateSelector, extractorDelegateSelector
-from html5.ext.popup import YesNoDialog
 from html5.ext.button import Button
 from html5.a import A
+from i18n import translate
 
 class CsvExport(Div):
 	_batchSize = 99  # How many row we fetch at once
@@ -45,39 +38,45 @@ class CsvExport(Div):
 
 		self.emptyNotificationDiv["style"]["display"] = "none"
 
-		tmpList = conf["mainWindow"].config["viur.defaultlangsvalues"].items()
-		self.lang_select = Select()
-		self.lang_select["id"] = "lang-select"
+		if "viur.defaultlangsvalues" in conf["mainWindow"].config.keys():
+			lngList = conf["mainWindow"].config["viur.defaultlangsvalues"].items()
+
+			self.lang_select = Select()
+			self.lang_select["id"] = "lang-select"
+
+			label1 = Label(translate("Language selection"))
+			label1["for"] = "lang-select"
+
+			span1 = Div()
+			span1.appendChild(label1)
+			span1.appendChild(self.lang_select)
+			span1["class"] = "bone"
+
+			self.appendChild(span1)
+
+			for key, value in lngList:
+				aoption = Option()
+				aoption["value"] = key
+				aoption.element.innerHTML = value
+				# self.appendChild(aoption)
+				if key == conf["currentlanguage"]:
+					aoption["selected"] = True
+				self.lang_select.appendChild(aoption)
+		else:
+			self.lang_select = None
+
+		# Encoding
 		self.encoding_select = Select()
 		self.encoding_select["id"] = "encoding-select"
 
-		label1 = Label("Sprachauswahl")
-		label1["for"] = "lang-select"
-
-		label2 = Label("Encoding")
-		label2["for"] = "lang-select"
-
-		span1 = Div()
-		span1.appendChild(label1)
-		span1.appendChild(self.lang_select)
-		span1["class"] = "bone"
+		label2 = Label(translate("Encoding"))
+		label2["for"] = "encoding-select"
 
 		span2 = Div()
 		span2.appendChild(label2)
 		span2.appendChild(self.encoding_select)
 		span2["class"] = "bone"
-
-		self.appendChild(span1)
 		self.appendChild(span2)
-		for key, value in tmpList:
-			aoption = Option()
-			aoption["value"] = key
-			aoption.element.innerHTML = value
-			# self.appendChild(aoption)
-			if key == conf["currentlanguage"]:
-				aoption["selected"] = True
-			self.lang_select.appendChild(aoption)
-
 
 		tmp1 = Option()
 		tmp1["value"] = "iso-8859-15"
@@ -115,7 +114,8 @@ class CsvExport(Div):
 					raise TypeError("missing extractor", self.module, key, tmpDict)
 				extractor = extractor(self.module, key, tmpDict)
 				self.cell_renderer[key] = extractor
-		# print("structure", self.columns)
+
+		print("structure", self.columns)
 		self.reloadData()
 
 	def onNextBatchNeeded(self, *args, **kwargs):
@@ -177,7 +177,7 @@ class CsvExport(Div):
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		skeldata = data["skellist"]
 		self.skelData.extend(skeldata)
-		# print("cursors", self._currentCursor, data["cursor"])
+		print("cursors", self._currentCursor, data["cursor"], len(skeldata))
 		if skeldata and "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
 			self.DIS_onNextBatchNeeded()
@@ -193,17 +193,17 @@ class CsvExport(Div):
 			                       failureHandler=self.showErrorMsg))
 
 	def dataArrived(self):
-		# print("exporting now...")
+		print("exporting now...%d" % len(self.skelData))
 		if not self.skelData:
 			return
 
 		current_lang = conf["currentlanguage"]
 		export_lang = conf["currentlanguage"]
 
-
-		for aoption in self.lang_select._children:
-			if aoption["selected"]:
-				export_lang = aoption["value"]
+		if self.lang_select:
+			for aoption in self.lang_select._children:
+				if aoption["selected"]:
+					export_lang = aoption["value"]
 
 		encoding = "iso-8859-15"
 		for aoption in self.encoding_select._children:
@@ -244,6 +244,9 @@ class CsvExport(Div):
 			self.appendChild(tmpA)
 			tmpA.element.click()
 			conf["mainWindow"].removeWidget(self)
+		except:
+			print("ERROR OCCURED...")
+
 		finally:
 			conf["currentlanguage"] = current_lang
 			# print("exporting finished")

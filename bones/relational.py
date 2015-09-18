@@ -35,14 +35,14 @@ class RelationalBoneExtractor(object):
 		self.boneName = boneName
 
 	def render(self, data, field ):
-		def localizedRender(val):
+		def localizedRender(val, format):
 			if "currentlanguage" in conf:
 				i18n_val = "%s.%s" % (self.format, conf["currentlanguage"])
 
 				if i18n_val in val:
 					val = html5.utils.unescape(val[i18n_val])
-				elif self.format in val:
-					val = html5.utils.unescape(val[self.format])
+				elif format in val:
+					val = html5.utils.unescape(str(val[format]))
 				elif val:
 					val = val["id"]
 
@@ -60,12 +60,12 @@ class RelationalBoneExtractor(object):
 		if isinstance(val, list):
 			result = list()
 			for x in val:
-				result.append(localizedRender(x))
+				result.append(localizedRender(x, self.format))
 
 			return ", ".join(result)
 
 		elif isinstance(val, dict):
-			val = localizedRender(val)
+			val = localizedRender(val, self.format)
 
 		else:
 			print("warning type:", val, type(val))
