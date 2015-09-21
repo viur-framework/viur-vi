@@ -152,9 +152,9 @@ class RelationalSingleSelectionBone( html5.Div ):
 			self.editBtn = None
 
 		# Remove button
-		if ( not required
-		     and ( "root" in conf[ "currentUser" ][ "access" ]
-		           or destModul + "-view" in conf[ "currentUser" ][ "access" ] ) ):
+		if ( not required and not readOnly
+		     and ("root" in conf[ "currentUser" ][ "access" ]
+		            or destModul + "-view" in conf[ "currentUser" ][ "access" ])):
 			# Yes, we check for "view" on the remove button, because removal of relations
 			# is only useful when viewing the destination module is still allowed.
 
@@ -177,7 +177,6 @@ class RelationalSingleSelectionBone( html5.Div ):
 		super(RelationalSingleSelectionBone, self)._setDisabled( disable )
 		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
 			self.parent()["class"].remove("is_active")
-
 
 	@classmethod
 	def fromSkelStructure( cls, modulName, boneName, skelStructure ):
@@ -354,9 +353,9 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 			self.appendChild( editBtn )
 
 		#Remove button
-
-		if ( "root" in conf[ "currentUser" ][ "access" ]
-		     or modul + "-view" in conf[ "currentUser" ][ "access" ] ):
+		if (not parent.readOnly
+			and ("root" in conf[ "currentUser" ][ "access" ]
+			        or modul + "-view" in conf[ "currentUser" ][ "access" ])):
 			# Check on "view" is also correct here - relational
 			# can be removed if entries can be selected!
 			remBtn = html5.ext.Button("Remove", self.onRemove )
