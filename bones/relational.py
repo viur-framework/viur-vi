@@ -86,18 +86,19 @@ class RelationalViewBoneDelegate( object ):
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
+
 		if field in data.keys():
 			val = data[field]
 		else:
 			val = ""
+
 		if isinstance(val,list):
-			val = ", ".join( [ (formatString(self.format, self.structure, x) or x["id"]) for x in val] )
-			#val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
+			val = ", ".join([(formatString(self.format, self.structure, x, unescape = True) or x["id"])
+			                    for x in val])
 		elif isinstance(val, dict):
-			val = formatString(self.format,self.structure, val ) or val["id"]
-			#val = val["name"] if "name" in val.keys() else val["id"]
-		return( html5.Label( val ) )
-		#return( formatString( self.format, self.structure, value ) ) FIXME!
+			val = formatString(self.format, self.structure, val, unescape = True ) or val["id"]
+
+		return html5.Label( val )
 
 class RelationalSingleSelectionBone( html5.Div ):
 	"""
