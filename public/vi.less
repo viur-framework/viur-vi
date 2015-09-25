@@ -1456,7 +1456,7 @@ input[type="password"],
     float:left;
 }
 
-.languagebuttons button.is_active {
+.languagebuttons button.is_active, .languagebuttons button.is_filled.is_active {
     background: linear-gradient(to bottom, #666 0%, #aaa 100%);
     box-shadow:inset 1px 1px 2px rgba(0,0,0,0.2);
     border-color:#666;
@@ -1464,7 +1464,8 @@ input[type="password"],
 }
 
 .languagebuttons button.is_filled {
-    color: #348D42;
+    color: #fff;
+    background: transparent linear-gradient(to bottom, #298342 0%, #479C42 100%) repeat scroll 0% 0%;
 }
 
 /* #extended relational bone
