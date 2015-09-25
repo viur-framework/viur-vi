@@ -104,10 +104,10 @@ class ListWidget( html5.Div ):
 		self.reloadData()
 
 	def updateFilterDescription(self):
-		for c in self.filterDescriptionSpan._children[:]:
-			self.filterDescriptionSpan.removeChild( c )
+		self.filterDescriptionSpan.removeAllChildren()
+
 		if self.filterDescr:
-			self.filterDescriptionSpan.appendChild( html5.TextNode( self.filterDescr ) )
+			self.filterDescriptionSpan.appendChild(html5.TextNode(html5.utils.unescape(self.filterDescr)))
 
 	def getDefaultActions(self, view = None ):
 		"""

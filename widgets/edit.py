@@ -455,7 +455,7 @@ class EditWidget( html5.Div ):
 
 			if "values" in data.keys() and "name" in data["values"].keys():
 				spanMsg = html5.Span()
-				spanMsg.appendChild( html5.TextNode( str(data["values"]["name"]) ))
+				spanMsg.appendChild(html5.TextNode(str(html5.utils.unescape(data["values"]["name"]))))
 				spanMsg["class"].append("namespan")
 				logDiv.appendChild(spanMsg)
 
