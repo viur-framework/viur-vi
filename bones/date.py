@@ -152,10 +152,14 @@ class DateEditBone( html5.Div ):
 				dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y")
 				self.dateinput["value"]=dateobj.strftime( "%Y-%m-%d" )
 			if self.hasdate  and self.hastime:
-				dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y %H:%M:%S")
-				self.dateinput["value"]=dateobj.strftime( "%Y-%m-%d" )
-				self.timeinput["value"]=dateobj.strftime( "%H:%M:%S" )
-
+				# FIXME: temporarily fixing a bug in extended relational bone
+				try:
+					dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y %H:%M:%S")
+					self.dateinput["value"]=dateobj.strftime( "%Y-%m-%d" )
+					self.timeinput["value"]=dateobj.strftime( "%H:%M:%S" )
+				except ValueError:
+					self.dateinput["value"] = "-"
+					self.timeinput["value"] = "-"
 
 	def serializeForPost(self):
 		#[day, month, year, hour, min,sec]
