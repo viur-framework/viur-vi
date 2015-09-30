@@ -455,7 +455,18 @@ class EditWidget( html5.Div ):
 
 			if "values" in data.keys() and "name" in data["values"].keys():
 				spanMsg = html5.Span()
-				spanMsg.appendChild(html5.TextNode(str(html5.utils.unescape(data["values"]["name"]))))
+
+				name = data["values"]["name"]
+				if isinstance(name, dict):
+					if conf["currentlanguage"] in name.keys():
+						name = name[conf["currentlanguage"]]
+					else:
+						name = name.values()
+
+				if isinstance(name, list):
+					name = ", ".join(name)
+
+				spanMsg.appendChild(html5.TextNode(str(html5.utils.unescape(name))))
 				spanMsg["class"].append("namespan")
 				logDiv.appendChild(spanMsg)
 

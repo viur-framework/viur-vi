@@ -14,11 +14,14 @@ def unescape(val, maxLength = 0):
 		:returns: The unquoted string.
 		:rtype: str
 	"""
-	val = val \
-			.replace("&lt;", "<") \
-			.replace("&gt;", ">") \
-			.replace("&quot;", "\"") \
-			.replace("&#39;", "'")
+	try:
+		val = val \
+				.replace("&lt;", "<") \
+				.replace("&gt;", ">") \
+				.replace("&quot;", "\"") \
+				.replace("&#39;", "'")
+	except AttributeError:
+		pass
 
 	if maxLength > 0:
 		return val[0:maxLength]
