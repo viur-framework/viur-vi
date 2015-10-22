@@ -80,6 +80,7 @@ class FilterSelector( html5.Div ):
 		super( FilterSelector, self ).__init__( *args, **kwargs )
 		self.modul = modul
 		self.currentTarget = None
+		self.defaultFilter = True
 		self.sinkEvent("onClick")
 
 	def onClick(self, event):
@@ -88,7 +89,7 @@ class FilterSelector( html5.Div ):
 		:param event:
 		:return:
 		"""
-		nextTarget=self.currentTarget
+		nextTarget = self.currentTarget
 		for c in self._children:
 			if c == self.currentTarget and not utils.doesEventHitWidgetOrChildren(event, c ):
 				c["class"].append("collapsed")
@@ -101,19 +102,22 @@ class FilterSelector( html5.Div ):
 				nextTarget = c
 
 		if self.currentTarget != nextTarget:
+			self.defaultFilter = False
 			self.currentTarget = nextTarget
 
 			if "reevaluate" in dir( nextTarget ):
 				nextTarget.reevaluate()
 
-		if ( "focus" in dir( self.currentTarget )
-		     and callable( self.currentTarget.focus ) ):
+		if ("focus" in dir(self.currentTarget)
+			and callable(self.currentTarget.focus)):
 			self.currentTarget.focus()
 
 	def onAttach(self):
-		super( FilterSelector, self ).onAttach()
+		super(FilterSelector, self).onAttach()
+
 		activeFilter = self.parent().parent().filterID
 		isSearchDisabled=False
+
 		if self.modul in conf["modules"].keys():
 			modulConfig = conf["modules"][self.modul]
 			if "views" in modulConfig.keys() and modulConfig["views"]:
@@ -121,14 +125,22 @@ class FilterSelector( html5.Div ):
 					self.appendChild( CompoundFilter( view, self.modul ) )
 			if "disabledFunctions" in modulConfig.keys() and modulConfig[ "disabledFunctions" ] and "fulltext-search" in modulConfig[ "disabledFunctions" ]:
 				isSearchDisabled = True
+
 		if not isSearchDisabled:
 			self.search = Search()
 			self.search["class"].append("collapsed")
 			self.appendChild(self.search)
 			self.search.startSearchEvent.register( self )
 
+	def onDetach(self):
+		if not self.defaultFilter:
+			self.onStartSearch()
 
-	def onStartSearch(self, searchTxt):
+		super(FilterSelector, self).onDetach()
+
+	def onStartSearch(self, searchTxt = None):
+		self.defaultFilter = not searchTxt
+
 		if self.modul in conf["modules"].keys():
 			modulConfig = conf["modules"][self.modul]
 			if "filter" in modulConfig.keys():
@@ -145,12 +157,8 @@ class FilterSelector( html5.Div ):
 
 				self.applyFilter( filter, -1, "" )
 
-
 	def setView(self, btn):
 		self.applyFilter( btn.destView["filter"], btn.destView["__id"], btn.destView["name"]  )
 
-
 	def applyFilter(self, filter, filterID, filterName):
 		self.parent().parent().setFilter( filter, filterID, filterName )
-		#self.parent().parent().sideBar.setWidget( type(self)( self.modul ) )
-

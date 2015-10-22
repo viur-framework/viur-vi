@@ -329,6 +329,11 @@ class ListPreviewInlineAction( html5.ext.Button ):
 			and conf["modules"][module]["disableInternalPreview"]):
 			return
 
+		# If there is already something in the sidebar, don't show the internal preview!
+		if (self.parent().parent().sideBar.getWidget()
+			and not isinstance(self.parent().parent().sideBar.getWidget(), InternalPreview)):
+			return
+
 		# Show internal preview when one entry is selected; Else, remove sidebar widget if
 		# it refers to an existing, internal preview.
 		if len(selection)==1:
@@ -532,6 +537,7 @@ class ListSelectFilterAction( html5.ext.Button ):
 		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), *args, **kwargs )
 		self["class"] = "icon selectfilter"
 		self.urls = None
+		self.filterSelector = None
 
 	def onAttach(self):
 		super(ListSelectFilterAction,self).onAttach()
@@ -548,9 +554,12 @@ class ListSelectFilterAction( html5.ext.Button ):
 					self["disabled"] = True
 
 	def onClick(self, sender=None):
-		#if self.parent().parent().isSelector:
-		#	return
-		self.parent().parent().sideBar.setWidget( FilterSelector( self.parent().parent().modul ) )
+		if isinstance(self.parent().parent().sideBar.getWidget(), FilterSelector):
+			self.parent().parent().sideBar.setWidget(None)
+			self.filterSelector = None
+		else:
+			self.filterSelector = FilterSelector(self.parent().parent().modul)
+			self.parent().parent().sideBar.setWidget(self.filterSelector)
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
