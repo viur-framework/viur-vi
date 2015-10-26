@@ -105,7 +105,7 @@ class CsvExport(Div):
 
 		count = 0
 		for key, bone in self._structure:
-			if bone["visible"]:
+			if bone["visible"] and ("params" not in bone or bone["params"] is None or "ignoreForCsvExport" not in bone["params"] or not bone["params"]["ignoreForCsvExport"]):
 				self.columns.append(str(bone["descr"]))
 				self.column_keys[key] = count
 				count += 1
@@ -193,8 +193,9 @@ class CsvExport(Div):
 			                       failureHandler=self.showErrorMsg))
 
 	def dataArrived(self):
-		print("exporting now...%d" % len(self.skelData))
-		if not self.skelData:
+		lenData= len(self.skelData)
+		print("exporting now...%d" % lenData)
+		if lenData == 0:
 			return
 
 		current_lang = conf["currentlanguage"]
@@ -204,12 +205,10 @@ class CsvExport(Div):
 			for aoption in self.lang_select._children:
 				if aoption["selected"]:
 					export_lang = aoption["value"]
-
 		encoding = "iso-8859-15"
 		for aoption in self.encoding_select._children:
 			if aoption["selected"]:
 				encoding = aoption["value"]
-
 		try:
 			if export_lang != current_lang:
 				conf["currentlanguage"] = export_lang
@@ -232,6 +231,7 @@ class CsvExport(Div):
 				resStr += line
 
 			tmpA = A()
+			self.appendChild(tmpA)
 			encFunc = eval("encodeURIComponent")
 			escapeFunc = eval("escape")
 			if encoding == "utf-8":
@@ -241,15 +241,12 @@ class CsvExport(Div):
 			else:
 				raise ValueError("unknown encoding: %s" % encoding)
 			tmpA["download"] = "export-%s-%s-%s-%s.csv" % (self.module, export_lang, encoding, datetime.now().strftime("%Y%m%d%H%M"))
-			self.appendChild(tmpA)
 			tmpA.element.click()
 			conf["mainWindow"].removeWidget(self)
-		except:
+		except Exception, err:
 			print("ERROR OCCURED...")
-
 		finally:
 			conf["currentlanguage"] = current_lang
-			# print("exporting finished")
 
 	def onFinished(self, req):
 		if self.request.isIdle():
