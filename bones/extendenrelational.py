@@ -1,13 +1,44 @@
 # -*- coding: utf-8 -*-
 
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from utils import formatString
 from widgets.list import ListWidget
 from widgets.edit import InternalEdit
 from config import conf
 from i18n import translate
+
+
+class ExtendedRelationalBoneExtractor( object ):
+	cantSort = True
+	def __init__(self, modul, boneName, structure):
+		super(ExtendedRelationalBoneExtractor, self).__init__()
+		self.format = "$(dest.name)"
+		if "format" in structure[boneName].keys():
+			self.format = structure[boneName]["format"]
+		self.modul = modul
+		self.structure = structure
+		self.boneName = boneName
+
+	def render(self, data, field ):
+		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
+		if field in data.keys():
+			val = data[field]
+		else:
+			val = ""
+		relStructList = self.structure[self.boneName]["using"]
+		relStructDict = { k:v for k,v in relStructList }
+		try:
+			if isinstance(val,list):
+				val = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["id"]) for x in val] )
+			elif isinstance(val, dict):
+				val = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["id"]
+		except:
+			#We probably received some garbage
+			val = ""
+		return val
+
 
 class ExtendedRelationalViewBoneDelegate( object ):
 	cantSort = True
@@ -349,3 +380,4 @@ def CheckForExtendedRelationalBoneSelection( modulName, boneName, skelStructure,
 editBoneSelector.insert( 5, CheckForExtendedRelationalBoneSelection, ExtendedRelationalSelectionBone)
 viewDelegateSelector.insert( 5, CheckForExtendedRelationalBoneSelection, ExtendedRelationalViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedRelationalSearch.canHandleExtension, ExtendedRelationalSearch )
+extractorDelegateSelector.insert(4, CheckForExtendedRelationalBoneSelection, ExtendedRelationalBoneExtractor)
