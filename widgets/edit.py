@@ -402,12 +402,12 @@ class EditWidget( html5.Div ):
 	def doCloneHierarchy(self, sender=None ):
 		if self.applicationType == EditWidget.appHierarchy:
 			NetworkService.request( self.modul, "clone",
-		                            { "from_repo" : self.node, "to_repo" : self.node,
-		                              "from_parent" : self.clone_of, "to_parent" : self.key },
+		                            { "fromRepo" : self.node, "toRepo" : self.node,
+		                              "fromParent" : self.clone_of, "toParent" : self.key },
 		                                secure=True, successHandler=self.cloneComplete )
 		else:
 			NetworkService.request( conf[ "modules" ][ self.modul ][ "rootNodeOf" ], "clone",
-		                            { "from_repo" : self.clone_of, "to_repo" : self.key },
+		                            { "fromRepo" : self.clone_of, "toRepo" : self.key },
 		                                secure=True, successHandler=self.cloneComplete )
 
 	def cloneComplete(self, request):
