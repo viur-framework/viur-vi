@@ -1,4 +1,4 @@
-import html5
+import html5, utils
 from network import NetworkService
 from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
@@ -247,11 +247,17 @@ class ListPreviewAction( html5.Span ):
 
 	def rebuildCB(self, *args, **kwargs):
 		self.urlCb.element.innerHTML = ""
+
+		if not isinstance(self.urls, dict):
+			self.urlCb["style"]["display"] = "none"
+			return
+
 		for name,url in self.urls.items():
 			o = html5.Option()
 			o["value"] = url
 			o.appendChild(html5.TextNode(name))
 			self.urlCb.appendChild(o)
+
 		if len( self.urls.keys() ) == 1:
 			self.urlCb["style"]["display"] = "none"
 		else:
@@ -273,16 +279,28 @@ class ListPreviewAction( html5.Span ):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		if len( selection )>0:
-			if len( self.urls.keys() )==1:
+
+		for entry in selection:
+			if isinstance(self.urls, str):
+				newUrl = self.urls
+			elif len(self.urls.keys()) == 1:
 				newUrl = self.urls.values()[0]
 			else:
 				newUrl = self.urlCb["options"].item(self.urlCb["selectedIndex"]).value
-			newUrl = newUrl.replace("{{id}}",selection[0]["id"]).replace("{{modul}}", self.parent().parent().modul )
-			if "'" in newUrl:
-				return
-			print( """var win=window.open('"""+newUrl+"""', 'ViPreview');""" )
-			eval("""var win=window.open('"""+newUrl+"""', 'ViPreview');""")
+
+			print(newUrl)
+
+			newUrl = newUrl \
+						.replace( "{{modul}}", self.parent().parent().modul)\
+							.replace("{{module}}", self.parent().parent().modul)
+
+			for k, v in entry.items():
+				newUrl = newUrl.replace("{{%s}}" % k, v)
+
+			newUrl = newUrl.replace("'", "\\'")
+
+			print(newUrl)
+			eval("""window.open('"""+newUrl+"""', 'ViPreview');""")
 			#widget = Preview( self.urls, selection[0], self.parent().parent().modul )
 			#conf["mainWindow"].stackWidget( widget )
 
