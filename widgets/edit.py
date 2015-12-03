@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import html5
+import html5, utils
 from html5.a import A
 from html5.form import Fieldset
 from html5.ext import YesNoDialog
+
 from network import NetworkService
 from config import conf
 from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
 from priorityqueue import protocolWrapperInstanceSelector
 from widgets.actionbar import ActionBar
-import utils
+from logics import viurLogics
 from i18n import translate
-
 
 class InvalidBoneValueException(ValueError):
 	pass
@@ -28,6 +28,7 @@ class InternalEdit( html5.Div ):
 		self.form = html5.Form()
 		self.appendChild(self.form)
 		self.renderStructure(readOnly=readOnly)
+
 		if values:
 			self.unserialize( values )
 
@@ -270,7 +271,7 @@ class EditWidget( html5.Div ):
 			self.clone_of = None
 
 		# End santy-checks
-		self.editIdx = EditWidget.__editIdx_ #Iternal counter to ensure unique ids
+		self.editIdx = EditWidget.__editIdx_ #Internal counter to ensure unique ids
 		EditWidget.__editIdx_ += 1
 		self.applicationType = applicationType
 		self.key = key
@@ -280,6 +281,7 @@ class EditWidget( html5.Div ):
 		self.bones = {}
 		self.closeOnSuccess = False
 		self.logaction = logaction
+		self.logic = viurLogics()
 
 		self._lastData = {} #Dict of structure and values received
 		if hashArgs:
@@ -301,6 +303,24 @@ class EditWidget( html5.Div ):
 		self.appendChild(self.form)
 		self.actionbar.setActions(["save.close","save.continue","reset"])
 		self.reloadData()
+		self.sinkEvent("onChange")
+
+	def performLogics(self):
+		fields = {}
+		for widget in self.bones.values():
+			fields.update(widget.serializeForPost())
+
+		for key, desc in self.dataCache["structure"]:
+			if desc.get("params") and desc["params"]:
+				visibleIf = desc["params"].get("visibleIf")
+
+				if self.logic.run(visibleIf, fields):
+					self.containers[key].show()
+				else:
+					self.containers[key].hide()
+
+	def onChange(self, event):
+		self.performLogics()
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -492,6 +512,7 @@ class EditWidget( html5.Div ):
 		#Clear the UI
 		self.clear()
 		self.bones = {}
+		self.containers = {}
 		self.actionbar.resetLoadingState()
 		self.dataCache = data
 
@@ -589,6 +610,7 @@ class EditWidget( html5.Div ):
 			#self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget
+			self.containers[ key ] = containerDiv
 
 		if len(fieldSets)==1:
 			for (k,v) in fieldSets.items():
@@ -612,6 +634,8 @@ class EditWidget( html5.Div ):
 
 		if hasMissing and not self.wasInitialRequest:
 			conf["mainWindow"].log("warning",translate("Could not save entry!"))
+
+		self.performLogics()
 
 	def unserialize(self, data):
 		"""

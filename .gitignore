@@ -10,3 +10,9 @@ output
 *.iml
 public/vi_custom.less
 
+pynetree/.hg
+pynetree/.hgignore
+pynetree/*.py
+
+
+
