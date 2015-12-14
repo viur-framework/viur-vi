@@ -133,6 +133,6 @@ lngDe = {
 	"{count} orders had been successfully canceled.": u"{count} Bestellungen wurden erfolgreich storniert.",
 	"Failed to cancel order": u"Stornierung der Bestellung fehlgeschlagen",
 	"Language selection": u"Sprachauswahl",
-	"Encoding": u"Zeichensatz"
+	"Encoding": u"Zeichensatz",
 	"and {count} more": u"Und {count} weitere"
 }
