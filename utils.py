@@ -28,6 +28,7 @@ def formatString( format, skelStructure, data, prefix=None, unescape=False ):
 	:return: The traversed string with the replaced values.
 	:rtype: str
 	"""
+
 	def chooseLang( value, prefs, key ): #FIXME: Copy&Paste from bones/string
 		"""
 			Tries to select the best language for the current user.
@@ -89,7 +90,11 @@ def formatString( format, skelStructure, data, prefix=None, unescape=False ):
 		elif isinstance( data[ key ], list ) and len( data[ key ] )>0 and isinstance( data[ key ][0], dict) :
 			res = formatString( res, skelStructure, data[key][0], prefix + [key] )
 		else:
-			res = res.replace( "$(%s)" % (".".join( prefix + [key] ) ), str(data[key]) )
+			tok = key.split(".")
+			if "." in key and "$(%s)" % tok[0] in res and tok[1] == conf["currentlanguage"]:
+				res = res.replace("$(%s)" % tok[0], str(data[key]))
+			else:
+				res = res.replace( "$(%s)" % (".".join( prefix + [key] ) ), str(data[key]) )
 
 	#Check for translated top-level bones
 	if not prefix:
@@ -131,7 +136,7 @@ def doesEventHitWidgetOrChildren( event, widget ):
 	return( False )
 
 def getImagePreview( data ):
-	if "mimetype" in data.keys() and isinstance(data["mimetype"], str) and data[ "mimetype" ].startswith("image/svg"):
+	if "mimetype" in data.keys() and isinstance(data["mimetype"], str) and data["mimetype"].startswith("image/svg"):
 		return "/file/download/%s" % data["dlkey"]
 	elif "servingurl" in data.keys():
 		if data["servingurl"]:
