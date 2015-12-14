@@ -21,7 +21,7 @@ def translate( key, **kwargs ):
 	"""
 	def processTr( inStr, **kwargs ):
 		for k,v in kwargs.items():
-			inStr = inStr.replace("{%s}" % k, v)
+			inStr = inStr.replace("{%s}" % k, str(v))
 		return( inStr )
 	#assert _currentLanguage is not None and len(_currentLanguage)==2 #FIXME: Fails for en-US
 	if _currentLanguage in _runtimeTranslations.keys():

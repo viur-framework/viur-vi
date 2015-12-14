@@ -8,6 +8,7 @@ from utils import formatString
 from widgets.list import ListWidget
 from widgets.edit import InternalEdit
 from config import conf
+from i18n import translate
 
 
 class ExtendedRelationalViewBoneDelegate( object ):
@@ -31,13 +32,17 @@ class ExtendedRelationalViewBoneDelegate( object ):
 		relStructDict = { k:v for k,v in relStructList }
 		try:
 			if isinstance(val,list):
-				val = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["id"]) for x in val] )
+				if len(val)<5:
+					res = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["id"]) for x in val] )
+				else:
+					res = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["id"]) for x in val[:4]] )
+					res += " "+translate("and {count} more",count=len(val)-4)
 			elif isinstance(val, dict):
-				val = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["id"]
+				res = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["id"]
 		except:
 			#We probably received some garbage
-			val = ""
-		return( html5.Label( val ) )
+			res = ""
+		return( html5.Label( res ) )
 
 class ExtendedRelationalSelectionBoneEntry( html5.Div ):
 	"""

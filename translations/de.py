@@ -121,5 +121,6 @@ lngDe = {
 	"Mark canceled": u"Stornieren",
 	"Do you really want to cancel {count} orders?": u"Möchten Sie wirklich {count} Bestellungen stornieren?",
 	"{count} orders had been successfully canceled.": u"{count} Bestellungen wurden erfolgreich storniert.",
-	"Failed to cancel order": u"Stornierung der Bestellung fehlgeschlagen"
+	"Failed to cancel order": u"Stornierung der Bestellung fehlgeschlagen",
+	"and {count} more": u"Und {count} weitere"
 }
