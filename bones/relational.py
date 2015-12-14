@@ -93,12 +93,18 @@ class RelationalViewBoneDelegate( object ):
 			val = ""
 
 		if isinstance(val,list):
-			val = ", ".join([(formatString(self.format, self.structure, x, unescape = True) or x["id"])
-			                    for x in val])
+			if len(val)<5:
+				res = ", ".join( [ (formatString(self.format, self.structure, x, unescape= True) or x["id"]) for x in val] )
+			else:
+				res = ", ".join( [ (formatString(self.format, self.structure, x, unescape= True) or x["id"]) for x in val[:4]] )
+				res += " "+translate("and {count} more",count=len(val)-4)
+			#val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
 		elif isinstance(val, dict):
-			val = formatString(self.format, self.structure, val, unescape = True ) or val["id"]
+			res = formatString(self.format,self.structure, val, unescape= True) or val["id"]
+			#val = val["name"] if "name" in val.keys() else val["id"]
+		return( html5.Label( res ) )
+		#return( formatString( self.format, self.structure, value ) ) FIXME!
 
-		return html5.Label( val )
 
 class RelationalSingleSelectionBone( html5.Div ):
 	"""

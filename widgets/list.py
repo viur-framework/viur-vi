@@ -24,9 +24,8 @@ class ListWidget( html5.Div ):
 			@type modul: string
 		"""
 		super( ListWidget, self ).__init__(  )
-
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
-
+		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
 		self.modul = modul
 		self.actionBar = ActionBar( modul, "list", currentAction="list" )
 		self.appendChild( self.actionBar )
@@ -156,7 +155,7 @@ class ListWidget( html5.Div ):
 		"""
 			Requests the next rows from the server and feed them to the table.
 		"""
-		if self._currentCursor:
+		if self._currentCursor and not self.isDetaching:
 			filter = self.filter.copy()
 			filter["amount"] = self._batchSize
 			filter["cursor"] = self._currentCursor
@@ -172,6 +171,7 @@ class ListWidget( html5.Div ):
 		NetworkService.registerChangeListener( self )
 
 	def onDetach(self):
+		self.isDetaching = True
 		super( ListWidget, self ).onDetach()
 		NetworkService.removeChangeListener( self )
 
