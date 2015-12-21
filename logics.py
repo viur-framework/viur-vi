@@ -35,23 +35,20 @@ class viurLogicsParser(Parser):
 						| comparison
 						;
 			comparison	: expr (("<" | ">" | "==" | ">=" | "<=" |
-									"<>" | "!=" | "in" | not_in |
-										"is" | is_not) expr)+ 					%emit
+									"<>" | "!=" | "in" | not_in) expr)+ 		%emit
 						| expr
 						;
 
 			not_in		: 'not' 'in' 											%emit;
-			is_not		: 'is' 'not' 											%emit;
 
 			expr		: add | sub | term;
 			add			: expr '+' term 										%emit;
 			sub			: expr '-' term 										%emit;
 
-			term		: mul | div | mod | idiv | factor;
+			term		: mul | div | mod | factor;
 			mul			: term '*' factor										%emit;
 			div			: term '/' factor										%emit;
 			mod			: term '%' factor										%emit;
-			idiv		: term '//' factor										%emit;
 
 			factor		: ("+"|"-"|"~") factor									%emit
 						| power
@@ -60,7 +57,10 @@ class viurLogicsParser(Parser):
 						| atom
 						;
 
-			atom		: NUMBER | strings | NAME | '(' test ')';
+			atom		: NUMBER | strings | NAME | list | '(' test ')'
+						;
+
+			list        : '[' (test (',' test)*) ']'                            %emit;
 			strings		: STRING+												%emit;
 			""")
 
@@ -88,7 +88,7 @@ class viurLogicsParser(Parser):
 
 class viurLogicsJS(viurLogicsParser):
 	"""
-	Compiler to turn viurLogics into JavaScript code.
+	Compiler to emit viurLogics code as JavaScript code.
 	"""
 	stack = None
 
@@ -133,17 +133,9 @@ class viurLogicsJS(viurLogicsParser):
 			l = self.stack.pop()
 
 			if op == "in":
-				pass #todo
-				#self.stack.append(l in r)
+				self.stack.append("viurLogicsIn(%s, %s)" % (l, r))
 			elif op == "not_in":
-				pass #todo
-				#self.stack.append(l not in r)
-			elif op == "is":
-				pass #todo
-				#self.stack.append(l is r)
-			elif op == "is_not":
-				pass #todo
-				#self.stack.append(l is not r)
+				self.stack.append("!viurLogicsIn(%s, %s)" % (l, r))
 			else:
 				if op == "<>":
 					op = "!="
@@ -153,32 +145,27 @@ class viurLogicsJS(viurLogicsParser):
 	def add(self, node):
 		r = self.stack.pop()
 		l = self.stack.pop()
-		self.stack.append("%s + %s" % (l, r))
+		self.stack.append("viurLogicsAdd(%s, %s)" % (l, r))
 
 	def sub(self, node):
 		r = self.stack.pop()
 		l = self.stack.pop()
-		self.stack.append("%s - %s" % (l, r))
+		self.stack.append("viurLogicsSub(%s, %s)" % (l, r))
 
 	def mul(self, node):
 		r = self.stack.pop()
 		l = self.stack.pop()
-		self.stack.append("%s * %s" % (l, r))
+		self.stack.append("viurLogicsMul(%s, %s)" % (l, r))
 
 	def div(self, node):
 		r = self.stack.pop()
 		l = self.stack.pop()
-		self.stack.append("%s / %s" % (l, r))
-
-	def idiv(self, node):
-		r = self.stack.pop()
-		l = self.stack.pop()
-		self.stack.append("%s // %s" % (l, r)) #todo
+		self.stack.append("viurLogicsDiv(%s, %s)" % (l, r))
 
 	def mod(self, node):
 		r = self.stack.pop()
 		l = self.stack.pop()
-		self.stack.append("%s %% %s" % (l, r))
+		self.stack.append("viurLogicsMod(%s, %s)" % (l, r))
 
 	def factor(self, node):
 		op = self.stack.pop()
@@ -186,11 +173,11 @@ class viurLogicsJS(viurLogicsParser):
 		if isinstance(op, (str, unicode)):
 			self.stack.append(op)
 		elif node[1][0][0] == "+":
-			self.stack.append(+op)
+			self.stack.append("+(%s)" % op)
 		elif node[1][0][0] == "-":
-			self.stack.append(-op)
+			self.stack.append("-(%s)" % op)
 		else:
-			self.stack.append(~op)
+			self.stack.append("~(%s)" % op)
 
 	def NAME(self, node):
 		if node[1] in ["True", "False"]:
@@ -207,6 +194,14 @@ class viurLogicsJS(viurLogicsParser):
 			s = str(self.stack.pop()[1:-1]) + s
 
 		self.stack.append("\"%s\"" % s)
+
+	def list(self, node):
+		l = []
+		for i in range(0, len(node[1])):
+			l.append(self.stack.pop())
+
+		l.reverse()
+		self.stack.append("Array(" + ", ".join(l) + ")")
 
 	def NUMBER(self, node):
 		if "." in node[1]:
@@ -296,11 +291,6 @@ class viurLogicsExecutor(viurLogicsParser):
 				self.stack.append(l in r)
 			elif op == "not_in":
 				self.stack.append(l not in r)
-			elif op == "is":
-				self.stack.append(l is r)
-			elif op == "is_not":
-				self.stack.append(l is not r)
-
 
 	def add(self, node):
 		l, r = self.getOperands(False)
@@ -321,10 +311,6 @@ class viurLogicsExecutor(viurLogicsParser):
 	def div(self, node):
 		l, r = self.getOperands()
 		self.stack.append(l / r)
-
-	def idiv(self, node):
-		l, r = self.getOperands()
-		self.stack.append(l // r)
 
 	def mod(self, node):
 		l, r = self.getOperands()
@@ -358,6 +344,13 @@ class viurLogicsExecutor(viurLogicsParser):
 
 		self.stack.append(s)
 
+	def list(self, node):
+		l = []
+		for i in range(0, len(node[1])):
+			l.append(self.stack.pop())
+
+		self.stack.push(l)
+
 	def NUMBER(self, node):
 		if "." in node[1]:
 			self.stack.append(float(node[1]))
@@ -370,4 +363,4 @@ if __name__ == "__main__":
 	#print(vile.execute("2 + 2 * 3 + (5.3 + 'hello' 'world')"))
 
 	viljs = viurLogicsJS()
-	print(viljs.compile("a if 1 and (2 or 3) else b == \"neun\""))
+	print(viljs.compile("a in [a, 9+2*3+5, c]"))
