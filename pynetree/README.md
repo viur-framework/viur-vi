@@ -49,7 +49,7 @@ The code below produces exactly the same parser with the same output as shown ab
 					mul: t '*' f %emit;
 					t: mul | f;
 					add: e '+' t %emit;
-					e %goal: add | t;""")
+					e: add | t;""")
 
 	p.dump(p.parse("1 + 2 * (3 + 4) + 5"))
 

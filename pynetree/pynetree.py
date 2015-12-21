@@ -64,12 +64,6 @@ class Parser(object):
 			Generates a unique symbol name from ``n``, by adding
 			single-quotation characters to the end of ``n`` until
 			no symbol with such a name exists in the grammar.
-
-			:param n: The basename to become unique.
-			:type n: str
-
-			:return: The next unique symbol name.
-			:rtype: str
 			"""
 			while n in self.tokens.keys():
 				n += "'"
@@ -128,7 +122,8 @@ class Parser(object):
 			# Construct a parser for the BNF input language.
 			bnfparser = Parser({
 				"inline": "( alternation )",
-				"symbol": ["IDENT", "STRING", "TOKEN", "REGEX", "inline", ""],
+				"symbol": ["IDENT", "STRING", "TOKEN", "REGEX", "CCL",
+						   	"inline", ""],
 				"mod_kleene": "symbol *",
 				"mod_positive": "symbol +",
 				"mod_optional": "symbol ?",
@@ -150,7 +145,7 @@ class Parser(object):
 
 				"termflag": ["EMIT", "IGNORE"],
 				"termflags": ["termflags % termflag", "% termflag"],
-				"termsym": ["STRING", "REGEX", "IDENT"],
+				"termsym": ["STRING", "REGEX", "CCL", "IDENT"],
 				"opt_ident": ["IDENT", ""],
 				"termdef": ["$ opt_ident termsym termflags? ;"],
 
@@ -163,6 +158,7 @@ class Parser(object):
 
 			bnfparser.ignore(r"\s+")
 			bnfparser.token("IDENT", r"\w+")
+			bnfparser.token("CCL", r"\[[^\]]*\]")
 			bnfparser.token("STRING", r"'[^']*'")
 			bnfparser.token("TOKEN", r'"[^"]*"')
 			bnfparser.token("REGEX", r"/(\\.|[^\\/])*/")
@@ -174,8 +170,8 @@ class Parser(object):
 			bnfparser.token("EMITNONE", "emitnone", static=True)
 			bnfparser.token("IGNORE", r"ignore|skip")
 
-			bnfparser.emit(["IDENT", "STRING", "TOKEN", "REGEX", "GOAL",
-							"EMIT", "NOEMIT", "EMITALL", "EMITNONE",
+			bnfparser.emit(["IDENT", "STRING", "TOKEN", "REGEX", "CCL",
+							"GOAL", "EMIT", "NOEMIT", "EMITALL", "EMITNONE",
 							"IGNORE"])
 			bnfparser.emit(["inline", "mod_kleene", "mod_positive",
 							"mod_optional", "production",  "nontermdef",
@@ -186,6 +182,10 @@ class Parser(object):
 				raise SyntaxError()
 
 			def buildSymbol(nonterm, symdef):
+				"""
+				AST traversal function for symbol level in the BNF-grammar.
+				"""
+
 				if symdef[0].startswith("mod_"):
 					sym = buildSymbol(nonterm, symdef[1][0])
 					sym = generateModifier(nonterm, sym,
@@ -204,6 +204,9 @@ class Parser(object):
 					sym = uniqueName(nonterm.upper())
 					self.token(sym, symdef[1][1:-1])
 					self.emits[sym] = None
+				elif symdef[0] == "CCL":
+					sym = uniqueName(nonterm.upper())
+					self.token(sym, symdef[1])
 				elif symdef[0] == "STRING":
 					sym = symdef[1][1:-1]
 				else:
@@ -212,6 +215,9 @@ class Parser(object):
 				return sym
 
 			def buildNonterminal(nonterm, prods, allEmit = False):
+				"""
+				AST traversal function for nonterminals in the BNF-grammar.
+				"""
 				if isinstance(prods, tuple):
 					prods = [prods]
 
@@ -286,6 +292,8 @@ class Parser(object):
 						dfn = d[1][1][1][1:-1]
 					elif kind == "REGEX":
 						dfn = re.compile(d[1][1][1][1:-1])
+					elif kind == "CCL":
+						dfn = re.compile(d[1][1][1])
 					else:
 						dfn = d[1][1][1]
 
@@ -309,7 +317,7 @@ class Parser(object):
 
 			# First nonterminal becomes goal, if not set by flags
 			if not self.goal:
-				for d in ast:
+				for d in reversed(ast):
 					if d[0] == "nontermdef":
 						self.goal = d[1][0][1]
 						break
@@ -319,6 +327,22 @@ class Parser(object):
 
 
 	def token(self, name, token = None, static = False):
+		"""
+		Adds a new terminal token ``name`` to the parser.
+
+		:param name: The unique, identifying name of the token to be added.
+		:type name: str
+
+		:param token: The token definition that is registered with ``name``.
+			If this is a str, and ``static`` is False, it will be interpreted
+			as regular expression. If omitted, ``token`` is set to ``name`` as
+			static string.
+		:type token: str | re | callable
+
+		:param static: If True, ``token`` is direcly taken as is, and not
+			interpreted as a regex str.
+		"""
+
 		if isinstance(name, list):
 			for n in name:
 				self.token(n, token=token, static=static)
@@ -337,11 +361,37 @@ class Parser(object):
 		self.tokens[name] = token
 
 	def ignore(self, token, static = False):
+		"""
+		Adds a new ignore terminal (whitespace) to the parser.
+
+		:param token: The token definition of the whitespace symbol.
+			If this is a str, and ``static`` is False, it will be interpreted
+			as regular expression.
+		:type token: str | re | callable
+
+		:param static: If True, ``token`` is direcly taken as is, and not
+			interpreted as a regex str.
+		"""
+
 		name = self.AUTOTOKNAME % len(self.tokens.keys())
 		self.token(name, token, static)
 		self.ignores.append(name)
 
 	def emit(self, name, action = None):
+		"""
+		Defines which symbols of the grammar shall be emitted in the
+		generated, abstract syntax tree (AST).
+
+		:param name: The name of the symbol that shall be emitted.
+			Alternatively, a list of symbol names is accepted.
+		:type name: str | list
+
+		:param action: An action that can be associated with the
+			emitter during AST traversal. This can be omitted, if
+			the traversal function is manually written.
+		:type action: callable
+		"""
+
 		if isinstance(name, list):
 			for n in name:
 				self.emit(n, action)
@@ -360,6 +410,16 @@ class Parser(object):
 		self.emits[name] = action
 
 	def error(self, s, pos):
+		"""
+		Print a parse error, that oocurs on input ``s`` at offset ``pos``.
+		This function can be overridden for specific operations.
+
+		:param s: The entire input string.
+		:type s: str
+
+		:param pos: The offset where the syntax error occurs.
+		:param pos: int | long
+		"""
 		line = s.count("\n", 0, pos) + 1
 
 		col = s.rfind("\n", 0, pos)
@@ -367,7 +427,22 @@ class Parser(object):
 
 		print("line %d, col %d: Parse error @ >%s<" % (line, col, s[pos:]))
 
-	def parse(self, s, reduce = True):
+	def parse(self, s):
+		"""
+		Parse ``s`` with the currently defined grammar.
+
+		This invokes the parser on a given input, and returns the
+		abstract syntax tree of this input on success.
+
+		The parser is implemented as a modified packrat parsing algorithm,
+		with support of left-recursive grammars.
+
+		:param s: The input string to be parsed.
+		:param s: str
+
+		:returns: Abstract syntax tree, None on error.
+		:rtype: list | tuple
+		"""
 
 		class Entry(object):
 			def __init__(self, res = None, pos = 0):
@@ -392,8 +467,14 @@ class Parser(object):
 		heads = {}
 
 		def apply(nterm, off):
+			"""
+			Apply nonterminal ``nterm`` on offset ``off``.
+			"""
 
 			def scantoken(sym, s, pos):
+				"""
+				Scan for a token that was previously defined with token().
+				"""
 				if isinstance(self.tokens[sym], str):
 					if s.startswith(self.tokens[sym], pos):
 						return len(self.tokens[sym])
@@ -411,7 +492,9 @@ class Parser(object):
 				return -1
 
 			def scanwhitespace(s, pos):
-				# Skip over whitespace
+				"""
+				Scan for whitespace that was previously defined by ignore().
+				"""
 				while True:
 					i = 0
 					for sym in self.ignores:
@@ -448,8 +531,8 @@ class Parser(object):
 							if res <= 0:
 								break
 
-							#if sym in self.emits.keys():
-							seq.append((sym, s[pos:pos + res]))
+							if sym in self.emits.keys():
+								seq.append((sym, s[pos:pos + res]))
 
 							pos += res
 
@@ -458,7 +541,6 @@ class Parser(object):
 							if not s[pos:].startswith(sym):
 								break
 
-							#seq.append((sym, s[pos : pos + len(sym)]))
 							pos += len(sym)
 
 						# Is nonterminal?
@@ -470,8 +552,12 @@ class Parser(object):
 
 							pos = res.pos
 
-							if res.res is not None:
+							if sym in self.emits.keys():
 								seq.append((sym, res.res))
+							elif isinstance(res.res, tuple):
+								seq.append(res.res)
+							elif isinstance(res.res, list):
+								seq += res.res
 
 						sym = None
 
@@ -479,7 +565,7 @@ class Parser(object):
 						pos = scanwhitespace(s, pos)
 
 						# Insert production-based node?
-						if (nterm, count) in self.emits:
+						if (nterm, count) in self.emits.keys():
 							seq = [((nterm, count), seq)]
 
 						return (seq, pos)
@@ -497,7 +583,7 @@ class Parser(object):
 					head.evaluate = list(head.involved)
 
 					res, pos = consume(nterm, pos)
-					if not res or pos <= entry.pos:
+					if res is None or pos <= entry.pos:
 						break
 
 					entry.res = res
@@ -528,7 +614,7 @@ class Parser(object):
 					return Entry(entry.res.seed, entry.pos)
 
 				entry.res = entry.res.seed
-				if not entry.res:
+				if entry.res is None:
 					return Entry(None, entry.pos)
 
 				return lrgrow(entry, head)
@@ -590,38 +676,10 @@ class Parser(object):
 
 			return None
 
-		res = (self.goal, ast.res)
-		return self.reduce(res) if reduce else res
+		if self.goal in self.emits.keys():
+			return (self.goal, ast.res)
 
-	def reduce(self, ast):
-		if ast is None:
-			return None
-
-		if isinstance(ast, tuple):
-			if isinstance(ast[1], list):
-				if ast[0] in self.emits.keys():
-					return (ast[0], self.reduce(ast[1]))
-
-				return self.reduce(ast[1])
-
-			elif ast[0] in self.emits.keys():
-				return ast
-		else:
-			ret = []
-
-			for i in ast:
-				res = self.reduce(i)
-
-				if res:
-					if isinstance(res, list):
-						ret.extend(res)
-					else:
-						ret.append(res)
-
-			if ret:
-				return ret
-
-		return None
+		return ast.res
 
 	def traverse(self, ast):
 		if isinstance(ast, tuple):
@@ -727,13 +785,7 @@ if __name__ == "__main__":
 	calc.emit("calc", calc.result)
 
 	# Parse into a parse tree
-	ptree = calc.parse("1 + 2 * ( 3 + 4 ) * 5 - 6 / 7", reduce=False)
-
-	print("--- entire parse tree ---")
-	calc.dump(ptree)
-
-	# Turn into an abstract syntax tree (ast)
-	ast = calc.reduce(ptree)
+	ast = calc.parse("1 + 2 * ( 3 + 4 ) * 5 - 6 / 7")
 
 	print("--- abstract syntax tree ---")
 	calc.dump(ast)
