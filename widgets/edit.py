@@ -11,7 +11,7 @@ from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
 from priorityqueue import protocolWrapperInstanceSelector
 from widgets.actionbar import ActionBar
-from logics import viurLogics
+from logics import viurLogicsExecutor
 from i18n import translate
 
 class InvalidBoneValueException(ValueError):
@@ -281,7 +281,7 @@ class EditWidget( html5.Div ):
 		self.bones = {}
 		self.closeOnSuccess = False
 		self.logaction = logaction
-		self.logic = viurLogics()
+		self.logic = viurLogicsExecutor()
 
 		self._lastData = {} #Dict of structure and values received
 		if hashArgs:
@@ -314,7 +314,7 @@ class EditWidget( html5.Div ):
 			if desc.get("params") and desc["params"]:
 				visibleIf = desc["params"].get("visibleIf")
 
-				if self.logic.run(visibleIf, fields):
+				if self.logic.execute(visibleIf, fields):
 					self.containers[key].show()
 				else:
 					self.containers[key].hide()
