@@ -349,7 +349,7 @@ class viurLogicsExecutor(viurLogicsParser):
 		for i in range(0, len(node[1])):
 			l.append(self.stack.pop())
 
-		self.stack.push(l)
+		self.stack.append(l)
 
 	def NUMBER(self, node):
 		if "." in node[1]:
@@ -359,8 +359,8 @@ class viurLogicsExecutor(viurLogicsParser):
 
 
 if __name__ == "__main__":
-	#vile = viurLogicsExecutor()
-	#print(vile.execute("2 + 2 * 3 + (5.3 + 'hello' 'world')"))
+	vile = viurLogicsExecutor()
+	print(vile.execute("a in [a, 9+2*3+5, c]"))
 
 	viljs = viurLogicsJS()
 	print(viljs.compile("a in [a, 9+2*3+5, c]"))
