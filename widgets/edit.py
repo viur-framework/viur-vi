@@ -320,10 +320,12 @@ class EditWidget( html5.Div ):
 
 					# Compile logic at first run
 					if isinstance(logic, str):
-						logic = desc["params"][event] = self.logic.compile(logic)
+						desc["params"][event] = self.logic.compile(logic)
 						if desc["params"][event] is None:
 							alert("viurLogics: Parse error in >%s<" % logic)
 							continue
+
+						logic = desc["params"][event]
 
 					res = self.logic.execute(logic, fields)
 					if res:
