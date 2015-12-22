@@ -312,12 +312,28 @@ class EditWidget( html5.Div ):
 
 		for key, desc in self.dataCache["structure"]:
 			if desc.get("params") and desc["params"]:
-				visibleIf = desc["params"].get("visibleIf")
+				for event in ["visibleIf"]: #add more here!
+					logic = desc["params"].get(event)
 
-				if self.logic.execute(visibleIf, fields):
-					self.containers[key].show()
-				else:
-					self.containers[key].hide()
+					if not logic:
+						continue
+
+					# Compile logic at first run
+					if isinstance(logic, str):
+						logic = desc["params"][event] = self.logic.compile(logic)
+						if desc["params"][event] is None:
+							alert("viurLogics: Parse error in >%s<" % logic)
+							continue
+
+					res = self.logic.execute(logic, fields)
+					if res:
+						if event == "visibleIf":
+							self.containers[key].show()
+						# add more here...
+					else:
+						if event == "visibleIf":
+							self.containers[key].hide()
+						# add more here...
 
 	def onChange(self, event):
 		self.performLogics()
