@@ -438,13 +438,13 @@ class EditWidget( html5.Div ):
 			if askHierarchyCloning and self.clone:
 				# for lists, which are rootNode entries of hierarchies, ask to clone entire hierarchy
 				if self.applicationType == EditWidget.appList and "rootNodeOf" in conf[ "modules" ][ self.modul ]:
-					self.key = data[ "values" ][ "id" ]
+					self.key = data[ "values" ][ "key" ]
 					YesNoDialog( translate( u"Do you want to clone the entire hierarchy?" ),
 				                    yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
 					return
 				# for cloning within a hierarchy, ask for cloning all subentries.
 				elif self.applicationType == EditWidget.appHierarchy:
-					self.key = data[ "values" ][ "id" ]
+					self.key = data[ "values" ][ "key" ]
 					YesNoDialog( translate( u"Do you want to clone all subentries of this item?" ),
 				                    yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
 					return

@@ -100,7 +100,7 @@ class HierarchyItem( html5.Li ):
 		"""
 			We get dragged, store our id inside the datatransfer object.
 		"""
-		event.dataTransfer.setData( "Text", self.data["id"] )
+		event.dataTransfer.setData( "Text", self.data["key"] )
 		event.stopPropagation()
 
 	def onDrop(self, event):
@@ -120,7 +120,7 @@ class HierarchyItem( html5.Li ):
 		if offset >= height * 0.20 and offset <= height * 0.80:
 			print( "insert into" )
 			# Just make the item a child of us
-			NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":self.data["id"]}, secure=True, modifies=True )
+			NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":self.data["key"]}, secure=True, modifies=True )
 		elif offset < height * 0.20:
 			#Insert this item *before* the current item
 			print( "insert before" )
@@ -304,7 +304,7 @@ class HierarchyWidget( html5.Div ):
 		if elem is None:
 			elem = self.entryFrame
 		for child in elem._children:
-			if child.data["id"]==key:
+			if child.data["key"]==key:
 				return( child )
 			tmp = self.itemForKey( key, child.ol )
 			if tmp is not None:
@@ -319,7 +319,7 @@ class HierarchyWidget( html5.Div ):
 			item.toggleExpand()
 			if not item.isLoaded:
 				item.isLoaded = True
-				self.loadNode( item.data["id"] )
+				self.loadNode( item.data["key"] )
 		else:
 			self.setCurrentItem( item )
 			self.selectionChangedEvent.fire( self, item )
@@ -369,7 +369,7 @@ class HierarchyWidget( html5.Div ):
 			for c in currNode._children[:]:
 				if isinstance( c, HierarchyItem ):
 					if c.isExpanded:
-						res.append( c.data["id"] )
+						res.append( c.data["key"] )
 					res.extend( collectExpandedNodes(c.ol) )
 			return( res )
 		self._expandedNodes = collectExpandedNodes( self.entryFrame )
@@ -409,11 +409,11 @@ class HierarchyWidget( html5.Div ):
 		for skel in data["skellist"]:
 			hi = HierarchyItem( self.modul, skel, data["structure"] )
 			ol.appendChild( hi )
-			if hi.data["id"] in self._expandedNodes:
+			if hi.data["key"] in self._expandedNodes:
 				hi.toggleExpand()
 				if not hi.isLoaded:
 					hi.isLoaded = True
-					self.loadNode( hi.data["id"] )
+					self.loadNode( hi.data["key"] )
 		if len(data["skellist"])==0: #No children received
 			if ol!=self.entryFrame:
 				ol.parent()["class"].append("has_no_childs")
