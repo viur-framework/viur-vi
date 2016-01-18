@@ -82,7 +82,7 @@ class EditAction( html5.ext.Button ):
 
 	def onSelectionActivated(self, table, selection ):
 		if not self.parent().parent().isSelector and len(selection)==1:
-			self.openEditor( selection[0]["id"] )
+			self.openEditor( selection[0]["key"] )
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -99,7 +99,7 @@ class EditAction( html5.ext.Button ):
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor( s["id"] )
+			self.openEditor( s["key"] )
 
 	def openEditor(self, id ):
 		pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
@@ -157,7 +157,7 @@ class CloneAction( html5.ext.Button ):
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor( s["id"] )
+			self.openEditor( s["key"] )
 
 	def openEditor(self, id ):
 		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
@@ -217,13 +217,13 @@ class DeleteAction( html5.ext.Button ):
 		if not selection:
 			return
 		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
-		d.deleteList = [x["id"] for x in selection]
+		d.deleteList = [x["key"] for x in selection]
 		d["class"].append( "delete" )
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
 		for x in deleteList:
-			NetworkService.request( self.parent().parent().modul, "delete", {"id": x}, secure=True, modifies=True )
+			NetworkService.request( self.parent().parent().modul, "delete", {"key": x}, secure=True, modifies=True )
 
 	def resetLoadingState(self):
 		pass
@@ -635,7 +635,7 @@ class RecurrentDateAction( html5.ext.Button ):
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor( s["id"] )
+			self.openEditor( s["key"] )
 
 	def openEditor(self, id ):
 		pane = Pane(translate("Recurrent Events"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
