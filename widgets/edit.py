@@ -518,10 +518,10 @@ class EditWidget( html5.Div ):
 				if cat=="default":
 					fs["class"].append("active")
 
-				#fs["id"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
+				#fs["key"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
 				fs["name"] = cat
 				legend = html5.Legend()
-				#legend["id"] = "vi_%s_%s_%s_%s_legend" % (self.editIdx,self.modul, "edit" if self.key else "add", cat)
+				#legend["key"] = "vi_%s_%s_%s_%s_legend" % (self.editIdx,self.modul, "edit" if self.key else "add", cat)
 				fshref = fieldset_A()
 				#fshref["href"] = "#vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
 				fshref.appendChild(html5.TextNode(cat) )

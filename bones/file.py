@@ -147,7 +147,7 @@ class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent.destModul, EditWidget.appTree, key=self.data[ "id" ], skelType="leaf"  )
+		edwg = EditWidget( self.parent.destModul, EditWidget.appTree, key=self.data[ "key" ], skelType="leaf"  )
 		pane.addWidget( edwg )
 
 class FileMultiSelectionBone( RelationalMultiSelectionBone ):
@@ -270,7 +270,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.destModul, EditWidget.appTree, key=self.selection[ "id" ], skelType="leaf"  )
+		edwg = EditWidget( self.destModul, EditWidget.appTree, key=self.selection[ "key" ], skelType="leaf"  )
 		pane.addWidget( edwg )
 
 	def setSelection(self, selection):
@@ -281,7 +281,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 		self.selection = selection
 		if selection:
-			NetworkService.request( self.destModul, "view/leaf/"+selection["id"],
+			NetworkService.request( self.destModul, "view/leaf/"+selection["key"],
 			                                successHandler=self.onSelectionDataAviable, cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
