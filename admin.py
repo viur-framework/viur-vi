@@ -250,8 +250,10 @@ class CoreWindow( html5.Div ):
 		"""
 		if not self.nextPane:
 			return
+
 		nextPane = self.nextPane
 		self.nextPane = None
+
 		self.focusPane( nextPane )
 
 	def focusPane(self, pane):
@@ -288,15 +290,23 @@ class CoreWindow( html5.Div ):
 	def removePane(self, pane):
 		assert pane in self.panes, "Cannot remove unknown pane!"
 		self.panes.remove( pane )
-		if pane==self.currentPane:
+		if pane == self.currentPane:
 			if self.panes:
 				self.focusPane( self.panes[-1])
 			else:
 				self.currentPane = None
+
+		if pane == self.nextPane:
+			if self.panes:
+				self.nextPane = self.panes[-1]
+			else:
+				self.nextPane = None
+
 		if pane.parent == self:
 			self.modulListUl.removeChild( pane )
 		else:
 			pane.parent.removeChildPane( pane )
+
 		self.viewport.removeChild( pane.widgetsDomElm )
 
 	def addWidget(self, widget, pane ):

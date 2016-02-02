@@ -209,7 +209,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 		format= "$(name)"
 		if "format" in skelStructure[ boneName ].keys():
 			format = skelStructure[ boneName ]["format"]
-		return( cls( modulName, boneName, readOnly, destModul=destModul, format=format, required=required ) )
+		return cls( modulName, boneName, readOnly, destModul=destModul, format=format, required=required )
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -221,8 +221,12 @@ class RelationalSingleSelectionBone( html5.Div ):
 		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.destModul, EditWidget.appList, key=self.selection[ "id" ] )
-		pane.addWidget( edwg )
+
+		try:
+			edwg = EditWidget( self.destModul, EditWidget.appList, key=self.selection[ "id" ] )
+			pane.addWidget( edwg )
+		except AssertionError:
+			conf["mainWindow"].removePane(pane)
 
 	def onRemove(self, *args, **kwargs):
 		self.setSelection( None )
@@ -261,7 +265,12 @@ class RelationalSingleSelectionBone( html5.Div ):
 		"""
 			Opens a ListWidget so that the user can select new values
 		"""
-		currentSelector = ListWidget( self.destModul, isSelector=True )
+
+		try:
+			currentSelector = ListWidget( self.destModul, isSelector=True )
+		except AssertionError:
+			return
+
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
@@ -501,7 +510,11 @@ class RelationalMultiSelectionBone( html5.Div ):
 		"""
 			Opens a ListWidget sothat the user can select new values
 		"""
-		currentSelector = ListWidget( self.destModul, isSelector=True )
+		try:
+			currentSelector = ListWidget( self.destModul, isSelector=True )
+		except AssertionError:
+			return
+
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
@@ -582,7 +595,11 @@ class ExtendedRelationalSearch( html5.Div ):
 		self.filterChangedEvent.fire()
 
 	def openSelector(self, *args, **kwargs):
-		currentSelector = ListWidget( self.extension["modul"], isSelector=True )
+		try:
+			currentSelector = ListWidget( self.extension["modul"], isSelector=True )
+		except AssertionError:
+			return
+
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 

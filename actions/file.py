@@ -35,14 +35,16 @@ class AddLeafAction( html5.ext.Button ):
 		self["class"] = "icon upload"
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="add.leaf"
 		correctHandler = handler == "tree.simple.file" or handler.startswith("tree.simple.file.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add-leaf" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add-leaf" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 
 	def onClick(self, sender=None):
@@ -85,13 +87,15 @@ class DownloadAction( html5.ext.Button ):
 				self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="download"
 		correctHandler = handler == "tree.simple.file" or handler.startswith("tree.simple.file.")
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "download" in conf["modules"][modul]["disabledFunctions"]
-		return( correctAction and correctHandler and not isDisabled )
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "download" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and not isDisabled
 
 
 	def onClick(self, sender=None):

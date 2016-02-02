@@ -8,7 +8,6 @@ from network import NetworkService
 from config import conf
 from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
-from priorityqueue import protocolWrapperInstanceSelector
 from widgets.actionbar import ActionBar
 import utils
 from i18n import translate
@@ -30,7 +29,6 @@ class InternalEdit( html5.Div ):
 		self.renderStructure(readOnly=readOnly)
 		if values:
 			self.unserialize( values )
-
 
 	def renderStructure(self, readOnly = False):
 		#Clear the UI
@@ -249,8 +247,13 @@ class EditWidget( html5.Div ):
 			@param hashArgs: Dictionary of parameters (usually supplied by the window.hash property) which should prefill values.
 			@type hashArgs: Dict
 		"""
+		if not modul in conf["modules"].keys():
+			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=modul))
+			assert modul in conf["modules"].keys()
+
 		super( EditWidget, self ).__init__( *args, **kwargs )
 		self.modul = modul
+
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
 		assert applicationType in [ EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree, EditWidget.appSingleton ] #Invalid Application-Type?
 
@@ -300,23 +303,28 @@ class EditWidget( html5.Div ):
 		self.form = html5.Form()
 		self.appendChild(self.form)
 		self.actionbar.setActions(["save.close","save.continue","reset"])
+
 		self.reloadData()
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
-			Removes all currently visible elements and displayes an error message
+			Removes all currently visible elements and displays an error message
 		"""
-		self.actionbar["style"]["display"] = "none"
-		self.form["style"]["display"] = "none"
-		errorDiv = html5.Div()
-		errorDiv["class"].append("error_msg")
+		try:
+			print(req.result)
+			print(NetworkService.decode(req))
+		except:
+			pass
+
 		if code and (code==401 or code==403):
 			txt = translate("Access denied!")
 		else:
-			txt = translate("An unknown error occurred!")
-		errorDiv["class"].append("error_code_%s" % (code or 0))
-		errorDiv.appendChild( html5.TextNode( txt ) )
-		self.appendChild( errorDiv )
+			txt = translate("An error occurred: {code}", code=code or 0)
+
+		conf["mainWindow"].log("error", txt)
+
+		if self.wasInitialRequest:
+			conf["mainWindow"].removeWidget(self)
 
 	def reloadData(self):
 		self.save( {} )
@@ -330,8 +338,8 @@ class EditWidget( html5.Div ):
 			@param data: The values to transmit or None to fetch a new, clean add/edit form.
 			@type data: Dict or None
 		"""
-
 		self.wasInitialRequest = not len(data)>0
+
 		if self.modul=="_tasks":
 			NetworkService.request( None, "/admin/%s/execute/%s" % ( self.modul, self.key ), data,
 			                        secure=len(data)>0,

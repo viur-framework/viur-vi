@@ -23,6 +23,10 @@ class ListWidget( html5.Div ):
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
 		"""
+		if not modul in conf["modules"].keys():
+			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=modul))
+			assert modul in conf["modules"].keys()
+
 		super( ListWidget, self ).__init__(  )
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests

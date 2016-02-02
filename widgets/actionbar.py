@@ -15,6 +15,8 @@ class ActionBar( html5.Div ):
 			@param appType: Type of the application (list, tree, hierarchy, ..)
 			@type appType: String
 		"""
+		assert modul in conf["modules"].keys()
+
 		super( ActionBar, self ).__init__(  )
 		self.actions = []
 		self.widgets = {}
