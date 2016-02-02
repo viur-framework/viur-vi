@@ -72,7 +72,7 @@
             innerXmlHttp.onreadystatechange = function () {
             if (innerXmlHttp.readyState == 4) {
 
-            if ( innerXmlHttp.responseText=="OKAY" ) {
+            if ( innerXmlHttp.responseText=="OKAY" || JSON.parse(innerXmlHttp.responseText) == "OKAY" ) {
             window.location.href="/vi";
             } else {
 								document.getElementById("logindatamsg").style.display='block';
