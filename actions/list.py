@@ -362,7 +362,7 @@ class ListPreviewInlineAction( html5.ext.Button ):
 
 		# Show internal preview when one entry is selected; Else, remove sidebar widget if
 		# it refers to an existing, internal preview.
-		if len(selection)==1:
+		if len(selection) == 1:
 			preview = InternalPreview( self.parent().parent().modul, self.parent().parent()._structure, selection[0])
 			self.parent().parent().sideBar.setWidget( preview )
 		else:

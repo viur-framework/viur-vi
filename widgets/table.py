@@ -1,6 +1,7 @@
 import html5, utils
 from event import EventDispatcher
 from html5.keycodes import *
+from network import DeferredCall
 
 class SelectTable( html5.Table ):
 	"""
@@ -345,6 +346,15 @@ class SelectTable( html5.Table ):
 			for row in self._selectedRows[:]:
 				self.removeSelectedRow( row )
 			self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
+
+		DeferredCall(self.focusRow, row)
+
+	def focusRow(self, row):
+		tr = self.getTrByIndex(row)
+		try:
+			tr.element.scrollIntoView()
+		except:
+			pass
 
 	def getCurrentSelection(self):
 		"""
