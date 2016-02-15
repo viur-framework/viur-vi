@@ -78,8 +78,10 @@ class RelationalViewBoneDelegate( object ):
 	def __init__(self, modul, boneName, structure):
 		super(RelationalViewBoneDelegate, self).__init__()
 		self.format = "$(name)"
+
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
+
 		self.modul = modul
 		self.structure = structure
 		self.boneName = boneName
@@ -98,12 +100,11 @@ class RelationalViewBoneDelegate( object ):
 			else:
 				res = ", ".join( [ (formatString(self.format, self.structure, x, unescape= True) or x["key"]) for x in val[:4]] )
 				res += " "+translate("and {count} more",count=len(val)-4)
-			#val = ", ".join( [(x["name"] if "name" in x.keys() else x["key"]) for x in val])
+
 		elif isinstance(val, dict):
 			res = formatString(self.format,self.structure, val, unescape= True) or val["key"]
-			#val = val["name"] if "name" in val.keys() else val["key"]
-		return( html5.Label( res ) )
-		#return( formatString( self.format, self.structure, value ) ) FIXME!
+
+		return html5.Label(res)
 
 
 class RelationalSingleSelectionBone( html5.Div ):
@@ -202,8 +203,8 @@ class RelationalSingleSelectionBone( html5.Div ):
 			required=True
 		else:
 			required=False
-		if "modul" in skelStructure[ boneName ].keys():
-			destModul = skelStructure[ boneName ][ "modul" ]
+		if "module" in skelStructure[ boneName ].keys():
+			destModul = skelStructure[ boneName ][ "module" ]
 		else:
 			destModul = skelStructure[ boneName ]["type"].split(".")[1]
 		format= "$(name)"
