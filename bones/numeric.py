@@ -33,14 +33,15 @@ class NumericViewBoneDelegate( object ):
 
 	def render( self, data, field ):
 		s =  conf[ "empty_value" ]
-
 		if field in data.keys():
-			prec = self.skelStructure[field].get( "precision" )
-			if prec and data[field] is not None:
-				s = ( "%." + str( prec ) + "f" ) % data[field]
-			else:
-				s = str( data[field] )
-
+			try:
+				prec = self.skelStructure[field].get( "precision" )
+				if prec and data[field] is not None:
+					s = ( "%." + str( prec ) + "f" ) % data[field]
+				else:
+					s = str( data[field] )
+			except:
+				return str(data[field])
 		return html5.Label( s )
 
 class NumericEditBone( html5.Input ):
