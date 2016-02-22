@@ -69,7 +69,7 @@ class NodeWidget( html5.Div ):
 		"""
 			Store our information in the drag's dataTransfer object
 		"""
-		event.dataTransfer.setData( "Text", "node/"+self.data["id"] )
+		event.dataTransfer.setData( "Text", "node/"+self.data["key"] )
 		event.stopPropagation()
 
 	def onDrop(self, event):
@@ -80,7 +80,7 @@ class NodeWidget( html5.Div ):
 			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
 		except:
 			return
-		NetworkService.request(self.modul,"move",{"skelType": nodeType, "id":srcKey, "destNode": self.data["id"]}, modifies=True, secure=True)
+		NetworkService.request(self.modul,"move",{"skelType": nodeType, "key":srcKey, "destNode": self.data["key"]}, modifies=True, secure=True)
 		event.preventDefault()
 		event.stopPropagation()
 
@@ -129,7 +129,7 @@ class LeafWidget( html5.Div ):
 		"""
 			Store our information in the drag's dataTransfer object
 		"""
-		event.dataTransfer.setData( "Text", "leaf/"+self.data["id"] )
+		event.dataTransfer.setData( "Text", "leaf/"+self.data["key"] )
 		event.stopPropagation()
 
 class SelectableDiv( html5.Div ):
@@ -343,7 +343,7 @@ class TreeWidget( html5.Div ):
 		if isinstance( item, self.nodeWidget ):
 			self.path.append( item.data )
 			self.rebuildPath()
-			self.setNode( item.data["id"] )
+			self.setNode( item.data["key"] )
 		elif isinstance(item, self.leafWidget):
 			if self.isSelector:
 				conf["mainWindow"].removeWidget(self)
@@ -359,7 +359,7 @@ class TreeWidget( html5.Div ):
 			if utils.doesEventHitWidgetOrParents( event, c ):
 				self.path = self.path[ : self.pathList._children.index( c )]
 				self.rebuildPath()
-				self.setNode( c.data["id"] )
+				self.setNode( c.data["key"] )
 				return
 
 	def onSetDefaultRootNode(self, req):
@@ -387,7 +387,7 @@ class TreeWidget( html5.Div ):
 			self.pathList.removeChild( c )
 		for p in [None]+self.path:
 			if p is None:
-				c = NodeWidget( self.modul, {"id":self.rootNode,"name":"root"}, [] )
+				c = NodeWidget( self.modul, {"key":self.rootNode,"name":"root"}, [] )
 				c["class"].append("is_rootnode")
 			else:
 				c = NodeWidget( self.modul, p, [] )

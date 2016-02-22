@@ -103,7 +103,7 @@ class EditAction( html5.ext.Button ):
 				skelType = "leaf"
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(selection[0])))
-			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=selection[0].data["id"], skelType=skelType)
+			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=selection[0].data["key"], skelType=skelType)
 			pane.addWidget( edwg )
 			pane.focus()
 
@@ -142,7 +142,7 @@ class EditAction( html5.ext.Button ):
 				skelType = "leaf"
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(s)))
-			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["id"], skelType=skelType, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
+			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["key"], skelType=skelType, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
 			pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -206,9 +206,9 @@ class DeleteAction( html5.ext.Button ):
 		deleteList = dialog.deleteList
 		for x in deleteList:
 			if isinstance(x,self.parent().parent().nodeWidget ):
-				NetworkService.request( self.parent().parent().modul, "delete/node", {"id": x.data["id"]}, secure=True, modifies=True )
+				NetworkService.request( self.parent().parent().modul, "delete/node", {"key": x.data["key"]}, secure=True, modifies=True )
 			elif isinstance(x,self.parent().parent().leafWidget ):
-				NetworkService.request( self.parent().parent().modul, "delete/leaf", {"id": x.data["id"]}, secure=True, modifies=True )
+				NetworkService.request( self.parent().parent().modul, "delete/leaf", {"key": x.data["key"]}, secure=True, modifies=True )
 
 	def resetLoadingState(self):
 		pass

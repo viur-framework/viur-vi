@@ -42,7 +42,7 @@ class ShopMarkAction( html5.ext.Button ):
 
 	def setPayed(self, order ):
 		NetworkService.request( self.parent().parent().modul, self.action,
-		                            { "id": order[ "id" ] }, secure=True,
+		                            { "key": order[ "key" ] }, secure=True,
 									successHandler=self.setPayedSucceeded,
 									failureHandler=self.setPayedFailed )
 
