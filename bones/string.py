@@ -27,6 +27,8 @@ class StringBoneExtractor(object):
 						if len(data[field].keys()) > 0:
 							resstr = data[field][data[field].keys()[0]].replace("&quot;", "'").replace(";", " ").replace('"', "'")
 				return '"%s"' % resstr
+			elif isinstance(data[field], list):
+				return ", ".join([item.replace("&quot;", "").replace(";", " ").replace('"', "'") for item in data[field]])
 			else:
 				return str('"%s"' % data[field].replace("&quot;", "").replace(";", " ").replace('"', "'"))
 		return conf["empty_value"]
@@ -64,17 +66,16 @@ class StringViewBoneDelegate( object ):
 
 		return self.getViewElement( conf[ "empty_value" ], False )
 
-	def getViewElement(self,labelstr,datafield):
+	def getViewElement(self, labelstr, datafield):
+		labelstr = html5.utils.unescape(labelstr)
+
 		if not datafield:
 			return( html5.Label(labelstr))
 		else:
 			aspan=html5.Span()
 			aspan.appendChild(html5.TextNode(labelstr))
-			aspan["Title"]=str(datafield)
-			return (aspan)
-
-def unescapeHtml( html ): #FIXME!
-	return( html )
+			aspan["Title"] = str(datafield)
+			return aspan
 
 class Tag( html5.Span ):
 	def __init__(self, tag, isEditMode, readonly=False, *args, **kwargs ):
@@ -96,6 +97,8 @@ class Tag( html5.Span ):
 	def removeMe(self, *args, **kwargs):
 		self.parent().removeChild( self )
 
+	def focus(self):
+		self.input.focus()
 
 class StringEditBone( html5.Div ):
 	def __init__(self, modulName, boneName, readOnly, multiple=False, languages=None, *args, **kwargs ):
@@ -117,6 +120,7 @@ class StringEditBone( html5.Div ):
 			self.buttonContainer["class"] = "languagebuttons"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
+			self.langBtns = {}
 
 			for lang in self.languages:
 				tagContainer = html5.Div()
@@ -124,9 +128,9 @@ class StringEditBone( html5.Div ):
 				tagContainer["class"].append("tagcontainer")
 				tagContainer["style"]["display"] = "none"
 
-				btn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
-				btn.lang = lang
-				self.buttonContainer.appendChild( btn )
+				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
+				langBtn.lang = lang
+				self.buttonContainer.appendChild(langBtn)
 
 				if not self.readOnly:
 					addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
@@ -136,6 +140,8 @@ class StringEditBone( html5.Div ):
 
 				self.languagesContainer.appendChild(tagContainer)
 				self.langEdits[lang] = tagContainer
+				self.langBtns[lang] = langBtn
+
 			self.setLang(self.languages[0])
 
 		elif self.languages and not self.multiple:
@@ -146,11 +152,12 @@ class StringEditBone( html5.Div ):
 			self.buttonContainer["class"] = "languagebuttons"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
+			self.langBtns = {}
 
 			for lang in self.languages:
-				btn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
-				btn.lang = lang
-				self.buttonContainer.appendChild( btn )
+				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
+				langBtn.lang = lang
+				self.buttonContainer.appendChild(langBtn)
 
 				inputField = html5.Input()
 				inputField["type"] = "text"
@@ -162,6 +169,7 @@ class StringEditBone( html5.Div ):
 
 				self.languagesContainer.appendChild( inputField )
 				self.langEdits[lang] = inputField
+				self.langBtns[lang] = langBtn
 
 			self.setLang(self.languages[0])
 
@@ -170,10 +178,13 @@ class StringEditBone( html5.Div ):
 			self.tagContainer = html5.Div()
 			self.tagContainer["class"].append("tagcontainer")
 			self.appendChild(self.tagContainer)
-			addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
-			addBtn.lang = None
-			addBtn["class"].append("icon new tag")
-			self.tagContainer.appendChild(addBtn)
+
+			if not self.readOnly:
+				addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
+				addBtn.lang = None
+				addBtn["class"].append("icon new tag")
+
+				self.tagContainer.appendChild(addBtn)
 
 		else: #not languages and not multiple:
 			self.input = html5.Input()
@@ -186,6 +197,7 @@ class StringEditBone( html5.Div ):
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
+
 		if boneName in skelStructure.keys():
 			if "multiple" in skelStructure[ boneName ].keys():
 				multiple = skelStructure[ boneName ]["multiple"]
@@ -197,15 +209,62 @@ class StringEditBone( html5.Div ):
 				languages = None
 		return( StringEditBone( modulName, boneName, readOnly, multiple=multiple, languages=languages ) )
 
-
 	def onLangBtnClicked(self, btn):
 		self.setLang( btn.lang )
+
+	def isFilled(self, lang=None):
+		if self.languages:
+			if lang is None:
+				lang = self.languages[0]
+
+			if self.multiple:
+				for item in self.langEdits[lang]._children:
+					if isinstance(item, Tag) and item.input["value"]:
+						return True
+
+				return False
+			else:
+				return bool(len(self.langEdits[lang]["value"]))
+
+		elif self.multiple:
+			for item in self.tagContainer._children:
+				if isinstance(item, Tag) and item.input["value"]:
+					return True
+
+			return False
+
+		return bool(len(self.input["value"]))
+
+	def _updateLanguageButtons(self):
+		if not self.languages:
+			return
+
+		for lang in self.languages:
+			if self.isFilled(lang):
+				self.langBtns[lang]["class"].remove("is_unfilled")
+				if not "is_filled" in self.langBtns[lang]["class"]:
+					self.langBtns[lang]["class"].append("is_filled")
+			else:
+				self.langBtns[lang]["class"].remove("is_filled")
+				if not "is_unfilled" in self.langBtns[lang]["class"]:
+					self.langBtns[lang]["class"].append("is_unfilled")
+
+			if lang == self.currentLanguage:
+				#self.langBtns[lang]["class"].remove("is_filled")
+				#self.langBtns[lang]["class"].remove("is_unfilled")
+
+				if not "is_active" in self.langBtns[lang]["class"]:
+					self.langBtns[lang]["class"].append("is_active")
+			else:
+				self.langBtns[lang]["class"].remove("is_active")
 
 	def setLang(self, lang):
 		if self.currentLanguage:
 			self.langEdits[ self.currentLanguage ]["style"]["display"] = "none"
+
 		self.currentLanguage = lang
 		self.langEdits[ self.currentLanguage ]["style"]["display"] = ""
+		self._updateLanguageButtons()
 
 		for btn in self.buttonContainer._children:
 			if btn.lang == lang:
@@ -215,7 +274,8 @@ class StringEditBone( html5.Div ):
 				btn[ "class" ].remove( "is_active" )
 
 	def onBtnGenTag(self, btn):
-		self.genTag( "", lang=btn.lang )
+		tag = self.genTag( "", lang=btn.lang )
+		tag.focus()
 
 	def unserialize( self, data, extendedErrorInformation=None ):
 		if not self.boneName in data.keys():
@@ -229,25 +289,27 @@ class StringEditBone( html5.Div ):
 				if lang in data.keys():
 					val = data[ lang ]
 					if isinstance( val, str ):
-						self.genTag( unescapeHtml(val), lang=lang )
+						self.genTag( html5.utils.unescape(val), lang=lang )
 					elif isinstance( val, list ):
 						for v in val:
-							self.genTag( unescapeHtml(v), lang=lang )
+							self.genTag( html5.utils.unescape(v), lang=lang )
 		elif self.languages and not self.multiple:
 			assert isinstance(data,dict)
 			for lang in self.languages:
 				if lang in data.keys() and data[ lang ]:
-					self.langEdits[ lang ]["value"] = unescapeHtml(str(data[ lang ]))
+					self.langEdits[ lang ]["value"] = html5.utils.unescape(str(data[ lang ]))
 				else:
 					self.langEdits[ lang ]["value"] = ""
 		elif not self.languages and self.multiple:
 			if isinstance( data,list ):
 				for tagStr in data:
-					self.genTag( unescapeHtml(tagStr) )
+					self.genTag( html5.utils.unescape(tagStr) )
 			else:
-				self.genTag( unescapeHtml(data) )
+				self.genTag( html5.utils.unescape(data) )
 		else:
-			self.input["value"] = unescapeHtml(str(data))
+			self.input["value"] = html5.utils.unescape(str(data))
+
+		self._updateLanguageButtons()
 
 	def serializeForPost(self):
 		res = {}
@@ -275,12 +337,13 @@ class StringEditBone( html5.Div ):
 		return( self.serialize( ) )
 
 	def genTag( self, tag, editMode=False, lang=None ):
-		tag =  Tag( tag, editMode, readonly = self.readOnly )
+		tag = Tag( tag, editMode, readonly = self.readOnly )
 		if lang is not None:
 			self.langEdits[ lang ].appendChild( tag )
 		else:
 			self.tagContainer.appendChild( tag )
 
+		return tag
 
 
 def CheckForStringBone(  modulName, boneName, skelStucture, *args, **kwargs ):

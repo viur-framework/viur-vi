@@ -8,7 +8,6 @@ from network import NetworkService
 from config import conf
 from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
-from priorityqueue import protocolWrapperInstanceSelector
 from widgets.actionbar import ActionBar
 import utils
 from i18n import translate
@@ -19,7 +18,7 @@ class InvalidBoneValueException(ValueError):
 
 class InternalEdit( html5.Div ):
 
-	def __init__(self, skelStructure, values=None, errorInformation=None ):
+	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False):
 		super( InternalEdit, self ).__init__()
 		self.editIdx = 1
 		self.skelStructure = skelStructure
@@ -27,12 +26,11 @@ class InternalEdit( html5.Div ):
 		self.errorInformation = errorInformation
 		self.form = html5.Form()
 		self.appendChild(self.form)
-		self.renderStructure()
+		self.renderStructure(readOnly=readOnly)
 		if values:
 			self.unserialize( values )
 
-
-	def renderStructure(self):
+	def renderStructure(self, readOnly = False):
 		#Clear the UI
 		#self.clear()
 		self.bones = {}
@@ -43,11 +41,22 @@ class InternalEdit( html5.Div ):
 		currRow = 0
 		hasMissing = False
 		for key, bone in self.skelStructure:
-			if bone["visible"]==False:
+
+			#Skip over invisible bones
+			if not bone["visible"]:
 				continue
+
+			#Enforcing readOnly mode
+			if readOnly:
+				tmpDict[key]["readonly"] = True
+
 			cat = "default"
-			if "params" in bone.keys() and isinstance(bone["params"],dict) and "category" in bone["params"].keys():
+
+			if ("params" in bone.keys()
+			    and isinstance(bone["params"],dict)
+			    and "category" in bone["params"].keys()):
 				cat = bone["params"]["category"]
+
 			if not cat in fieldSets.keys():
 				fs = html5.Fieldset()
 				fs["class"] = cat
@@ -66,23 +75,30 @@ class InternalEdit( html5.Div ):
 				fs.appendChild(section)
 				fs._section = section
 				fieldSets[ cat ] = fs
+
 			if "params" in bone.keys() and bone["params"] and "category" in bone["params"].keys():
 				tabName = bone["params"]["category"]
 			else:
-				tabName = "Test"#QtCore.QCoreApplication.translate("EditWidget", "General")
+				tabName = "Test"
+
 			wdgGen = editBoneSelector.select( None, key, tmpDict )
 			widget = wdgGen.fromSkelStructure( None, key, tmpDict )
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat, key)
 			#widget["class"].append(key)
 			#widget["class"].append(bone["type"].replace(".","_"))
 			#self.prepareCol(currRow,1)
+
 			descrLbl = html5.Label(bone["descr"])
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, None, "internal", cat, key)
+
 			if bone["required"]:
 				descrLbl["class"].append("is_required")
-			if bone["required"] and (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
+
+			if (bone["required"]
+			    and (bone["error"] is not None
+			            or (self.errorInformation and key in self.errorInformation.keys()))):
 				descrLbl["class"].append("is_invalid")
 				if bone["error"]:
 					descrLbl["title"] = bone["error"]
@@ -90,38 +106,46 @@ class InternalEdit( html5.Div ):
 					descrLbl["title"] = self.errorInformation[ key ]
 				fieldSets[ cat ]["class"].append("is_incomplete")
 				hasMissing = True
+
 			if bone["required"] and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
 				descrLbl["class"].append("is_valid")
+
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
 				tmp = html5.Span()
 				tmp.appendChild(descrLbl)
 				tmp.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
 				descrLbl = tmp
+
 			containerDiv = html5.Div()
 			containerDiv.appendChild( descrLbl )
 			containerDiv.appendChild( widget )
 			fieldSets[ cat ]._section.appendChild( containerDiv )
+
 			containerDiv["class"].append("bone")
 			containerDiv["class"].append("bone_"+key)
 			containerDiv["class"].append( bone["type"].replace(".","_") )
+
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
 					containerDiv["class"].append(t)
+
 			#self["cell"][currRow][0] = descrLbl
 			#fieldSets[ cat ].appendChild( widget )
 			#self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget
+
 		if len(fieldSets)==1:
 			for (k,v) in fieldSets.items():
 				if not "active" in v["class"]:
 					v["class"].append("active")
+
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort( key=lambda x:x[0])
+
 		for k,v in tmpList:
 			self.form.appendChild( v )
 			v._section = None
-
 
 	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
 		"""
@@ -223,8 +247,13 @@ class EditWidget( html5.Div ):
 			@param hashArgs: Dictionary of parameters (usually supplied by the window.hash property) which should prefill values.
 			@type hashArgs: Dict
 		"""
+		if not modul in conf["modules"].keys():
+			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=modul))
+			assert modul in conf["modules"].keys()
+
 		super( EditWidget, self ).__init__( *args, **kwargs )
 		self.modul = modul
+
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
 		assert applicationType in [ EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree, EditWidget.appSingleton ] #Invalid Application-Type?
 
@@ -274,23 +303,28 @@ class EditWidget( html5.Div ):
 		self.form = html5.Form()
 		self.appendChild(self.form)
 		self.actionbar.setActions(["save.close","save.continue","reset"])
+
 		self.reloadData()
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
-			Removes all currently visible elements and displayes an error message
+			Removes all currently visible elements and displays an error message
 		"""
-		self.actionbar["style"]["display"] = "none"
-		self.form["style"]["display"] = "none"
-		errorDiv = html5.Div()
-		errorDiv["class"].append("error_msg")
+		try:
+			print(req.result)
+			print(NetworkService.decode(req))
+		except:
+			pass
+
 		if code and (code==401 or code==403):
 			txt = translate("Access denied!")
 		else:
-			txt = translate("An unknown error occurred!")
-		errorDiv["class"].append("error_code_%s" % (code or 0))
-		errorDiv.appendChild( html5.TextNode( txt ) )
-		self.appendChild( errorDiv )
+			txt = translate("An error occurred: {code}", code=code or 0)
+
+		conf["mainWindow"].log("error", txt)
+
+		if self.wasInitialRequest:
+			conf["mainWindow"].removeWidget(self)
 
 	def reloadData(self):
 		self.save( {} )
@@ -304,8 +338,8 @@ class EditWidget( html5.Div ):
 			@param data: The values to transmit or None to fetch a new, clean add/edit form.
 			@type data: Dict or None
 		"""
-
 		self.wasInitialRequest = not len(data)>0
+
 		if self.modul=="_tasks":
 			NetworkService.request( None, "/admin/%s/execute/%s" % ( self.modul, self.key ), data,
 			                        secure=len(data)>0,
@@ -376,12 +410,12 @@ class EditWidget( html5.Div ):
 	def doCloneHierarchy(self, sender=None ):
 		if self.applicationType == EditWidget.appHierarchy:
 			NetworkService.request( self.modul, "clone",
-		                            { "from_repo" : self.node, "to_repo" : self.node,
-		                              "from_parent" : self.clone_of, "to_parent" : self.key },
+		                            { "fromRepo" : self.node, "toRepo" : self.node,
+		                              "fromParent" : self.clone_of, "toParent" : self.key },
 		                                secure=True, successHandler=self.cloneComplete )
 		else:
 			NetworkService.request( conf[ "modules" ][ self.modul ][ "rootNodeOf" ], "clone",
-		                            { "from_repo" : self.clone_of, "to_repo" : self.key },
+		                            { "fromRepo" : self.clone_of, "toRepo" : self.key },
 		                                secure=True, successHandler=self.cloneComplete )
 
 	def cloneComplete(self, request):
@@ -395,7 +429,7 @@ class EditWidget( html5.Div ):
 		conf["mainWindow"].log("success",logDiv)
 		self.closeOrContinue()
 
-	def setData( self, request=None, data=None, ignoreMissing=False, askHierarchyCloning=True ):
+	def setData(self, request=None, data=None, ignoreMissing=False, askHierarchyCloning=True):
 		"""
 		Rebuilds the UI according to the skeleton received from server
 
@@ -429,7 +463,18 @@ class EditWidget( html5.Div ):
 
 			if "values" in data.keys() and "name" in data["values"].keys():
 				spanMsg = html5.Span()
-				spanMsg.appendChild( html5.TextNode( str(data["values"]["name"]) ))
+
+				name = data["values"]["name"]
+				if isinstance(name, dict):
+					if conf["currentlanguage"] in name.keys():
+						name = name[conf["currentlanguage"]]
+					else:
+						name = name.values()
+
+				if isinstance(name, list):
+					name = ", ".join(name)
+
+				spanMsg.appendChild(html5.TextNode(str(html5.utils.unescape(name))))
 				spanMsg["class"].append("namespan")
 				logDiv.appendChild(spanMsg)
 
@@ -457,22 +502,30 @@ class EditWidget( html5.Div ):
 		self.bones = {}
 		self.actionbar.resetLoadingState()
 		self.dataCache = data
+
 		tmpDict = utils.boneListToDict( data["structure"] )
 		fieldSets = {}
 		currRow = 0
 		hasMissing = False
 
 		for key, bone in data["structure"]:
-			if bone["visible"]==False:
+			if not bone["visible"]:
 				continue
+
 			cat = "default"
-			if "params" in bone.keys() and isinstance(bone["params"],dict) and "category" in bone["params"].keys():
+
+			if ("params" in bone.keys()
+			    and isinstance(bone["params"], dict)
+			    and "category" in bone["params"].keys()):
 				cat = bone["params"]["category"]
+
 			if not cat in fieldSets.keys():
 				fs = html5.Fieldset()
 				fs["class"] = cat
+
 				if cat=="default":
 					fs["class"].append("active")
+
 				#fs["id"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
 				fs["name"] = cat
 				legend = html5.Legend()
@@ -486,62 +539,85 @@ class EditWidget( html5.Div ):
 				fs.appendChild(section)
 				fs._section = section
 				fieldSets[ cat ] = fs
+
 			if "params" in bone.keys() and bone["params"] and "category" in bone["params"].keys():
 				tabName = bone["params"]["category"]
 			else:
 				tabName = "Test"#QtCore.QCoreApplication.translate("EditWidget", "General")
+
 			wdgGen = editBoneSelector.select( self.modul, key, tmpDict )
 			widget = wdgGen.fromSkelStructure( self.modul, key, tmpDict )
-			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat, key)
+			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.modul,
+			                                            "edit" if self.key else "add", cat, key)
+
 			#widget["class"].append(key)
 			#widget["class"].append(bone["type"].replace(".","_"))
 			#self.prepareCol(currRow,1)
+
 			descrLbl = html5.Label(bone["descr"])
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
-			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, self.modul, "edit" if self.key else "add", cat, key)
+			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, self.modul,
+			                                                "edit" if self.key else "add", cat, key)
+			print(key, bone["required"], bone["error"])
 			if bone["required"]:
 				descrLbl["class"].append("is_required")
-			if bone["required"] and bone["error"] is not None:
-				descrLbl["class"].append("is_invalid")
-				descrLbl["title"] = bone["error"]
-				fieldSets[ cat ]["class"].append("is_incomplete")
-				hasMissing = True
-			if bone["required"] and bone["error"] is None and not self.wasInitialRequest:
-				descrLbl["class"].append("is_valid")
+
+				if bone["error"] is not None:
+					descrLbl["class"].append("is_invalid")
+					descrLbl["title"] = bone["error"]
+					fieldSets[ cat ]["class"].append("is_incomplete")
+					hasMissing = True
+				elif bone["error"] is None and not self.wasInitialRequest:
+					descrLbl["class"].append("is_valid")
+
 			if isinstance(bone["error"], dict):
-				widget.setExtendedErrorInformation( bone["error"] )
+				widget.setExtendedErrorInformation(bone["error"])
+
 			containerDiv = html5.Div()
 			containerDiv.appendChild( descrLbl )
 			containerDiv.appendChild( widget )
-			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
+
+			if ("params" in bone.keys()
+			    and isinstance(bone["params"], dict)
+			    and "tooltip" in bone["params"].keys()):
 				containerDiv.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
+
 			fieldSets[ cat ]._section.appendChild( containerDiv )
 			containerDiv["class"].append("bone")
 			containerDiv["class"].append("bone_"+key)
 			containerDiv["class"].append( bone["type"].replace(".","_") )
+
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
 					containerDiv["class"].append(t)
+
 			#self["cell"][currRow][0] = descrLbl
 			#fieldSets[ cat ].appendChild( widget )
 			#self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget
+
 		if len(fieldSets)==1:
 			for (k,v) in fieldSets.items():
 				if not "active" in v["class"]:
 					v["class"].append("active")
+
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort( key=lambda x:x[0])
+
 		for k,v in tmpList:
 			self.form.appendChild( v )
 			v._section = None
+
 		self.unserialize( data["values"] )
+
 		if self._hashArgs: #Apply the default values (if any)
 			self.unserialize( self._hashArgs )
 			self._hashArgs = None
+
 		self._lastData = data
+
 		if hasMissing and not self.wasInitialRequest:
 			conf["mainWindow"].log("warning",translate("Could not save entry!"))
 

@@ -14,7 +14,6 @@ class BaseBoneExtractor( object ):
 		self.modulName=modulName
 
 	def render( self, data, field ):
-		# print("StringBoneExtractor.render", data, field)
 		if field in data.keys():
 			return str(data[field])
 		return conf["empty_value"]

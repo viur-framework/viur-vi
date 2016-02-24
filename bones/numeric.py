@@ -42,6 +42,7 @@ class NumericViewBoneDelegate( object ):
 					s = str( data[field] )
 			except:
 				return str(data[field])
+
 		return html5.Label( s )
 
 class NumericEditBone( html5.Input ):

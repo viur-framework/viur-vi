@@ -5,7 +5,6 @@ from widgets import ListWidget
 from config import conf
 from pane import Pane
 from widgets.edit import EditWidget
-from widgets.list import ListWidgetPreview
 from i18n import translate
 
 class ListHandler( Pane ):
