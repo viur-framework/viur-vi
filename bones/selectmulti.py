@@ -58,41 +58,56 @@ class SelectMultiViewBoneDelegate( object ):
 
 class SelectMultiEditBone( html5.Div ):
 
-	def __init__(self, modulName, boneName,readOnly, values, sortBy="keys", *args, **kwargs ):
+	def __init__(self, modulName, boneName,readOnly, values, sortBy, valuesOrder, *args, **kwargs ):
 		super( SelectMultiEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self.values=values
-		tmpList = values.items()
-		if sortBy=="keys":
-			tmpList.sort( key=lambda x: x[0] ) #Sort by keys
-		else:
-			tmpList.sort( key=lambda x: x[1] ) #Values
-		for key, value in tmpList:
-			alabel=html5.Label()
-			acheckbox=html5.Input()
-			acheckbox["type"]="checkbox"
-			acheckbox["name"]=key
+		self.values = values
+
+		tmpValues = values.copy()
+
+		# Perform valuesOrder list
+		for key in valuesOrder:
+			if key in tmpValues.keys():
+				alabel = html5.Label()
+				acheckbox = html5.Input()
+				acheckbox["type"] = "checkbox"
+				acheckbox["name"] = key
+				alabel.appendChild(acheckbox)
+
+				aspan = html5.Span()
+				aspan.element.innerHTML = values[key]
+				alabel.appendChild(aspan)
+
+				self.appendChild(alabel)
+				del tmpValues[key]
+
+		tmpValues = tmpValues.items()
+		tmpValues.sort(key=lambda x: x[0] if sortBy == "keys" else x[1])
+
+		for key, value in tmpValues:
+			alabel = html5.Label()
+			acheckbox = html5.Input()
+			acheckbox["type"] = "checkbox"
+			acheckbox["name"] = key
 			alabel.appendChild(acheckbox)
-			aspan=html5.Span()
-			aspan.element.innerHTML=value
+
+			aspan = html5.Span()
+			aspan.element.innerHTML = value
 			alabel.appendChild(aspan)
+
 			self.appendChild(alabel)
+
 		if self.readOnly:
 			self["disabled"] = True
 
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		if "sortBy" in skelStructure[ boneName ].keys():
-			sortBy = skelStructure[ boneName ][ "sortBy" ]
-		else:
-			sortBy = "keys"
-		if "values" in skelStructure[ boneName ].keys():
-			values =skelStructure[ boneName ]["values"]
-		else:
-			values = {}
-		return( SelectMultiEditBone( modulName, boneName, readOnly, values, sortBy ) )
+		return SelectMultiEditBone(modulName, boneName,
+		                            skelStructure[boneName].get("readonly", False),
+		                            skelStructure[boneName].get("values", {}),
+									skelStructure[boneName].get("sortBy", "keys"),
+		                            skelStructure[boneName].get("valuesOrder", []))
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
