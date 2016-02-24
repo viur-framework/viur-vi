@@ -351,10 +351,7 @@ class SelectTable( html5.Table ):
 
 	def focusRow(self, row):
 		tr = self.getTrByIndex(row)
-		try:
-			tr.element.scrollIntoView()
-		except:
-			pass
+		# fixme: Re-implement maybe later?
 
 	def getCurrentSelection(self):
 		"""
