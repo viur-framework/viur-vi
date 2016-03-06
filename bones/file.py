@@ -131,7 +131,7 @@ class FileViewBoneDelegate(object):
 
 		return html5.Div()
 
-class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
+class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 	def __init__(self, *args, **kwargs):
 		super( FileMultiSelectionBoneEntry, self ).__init__( *args, **kwargs )
 		self["class"].append("fileentry")
@@ -203,18 +203,18 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 				break
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
-		self.setSelection( [x.data for x in selection if isinstance(x,LeafFileWidget)] )
+		self.setSelection( [{"dest": x.data} for x in selection if isinstance(x,LeafFileWidget)] )
 
 	def setSelection(self, selection):
 		"""
 			Set our current value to 'selection'
 			@param selection: The new entry that this bone should reference
-			@type selection: dict
+			@type selection: dict | list[dict]
 		"""
 		if selection is None:
 			return
 		for data in selection:
-			entry = FileMultiSelectionBoneEntry( self, self.destModul, data)
+			entry = FileMultiSelectionBoneEntry(self, self.destModul, data, using=None, errorInfo={})
 			self.addEntry( entry )
 
 class FileSingleSelectionBone( RelationalSingleSelectionBone ):
