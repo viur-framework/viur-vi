@@ -266,7 +266,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 				break
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
-		self.setSelection( [x.data for x in selection if isinstance(x,LeafFileWidget)][0] )
+		self.setSelection([{"dest": x.data for x in selection if isinstance(x,LeafFileWidget)}][0] )
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -289,7 +289,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 		self.selection = selection
 		if selection:
-			NetworkService.request( self.destModul, "view/leaf/"+selection["key"],
+			NetworkService.request( self.destModul, "view/leaf/"+selection["dest"]["key"],
 			                                successHandler=self.onSelectionDataAviable, cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
