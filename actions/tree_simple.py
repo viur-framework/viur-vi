@@ -15,14 +15,16 @@ class AddNodeAction( html5.ext.Button ):
 		self["class"] = "icon mkdir"
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="add.node"
 		correctHandler = handler == "tree.simple" or handler.startswith("tree.simple.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add-node" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add-node" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 
 	def onClick(self, sender=None):
@@ -73,7 +75,7 @@ class EditAction( html5.ext.Button ):
 			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			skelType = "leaf"
-			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=selection[0].data["id"], skelType=skelType)
+			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=selection[0].data["key"], skelType=skelType)
 			pane.addWidget( edwg )
 			pane.focus()
 
@@ -87,14 +89,16 @@ class EditAction( html5.ext.Button ):
 				self["disabled"]= True
 				self.isDisabled = True
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="edit"
 		correctHandler = handler == "tree.simple" or handler.startswith("tree.simple.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "edit" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
@@ -103,16 +107,16 @@ class EditAction( html5.ext.Button ):
 		for s in selection:
 			if isinstance(s,self.parent().parent().nodeWidget):
 				i = InputDialog( translate("Directory Name"), successHandler=self.editDir, value=s.data["name"] )
-				i.dirKey = s.data["id"]
+				i.dirKey = s.data["key"]
 				return
 			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane, focus=True )
 			skelType = "leaf"
-			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["id"], skelType=skelType)
+			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["key"], skelType=skelType)
 			pane.addWidget( edwg )
 
 	def editDir(self, dialog, dirName ):
-		NetworkService.request( self.parent().parent().modul, "edit/node", {"id": dialog.dirKey,"name": dirName}, secure=True, modifies=True)
+		NetworkService.request( self.parent().parent().modul, "edit/node", {"key": dialog.dirKey,"name": dirName}, secure=True, modifies=True)
 
 	def resetLoadingState(self):
 		pass

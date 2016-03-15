@@ -54,8 +54,10 @@ lngDe = {
 	"Clear":u"Löschen",
 	"New":u"Neu",
 	"Edit Text":u"Text bearbeiten",
-	"Access denied!":u"Zugriff Verweigert",
-	"An unknown error occurred!":u"Ein unbekannter Fehler ist aufgetreten",
+	"Access denied!":u"Zugriff verweigert",
+	"An unknown error occurred!":u"Es ist ein unbekannter Fehler aufgetreten",
+	"An error occurred: {code}":u"Es ist ein Fehler aufgetreten: {code}",
+	"The module '{module}' does not exist.": u"Es existiert kein Modul mit dem Namen '{module}'.",
 	"Redo the last undone action":u"Wiederholen",
 	"Undo the last action":u"Rückgängig",
 	"Bold":u"Fett",
@@ -132,7 +134,7 @@ lngDe = {
 	"Do you really want to cancel {count} orders?": u"Möchten Sie wirklich {count} Bestellungen stornieren?",
 	"{count} orders had been successfully canceled.": u"{count} Bestellungen wurden erfolgreich storniert.",
 	"Failed to cancel order": u"Stornierung der Bestellung fehlgeschlagen",
-
 	"Language selection": u"Sprachauswahl",
-	"Encoding": u"Zeichensatz"
+	"Encoding": u"Zeichensatz",
+	"and {count} more": u"Und {count} weitere"
 }

@@ -44,10 +44,10 @@ class RelationalBoneExtractor(object):
 				elif format in val:
 					val = html5.utils.unescape(str(val[format]))
 				elif val:
-					val = val["id"]
+					val = val["key"]
 
 			else:
-				val = val["id"]
+				val = val["key"]
 
 			return val
 
@@ -78,8 +78,10 @@ class RelationalViewBoneDelegate( object ):
 	def __init__(self, modul, boneName, structure):
 		super(RelationalViewBoneDelegate, self).__init__()
 		self.format = "$(name)"
+
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
+
 		self.modul = modul
 		self.structure = structure
 		self.boneName = boneName
@@ -93,12 +95,17 @@ class RelationalViewBoneDelegate( object ):
 			val = ""
 
 		if isinstance(val,list):
-			val = ", ".join([(formatString(self.format, self.structure, x, unescape = True) or x["id"])
-			                    for x in val])
-		elif isinstance(val, dict):
-			val = formatString(self.format, self.structure, val, unescape = True ) or val["id"]
+			if len(val)<5:
+				res = ", ".join( [ (formatString(self.format, self.structure, x, unescape= True) or x["key"]) for x in val] )
+			else:
+				res = ", ".join( [ (formatString(self.format, self.structure, x, unescape= True) or x["key"]) for x in val[:4]] )
+				res += " "+translate("and {count} more",count=len(val)-4)
 
-		return html5.Label( val )
+		elif isinstance(val, dict):
+			res = formatString(self.format,self.structure, val, unescape= True) or val["key"]
+
+		return html5.Label(res)
+
 
 class RelationalSingleSelectionBone( html5.Div ):
 	"""
@@ -196,14 +203,14 @@ class RelationalSingleSelectionBone( html5.Div ):
 			required=True
 		else:
 			required=False
-		if "modul" in skelStructure[ boneName ].keys():
-			destModul = skelStructure[ boneName ][ "modul" ]
+		if "module" in skelStructure[ boneName ].keys():
+			destModul = skelStructure[ boneName ][ "module" ]
 		else:
 			destModul = skelStructure[ boneName ]["type"].split(".")[1]
 		format= "$(name)"
 		if "format" in skelStructure[ boneName ].keys():
 			format = skelStructure[ boneName ]["format"]
-		return( cls( modulName, boneName, readOnly, destModul=destModul, format=format, required=required ) )
+		return cls( modulName, boneName, readOnly, destModul=destModul, format=format, required=required )
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -215,8 +222,12 @@ class RelationalSingleSelectionBone( html5.Div ):
 		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.destModul, EditWidget.appList, key=self.selection[ "id" ] )
-		pane.addWidget( edwg )
+
+		try:
+			edwg = EditWidget( self.destModul, EditWidget.appList, key=self.selection[ "key" ] )
+			pane.addWidget( edwg )
+		except AssertionError:
+			conf["mainWindow"].removePane(pane)
 
 	def onRemove(self, *args, **kwargs):
 		self.setSelection( None )
@@ -246,7 +257,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 			Serializes our value into something that can be transferred to the server using POST.
 			@returns: dict
 		"""
-		return( { self.boneName: self.selection["id"] if self.selection is not None else "" } )
+		return( { self.boneName: self.selection["key"] if self.selection is not None else "" } )
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )
@@ -255,7 +266,12 @@ class RelationalSingleSelectionBone( html5.Div ):
 		"""
 			Opens a ListWidget so that the user can select new values
 		"""
-		currentSelector = ListWidget( self.destModul, isSelector=True )
+
+		try:
+			currentSelector = ListWidget( self.destModul, isSelector=True )
+		except AssertionError:
+			return
+
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
@@ -277,7 +293,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 		"""
 		self.selection = selection
 		if selection:
-			NetworkService.request( self.destModul, "view/"+selection["id"],
+			NetworkService.request( self.destModul, "view/"+selection["key"],
 			                            successHandler=self.onSelectionDataAviable, cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 		else:
@@ -317,7 +333,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 			We just received the full information for this entry from the server and can start displaying it
 		"""
 		data = NetworkService.decode( req )
-		assert self.selection["id"]==data["values"]["id"]
+		assert self.selection["key"]==data["values"]["key"]
 		self.selectionTxt["value"] = formatString( self.format ,data["structure"],data["values"] )
 
 class RelationalMultiSelectionBoneEntry( html5.Div ):
@@ -364,7 +380,7 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 			remBtn["class"].append("cancel")
 			self.appendChild( remBtn )
 
-		self.fetchEntry( self.data["id"] )
+		self.fetchEntry( self.data["key"] )
 
 	def fetchEntry(self, id):
 		NetworkService.request(self.modul,"view/"+id, successHandler=self.onSelectionDataAviable, cacheable=True)
@@ -376,7 +392,7 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent.destModul, EditWidget.appList, key=self.data[ "id" ] )
+		edwg = EditWidget( self.parent.destModul, EditWidget.appList, key=self.data[ "key" ] )
 		pane.addWidget( edwg )
 
 	def onRemove(self, *args, **kwargs):
@@ -387,7 +403,7 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 			We just received the full information for this entry from the server and can start displaying it
 		"""
 		data = NetworkService.decode( req )
-		assert self.data["id"]==data["values"]["id"]
+		assert self.data["key"]==data["values"]["key"]
 		for c in self.selectionTxt._children[:]:
 			self.selectionTxt.removeChild( c )
 		self.selectionTxt.appendChild( html5.TextNode( formatString( self.format ,data["structure"],data["values"] ) ) )
@@ -486,7 +502,7 @@ class RelationalMultiSelectionBone( html5.Div ):
 			Serializes our values into something that can be transferred to the server using POST.
 			@returns: dict
 		"""
-		return( { self.boneName: [x.data["id"] for x in self.entries]} )
+		return( { self.boneName: [x.data["key"] for x in self.entries]} )
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )
@@ -495,7 +511,11 @@ class RelationalMultiSelectionBone( html5.Div ):
 		"""
 			Opens a ListWidget sothat the user can select new values
 		"""
-		currentSelector = ListWidget( self.destModul, isSelector=True )
+		try:
+			currentSelector = ListWidget( self.destModul, isSelector=True )
+		except AssertionError:
+			return
+
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
@@ -576,7 +596,11 @@ class ExtendedRelationalSearch( html5.Div ):
 		self.filterChangedEvent.fire()
 
 	def openSelector(self, *args, **kwargs):
-		currentSelector = ListWidget( self.extension["modul"], isSelector=True )
+		try:
+			currentSelector = ListWidget( self.extension["modul"], isSelector=True )
+		except AssertionError:
+			return
+
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 
@@ -588,7 +612,7 @@ class ExtendedRelationalSearch( html5.Div ):
 	def updateFilter(self, filter):
 		if self.currentSelection:
 			self.currentEntry.element.innerHTML = self.currentSelection[0]["name"]
-			newId = self.currentSelection[0]["id"]
+			newId = self.currentSelection[0]["key"]
 			filter[ self.extension["target"]+".id" ] = newId
 		else:
 			self.currentEntry.element.innerHTML = ""

@@ -27,14 +27,16 @@ class AddAction( html5.ext.Button ):
 		self["class"] = "icon add list"
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="add"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
 		pane = EditPane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_add" ])
@@ -82,24 +84,26 @@ class EditAction( html5.ext.Button ):
 
 	def onSelectionActivated(self, table, selection ):
 		if not self.parent().parent().isSelector and len(selection)==1:
-			self.openEditor( selection[0]["id"] )
+			self.openEditor( selection[0]["key"] )
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="edit"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "edit" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor( s["id"] )
+			self.openEditor( s["key"] )
 
 	def openEditor(self, id ):
 		pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
@@ -143,21 +147,23 @@ class CloneAction( html5.ext.Button ):
 				self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="clone"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "clone" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "clone" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor( s["id"] )
+			self.openEditor( s["key"] )
 
 	def openEditor(self, id ):
 		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
@@ -202,28 +208,29 @@ class DeleteAction( html5.ext.Button ):
 				self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="delete"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-delete" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "delete" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-delete" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "delete" in conf["modules"][module]["disabledFunctions"]
 
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
 		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
-		d.deleteList = [x["id"] for x in selection]
+		d.deleteList = [x["key"] for x in selection]
 		d["class"].append( "delete" )
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
 		for x in deleteList:
-			NetworkService.request( self.parent().parent().modul, "delete", {"id": x}, secure=True, modifies=True )
+			NetworkService.request( self.parent().parent().modul, "delete", {"key": x}, secure=True, modifies=True )
 
 	def resetLoadingState(self):
 		pass
@@ -305,19 +312,20 @@ class ListPreviewAction( html5.Span ):
 			#conf["mainWindow"].stackWidget( widget )
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="preview"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-view" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "view" in conf["modules"][modul]["disabledFunctions"]
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
 		isAvailable = False
-		if modul in conf["modules"].keys():
-			modulConfig = conf["modules"][modul]
-			if "previewurls" in modulConfig.keys() and modulConfig["previewurls"]:
-				isAvailable = True
-		return(  correctAction and correctHandler and hasAccess and not isDisabled and isAvailable )
+
+		if "previewurls" in conf["modules"][module].keys() and conf["modules"][module]["previewurls"]:
+			isAvailable = True
+
+		return correctAction and correctHandler and hasAccess and not isDisabled and isAvailable
 
 actionDelegateSelector.insert( 2, ListPreviewAction.isSuitableFor, ListPreviewAction )
 
@@ -354,7 +362,7 @@ class ListPreviewInlineAction( html5.ext.Button ):
 
 		# Show internal preview when one entry is selected; Else, remove sidebar widget if
 		# it refers to an existing, internal preview.
-		if len(selection)==1:
+		if len(selection) == 1:
 			preview = InternalPreview( self.parent().parent().modul, self.parent().parent()._structure, selection[0])
 			self.parent().parent().sideBar.setWidget( preview )
 		else:
@@ -362,14 +370,16 @@ class ListPreviewInlineAction( html5.ext.Button ):
 				self.parent().parent().sideBar.setWidget( None )
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
-		correctAction = actionName=="preview"
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
+		correctAction = actionName == "preview"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-view" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "view" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 actionDelegateSelector.insert( 1, ListPreviewInlineAction.isSuitableFor, ListPreviewInlineAction )
 
@@ -383,8 +393,8 @@ class CloseAction( html5.ext.Button ):
 		conf["mainWindow"].removeWidget( self.parent().parent() )
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		return( actionName=="close" )
+	def isSuitableFor( module, handler, actionName ):
+		return actionName=="close"
 
 actionDelegateSelector.insert( 1, CloseAction.isSuitableFor, CloseAction )
 
@@ -397,8 +407,8 @@ class ActivateSelectionAction( html5.ext.Button ):
 		self.parent().parent().activateCurrentSelection()
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		return( actionName=="select" )
+	def isSuitableFor( module, handler, actionName ):
+		return actionName=="select"
 
 actionDelegateSelector.insert( 1, ActivateSelectionAction.isSuitableFor, ActivateSelectionAction )
 
@@ -519,8 +529,8 @@ class SelectFieldsAction( html5.ext.Button ):
 			self["disabled"] = self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		return( actionName=="selectfields" )
+	def isSuitableFor( module, handler, actionName ):
+		return actionName=="selectfields"
 
 actionDelegateSelector.insert( 1, SelectFieldsAction.isSuitableFor, SelectFieldsAction )
 
@@ -533,10 +543,10 @@ class ReloadAction( html5.ext.Button ):
 		self["class"] = "icon reload"
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
+	def isSuitableFor( module, handler, actionName ):
 		correctAction = actionName=="reload"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		return(  correctAction and correctHandler )
+		return correctAction and correctHandler
 
 	def onClick(self, sender=None):
 		self["class"].append("is_loading")
@@ -580,14 +590,16 @@ class ListSelectFilterAction( html5.ext.Button ):
 			self.parent().parent().sideBar.setWidget(self.filterSelector)
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="selectfilter"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-view" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "view" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 actionDelegateSelector.insert( 1, ListSelectFilterAction.isSuitableFor, ListSelectFilterAction )
 
@@ -621,21 +633,23 @@ class RecurrentDateAction( html5.ext.Button ):
 				self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="repeatdate"
 		correctHandler = handler == "list.calendar" or handler.startswith("list.calendar.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "edit" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor( s["id"] )
+			self.openEditor( s["key"] )
 
 	def openEditor(self, id ):
 		pane = Pane(translate("Recurrent Events"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
@@ -657,8 +671,8 @@ class CreateRecurrentAction( html5.ext.Button ):
 		self["class"] = "icon save close"
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		return( actionName=="create.recurrent" )
+	def isSuitableFor( module, handler, actionName ):
+		return actionName=="create.recurrent"
 
 	def onClick(self, sender=None):
 		self["class"].append("is_loading")
@@ -673,8 +687,8 @@ class CsvExportAction( html5.ext.Button ):
 		self["class"] = "icon download"
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		return actionName=="exportcsv" and (handler == "list" or handler.startswith("list."))
+	def isSuitableFor( module, handler, actionName ):
+		return actionName == "exportcsv" and (handler == "list" or handler.startswith("list."))
 
 	def onClick(self, sender=None):
 		pane = Pane(translate("Csv Exporter"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "exportcsv" ])
@@ -693,7 +707,7 @@ class SelectAllAction(html5.ext.Button):
 		self["disabled"] = self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor(modul, handler, actionName):
+	def isSuitableFor(module, handler, actionName):
 		return actionName == "selectall" and (handler == "list" or handler.startswith("list."))
 
 	def onClick(self, sender=None):
@@ -724,7 +738,7 @@ class UnSelectAllAction(html5.ext.Button):
 		self["disabled"] = self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor(modul, handler, actionName):
+	def isSuitableFor(module, handler, actionName):
 		return actionName == "unselectall" and (handler == "list" or handler.startswith("list."))
 
 	def onClick(self, sender=None):

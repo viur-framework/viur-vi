@@ -33,13 +33,15 @@ class NumericViewBoneDelegate( object ):
 
 	def render( self, data, field ):
 		s =  conf[ "empty_value" ]
-
-		if field in data.keys() and data[field]:
-			prec = self.skelStructure[field].get( "precision" )
-			if prec:
-				s = ( "%." + str( prec ) + "f" ) % data[field]
-			else:
-				s = str( data[field] )
+		if field in data.keys():
+			try:
+				prec = self.skelStructure[field].get( "precision" )
+				if prec and data[field] is not None:
+					s = ( "%." + str( prec ) + "f" ) % data[field]
+				else:
+					s = str( data[field] )
+			except:
+				return str(data[field])
 
 		return html5.Label( s )
 

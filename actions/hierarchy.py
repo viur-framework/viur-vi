@@ -15,14 +15,16 @@ class AddAction( html5.ext.Button ):
 		self["class"] = "icon add"
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="add"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-add" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "add" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 
 	def onClick(self, sender=None):
@@ -70,17 +72,19 @@ class EditAction( html5.ext.Button ):
 
 	def onSelectionActivated(self, table, selection):
 		if not self.parent().parent().isSelector and len(selection)>0:
-			self.openEditor( selection[0].data["id"] )
+			self.openEditor( selection[0].data["key"] )
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="edit"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "edit" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "edit" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 
 	def onClick(self, sender=None):
@@ -88,7 +92,7 @@ class EditAction( html5.ext.Button ):
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor( s["id"] )
+			self.openEditor( s["key"] )
 
 	def openEditor( self, id ):
 		pane = Pane(translate("Edit"), closeable=True)
@@ -131,21 +135,22 @@ class CloneAction( html5.ext.Button ):
 				self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="clone"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-edit" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "clone" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "clone" in conf["modules"][module]["disabledFunctions"]
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor( s["id"] )
+			self.openEditor( s["key"] )
 
 	def openEditor(self, id ):
 		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_hierarchy", "action_edit" ])
@@ -191,14 +196,16 @@ class DeleteAction( html5.ext.Button ):
 
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		if modul is None:
-			return( False )
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
 		correctAction = actionName=="delete"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or modul+"-delete" in conf["currentUser"]["access"])
-		isDisabled = modul is not None and "disabledFunctions" in conf["modules"][modul].keys() and conf["modules"][modul]["disabledFunctions"] and "delete" in conf["modules"][modul]["disabledFunctions"]
-		return(  correctAction and correctHandler and hasAccess and not isDisabled )
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-delete" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "delete" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
 
 
 	def onClick(self, sender=None):
@@ -206,13 +213,13 @@ class DeleteAction( html5.ext.Button ):
 		if not selection:
 			return
 		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
-		d.deleteList = [x["id"] for x in selection]
+		d.deleteList = [x["key"] for x in selection]
 		d["class"].append( "delete" )
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
 		for x in deleteList:
-			NetworkService.request( self.parent().parent().modul, "delete", {"id": x}, secure=True, modifies=True )
+			NetworkService.request( self.parent().parent().modul, "delete", {"key": x}, secure=True, modifies=True )
 
 	def resetLoadingState(self):
 		pass
@@ -228,10 +235,10 @@ class ReloadAction( html5.ext.Button ):
 		self["class"] = "icon reload"
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
+	def isSuitableFor( module, handler, actionName ):
 		correctAction = actionName=="reload"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
-		return(  correctAction and correctHandler )
+		return correctAction and correctHandler
 
 	def onClick(self, sender=None):
 		self["class"].append("is_loading")
@@ -288,9 +295,7 @@ class SelectRootNode( html5.Select ):
 		self.parent().parent().setRootNode( newRootNode )
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
-		correctAction = actionName=="selectrootnode"
-		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
-		return( correctAction and correctHandler )
+	def isSuitableFor( module, handler, actionName ):
+		return actionName == "selectrootnode" and (handler == "hierarchy" or handler.startswith("hierarchy."))
 
 actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )

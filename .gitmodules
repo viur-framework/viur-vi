@@ -4,3 +4,6 @@
 [submodule "logics"]
 	path = logics
 	url = git@bitbucket.org:viur/logics.git
+[submodule "html5"]
+	path = html5
+	url = git@bitbucket.org:viur/html5.git

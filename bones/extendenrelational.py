@@ -31,9 +31,9 @@ class ExtendedRelationalBoneExtractor( object ):
 		relStructDict = { k:v for k,v in relStructList }
 		try:
 			if isinstance(val,list):
-				val = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["id"]) for x in val] )
+				val = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["key"]) for x in val] )
 			elif isinstance(val, dict):
-				val = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["id"]
+				val = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["key"]
 		except:
 			#We probably received some garbage
 			val = ""
@@ -61,13 +61,17 @@ class ExtendedRelationalViewBoneDelegate( object ):
 		relStructDict = { k:v for k,v in relStructList }
 		try:
 			if isinstance(val,list):
-				val = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["id"]) for x in val] )
+				if len(val)<5:
+					res = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["key"]) for x in val] )
+				else:
+					res = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["key"]) for x in val[:4]] )
+					res += " "+translate("and {count} more",count=len(val)-4)
 			elif isinstance(val, dict):
-				val = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["id"]
+				res = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["key"]
 		except:
 			#We probably received some garbage
-			val = ""
-		return( html5.Label( val ) )
+			res = ""
+		return( html5.Label( res ) )
 
 class ExtendedRelationalSelectionBoneEntry( html5.Div ):
 	"""
@@ -92,12 +96,12 @@ class ExtendedRelationalSelectionBoneEntry( html5.Div ):
 			if "name" in data["dest"].keys():
 				txtLbl = html5.Label( data["dest"]["name"])
 			else:
-				txtLbl = html5.Label( data["dest"]["id"])
+				txtLbl = html5.Label( data["dest"]["key"])
 		else:
 			if "name" in data.keys():
 				txtLbl = html5.Label( data["name"])
 			else:
-				txtLbl = html5.Label( data["id"])
+				txtLbl = html5.Label( data["key"])
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild( txtLbl )
 		wrapperDiv["class"].append("labelwrapper")
@@ -124,10 +128,10 @@ class ExtendedRelationalSelectionBoneEntry( html5.Div ):
 		if self.ie:
 			res = {}
 			res.update( self.ie.doSave() )
-			res["id"] = self.data["dest"]["id"]
+			res["key"] = self.data["dest"]["key"]
 			return( res )
 		else:
-			return( self.data["id"] )
+			return( self.data["key"] )
 
 
 class ExtendedRelationalSelectionBone( html5.Div ):
@@ -239,10 +243,10 @@ class ExtendedRelationalSelectionBone( html5.Div ):
 				for k,v in currRes.items():
 					res["%s%s.%s" % (self.boneName,idx,k) ] = v
 			else:
-				res["%s%s.id" % (self.boneName,idx) ] = currRes
+				res["%s%s.key" % (self.boneName,idx) ] = currRes
 			idx += 1
 		return( res )
-		#return( { self.boneName: [x.data["id"] for x in self.entries]} )
+		#return( { self.boneName: [x.data["key"] for x in self.entries]} )
 
 	def serializeForDocument(self):
 		return( self.serialize( ) )
@@ -359,8 +363,8 @@ class ExtendedRelationalSearch( html5.Div ):
 	def updateFilter(self, filter):
 		if self.currentSelection:
 			self.currentEntry.element.innerHTML = self.currentSelection[0]["name"]
-			newId = self.currentSelection[0]["id"]
-			filter[ self.extension["target"]+".id" ] = newId
+			newId = self.currentSelection[0]["key"]
+			filter[ self.extension["target"]+".key" ] = newId
 		else:
 			self.currentEntry.element.innerHTML = ""
 		return( filter )

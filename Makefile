@@ -28,8 +28,6 @@ all: debug
 
 setup:
 	if [ ! -f $(MAIN_CSS) ]; then cp $(DEFAULT_CSS) $(MAIN_CSS); fi
-	if [ ! -x vi_plugins -a -x $(VI_CUSTOM)/vi_plugins ]; then \
-		ln -s $(VI_CUSTOM)/vi_plugins; fi
 
 defaultcss: $(MAIN_CSS)
 	cp $(MAIN_CSS) $(DEFAULT_CSS)
@@ -53,6 +51,7 @@ debug: $(OUTPUT) $(MAIN_CSS) version copyfiles
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEBUGOPTS) \
 		--bootloader=bootstrap_progress.js \
+		-I ./$(VI_CUSTOM) \
 				admin.py
 	@echo "--- FINISHED DEBUG BUILD ---"
 
@@ -61,6 +60,7 @@ deploy: $(MAIN_CSS) version copyfiles
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEPLOYOPTS) \
 		--bootloader=bootstrap_progress.js \
+		-I ./$(VI_CUSTOM) \
 				admin.py
 	@echo "--- FINISHED DEPLOY BUILD ---"
 
@@ -68,5 +68,4 @@ tarfile: deploy
 	tar cvf "vi_`date +'%Y-%m-%d'`.tar" vi
 	
 clean: $(OUTPUT)
-	rm -rf $(OUTPUT)/*
-
+	rm -rf $(MAIN_CSS) $(OUTPUT)/*

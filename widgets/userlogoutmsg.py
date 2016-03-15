@@ -81,7 +81,7 @@ class UserLogoutMsg( html5.ext.Popup):
 			self.showMessage()
 			return
 		if self.isCurrentlyFailed:
-			if conf["currentUser"]!=None and conf["currentUser"]["id"]==data["values"]["id"]:
+			if conf["currentUser"]!=None and conf["currentUser"]["key"]==data["values"]["key"]:
 				self.hideMessage()
 				self.closeLoginWindow()
 

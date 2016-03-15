@@ -63,11 +63,14 @@ class FileHref( html5.A ):
 
 
 class FileViewBoneDelegate(object):
+
 	def __init__(self, modul, boneName, structure):
 		super(FileViewBoneDelegate, self).__init__()
 		self.format = "$(name)"
+
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
+
 		self.modul = modul
 		self.structure = structure
 		self.boneName = boneName
@@ -91,15 +94,18 @@ class FileViewBoneDelegate(object):
 
 		aspan=html5.Span()
 		aspan.appendChild(html5.TextNode(fileentry["name"]))#fixme: formatstring!
+
 		adiv.appendChild(aspan)
 		adiv["class"].append("fileBoneViewCell")
 		adiv["draggable"]=True
 		metamime="application/octet-stream"
+
 		if "mimetype" in fileentry.keys():
 			metamime=str(fileentry["mimetype"])
+
 		adiv["download"]=metamime+":"+str(fileentry["name"])+":"+"/file/download/"+str(fileentry["dlkey"])+"?download=1&fileName="+str(fileentry["name"])
 		adiv["href"]="/file/download/"+str(fileentry["dlkey"])+"?download=1&fileName="+str(fileentry["name"])
-		return (adiv)
+		return adiv
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
@@ -114,7 +120,9 @@ class FileViewBoneDelegate(object):
 			cell=html5.Div()
 			for f in val:
 				cell.appendChild(self.renderFileentry(f))
-			return (cell)
+
+			return cell
+
 		elif isinstance(val, dict):
 			return self.renderFileentry(val)
 
@@ -147,7 +155,7 @@ class FileMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent.destModul, EditWidget.appTree, key=self.data[ "id" ], skelType="leaf"  )
+		edwg = EditWidget( self.parent.destModul, EditWidget.appTree, key=self.data[ "key" ], skelType="leaf"  )
 		pane.addWidget( edwg )
 
 class FileMultiSelectionBone( RelationalMultiSelectionBone ):
@@ -270,7 +278,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.destModul, EditWidget.appTree, key=self.selection[ "id" ], skelType="leaf"  )
+		edwg = EditWidget( self.destModul, EditWidget.appTree, key=self.selection[ "key" ], skelType="leaf"  )
 		pane.addWidget( edwg )
 
 	def setSelection(self, selection):
@@ -281,7 +289,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 		self.selection = selection
 		if selection:
-			NetworkService.request( self.destModul, "view/leaf/"+selection["id"],
+			NetworkService.request( self.destModul, "view/leaf/"+selection["key"],
 			                                successHandler=self.onSelectionDataAviable, cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
