@@ -55,25 +55,37 @@ class RelationalViewBoneDelegate( object ):
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
-		if field in data.keys():
-			val = data[field]
-		else:
-			val = ""
-		relStructList = self.structure[self.boneName]["using"]
-		relStructDict = { k:v for k,v in relStructList }
+		val = data.get(field, "")
+
+		relStructList = relStructDict = self.structure[self.boneName].get("using")
+		if relStructList:
+			relStructDict = {k:v for k,v in relStructList}
+
 		try:
-			if isinstance(val,list):
-				if len(val)<5:
-					res = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["key"]) for x in val] )
+			if isinstance(val, list):
+				count = len(val)
+				if count >= 5:
+					val = val[:4]
+
+				if relStructList:
+					res = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["key"]) for x in val])
 				else:
-					res = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["key"]) for x in val[:4]] )
-					res += " "+translate("and {count} more",count=len(val)-4)
+					res = ", ".join( [ (formatString(self.format, self.structure, x ) or x["key"]) for x in val] )
+
+				if count >= 5:
+					res += " %s" % translate("and {count} more", count=count - 4)
+
 			elif isinstance(val, dict):
-				res = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["key"]
+				if relStructList:
+					res = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["key"]
+				else:
+					res = formatString(self.format, self.structure, val["dest"]) or val["dest"]["key"]
+
 		except:
 			#We probably received some garbage
 			res = ""
-		return( html5.Label( res ) )
+
+		return html5.Label(res)
 
 class RelationalMultiSelectionBoneEntry( html5.Div ):
 	"""
