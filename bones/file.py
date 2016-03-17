@@ -75,36 +75,45 @@ class FileViewBoneDelegate(object):
 		self.structure = structure
 		self.boneName = boneName
 
-	def renderFileentry(self,fileentry):
+	def renderFileentry(self, fileEntry):
+		if not "dest" in fileEntry.keys():
+			return None
+
+		fileEntry = fileEntry["dest"]
+
+		if not "name" in fileEntry.keys() and not "dlkey" in fileEntry.keys():
+			return None
+
 		adiv=FileHref()  #Fixme: We need a better method to accomplish this
-		adiv["Title"]=str(fileentry["name"])
-		if "mimetype" in fileentry.keys():
+		adiv["Title"] = str(fileEntry["name"])
+		if "mimetype" in fileEntry.keys():
 			try:
-				ftype, fformat = fileentry["mimetype"].split("/")
+				ftype, fformat = fileEntry["mimetype"].split("/")
 				adiv["class"].append("type_%s" % ftype )
 				adiv["class"].append("format_%s" % fformat )
 			except:
 				pass
 
-		if utils.getImagePreview( fileentry ):
+		if utils.getImagePreview( fileEntry ):
 			aimg=html5.Img()
-			aimg["src"] = utils.getImagePreview( fileentry )
-			aimg["alt"] = fileentry["name"]
+			aimg["src"] = utils.getImagePreview( fileEntry )
+			aimg["alt"] = fileEntry["name"]
 			adiv.appendChild(aimg)
 
 		aspan=html5.Span()
-		aspan.appendChild(html5.TextNode(fileentry["name"]))#fixme: formatstring!
+		aspan.appendChild(html5.TextNode(str(fileEntry.get("name", ""))))#fixme: formatstring!
 
 		adiv.appendChild(aspan)
 		adiv["class"].append("fileBoneViewCell")
 		adiv["draggable"]=True
 		metamime="application/octet-stream"
 
-		if "mimetype" in fileentry.keys():
-			metamime=str(fileentry["mimetype"])
+		if "mimetype" in fileEntry.keys():
+			metamime=str(fileEntry["mimetype"])
 
-		adiv["download"]=metamime+":"+str(fileentry["name"])+":"+"/file/download/"+str(fileentry["dlkey"])+"?download=1&fileName="+str(fileentry["name"])
-		adiv["href"]="/file/download/"+str(fileentry["dlkey"])+"?download=1&fileName="+str(fileentry["name"])
+		adiv["download"]="%s:%s:/file/download/%s?download=1&fileName=%s" % (metamime, str(fileEntry["name"]),
+		                                                            str(fileEntry["dlkey"]), str(fileEntry["name"]))
+		adiv["href"]="/file/download/%s?download=1&fileName=%s" % (str(fileEntry["dlkey"]), str(fileEntry["name"]))
 		return adiv
 
 	def render(self, data, field ):

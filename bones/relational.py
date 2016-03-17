@@ -275,7 +275,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 		conf["mainWindow"].stackPane( pane, focus=True )
 
 		try:
-			edwg = EditWidget( self.destModul, EditWidget.appList, key=self.selection[ "key" ] )
+			edwg = EditWidget( self.destModul, EditWidget.appList, key=self.selection["dest"]["key"] )
 			pane.addWidget( edwg )
 		except AssertionError:
 			conf["mainWindow"].removePane(pane)
