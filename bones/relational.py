@@ -314,6 +314,9 @@ class RelationalSingleSelectionBone( html5.Div ):
 			Serializes our value into something that can be transferred to the server using POST.
 			@returns: dict
 		"""
+		if not (self.selection and "dest" in self.selection.keys() and "key" in self.selection["dest"].keys()):
+			# We have no value selected
+			return {}
 		res = {}
 		if self.ie:
 			res.update(self.ie.doSave())
