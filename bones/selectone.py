@@ -25,16 +25,19 @@ class SelectOneViewBoneDelegate( object ):
 		super( SelectOneViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.modulName = modulName
 
 	def render( self, data, field ):
 		if field in data.keys():
-			aspan=html5.Span()
-			if data and field and field in self.skelStructure and data[field] and data[field] in self.skelStructure[field]["values"]:
-				aspan.appendChild(html5.TextNode(self.skelStructure[field]["values"][data[field]]))
+			if data and field and field in self.skelStructure:
+				options = {k: v for k, v in self.skelStructure[field]["values"]}
+
+				aspan = html5.Span()
+				aspan.appendChild(html5.TextNode(options.get(data[field], data[field])))
 				aspan["Title"]=data[field]
-				return(aspan)
-		return( html5.Label( conf[ "empty_value" ] ) )
+				return aspan
+
+		return html5.Label(conf["empty_value"])
 
 class SelectOneEditBone( html5.Select ):
 
