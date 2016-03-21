@@ -316,7 +316,7 @@ class EditWidget( html5.Div ):
 
 		for key, desc in self.dataCache["structure"]:
 			if desc.get("params") and desc["params"]:
-				for event in ["visibleIf"]: #add more here!
+				for event in ["logic.visibleIf"]: #add more here!
 					logic = desc["params"].get(event)
 
 					if not logic:
@@ -333,11 +333,11 @@ class EditWidget( html5.Div ):
 
 					res = self.logic.execute(logic, fields)
 					if res:
-						if event == "visibleIf":
+						if event == "logic.visibleIf":
 							self.containers[key].show()
 						# add more here...
 					else:
-						if event == "visibleIf":
+						if event == "logic.visibleIf":
 							self.containers[key].hide()
 						# add more here...
 
