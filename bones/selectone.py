@@ -38,38 +38,47 @@ class SelectOneViewBoneDelegate( object ):
 
 class SelectOneEditBone( html5.Select ):
 
-	def __init__(self, modulName, boneName, readOnly, values, sortBy="keys", *args, **kwargs ):
+	def __init__(self, modulName, boneName, readOnly, values, sortBy, valuesOrder, *args, **kwargs ):
 		super( SelectOneEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self["name"]=boneName
 		self.readOnly = readOnly
-		self.values=values
-		tmpList = values.items()
-		if sortBy=="keys":
-			tmpList.sort( key=lambda x: x[0] ) #Sort by keys
-		else:
-			tmpList.sort( key=lambda x: x[1] ) #Values
-		for key, value in tmpList:
-			aoption=html5.Option()
-			aoption["value"]=key
-			aoption.element.innerHTML=value
-			self.appendChild(aoption)
+		self.values = values
+
+		tmpValues = values.copy()
+
+		# Perform valuesOrder list
+		for key in valuesOrder:
+			if key in tmpValues.keys():
+				opt = html5.Option()
+				opt["value"] = key
+				opt.element.innerHTML = values[key]
+
+				self.appendChild(opt)
+				del tmpValues[key]
+
+		tmpValues = tmpValues.items()
+		tmpValues.sort(key=lambda x: x[0] if sortBy == "keys" else x[1])
+
+		# Do the rest according to sorted list.
+		for key, value in tmpValues:
+			opt = html5.Option()
+
+			opt["value"] = key
+			opt.element.innerHTML = value
+
+			self.appendChild(opt)
+
 		if self.readOnly:
 			self["disabled"] = True
 
-
 	@staticmethod
 	def fromSkelStructure( modulName, boneName, skelStructure ):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		if "sortBy" in skelStructure[ boneName ].keys():
-			sortBy = skelStructure[ boneName ][ "sortBy" ]
-		else:
-			sortBy = "keys"
-		if "values" in skelStructure[ boneName ].keys():
-			values =skelStructure[ boneName ]["values"]
-		else:
-			values = {}
-		return( SelectOneEditBone( modulName, boneName, readOnly, values, sortBy ) )
+		return SelectOneEditBone(modulName, boneName,
+		                            skelStructure[boneName].get("readonly", False),
+		                            skelStructure[boneName].get("values", {}),
+		                            skelStructure[boneName].get("sortBy", "keys"),
+		                            skelStructure[boneName].get("valuesOrder", []))
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
