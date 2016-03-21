@@ -38,32 +38,20 @@ class SelectOneViewBoneDelegate( object ):
 
 class SelectOneEditBone( html5.Select ):
 
-	def __init__(self, modulName, boneName, readOnly, values, sortBy, valuesOrder, *args, **kwargs ):
-		super( SelectOneEditBone,  self ).__init__( *args, **kwargs )
-		self.boneName = boneName
-		self["name"]=boneName
+	def __init__(self, moduleName, boneName, readOnly, values, *args, **kwargs):
+		super(SelectOneEditBone,  self).__init__(*args, **kwargs)
+		self["name"] = self.boneName = boneName
 		self.readOnly = readOnly
-		self.values = values
 
-		tmpValues = values.copy()
+		# Compatibility mode
+		if isinstance(values, dict):
+			self.values = [(k, v) for k, v in values.items()]
+		else:
+			self.values = values
 
 		# Perform valuesOrder list
-		for key in valuesOrder:
-			if key in tmpValues.keys():
-				opt = html5.Option()
-				opt["value"] = key
-				opt.element.innerHTML = values[key]
-
-				self.appendChild(opt)
-				del tmpValues[key]
-
-		tmpValues = tmpValues.items()
-		tmpValues.sort(key=lambda x: x[0] if sortBy == "keys" else x[1])
-
-		# Do the rest according to sorted list.
-		for key, value in tmpValues:
+		for (key, value) in self.values:
 			opt = html5.Option()
-
 			opt["value"] = key
 			opt.element.innerHTML = value
 
@@ -76,9 +64,7 @@ class SelectOneEditBone( html5.Select ):
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		return SelectOneEditBone(modulName, boneName,
 		                            skelStructure[boneName].get("readonly", False),
-		                            skelStructure[boneName].get("values", {}),
-		                            skelStructure[boneName].get("sortBy", "keys"),
-		                            skelStructure[boneName].get("valuesOrder", []))
+		                            skelStructure[boneName].get("values", {}))
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():

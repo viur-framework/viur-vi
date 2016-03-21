@@ -56,36 +56,21 @@ class SelectMultiViewBoneDelegate( object ):
 			return( result)
 		return html5.Label("&nbsp; - &nbsp;")
 
-class SelectMultiEditBone( html5.Div ):
+class SelectMultiEditBone(html5.Div):
 
-	def __init__(self, modulName, boneName,readOnly, values, sortBy, valuesOrder, *args, **kwargs ):
-		super( SelectMultiEditBone,  self ).__init__( *args, **kwargs )
+	def __init__(self, moduleName, boneName, readOnly, values, *args, **kwargs):
+		super(SelectMultiEditBone,  self ).__init__(*args, **kwargs)
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self.values = values
 
-		tmpValues = values.copy()
+		# Compatibility mode
+		if isinstance(values, dict):
+			self.values = [(k, v) for k, v in values.items()]
+		else:
+			self.values = values
 
 		# Perform valuesOrder list
-		for key in valuesOrder:
-			if key in tmpValues.keys():
-				alabel = html5.Label()
-				acheckbox = html5.Input()
-				acheckbox["type"] = "checkbox"
-				acheckbox["name"] = key
-				alabel.appendChild(acheckbox)
-
-				aspan = html5.Span()
-				aspan.element.innerHTML = values[key]
-				alabel.appendChild(aspan)
-
-				self.appendChild(alabel)
-				del tmpValues[key]
-
-		tmpValues = tmpValues.items()
-		tmpValues.sort(key=lambda x: x[0] if sortBy == "keys" else x[1])
-
-		for key, value in tmpValues:
+		for key, value in self.values:
 			alabel = html5.Label()
 			acheckbox = html5.Input()
 			acheckbox["type"] = "checkbox"
@@ -105,9 +90,7 @@ class SelectMultiEditBone( html5.Div ):
 	def fromSkelStructure( modulName, boneName, skelStructure ):
 		return SelectMultiEditBone(modulName, boneName,
 		                            skelStructure[boneName].get("readonly", False),
-		                            skelStructure[boneName].get("values", {}),
-									skelStructure[boneName].get("sortBy", "keys"),
-		                            skelStructure[boneName].get("valuesOrder", []))
+		                            skelStructure[boneName].get("values", {}))
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
