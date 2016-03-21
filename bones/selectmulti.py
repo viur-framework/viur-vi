@@ -31,30 +31,36 @@ class SelectMultiViewBoneDelegate( object ):
 		super( SelectMultiViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.modulName = modulName
 
 	def render( self, data, field ):
 		if field in data.keys():
-			result=html5.Ul()
-			if len(data[field])<5:
+			result = html5.Ul()
+
+			if len(data[field]) < 5:
 				loopLimit = len(data[field])
 			else:
 				loopLimit = 4
+
+			options = {k: v for k, v in self.skelStructure[field]["values"]}
+			
 			for fieldKey in data[field][:loopLimit]:
-				ali=html5.Li()
-				if not fieldKey in self.skelStructure[field]["values"].keys():
-					ali.appendChild(html5.TextNode(fieldKey))
-				else:
-					ali.appendChild(html5.TextNode( self.skelStructure[field]["values"][fieldKey] ) )
+				ali = html5.Li()
+				ali.appendChild(html5.TextNode(options.get(fieldKey, fieldKey)))
 				ali["Title"] = fieldKey
+
 				result.appendChild(ali)
-			if not len(data[field])<5:
-				ali=html5.Li()
-				ali.appendChild(html5.TextNode( translate("and {count} more",count=len(data[field])-4)) )
-				result.appendChild(ali)
+
+			if not len(data[field]) < 5:
+				ali = html5.Li()
+				ali.appendChild(html5.TextNode(translate("and {count} more", count=len(data[field]) - 4)))
 				ali["class"].append("selectmulti_more_li")
-			return( result)
-		return html5.Label("&nbsp; - &nbsp;")
+
+				result.appendChild(ali)
+
+			return result
+
+		return html5.Label(conf["empty_value"])
 
 class SelectMultiEditBone(html5.Div):
 
@@ -168,7 +174,7 @@ class AccessMultiSelectBone( html5.Div ):
 		self.boneName = boneName
 		self.modulName = moduleName
 		self.readOnly = readOnly
-		self.values = values
+		self.values = {k: v for k, v in values}
 
 		self.modules = {}
 		self.modulesbox = {}
@@ -176,7 +182,7 @@ class AccessMultiSelectBone( html5.Div ):
 
 		self.sinkEvent( "onClick" )
 
-		for value in values:
+		for value in self.values:
 			module = self.parseskelaccess( value )
 			if not module:
 				self.flags[ value ] = None
@@ -301,14 +307,8 @@ class AccessMultiSelectBone( html5.Div ):
 
 	@staticmethod
 	def fromSkelStructure( moduleName, boneName, skelStructure ):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-
-		if "values" in skelStructure[ boneName ].keys():
-			values = skelStructure[ boneName ]["values"]
-		else:
-			values = {}
-
-		return( AccessMultiSelectBone( moduleName, boneName, readOnly, values ) )
+		return AccessMultiSelectBone(moduleName, boneName, skelStructure[ boneName ].get("readonly", False),
+		                                                    skelStructure[boneName].get("values", []))
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
