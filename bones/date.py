@@ -14,34 +14,39 @@ class DateBoneExtractor( object ):
 		self.boneName = boneName
 		self.modulName=modulName
 
-	def render( self, data, field ):
-		print( self, data, field)
-
-
-		if not self.boneName in self.skelStructure or not data or not field in data.keys():
-			return conf[ "empty_value" ]
+	def render(self, data, field):
+		if not(self.boneName in self.skelStructure
+		        and data and data.get(field)):
+			return conf["empty_value"]
 
 		structure = self.skelStructure[self.boneName]
 		val = data[field]
+
 		try:
 			if structure["date"] and structure["time"]:
 				try:
 					dt = datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
 				except:
 					return "Error parsing Date"
+
 				return dt.strftime("%d.%m.%Y %H:%M:%S")
+
 			elif structure["date"] and not structure["time"]:
 				try:
 					dt = datetime.strptime( val, "%d.%m.%Y")
 				except:
 					return "Error parsing Date"
+
 				return dt.strftime("%d.%m.%Y")
+
 			elif not structure["date"] and structure["time"]:
 				try:
 					dt = datetime.strptime( val, "%H:%M:%S")
 				except:
 					return "Error parsing time"
+
 				return dt.strftime("%H:%M:%S")
+
 		except:
 			return str(val)
 
@@ -55,17 +60,20 @@ class DateViewBoneDelegate( object ):
 
 	def render( self, data, field ):
 
-		if not self.boneName in self.skelStructure or not data or not field in data.keys():
-			return( html5.Label( conf[ "empty_value" ] ) )
+		if not(self.boneName in self.skelStructure
+		        and data and data.get(field)):
+			return html5.Label(conf["empty_value"])
 
 		structure = self.skelStructure[self.boneName]
 		val = data[field]
+
 		try:
 			if structure["date"] and structure["time"]:
 				try:
-					dt = datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
+					dt = datetime.strptime(val, "%d.%m.%Y %H:%M:%S")
 				except:
-					return(html5.TextNode(translate("Error parsing Date")))
+					return html5.TextNode(translate("Error parsing Date"))
+
 				span = html5.Span()
 				span["class"].append("datetime")
 				dateSpan = html5.Span()
@@ -76,27 +84,34 @@ class DateViewBoneDelegate( object ):
 				timeSpan.appendChild( html5.TextNode( dt.strftime("%H:%M:%S") ))
 				span.appendChild(dateSpan)
 				span.appendChild(timeSpan)
-				return( span )
+
+				return span
+
 			elif structure["date"] and not structure["time"]:
 				try:
 					dt = datetime.strptime( val, "%d.%m.%Y")
 				except:
-					return(html5.TextNode(translate("Error parsing Date")))
+					return html5.TextNode(translate("Error parsing Date"))
+
 				dateSpan = html5.Span()
 				dateSpan["class"].append("date")
-				dateSpan.appendChild( html5.TextNode( dt.strftime("%d.%m.%Y") ))
-				return( dateSpan )
+				dateSpan.appendChild(html5.TextNode(dt.strftime("%d.%m.%Y")))
+
+				return dateSpan
+
 			elif not structure["date"] and structure["time"]:
 				try:
-					dt = datetime.strptime( val, "%H:%M:%S")
+					dt = datetime.strptime(val, "%H:%M:%S")
 				except:
-					return(html5.TextNode(translate("Error parsing Date")))
+					return html5.TextNode(translate("Error parsing Date"))
+
 				timeSpan = html5.Span()
 				timeSpan["class"].append("time")
-				timeSpan.appendChild( html5.TextNode( dt.strftime("%H:%M:%S") ))
-				return( timeSpan )
+				timeSpan.appendChild( html5.TextNode(dt.strftime("%H:%M:%S")))
+				return timeSpan
+
 		except: #Something got wrong parsing the date
-			return( html5.Label(str(val)))
+			return html5.Label(str(val))
 
 class DateEditBone( html5.Div ):
 	def __init__(self, modulName, boneName,readOnly,date=True, time=True, *args, **kwargs ):

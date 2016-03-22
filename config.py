@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 from event import EventDispatcher
 from i18n import translate
 
@@ -10,5 +11,6 @@ conf = {
 	"empty_value": translate( "-" ),
 	"initialHashEvent": EventDispatcher("initialHash"),
     "toplevelactions": [ "tasks", "userstate", "logout" ],
-	"batchSize": 20
+	"batchSize": 20,
+	"showBoneNames": False
 }

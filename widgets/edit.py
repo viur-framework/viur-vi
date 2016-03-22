@@ -593,7 +593,7 @@ class EditWidget( html5.Div ):
 			#widget["class"].append(bone["type"].replace(".","_"))
 			#self.prepareCol(currRow,1)
 
-			descrLbl = html5.Label(bone["descr"])
+			descrLbl = html5.Label(key if conf["showBoneNames"] else bone.get("descr", key))
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, self.modul,
