@@ -1,5 +1,7 @@
+#-*- coding: utf-8 -*-
 import html5
 from priorityqueue import viewDelegateSelector
+from config import conf
 
 class InternalPreview( html5.Ul ):
 	def __init__(self, modul, structure, item, *args, **kwargs):
@@ -20,7 +22,7 @@ class InternalPreview( html5.Ul ):
 			self.adl= html5.Dl()
 
 			self.adt=html5.Dt()
-			self.adt.appendChild(html5.TextNode(bone["descr"]))
+			self.adt.appendChild(html5.TextNode(key if conf["showBoneNames"] else bone.get("descr", key)))
 
 			self.aadd=html5.Dd()
 			delegateFactory = viewDelegateSelector.select( modul, key, tmpDict )( modul, key, tmpDict )

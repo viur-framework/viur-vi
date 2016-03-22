@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import pyjd # this is dummy in pyjs.
 import json
 from config import conf
@@ -267,25 +268,36 @@ class ListWidget( html5.Div ):
 		if not self._structure:
 			self._tableHeaderIsValid = False
 			return
+
 		boneInfoList = []
 		tmpDict = {}
+
 		for key, bone in self._structure:
 			tmpDict[ key ] = bone
+
 		fields = [x for x in fields if x in tmpDict.keys()]
 		self.columns = fields
+
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
 			self.table.setCellRender( boneName, delegateFactory )
 			boneInfoList.append( boneInfo )
-		self.table.setHeader( [x["descr"] for x in boneInfoList])
-		self.table.setShownFields( fields )
+
+		if conf["showBoneNames"]:
+			self.table.setHeader(fields)
+		else:
+			self.table.setHeader([x.get("descr", "") for x in boneInfoList])
+
+		self.table.setShownFields(fields)
 		rendersDict = {}
+
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
 			rendersDict[ boneName ] = delegateFactory
 			boneInfoList.append( boneInfo )
+
 		self.table.setCellRenders( rendersDict )
 		self._tableHeaderIsValid = True
 
