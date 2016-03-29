@@ -8,11 +8,11 @@ from i18n import translate
 from config import conf
 
 class DateBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( DateBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.modulName = moduleName
 
 	def render(self, data, field):
 		if not(self.boneName in self.skelStructure
@@ -52,16 +52,15 @@ class DateBoneExtractor( object ):
 
 
 class DateViewBoneDelegate( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( DateViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.modulName = moduleName
 
 	def render( self, data, field ):
 
-		if not(self.boneName in self.skelStructure
-		        and data and data.get(field)):
+		if not(self.boneName in self.skelStructure and data and data.get(field)):
 			return html5.Label(conf["empty_value"])
 
 		structure = self.skelStructure[self.boneName]
@@ -114,24 +113,24 @@ class DateViewBoneDelegate( object ):
 			return html5.Label(str(val))
 
 class DateEditBone( html5.Div ):
-	def __init__(self, modulName, boneName,readOnly,date=True, time=True, *args, **kwargs ):
-		super( DateEditBone,  self ).__init__( *args, **kwargs )
+	def __init__(self, moduleName, boneName, readOnly, date=True, time=True, *args, **kwargs ):
+		super( DateEditBone,  self ).__init__(*args, **kwargs)
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.hasdate = date
 		self.hastime = time
 
 		if date:
-			self.dateinput=html5.Input()
+			self.dateinput = html5.Input()
 
 			#IE11
 			try:
-				self.dateinput["type"]="date"
+				self.dateinput["type"] = "date"
 			except:
 				pass
 
-			self.dateinput["style"]["float"]="left"
-			self.appendChild(self.dateinput)#
+			self.dateinput["style"]["float"] = "left"
+			self.appendChild(self.dateinput)
 
 			if self.readOnly:
 				self.dateinput["readonly"] = True
@@ -141,37 +140,40 @@ class DateEditBone( html5.Div ):
 
 			#IE11
 			try:
-				self.timeinput["type"]="time"
+				self.timeinput["type"] = "time"
 			except:
 				pass
 
-			self.timeinput["style"]["float"]="left"
-			self.timeinput["style"]["width"]="70px"
+			self.timeinput["style"]["float"] = "left"   #fixme: Do this with css?
+			self.timeinput["style"]["width"] = "70px"   #fixme: Do this with css?
 			self.appendChild(self.timeinput)
 
 			if self.readOnly:
 				self.timeinput["readonly"] = True
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		date = skelStructure[ boneName ]["date"] if "date" in skelStructure[ boneName ].keys() else True
 		time = skelStructure[ boneName ]["time"] if "time" in skelStructure[ boneName ].keys() else True
-		return( DateEditBone( modulName, boneName, readOnly,date,time ) )
+		return DateEditBone(moduleName, boneName, readOnly, date, time)
 
 	def unserialize(self, data, extendedErrorInformation=None):
-		if self.boneName in data.keys():
+		if data.get(self.boneName):
 			if self.hastime and not self.hasdate:
-				self.timeinput["value"]=data[ self.boneName ]
-			if self.hasdate  and not self.hastime:
-				dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y")
-				self.dateinput["value"]=dateobj.strftime( "%Y-%m-%d" )
-			if self.hasdate  and self.hastime:
+				self.timeinput["value"] = data[ self.boneName ]
+
+			if self.hasdate and not self.hastime:
+				dateobj = datetime.strptime(data[ self.boneName ], "%d.%m.%Y")
+				self.dateinput["value"] = dateobj.strftime( "%Y-%m-%d" )
+
+			if self.hasdate and self.hastime:
 				# FIXME: temporarily fixing a bug in extended relational bone
 				try:
-					dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y %H:%M:%S")
-					self.dateinput["value"]=dateobj.strftime( "%Y-%m-%d" )
-					self.timeinput["value"]=dateobj.strftime( "%H:%M:%S" )
+					dateobj = datetime.strptime(data[self.boneName], "%d.%m.%Y %H:%M:%S")
+					self.dateinput["value"]=dateobj.strftime("%Y-%m-%d")
+					self.timeinput["value"]=dateobj.strftime("%H:%M:%S")
+
 				except ValueError:
 					self.dateinput["value"] = "-"
 					self.timeinput["value"] = "-"
@@ -185,6 +187,7 @@ class DateEditBone( html5.Div ):
 			if result:
 				adatetime[3] = result.group(1)
 				adatetime[4] = result.group(2)
+
 		if hasattr(self,"dateinput"):
 			result = re.match('(\d+).(\d+).(\d+)',self.dateinput["value"])
 			if result:
@@ -193,17 +196,18 @@ class DateEditBone( html5.Div ):
 				adatetime[2] = result.group(1)
 
 		if adatetime[2]=="0000":
-			return( { self.boneName: adatetime[3]+":"+adatetime[4]+":00" } )
+			return {self.boneName: adatetime[3]+":"+adatetime[4]+":00"}
+
 		returnvalue = adatetime[0]+"."+adatetime[1]+"."+adatetime[2]+" "+adatetime[3]+":"+adatetime[4]+":00"
-		return( { self.boneName: returnvalue } )
+		return {self.boneName: returnvalue}
 
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serialize()
 
-def CheckForDateBone(  modulName, boneName, skelStucture, *args, **kwargs ):
-	return( skelStucture[boneName]["type"]=="date" )
+def CheckForDateBone(moduleName, boneName, skelStucture, *args, **kwargs):
+	return skelStucture[boneName]["type"] == "date"
 
 #Register this Bone in the global queue
-editBoneSelector.insert( 3, CheckForDateBone, DateEditBone)
-viewDelegateSelector.insert( 3, CheckForDateBone, DateViewBoneDelegate)
+editBoneSelector.insert(3, CheckForDateBone, DateEditBone)
+viewDelegateSelector.insert(3, CheckForDateBone, DateViewBoneDelegate)
 extractorDelegateSelector.insert(3, CheckForDateBone, DateBoneExtractor)
