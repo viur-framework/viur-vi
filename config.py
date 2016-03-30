@@ -12,5 +12,6 @@ conf = {
 	"initialHashEvent": EventDispatcher("initialHash"),
     "toplevelactions": [ "tasks", "userstate", "logout" ],
 	"batchSize": 20,
-	"showBoneNames": False
+	"showBoneNames": False,
+	"internalPreview": True
 }

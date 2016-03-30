@@ -351,8 +351,7 @@ class ListPreviewInlineAction( html5.ext.Button ):
 
 		# Disable internal Preview by config
 		module = self.parent().parent().modul
-		if ("disableInternalPreview" in conf["modules"][module].keys()
-			and conf["modules"][module]["disableInternalPreview"]):
+		if conf["modules"][module].get("disableInternalPreview", not conf["internalPreview"]):
 			return
 
 		# If there is already something in the sidebar, don't show the internal preview!
