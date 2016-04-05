@@ -181,13 +181,7 @@ class Logout(html5.Li):
 	def onClick(self, event):
 		event.stopPropagation()
 		event.preventDefault()
-		NetworkService.request( "skey", "", successHandler=self.onSkeyAvaiable, cacheable=False )
-
-	def onSkeyAvaiable(self, req):
-		skey = NetworkService.decode( req )
-		assert not "\"" in skey
-		eval("""window.top.location.href = "/vi/user/logout?skey="""+skey+"""&";""")
-
+		conf["mainWindow"].logoutEvent.fire()
 
 	@staticmethod
 	def canHandle( action ):

@@ -52,7 +52,7 @@ debug: $(OUTPUT) $(MAIN_CSS) version copyfiles
 		$(DEBUGOPTS) \
 		--bootloader=bootstrap_progress.js \
 		-I ./$(VI_CUSTOM) \
-				admin.py
+				main.py
 	@echo "--- FINISHED DEBUG BUILD ---"
 
 deploy: $(MAIN_CSS) version copyfiles
@@ -61,7 +61,7 @@ deploy: $(MAIN_CSS) version copyfiles
 		$(DEPLOYOPTS) \
 		--bootloader=bootstrap_progress.js \
 		-I ./$(VI_CUSTOM) \
-				admin.py
+				main.py
 	@echo "--- FINISHED DEPLOY BUILD ---"
 
 tarfile: deploy

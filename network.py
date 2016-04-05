@@ -187,9 +187,12 @@ class NetworkService( object ):
 			@type req: Instance of NetworkService response
 			@returns: object
 		"""
-		return( json.loads( req.result ) )
+		return json.loads( req.result )
 
-
+	@staticmethod
+	def isOkay(req):
+		answ = NetworkService.decode(req)
+		return isinstance(answ, str) and answ == "OKAY"
 
 	@staticmethod
 	def urlForArgs( modul, path, cacheable ):

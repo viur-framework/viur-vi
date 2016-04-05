@@ -1,110 +1,108 @@
-import pyjd
+#-*- coding: utf-8 -*-
+
 import html5
 from config import conf
 from widgets import TopBarWidget
 from widgets.userlogoutmsg import UserLogoutMsg
-import json
 from network import NetworkService, DeferredCall
+from event import viInitializedEvent, EventDispatcher
+from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
+from log import Log
+from pane import GroupPane
+
+# THESE MUST REMAIN AND ARE QUEUED!!
 import handler
 import bones
 import actions
 import i18n
-from event import viInitializedEvent
-from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
-from log import Log
-from pane import Pane, GroupPane
-from i18n import translate
 
-try:
-	import vi_plugins
-except ImportError:
-	pass
+class AdminScreen(html5.Div):
 
-class CoreWindow( html5.Div ):
+	def __init__(self, parent, *args, **kwargs ):
+		super(AdminScreen, self).__init__(*args, **kwargs)
+		parent.appendChild(self)
 
-	def __init__(self, *args, **kwargs ):
-		super( CoreWindow, self ).__init__( *args, **kwargs )
-		self["id"]="CoreWindow"
+		self["id"] = "CoreWindow"
+		conf["mainWindow"] = self
+
+		self.logoutEvent = EventDispatcher("logout")
+		self.logoutEvent.register(parent)
+
 		self.topBar = TopBarWidget()
 		self.appendChild( self.topBar )
+
 		self.workSpace = html5.Div()
 		self.workSpace["class"] = "vi_workspace"
-		self.appendChild( self.workSpace )
+		self.appendChild(self.workSpace)
+
 		self.modulMgr = html5.Div()
 		self.modulMgr["class"] = "vi_wm"
-		self.appendChild( self.modulMgr )
+		self.appendChild(self.modulMgr)
+
 		self.modulList = html5.Nav()
 		self.modulList["class"] = "vi_manager"
-		self.modulMgr.appendChild( self.modulList )
+		self.modulMgr.appendChild(self.modulList)
+
 		self.modulListUl = html5.Ul()
 		self.modulListUl["class"] = "modullist"
-		self.modulList.appendChild( self.modulListUl )
+		self.modulList.appendChild(self.modulListUl)
+
 		self.viewport = html5.Div()
 		self.viewport["class"] = "vi_viewer"
-		self.workSpace.appendChild( self.viewport)
+		self.workSpace.appendChild(self.viewport)
+
 		self.logWdg = Log()
-		self.appendChild( self.logWdg )
-		#DOM.appendChild( self.modulMgr, self.modulList )
-		#self.modulList = ModulListWidget()
-		#self.adopt( self.modulList,self.modulMgr )
-		#self.modulList.onAttach()
+		self.appendChild(self.logWdg)
+
 		self.currentPane = None
 		self.nextPane = None #Which pane gains focus once the deferred call fires
 		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
 		self.config = None
 		self.user = None
-		self.userLoggedOutMsg=UserLogoutMsg()
+		self.userLoggedOutMsg = UserLogoutMsg()
+
 		self["class"].append("is_loading")
-		startupQueue.setFinalElem( self.startup )
-		self.sinkEvent('onUserTryedToLogin')
+
+		startupQueue.setFinalElem(self.startup)
+
 		# Register the error-handling for this iframe
 		le = eval("window.top.logError")
 		w = eval("window")
 		w.onerror = le
 		w = eval("window.top")
 		w.onerror = le
+		self.hide()
 
-	def onUserTryedToLogin(self,event):
-		self.userLoggedOutMsg.testUserAvaiable()
+	def invoke(self):
+		self.show()
+		startupQueue.run()
 
 	def startup(self):
-		NetworkService.request( None, "/admin/config", successHandler=self.onConfigAvailable,
-					failureHandler=self.onError, cacheable=True )
-		NetworkService.request( "user", "view/self", successHandler=self.onUserAvaiable,
-					failureHandler=self.userLoggedOutMsg.onUserTestFail, cacheable=True )
+		NetworkService.request(None, "/admin/config", successHandler=self.postInit,
+								failureHandler=self.onError, cacheable=True)
 
 	def log(self, type, msg ):
 		self.logWdg.log( type, msg )
 
-	def onConfigAvailable(self, req):
+	def postInit(self, req):
 		self.config = NetworkService.decode(req)
-		if self.user is not None:
-			self.postInit()
-	
-	def onUserAvaiable(self, req):
-		data = NetworkService.decode(req)
-		conf["currentUser"] = data["values"]
-		self.user = data
-		if self.config is not None:
-			self.postInit()
 
-	def postInit(self):
 		def getModulName(argIn):
 			try:
-				return( argIn[1]["name"].lower() )
+				return argIn[1]["name"].lower()
 			except:
-				return( None )
+				return None
 
 		def getModulSortIndex(argIn):
 			try:
-				return( argIn[1]["sortIndex"] )
+				return argIn[1]["sortIndex"]
 			except:
-				return( None )
+				return None
 
 		# Modules
 		groups = {}
 		panes = []
-		userAccess = self.user["values"].get( "access" ) or []
+		userAccess = conf["currentUser"].get("access", [])
 		predefinedFilterCounter = 1
 
 		if ( "configuration" in self.config.keys()
@@ -140,8 +138,10 @@ class CoreWindow( html5.Div ):
 					v["__id"] = predefinedFilterCounter
 					predefinedFilterCounter += 1
 
-			handlerCls = HandlerClassSelector.select( module, info )
-			assert handlerCls is not None, "No handler available for modul %s" % module
+			handlerCls = HandlerClassSelector.select(module, info)
+			print(module, info)
+
+			assert handlerCls is not None, "No handler available for module '%s'" % module
 
 			isChild = False
 			for k in groups.keys():
@@ -322,14 +322,3 @@ class CoreWindow( html5.Div ):
 				pane.removeWidget( widget )
 				return
 		raise AssertionError("Tried to remove unknown widget %s" % str( widget ))
-
-if __name__ == '__main__':
-	pyjd.setup("public/admin.html")
-	conf["mainWindow"] = CoreWindow()
-	html5.Body().appendChild( conf["mainWindow"] )
-	#RootPanel().add( conf["mainWindow"] )
-	#t.setFocus( True )
-	#conf["mainWindow"].addWidget(None,"test")
-	startupQueue.run()
-	pyjd.run()
-
