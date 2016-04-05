@@ -33,6 +33,7 @@ class StartupQueue( object ):
 			cb()
 		elif self.currentElem == len( self.q ): #We should call the final element
 			self.finalElem()
+			self.finalElem = None
 		else:
 			raise RuntimeError("StartupQueue has no more elements to call. Someone called next() twice!")
 

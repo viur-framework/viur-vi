@@ -63,8 +63,6 @@ class AdminScreen(html5.Div):
 
 		self["class"].append("is_loading")
 
-		startupQueue.setFinalElem(self.startup)
-
 		# Register the error-handling for this iframe
 		le = eval("window.top.logError")
 		w = eval("window")
@@ -75,6 +73,7 @@ class AdminScreen(html5.Div):
 
 	def invoke(self):
 		self.show()
+		startupQueue.setFinalElem(self.startup)
 		startupQueue.run()
 
 	def startup(self):

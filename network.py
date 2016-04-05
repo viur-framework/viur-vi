@@ -99,28 +99,28 @@ class NetworkService( object ):
 		currently active widgets of changes made to data on the server.
 	"""
 	changeListeners = [] # All currently active widgets which will be informed of changes made
-	_cache = {} # Modul->Cache index map (for requests that can be cached)
+	_cache = {} # module->Cache index map (for requests that can be cached)
 
 	@staticmethod
-	def notifyChange( modul ):
+	def notifyChange( module ):
 		"""
-			Broadcasts a change made to data of modul 'modul' to all currently
+			Broadcasts a change made to data of module 'module' to all currently
 			registered changeListeners.
 			Also invalidates our _cache
-			@param modul: Name of the modul where the change occured
-			@type modul: string
+			@param module: Name of the module where the change occured
+			@type module: string
 		"""
-		if modul in NetworkService._cache.keys():
-			NetworkService._cache[ modul ] += 1
+		if module in NetworkService._cache.keys():
+			NetworkService._cache[ module ] += 1
 		for c in NetworkService.changeListeners:
-			c.onDataChanged( modul )
+			c.onDataChanged( module )
 
 	@staticmethod
 	def registerChangeListener( listener ):
 		"""
 			Registers object 'listener' for change notifications.
 			'listener' must provide an 'onDataChanged' function accepting
-			one parameter: the name of the modul. Does nothing if that object
+			one parameter: the name of the module. Does nothing if that object
 			has already registered.
 			@param listener: The object to register
 			@type listener: object
@@ -195,34 +195,34 @@ class NetworkService( object ):
 		return isinstance(answ, str) and answ == "OKAY"
 
 	@staticmethod
-	def urlForArgs( modul, path, cacheable ):
+	def urlForArgs( module, path, cacheable ):
 		"""
 			Constructs the final url for that request.
-			If modul is given, it prepends "/admin" and injects a timestamp
+			If module is given, it prepends "/admin" and injects a timestamp
 			to fool the builtin cache of modern browsers.
-			If modul is None, path is returned unchanged.
-			@param modul: Name of the target modul or None
-			@type modul: string or None
-			@param path: Path (either relative to 'modul' or absolute if 'modul' is None
+			If module is None, path is returned unchanged.
+			@param module: Name of the target module or None
+			@type module: string or None
+			@param path: Path (either relative to 'module' or absolute if 'module' is None
 			@type path: string
 			@param cacheable: If true, allow the browser to cache that request
 			@type cacheable: bool
 			@returns: string
 		"""
 		cacheKey = time.time()
-		if cacheable and modul:
-			if not modul in NetworkService._cache.keys():
-				NetworkService._cache[ modul ] = 1
-			cacheKey = "c%s" % NetworkService._cache[ modul ]
-		if modul:
-			return( "/admin/%s/%s?_unused_time_stamp=%s" % (modul, path, cacheKey))
+		if cacheable and module:
+			if not module in NetworkService._cache.keys():
+				NetworkService._cache[ module ] = 1
+			cacheKey = "c%s" % NetworkService._cache[ module ]
+		if module:
+			return( "/vi/%s/%s?_unused_time_stamp=%s" % (module, path, cacheKey))
 		else:
 			if "?" in path:
 				return( path+"&_unused_time_stamp=%s" % cacheKey)
 			else:
 				return( path+"?_unused_time_stamp=%s" % cacheKey)
 
-	def __init__(self, modul, url, params, successHandler, failureHandler, finishedHandler, modifies, cacheable, secure ):
+	def __init__(self, module, url, params, successHandler, failureHandler, finishedHandler, modifies, cacheable, secure ):
 		"""
 			Constructs a new NetworkService request.
 			Should not be called directly (use NetworkService.request instead).
@@ -231,7 +231,7 @@ class NetworkService( object ):
 		self.result = None
 		self.status = "running"
 		self.waitingForSkey = False
-		self.modul = modul
+		self.module = module
 		self.url = url
 		self.params = params
 		self.successHandler = [successHandler] if successHandler else []
@@ -242,21 +242,21 @@ class NetworkService( object ):
 		self.secure = secure
 		if secure:
 			self.waitingForSkey = True
-			self.doFetch("/admin/skey",None,None)
+			self.doFetch("/vi/skey", None, None)
 		else:
-			self.doFetch(NetworkService.urlForArgs(modul,url,cacheable),params, None)
+			self.doFetch(NetworkService.urlForArgs(module, url, cacheable), params, None)
 
 
 	@staticmethod
-	def request( modul, url, params=None, successHandler=None, failureHandler=None,
-		   finishedHandler=None, modifies=False, cacheable=False, secure=False ):
+	def request(module, url, params=None, successHandler=None, failureHandler=None,
+		            finishedHandler=None, modifies=False, cacheable=False, secure=False):
 		"""
 			Performs an AJAX request. Handles caching and security-keys.
 			Calls made to this function are guaranteed to be asynchron, even
 			if the result is already known (cached).
-			@param modul: Target modul on the server. Set to None if you want to call anything else
-			@type modul: string or None
-			@param url: The path (relative to modul) or a full url if modul is None
+			@param module: Target module on the server. Set to None if you want to call anything else
+			@type module: string or None
+			@param url: The path (relative to module) or a full url if module is None
 			@type url: None
 			@param successHandler: function beeing called if the request succeeds. Must take one argument (the request).
 			@type successHandler: callable
@@ -264,7 +264,7 @@ class NetworkService( object ):
 			@type failureHandler: callable
 			@param finishedHandler: function beeing called if the request finished (regardless wherever it succeeded or not). Must take one argument (the request).
 			@type finishedHandler: callable
-			@param modifies: If set to True, it will automatically broadcast an onDataChanged event for that modul.
+			@param modifies: If set to True, it will automatically broadcast an onDataChanged event for that module.
 			@type modifies: bool
 			@param cacheable: Indicates if this request could be cached. Defaults to False.
 			@type cacheable: bool
@@ -272,10 +272,10 @@ class NetworkService( object ):
 			@type secure: bool
 
 		"""
-		print("NS REQUEST", modul, url, params )
+		print("NS REQUEST", module, url, params )
 		assert not( cacheable and modifies ), "Cannot cache a request modifying data!"
 		#Seems not cacheable or not cached
-		return( NetworkService(modul, url, params, successHandler, failureHandler, finishedHandler,
+		return( NetworkService(module, url, params, successHandler, failureHandler, finishedHandler,
 				       modifies, cacheable, secure) )
 
 
@@ -311,7 +311,7 @@ class NetworkService( object ):
 		"""
 		if self.waitingForSkey:
 			self.waitingForSkey = False
-			self.doFetch( NetworkService.urlForArgs(self.modul,self.url,self.cacheable), self.params, json.loads(text) )
+			self.doFetch( NetworkService.urlForArgs(self.module,self.url,self.cacheable), self.params, json.loads(text) )
 		else:
 			#print("IM COMPLETE", self)
 			self.result = text
@@ -323,8 +323,8 @@ class NetworkService( object ):
 					s( self )
 			except:
 				if self.modifies:
-					DeferredCall(NetworkService.notifyChange, self.modul, _delay=2500)
-					#NetworkService.notifyChange( self.modul )
+					DeferredCall(NetworkService.notifyChange, self.module, _delay=2500)
+					#NetworkService.notifyChange( self.module )
 				raise
 			# Remove references to our handlers
 			self.successHandler = []
@@ -332,7 +332,7 @@ class NetworkService( object ):
 			self.failureHandler = []
 			self.params = None
 			if self.modifies:
-				DeferredCall(NetworkService.notifyChange, self.modul, _delay=2500)
+				DeferredCall(NetworkService.notifyChange, self.module, _delay=2500)
 
 	def onError(self, text, code):
 		"""

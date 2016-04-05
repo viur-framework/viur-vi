@@ -52,11 +52,6 @@ class LoginHandler(html5.Li):
 		self.mask.addClass("vi-login-mask-%s" % self.methodClass)
 		loginScreen.appendChild(self.mask)
 
-		if len(self.loginScreen.loginMethodSelector._children) > 1:
-			self.disable()
-		else:
-			self.enable()
-
 	def onClick(self, event):
 		self.loginScreen.selectHandler(self)
 
@@ -77,27 +72,42 @@ class LoginHandler_UserPassword(LoginHandler):
 	def __init__(self, loginScreen, *args, **kwargs):
 		super(LoginHandler_UserPassword, self).__init__(loginScreen, *args, **kwargs)
 
-		form = html5.Form()
-		self.mask.appendChild(form)
+		# Standard Login Form
+		self.pwform = html5.Form()
+		self.mask.appendChild(self.pwform)
 
 		self.username = html5.Input()
 		self.username["name"] = "username"
 		self.username["placeholder"] = translate("Username")
-		form.appendChild(self.username)
+		self.pwform.appendChild(self.username)
 
 		self.password = html5.Input()
 		self.password["type"] = "password"
 		self.password["name"] = "password"
 		self.password["placeholder"] = translate("Password")
-		form.appendChild(self.password)
+		self.pwform.appendChild(self.password)
 
 		self.loginBtn = html5.ext.Button(translate("Login"), callback=self.onLoginClick)
-		form.appendChild(self.loginBtn)
+		self.pwform.appendChild(self.loginBtn)
+
+		# One Time Password
+		self.otpform = html5.Form()
+		self.otpform.hide()
+		self.mask.appendChild(self.otpform)
+
+		self.otp = html5.Input()
+		self.otp["name"] = "otp"
+		self.otp["placeholder"] = translate("One Time Password")
+		self.otpform.appendChild(self.otp)
+
+		self.verifyBtn = html5.ext.Button(translate("Verify"), callback=self.onVerifyClick)
+		self.otpform.appendChild(self.verifyBtn)
 
 	def onLoginClick(self, sender = None):
 		if not (self.username["value"] and self.password["value"]):
 			return # fixme
 
+		self.loginBtn["disabled"] = True
 		self.loginScreen.loader.show()
 
 		NetworkService.request("user", "auth_userpassword/login",
@@ -109,18 +119,64 @@ class LoginHandler_UserPassword(LoginHandler):
 
 	def doLoginSuccess(self, req):
 		answ = NetworkService.decode(req)
+		print(answ)
+		self.loginScreen.loader.hide()
 
 		if answ == "OKAY":
+			self.reset()
 			self.loginScreen.invoke()
 		elif answ == "OKAY:OTP":
-			alert("OTP TODO")
+			self.pwform.hide()
+			self.otpform.show()
 		elif answ == "OKAY:NOADMIN":
+			self.reset()
 			eval("window.top.preventViUnloading = false;")
 			eval("window.top.location = \"/\"")
 
 	def doLoginFailure(self, *args, **kwargs):
 		alert("Fail")
 
+	def onVerifyClick(self, sender = None):
+		if not self.otp["value"]:
+			return # fixme
+
+		self.verifyBtn["disabled"] = True
+		self.loginScreen.loader.show()
+
+		NetworkService.request("user", "f2_otp2factor/otp",
+		                        params={"otptoken": self.otp["value"]},
+		                        secure=True,
+		                        successHandler=self.doVerifySuccess,
+		                        failureHandler=self.doVerifyFailure)
+
+	def doVerifySuccess(self, req):
+		self.loginScreen.loader.hide()
+		answ = NetworkService.decode(req)
+
+		if isinstance(answ, str):
+			self.doLoginSuccess(req)
+		else:
+			self.verifyBtn["disabled"] = False
+
+	def doVerifyFailure(self, *args, **kwargs):
+		if kwargs.get("code") == 401 or kwargs.get("code") == 403:
+			#Too many retries?
+			self.reset()
+			self.enable()
+
+	def reset(self):
+		self.loginBtn["disabled"] = False
+		self.verifyBtn["disabled"] = False
+
+		self.otp["value"] = ""
+		self.username["value"] = ""
+		self.password["value"] = ""
+
+	def enable(self):
+		self.pwform.show()
+		self.otpform.hide()
+
+		super(LoginHandler_UserPassword, self).enable()
 
 class LoginHandler_GoogleAccount(LoginHandler):
 	method = "X-VIUR-AUTH-Google-Account"
@@ -184,6 +240,7 @@ class LoginScreen(html5.Div):
 
 	def invoke(self, logout = False):
 		self.loader.show()
+
 		conf["currentUser"] = None
 
 		#Enforce logout
@@ -206,6 +263,7 @@ class LoginScreen(html5.Div):
 	def doShowLogin(self, *args, **kwargs):
 		self.loader.hide()
 		self.show()
+		self.selectHandler()
 
 	def doSkipLogin(self, req):
 		answ = NetworkService.decode(req)
@@ -234,10 +292,11 @@ class LoginScreen(html5.Div):
 
 		self.loader.hide()
 
-	def selectHandler(self, handler):
+	def selectHandler(self, handler = None):
 		for h in self.loginMethodSelector._children:
-			if h is handler:
+			if handler is None or h is handler:
 				h.enable()
+				handler = h
 			else:
 				h.disable()
 

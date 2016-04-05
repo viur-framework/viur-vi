@@ -174,6 +174,7 @@ class AccessMultiSelectBone( html5.Div ):
 		self.boneName = boneName
 		self.modulName = moduleName
 		self.readOnly = readOnly
+		print(values)
 		self.values = {k: v for k, v in values}
 
 		self.modules = {}
