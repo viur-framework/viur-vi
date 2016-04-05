@@ -5,8 +5,11 @@
 class StartupQueue( object ):
 	def __init__(self):
 		super(StartupQueue, self).__init__()
-		self.isRunning = False
 		self.q = []
+		self.reset()
+
+	def reset(self):
+		self.isRunning = False
 		self.currentElem = -1
 		self.finalElem = None
 
@@ -33,7 +36,7 @@ class StartupQueue( object ):
 			cb()
 		elif self.currentElem == len( self.q ): #We should call the final element
 			self.finalElem()
-			self.finalElem = None
+			self.reset()
 		else:
 			raise RuntimeError("StartupQueue has no more elements to call. Someone called next() twice!")
 
