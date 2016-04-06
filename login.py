@@ -5,6 +5,7 @@ from network import NetworkService, DeferredCall
 from i18n import translate
 from event import EventDispatcher
 from config import conf
+from priorityqueue import loginHandlerSelector
 
 class LoginInputField(html5.Input):
 
@@ -18,50 +19,26 @@ class LoginInputField(html5.Input):
 	def onKeyPress(self, event):
 		self.onKeyPressEvent.fire(event)
 
-class LoginLoader(html5.Div):
 
-	def __init__(self, parent = None, *args, **kwargs):
-		super(LoginLoader, self).__init__(*args, **kwargs)
-
-		self.addClass("vi-login-screen-loader")
-
-		img = html5.Img()
-		img[ "src" ] = "icons/is_loading.gif"
-		self.appendChild(img)
-
-		self.text = html5.Span()
-		self.appendChild(self.text)
-
-		if parent:
-			parent.appendChild(self)
-
-		self.update()
-
-	def update(self):
-		self.text.removeAllChildren()
-		self.text.appendChild(html5.TextNode(translate("Please wait...")))
-
-class LoginHandler(html5.Li):
-	method = None
-
+class BaseLoginHandler(html5.Li):
 	def __init__(self, loginScreen, *args, **kwargs):
-		assert self.method, "Method must be set in class!"
 		assert isinstance(loginScreen, LoginScreen)
-		super(LoginHandler, self).__init__(*args, **kwargs)
-
-		self.methodClass = self.method.replace("X-VIUR-AUTH-", "").lower()
+		super(BaseLoginHandler, self).__init__(*args, **kwargs)
 
 		self.loginScreen = loginScreen
 
-		self.addClass("vi-login-handler-%s" % self.methodClass)
+		if not "cssname" in dir(self):
+			self.cssname = self.__class__.__name__.lower()
+
+		self.addClass("vi-login-handler-%s" % self.cssname)
 		self.sinkEvent("onClick")
 
 		self.loginScreen.loginMethodSelector.appendChild(self)
 
-		self.appendChild(html5.TextNode(translate("vi.login.handler.%s" % self.methodClass)))
+		self.appendChild(html5.TextNode(translate("vi.login.handler.%s" % self.cssname)))
 
 		self.mask = html5.Div()
-		self.mask.addClass("vi-login-mask-%s" % self.methodClass)
+		self.mask.addClass("vi-login-mask-%s" % self.cssname)
 		loginScreen.appendChild(self.mask)
 
 	def onClick(self, event):
@@ -75,14 +52,24 @@ class LoginHandler(html5.Li):
 		self.removeClass("is-active")
 		self.mask.hide()
 
+	def lock(self):
+		self.loginScreen.lock()
+
+	def unlock(self):
+		self.loginScreen.unlock()
+
+	def login(self):
+		self.reset()
+		self.loginScreen.invoke()
+
 	def reset(self):
 		pass
 
-class LoginHandler_UserPassword(LoginHandler):
-	method = "X-VIUR-AUTH-User-Password"
+class UserPasswordLoginHandler(BaseLoginHandler):
+	cssname = "userpassword"
 
 	def __init__(self, loginScreen, *args, **kwargs):
-		super(LoginHandler_UserPassword, self).__init__(loginScreen, *args, **kwargs)
+		super(UserPasswordLoginHandler, self).__init__(loginScreen, *args, **kwargs)
 
 		# Standard Login Form
 		self.pwform = html5.Form()
@@ -135,7 +122,7 @@ class LoginHandler_UserPassword(LoginHandler):
 			return # fixme
 
 		self.loginBtn["disabled"] = True
-		self.loginScreen.loader.show()
+		self.lock()
 
 		NetworkService.request("user", "auth_userpassword/login",
 		                        params={"name": self.username["value"],
@@ -148,12 +135,11 @@ class LoginHandler_UserPassword(LoginHandler):
 		answ = NetworkService.decode(req)
 		print(answ)
 
-		self.loginScreen.loader.hide()
+		self.unlock()
 		self.loginBtn["disabled"] = False
 
 		if answ == "OKAY":
-			self.reset()
-			self.loginScreen.invoke()
+			self.login()
 		elif answ == "ONE-TIME-PASSWORD":
 			self.pwform.hide()
 			self.otpform.show()
@@ -169,7 +155,7 @@ class LoginHandler_UserPassword(LoginHandler):
 			return # fixme
 
 		self.verifyBtn["disabled"] = True
-		self.loginScreen.loader.show()
+		self.lock()
 
 		NetworkService.request("user", "f2_otp2factor/otp",
 		                        params={"otptoken": self.otp["value"]},
@@ -178,12 +164,11 @@ class LoginHandler_UserPassword(LoginHandler):
 		                        failureHandler=self.doVerifyFailure)
 
 	def doVerifySuccess(self, req):
-		self.loginScreen.loader.hide()
+		self.unlock()
 		self.verifyBtn["disabled"] = False
 
 		if NetworkService.isOkay(req):
-			self.reset()
-			self.doLoginSuccess(req)
+			self.login()
 		else:
 			self.otp["value"] = ""
 			self.otp.focus()
@@ -204,28 +189,41 @@ class LoginHandler_UserPassword(LoginHandler):
 		self.pwform.show()
 		self.otpform.hide()
 
-		super(LoginHandler_UserPassword, self).enable()
+		super(UserPasswordLoginHandler, self).enable()
 		DeferredCall(self.focusLaterIdiot)
 
 	def focusLaterIdiot(self):
 		self.username.focus()
 
-class LoginHandler_GoogleAccount(LoginHandler):
-	method = "X-VIUR-AUTH-Google-Account"
+	@staticmethod
+	def canHandle(method, secondFactor):
+		return method == "X-VIUR-AUTH-User-Password"
+
+loginHandlerSelector.insert(0, UserPasswordLoginHandler.canHandle, UserPasswordLoginHandler)
+
+
+class GoogleAccountLoginHandler(BaseLoginHandler):
+	cssname = "googleaccount"
 
 	def __init__(self, loginScreen, *args, **kwargs):
-		super(LoginHandler_GoogleAccount, self).__init__(loginScreen, *args, **kwargs)
+		super(GoogleAccountLoginHandler, self).__init__(loginScreen, *args, **kwargs)
 
 		self.loginBtn = html5.ext.Button(translate("Login with Google"), callback=self.onLoginClick)
 		self.mask.appendChild(self.loginBtn)
 
 	def onLoginClick(self, sender = None):
-		self.loginScreen.loader.show()
+		self.lock()
 		eval("window.top.preventViUnloading = false;")
 		eval("window.top.location = \"/vi/user/auth_googleaccount/login\"")
 
+	@staticmethod
+	def canHandle(method, secondFactor):
+		return method == "X-VIUR-AUTH-Google-Account"
+
+loginHandlerSelector.insert(0, GoogleAccountLoginHandler.canHandle, GoogleAccountLoginHandler)
+
+
 class LoginScreen(html5.Div):
-	possibleHandlers = [LoginHandler_UserPassword, LoginHandler_GoogleAccount]
 
 	def __init__(self, parent, *args, **kwargs):
 		super(LoginScreen, self).__init__(*args, **kwargs)
@@ -235,9 +233,6 @@ class LoginScreen(html5.Div):
 		self.loginEvent.register(parent)
 
 		self.addClass("vi-login")
-
-		# --- Loader ---
-		self.loader = LoginLoader(self)
 
 		# --- Header ---
 
@@ -271,7 +266,7 @@ class LoginScreen(html5.Div):
 		self.hide()
 
 	def invoke(self, logout = False):
-		self.loader.show()
+		self.lock()
 
 		conf["currentUser"] = None
 
@@ -288,12 +283,17 @@ class LoginScreen(html5.Div):
 		                        successHandler=self.doSkipLogin,
 		                        failureHandler=self.doShowLogin)
 
+	def lock(self):
+		self.addClass("is-loading")
+
+	def unlock(self):
+		self.removeClass("is-loading")
 
 	def onLogoutSuccess(self, req):
 		self.invoke()
 
 	def doShowLogin(self, *args, **kwargs):
-		self.loader.hide()
+		self.unlock()
 		self.show()
 		self.selectHandler()
 
@@ -318,15 +318,13 @@ class LoginScreen(html5.Div):
 
 		methods = []
 		for method in answ:
-			if method[0] not in methods:
-				methods.append(method[0])
+			handler = loginHandlerSelector.select(method[0], method[1])
 
-		for method in methods:
-			for handler in self.possibleHandlers:
-				if method == handler.method:
-					handler(self)
+			# Check if this handler is already inserted!
+			if not any([c.__class__.__name__ == handler.__name__ for c in self.loginMethodSelector._children]):
+				handler(self)
 
-		self.loader.hide()
+		self.unlock()
 
 	def selectHandler(self, handler = None):
 		for h in self.loginMethodSelector._children:
