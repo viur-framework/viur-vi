@@ -1,10 +1,22 @@
 #-*- coding: utf-8 -*-
 
 import html5
-from network import NetworkService
+from network import NetworkService, DeferredCall
 from i18n import translate
 from event import EventDispatcher
 from config import conf
+
+class LoginInputField(html5.Input):
+
+	def __init__(self, notifier, *args, **kwargs):
+		super(LoginInputField, self).__init__(*args, **kwargs)
+		self.sinkEvent("onKeyPress")
+
+		self.onKeyPressEvent = EventDispatcher("keyPress")
+		self.onKeyPressEvent.register(notifier)
+
+	def onKeyPress(self, event):
+		self.onKeyPressEvent.fire(event)
 
 class LoginLoader(html5.Div):
 
@@ -76,12 +88,12 @@ class LoginHandler_UserPassword(LoginHandler):
 		self.pwform = html5.Form()
 		self.mask.appendChild(self.pwform)
 
-		self.username = html5.Input()
+		self.username = LoginInputField(self)
 		self.username["name"] = "username"
 		self.username["placeholder"] = translate("Username")
 		self.pwform.appendChild(self.username)
 
-		self.password = html5.Input()
+		self.password = LoginInputField(self)
 		self.password["type"] = "password"
 		self.password["name"] = "password"
 		self.password["placeholder"] = translate("Password")
@@ -95,13 +107,28 @@ class LoginHandler_UserPassword(LoginHandler):
 		self.otpform.hide()
 		self.mask.appendChild(self.otpform)
 
-		self.otp = html5.Input()
+		self.otp = LoginInputField(self)
 		self.otp["name"] = "otp"
 		self.otp["placeholder"] = translate("One Time Password")
 		self.otpform.appendChild(self.otp)
 
 		self.verifyBtn = html5.ext.Button(translate("Verify"), callback=self.onVerifyClick)
 		self.otpform.appendChild(self.verifyBtn)
+
+	def onKeyPress(self, event):
+		if event.keyCode == 13:
+			if html5.utils.doesEventHitWidgetOrChildren(event, self.username):
+				if self.username["value"]:
+					self.password.element.focus()
+			elif html5.utils.doesEventHitWidgetOrChildren(event, self.password):
+				if self.username["value"] and self.password["value"]:
+					self.onLoginClick()
+			elif html5.utils.doesEventHitWidgetOrChildren(event, self.otp):
+				if self.otp["value"]:
+					self.onVerifyClick()
+
+			event.stopPropagation()
+			event.preventDefault()
 
 	def onLoginClick(self, sender = None):
 		if not (self.username["value"] and self.password["value"]):
@@ -120,18 +147,19 @@ class LoginHandler_UserPassword(LoginHandler):
 	def doLoginSuccess(self, req):
 		answ = NetworkService.decode(req)
 		print(answ)
+
 		self.loginScreen.loader.hide()
+		self.loginBtn["disabled"] = False
 
 		if answ == "OKAY":
 			self.reset()
 			self.loginScreen.invoke()
-		elif answ == "OKAY:OTP":
+		elif answ == "ONE-TIME-PASSWORD":
 			self.pwform.hide()
 			self.otpform.show()
-		elif answ == "OKAY:NOADMIN":
-			self.reset()
-			eval("window.top.preventViUnloading = false;")
-			eval("window.top.location = \"/\"")
+			self.otp.focus()
+		else:
+			self.password.focus()
 
 	def doLoginFailure(self, *args, **kwargs):
 		alert("Fail")
@@ -151,18 +179,18 @@ class LoginHandler_UserPassword(LoginHandler):
 
 	def doVerifySuccess(self, req):
 		self.loginScreen.loader.hide()
-		answ = NetworkService.decode(req)
+		self.verifyBtn["disabled"] = False
 
-		if isinstance(answ, str):
+		if NetworkService.isOkay(req):
+			self.reset()
 			self.doLoginSuccess(req)
 		else:
-			self.verifyBtn["disabled"] = False
+			self.otp["value"] = ""
+			self.otp.focus()
 
 	def doVerifyFailure(self, *args, **kwargs):
-		if kwargs.get("code") == 401 or kwargs.get("code") == 403:
-			#Too many retries?
-			self.reset()
-			self.enable()
+		self.reset()
+		self.enable()
 
 	def reset(self):
 		self.loginBtn["disabled"] = False
@@ -177,6 +205,10 @@ class LoginHandler_UserPassword(LoginHandler):
 		self.otpform.hide()
 
 		super(LoginHandler_UserPassword, self).enable()
+		DeferredCall(self.focusLaterIdiot)
+
+	def focusLaterIdiot(self):
+		self.username.focus()
 
 class LoginHandler_GoogleAccount(LoginHandler):
 	method = "X-VIUR-AUTH-Google-Account"
@@ -272,7 +304,11 @@ class LoginScreen(html5.Div):
 			return
 
 		self.hide()
+
 		conf["currentUser"] = answ["values"]
+		if not any([x in conf["currentUser"].get("access", []) for x in ["admin", "root"]]):
+			self.reset()
+			self.loginScreen.redirectNoAdmin()
 
 		print("User already logged in")
 		self.loginEvent.fire()
@@ -303,5 +339,7 @@ class LoginScreen(html5.Div):
 	def onGetAuthMethodsFailure(self, *args, **kwargs):
 		alert("Fail")
 
-
+	def redirectNoAdmin(self):
+		eval("window.top.preventViUnloading = false;")
+		eval("window.top.location = \"/\"")
 
