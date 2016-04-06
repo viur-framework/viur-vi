@@ -242,7 +242,7 @@ class LoginScreen(Screen):
 
 		# Logo
 		img = html5.Img()
-		img["src"] = "login/login-logo.png"
+		img["src"] = "login-logo.png"
 		header.appendChild(img)
 
 		# --- Dialog ---
