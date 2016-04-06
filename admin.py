@@ -9,6 +9,7 @@ from event import viInitializedEvent, EventDispatcher
 from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from log import Log
 from pane import GroupPane
+from screen import Screen
 
 # THESE MUST REMAIN AND ARE QUEUED!!
 import handler
@@ -16,17 +17,13 @@ import bones
 import actions
 import i18n
 
-class AdminScreen(html5.Div):
+class AdminScreen(Screen):
 
-	def __init__(self, parent, *args, **kwargs ):
+	def __init__(self, *args, **kwargs ):
 		super(AdminScreen, self).__init__(*args, **kwargs)
-		parent.appendChild(self)
 
 		self["id"] = "CoreWindow"
 		conf["mainWindow"] = self
-
-		self.logoutEvent = EventDispatcher("logout")
-		self.logoutEvent.register(parent)
 
 		self.topBar = TopBarWidget()
 		self.appendChild( self.topBar )
@@ -61,18 +58,17 @@ class AdminScreen(html5.Div):
 		self.user = None
 		self.userLoggedOutMsg = UserLogoutMsg()
 
-		self["class"].append("is_loading")
-
 		# Register the error-handling for this iframe
 		le = eval("window.top.logError")
 		w = eval("window")
 		w.onerror = le
 		w = eval("window.top")
 		w.onerror = le
-		self.hide()
 
 	def invoke(self):
 		self.show()
+		self.lock()
+
 		startupQueue.setFinalElem(self.startup)
 		startupQueue.run()
 
@@ -175,7 +171,7 @@ class AdminScreen(html5.Div):
 		# Finalizing!
 		viInitializedEvent.fire()
 		DeferredCall( self.checkInitialHash )
-		self["class"].remove("is_loading")
+		self.unlock()
 
 	def checkInitialHash( self, *args, **kwargs ):
 		urlHash = eval("window.top.location.hash")

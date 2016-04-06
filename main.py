@@ -1,5 +1,4 @@
 #-*- coding: utf-8 -*-
-
 import pyjd
 import html5
 
@@ -12,7 +11,6 @@ try:
 except ImportError:
 	pass
 
-
 class Application(html5.Div):
 	def __init__(self):
 		super(Application, self).__init__()
@@ -20,19 +18,20 @@ class Application(html5.Div):
 		conf["theApp"] = self
 
 		# Main Screens
-		self.loginScreen = LoginScreen(self)
+		self.loginScreen = LoginScreen()
 		self.adminScreen = None
 
 		self.loginScreen.invoke()
 
-	def onLogin(self):
+	def login(self):
 		if not self.adminScreen:
-			self.adminScreen = AdminScreen(self)
+			self.adminScreen = AdminScreen()
 
+		self.loginScreen.hide()
 		self.adminScreen.invoke()
 
-	def onLogout(self):
-		self.removeChild(self.adminScreen)
+	def logout(self):
+		self.adminScreen.remove()
 		conf["mainWindow"] = self.adminScreen = None
 
 		self.loginScreen.invoke(logout=True)

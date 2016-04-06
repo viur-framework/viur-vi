@@ -181,7 +181,7 @@ class Logout(html5.Li):
 	def onClick(self, event):
 		event.stopPropagation()
 		event.preventDefault()
-		conf["mainWindow"].logoutEvent.fire()
+		conf["theApp"].logout()
 
 	@staticmethod
 	def canHandle( action ):

@@ -6,6 +6,7 @@ from i18n import translate
 from event import EventDispatcher
 from config import conf
 from priorityqueue import loginHandlerSelector
+from screen import Screen
 
 class LoginInputField(html5.Input):
 
@@ -223,19 +224,13 @@ class GoogleAccountLoginHandler(BaseLoginHandler):
 loginHandlerSelector.insert(0, GoogleAccountLoginHandler.canHandle, GoogleAccountLoginHandler)
 
 
-class LoginScreen(html5.Div):
+class LoginScreen(Screen):
 
-	def __init__(self, parent, *args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		super(LoginScreen, self).__init__(*args, **kwargs)
-		parent.appendChild(self)
-
-		self.loginEvent = EventDispatcher("login")
-		self.loginEvent.register(parent)
-
 		self.addClass("vi-login")
 
 		# --- Header ---
-
 		header = html5.Div()
 		header.addClass("vi-login-header")
 		self.appendChild(header)
@@ -260,13 +255,19 @@ class LoginScreen(html5.Div):
 		self.loginMethodSelector.addClass("vi-login-method")
 		dialog.appendChild(self.loginMethodSelector)
 
-		NetworkService.request("user", "getAuthMethods",
-		                        successHandler=self.onGetAuthMethodsSuccess,
-		                        failureHandler=self.onGetAuthMethodsFailure)
-		self.hide()
+		self.haveLoginHandlers = False
+
 
 	def invoke(self, logout = False):
+		self.show()
 		self.lock()
+
+		if not self.haveLoginHandlers:
+			NetworkService.request("user", "getAuthMethods",
+		                            successHandler=self.onGetAuthMethodsSuccess,
+		                            failureHandler=self.onGetAuthMethodsFailure)
+
+			return
 
 		conf["currentUser"] = None
 
@@ -283,12 +284,6 @@ class LoginScreen(html5.Div):
 		                        successHandler=self.doSkipLogin,
 		                        failureHandler=self.doShowLogin)
 
-	def lock(self):
-		self.addClass("is-loading")
-
-	def unlock(self):
-		self.removeClass("is-loading")
-
 	def onLogoutSuccess(self, req):
 		self.invoke()
 
@@ -303,15 +298,13 @@ class LoginScreen(html5.Div):
 			self.doShowLogin()
 			return
 
-		self.hide()
-
 		conf["currentUser"] = answ["values"]
 		if not any([x in conf["currentUser"].get("access", []) for x in ["admin", "root"]]):
 			self.reset()
 			self.loginScreen.redirectNoAdmin()
 
 		print("User already logged in")
-		self.loginEvent.fire()
+		conf["theApp"].login()
 
 	def onGetAuthMethodsSuccess(self, req):
 		answ = NetworkService.decode(req)
@@ -324,7 +317,8 @@ class LoginScreen(html5.Div):
 			if not any([c.__class__.__name__ == handler.__name__ for c in self.loginMethodSelector._children]):
 				handler(self)
 
-		self.unlock()
+		self.haveLoginHandlers = True
+		self.invoke()
 
 	def selectHandler(self, handler = None):
 		for h in self.loginMethodSelector._children:
