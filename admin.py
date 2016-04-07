@@ -26,7 +26,7 @@ class AdminScreen(Screen):
 		conf["mainWindow"] = self
 
 		self.topBar = TopBarWidget()
-		self.appendChild( self.topBar )
+		self.appendChild(self.topBar)
 
 		self.workSpace = html5.Div()
 		self.workSpace["class"] = "vi_workspace"
@@ -54,8 +54,6 @@ class AdminScreen(Screen):
 		self.currentPane = None
 		self.nextPane = None #Which pane gains focus once the deferred call fires
 		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
-		self.config = None
-		self.user = None
 		self.userLoggedOutMsg = UserLogoutMsg()
 
 		# Register the error-handling for this iframe
@@ -72,6 +70,11 @@ class AdminScreen(Screen):
 		startupQueue.setFinalElem(self.startup)
 		startupQueue.run()
 
+	def remove(self):
+		self.userLoggedOutMsg.stopInterval()
+		self.userLoggedOutMsg = None
+		super(AdminScreen, self).remove()
+
 	def startup(self):
 		NetworkService.request(None, "/admin/config", successHandler=self.postInit,
 								failureHandler=self.onError, cacheable=True)
@@ -80,7 +83,7 @@ class AdminScreen(Screen):
 		self.logWdg.log( type, msg )
 
 	def postInit(self, req):
-		self.config = NetworkService.decode(req)
+		config = NetworkService.decode(req)
 
 		def getModulName(argIn):
 			try:
@@ -100,12 +103,12 @@ class AdminScreen(Screen):
 		userAccess = conf["currentUser"].get("access", [])
 		predefinedFilterCounter = 1
 
-		if ( "configuration" in self.config.keys()
-		     and isinstance( self.config["configuration"], dict )
-		     and "modulGroups" in self.config["configuration"].keys()
-		     and isinstance( self.config["configuration"]["modulGroups"], list) ):
+		if ( "configuration" in config.keys()
+		     and isinstance( config["configuration"], dict )
+		     and "modulGroups" in config["configuration"].keys()
+		     and isinstance( config["configuration"]["modulGroups"], list) ):
 
-			for group in self.config["configuration"]["modulGroups"]:
+			for group in config["configuration"]["modulGroups"]:
 				p = GroupPane( group["name"], iconURL=group["icon"] )
 
 				groups[ group["prefix"] ] = p
@@ -117,7 +120,7 @@ class AdminScreen(Screen):
 				panes.append( (group["name"], sortIndex, p) )
 
 		# Sorting the 2nd level entries
-		sorted_modules = [(x,y) for x,y in self.config["modules"].items()]
+		sorted_modules = [(x,y) for x,y in config["modules"].items()]
 		sorted_modules.sort(key=getModulName)
 		sorted_modules.sort(key=getModulSortIndex, reverse=True)
 
