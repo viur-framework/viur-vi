@@ -20,8 +20,12 @@ class UserLogoutMsg( html5.ext.Popup):
 		self.appendChild(html5.ext.Button(translate("Refresh"), callback=self.startPolling) )
 		self.appendChild( html5.ext.Button(translate("Login"), callback=self.showLoginWindow) )
 		setInterval = eval("window.setInterval")
-		setInterval( self.checkForSuspendResume, self.checkIntervall )
+		self.interval = setInterval( self.checkForSuspendResume, self.checkIntervall )
 		self.hideMessage()
+
+	def stopInterval(self):
+		clearInterval = eval("window.clearInterval")
+		clearInterval(self.interval)
 
 	def hideMessage(self):
 		"""
