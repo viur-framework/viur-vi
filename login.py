@@ -31,6 +31,7 @@ class BaseLoginHandler(html5.Li):
 		if not "cssname" in dir(self):
 			self.cssname = self.__class__.__name__.lower()
 
+		self.addClass("vi-login-handler")
 		self.addClass("vi-login-handler-%s" % self.cssname)
 		self.sinkEvent("onClick")
 
@@ -39,6 +40,7 @@ class BaseLoginHandler(html5.Li):
 		self.appendChild(html5.TextNode(translate("vi.login.handler.%s" % self.cssname)))
 
 		self.mask = html5.Div()
+		self.mask.addClass("vi-login-mask")
 		self.mask.addClass("vi-login-mask-%s" % self.cssname)
 		loginScreen.appendChild(self.mask)
 
@@ -88,6 +90,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.pwform.appendChild(self.password)
 
 		self.loginBtn = html5.ext.Button(translate("Login"), callback=self.onLoginClick)
+		self.loginBtn.addClass("vi-login-btn")
 		self.pwform.appendChild(self.loginBtn)
 
 		# One Time Password
@@ -210,6 +213,7 @@ class GoogleAccountLoginHandler(BaseLoginHandler):
 		super(GoogleAccountLoginHandler, self).__init__(loginScreen, *args, **kwargs)
 
 		self.loginBtn = html5.ext.Button(translate("Login with Google"), callback=self.onLoginClick)
+		self.loginBtn.addClass("vi-login-btn")
 		self.mask.appendChild(self.loginBtn)
 
 	def onLoginClick(self, sender = None):
@@ -237,11 +241,13 @@ class LoginScreen(Screen):
 
 		# Login
 		h1 = html5.H1()
+		h1.addClass("vi-login-headline")
 		h1.appendChild(html5.TextNode(translate("vi.login.title")))
 		header.appendChild(h1)
 
 		# Logo
 		img = html5.Img()
+		img.addClass("vi-login-logo")
 		img["src"] = "login-logo.png"
 		header.appendChild(img)
 
