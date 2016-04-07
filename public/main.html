@@ -52,10 +52,11 @@
         <link rel="stylesheet" href="vi.css" />
 
         <script language="JavaScript">
-            /* We support Chrome, Firefox and MSIE11 */
+            /* We support Chrome, Firefox, Safari and MSIE >= 11 */
             if( window.location.hash != "#skipbd"
                     && !( window.chrome // Chromium
-                            || typeof InstallTrigger !== 'undefined' //Firefox
+                            || typeof InstallTrigger !== "undefined" //Firefox
+                                || navigator.userAgent.toLowerCase().indexOf("safari") > -1 //Safari
                                 || ( Object.hasOwnProperty.call( window, "ActiveXObject" )
                                         && !window.ActiveXObject ) //MSIE11
                             ) )
