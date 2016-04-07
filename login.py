@@ -275,6 +275,7 @@ class LoginScreen(Screen):
 		if logout:
 			NetworkService.request("user", "logout",
 					                successHandler=self.onLogoutSuccess,
+					                failureHandler=self.onLogoutSuccess,
 					                secure=True)
 			return
 
@@ -284,7 +285,7 @@ class LoginScreen(Screen):
 		                        successHandler=self.doSkipLogin,
 		                        failureHandler=self.doShowLogin)
 
-	def onLogoutSuccess(self, req):
+	def onLogoutSuccess(self, *args, **kwargs):
 		self.invoke()
 
 	def doShowLogin(self, *args, **kwargs):
