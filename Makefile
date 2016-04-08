@@ -19,6 +19,8 @@ DEFAULT_CSS	=	public/default/vi.css
 
 MAIN_CSS	=	public/vi.css
 MAIN_LESS	= 	public/vi.less
+MORE_LESS	=	public/login.less
+
 CUSTOM_LESS	=	public/default/vi_custom.less \
 				$(wildcard $(VI_CUSTOM)/static/vi_custom.less)
 
@@ -32,7 +34,7 @@ setup:
 defaultcss: $(MAIN_CSS)
 	cp $(MAIN_CSS) $(DEFAULT_CSS)
 
-$(MAIN_CSS): $(MAIN_LESS) $(CUSTOM_LESS)
+$(MAIN_CSS): $(MAIN_LESS) $(MORE_LESS) $(CUSTOM_LESS)
 	$(LESSC) $(LESSCOPTS) $(MAIN_LESS) >$@
 
 copyfiles:
@@ -52,7 +54,7 @@ debug: $(OUTPUT) $(MAIN_CSS) version copyfiles
 		$(DEBUGOPTS) \
 		--bootloader=bootstrap_progress.js \
 		-I ./$(VI_CUSTOM) \
-				admin.py
+				main.py
 	@echo "--- FINISHED DEBUG BUILD ---"
 
 deploy: $(MAIN_CSS) version copyfiles
@@ -61,7 +63,7 @@ deploy: $(MAIN_CSS) version copyfiles
 		$(DEPLOYOPTS) \
 		--bootloader=bootstrap_progress.js \
 		-I ./$(VI_CUSTOM) \
-				admin.py
+				main.py
 	@echo "--- FINISHED DEPLOY BUILD ---"
 
 tarfile: deploy

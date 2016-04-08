@@ -136,5 +136,16 @@ lngDe = {
 	"Failed to cancel order": u"Stornierung der Bestellung fehlgeschlagen",
 	"Language selection": u"Sprachauswahl",
 	"Encoding": u"Zeichensatz",
-	"and {count} more": u"Und {count} weitere"
+	"and {count} more": u"Und {count} weitere",
+
+	# new login method
+	"vi.login.title": u"Login",
+	"vi.login.handler.userpassword": u"Benutzer",
+	"username": u"Benutzername",
+	"password": u"Kennwort",
+	"login": u"Einloggen",
+	"one time password": u"OTP-Token",
+	"verify": u"Authentifizieren",
+	"vi.login.handler.googleaccount": u"Google",
+	"login with google": u"Mit Google einloggen",
 }

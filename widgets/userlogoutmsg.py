@@ -12,16 +12,21 @@ class UserLogoutMsg( html5.ext.Popup):
 		super( UserLogoutMsg, self ).__init__( title=translate("Session terminated"), *args, **kwargs )
 		self["class"].append("userloggendoutmsg")
 		self.isCurrentlyFailed = False
-		self.isInitialTest = True
 		self.loginWindow = None
 		self.lastChecked = datetime.now()
-		self.lbl = html5.Label(translate("Your session was terminated by our server. Perhaps your computer fall asleep and broke connection?\n Please relogin to continue your mission."))
+		self.lbl = html5.Label(translate("Your session was terminated by our server. "
+		                                    "Perhaps your computer fall asleep and broke connection?\n"
+		                                    "Please relogin to continue your mission."))
 		self.appendChild(self.lbl)
 		self.appendChild(html5.ext.Button(translate("Refresh"), callback=self.startPolling) )
 		self.appendChild( html5.ext.Button(translate("Login"), callback=self.showLoginWindow) )
 		setInterval = eval("window.setInterval")
-		setInterval( self.checkForSuspendResume, self.checkIntervall )
+		self.interval = setInterval(self.checkForSuspendResume, self.checkIntervall)
 		self.hideMessage()
+
+	def stopInterval(self):
+		clearInterval = eval("window.clearInterval")
+		clearInterval(self.interval)
 
 	def hideMessage(self):
 		"""
@@ -39,22 +44,10 @@ class UserLogoutMsg( html5.ext.Popup):
 
 	def showLoginWindow(self, *args, **kwargs ):
 		"""
-			Open the login-window sothat the user can sign in again
+			Return to the login window.
 		"""
-		self.closeLoginWindow()
-		newWindow = eval("window.open")
-		self.loginWindow = newWindow("/vi/user/login", "loginwindow", "width=800,height=600,status=yes,scrollbars=yes,resizable=yes")
-		self.loginWindow.focus()
-
-	def closeLoginWindow(self, *args, **kwargs ):
-		return #Due to a bug in chrome, we either a) cannot close the window or b) crash the browser
-		if self.loginWindow:
-			self.closeLoginWindow()
-			self.loginWindow = None
-			try:
-				self.closeLoginWindow()
-			except:
-				pass
+		self.hideMessage()
+		conf["theApp"].logout()
 
 	def checkForSuspendResume(self,*args, **kwargs):
 		"""
@@ -68,32 +61,31 @@ class UserLogoutMsg( html5.ext.Popup):
 		"""
 			Start querying the server
 		"""
-		NetworkService.request( "user", "view/self", successHandler=self.onUserTestSuccess,failureHandler=self.onUserTestFail, cacheable=False )
+		NetworkService.request("user", "view/self",
+		                        successHandler=self.onUserTestSuccess,
+                                failureHandler=self.onUserTestFail,
+                                cacheable=False)
 
 	def onUserTestSuccess(self,req):
 		"""
 			We received a response from the server
 		"""
-		self.isInitialTest = False
 		try:
 			data = NetworkService.decode(req)
 		except:
 			self.showMessage()
 			return
+
 		if self.isCurrentlyFailed:
-			if conf["currentUser"]!=None and conf["currentUser"]["key"]==data["values"]["key"]:
+			if conf["currentUser"] != None and conf["currentUser"]["key"] == data["values"]["key"]:
 				self.hideMessage()
 				self.closeLoginWindow()
 
-	def onUserTestFail(self,text, ns):
+	def onUserTestFail(self, text, ns):
 		"""
 			Error retrieving the current user response from the server
 		"""
-		if self.isInitialTest:
-			eval("window.top.preventViUnloading = false;")
-			eval("window.top.location = '/vi'")
 		self.showMessage()
-
 
 
 

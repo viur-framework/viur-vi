@@ -100,7 +100,7 @@ class Pane( html5.Li ):
 
 
 	def onDetach(self):
-		assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
+		#assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
 		#Kill all remaining children
 		for widget in self.widgetsDomElm._children[:]:
 			self.widgetsDomElm.removeChild(widget)
