@@ -6,15 +6,12 @@ from widgets.edit import EditWidget
 from i18n import translate
 
 class HierarchyHandler( Pane ):
-	def __init__(self, modulName, modulInfo, groupName=None, *args, **kwargs):
+	def __init__(self, modulName, modulInfo, *args, **kwargs):
 		icon = "icons/modules/hierarchy.svg"
 		if "icon" in modulInfo.keys():
 			icon = modulInfo["icon"]
-		if groupName:
-			myDescr = modulInfo["name"].replace( groupName, "")
-		else:
-			myDescr = modulInfo["name"]
-		super( HierarchyHandler, self ).__init__( myDescr, icon )
+
+		super(HierarchyHandler, self).__init__(modulInfo["visibleName"], icon )
 		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
 		self.modulName = modulName

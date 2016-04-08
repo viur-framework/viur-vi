@@ -97,27 +97,32 @@ class AdminScreen(Screen):
 			except:
 				return None
 
+		# Save module groups
+		if ("configuration" in config.keys()
+		    and isinstance(config["configuration"], dict)
+		    and "modulGroups" in config["configuration"].keys()
+		    and isinstance(config["configuration"]["modulGroups"], list)):
+
+			moduleGroups = config["configuration"]["modulGroups"]
+		else:
+			moduleGroups = []
+
 		# Modules
 		groups = {}
 		panes = []
 		userAccess = conf["currentUser"].get("access", [])
 		predefinedFilterCounter = 1
 
-		if ( "configuration" in config.keys()
-		     and isinstance( config["configuration"], dict )
-		     and "modulGroups" in config["configuration"].keys()
-		     and isinstance( config["configuration"]["modulGroups"], list) ):
+		for group in moduleGroups:
+			p = GroupPane(group["name"], iconURL=group["icon"])
 
-			for group in config["configuration"]["modulGroups"]:
-				p = GroupPane( group["name"], iconURL=group["icon"] )
+			groups[group["prefix"]] = p
+			if "sortIndex" in group.keys():
+				sortIndex = group["sortIndex"]
+			else:
+				sortIndex = None
 
-				groups[ group["prefix"] ] = p
-				if "sortIndex" in group.keys():
-					sortIndex = group["sortIndex"]
-				else:
-					sortIndex = None
-
-				panes.append( (group["name"], sortIndex, p) )
+			panes.append((group["name"], sortIndex, p))
 
 		# Sorting the 2nd level entries
 		sorted_modules = [(x,y) for x,y in config["modules"].items()]
@@ -137,15 +142,18 @@ class AdminScreen(Screen):
 					predefinedFilterCounter += 1
 
 			handlerCls = HandlerClassSelector.select(module, info)
-			print(module, info)
-
 			assert handlerCls is not None, "No handler available for module '%s'" % module
+
+			conf["modules"][module]["visibleName"] = conf["modules"][module]["name"]
 
 			isChild = False
 			for k in groups.keys():
 				if info["name"].startswith(k):
-					handler = handlerCls( module, info, groupName=k )
-					groups[k].addChildPane( handler )
+					conf["modules"][module]["visibleName"] = conf["modules"][module]["name"].replace(k, "")
+
+					handler = handlerCls(module, info)
+					groups[k].addChildPane(handler)
+
 					isChild = True
 					break
 
@@ -155,7 +163,7 @@ class AdminScreen(Screen):
 					sortIndex = info["sortIndex"]
 				else:
 					sortIndex = None
-				panes.append( ( info["name"], sortIndex, handler ) )
+				panes.append((info["visibleName"], sortIndex, handler))
 
 		# Sorting our top level entries
 		panes.sort( key=lambda x: x[0] )
