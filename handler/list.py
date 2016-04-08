@@ -8,24 +8,24 @@ from widgets.edit import EditWidget
 from i18n import translate
 
 class ListHandler( Pane ):
-	def __init__(self, modulName, modulInfo, groupName=None, *args, **kwargs):
+	def __init__(self, modulName, modulInfo, *args, **kwargs):
 		icon = "icons/modules/list.svg"
 		if "icon" in modulInfo.keys():
 			icon = modulInfo["icon"]
-		if groupName:
-			myDescr = modulInfo["name"].replace( groupName, "")
-		else:
-			myDescr = modulInfo["name"]
-		super( ListHandler, self ).__init__( myDescr, icon )
+
+		super(ListHandler, self).__init__(modulInfo["visibleName"], icon)
+
 		self.modulName = modulName
 		self.modulInfo = modulInfo
+
 		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
 		else:
 			if "views" in modulInfo.keys():
 				for view in modulInfo["views"]:
 					self.addChildPane( ListHandler(modulName,view) )
-		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
+
+		initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
 
 	def canHandleInitialHash(self, pathList, params ):
 		if len(pathList)>1:
@@ -66,14 +66,18 @@ class ListHandler( Pane ):
 		if not len(self.widgetsDomElm._children):
 			filter = None
 			columns = None
+
 			if "filter" in self.modulInfo.keys():
 				filter = self.modulInfo["filter"]
+
 			if "columns" in self.modulInfo.keys():
 				columns = self.modulInfo["columns"]
-			filterName = self.modulInfo["name"] if "name" in self.modulInfo.keys() else ""
-			filterID = self.modulInfo["__id"] if "__id" in self.modulInfo.keys() else None
-			self.addWidget( ListWidget( self.modulName, filter=filter, columns=columns, filterID=filterID, filterDescr=filterName ) )
-		super( ListHandler, self ).onClick( *args, **kwargs )
+
+			self.addWidget(ListWidget(self.modulName, filter=filter,
+			                            columns=columns, filterID=self.modulInfo.get("__id"),
+			                            filterDescr=self.modulInfo.get("visibleName", "")))
+
+		super(ListHandler, self).onClick(*args, **kwargs)
 
 
 HandlerClassSelector.insert( 1, ListHandler.canHandle, ListHandler )

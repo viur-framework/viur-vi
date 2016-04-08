@@ -5,15 +5,12 @@ from pane import Pane
 
 
 class SingletonHandler( Pane ):
-	def __init__(self, modulName, modulInfo, groupName=None, *args, **kwargs):
+	def __init__(self, modulName, modulInfo, *args, **kwargs):
 		icon = "icons/modules/singleton.svg"
 		if "icon" in modulInfo.keys():
 			icon = modulInfo["icon"]
-		if groupName:
-			myDescr = modulInfo["name"].replace( groupName, "")
-		else:
-			myDescr = modulInfo["name"]
-		super( SingletonHandler, self ).__init__( myDescr, icon )
+
+		super( SingletonHandler, self ).__init__(modulInfo["visibleName"], icon)
 		self.modulName = modulName
 		self.modulInfo = modulInfo
 		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:

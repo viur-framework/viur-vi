@@ -509,12 +509,13 @@ class EditWidget( html5.Div ):
 		fieldSets = {}
 		currRow = 0
 		hasMissing = False
+		defaultCat = conf["modules"][self.modul].get("visibleName", self.modul)
 
 		for key, bone in data["structure"]:
 			if not bone["visible"]:
 				continue
 
-			cat = "default"
+			cat = defaultCat
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)
@@ -523,34 +524,24 @@ class EditWidget( html5.Div ):
 
 			if not cat in fieldSets.keys():
 				fs = html5.Fieldset()
-				fs["class"] = cat
+				fs.addClass("active" if not fieldSets else "inactive")
 
-				if cat=="default":
-					fs["class"].append("active")
+				#fs["class"] = cat
 
-				#fs["key"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
 				fs["name"] = cat
 				legend = html5.Legend()
-				#legend["key"] = "vi_%s_%s_%s_%s_legend" % (self.editIdx,self.modul, "edit" if self.key else "add", cat)
 				fshref = fieldset_A()
-				#fshref["href"] = "#vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
 				fshref.appendChild(html5.TextNode(cat) )
 				legend.appendChild( fshref )
 				fs.appendChild(legend)
 				section = html5.Section()
 				fs.appendChild(section)
 				fs._section = section
-				fieldSets[ cat ] = fs
+				fieldSets[cat] = fs
 
-			if "params" in bone.keys() and bone["params"] and "category" in bone["params"].keys():
-				tabName = bone["params"]["category"]
-			else:
-				tabName = "Test"#QtCore.QCoreApplication.translate("EditWidget", "General")
-
-			wdgGen = editBoneSelector.select( self.modul, key, tmpDict )
-			widget = wdgGen.fromSkelStructure( self.modul, key, tmpDict )
-			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.modul,
-			                                            "edit" if self.key else "add", cat, key)
+			wdgGen = editBoneSelector.select(self.modul, key, tmpDict)
+			widget = wdgGen.fromSkelStructure(self.modul, key, tmpDict)
+			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat, key)
 
 			#widget["class"].append(key)
 			#widget["class"].append(bone["type"].replace(".","_"))
@@ -577,34 +568,24 @@ class EditWidget( html5.Div ):
 				widget.setExtendedErrorInformation(bone["error"])
 
 			containerDiv = html5.Div()
-			containerDiv.appendChild( descrLbl )
-			containerDiv.appendChild( widget )
+			containerDiv.appendChild(descrLbl)
+			containerDiv.appendChild(widget)
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)
 			    and "tooltip" in bone["params"].keys()):
-				containerDiv.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
+				containerDiv.appendChild(ToolTip(longText=bone["params"]["tooltip"]))
 
-			fieldSets[ cat ]._section.appendChild( containerDiv )
-			containerDiv["class"].append("bone")
-			containerDiv["class"].append("bone_"+key)
-			containerDiv["class"].append( bone["type"].replace(".","_") )
+			fieldSets[cat]._section.appendChild(containerDiv)
+			containerDiv.addClass("bone", "bone_%s" % key, bone["type"].replace(".","_"))
 
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
 					containerDiv["class"].append(t)
 
-			#self["cell"][currRow][0] = descrLbl
-			#fieldSets[ cat ].appendChild( widget )
-			#self["cell"][currRow][1] = widget
 			currRow += 1
 			self.bones[ key ] = widget
 			self.containers[ key ] = containerDiv
-
-		if len(fieldSets)==1:
-			for (k,v) in fieldSets.items():
-				if not "active" in v["class"]:
-					v["class"].append("active")
 
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort( key=lambda x:x[0])
@@ -613,7 +594,7 @@ class EditWidget( html5.Div ):
 			self.form.appendChild( v )
 			v._section = None
 
-		self.unserialize( data["values"] )
+		self.unserialize(data["values"])
 
 		if self._hashArgs: #Apply the default values (if any)
 			self.unserialize( self._hashArgs )
