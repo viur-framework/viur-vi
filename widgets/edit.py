@@ -10,6 +10,7 @@ from config import conf
 from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
 from widgets.actionbar import ActionBar
+from logics import viurLogicsExecutor
 from i18n import translate
 
 class InvalidBoneValueException(ValueError):
@@ -283,6 +284,7 @@ class EditWidget( html5.Div ):
 		self.bones = {}
 		self.closeOnSuccess = False
 		self.logaction = logaction
+		self.logic = viurLogicsExecutor()
 
 		self._lastData = {} #Dict of structure and values received
 		if hashArgs:
@@ -306,6 +308,41 @@ class EditWidget( html5.Div ):
 
 		self.reloadData()
 		self.sinkEvent("onChange")
+
+	def performLogics(self):
+		fields = {}
+		for widget in self.bones.values():
+			fields.update(widget.serializeForPost())
+
+		for key, desc in self.dataCache["structure"]:
+			if desc.get("params") and desc["params"]:
+				for event in ["logic.visibleIf"]: #add more here!
+					logic = desc["params"].get(event)
+
+					if not logic:
+						continue
+
+					# Compile logic at first run
+					if isinstance(logic, str):
+						desc["params"][event] = self.logic.compile(logic)
+						if desc["params"][event] is None:
+							alert("viurLogics: Parse error in >%s<" % logic)
+							continue
+
+						logic = desc["params"][event]
+
+					res = self.logic.execute(logic, fields)
+					if res:
+						if event == "logic.visibleIf":
+							self.containers[key].show()
+						# add more here...
+					else:
+						if event == "logic.visibleIf":
+							self.containers[key].hide()
+						# add more here...
+
+	def onChange(self, event):
+		self.performLogics()
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
