@@ -12,6 +12,7 @@ class LoginInputField(html5.Input):
 
 	def __init__(self, notifier, *args, **kwargs):
 		super(LoginInputField, self).__init__(*args, **kwargs)
+		self.addClass("vi-login-input")
 		self.sinkEvent("onKeyPress")
 
 		self.onKeyPressEvent = EventDispatcher("keyPress")
@@ -42,7 +43,7 @@ class BaseLoginHandler(html5.Li):
 		self.mask = html5.Div()
 		self.mask.addClass("vi-login-mask")
 		self.mask.addClass("vi-login-mask-%s" % self.cssname)
-		loginScreen.appendChild(self.mask)
+		loginScreen.dialog.appendChild(self.mask)
 
 	def onClick(self, event):
 		self.loginScreen.selectHandler(self)
@@ -234,10 +235,15 @@ class LoginScreen(Screen):
 		super(LoginScreen, self).__init__(*args, **kwargs)
 		self.addClass("vi-login")
 
+		# --- Surrounding Dialog ---
+		self.dialog = html5.Div()
+		self.dialog.addClass("vi-login-dialog")
+		self.appendChild(self.dialog)
+
 		# --- Header ---
 		header = html5.Div()
 		header.addClass("vi-login-header")
-		self.appendChild(header)
+		self.dialog.appendChild(header)
 
 		# Login
 		h1 = html5.H1()
@@ -253,13 +259,9 @@ class LoginScreen(Screen):
 
 		# --- Dialog ---
 
-		dialog = html5.Div()
-		dialog.addClass("vi-login-dialog")
-		self.appendChild(dialog)
-
 		self.loginMethodSelector = html5.Ul()
 		self.loginMethodSelector.addClass("vi-login-method")
-		dialog.appendChild(self.loginMethodSelector)
+		self.dialog.appendChild(self.loginMethodSelector)
 
 		self.haveLoginHandlers = False
 

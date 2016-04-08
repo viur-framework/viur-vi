@@ -77,8 +77,6 @@ h2 { font-size: 1.4em; color: #ccc;}
 h3 { font-size: 1em;  color: #444;}
 p { margin-bottom: 10px;}
 
-@import "login.less";
-
 /* #Splash Screen
 ================================================== */
 
@@ -2613,17 +2611,14 @@ progress[value]::-webkit-progress-value {
 .alertbox.selectfields ul { max-height: 400px; overflow-y: auto; margin-bottom:15px; }
 .alertbox.selectfields div.selectiontools { float:left; }
 
-/* #vi_badges
-==================================================
+/* #vi_login
+================================================== */
 
-.beta {
-  background: url(icons/beta_small.png) no-repeat top right;
-  padding-right: 35px;
-}*/
-
+@import "login.less";
 
 /* #vi_messenger
-================================================== */.vi_messenger {
+================================================== */
+.vi_messenger {
   box-shadow: 0px -3px 3px rgba(0, 0, 0, 0.2);
   width: 100%;
   position: fixed;
