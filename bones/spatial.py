@@ -6,10 +6,9 @@ from i18n import translate
 from priorityqueue import editBoneSelector
 
 
-class SpatiaBone(html5.Div):
+class SpatialBone(html5.Div):
 	def __init__(self, modulName, boneName, readOnly, *args, **kwargs):
-		print("SpacialBone", modulName, boneName, readOnly, args, kwargs)
-		super(SpatiaBone, self).__init__(*args, **kwargs)
+		super(SpatialBone, self).__init__(*args, **kwargs)
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.latitude = html5.Input()
@@ -27,12 +26,10 @@ class SpatiaBone(html5.Div):
 
 	@staticmethod
 	def fromSkelStructure(modulName, boneName, skelStructure):
-		print("SpatialBone.fromSkelStructure", modulName, boneName, skelStructure)
 		readOnly = "readonly" in skelStructure[boneName].keys() and skelStructure[boneName]["readonly"]
-		return SpatiaBone(modulName, boneName, readOnly)
+		return SpatialBone(modulName, boneName, readOnly)
 
 	def unserialize(self, data):
-		print("SpatiaBone.unserialize", data)
 		try:
 			self.latitude["value"], self.longitude["value"] = data[self.boneName]
 		except KeyError:
@@ -50,9 +47,8 @@ class SpatiaBone(html5.Div):
 
 def CheckForSpatialBone(modulName, boneName, skelStucture, *args, **kwargs):
 	tmp = str(skelStucture[boneName]["type"]).startswith("spatial")
-	print("CheckForSpatialBone", tmp)
 	return tmp
 
 
 # Register this Bone in the global queue
-editBoneSelector.insert(5, CheckForSpatialBone, SpatiaBone)
+editBoneSelector.insert(5, CheckForSpatialBone, SpatialBone)
