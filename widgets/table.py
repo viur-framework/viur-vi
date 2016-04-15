@@ -143,9 +143,7 @@ class SelectTable( html5.Table ):
 
 		row = self.getIndexByTr( tr )
 
-		if ( self.checkboxes
-		       and utils.doesEventHitWidgetOrChildren(
-					event, self._checkboxes[ row ] ) ):
+		if self.checkboxes and html5.utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
 			self._checkboxes[ row ][ "checked" ] = row in self._selectedRows
 
 	def onMouseDown(self, event):
@@ -161,10 +159,7 @@ class SelectTable( html5.Table ):
 			else:
 				self.addSelectedRow( row )
 
-		elif ( self.checkboxes
-		       and utils.doesEventHitWidgetOrChildren(
-					event, self._checkboxes[ row ] ) ):
-
+		elif self.checkboxes and html5.utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
 			if row in self._selectedRows:
 				self.removeSelectedRow( row )
 			else:

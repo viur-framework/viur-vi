@@ -252,7 +252,7 @@ class AccessMultiSelectBone( html5.Div ):
 	def onClick( self, event ):
 		for module, toggles in self.modules.items():
 			for toggle in toggles.values():
-				if utils.doesEventHitWidgetOrChildren( event, toggle ):
+				if html5.utils.doesEventHitWidgetOrChildren(event, toggle):
 					if not "disabled" in toggle[ "class" ]:
 						if "active" in toggle[ "class" ]:
 							toggle[ "class" ].remove( "active" )
@@ -271,8 +271,8 @@ class AccessMultiSelectBone( html5.Div ):
 					event.preventDefault()
 					return
 
-			if utils.doesEventHitWidgetOrChildren( event, self.modulesbox[ module ] ):
-				self.modulesbox[ module ].parent()[ "class" ].remove( "partly" )
+			if html5.utils.doesEventHitWidgetOrChildren(event, self.modulesbox[module]):
+				self.modulesbox[ module ].parent()["class"].remove("partly")
 
 				for toggle in toggles.values():
 					if not "disabled" in toggle[ "class" ]:

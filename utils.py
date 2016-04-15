@@ -114,29 +114,7 @@ def boneListToDict( l ):
 		res[ key ] = bone
 	return( res )
 
-def doesEventHitWidgetOrParents( event, widget ):
-	"""
-		Test if event 'event' hits widget 'widget' (or *any* of its parents)
-	"""
-	while widget:
-		if event.target == widget.element:
-			return( True )
-		widget = widget.parent()
-	return( False )
-
-def doesEventHitWidgetOrChildren( event, widget ):
-	"""
-		Test if event 'event' hits widget 'widget' (or *any* of its children)
-	"""
-	if event.target==widget.element:
-		return( True )
-	for child in widget._children:
-		if doesEventHitWidgetOrChildren( event, child ):
-			return( True )
-	return( False )
-
 def getImagePreview(data):
-	print(data)
 	if "mimetype" in data.keys() and isinstance(data["mimetype"], str) and data["mimetype"].startswith("image/svg"):
 		return "/file/download/%s" % data["dlkey"]
 	elif "servingurl" in data.keys():

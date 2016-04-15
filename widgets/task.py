@@ -69,7 +69,7 @@ class TaskSelectWidget( TaskWidget ):
 				task.get( "descr" ) or translate( "No description provided." ) ) )
 
 	def onChange(self, event):
-		if utils.doesEventHitWidgetOrChildren( event, self.select ):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.select):
 			self.setActiveTask()
 
 	def invokeTask(self, *args, **kwargs):

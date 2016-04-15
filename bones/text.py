@@ -204,13 +204,13 @@ class TextEditBone( html5.Div ):
 
 	def serializeForPost(self):
 		if self.selectedLang:
-			self.valuesdict[self.selectedLang]=self.input["value"]
-			return( { self.boneName: self.valuesdict } )
+			self.valuesdict[self.selectedLang] = self.input["value"]
+			return {self.boneName: self.valuesdict}
 		else:
-			return( { self.boneName: self.input["value"] } )
+			return {self.boneName: self.input["value"]}
 
 	def onClick(self, event):
-		if utils.doesEventHitWidgetOrChildren( event, self.previewDiv ):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.previewDiv):
 			event.stopPropagation()
 			event.preventDefault()
 			if not self.readOnly:

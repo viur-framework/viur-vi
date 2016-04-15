@@ -1,7 +1,6 @@
 import html5
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
-from utils import doesEventHitWidgetOrChildren
 from time import time
 from priorityqueue import actionDelegateSelector
 import re

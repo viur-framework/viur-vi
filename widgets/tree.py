@@ -173,7 +173,7 @@ class SelectableDiv( html5.Div ):
 	def onClick(self, event):
 		self.focus()
 		for child in self._children:
-			if utils.doesEventHitWidgetOrChildren( event, child ):
+			if html5.utils.doesEventHitWidgetOrChildren(event, child):
 				self.setCurrentItem( child )
 				if self._isCtlPressed:
 					self.addSelectedItem( child )
@@ -188,7 +188,7 @@ class SelectableDiv( html5.Div ):
 
 	def onDblClick(self, event):
 		for child in self._children:
-			if utils.doesEventHitWidgetOrChildren( event, child ):
+			if html5.utils.doesEventHitWidgetOrChildren(event, child):
 				if self.selectionType=="node" and isinstance( child, self.nodeWidget ) or \
 				   self.selectionType=="leaf" and isinstance( child, self.leafWidget ) or \
 				   self.selectionType=="both":
@@ -358,7 +358,7 @@ class TreeWidget( html5.Div ):
 		super( TreeWidget, self ).onClick( event )
 		for c in self.pathList._children:
 			# Test if the user clicked inside the path-list
-			if utils.doesEventHitWidgetOrParents( event, c ):
+			if html5.utils.doesEventHitWidgetOrParents(event, c):
 				self.path = self.path[ : self.pathList._children.index( c )]
 				self.rebuildPath()
 				self.setNode( c.data["key"] )
