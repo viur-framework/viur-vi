@@ -318,14 +318,18 @@ class HierarchyWidget( html5.Div ):
 		return( None )
 
 	def onClick(self, event):
-		item = self.itemForEvent( event )
+		item = self.itemForEvent(event)
+
 		if item is None:
 			return
-		if utils.doesEventHitWidgetOrChildren( event, item.expandLink ):
+
+		if html5.utils.doesEventHitWidgetOrChildren(event, item.expandLink):
 			item.toggleExpand()
+
 			if not item.isLoaded:
 				item.isLoaded = True
-				self.loadNode( item.data["key"] )
+				self.loadNode(item.data["key"])
+
 		else:
 			self.setCurrentItem( item )
 			self.selectionChangedEvent.fire( self, item )

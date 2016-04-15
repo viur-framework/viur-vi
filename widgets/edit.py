@@ -643,7 +643,7 @@ class fieldset_A(A):
 	def onClick(self,event):
 		for element in self.parent().parent().parent()._children:
 			if isinstance(element,Fieldset):
-				if utils.doesEventHitWidgetOrChildren( event, element ):
+				if html5.utils.doesEventHitWidgetOrChildren(event, element):
 					if not "active" in element["class"]:
 						element["class"].append("active")
 						element["class"].remove("inactive")

@@ -91,12 +91,12 @@ class FilterSelector( html5.Div ):
 		"""
 		nextTarget = self.currentTarget
 		for c in self._children:
-			if c == self.currentTarget and not utils.doesEventHitWidgetOrChildren(event, c ):
+			if c == self.currentTarget and not html5.utils.doesEventHitWidgetOrChildren(event, c):
 				c["class"].append("collapsed")
 				c["class"].remove("expanded")
 				if nextTarget==self.currentTarget: #Did not change yet
 					nextTarget = None
-			elif c != self.currentTarget and utils.doesEventHitWidgetOrChildren(event, c ):
+			elif c != self.currentTarget and html5.utils.doesEventHitWidgetOrChildren(event, c):
 				c["class"].remove("collapsed")
 				c["class"].append("expanded")
 				nextTarget = c
