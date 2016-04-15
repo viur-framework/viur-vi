@@ -187,8 +187,9 @@ class RelationalSingleSelectionBone( html5.Div ):
 		#DOM.appendChild(self.getElement(), self.selectionTxt )
 
 		# Selection button
-		if ( "root" in conf[ "currentUser" ][ "access" ]
-		     or destModul + "-view" in conf[ "currentUser" ][ "access" ] ):
+		if (destModul in conf["modules"].keys()
+			and ("root" in conf["currentUser"]["access"] or destModul + "-view" in conf["currentUser"]["access"])):
+
 			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 			self.selectBtn["class"].append("icon")
 			self.selectBtn["class"].append("select")
@@ -197,8 +198,8 @@ class RelationalSingleSelectionBone( html5.Div ):
 			self.selectBtn = None
 
 		# Edit button
-		if ( "root" in conf[ "currentUser" ][ "access" ]
-		     or destModul + "-edit" in conf[ "currentUser" ][ "access" ] ):
+		if (destModul in conf["modules"].keys()
+			and ("root" in conf["currentUser"]["access"] or destModul + "-edit" in conf["currentUser"]["access"])):
 			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit )
 			self.editBtn["class"].append("icon")
 			self.editBtn["class"].append("edit")
@@ -207,9 +208,9 @@ class RelationalSingleSelectionBone( html5.Div ):
 			self.editBtn = None
 
 		# Remove button
-		if ( not required and not readOnly
-		     and ("root" in conf[ "currentUser" ][ "access" ]
-		            or destModul + "-view" in conf[ "currentUser" ][ "access" ])):
+		if (not required and not readOnly
+		    and ("root" in conf["currentUser"]["access"]
+		            or destModul + "-view" in conf["currentUser"]["access"])):
 			# Yes, we check for "view" on the remove button, because removal of relations
 			# is only useful when viewing the destination module is still allowed.
 
@@ -444,8 +445,9 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.selectionDiv["class"].append("selectioncontainer")
 		self.appendChild( self.selectionDiv )
 
-		if ( "root" in conf[ "currentUser" ][ "access" ]
-		     or destModul + "-view" in conf[ "currentUser" ][ "access" ] ):
+		if (destModul in conf["modules"].keys()
+			and ("root" in conf["currentUser"]["access"] or destModul + "-view" in conf["currentUser"]["access"])):
+
 			self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
 			self.selectBtn["class"].append("icon")
 			self.selectBtn["class"].append("select")

@@ -331,7 +331,9 @@ class TreeWidget( html5.Div ):
 			if not isRootNode:
 				return
 
-		self.actionBar.widgets[ "selectrootnode" ].update()
+		if "selectrootnode" in self.actionBar.widgets.keys():
+			self.actionBar.widgets["selectrootnode"].update()
+
 		self.reloadData()
 
 	def onSelectionActivated(self, div, selection ):

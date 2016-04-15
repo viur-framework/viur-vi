@@ -101,7 +101,7 @@ class Uploader( html5.Progress ):
 			Internal callback - further bytes have been transmitted
 		"""
 		if event.lengthComputable:
-			complete = int(event.loaded / event.total * 100 )
+			complete = int(event.loaded / event.total * 100)
 			self["value"] = complete
 			self["max"] = 100
 
@@ -109,13 +109,11 @@ class Uploader( html5.Progress ):
 		"""
 			Internal callback - The upload succeeded.
 		"""
-		print("UPLOAD OK")
-		print(self.responseValue["values"])
-
 		for v in self.responseValue["values"]:
-			self.uploadSuccess.fire( self, v )
+			self.uploadSuccess.fire(self, v)
+
 		NetworkService.notifyChange("file")
-		self.replaceWithMessage( "Upload complete" , isSuccess=True )
+		self.replaceWithMessage("Upload complete", isSuccess=True)
 
 	def onFailed(self, errorCode, *args, **kwargs ):
 		self.replaceWithMessage( "Upload failed with status code %s" % errorCode, isSuccess=False )

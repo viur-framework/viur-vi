@@ -161,11 +161,15 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		"""
 			Edit the image entry.
 		"""
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
-		                                                                    "apptype_list", "action_edit" ] )
-		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent.destModul, EditWidget.appTree, key=self.data[ "key" ], skelType="leaf"  )
-		pane.addWidget( edwg )
+		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
+		                                                                "apptype_list", "action_edit" ] )
+		conf["mainWindow"].stackPane(pane, focus=True)
+
+		try:
+			edwg = EditWidget(self.parent.destModul, EditWidget.appTree, key=self.data["dest"]["key"], skelType="leaf")
+			pane.addWidget(edwg)
+		except AssertionError:
+			conf["mainWindow"].removePane(pane)
 
 class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 
@@ -220,6 +224,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 		if selection is None:
 			return
+
 		for data in selection:
 			entry = FileMultiSelectionBoneEntry(self, self.destModul, data, using=None, errorInfo={})
 			self.addEntry( entry )
@@ -243,9 +248,11 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		event.preventDefault()
 		event.stopPropagation()
 		files = event.dataTransfer.files
-		if files.length>1:
+
+		if files.length > 1:
 			conf["mainWindow"].log("error",translate("You cannot drop more than one file here!"))
 			return
+
 		for x in range(0,files.length):
 			ul = Uploader(files.item(x), None )
 			ul.uploadSuccess.register( self )
@@ -282,11 +289,15 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		if not self.selection:
 			return
 
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
-		                                                                    "apptype_list", "action_edit" ] )
-		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.destModul, EditWidget.appTree, key=self.selection[ "key" ], skelType="leaf"  )
-		pane.addWidget( edwg )
+		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
+		                                                                "apptype_list", "action_edit" ] )
+		conf["mainWindow"].stackPane(pane, focus=True)
+
+		try:
+			edwg = EditWidget(self.destModul, EditWidget.appTree, key=self.selection["dest"]["key"], skelType="leaf")
+			pane.addWidget(edwg)
+		except AssertionError:
+			conf["mainWindow"].removePane(pane)
 
 	def setSelection(self, selection):
 		"""
@@ -304,7 +315,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 			previewUrl = utils.getImagePreview(self.selection["dest"])
 
-			if previewUrl is not None:
+			if previewUrl:
 				self.previewImg["src"] = previewUrl
 				self.previewImg["style"]["display"] = ""
 			else:
