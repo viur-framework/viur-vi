@@ -161,11 +161,15 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		"""
 			Edit the image entry.
 		"""
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
-		                                                                    "apptype_list", "action_edit" ] )
-		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent.destModul, EditWidget.appTree, key=self.data[ "key" ], skelType="leaf"  )
-		pane.addWidget( edwg )
+		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
+		                                                                "apptype_list", "action_edit" ] )
+		conf["mainWindow"].stackPane(pane, focus=True)
+
+		try:
+			edwg = EditWidget(self.parent.destModul, EditWidget.appTree, key=self.data["dest"]["key"], skelType="leaf")
+			pane.addWidget(edwg)
+		except AssertionError:
+			conf["mainWindow"].removePane(pane)
 
 class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 
@@ -180,7 +184,6 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		event.stopPropagation()
 
 	def onDrop(self, event):
-		print("DROP EVENT")
 		event.preventDefault()
 		event.stopPropagation()
 		files = event.dataTransfer.files
@@ -189,8 +192,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 			ul.uploadSuccess.register( self )
 
 	def onUploadSuccess(self, uploader, file ):
-		self.setSelection( [file] )
-
+		self.setSelection([{"dest": file,"rel":{}}])
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -222,6 +224,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 		if selection is None:
 			return
+
 		for data in selection:
 			entry = FileMultiSelectionBoneEntry(self, self.destModul, data, using=None, errorInfo={})
 			self.addEntry( entry )
@@ -245,15 +248,17 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		event.preventDefault()
 		event.stopPropagation()
 		files = event.dataTransfer.files
-		if files.length>1:
+
+		if files.length > 1:
 			conf["mainWindow"].log("error",translate("You cannot drop more than one file here!"))
 			return
+
 		for x in range(0,files.length):
 			ul = Uploader(files.item(x), None )
 			ul.uploadSuccess.register( self )
 
-	def onUploadSuccess(self, uploader, file ):
-		self.setSelection( file )
+	def onUploadSuccess(self, uploader, file):
+		self.setSelection({"dest": file, "rel":{}})
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -284,11 +289,15 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		if not self.selection:
 			return
 
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
-		                                                                    "apptype_list", "action_edit" ] )
-		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.destModul, EditWidget.appTree, key=self.selection[ "key" ], skelType="leaf"  )
-		pane.addWidget( edwg )
+		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
+		                                                                "apptype_list", "action_edit" ] )
+		conf["mainWindow"].stackPane(pane, focus=True)
+
+		try:
+			edwg = EditWidget(self.destModul, EditWidget.appTree, key=self.selection["dest"]["key"], skelType="leaf")
+			pane.addWidget(edwg)
+		except AssertionError:
+			conf["mainWindow"].removePane(pane)
 
 	def setSelection(self, selection):
 		"""
@@ -297,13 +306,17 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			@type selection: dict
 		"""
 		self.selection = selection
+
 		if selection:
-			NetworkService.request( self.destModul, "view/leaf/"+selection["dest"]["key"],
-			                                successHandler=self.onSelectionDataAviable, cacheable=True)
+			NetworkService.request(self.destModul, "view/leaf/%s" % selection["dest"]["key"],
+			                        successHandler=self.onSelectionDataAviable,
+			                        cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
-			if utils.getImagePreview( self.selection ) is not None:
-				self.previewImg["src"] = utils.getImagePreview( self.selection )
+			previewUrl = utils.getImagePreview(self.selection["dest"])
+
+			if previewUrl:
+				self.previewImg["src"] = previewUrl
 				self.previewImg["style"]["display"] = ""
 			else:
 				self.previewImg["style"]["display"] = "none"

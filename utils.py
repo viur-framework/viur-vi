@@ -135,12 +135,13 @@ def doesEventHitWidgetOrChildren( event, widget ):
 			return( True )
 	return( False )
 
-def getImagePreview( data ):
+def getImagePreview(data):
+	print(data)
 	if "mimetype" in data.keys() and isinstance(data["mimetype"], str) and data["mimetype"].startswith("image/svg"):
 		return "/file/download/%s" % data["dlkey"]
 	elif "servingurl" in data.keys():
 		if data["servingurl"]:
-			return data["servingurl"] + "=s150"
+			return data["servingurl"] + "=s150-c"
 
 		return ""
 
