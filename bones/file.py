@@ -180,7 +180,6 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		event.stopPropagation()
 
 	def onDrop(self, event):
-		print("DROP EVENT")
 		event.preventDefault()
 		event.stopPropagation()
 		files = event.dataTransfer.files
@@ -189,8 +188,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 			ul.uploadSuccess.register( self )
 
 	def onUploadSuccess(self, uploader, file ):
-		self.setSelection( [file] )
-
+		self.setSelection([{"dest": file,"rel":{}}])
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -252,8 +250,8 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			ul = Uploader(files.item(x), None )
 			ul.uploadSuccess.register( self )
 
-	def onUploadSuccess(self, uploader, file ):
-		self.setSelection( file )
+	def onUploadSuccess(self, uploader, file):
+		self.setSelection({"dest": file, "rel":{}})
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -297,13 +295,17 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			@type selection: dict
 		"""
 		self.selection = selection
+
 		if selection:
-			NetworkService.request( self.destModul, "view/leaf/"+selection["dest"]["key"],
-			                                successHandler=self.onSelectionDataAviable, cacheable=True)
+			NetworkService.request(self.destModul, "view/leaf/%s" % selection["dest"]["key"],
+			                        successHandler=self.onSelectionDataAviable,
+			                        cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
-			if utils.getImagePreview( self.selection ) is not None:
-				self.previewImg["src"] = utils.getImagePreview( self.selection )
+			previewUrl = utils.getImagePreview(self.selection["dest"])
+
+			if previewUrl is not None:
+				self.previewImg["src"] = previewUrl
 				self.previewImg["style"]["display"] = ""
 			else:
 				self.previewImg["style"]["display"] = "none"

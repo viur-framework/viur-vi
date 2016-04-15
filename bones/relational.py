@@ -408,8 +408,8 @@ class RelationalSingleSelectionBone( html5.Div ):
 			We just received the full information for this entry from the server and can start displaying it
 		"""
 		data = NetworkService.decode( req )
-		assert self.selection["dest"]["key"]==data["values"]["key"]
-		self.selectionTxt["value"] = formatString( self.format ,data["structure"],data["values"] )
+		assert self.selection["dest"]["key"] == data["values"]["key"]
+		self.selectionTxt["value"] = formatString(self.format, data["structure"], data["values"])
 
 class RelationalMultiSelectionBone( html5.Div ):
 	"""

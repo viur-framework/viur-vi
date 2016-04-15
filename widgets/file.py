@@ -109,6 +109,9 @@ class Uploader( html5.Progress ):
 		"""
 			Internal callback - The upload succeeded.
 		"""
+		print("UPLOAD OK")
+		print(self.responseValue["values"])
+
 		for v in self.responseValue["values"]:
 			self.uploadSuccess.fire( self, v )
 		NetworkService.notifyChange("file")
