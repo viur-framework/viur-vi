@@ -182,17 +182,16 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 	def onUploadSuccess(self, uploader, file ):
 		self.setSelection( [file] )
 
-
 	def onShowSelector(self, *args, **kwargs):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = FileWidget( self.destModul, isSelector=True )
-		currentSelector.selectionActivatedEvent.register( self )
+		currentSelector = FileWidget( self.destModul, isSelector="leaf" )
+		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
 
-	def onSelectionActivated(self, table, selection ):
+	def onSelectionReturn(self, table, selection ):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""
@@ -250,12 +249,12 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = FileWidget( self.destModul, isSelector=True )
-		currentSelector.selectionActivatedEvent.register( self )
+		currentSelector = FileWidget( self.destModul, isSelector="leaf" )
+		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
 
-	def onSelectionActivated(self, table, selection ):
+	def onSelectionReturn(self, table, selection ):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""

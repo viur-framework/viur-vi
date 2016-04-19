@@ -6,6 +6,7 @@ from config import conf
 from pane import Pane
 from html5.ext.inputdialog import InputDialog
 from i18n import translate
+
 class AddNodeAction( html5.ext.Button ):
 	"""
 		Adds a new directory to a tree.simple application.
