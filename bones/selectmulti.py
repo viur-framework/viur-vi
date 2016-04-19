@@ -36,7 +36,11 @@ class SelectMultiViewBoneDelegate( object ):
 	def render( self, data, field ):
 		if field in data.keys():
 			result=html5.Ul()
-			for fieldKey in data[field]:
+			if len(data[field])<5:
+				loopLimit = len(data[field])
+			else:
+				loopLimit = 4
+			for fieldKey in data[field][:loopLimit]:
 				ali=html5.Li()
 				if not fieldKey in self.skelStructure[field]["values"].keys():
 					ali.appendChild(html5.TextNode(fieldKey))
@@ -44,6 +48,11 @@ class SelectMultiViewBoneDelegate( object ):
 					ali.appendChild(html5.TextNode( self.skelStructure[field]["values"][fieldKey] ) )
 				ali["Title"] = fieldKey
 				result.appendChild(ali)
+			if not len(data[field])<5:
+				ali=html5.Li()
+				ali.appendChild(html5.TextNode( translate("and {count} more",count=len(data[field])-4)) )
+				result.appendChild(ali)
+				ali["class"].append("selectmulti_more_li")
 			return( result)
 		return html5.Label("&nbsp; - &nbsp;")
 

@@ -37,7 +37,7 @@ class TopBarWidget( html5.Header ):
 		#self.appendChild( self.logoContainer )
 
 		self.modulH1 = html5.H1()
-		self.modulH1._setClass("beta")
+		self.modulH1._setClass("module")
 		self.appendChild(self.modulH1)
 
 		self.modulContainer = html5.Div()
@@ -66,16 +66,20 @@ class TopBarWidget( html5.Header ):
 			self.modulName.removeChild( c )
 		for c in self.modulImg["class"]:
 			self.modulImg["class"].remove(c)
-		self.modulName.appendChild( html5.TextNode(descr))
+
+		descr = html5.utils.unescape(descr)
+		self.modulName.appendChild(html5.TextNode(descr))
+
 		if iconURL is not None:
 			img = html5.Img()
 			img["src"] = iconURL
 			self.modulImg.appendChild(img)
+
 		if iconClasses is not None:
 			for cls in iconClasses:
 				self.modulImg["class"].append( cls )
 
-		eval("top.document.title='"+descr+"'")
+		eval("top.document.title='%s'" % descr.replace("'", "\\'"))
 
 
 class UserState(html5.Li):

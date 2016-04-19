@@ -77,6 +77,53 @@ h2 { font-size: 1.4em; color: #ccc;}
 h3 { font-size: 1em;  color: #444;}
 p { margin-bottom: 10px;}
 
+/* #Splash Screen
+================================================== */
+
+.splash.progressBar
+{
+  margin: 0px auto;
+  height: 6px;
+  line-height: 6px;
+  font-size: 0px;
+  max-height: 6px;
+  width: 0px;
+  background-color: @maincolor;
+}
+
+.splash.status
+{
+  margin-top: 6px;
+  font-family: sans;
+  font-weight: bold;
+}
+
+.splash.cont
+{
+  background-color: white;
+  color:#333;
+  z-index:10000;
+  text-align:center;
+  position:absolute;
+  top:0px;
+  left:0px;
+  width:100%;
+  height:100%;
+}
+
+.splash.infoCont
+{
+  margin:0px auto;
+  width:40%;
+  border-left:1px solid #333;
+  border-right:1px solid #333;
+}
+
+.splash.header
+{
+  text-align:center;
+}
+
 /* #Site Styles
 ================================================== */
 .wrapper {
@@ -137,6 +184,9 @@ p { margin-bottom: 10px;}
   display:block;
   white-space: nowrap;
 }
+
+.vi_topbar h1 {min-width:15.7%; margin-right: .4%;}
+
 .vi_topbar h1:before {
   content: ' ';
   background-image: url('icons/vi_app_logo.png');
@@ -153,7 +203,6 @@ p { margin-bottom: 10px;}
   text-align: center;
   float: left;
   width: auto;
-  margin-left: 15.7%;
   margin-top:10px;
 }
 .vi_topbar .currentmodul img {
@@ -383,12 +432,7 @@ p { margin-bottom: 10px;}
   text-shadow: none;
   color: #666;
 }
-.modullist ul h3:before {
-  margin-right: 15px;
-}
-.modullist ul ul h3::before {
-    margin-left: 29px !important;    
-}
+
 .modullist ul a {
   background-color: #e9e9e9;
   background: -moz-linear-gradient(top, #e4e4e4, #e9e9e9);
@@ -410,6 +454,11 @@ p { margin-bottom: 10px;}
 .modullist ul ul img {
     margin-left: 44px;
 }
+
+.modullist ul ul ul img {
+    margin-left: 64px;
+}
+
 .modullist ul button {
   margin-top: -32px;
   position: relative;
@@ -479,10 +528,9 @@ p { margin-bottom: 10px;}
   padding: 150px 1% 45px;
   float: left;
   width: 98%;
-  min-height: 500px;
+  /*min-height: 500px;*/
   background: #f6f6f6;
   overflow: hidden;
-  transform: translateY(0); 
 }
 
 .vi_operator > div.supports_drop {
@@ -519,6 +567,7 @@ margin-top: -20px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   border:1px solid #d2d2d2;
   transition:all .3s ease;
+  overflow: hidden;
 }
 
 .vi_operator .compoundfilter h2,
@@ -586,21 +635,26 @@ background-color:#d6d6d6;
 /* #actionbar
 ================================================== */
 .vi_operator .actionbar {
-  width: 97%;
+  width: 83%;
   /*min-width: 500px;*/
-  position: absolute; /* Issue VI-20 */
+  position: fixed;
   margin-top: -105px;
   margin-left: -1%;
   padding: 15px 1%;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #ccc;
-  border-bottom: 1px solid @highlightcolor; 
+  border-bottom: 1px solid #bbb;
   background-color: #eee;
-  background-color: rgba(210, 210, 210, 0.7);
-  background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.8)), to(rgba(255, 255, 255, 0.2)));
+  background-color: rgba(210, 210, 210, 0.9);
+  background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.9)), to(rgba(255, 255, 255, 0.2)));
   background-image: -moz-linear-gradient(top center, rgba(238, 238, 238, 0.8) 20%, rgba(255, 255, 255, 0.2) 95%);
   z-index: 100;
 }
+
+.has_multiple_children .actionbar {
+  width:41%;
+}
+
 .vi_operator .actionbar h3:before {
   content: '';
   margin-top: -4px;
@@ -659,6 +713,12 @@ background-color:#d6d6d6;
   margin-right: 20px;
 }
 
+.actionbar .spacer
+{
+  width: 10px;
+  display: inline-block;
+}
+
 /* #vi_buttons
 ================================================== */
 button[type="button"] {
@@ -698,6 +758,7 @@ button.btn_no {
   overflow: hidden;
   min-width: 28px;
 }
+/* Icons for Icon Buttons as Sprite */
 button.icon:before,
 .vi_operator .search button:before,
 .btn_yes:before,
@@ -784,6 +845,12 @@ button.unselectall:before {
 button.selectinvert:before {
   background-position: -80px -64px;   
 }
+button.lock:before {
+  background-position: -96px -64px;
+}
+button.unlock:before {
+  background-position: -112px -64px;
+}
 button.textedit:before {
   background-position: -96px -16px;
 }
@@ -815,7 +882,9 @@ button.resend:before {
 button.trans:before {
   background-image: url(icons/actions/translate.svg);
 }
-
+button.import:before {
+  background-position: -96px -48px;
+}
 /* Newsletter Icons */
 button.send.newsletter:before {
   background-position: -80px -32px;
@@ -972,7 +1041,8 @@ button.icon[type="button"]:hover {
 }
 
 /* Red Buttons */
-button.icon.close[type="button"] {
+button.icon.close[type="button"],
+button.icon.delete[type="button"] {
   border: 1px solid #e20614;
   color: #fff;
   background-color: #c31520;
@@ -984,6 +1054,8 @@ button.icon.close[type="button"] {
   background: linear-gradient(to bottom, #e20614 0%, #c31520 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e20614', EndColorStr='#c31520', GradientType=0);
 }
+
+/* Red Button Hover */
 button.icon.close[type="button"]:hover,
 button.icon.cancel[type="button"]:hover,
 button.icon.delete[type="button"]:hover {
@@ -998,22 +1070,21 @@ button.icon.delete[type="button"]:hover {
   background: linear-gradient(to bottom, #c31520 0%, #e20614 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#c31520', EndColorStr='#e20614', GradientType=0);
 }
+
+/* White Icon Sprite for Red Buttons */
 button.icon.close[type="button"]:before,
+button.icon.delete[type="button"]:before,
 button.icon.cancel[type="button"]:hover:before,
 button.icon.delete[type="button"]:hover:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
 }
 
-button.icon.close[type="button"]:before,
-button.icon.cancel[type="button"]:hover:before,
-button.icon.delete[type="button"]:hover:before {
-  background-image: url(icons/vi_actions_sprite_white.svg);
-}
 
 /* Green Buttons */
 button.icon.save.close[type="button"],
 button.icon.activateselection[type="button"],
-button.text.save[type="button"] {
+button.text.save[type="button"],
+button.icon.add[type="button"] {
   border: 1px solid #298342;
   color: #fff;
   background-color: #479c42;
@@ -1025,6 +1096,9 @@ button.text.save[type="button"] {
   background: linear-gradient(to bottom, #479c42 0%, #298342 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0); 
 }
+
+
+/* Green Button Hover */
 button.icon.activateselection[type="button"]:hover,
 button.text.save[type="button"]:hover,
 button.icon.add[type="button"]:hover,
@@ -1041,6 +1115,8 @@ button.icon.save.close[type="button"]:hover {
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
 
+/* White Icon Sprite for Green Buttons */
+button.icon.add[type="button"]:before,
 button.icon.activateselection[type="button"]:before,
 button.text.save[type="button"]:before,
 button.icon.add[type="button"]:hover:before,
@@ -1058,9 +1134,13 @@ button.icon.save.close.is_loading[type="button"]:hover:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
+
+/* Standard Buttons (28px wide, transparent Text) */
 button.icon.close[type="button"],
 button.icon.activateselection[type="button"],
 button.text.save[type="button"],
+button.icon.delete[type="button"],
+button.icon.delete.is_disabled[type="button"]:hover,
 button.icon.text[type="button"]:hover,
 button.icon.flipview[type="button"]:hover,
 button.icon.is_disabled[type="button"]:hover {
@@ -1071,14 +1151,17 @@ button.icon.is_disabled[type="button"]:hover {
   transition-delay: 0;
 }
 
-button.icon.save.close[type="button"] {
+/* Primary Buttons (120px wide without hover) */
+button.icon.save.close[type="button"],
+button.icon.add[type="button"] {
     color:#fff;
     overflow: visible;
     min-width: 120px;
     letter-spacing: normal;   
 }
 
-
+/* 120px wide Hover */
+button.icon.delete[type="button"]:hover,
 button.icon.close[type="button"]:hover,
 button.icon.activateselection[type="button"]:hover,
 button.icon.save.close[type="button"]:hover {
@@ -1086,16 +1169,24 @@ button.icon.save.close[type="button"]:hover {
   min-width: 120px;
   letter-spacing: normal;
 }
+
 /* Disabled Buttons */
+button.icon.delete.is_disabled[type="button"] {
+  background: #e0e0e0;
+}
+
+button.icon.delete.is_disabled[type="button"]:hover,
 button.icon.is_disabled[type="button"]:hover {
   border-color: #999;
   background: #e0e0e0;
 }
+button.icon.delete.is_disabled[type="button"]:before,
 button.icon.is_disabled:before {
   opacity: 0.3;
   background-image: url(icons/vi_actions_sprite.svg)!important;
 }
 
+button.icon.delete.is_disabled[type="button"],
 button.icon.is_disabled {
   cursor: default;
   color: transparent;
@@ -1318,11 +1409,12 @@ box-shadow: none;
 
 input,
 textarea,
+select,
 input[type="text"],
 input[type="email"],
 input[type="date"],
-input[type=url],
-input[type=password],
+input[type="url"],
+input[type="password"],
 .text .preview,
 [contenteditable] {
   display: inline-block;
@@ -1362,15 +1454,26 @@ input[type=password],
 
 }
 
+.compoundfilter select
+{
+  min-width: auto;
+
+}
+
 .bone.text .languagebuttons {
     float:left;
 }
 
-.languagebuttons button.is_active {
+.languagebuttons button.is_active, .languagebuttons button.is_filled.is_active {
     background: linear-gradient(to bottom, #666 0%, #aaa 100%);
     box-shadow:inset 1px 1px 2px rgba(0,0,0,0.2);
     border-color:#666;
-    color:#fff;
+    color:#fff !important;
+}
+
+.languagebuttons button.is_filled {
+    color: #fff;
+    background: transparent linear-gradient(to bottom, #298342 0%, #479C42 100%) repeat scroll 0% 0%;
 }
 
 /* #extended relational bone
@@ -1649,8 +1752,11 @@ textarea, .text .preview {
 }
 
 select {
-  min-width: 175px;
-  margin-left: 15px;
+  width: auto;
+  min-width: 325px;
+  height: 28px;
+  /* margin-left: 15px; */
+  border-radius: 0;
   border: 1px solid #ccc;
   font-size: .75em;
   font-weight: 100;
@@ -1951,7 +2057,8 @@ thead tr th {
   border-width: 0px 0px 1px 1px;
   font-weight: 300;
   color: #ffffff;
-  padding: 5px 0;
+  padding: 5px 5px;
+  font-size: .9em;
 }
 thead tr:hover th {
   background:-o-linear-gradient(bottom, @lightcolor 5%, @maincolor 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, @lightcolor), color-stop(1, @maincolor) );
@@ -1989,6 +2096,12 @@ td span.date {
 
 td span.time {
   font-weight: 100;
+}
+
+td span.index
+{
+  font-style: italic;
+  color: @lightcolor;
 }
 
 .emptynotification {
@@ -2096,8 +2209,8 @@ td span.time {
 ================================================== */
 .tree {
   width: 100%;
-  min-height: 500px;
-  margin-bottom: 250px;
+  /*min-height: 500px;*/
+  /*margin-bottom: 250px;*/
 }
 .tree .treeitem {
   padding: 7px;
@@ -2130,7 +2243,7 @@ td span.time {
   background-color: rgba(250, 250, 250, 0.7);
 }
 .breadcrumb, .imageeditor, .linkeditor {
-  width: 98%;
+  width: 83%;
   font-weight: 600;
   min-width: 500px;
   border-top: 0;
@@ -2150,6 +2263,12 @@ td span.time {
 
   margin-top: -47px;
   z-index: 10;
+}
+
+.has_multiple_children .breadcrumb,
+.has_multiple_children .imageeditor,
+.has_multiple_children .linkeditor {
+  width:41%;
 }
 
 .imageeditor, .linkeditor {
@@ -2418,6 +2537,7 @@ progress[value]::-webkit-progress-value {
   padding: 5px;
   margin: 0;
   width: 100%;
+  height: auto;
 }
 
 .alertbox.task .task-description
@@ -2492,12 +2612,13 @@ progress[value]::-webkit-progress-value {
 .alertbox.selectfields div.selectiontools { float:left; }
 
 /* #vi_badges
-================================================== */
+==================================================
 
 .beta {
   background: url(icons/beta_small.png) no-repeat top right;
   padding-right: 35px;
-}
+}*/
+
 
 /* #vi_messenger
 ================================================== */.vi_messenger {

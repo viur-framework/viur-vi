@@ -1,0 +1,54 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+
+import html5
+from i18n import translate
+from priorityqueue import editBoneSelector
+
+
+class SpatialBone(html5.Div):
+	def __init__(self, modulName, boneName, readOnly, *args, **kwargs):
+		super(SpatialBone, self).__init__(*args, **kwargs)
+		self.boneName = boneName
+		self.readOnly = readOnly
+		self.latitude = html5.Input()
+		self.longitude = html5.Input()
+		self.latitude["type"] = "number"
+		self.longitude["type"] = "number"
+		self.appendChild(self.latitude)
+		lbl = html5.Label(translate("longitude"))
+		lbl["for"] == modulName + "_" + boneName + "_longitude"
+		self.appendChild(lbl)
+		self.longitude["name"] = modulName + "_" + boneName + "_longitude"
+		self.appendChild(self.longitude)
+		if self.readOnly:
+			self["disabled"] = True
+
+	@staticmethod
+	def fromSkelStructure(modulName, boneName, skelStructure):
+		readOnly = "readonly" in skelStructure[boneName].keys() and skelStructure[boneName]["readonly"]
+		return SpatialBone(modulName, boneName, readOnly)
+
+	def unserialize(self, data):
+		try:
+			self.latitude["value"], self.longitude["value"] = data[self.boneName]
+		except KeyError:
+			pass
+
+	def serializeForPost(self):
+		return {
+			"{0}.lat".format(self.boneName): self.latitude["value"],
+			"{0}.lng".format(self.boneName): self.longitude["value"]
+		}
+
+	def setExtendedErrorInformation(self, errorInfo):
+		pass
+
+
+def CheckForSpatialBone(modulName, boneName, skelStucture, *args, **kwargs):
+	tmp = str(skelStucture[boneName]["type"]).startswith("spatial")
+	return tmp
+
+
+# Register this Bone in the global queue
+editBoneSelector.insert(5, CheckForSpatialBone, SpatialBone)

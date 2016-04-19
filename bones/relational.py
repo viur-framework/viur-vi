@@ -35,17 +35,20 @@ class RelationalBoneExtractor(object):
 		self.boneName = boneName
 
 	def render(self, data, field ):
-		def localizedRender(val):
+		def localizedRender(val, format):
 			if "currentlanguage" in conf:
 				i18n_val = "%s.%s" % (self.format, conf["currentlanguage"])
+
 				if i18n_val in val:
-					val = val[i18n_val].replace("&quot;", "")
-				elif self.format in val:
-					val = val[self.format].replace("&quot;", "")
+					val = html5.utils.unescape(val[i18n_val])
+				elif format in val:
+					val = html5.utils.unescape(str(val[format]))
 				elif val:
 					val = val["id"]
+
 			else:
 				val = val["id"]
+
 			return val
 
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
@@ -57,14 +60,17 @@ class RelationalBoneExtractor(object):
 		if isinstance(val, list):
 			result = list()
 			for x in val:
-				print("relation x in val", x)
-				result.append(localizedRender(x))
+				result.append(localizedRender(x, self.format))
+
 			return ", ".join(result)
+
 		elif isinstance(val, dict):
-			val = localizedRender(val)
+			val = localizedRender(val, self.format)
+
 		else:
 			print("warning type:", val, type(val))
-		return val.replace("&quot;", "")
+
+		return html5.utils.unescape(val)
 
 
 class RelationalViewBoneDelegate( object ):
@@ -80,18 +86,25 @@ class RelationalViewBoneDelegate( object ):
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
+
 		if field in data.keys():
 			val = data[field]
 		else:
 			val = ""
+
 		if isinstance(val,list):
-			val = ", ".join( [ (formatString(self.format, self.structure, x) or x["id"]) for x in val] )
+			if len(val)<5:
+				res = ", ".join( [ (formatString(self.format, self.structure, x, unescape= True) or x["id"]) for x in val] )
+			else:
+				res = ", ".join( [ (formatString(self.format, self.structure, x, unescape= True) or x["id"]) for x in val[:4]] )
+				res += " "+translate("and {count} more",count=len(val)-4)
 			#val = ", ".join( [(x["name"] if "name" in x.keys() else x["id"]) for x in val])
 		elif isinstance(val, dict):
-			val = formatString(self.format,self.structure, val ) or val["id"]
+			res = formatString(self.format,self.structure, val, unescape= True) or val["id"]
 			#val = val["name"] if "name" in val.keys() else val["id"]
-		return( html5.Label( val ) )
+		return( html5.Label( res ) )
 		#return( formatString( self.format, self.structure, value ) ) FIXME!
+
 
 class RelationalSingleSelectionBone( html5.Div ):
 	"""
@@ -146,9 +159,9 @@ class RelationalSingleSelectionBone( html5.Div ):
 			self.editBtn = None
 
 		# Remove button
-		if ( not required
-		     and ( "root" in conf[ "currentUser" ][ "access" ]
-		           or destModul + "-view" in conf[ "currentUser" ][ "access" ] ) ):
+		if ( not required and not readOnly
+		     and ("root" in conf[ "currentUser" ][ "access" ]
+		            or destModul + "-view" in conf[ "currentUser" ][ "access" ])):
 			# Yes, we check for "view" on the remove button, because removal of relations
 			# is only useful when viewing the destination module is still allowed.
 
@@ -171,7 +184,6 @@ class RelationalSingleSelectionBone( html5.Div ):
 		super(RelationalSingleSelectionBone, self)._setDisabled( disable )
 		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
 			self.parent()["class"].remove("is_active")
-
 
 	@classmethod
 	def fromSkelStructure( cls, modulName, boneName, skelStructure ):
@@ -197,7 +209,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 		format= "$(name)"
 		if "format" in skelStructure[ boneName ].keys():
 			format = skelStructure[ boneName ]["format"]
-		return( cls( modulName, boneName, readOnly, destModul=destModul, format=format, required=required ) )
+		return cls( modulName, boneName, readOnly, destModul=destModul, format=format, required=required )
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -209,8 +221,12 @@ class RelationalSingleSelectionBone( html5.Div ):
 		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.destModul, EditWidget.appList, key=self.selection[ "id" ] )
-		pane.addWidget( edwg )
+
+		try:
+			edwg = EditWidget( self.destModul, EditWidget.appList, key=self.selection[ "id" ] )
+			pane.addWidget( edwg )
+		except AssertionError:
+			conf["mainWindow"].removePane(pane)
 
 	def onRemove(self, *args, **kwargs):
 		self.setSelection( None )
@@ -249,7 +265,12 @@ class RelationalSingleSelectionBone( html5.Div ):
 		"""
 			Opens a ListWidget so that the user can select new values
 		"""
-		currentSelector = ListWidget( self.destModul, isSelector=True )
+
+		try:
+			currentSelector = ListWidget( self.destModul, isSelector=True )
+		except AssertionError:
+			return
+
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
@@ -351,9 +372,9 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 			self.appendChild( editBtn )
 
 		#Remove button
-
-		if ( "root" in conf[ "currentUser" ][ "access" ]
-		     or modul + "-view" in conf[ "currentUser" ][ "access" ] ):
+		if (not parent.readOnly
+			and ("root" in conf[ "currentUser" ][ "access" ]
+			        or modul + "-view" in conf[ "currentUser" ][ "access" ])):
 			# Check on "view" is also correct here - relational
 			# can be removed if entries can be selected!
 			remBtn = html5.ext.Button("Remove", self.onRemove )
@@ -493,7 +514,11 @@ class RelationalMultiSelectionBone( html5.Div ):
 		"""
 			Opens a ListWidget sothat the user can select new values
 		"""
-		currentSelector = ListWidget( self.destModul, isSelector=True )
+		try:
+			currentSelector = ListWidget( self.destModul, isSelector=True )
+		except AssertionError:
+			return
+
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
@@ -574,7 +599,11 @@ class ExtendedRelationalSearch( html5.Div ):
 		self.filterChangedEvent.fire()
 
 	def openSelector(self, *args, **kwargs):
-		currentSelector = ListWidget( self.extension["modul"], isSelector=True )
+		try:
+			currentSelector = ListWidget( self.extension["modul"], isSelector=True )
+		except AssertionError:
+			return
+
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 

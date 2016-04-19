@@ -177,7 +177,7 @@ def CheckForTreeDirBoneMultiSelection( modulName, boneName, skelStructure, *args
 def CheckForTreeDirBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	#print("CHECKING FILE BONE", skelStucture[boneName]["type"])
 	print( skelStucture[boneName]["type"] )
-	return( skelStucture[boneName]["type"].startswith("treedir.") )
+	return( skelStucture[boneName]["type"].startswith("relational.treedir.") )
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 5, CheckForTreeDirBoneSingleSelection, TreeDirSingleSelectionBone)

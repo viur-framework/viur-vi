@@ -15,6 +15,8 @@ class DateBoneExtractor( object ):
 		self.modulName=modulName
 
 	def render( self, data, field ):
+		print( self, data, field)
+
 
 		if not self.boneName in self.skelStructure or not data or not field in data.keys():
 			return conf[ "empty_value" ]
@@ -30,7 +32,7 @@ class DateBoneExtractor( object ):
 				return dt.strftime("%d.%m.%Y %H:%M:%S")
 			elif structure["date"] and not structure["time"]:
 				try:
-					dt = datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
+					dt = datetime.strptime( val, "%d.%m.%Y")
 				except:
 					return "Error parsing Date"
 				return dt.strftime("%d.%m.%Y")
@@ -150,10 +152,14 @@ class DateEditBone( html5.Div ):
 				dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y")
 				self.dateinput["value"]=dateobj.strftime( "%Y-%m-%d" )
 			if self.hasdate  and self.hastime:
-				dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y %H:%M:%S")
-				self.dateinput["value"]=dateobj.strftime( "%Y-%m-%d" )
-				self.timeinput["value"]=dateobj.strftime( "%H:%M:%S" )
-
+				# FIXME: temporarily fixing a bug in extended relational bone
+				try:
+					dateobj=datetime.strptime(data[ self.boneName ], "%d.%m.%Y %H:%M:%S")
+					self.dateinput["value"]=dateobj.strftime( "%Y-%m-%d" )
+					self.timeinput["value"]=dateobj.strftime( "%H:%M:%S" )
+				except ValueError:
+					self.dateinput["value"] = "-"
+					self.timeinput["value"] = "-"
 
 	def serializeForPost(self):
 		#[day, month, year, hour, min,sec]

@@ -50,24 +50,30 @@ class Log( html5.Div ):
 			@type msg: String
 		"""
 		assert type in ["success", "error", "warning", "info", "progress"]
+
 		liwrap = html5.Li()
 		liwrap["class"].append("log_"+type)
 		liwrap["class"].append("is_new")
+
 		spanDate = html5.Span()
 		spanDate.appendChild( html5.TextNode( datetime.now().strftime("%H:%M:%S") ))
 		spanDate["class"].append("date")
 		liwrap.appendChild(spanDate)
+
 		if isinstance( msg, html5.Widget ):
 			#Append that widget directly
 			liwrap.appendChild( msg )
+
 		else:
 			#Create a span element for that message
 			spanMsg = html5.Span()
-			spanMsg.appendChild( html5.TextNode( msg ))
+			spanMsg.appendChild(html5.TextNode(html5.utils.unescape(msg)))
 			spanMsg["class"].append("msg")
 			liwrap.appendChild(spanMsg)
+
 		DeferredCall(self.removeNewCls, liwrap,_delay=2500)
 		self.logUL.appendChild( liwrap )
+
 		if len(self.logUL._children)>1:
 			self.logUL.element.removeChild( liwrap.element )
 			self.logUL.element.insertBefore( liwrap.element, self.logUL.element.children.item(0) )
