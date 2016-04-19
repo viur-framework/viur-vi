@@ -12,3 +12,5 @@ from bones import color
 from bones import email
 from bones import password
 from bones import numeric
+from bones import treedir
+from bones import spatial
