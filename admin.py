@@ -76,7 +76,7 @@ class AdminScreen(Screen):
 		super(AdminScreen, self).remove()
 
 	def startup(self):
-		NetworkService.request(None, "/admin/config", successHandler=self.postInit,
+		NetworkService.request(None, "/vi/config", successHandler=self.postInit,
 								failureHandler=self.onError, cacheable=True)
 
 	def log(self, type, msg ):
@@ -84,6 +84,7 @@ class AdminScreen(Screen):
 
 	def postInit(self, req):
 		config = NetworkService.decode(req)
+		conf["server"] = config.get("configuration", {})
 
 		def getModulName(argIn):
 			try:
