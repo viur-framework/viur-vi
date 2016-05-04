@@ -13,7 +13,7 @@ class ListHandler( Pane ):
 		if "icon" in modulInfo.keys():
 			icon = modulInfo["icon"]
 
-		super(ListHandler, self).__init__(modulInfo["visibleName"], icon)
+		super(ListHandler, self).__init__(modulInfo.get("visibleName", modulInfo["name"]), icon)
 
 		self.modulName = modulName
 		self.modulInfo = modulInfo

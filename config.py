@@ -4,6 +4,7 @@ from i18n import translate
 
 conf = {
 	"mainWindow": None,
+	"server": {},
 	"modules": { "_tasks" : { "handler" : "singleton", "name": "Tasks" } },
 	"tasks" : { "server" : [], "client" : [] },
 	"currentlanguage":"de",
