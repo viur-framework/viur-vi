@@ -92,7 +92,7 @@ def formatString( format, skelStructure, data, prefix=None, unescape=False ):
 		else:
 			tok = key.split(".")
 			if "." in key and "$(%s)" % tok[0] in res and tok[1] == conf["currentlanguage"]:
-				res = res.replace("$(%s)" % tok[0], str(data[key]))
+				res = res.replace("$(%s)" % (".".join( prefix + [tok[0]])), str(data[key]))
 			else:
 				res = res.replace( "$(%s)" % (".".join( prefix + [key] ) ), str(data[key]) )
 
