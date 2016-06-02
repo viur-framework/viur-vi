@@ -185,36 +185,53 @@ class AdminScreen(Screen):
 		DeferredCall( self.checkInitialHash )
 		self.unlock()
 
-	def checkInitialHash( self, *args, **kwargs ):
+	def checkInitialHash(self, *args, **kwargs):
 		urlHash = eval("window.top.location.hash")
 		if not urlHash:
 			return
+		
 		if "?" in urlHash:
-			hashStr = urlHash[ : urlHash.find("?") ]
-			paramsStr = urlHash[ urlHash.find("?")+1: ]
+			hashStr = urlHash[1:urlHash.find("?")]
+			paramsStr = urlHash[urlHash.find("?")+1:]
 		else:
-			hashStr = urlHash
+			hashStr = urlHash[1:]
 			paramsStr = ""
-		hashList = hashStr[1:].split("/")
-		hashList = [x for x in hashList if x]
-		params = {}
-		if paramsStr:
-			for pair in paramsStr.split("&"):
+
+		self.execCall(hashStr, paramsStr)
+
+	def execCall(self, path, params = None):
+		"""
+		Performs an execution call.
+
+		:param path: Path to the module and action
+		:param params: Parameters passed to the module
+		"""
+		path = [x for x in path.split("/") if x]
+		
+		param = {}
+
+		if params:
+			for pair in params.split("&"):
 				if not "=" in pair:
 					continue
-				key = pair[ :pair.find("=") ]
-				value = pair[ pair.find("=")+1: ]
+
+				key = pair[:pair.find("=")]
+				value = pair[pair.find("=") + 1:]
+
 				if not (key and value):
 					continue
-				if key in params.keys():
-					if not isinstance( params[ key ], list ):
-						params[ key ] = [ params[ key ] ]
-					params[ key ].append( value )
+
+				if key in param.keys():
+					if not isinstance(param[key], list):
+						param[key] = [params[key]]
+
+					param[key].append(value)
 				else:
-					params[ key ] = value
-		gen = initialHashHandler.select( hashList, params )
+					param[key] = value
+
+		gen = initialHashHandler.select(path, param)
 		if gen:
-			gen( hashList, params )
+			gen(path, param)
 
 	def onError(self, req, code):
 		print("ONERROR")
