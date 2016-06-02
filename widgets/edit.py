@@ -642,8 +642,6 @@ class EditWidget( html5.Div ):
 		if hasMissing and not self.wasInitialRequest:
 			conf["mainWindow"].log("warning",translate("Could not save entry!"))
 
-		self.performLogics()
-
 	def unserialize(self, data):
 		"""
 			Applies the actual data to the bones.
