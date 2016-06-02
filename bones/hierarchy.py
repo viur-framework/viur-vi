@@ -24,7 +24,7 @@ class HierarchyMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""
-		self.setSelection( [x.data for x in selection] )
+		self.setSelection( [{"dest": x.data, "rel": {}} for x in selection] )
 
 class HierarchySingleSelectionBone( RelationalSingleSelectionBone ):
 	def onShowSelector(self, *args, **kwargs):
@@ -39,9 +39,7 @@ class HierarchySingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""
-		self.setSelection( [x.data for x in selection][0] )
-
-
+		self.setSelection( [{"dest": x.data, "rel": {}} for x in selection][0] )
 
 
 
