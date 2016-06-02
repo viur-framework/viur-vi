@@ -211,23 +211,28 @@ class AdminScreen(Screen):
 		param = {}
 
 		if params:
-			for pair in params.split("&"):
-				if not "=" in pair:
-					continue
+			if isinstance(params, dict):
+				param = params
+			else:
+				for pair in params.split("&"):
+					if not "=" in pair:
+						continue
 
-				key = pair[:pair.find("=")]
-				value = pair[pair.find("=") + 1:]
+					key = pair[:pair.find("=")]
+					value = pair[pair.find("=") + 1:]
 
-				if not (key and value):
-					continue
+					if not (key and value):
+						continue
 
-				if key in param.keys():
-					if not isinstance(param[key], list):
-						param[key] = [params[key]]
+					if key in param.keys():
+						if not isinstance(param[key], list):
+							param[key] = [params[key]]
 
-					param[key].append(value)
-				else:
-					param[key] = value
+						param[key].append(value)
+					else:
+						param[key] = value
+
+		print("execCall", path, param)
 
 		gen = initialHashHandler.select(path, param)
 		if gen:
