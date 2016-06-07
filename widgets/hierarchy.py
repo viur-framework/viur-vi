@@ -391,7 +391,12 @@ class HierarchyWidget( html5.Div ):
 			@param node: Key of the node to fetch
 			@type node: string
 		"""
-		r = NetworkService.request(self.modul,"list/", {"parent":node,"orderby":"sortindex"}, successHandler=self.onRequestSucceded, failureHandler=self.showErrorMsg )
+		r = NetworkService.request(self.modul,"list",
+		                            {   "parent":node,
+		                                "orderby":
+										"sortindex", "amount": 99},
+		                            successHandler=self.onRequestSucceded,
+		                            failureHandler=self.showErrorMsg)
 		r.node = node
 		self._currentRequests.append( r )
 
