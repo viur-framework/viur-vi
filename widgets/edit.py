@@ -187,11 +187,14 @@ def parseHashParameters( src, prefix="" ):
 
 	res = {}
 	processedPrefixes = [] #Dont process a prefix twice
+
 	for k,v in src.items():
 		if prefix and not k.startswith( prefix ):
 			continue
+
 		if prefix:
 			k = k.replace(prefix,"")
+
 		if not "." in k:
 			if k in res.keys():
 				if not isinstance( res[k], list ):
@@ -199,25 +202,34 @@ def parseHashParameters( src, prefix="" ):
 				res[k].append( v )
 			else:
 				res[ k ] = v
+
 		else:
 			newPrefix = k[ :k.find(".")  ]
+
 			if newPrefix in processedPrefixes: #We did this already
 				continue
+
 			processedPrefixes.append( newPrefix )
+
 			if newPrefix in res.keys():
 				if not isinstance( res[ newPrefix ], list ):
 					res[ newPrefix ] = [ res[ newPrefix ] ]
 				res[ newPrefix ].append( parseHashParameters( src, prefix="%s%s." %(prefix,newPrefix)) )
+
 			else:
 				res[ newPrefix ] = parseHashParameters( src, prefix="%s%s." %(prefix,newPrefix))
+
 	if all( [x.isdigit() for x in res.keys()]):
 		newRes = []
 		keys = [int(x) for x in res.keys()]
 		keys.sort()
+
 		for k in keys:
 			newRes.append( res[str(k)] )
-		return( newRes )
-	return( res )
+
+		return newRes
+
+	return res
 
 
 class EditWidget( html5.Div ):
@@ -285,14 +297,17 @@ class EditWidget( html5.Div ):
 		self.logaction = logaction
 
 		self._lastData = {} #Dict of structure and values received
+
 		if hashArgs:
 			self._hashArgs = parseHashParameters( hashArgs )
+			'''
 			warningNode = html5.TextNode("Warning: Values shown below got overriden by the Link you clicked on and do NOT represent the actual values!\n"+\
 						"Doublecheck them before saving!")
 			warningSpan = html5.Span()
 			warningSpan["class"].append("warning")
 			warningSpan.appendChild( warningNode )
 			self.appendChild( warningSpan )
+			'''
 		else:
 			self._hashArgs = None
 
