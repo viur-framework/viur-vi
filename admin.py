@@ -8,7 +8,7 @@ from network import NetworkService, DeferredCall
 from event import viInitializedEvent, EventDispatcher
 from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from log import Log
-from pane import GroupPane
+from pane import Pane, GroupPane
 from screen import Screen
 
 # THESE MUST REMAIN AND ARE QUEUED!!
@@ -253,12 +253,14 @@ class AdminScreen(Screen):
 		#self.paneIdx += 1
 		if len(pane.childPanes)>0:
 			self._registerChildPanes( pane )
+
 		self.panes.append( pane )
+
 		if parentPane:
 			parentPane.addChildPane( pane )
-			pane.parent = parentPane
 		else:
 			self.modulListUl.appendChild( pane )
+
 		self.viewport.appendChild(pane.widgetsDomElm)
 		pane.widgetsDomElm["style"]["display"] = "none"
 		#DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
@@ -316,6 +318,14 @@ class AdminScreen(Screen):
 
 		self.currentPane["class"].append("is_active")
 
+		# Also open parent panes, if not already done
+		pane = self.currentPane.parentPane
+		while isinstance(pane, Pane):
+			if pane.childDomElem["style"].get("display", "none") == "none":
+				pane.childDomElem["style"]["display"] = "block"
+
+			pane = pane.parentPane
+
 	def removePane(self, pane):
 		assert pane in self.panes, "Cannot remove unknown pane!"
 		self.panes.remove( pane )
@@ -331,10 +341,10 @@ class AdminScreen(Screen):
 			else:
 				self.nextPane = None
 
-		if pane.parent == self:
+		if pane.parentPane == self:
 			self.modulListUl.removeChild( pane )
 		else:
-			pane.parent.removeChildPane( pane )
+			pane.parentPane.removeChildPane( pane )
 
 		self.viewport.removeChild( pane.widgetsDomElm )
 

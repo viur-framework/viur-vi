@@ -8,7 +8,7 @@ from widgets.edit import EditWidget
 from i18n import translate
 
 class ListHandler( Pane ):
-	def __init__(self, modulName, modulInfo, *args, **kwargs):
+	def __init__(self, modulName, modulInfo, isView = False, *args, **kwargs):
 		icon = "icons/modules/list.svg"
 		if "icon" in modulInfo.keys():
 			icon = modulInfo["icon"]
@@ -23,16 +23,18 @@ class ListHandler( Pane ):
 		else:
 			if "views" in modulInfo.keys():
 				for view in modulInfo["views"]:
-					self.addChildPane( ListHandler(modulName,view) )
+					self.addChildPane(ListHandler(modulName, view, isView=True))
 
-		initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
+		if not isView:
+			initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
 
 	def canHandleInitialHash(self, pathList, params ):
 		if len(pathList)>1:
 			if pathList[0]==self.modulName:
 				if pathList[1] in ["add","list"] or (pathList[1]=="edit" and len(pathList)>2):
-					return( True )
-		return( False )
+					return True
+
+		return False
 
 	def handleInitialHash(self, pathList, params):
 		assert self.canHandleInitialHash( pathList, params )
