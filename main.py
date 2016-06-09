@@ -1,6 +1,5 @@
 #-*- coding: utf-8 -*-
-import pyjd
-import html5
+import html5, pyjd, network
 
 from login import LoginScreen
 from admin import AdminScreen
@@ -38,6 +37,9 @@ class Application(html5.Div):
 
 if __name__ == '__main__':
 	pyjd.setup("public/main.html")
+
+	# Configure vi as network render prefix
+	network.NetworkService.prefix = "/vi"
 
 	app = Application()
 	html5.Body().appendChild(app)

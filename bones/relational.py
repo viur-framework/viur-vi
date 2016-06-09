@@ -400,8 +400,8 @@ class RelationalSingleSelectionBone( html5.Div ):
 		NetworkService.removeChangeListener( self )
 		super( RelationalSingleSelectionBone,  self ).onDetach()
 
-	def onDataChanged(self, modul):
-		if modul == self.destModul:
+	def onDataChanged(self, module, **kwargs):
+		if module == self.destModul:
 			self.setSelection(self.selection)
 
 	def onSelectionDataAviable(self, req):

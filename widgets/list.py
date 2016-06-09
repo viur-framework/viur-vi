@@ -180,11 +180,11 @@ class ListWidget( html5.Div ):
 		super( ListWidget, self ).onDetach()
 		NetworkService.removeChangeListener( self )
 
-	def onDataChanged(self, modul):
+	def onDataChanged(self, module, **kwargs):
 		"""
 			Refresh our view if element(s) in this modul have changed
 		"""
-		if modul and modul!=self.modul:
+		if module and module != self.modul:
 			return
 
 		self.reloadData()
