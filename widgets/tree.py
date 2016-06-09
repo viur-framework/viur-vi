@@ -338,11 +338,15 @@ class TreeWidget( html5.Div ):
 		NetworkService.removeChangeListener( self )
 
 
-	def onDataChanged(self, modul):
-		if modul != self.modul:
+	def onDataChanged(self, module, **kwargs):
+		if module != self.modul:
+
 			isRootNode = False
-			for k, v in conf[ "modules" ].items():
-				if k == modul and v.get( "handler" ) == "list" and v.get( "rootNodeOf" ) == self.modul:
+			for k, v in conf["modules"].items():
+				if (k == module
+				    and v.get("handler") == "list"
+				    and v.get("rootNodeOf") == self.modul):
+
 					isRootNode = True
 					break
 

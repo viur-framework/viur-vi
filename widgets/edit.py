@@ -62,12 +62,12 @@ class InternalEdit( html5.Div ):
 				fs["class"] = cat
 				if cat=="default":
 					fs["class"].append("active")
-				#fs["id"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
+				#fs["id"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.module, "edit" if self.key else "add", cat)
 				fs["name"] = cat
 				legend = html5.Legend()
-				#legend["id"] = "vi_%s_%s_%s_%s_legend" % (self.editIdx,self.modul, "edit" if self.key else "add", cat)
+				#legend["id"] = "vi_%s_%s_%s_%s_legend" % (self.editIdx,self.module, "edit" if self.key else "add", cat)
 				fshref = fieldset_A()
-				#fshref["href"] = "#vi_%s_%s_%s_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat)
+				#fshref["href"] = "#vi_%s_%s_%s_%s" % (self.editIdx, self.module, "edit" if self.key else "add", cat)
 				fshref.appendChild(html5.TextNode(cat) )
 				legend.appendChild( fshref )
 				fs.appendChild(legend)
@@ -239,12 +239,12 @@ class EditWidget( html5.Div ):
 	appSingleton = "singleton"
 	__editIdx_ = 0 #Internal counter to ensure unique ids
 
-	def __init__(self, modul, applicationType, key=0, node=None, skelType=None, clone=False,
+	def __init__(self, module, applicationType, key=0, node=None, skelType=None, clone=False,
 	             hashArgs=None, logaction = "Entry saved!", *args, **kwargs ):
 		"""
-			Initialize a new Edit or Add-Widget for the given modul.
-			@param modul: Name of the modul
-			@type modul: String
+			Initialize a new Edit or Add-Widget for the given module.
+			@param module: Name of the module
+			@type module: String
 			@param applicationType: Defines for what application this Add / Edit should be created. This hides additional complexity introduced by the hierarchy / tree-application
 			@type applicationType: Any of EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree or EditWidget.appSingleton
 			@param id: ID of the entry. If none, it will add a new Entry.
@@ -259,12 +259,12 @@ class EditWidget( html5.Div ):
 			@param hashArgs: Dictionary of parameters (usually supplied by the window.hash property) which should prefill values.
 			@type hashArgs: Dict
 		"""
-		if not modul in conf["modules"].keys():
-			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=modul))
-			assert modul in conf["modules"].keys()
+		if not module in conf["modules"].keys():
+			conf["mainWindow"].log("error", translate("The modulee '{modulee}' does not exist.", modulee=module))
+			assert module in conf["modules"].keys()
 
 		super( EditWidget, self ).__init__( *args, **kwargs )
-		self.modul = modul
+		self.module = module
 
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
 		assert applicationType in [ EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree, EditWidget.appSingleton ] #Invalid Application-Type?
@@ -313,7 +313,7 @@ class EditWidget( html5.Div ):
 
 		self.editTaskID = None
 		self.wasInitialRequest = True #Wherever the last request attempted to save data or just fetched the form
-		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" if self.key else "add" )
+		self.actionbar = ActionBar( self.module, self.applicationType, "edit" if self.key else "add" )
 		self.appendChild( self.actionbar )
 		self.form = html5.Form()
 		self.appendChild(self.form)
@@ -356,46 +356,46 @@ class EditWidget( html5.Div ):
 		"""
 		self.wasInitialRequest = not len(data)>0
 
-		if self.modul=="_tasks":
-			NetworkService.request( None, "/admin/%s/execute/%s" % ( self.modul, self.key ), data,
+		if self.module=="_tasks":
+			NetworkService.request( None, "/admin/%s/execute/%s" % ( self.module, self.key ), data,
 			                        secure=len(data)>0,
 			                        successHandler=self.setData,
 			                        failureHandler=self.showErrorMsg)
 		elif self.applicationType == EditWidget.appList: ## Application: List
 			if self.key and (not self.clone or not data):
-				NetworkService.request(self.modul,"edit/%s" % self.key, data,
+				NetworkService.request(self.module,"edit/%s" % self.key, data,
 				                       secure=len(data)>0,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 			else:
-				NetworkService.request(self.modul, "add", data,
+				NetworkService.request(self.module, "add", data,
 				                       secure=len(data)>0,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg )
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
 			if self.key and (not self.clone or not data):
-				NetworkService.request(self.modul,"edit/%s" % self.key, data,
+				NetworkService.request(self.module,"edit/%s" % self.key, data,
 				                       secure=len(data)>0,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 			else:
-				NetworkService.request(self.modul, "add/%s" % self.node, data,
+				NetworkService.request(self.module, "add/%s" % self.node, data,
 				                       secure=len(data)>0,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg )
 		elif self.applicationType == EditWidget.appTree: ## Application: Tree
 			if self.key and not self.clone:
-				NetworkService.request(self.modul,"edit/%s/%s" % (self.skelType,self.key), data,
+				NetworkService.request(self.module,"edit/%s/%s" % (self.skelType,self.key), data,
 				                       secure=len(data)>0,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 			else:
-				NetworkService.request(self.modul,"add/%s/%s" % (self.skelType,self.node), data,
+				NetworkService.request(self.module,"add/%s/%s" % (self.skelType,self.node), data,
 				                       secure=len(data)>0,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 		elif self.applicationType == EditWidget.appSingleton: ## Application: Singleton
-			NetworkService.request(self.modul,"edit", data,
+			NetworkService.request(self.module,"edit", data,
 			                       secure=len(data)>0,
 			                       successHandler=self.setData,
 			                       failureHandler=self.showErrorMsg)
@@ -411,12 +411,12 @@ class EditWidget( html5.Div ):
 
 	def closeOrContinue(self, sender=None ):
 		if self.closeOnSuccess:
-			if self.modul == "_tasks":
+			if self.module == "_tasks":
 				self.parent().close()
 				return
 
-			conf["mainWindow"].removeWidget( self )
-			NetworkService.notifyChange(self.modul)
+			conf["mainWindow"].removeWidget(self)
+			NetworkService.notifyChange(self.module, key=self.key)
 			return
 
 		self.clear()
@@ -425,12 +425,12 @@ class EditWidget( html5.Div ):
 
 	def doCloneHierarchy(self, sender=None ):
 		if self.applicationType == EditWidget.appHierarchy:
-			NetworkService.request( self.modul, "clone",
+			NetworkService.request( self.module, "clone",
 		                            { "fromRepo" : self.node, "toRepo" : self.node,
 		                              "fromParent" : self.clone_of, "toParent" : self.key },
 		                                secure=True, successHandler=self.cloneComplete )
 		else:
-			NetworkService.request( conf[ "modules" ][ self.modul ][ "rootNodeOf" ], "clone",
+			NetworkService.request( conf[ "modules" ][ self.module ][ "rootNodeOf" ], "clone",
 		                            { "fromRepo" : self.clone_of, "toRepo" : self.key },
 		                                secure=True, successHandler=self.cloneComplete )
 
@@ -468,13 +468,13 @@ class EditWidget( html5.Div ):
 			spanMsg["class"].append("msgspan")
 			logDiv.appendChild(spanMsg)
 
-			if self.modul in conf["modules"].keys():
+			if self.module in conf["modules"].keys():
 				spanMsg = html5.Span()
-				if self.modul.startswith( "_" ):
+				if self.module.startswith( "_" ):
 					spanMsg.appendChild( html5.TextNode( self.key ) )
 				else:
-					spanMsg.appendChild( html5.TextNode( conf["modules"][self.modul]["name"] ))
-				spanMsg["class"].append("modulspan")
+					spanMsg.appendChild( html5.TextNode( conf["modules"][self.module]["name"] ))
+				spanMsg["class"].append("modulespan")
 				logDiv.appendChild(spanMsg)
 
 			if "values" in data.keys() and "name" in data["values"].keys():
@@ -494,18 +494,21 @@ class EditWidget( html5.Div ):
 				spanMsg["class"].append("namespan")
 				logDiv.appendChild(spanMsg)
 
+			try:
+				self.key = data["values"]["key"]
+			except:
+				self.key = None
+
 			conf["mainWindow"].log("success",logDiv)
 
 			if askHierarchyCloning and self.clone:
 				# for lists, which are rootNode entries of hierarchies, ask to clone entire hierarchy
-				if self.applicationType == EditWidget.appList and "rootNodeOf" in conf[ "modules" ][ self.modul ]:
-					self.key = data[ "values" ][ "key" ]
+				if self.applicationType == EditWidget.appList and "rootNodeOf" in conf[ "modules" ][ self.module ]:
 					YesNoDialog( translate( u"Do you want to clone the entire hierarchy?" ),
 				                    yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
 					return
 				# for cloning within a hierarchy, ask for cloning all subentries.
 				elif self.applicationType == EditWidget.appHierarchy:
-					self.key = data[ "values" ][ "key" ]
 					YesNoDialog( translate( u"Do you want to clone all subentries of this item?" ),
 				                    yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
 					return
@@ -524,7 +527,7 @@ class EditWidget( html5.Div ):
 		fieldSets = {}
 		currRow = 0
 		hasMissing = False
-		defaultCat = conf["modules"][self.modul].get("visibleName", self.modul)
+		defaultCat = conf["modules"][self.module].get("visibleName", self.module)
 
 		for key, bone in data["structure"]:
 			if not bone["visible"]:
@@ -554,9 +557,9 @@ class EditWidget( html5.Div ):
 				fs._section = section
 				fieldSets[cat] = fs
 
-			wdgGen = editBoneSelector.select(self.modul, key, tmpDict)
-			widget = wdgGen.fromSkelStructure(self.modul, key, tmpDict)
-			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.modul, "edit" if self.key else "add", cat, key)
+			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
+			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
+			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, "edit" if self.key else "add", cat, key)
 
 			#widget["class"].append(key)
 			#widget["class"].append(bone["type"].replace(".","_"))
@@ -565,7 +568,7 @@ class EditWidget( html5.Div ):
 			descrLbl = html5.Label(key if conf["showBoneNames"] else bone.get("descr", key))
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
-			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, self.modul,
+			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, self.module,
 			                                                "edit" if self.key else "add", cat, key)
 			print(key, bone["required"], bone["error"])
 			if bone["required"]:
