@@ -77,10 +77,12 @@ class StringViewBoneDelegate( object ):
 			aspan["Title"] = str(datafield)
 			return aspan
 
-class Tag( html5.Span ):
-	def __init__(self, tag, isEditMode, readonly=False, *args, **kwargs ):
-		super( Tag, self ).__init__( *args, **kwargs )
+class Tag(html5.Span):
+	def __init__(self, parentBone, tag, isEditMode, readonly=False, *args, **kwargs ):
+		super(Tag, self).__init__(*args, **kwargs)
 		self["class"].append("tag")
+
+		self.parentBone = parentBone
 
 		self.input = html5.Input()
 		self.input["type"] = "text"
@@ -88,19 +90,53 @@ class Tag( html5.Span ):
 		self.appendChild(self.input)
 
 		if readonly:
-			self.input[ "readonly" ] = True
+			self.input["readonly"] = True
 		else:
-			delBtn = html5.ext.Button(translate("Delete"), self.removeMe)
+			self["draggable"] = True
+			self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd")
+
+			delBtn = html5.ext.Button(translate("Delete"), self.onDelBtnClick)
 			delBtn["class"].append("icon delete tag")
 			self.appendChild(delBtn)
 
-	def removeMe(self, *args, **kwargs):
-		self.parent().removeChild( self )
+	def onDelBtnClick(self, *args, **kwargs):
+		self.parent().removeChild(self)
 
 	def focus(self):
 		self.input.focus()
 
-class StringEditBone( html5.Div ):
+	def onDragStart(self, event):
+		self.parentBone.currentTagToDrag = self
+		event.dataTransfer.setData("text", self.input["value"])
+		event.stopPropagation()
+
+	def onDragOver(self, event):
+		event.preventDefault()
+
+	def onDragEnd(self, event):
+		self.parentBone.currentTagToDrag = None
+		event.stopPropagation()
+
+	def onDrop(self, event):
+		event.preventDefault()
+		event.stopPropagation()
+
+		tagToDrop = self.parentBone.currentTagToDrag
+
+		if tagToDrop and tagToDrop != self:
+			if self.element.offsetTop > tagToDrop.element.offsetTop:
+				parentChilds = self.parent().children()
+
+				if parentChilds[-1] is self:
+					self.parent().appendChild(tagToDrop)
+				else:
+					self.parent().insertBefore(tagToDrop, parentChilds[parentChilds.index(self) + 1])
+			else:
+				self.parent().insertBefore(tagToDrop, self)
+
+		self.parentBone.currentTagToDrag = None
+
+class StringEditBone(html5.Div):
 	def __init__(self, modulName, boneName, readOnly, multiple=False, languages=None, *args, **kwargs ):
 		super( StringEditBone,  self ).__init__( *args, **kwargs )
 		self.modulName = modulName
@@ -109,6 +145,7 @@ class StringEditBone( html5.Div ):
 		self.multiple = multiple
 		self.languages = languages
 		self.boneName = boneName
+		self.currentTagToDrag = None
 		self.currentLanguage = None
 
 		if self.languages and self.multiple:
@@ -274,38 +311,48 @@ class StringEditBone( html5.Div ):
 				btn[ "class" ].remove( "is_active" )
 
 	def onBtnGenTag(self, btn):
-		tag = self.genTag( "", lang=btn.lang )
+		tag = self.genTag("", lang=btn.lang)
 		tag.focus()
 
-	def unserialize( self, data, extendedErrorInformation=None ):
+	def unserialize(self, data, extendedErrorInformation=None):
 		if not self.boneName in data.keys():
 			return
-		data = data[ self.boneName ]
+
+		data = data[self.boneName]
 		if not data:
 			return
+
 		if self.languages and self.multiple:
-			assert isinstance(data,dict)
+			assert isinstance(data, dict)
+
 			for lang in self.languages:
+
 				if lang in data.keys():
-					val = data[ lang ]
-					if isinstance( val, str ):
-						self.genTag( html5.utils.unescape(val), lang=lang )
-					elif isinstance( val, list ):
+					val = data[lang]
+
+					if isinstance(val, str):
+						self.genTag(html5.utils.unescape(val), lang=lang)
+					elif isinstance(val, list):
 						for v in val:
-							self.genTag( html5.utils.unescape(v), lang=lang )
+							self.genTag(html5.utils.unescape(v), lang=lang)
+
 		elif self.languages and not self.multiple:
 			assert isinstance(data,dict)
+
 			for lang in self.languages:
-				if lang in data.keys() and data[ lang ]:
-					self.langEdits[ lang ]["value"] = html5.utils.unescape(str(data[ lang ]))
+				if lang in data.keys() and data[lang]:
+					self.langEdits[lang]["value"] = html5.utils.unescape(str(data[lang]))
 				else:
-					self.langEdits[ lang ]["value"] = ""
+					self.langEdits[lang]["value"] = ""
+
 		elif not self.languages and self.multiple:
+
 			if isinstance( data,list ):
 				for tagStr in data:
-					self.genTag( html5.utils.unescape(tagStr) )
+					self.genTag(html5.utils.unescape(tagStr))
 			else:
-				self.genTag( html5.utils.unescape(data) )
+				self.genTag(html5.utils.unescape(data))
+
 		else:
 			self.input["value"] = html5.utils.unescape(str(data))
 
@@ -313,41 +360,47 @@ class StringEditBone( html5.Div ):
 
 	def serializeForPost(self):
 		res = {}
+
 		if self.languages and self.multiple:
 			for lang in self.languages:
 				res[ "%s.%s" % (self.boneName, lang ) ] = []
 				for child in self.langEdits[ lang ]._children:
 					if isinstance( child, Tag ):
 						res[ "%s.%s" % (self.boneName, lang ) ].append( child.input["value"] )
+
 		elif self.languages and not self.multiple:
 			for lang in self.languages:
 				txt = self.langEdits[ lang ]["value"]
 				if txt:
 					res[ "%s.%s" % (self.boneName, lang) ] = txt
+
 		elif not self.languages and self.multiple:
 			res[ self.boneName ] = []
 			for child in self.tagContainer._children:
 				if isinstance( child, Tag ):
 					res[ self.boneName ].append( child.input["value"] )
+
 		elif not self.languages and not self.multiple:
 			res[ self.boneName ] = self.input["value"]
-		return( res )
+
+		return res
 
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serialize()
 
-	def genTag( self, tag, editMode=False, lang=None ):
-		tag = Tag( tag, editMode, readonly = self.readOnly )
+	def genTag(self, tag, editMode=False, lang=None):
+		tag = Tag(self, tag, editMode, readonly = self.readOnly)
+
 		if lang is not None:
-			self.langEdits[ lang ].appendChild( tag )
+			self.langEdits[lang].appendChild(tag)
 		else:
-			self.tagContainer.appendChild( tag )
+			self.tagContainer.appendChild(tag)
 
 		return tag
 
 
 def CheckForStringBone(  modulName, boneName, skelStucture, *args, **kwargs ):
-	return( str(skelStucture[boneName]["type"]).startswith("str") )
+	return str(skelStucture[boneName]["type"]).startswith("str")
 
 
 class ExtendedStringSearch( html5.Div ):
