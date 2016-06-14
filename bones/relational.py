@@ -87,103 +87,6 @@ class RelationalViewBoneDelegate( object ):
 
 		return html5.Label(res)
 
-class RelationalMultiSelectionBoneEntry( html5.Div ):
-	"""
-		Wrapper-class that holds one referenced entry in a RelationalMultiSelectionBone.
-		Provides the UI to display its data and a button to remove it from the bone.
-	"""
-
-	def __init__(self, parent, module, data, using, errorInfo, *args, **kwargs ):
-		"""
-			@param parent: Reference to the RelationalMultiSelectionBone we belong to
-			@type parent: RelationalMultiSelectionBone
-			@param module: Name of the module which references
-			@type module: String
-			@param data: Values of the entry we shall display
-			@type data: dict
-		"""
-		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
-
-		self["draggable"] = True
-		self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd")
-
-		self.parent = parent
-		self.module = module
-		self.data = data
-
-		if "dest" in data.keys():
-			if "name" in data["dest"].keys():
-				txtLbl = html5.Label( data["dest"]["name"])
-			else:
-				txtLbl = html5.Label( data["dest"]["key"])
-		else:
-			if "name" in data.keys():
-				txtLbl = html5.Label( data["name"])
-			else:
-				try:
-					txtLbl = html5.Label( data["key"])
-				except KeyError:
-					print("Received garbarge from sever!")
-					txtLbl = html5.Label("Invalid data received")
-
-		wrapperDiv = html5.Div()
-		wrapperDiv.appendChild( txtLbl )
-		wrapperDiv["class"].append("labelwrapper")
-
-		if not parent.readOnly:
-			remBtn = html5.ext.Button(translate("Remove"), self.onRemove)
-			remBtn["class"].append("icon")
-			remBtn["class"].append("cancel")
-			wrapperDiv.appendChild(remBtn)
-
-		self.appendChild(wrapperDiv)
-
-		if using:
-			self.ie = InternalEdit( using, data["rel"], errorInfo, readOnly = parent.readOnly )
-			self.appendChild( self.ie )
-		else:
-			self.ie = None
-
-	def onDragStart(self, event):
-		self.parent.currentDrag = self
-		event.dataTransfer.setData("application/json", json.dumps(self.data))
-		event.stopPropagation()
-
-	def onDragOver(self, event):
-		event.preventDefault()
-
-	def onDragEnd(self, event):
-		self.parent.currentDrag = None
-		event.stopPropagation()
-
-	def onDrop(self, event):
-		event.preventDefault()
-		event.stopPropagation()
-
-		if not self.parent.currentDrag:
-			return
-
-		if self.element.offsetTop > self.parent.currentDrag.element.offsetTop:
-			if self.parent.entries[-1] is self:
-				self.parent.moveEntry(self.parent.currentDrag)
-			else:
-				self.parent.moveEntry(self.parent.currentDrag, self.parent.entries[self.parent.entries.index(self) + 1])
-		else:
-			self.parent.moveEntry(self.parent.currentDrag, self)
-
-		self.parent.currentDrag = None
-
-	def onRemove(self, *args, **kwargs):
-		self.parent.removeEntry(self)
-
-	def serialize(self):
-		if self.ie:
-			res = {}
-			res.update( self.ie.doSave() )
-			res["key"] = self.data["dest"]["key"]
-			return res
-		else:
-			return {"key": self.data["dest"]["key"]}
 
 class RelationalSingleSelectionBone( html5.Div ):
 	"""
@@ -315,7 +218,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 			conf["mainWindow"].removePane(pane)
 
 	def onRemove(self, *args, **kwargs):
-		self.setSelection( None )
+		self.setSelection(None)
 
 	def unserialize(self, data):
 		"""
@@ -338,7 +241,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 					self.ie = InternalEdit( self.using, val["rel"], {}, readOnly=self.readOnly )
 					self.appendChild( self.ie )
 			else:
-				self.setSelection( None )
+				self.setSelection(None)
 
 			#self.setText( data[ self.boneName ] if data[ self.boneName ] else "" )
 			#self.lineEdit.setText( str( data[ self.boneName ] ) if data[ self.boneName ] else "" )
@@ -392,11 +295,14 @@ class RelationalSingleSelectionBone( html5.Div ):
 			@type selection: dict
 		"""
 		if not selection:
+			selection = {}
 			self.selection = None
-			return
+
 		if not self.selection:
 			self.selection = {}
+
 		self.selection.update(selection)
+
 		#self.selection["dest"] = selection
 		if selection:
 			NetworkService.request( self.destmodule, "view/"+selection["dest"]["key"],
@@ -407,6 +313,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 				self.appendChild( self.ie )
 		else:
 			self.selectionTxt["value"] = ""
+
 		self.updateButtons()
 
 
@@ -444,6 +351,104 @@ class RelationalSingleSelectionBone( html5.Div ):
 		data = NetworkService.decode( req )
 		assert self.selection["dest"]["key"] == data["values"]["key"]
 		self.selectionTxt["value"] = formatString(self.format, data["structure"], data["values"])
+
+
+class RelationalMultiSelectionBoneEntry( html5.Div ):
+	"""
+		Wrapper-class that holds one referenced entry in a RelationalMultiSelectionBone.
+		Provides the UI to display its data and a button to remove it from the bone.
+	"""
+
+	def __init__(self, parent, module, data, using, errorInfo, *args, **kwargs ):
+		"""
+			@param parent: Reference to the RelationalMultiSelectionBone we belong to
+			@type parent: RelationalMultiSelectionBone
+			@param module: Name of the module which references
+			@type module: String
+			@param data: Values of the entry we shall display
+			@type data: dict
+		"""
+		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
+
+		self["draggable"] = True
+		self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd")
+
+		self.parent = parent
+		self.module = module
+		self.data = data
+
+		if "dest" in data.keys():
+			if "name" in data["dest"].keys():
+				txtLbl = html5.Label( data["dest"]["name"])
+			else:
+				txtLbl = html5.Label( data["dest"]["key"])
+		else:
+			if "name" in data.keys():
+				txtLbl = html5.Label( data["name"])
+			else:
+				try:
+					txtLbl = html5.Label( data["key"])
+				except KeyError:
+					print("Received garbarge from sever!")
+					txtLbl = html5.Label("Invalid data received")
+
+		wrapperDiv = html5.Div()
+		wrapperDiv.appendChild( txtLbl )
+		wrapperDiv["class"].append("labelwrapper")
+
+		if not parent.readOnly:
+			remBtn = html5.ext.Button(translate("Remove"), self.onRemove)
+			remBtn["class"].append("icon")
+			remBtn["class"].append("cancel")
+			wrapperDiv.appendChild(remBtn)
+
+		self.appendChild(wrapperDiv)
+
+		if using:
+			self.ie = InternalEdit(using, data["rel"], errorInfo, readOnly = parent.readOnly)
+			self.appendChild(self.ie)
+		else:
+			self.ie = None
+
+	def onDragStart(self, event):
+		self.parent.currentDrag = self
+		event.dataTransfer.setData("application/json", json.dumps(self.data))
+		event.stopPropagation()
+
+	def onDragOver(self, event):
+		event.preventDefault()
+
+	def onDragEnd(self, event):
+		self.parent.currentDrag = None
+		event.stopPropagation()
+
+	def onDrop(self, event):
+		event.preventDefault()
+		event.stopPropagation()
+
+		if self.parent.currentDrag and self.parent.currentDrag != self:
+			if self.element.offsetTop > self.parent.currentDrag.element.offsetTop:
+				if self.parent.entries[-1] is self:
+					self.parent.moveEntry(self.parent.currentDrag)
+				else:
+					self.parent.moveEntry(self.parent.currentDrag, self.parent.entries[self.parent.entries.index(self) + 1])
+			else:
+				self.parent.moveEntry(self.parent.currentDrag, self)
+
+		self.parent.currentDrag = None
+
+	def onRemove(self, *args, **kwargs):
+		self.parent.removeEntry(self)
+
+	def serialize(self):
+		if self.ie:
+			res = {}
+			res.update( self.ie.doSave() )
+			res["key"] = self.data["dest"]["key"]
+			return res
+		else:
+			return {"key": self.data["dest"]["key"]}
+
 
 class RelationalMultiSelectionBone( html5.Div ):
 	"""
@@ -625,7 +630,6 @@ class RelationalMultiSelectionBone( html5.Div ):
 		assert entry in self.entries, "Cannot remove unknown entry %s from relationalBone" % str(entry)
 		self.entries.remove(entry)
 
-		print("BEFORE", before)
 		if before:
 			assert before in self.entries, "Cannot remove unknown entry %s from relationalBone" % str(before)
 			self.selectionDiv.insertBefore(entry, before)
