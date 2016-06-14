@@ -88,12 +88,13 @@ class RelationalViewBoneDelegate( object ):
 		return html5.Label(res)
 
 
-class RelationalSingleSelectionBone( html5.Div ):
+class RelationalSingleSelectionBone(html5.Div):
 	"""
 		Provides the widget for a relationalBone with multiple=False
 	"""
 
-	def __init__(self, srcmodule, boneName, readOnly, destmodule, format="$(name)", required=False, using=None, *args, **kwargs ):
+	def __init__(self, srcmodule, boneName, readOnly, destmodule, format="$(name)", required=False,
+	                using = None, usingDescr = None, *args, **kwargs ):
 		"""
 			@param srcmodule: Name of the module from which is referenced
 			@type srcmodule: string
@@ -113,14 +114,14 @@ class RelationalSingleSelectionBone( html5.Div ):
 		self.destmodule = destmodule
 		self.format = format
 		self.using = using
+		self.usingDescr = usingDescr
+
 		self.selection = None
 		self.selectionTxt = html5.Input()
 		self.selectionTxt["type"] = "text"
 		self.selectionTxt["readonly"] = True
 		self.appendChild( self.selectionTxt )
 		self.ie = None
-		#DOM.setElemAttribute( self.selectionTxt, "type", "text")
-		#DOM.appendChild(self.getElement(), self.selectionTxt )
 
 		# Selection button
 		if (destmodule in conf["modules"].keys()
@@ -159,8 +160,6 @@ class RelationalSingleSelectionBone( html5.Div ):
 
 		if self.readOnly:
 			self["disabled"] = True
-		#DOM.appendChild( self.getElement(), self.selectBtn.getElement())
-		#self.selectBtn.onAttach()
 
 	def _setDisabled(self, disable):
 		"""
@@ -182,23 +181,35 @@ class RelationalSingleSelectionBone( html5.Div ):
 			@type skelStructure: dict
 		"""
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		multiple = skelStructure[boneName]["multiple"]
+
 		if "required" in skelStructure[boneName].keys() and skelStructure[boneName]["required"]:
-			required=True
+			required = True
 		else:
-			required=False
-		if "module" in skelStructure[ boneName ].keys():
-			destmodule = skelStructure[ boneName ][ "module" ]
+			required = False
+
+		if "module" in skelStructure[boneName].keys():
+			destmodule = skelStructure[boneName]["module"]
 		else:
-			destmodule = skelStructure[ boneName ]["type"].split(".")[1]
-		format= "$(name)"
+			destmodule = skelStructure[boneName]["type"].split(".")[1]
+
+		format = "$(name)"
 		if "format" in skelStructure[ boneName ].keys():
 			format = skelStructure[ boneName ]["format"]
+
 		if "using" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["using"]:
 			using = skelStructure[ boneName ]["using"]
 		else:
 			using = None
-		return cls( moduleName, boneName, readOnly, destmodule=destmodule, format=format, required=required, using=using )
+
+		if ("params" in skelStructure[boneName].keys()
+		    and skelStructure[boneName]["params"]
+			and "usingDescr" in skelStructure[boneName]["params"].keys()):
+			usingDescr = skelStructure[boneName]["params"]["usingDescr"]
+		else:
+			usingDescr = skelStructure[boneName].get("descr", boneName)
+
+		return cls(moduleName, boneName, readOnly, destmodule=destmodule,
+		            format=format, required=required, using=using, usingDescr=usingDescr)
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -238,13 +249,12 @@ class RelationalSingleSelectionBone( html5.Div ):
 				if self.using:
 					if self.ie:
 						self.removeChild(self.ie)
-					self.ie = InternalEdit( self.using, val["rel"], {}, readOnly=self.readOnly )
+
+					self.ie = InternalEdit(self.using, val["rel"], {},
+					                        readOnly=self.readOnly, defaultCat=self.usingDescr)
 					self.appendChild( self.ie )
 			else:
 				self.setSelection(None)
-
-			#self.setText( data[ self.boneName ] if data[ self.boneName ] else "" )
-			#self.lineEdit.setText( str( data[ self.boneName ] ) if data[ self.boneName ] else "" )
 
 	def serializeForPost(self):
 		"""
@@ -306,11 +316,13 @@ class RelationalSingleSelectionBone( html5.Div ):
 		#self.selection["dest"] = selection
 		if selection:
 			NetworkService.request( self.destmodule, "view/"+selection["dest"]["key"],
-			                            successHandler=self.onSelectionDataAviable, cacheable=True)
+			                            successHandler=self.onSelectionDataAvailable, cacheable=True)
+
 			self.selectionTxt["value"] = translate("Loading...")
+
 			if self.using and not self.ie:
-				self.ie = InternalEdit( self.using,{}, {}, readOnly=self.readOnly )
-				self.appendChild( self.ie )
+				self.ie = InternalEdit(self.using,{}, {}, readOnly=self.readOnly, defaultCat=self.usingDescr)
+				self.appendChild(self.ie)
 		else:
 			self.selectionTxt["value"] = ""
 
@@ -344,7 +356,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 		if module == self.destmodule:
 			self.setSelection(self.selection)
 
-	def onSelectionDataAviable(self, req):
+	def onSelectionDataAvailable(self, req):
 		"""
 			We just received the full information for this entry from the server and can start displaying it
 		"""
@@ -353,7 +365,7 @@ class RelationalSingleSelectionBone( html5.Div ):
 		self.selectionTxt["value"] = formatString(self.format, data["structure"], data["values"])
 
 
-class RelationalMultiSelectionBoneEntry( html5.Div ):
+class RelationalMultiSelectionBoneEntry(html5.Div):
 	"""
 		Wrapper-class that holds one referenced entry in a RelationalMultiSelectionBone.
 		Provides the UI to display its data and a button to remove it from the bone.
@@ -371,29 +383,16 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 
 		self["draggable"] = True
-		self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd")
+		self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd", "onChange")
 
 		self.parent = parent
 		self.module = module
 		self.data = data
 
-		if "dest" in data.keys():
-			if "name" in data["dest"].keys():
-				txtLbl = html5.Label( data["dest"]["name"])
-			else:
-				txtLbl = html5.Label( data["dest"]["key"])
-		else:
-			if "name" in data.keys():
-				txtLbl = html5.Label( data["name"])
-			else:
-				try:
-					txtLbl = html5.Label( data["key"])
-				except KeyError:
-					print("Received garbarge from sever!")
-					txtLbl = html5.Label("Invalid data received")
+		self.txtLbl = html5.Label()
 
 		wrapperDiv = html5.Div()
-		wrapperDiv.appendChild( txtLbl )
+		wrapperDiv.appendChild(self.txtLbl)
 		wrapperDiv["class"].append("labelwrapper")
 
 		if not parent.readOnly:
@@ -405,10 +404,26 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 		self.appendChild(wrapperDiv)
 
 		if using:
-			self.ie = InternalEdit(using, data["rel"], errorInfo, readOnly = parent.readOnly)
+			self.ie = InternalEdit(using, data["rel"], errorInfo,
+			                        readOnly = parent.readOnly,
+			                        defaultCat = parent.usingDescr)
 			self.appendChild(self.ie)
 		else:
 			self.ie = None
+
+		self.updateLabel()
+
+	def updateLabel(self, data = None):
+		if data is None:
+			data = self.data
+
+		self.txtLbl.removeAllChildren()
+		txt = formatString(self.parent.format, self.parent.relskel, data["dest"], prefix=["dest"])
+
+		if self.ie:
+			txt = formatString(txt, self.parent.using, self.ie.doSave(), prefix=["rel"])
+
+		html5.utils.textToHtml(self.txtLbl, txt)
 
 	def onDragStart(self, event):
 		self.parent.currentDrag = self
@@ -437,25 +452,32 @@ class RelationalMultiSelectionBoneEntry( html5.Div ):
 
 		self.parent.currentDrag = None
 
+	def onChange(self, event):
+		data = self.data.copy()
+		data["rel"].update(self.ie.doSave())
+
+		self.updateLabel(data)
+
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry(self)
 
 	def serialize(self):
 		if self.ie:
 			res = {}
-			res.update( self.ie.doSave() )
+			res.update(self.ie.doSave())
 			res["key"] = self.data["dest"]["key"]
 			return res
 		else:
 			return {"key": self.data["dest"]["key"]}
 
 
-class RelationalMultiSelectionBone( html5.Div ):
+class RelationalMultiSelectionBone(html5.Div):
 	"""
 		Provides the widget for a relationalBone with multiple=True
 	"""
 
-	def __init__(self, srcmodule, boneName, readOnly, destmodule, format="$(name)", using=None, *args, **kwargs ):
+	def __init__(self, srcmodule, boneName, readOnly, destmodule, format="$(name)", using=None, usingDescr=None,
+	                relskel=None, *args, **kwargs ):
 		"""
 			@param srcmodule: Name of the module from which is referenced
 			@type srcmodule: string
@@ -469,8 +491,6 @@ class RelationalMultiSelectionBone( html5.Div ):
 			@type format: string
 		"""
 		super( RelationalMultiSelectionBone,  self ).__init__( *args, **kwargs )
-		#self["class"].append("relational")
-		#self["class"].append("multiple")
 
 		self.srcmodule = srcmodule
 		self.boneName = boneName
@@ -478,13 +498,16 @@ class RelationalMultiSelectionBone( html5.Div ):
 		self.destmodule = destmodule
 		self.format = format
 		self.using = using
+		self.usingDescr = usingDescr
+		self.relskel = relskel
+
 		self.entries = []
 		self.extendedErrorInformation = {}
 		self.currentDrag = None
 
 		self.selectionDiv = html5.Div()
 		self.selectionDiv["class"].append("selectioncontainer")
-		self.appendChild( self.selectionDiv )
+		self.appendChild(self.selectionDiv)
 
 		if (destmodule in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"] or destmodule + "-view" in conf["currentUser"]["access"])):
@@ -520,19 +543,26 @@ class RelationalMultiSelectionBone( html5.Div ):
 			@param skelStructure: The parsed skeleton structure send by the server
 			@type skelStructure: dict
 		"""
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		multiple = skelStructure[boneName]["multiple"]
+		readOnly = bool(skelStructure[boneName].get("readonly", False))
+
 		if "module" in skelStructure[ boneName ].keys():
 			destmodule = skelStructure[ boneName ][ "module" ]
 		else:
 			destmodule = skelStructure[ boneName ]["type"].split(".")[1]
-		format= "$(name)"
-		if "format" in skelStructure[ boneName ].keys():
-			format = skelStructure[ boneName ]["format"]
-		using= None
-		if "using" in skelStructure[ boneName ].keys():
-			using = skelStructure[ boneName ]["using"]
-		return( cls( moduleName, boneName, readOnly, destmodule=destmodule, format=format, using=using ) )
+
+		format = skelStructure[boneName].get("format", "$(name)")
+		using = skelStructure[boneName].get("using")
+
+		if ("params" in skelStructure[boneName].keys()
+		    and skelStructure[boneName]["params"]
+			and "usingDescr" in skelStructure[boneName]["params"].keys()):
+			usingDescr = skelStructure[boneName]["params"]["usingDescr"]
+		else:
+			usingDescr = skelStructure[boneName].get("descr", boneName)
+
+		return cls(moduleName, boneName, readOnly,
+		            destmodule=destmodule, format=format, using=using, usingDescr = usingDescr,
+		                relskel=skelStructure[boneName].get("relskel"))
 
 	def unserialize(self, data):
 		"""

@@ -15,31 +15,34 @@ from i18n import translate
 class InvalidBoneValueException(ValueError):
 	pass
 
-class InternalEdit( html5.Div ):
+class InternalEdit(html5.Div):
 
-	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False):
-		super( InternalEdit, self ).__init__()
+	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, defaultCat=""):
+		super(InternalEdit, self).__init__()
 		self.editIdx = 1
 		self.skelStructure = skelStructure
 		self.values = values
 		self.errorInformation = errorInformation
+		self.defaultCat = defaultCat
+
 		self.form = html5.Form()
 		self.appendChild(self.form)
+
 		self.renderStructure(readOnly=readOnly)
 
 		if values:
 			self.unserialize( values )
 
 	def renderStructure(self, readOnly = False):
-		#Clear the UI
-		#self.clear()
 		self.bones = {}
-		#self.actionbar.resetLoadingState()
-		#self.dataCache = data
+
 		tmpDict = utils.boneListToDict( self.skelStructure )
 		fieldSets = {}
 		currRow = 0
-		hasMissing = False
+
+		defaultCat = self.defaultCat
+		firstCat = True
+
 		for key, bone in self.skelStructure:
 
 			#Skip over invisible bones
@@ -50,48 +53,43 @@ class InternalEdit( html5.Div ):
 			if readOnly:
 				tmpDict[key]["readonly"] = True
 
-			cat = "default"
+			cat = defaultCat
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"],dict)
 			    and "category" in bone["params"].keys()):
 				cat = bone["params"]["category"]
 
-			if not cat in fieldSets.keys():
+			if cat is not None and not cat in fieldSets.keys():
 				fs = html5.Fieldset()
 				fs["class"] = cat
-				if cat=="default":
+
+				if firstCat:
 					fs["class"].append("active")
+					firstCat = False
+
 				#fs["id"] = "vi_%s_%s_%s_%s" % (self.editIdx, self.module, "edit" if self.key else "add", cat)
-				fs["name"] = cat
+				fs["name"] = cat or "empty"
 				legend = html5.Legend()
 				#legend["id"] = "vi_%s_%s_%s_%s_legend" % (self.editIdx,self.module, "edit" if self.key else "add", cat)
 				fshref = fieldset_A()
 				#fshref["href"] = "#vi_%s_%s_%s_%s" % (self.editIdx, self.module, "edit" if self.key else "add", cat)
-				fshref.appendChild(html5.TextNode(cat) )
+				fshref.appendChild(html5.TextNode(cat))
 				legend.appendChild( fshref )
 				fs.appendChild(legend)
 				section = html5.Section()
 				fs.appendChild(section)
 				fs._section = section
-				fieldSets[ cat ] = fs
+				fieldSets[cat] = fs
 
-			if "params" in bone.keys() and bone["params"] and "category" in bone["params"].keys():
-				tabName = bone["params"]["category"]
-			else:
-				tabName = "Test"
-
-			wdgGen = editBoneSelector.select( None, key, tmpDict )
-			widget = wdgGen.fromSkelStructure( None, key, tmpDict )
-			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat, key)
-			#widget["class"].append(key)
-			#widget["class"].append(bone["type"].replace(".","_"))
-			#self.prepareCol(currRow,1)
+			wdgGen = editBoneSelector.select(None, key, tmpDict)
+			widget = wdgGen.fromSkelStructure(None, key, tmpDict)
+			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 
 			descrLbl = html5.Label(bone["descr"])
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
-			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, None, "internal", cat, key)
+			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, None, "internal", cat or "empty", key)
 
 			if bone["required"]:
 				descrLbl["class"].append("is_required")
@@ -105,7 +103,6 @@ class InternalEdit( html5.Div ):
 				else:
 					descrLbl["title"] = self.errorInformation[ key ]
 				fieldSets[ cat ]["class"].append("is_incomplete")
-				hasMissing = True
 
 			if bone["required"] and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
 				descrLbl["class"].append("is_valid")
@@ -119,7 +116,11 @@ class InternalEdit( html5.Div ):
 			containerDiv = html5.Div()
 			containerDiv.appendChild( descrLbl )
 			containerDiv.appendChild( widget )
-			fieldSets[ cat ]._section.appendChild( containerDiv )
+
+			if cat is not None:
+				fieldSets[cat]._section.appendChild(containerDiv)
+			else:
+				self.form.appendChild(containerDiv)
 
 			containerDiv["class"].append("bone")
 			containerDiv["class"].append("bone_"+key)
@@ -129,11 +130,8 @@ class InternalEdit( html5.Div ):
 				for t in bone["type"].split("."):
 					containerDiv["class"].append(t)
 
-			#self["cell"][currRow][0] = descrLbl
-			#fieldSets[ cat ].appendChild( widget )
-			#self["cell"][currRow][1] = widget
 			currRow += 1
-			self.bones[ key ] = widget
+			self.bones[key] = widget
 
 		if len(fieldSets)==1:
 			for (k,v) in fieldSets.items():
