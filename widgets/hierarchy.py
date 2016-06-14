@@ -392,21 +392,27 @@ class HierarchyWidget( html5.Div ):
 			self.entryFrame.removeChild(c)
 		self.loadNode( self.rootNode )
 
-	def loadNode(self, node):
+	def loadNode(self, node, cursor = None):
 		"""
 			Fetch the (direct) children of the given node.
 			Once the list is received, append them to their parent node.
 			@param node: Key of the node to fetch
 			@type node: string
 		"""
-		r = NetworkService.request(self.modul,"list",
-		                            {   "parent":node,
-		                                "orderby":
-										"sortindex", "amount": 99},
+		params = {
+			"parent": node,
+		    "orderby": "sortindex"
+		}
+
+		if cursor:
+			params.update({"cursor": cursor})
+
+		r = NetworkService.request(self.modul, "list",
+		                            params,
 		                            successHandler=self.onRequestSucceded,
 		                            failureHandler=self.showErrorMsg)
 		r.node = node
-		self._currentRequests.append( r )
+		self._currentRequests.append(r)
 
 	def onRequestSucceded(self, req):
 		"""
@@ -417,14 +423,17 @@ class HierarchyWidget( html5.Div ):
 			#Prevent inserting old (stale) data
 			self.actionBar.resetLoadingState()
 			return
-		self._currentRequests.remove( req )
-		data = NetworkService.decode( req )
-		if req.node==self.rootNode:
+
+		self._currentRequests.remove(req)
+		data = NetworkService.decode(req)
+
+		if req.node == self.rootNode:
 			ol = self.entryFrame
 		else:
-			tmp = self.itemForKey( req.node )
+			tmp = self.itemForKey(req.node)
 			ol = tmp.ol
 			assert ol is not None
+
 		for skel in data["skellist"]:
 			hi = HierarchyItem( self.modul, skel, data["structure"] )
 			ol.appendChild( hi )
@@ -432,10 +441,13 @@ class HierarchyWidget( html5.Div ):
 				hi.toggleExpand()
 				if not hi.isLoaded:
 					hi.isLoaded = True
-					self.loadNode( hi.data["key"] )
-		if len(data["skellist"])==0: #No children received
-			if ol!=self.entryFrame:
-				ol.parent()["class"].append("has_no_childs")
+					self.loadNode(hi.data["key"])
+
+		if not ol._children and ol != self.entryFrame:
+			ol.parent()["class"].append("has_no_childs")
+
+		if data["skellist"] and data["cursor"]:
+			self.loadNode(req.node, data["cursor"])
 
 		self.actionBar.resetLoadingState()
 
