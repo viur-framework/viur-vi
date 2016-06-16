@@ -16,9 +16,9 @@ class HierarchyMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = HierarchyWidget( self.destModul, isSelector=True )
-		currentSelector.selectionActivatedEvent.register( self )
-		conf["mainWindow"].stackWidget( currentSelector )
+		currentSelector = HierarchyWidget(self.destModule, isSelector=True)
+		currentSelector.selectionActivatedEvent.register(self)
+		conf["mainWindow"].stackWidget(currentSelector)
 
 	def onSelectionActivated(self, table, selection ):
 		"""
@@ -31,9 +31,9 @@ class HierarchySingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = HierarchyWidget( self.destModul, isSelector=True )
-		currentSelector.selectionActivatedEvent.register( self )
-		conf["mainWindow"].stackWidget( currentSelector )
+		currentSelector = HierarchyWidget(self.destModule, isSelector=True)
+		currentSelector.selectionActivatedEvent.register(self)
+		conf["mainWindow"].stackWidget(currentSelector)
 
 	def onSelectionActivated(self, table, selection ):
 		"""

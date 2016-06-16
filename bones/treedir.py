@@ -40,19 +40,21 @@ class TreeDirMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 		"""
 			Edit the image entry.
 		"""
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
+		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModule,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent.destModul, EditWidget.appTree, key=self.data[ "id" ], skelType="leaf"  )
+		edwg = EditWidget(self.parent.destModule, EditWidget.appTree,
+		                    key=self.data["key"], skelType="leaf")
 		pane.addWidget( edwg )
 
 class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 
 	def __init__(self, *args, **kwargs):
-		if "destModul" in kwargs:
-			kwargs["destModul"] = kwargs["destModul"][ : kwargs["destModul"].find("_") ] # Remove _rootNode
-		super(TreeDirMultiSelectionBone, self).__init__( *args, **kwargs )
 
+		if "destModule" in kwargs:
+			kwargs["destModule"] = kwargs["destModule"][ : kwargs["destModule"].find("_") ] # Remove _rootNode
+
+		super(TreeDirMultiSelectionBone, self).__init__( *args, **kwargs )
 
 	def onUploadSuccess(self, uploader, file ):
 		self.setSelection( [file] )
@@ -62,7 +64,7 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = FileWidget( self.destModul, isSelector="node" )
+		currentSelector = FileWidget( self.destModule, isSelector="node" )
 		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
@@ -89,15 +91,15 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 		if selection is None:
 			return
 		for data in selection:
-			entry = TreeDirMultiSelectionBoneEntry( self, self.destModul, data)
+			entry = TreeDirMultiSelectionBoneEntry(self, self.destModule, data)
 			self.addEntry( entry )
 
 class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 
 	def __init__(self, *args, **kwargs):
-		if "destModul" in kwargs:
-			kwargs["destModul"] = kwargs["destModul"][ : kwargs["destModul"].find("_") ] # Remove _rootNode
-		print( "xx%syy" % kwargs["destModul"])
+		if "destModule" in kwargs:
+			kwargs["destModule"] = kwargs["destModule"][ : kwargs["destModule"].find("_") ] # Remove _rootNode
+
 		super(TreeDirSingleSelectionBone, self).__init__( *args, **kwargs )
 
 		self.previewImg = html5.Img()
@@ -109,9 +111,9 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = TreeWidget( self.destModul, isSelector="node" )
-		currentSelector.selectionReturnEvent.register( self )
-		conf["mainWindow"].stackWidget( currentSelector )
+		currentSelector = TreeWidget(self.destModule, isSelector="node")
+		currentSelector.selectionReturnEvent.register(self)
+		conf["mainWindow"].stackWidget(currentSelector)
 		self.parent()["class"].append("is_active")
 
 	def onSelectionReturn(self, table, selection ):
@@ -135,10 +137,10 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		if not self.selection:
 			return
 
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
+		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModule,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.destModul, EditWidget.appTree, key=self.selection[ "id" ], skelType="leaf"  )
+		edwg = EditWidget(self.destModule, EditWidget.appTree, key=self.selection["key"], skelType="leaf")
 		pane.addWidget( edwg )
 
 	def setSelection(self, selection):
@@ -149,8 +151,9 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 		self.selection = selection
 		if selection:
-			NetworkService.request( self.destModul, "view/node/"+selection["id"],
-			                                successHandler=self.onSelectionDataAviable, cacheable=True)
+			NetworkService.request(self.destModule, "view/node/"+selection["key"],
+			                        successHandler=self.onSelectionDataAviable,
+			                        cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
 			if utils.getImagePreview( self.selection ) is not None:
