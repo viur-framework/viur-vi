@@ -4,7 +4,6 @@ from event import EventDispatcher
 
 import html5, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from utils import formatString
 from widgets.file import FileWidget, LeafFileWidget
 from config import conf
 from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry
@@ -124,10 +123,14 @@ class FileViewBoneDelegate(object):
 		else:
 			val = ""
 
-		if isinstance(val,list):
+		if isinstance(val, list):
 			#MultiFileBone
-			cell=html5.Div()
+			cell = html5.Div()
+
 			for f in val:
+				if cell.children():
+					cell.appendChild(html5.TextNode(", "))
+
 				cell.appendChild(self.renderFileentry(f))
 
 			return cell
@@ -142,7 +145,7 @@ class FileViewBoneDelegate(object):
 
 class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 	def __init__(self, *args, **kwargs):
-		super( FileMultiSelectionBoneEntry, self ).__init__( *args, **kwargs )
+		super(FileMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 		self["class"].append("fileentry")
 
 		if utils.getImagePreview( self.data ) is not None:
@@ -151,22 +154,23 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 			img["class"].append("previewimg")
 			self.appendChild(img)
 			# Move the img in front of the lbl
-			self.element.removeChild( img.element )
-			self.element.insertBefore( img.element, self.element.children.item(0) )
+			self.element.removeChild(img.element)
+			self.element.insertBefore(img.element, self.element.children.item(0))
 
-	def fetchEntry(self, id):
-		NetworkService.request(self.modul,"view/leaf/"+id, successHandler=self.onSelectionDataAviable, cacheable=True)
+	def fetchEntry(self, key):
+		NetworkService.request(self.modul,"view/leaf/"+key,
+		                        successHandler=self.onSelectionDataAviable, cacheable=True)
 
 	def onEdit(self, *args, **kwargs):
 		"""
 			Edit the image entry.
 		"""
-		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModul,
+		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModule,
 		                                                                "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane(pane, focus=True)
 
 		try:
-			edwg = EditWidget(self.parent.destModul, EditWidget.appTree, key=self.data["dest"]["key"], skelType="leaf")
+			edwg = EditWidget(self.parent.destModule, EditWidget.appTree, key=self.data["dest"]["key"], skelType="leaf")
 			pane.addWidget(edwg)
 		except AssertionError:
 			conf["mainWindow"].removePane(pane)
@@ -198,9 +202,9 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = FileWidget( self.destModul, isSelector="leaf" )
-		currentSelector.selectionReturnEvent.register( self )
-		conf["mainWindow"].stackWidget( currentSelector )
+		currentSelector = FileWidget(self.destModule, isSelector="leaf")
+		currentSelector.selectionReturnEvent.register(self)
+		conf["mainWindow"].stackWidget(currentSelector)
 		self.parent()["class"].append("is_active")
 
 	def onSelectionReturn(self, table, selection ):
@@ -214,7 +218,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 				break
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
-		self.setSelection( [{"dest": x.data} for x in selection if isinstance(x,LeafFileWidget)] )
+		self.setSelection( [{"dest": x.data, "rel": {}} for x in selection if isinstance(x, LeafFileWidget)] )
 
 	def setSelection(self, selection):
 		"""
@@ -226,7 +230,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 			return
 
 		for data in selection:
-			entry = FileMultiSelectionBoneEntry(self, self.destModul, data, using=None, errorInfo={})
+			entry = FileMultiSelectionBoneEntry(self, self.destModule, data, using=self.using, errorInfo={})
 			self.addEntry( entry )
 
 class FileSingleSelectionBone( RelationalSingleSelectionBone ):
@@ -264,7 +268,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = FileWidget( self.destModul, isSelector="leaf" )
+		currentSelector = FileWidget( self.destModule, isSelector="leaf" )
 		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
@@ -289,12 +293,12 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		if not self.selection:
 			return
 
-		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModul,
+		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModule,
 		                                                                "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane(pane, focus=True)
 
 		try:
-			edwg = EditWidget(self.destModul, EditWidget.appTree, key=self.selection["dest"]["key"], skelType="leaf")
+			edwg = EditWidget(self.destModule, EditWidget.appTree, key=self.selection["dest"]["key"], skelType="leaf")
 			pane.addWidget(edwg)
 		except AssertionError:
 			conf["mainWindow"].removePane(pane)
@@ -308,7 +312,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		self.selection = selection
 
 		if selection:
-			NetworkService.request(self.destModul, "view/leaf/%s" % selection["dest"]["key"],
+			NetworkService.request(self.destModule, "view/leaf/%s" % selection["dest"]["key"],
 			                        successHandler=self.onSelectionDataAviable,
 			                        cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")

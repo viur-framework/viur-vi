@@ -93,25 +93,25 @@ class RelationalSingleSelectionBone(html5.Div):
 		Provides the widget for a relationalBone with multiple=False
 	"""
 
-	def __init__(self, srcmodule, boneName, readOnly, destmodule, format="$(name)", required=False,
+	def __init__(self, srcModule, boneName, readOnly, destModule, format="$(name)", required=False,
 	                using = None, usingDescr = None, *args, **kwargs ):
 		"""
-			@param srcmodule: Name of the module from which is referenced
-			@type srcmodule: string
+			@param srcModule: Name of the module from which is referenced
+			@type srcModule: string
 			@param boneName: Name of the bone thats referencing
 			@type boneName: string
 			@param readOnly: Prevents modifying its value if set to True
 			@type readOnly: bool
-			@param destmodule: Name of the module which gets referenced
-			@type destmodule: string
+			@param destModule: Name of the module which gets referenced
+			@type destModule: string
 			@param format: Specifies how entries should be displayed.
 			@type format: string
 		"""
 		super( RelationalSingleSelectionBone,  self ).__init__( *args, **kwargs )
-		self.srcmodule = srcmodule
+		self.srcModule = srcModule
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self.destmodule = destmodule
+		self.destModule = destModule
 		self.format = format
 		self.using = using
 		self.usingDescr = usingDescr
@@ -124,8 +124,8 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.ie = None
 
 		# Selection button
-		if (destmodule in conf["modules"].keys()
-			and ("root" in conf["currentUser"]["access"] or destmodule + "-view" in conf["currentUser"]["access"])):
+		if (destModule in conf["modules"].keys()
+			and ("root" in conf["currentUser"]["access"] or destModule + "-view" in conf["currentUser"]["access"])):
 
 			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 			self.selectBtn["class"].append("icon")
@@ -135,8 +135,8 @@ class RelationalSingleSelectionBone(html5.Div):
 			self.selectBtn = None
 
 		# Edit button
-		if (destmodule in conf["modules"].keys()
-			and ("root" in conf["currentUser"]["access"] or destmodule + "-edit" in conf["currentUser"]["access"])):
+		if (destModule in conf["modules"].keys()
+			and ("root" in conf["currentUser"]["access"] or destModule + "-edit" in conf["currentUser"]["access"])):
 			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit )
 			self.editBtn["class"].append("icon")
 			self.editBtn["class"].append("edit")
@@ -147,7 +147,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		# Remove button
 		if (not required and not readOnly
 		    and ("root" in conf["currentUser"]["access"]
-		            or destmodule + "-view" in conf["currentUser"]["access"])):
+		            or destModule + "-view" in conf["currentUser"]["access"])):
 			# Yes, we check for "view" on the remove button, because removal of relations
 			# is only useful when viewing the destination module is still allowed.
 
@@ -188,9 +188,9 @@ class RelationalSingleSelectionBone(html5.Div):
 			required = False
 
 		if "module" in skelStructure[boneName].keys():
-			destmodule = skelStructure[boneName]["module"]
+			destModule = skelStructure[boneName]["module"]
 		else:
-			destmodule = skelStructure[boneName]["type"].split(".")[1]
+			destModule = skelStructure[boneName]["type"].split(".")[1]
 
 		format = "$(name)"
 		if "format" in skelStructure[ boneName ].keys():
@@ -208,7 +208,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		else:
 			usingDescr = skelStructure[boneName].get("descr", boneName)
 
-		return cls(moduleName, boneName, readOnly, destmodule=destmodule,
+		return cls(moduleName, boneName, readOnly, destModule=destModule,
 		            format=format, required=required, using=using, usingDescr=usingDescr)
 
 	def onEdit(self, *args, **kwargs):
@@ -218,12 +218,12 @@ class RelationalSingleSelectionBone(html5.Div):
 		if not self.selection:
 			return
 
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "module_%s" % self.destmodule,
+		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "module_%s" % self.destModule,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
 
 		try:
-			edwg = EditWidget( self.destmodule, EditWidget.appList, key=self.selection["dest"]["key"] )
+			edwg = EditWidget( self.destModule, EditWidget.appList, key=self.selection["dest"]["key"] )
 			pane.addWidget( edwg )
 		except AssertionError:
 			conf["mainWindow"].removePane(pane)
@@ -281,7 +281,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		"""
 
 		try:
-			currentSelector = ListWidget( self.destmodule, isSelector=True )
+			currentSelector = ListWidget( self.destModule, isSelector=True )
 		except AssertionError:
 			return
 
@@ -315,7 +315,7 @@ class RelationalSingleSelectionBone(html5.Div):
 
 		#self.selection["dest"] = selection
 		if selection:
-			NetworkService.request( self.destmodule, "view/"+selection["dest"]["key"],
+			NetworkService.request( self.destModule, "view/"+selection["dest"]["key"],
 			                            successHandler=self.onSelectionDataAvailable, cacheable=True)
 
 			self.selectionTxt["value"] = translate("Loading...")
@@ -353,7 +353,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		super(RelationalSingleSelectionBone, self).onDetach()
 
 	def onDataChanged(self, module, **kwargs):
-		if module == self.destmodule:
+		if module == self.destModule:
 			self.setSelection(self.selection)
 
 	def onSelectionDataAvailable(self, req):
@@ -476,26 +476,26 @@ class RelationalMultiSelectionBone(html5.Div):
 		Provides the widget for a relationalBone with multiple=True
 	"""
 
-	def __init__(self, srcmodule, boneName, readOnly, destmodule, format="$(name)", using=None, usingDescr=None,
+	def __init__(self, srcModule, boneName, readOnly, destModule, format="$(name)", using=None, usingDescr=None,
 	                relskel=None, *args, **kwargs ):
 		"""
-			@param srcmodule: Name of the module from which is referenced
-			@type srcmodule: string
+			@param srcModule: Name of the module from which is referenced
+			@type srcModule: string
 			@param boneName: Name of the bone thats referencing
 			@type boneName: string
 			@param readOnly: Prevents modifying its value if set to True
 			@type readOnly: bool
-			@param destmodule: Name of the module which gets referenced
-			@type destmodule: string
+			@param destModule: Name of the module which gets referenced
+			@type destModule: string
 			@param format: Specifies how entries should be displayed.
 			@type format: string
 		"""
 		super( RelationalMultiSelectionBone,  self ).__init__( *args, **kwargs )
 
-		self.srcmodule = srcmodule
+		self.srcModule = srcModule
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self.destmodule = destmodule
+		self.destModule = destModule
 		self.format = format
 		self.using = using
 		self.usingDescr = usingDescr
@@ -509,8 +509,8 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.selectionDiv["class"].append("selectioncontainer")
 		self.appendChild(self.selectionDiv)
 
-		if (destmodule in conf["modules"].keys()
-			and ("root" in conf["currentUser"]["access"] or destmodule + "-view" in conf["currentUser"]["access"])):
+		if (destModule in conf["modules"].keys()
+			and ("root" in conf["currentUser"]["access"] or destModule + "-view" in conf["currentUser"]["access"])):
 
 			self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
 			self.selectBtn["class"].append("icon")
@@ -546,9 +546,9 @@ class RelationalMultiSelectionBone(html5.Div):
 		readOnly = bool(skelStructure[boneName].get("readonly", False))
 
 		if "module" in skelStructure[ boneName ].keys():
-			destmodule = skelStructure[ boneName ][ "module" ]
+			destModule = skelStructure[ boneName ][ "module" ]
 		else:
-			destmodule = skelStructure[ boneName ]["type"].split(".")[1]
+			destModule = skelStructure[ boneName ]["type"].split(".")[1]
 
 		format = skelStructure[boneName].get("format", "$(name)")
 		using = skelStructure[boneName].get("using")
@@ -561,7 +561,7 @@ class RelationalMultiSelectionBone(html5.Div):
 			usingDescr = skelStructure[boneName].get("descr", boneName)
 
 		return cls(moduleName, boneName, readOnly,
-		            destmodule=destmodule, format=format, using=using, usingDescr = usingDescr,
+		            destModule=destModule, format=format, using=using, usingDescr = usingDescr,
 		                relskel=skelStructure[boneName].get("relskel"))
 
 	def unserialize(self, data):
@@ -602,7 +602,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 			Opens a ListWidget sothat the user can select new values
 		"""
-		currentSelector = ListWidget( self.destmodule, isSelector=True )
+		currentSelector = ListWidget( self.destModule, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
@@ -635,7 +635,7 @@ class RelationalMultiSelectionBone(html5.Div):
 						continue
 					if idx == errIdx:
 						errDict[ errKey ] = v
-			entry = RelationalMultiSelectionBoneEntry( self, self.destmodule, data, self.using, errDict )
+			entry = RelationalMultiSelectionBoneEntry( self, self.destModule, data, self.using, errDict )
 			self.addEntry( entry )
 
 	def addEntry(self, entry):
