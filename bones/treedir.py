@@ -34,7 +34,7 @@ class TreeDirMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 		self.editBtn = None
 
 	def fetchEntry(self, id):
-		NetworkService.request(self.modul,"view/node/"+id, successHandler=self.onSelectionDataAviable, cacheable=True)
+		NetworkService.request(self.modul,"view/node/"+id, successHandler=self.onSelectionDataAvailable, cacheable=True)
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -152,7 +152,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		self.selection = selection
 		if selection:
 			NetworkService.request(self.destModule, "view/node/"+selection["key"],
-			                        successHandler=self.onSelectionDataAviable,
+			                        successHandler=self.onSelectionDataAvailable,
 			                        cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 

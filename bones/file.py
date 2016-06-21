@@ -159,7 +159,7 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 
 	def fetchEntry(self, key):
 		NetworkService.request(self.modul,"view/leaf/"+key,
-		                        successHandler=self.onSelectionDataAviable, cacheable=True)
+		                        successHandler=self.onSelectionDataAvailable, cacheable=True)
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -313,7 +313,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 		if selection:
 			NetworkService.request(self.destModule, "view/leaf/%s" % selection["dest"]["key"],
-			                        successHandler=self.onSelectionDataAviable,
+			                        successHandler=self.onSelectionDataAvailable,
 			                        cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 

@@ -79,7 +79,7 @@ class RelationalViewBoneDelegate( object ):
 				if relStructList:
 					res = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["key"]
 				else:
-					res = formatString(self.format, self.structure, val["dest"]) or val["dest"]["key"]
+					res = formatString(self.format, self.structure, val) or val["dest"]["key"]
 
 		except:
 			#We probably received some garbage
