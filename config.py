@@ -14,5 +14,6 @@ conf = {
     "toplevelactions": [ "tasks", "userstate", "logout" ],
 	"batchSize": 20,
 	"showBoneNames": False,
-	"internalPreview": True
+	"internalPreview": True,
+	"maxMultiBoneEntries": 5
 }

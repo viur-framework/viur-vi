@@ -61,31 +61,42 @@ class RelationalViewBoneDelegate( object ):
 		if relStructList:
 			relStructDict = {k:v for k,v in relStructList}
 
+		res = ""
+
 		try:
 			if isinstance(val, list):
 				count = len(val)
-				if count >= 5:
-					val = val[:4]
+				if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
+					val = val[:conf["maxMultiBoneEntries"] - 1]
 
 				if relStructList:
-					res = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["key"]) for x in val])
+					res = "\n".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["key"]) for x in val])
 				else:
-					res = ", ".join( [ (formatString(self.format, self.structure, x ) or x["key"]) for x in val] )
+					res = "\n".join( [ (formatString(self.format, self.structure, x ) or x["key"]) for x in val] )
 
-				if count >= 5:
-					res += " %s" % translate("and {count} more", count=count - 4)
+				if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
+					res += "\n%s" % translate("and {count} more", count=count - conf["maxMultiBoneEntries"] - 1)
 
 			elif isinstance(val, dict):
 				if relStructList:
-					res = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["key"]
+					res = (formatString(
+							formatString(self.format, self.structure, val["dest"], prefix=["dest"]),
+								relStructDict, val["rel"], prefix=["rel"]) or val["key"])
 				else:
-					res = formatString(self.format, self.structure, val) or val["dest"]["key"]
+					res = (formatString(
+							formatString(self.format, self.structure, val["dest"]),
+					                        self.structure, val) or val["dest"]["key"])
 
 		except:
 			#We probably received some garbage
-			res = ""
+			pass
 
-		return html5.Label(res)
+		lbl = html5.Label()
+
+		if res:
+			html5.utils.textToHtml(lbl, res)
+
+		return lbl
 
 
 class RelationalSingleSelectionBone(html5.Div):
