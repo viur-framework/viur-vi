@@ -136,7 +136,7 @@ lngDe = {
 	"Failed to cancel order": u"Stornierung der Bestellung fehlgeschlagen",
 	"Language selection": u"Sprachauswahl",
 	"Encoding": u"Zeichensatz",
-	"and {count} more": u"Und {count} weitere",
+	"and {count} more": u"und {count} weitere",
 
 	# new login method
 	"vi.login.title": u"Login",

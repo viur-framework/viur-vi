@@ -36,25 +36,22 @@ class SelectMultiViewBoneDelegate( object ):
 	def render( self, data, field ):
 		if field in data.keys():
 			result = html5.Ul()
-
-			if len(data[field]) < 5:
-				loopLimit = len(data[field])
-			else:
-				loopLimit = 4
-
 			options = {k: v for k, v in self.skelStructure[field]["values"]}
-			
-			for fieldKey in data[field][:loopLimit]:
+
+			for i, fieldKey in enumerate(data[field]):
+				if conf["maxMultiBoneEntries"] and i == conf["maxMultiBoneEntries"]:
+					ali = html5.Li()
+					ali.appendChild(
+						html5.TextNode(translate("and {count} more",
+						                            count=len(data[field]) - conf["maxMultiBoneEntries"] - 1)))
+					ali["class"].append("selectmulti_more_li")
+
+					result.appendChild(ali)
+					break
+
 				ali = html5.Li()
 				ali.appendChild(html5.TextNode(options.get(fieldKey, fieldKey)))
 				ali["Title"] = fieldKey
-
-				result.appendChild(ali)
-
-			if not len(data[field]) < 5:
-				ali = html5.Li()
-				ali.appendChild(html5.TextNode(translate("and {count} more", count=len(data[field]) - 4)))
-				ali["class"].append("selectmulti_more_li")
 
 				result.appendChild(ali)
 
