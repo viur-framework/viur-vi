@@ -393,7 +393,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		"""
 		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 
-		self["draggable"] = True
+		self["draggable"] = not parent.readOnly
 		self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd", "onChange")
 
 		self.parent = parent
@@ -437,18 +437,30 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		html5.utils.textToHtml(self.txtLbl, txt)
 
 	def onDragStart(self, event):
+		if self.parent.readOnly:
+			return
+
 		self.parent.currentDrag = self
 		event.dataTransfer.setData("application/json", json.dumps(self.data))
 		event.stopPropagation()
 
 	def onDragOver(self, event):
+		if self.parent.readOnly:
+			return
+
 		event.preventDefault()
 
 	def onDragEnd(self, event):
+		if self.parent.readOnly:
+			return
+
 		self.parent.currentDrag = None
 		event.stopPropagation()
 
 	def onDrop(self, event):
+		if self.parent.readOnly:
+			return
+
 		event.preventDefault()
 		event.stopPropagation()
 
