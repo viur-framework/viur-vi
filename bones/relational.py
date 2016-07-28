@@ -371,10 +371,19 @@ class RelationalSingleSelectionBone(html5.Div):
 		"""
 			We just received the full information for this entry from the server and can start displaying it
 		"""
-		data = NetworkService.decode( req )
+		data = NetworkService.decode(req)
 		assert self.selection["dest"]["key"] == data["values"]["key"]
-		self.selectionTxt["value"] = formatString(self.format, data["structure"], data["values"])
 
+		if self.using:
+			res = (formatString(
+				formatString(self.format, data["structure"], data["values"], prefix=["dest"]),
+					self.using, self.selection["dest"], prefix=["rel"]) or data["values"]["key"])
+		else:
+			res = (formatString(
+					formatString(self.format, data["structure"], data["values"], prefix=["dest"]),
+						data["structure"], data["values"]) or data["values"]["key"])
+
+		self.selectionTxt["value"] = res
 
 class RelationalMultiSelectionBoneEntry(html5.Div):
 	"""
