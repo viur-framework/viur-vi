@@ -86,18 +86,6 @@ class AdminScreen(Screen):
 		config = NetworkService.decode(req)
 		conf["server"] = config.get("configuration", {})
 
-		def getModulName(argIn):
-			try:
-				return argIn[1]["name"].lower()
-			except:
-				return None
-
-		def getModulSortIndex(argIn):
-			try:
-				return argIn[1]["sortIndex"]
-			except:
-				return None
-
 		# Save module groups
 		if ("configuration" in config.keys()
 		    and isinstance(config["configuration"], dict)
@@ -127,8 +115,8 @@ class AdminScreen(Screen):
 
 		# Sorting the 2nd level entries
 		sorted_modules = [(x,y) for x,y in config["modules"].items()]
-		sorted_modules.sort(key=getModulName)
-		sorted_modules.sort(key=getModulSortIndex, reverse=True)
+		sorted_modules.sort(key=lambda x: x[1].get("name", "").lower() or None)
+		sorted_modules.sort(key=lambda x: x[1].get("sortIndex"), reverse=True)
 
 		for module, info in sorted_modules:
 			if not "root" in userAccess and not any([x.startswith(module) for x in userAccess]):
