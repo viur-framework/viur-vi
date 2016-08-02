@@ -34,7 +34,7 @@ class TreeDirMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 		self.editBtn = None
 
 	def fetchEntry(self, id):
-		NetworkService.request(self.modul,"view/node/"+id, successHandler=self.onSelectionDataAvailable, cacheable=True)
+		NetworkService.request(self.module,"view/node/"+id, successHandler=self.onSelectionDataAviable, cacheable=True)
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -43,18 +43,16 @@ class TreeDirMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
 		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModule,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget(self.parent.destModule, EditWidget.appTree,
-		                    key=self.data["key"], skelType="leaf")
+		edwg = EditWidget( self.parent.destModule, EditWidget.appTree, key=self.data[ "key" ], skelType="leaf"  )
 		pane.addWidget( edwg )
 
 class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 
 	def __init__(self, *args, **kwargs):
-
 		if "destModule" in kwargs:
 			kwargs["destModule"] = kwargs["destModule"][ : kwargs["destModule"].find("_") ] # Remove _rootNode
-
 		super(TreeDirMultiSelectionBone, self).__init__( *args, **kwargs )
+
 
 	def onUploadSuccess(self, uploader, file ):
 		self.setSelection( [file] )
@@ -80,7 +78,7 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 				break
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
-		self.setSelection( [x.data for x in selection if isinstance(x,NodeWidget)] )
+		self.setSelection( [{"dest": x.data, "rel": {}} for x in selection if isinstance(x,NodeWidget)] )
 
 	def setSelection(self, selection):
 		"""
@@ -91,15 +89,16 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 		if selection is None:
 			return
 		for data in selection:
-			entry = TreeDirMultiSelectionBoneEntry(self, self.destModule, data)
+			entry = TreeDirMultiSelectionBoneEntry( self, self.destModule, data)
 			self.addEntry( entry )
 
 class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 
 	def __init__(self, *args, **kwargs):
+		print("kwargs", kwargs)
 		if "destModule" in kwargs:
 			kwargs["destModule"] = kwargs["destModule"][ : kwargs["destModule"].find("_") ] # Remove _rootNode
-
+		# print( "xx%syy" % kwargs["destModul"])
 		super(TreeDirSingleSelectionBone, self).__init__( *args, **kwargs )
 
 		self.previewImg = html5.Img()
@@ -111,9 +110,9 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = TreeWidget(self.destModule, isSelector="node")
-		currentSelector.selectionReturnEvent.register(self)
-		conf["mainWindow"].stackWidget(currentSelector)
+		currentSelector = TreeWidget( self.destModule, isSelector="node" )
+		currentSelector.selectionReturnEvent.register( self )
+		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
 
 	def onSelectionReturn(self, table, selection ):
@@ -128,7 +127,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 				break
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
-		self.setSelection( [x.data for x in selection if isinstance(x,NodeWidget)][0] )
+		self.setSelection([{"dest": x.data, "rel": {}} for x in selection if isinstance(x, NodeWidget)][0])
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -140,7 +139,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModule,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget(self.destModule, EditWidget.appTree, key=self.selection["key"], skelType="leaf")
+		edwg = EditWidget( self.destModule, EditWidget.appTree, key=self.selection[ "key" ], skelType="leaf"  )
 		pane.addWidget( edwg )
 
 	def setSelection(self, selection):
@@ -151,9 +150,8 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 		self.selection = selection
 		if selection:
-			NetworkService.request(self.destModule, "view/node/"+selection["key"],
-			                        successHandler=self.onSelectionDataAvailable,
-			                        cacheable=True)
+			NetworkService.request( self.destModule, "view/node/"+selection["dest"]["key"],
+			                                successHandler=self.onSelectionDataAvailable, cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
 			if utils.getImagePreview( self.selection ) is not None:
@@ -180,7 +178,7 @@ def CheckForTreeDirBoneMultiSelection( modulName, boneName, skelStructure, *args
 def CheckForTreeDirBone(  modulName, boneName, skelStucture, *args, **kwargs ):
 	#print("CHECKING FILE BONE", skelStucture[boneName]["type"])
 	print( skelStucture[boneName]["type"] )
-	return( skelStucture[boneName]["type"].startswith("relational.treedir.") )
+	return( skelStucture[boneName]["type"].startswith("treedir.") )
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 5, CheckForTreeDirBoneSingleSelection, TreeDirSingleSelectionBone)
