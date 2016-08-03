@@ -179,14 +179,17 @@ class DateEditBone( html5.Div ):
 					self.timeinput["value"] = "-"
 
 	def serializeForPost(self):
-		#[day, month, year, hour, min,sec]
+		#[day, month, year, hour, min, sec]
 		adatetime=["00","00","0000","00","00","00"]
 
 		if hasattr(self,"timeinput"):
-			result = re.match('(\d+):(\d+)',self.timeinput["value"])
+			result = re.match('(\d+):(\d+)(:(\d+))?',self.timeinput["value"])
 			if result:
 				adatetime[3] = result.group(1)
 				adatetime[4] = result.group(2)
+
+				if result.group(4):
+					adatetime[5] = result.group(4)
 
 		if hasattr(self,"dateinput"):
 			result = re.match('(\d+).(\d+).(\d+)',self.dateinput["value"])
@@ -198,7 +201,7 @@ class DateEditBone( html5.Div ):
 		if adatetime[2]=="0000":
 			return {self.boneName: adatetime[3]+":"+adatetime[4]+":00"}
 
-		returnvalue = adatetime[0]+"."+adatetime[1]+"."+adatetime[2]+" "+adatetime[3]+":"+adatetime[4]+":00"
+		returnvalue = adatetime[0]+"."+adatetime[1]+"."+adatetime[2]+" "+adatetime[3]+":"+adatetime[4]+":"+adatetime[5]
 		return {self.boneName: returnvalue}
 
 	def serializeForDocument(self):
