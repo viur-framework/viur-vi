@@ -412,13 +412,14 @@ class EditWidget( html5.Div ):
 			self.form.removeChild( c )
 
 	def closeOrContinue(self, sender=None ):
+		NetworkService.notifyChange(self.module, key=self.key)
+
 		if self.closeOnSuccess:
 			if self.module == "_tasks":
 				self.parent().close()
 				return
 
 			conf["mainWindow"].removeWidget(self)
-			NetworkService.notifyChange(self.module, key=self.key)
 			return
 
 		self.clear()
