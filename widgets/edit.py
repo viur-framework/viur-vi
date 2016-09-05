@@ -10,8 +10,8 @@ from config import conf
 from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
 from widgets.actionbar import ActionBar
-from logics import viurLogicsExecutor
 from i18n import translate
+import logics
 
 class InvalidBoneValueException(ValueError):
 	pass
@@ -294,7 +294,7 @@ class EditWidget( html5.Div ):
 		self.bones = {}
 		self.closeOnSuccess = False
 		self.logaction = logaction
-		self.logic = viurLogicsExecutor()
+		self.logic = logics.Interpreter()
 
 		self._lastData = {} #Dict of structure and values received
 
@@ -329,7 +329,7 @@ class EditWidget( html5.Div ):
 
 		for key, desc in self.dataCache["structure"]:
 			if desc.get("params") and desc["params"]:
-				for event in ["logic.visibleIf", "logic.readonlyIf"]: #add more here!
+				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
 					logic = desc["params"].get(event)
 
 					if not logic:
@@ -345,7 +345,9 @@ class EditWidget( html5.Div ):
 						logic = desc["params"][event]
 
 					res = self.logic.execute(logic, fields)
-					if res:
+					if event == "logic.evaluate":
+						self.bones[key].unserialize({key: str(res)})
+					elif res:
 						if event == "logic.visibleIf":
 							self.containers[key].show()
 						elif event == "logic.readonlyIf":
