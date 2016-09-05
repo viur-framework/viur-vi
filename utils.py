@@ -1,7 +1,7 @@
 import html5
 from config import conf
 
-def formatString( format, skelStructure, data, prefix=None, unescape=False ):
+def formatString(format, skelStructure, data, prefix=None, unescape=False, _recursion = 0):
 	"""
 	Parses a string given by format and substitutes placeholders using values specified by data.
 
@@ -29,7 +29,9 @@ def formatString( format, skelStructure, data, prefix=None, unescape=False ):
 	:rtype: str
 	"""
 
-	def chooseLang( value, prefs, key ): #FIXME: Copy&Paste from bones/string
+	#print("%sformatString" % (" " * _recursion), format, data, prefix)
+
+	def chooseLang(value, prefs, key): #FIXME: Copy&Paste from bones/string
 		"""
 			Tries to select the best language for the current user.
 			Value is the dictionary of lang -> text recived from the server,
@@ -42,12 +44,15 @@ def formatString( format, skelStructure, data, prefix=None, unescape=False ):
 			lang = "%s.%s" % (key,conf["currentlanguage"])
 		except:
 			lang = ""
+
 		if lang in value.keys() and value[ lang ]:
-			return( value[ lang ] )
+			return value[lang]
+
 		for lang in prefs:
 			if "%s.%s" % (key,lang) in value.keys():
 				if value[ "%s.%s" % (key,lang) ]:
 					return( value[ "%s.%s" % (key,lang) ] )
+
 		# Normal edit format ( name : { lang: xx } ) format
 		if key in value.keys() and isinstance( value[ key ], dict ):
 			langDict = value[ key ]
@@ -85,12 +90,24 @@ def formatString( format, skelStructure, data, prefix=None, unescape=False ):
 		return res
 
 	for key in data.keys():
-		if isinstance( data[ key ], dict ):
-			res = formatString( res, skelStructure, data[key], prefix + [key] )
-		elif isinstance( data[ key ], list ) and len( data[ key ] )>0 and isinstance( data[ key ][0], dict) :
-			res = formatString( res, skelStructure, data[key][0], prefix + [key] )
+		if isinstance(data[key], dict):
+			if (key in skelStructure.keys()
+			    and skelStructure[key].get("languages")
+				and conf["currentlanguage"] in skelStructure[key]["languages"]
+			    and conf["currentlanguage"] in data[key].keys()
+			    and "$(%s)" % (".".join(prefix + [key])) in res):
+
+				#print(conf["currentlanguage"], data[key][conf["currentlanguage"]])
+				res = res.replace("$(%s)" % (".".join(prefix + [key])), str(data[key][conf["currentlanguage"]]))
+			else:
+				res = formatString(res, skelStructure, data[key], prefix + [key], _recursion = _recursion + 1)
+
+		elif isinstance(data[key], list) and len(data[key]) > 0 and isinstance(data[key][0], dict):
+			res = formatString(res, skelStructure, data[key][0], prefix + [key], _recursion = _recursion + 1)
+
 		else:
 			tok = key.split(".")
+
 			if "." in key and "$(%s)" % tok[0] in res and tok[1] == conf["currentlanguage"]:
 				res = res.replace("$(%s)" % (".".join( prefix + [tok[0]])), str(data[key]))
 			else:
@@ -99,8 +116,8 @@ def formatString( format, skelStructure, data, prefix=None, unescape=False ):
 	#Check for translated top-level bones
 	if not prefix:
 		for key, bone in skelStructure.items():
-			if "languages" in bone.keys() and bone[ "languages" ]:
-				res = res.replace( "$(%s)" % key, str(chooseLang( data, bone[ "languages" ], key) ) )
+			if "languages" in bone.keys() and bone["languages"]:
+				res = res.replace("$(%s)" % key, str(chooseLang(data, bone["languages"], key)))
 
 	# Unesacpe?
 	if unescape:
