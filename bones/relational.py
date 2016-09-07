@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import html5, json
+import html5, json, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
-from utils import formatString
 from widgets.list import ListWidget
 from widgets.edit import InternalEdit, EditWidget
 from config import conf
@@ -12,84 +11,83 @@ from network import NetworkService
 from pane import Pane
 
 
-class RelationalBoneExtractor( object ):
-	cantSort = True
+class RelationalBoneExtractor(object):
 	def __init__(self, module, boneName, structure):
 		super(RelationalBoneExtractor, self).__init__()
 		self.format = "$(dest.name)"
+
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
+
 		self.module = module
 		self.structure = structure
 		self.boneName = boneName
 
 	def render(self, data, field ):
-		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
+		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
+
 		if field in data.keys():
 			val = data[field]
 		else:
 			val = ""
-		relStructList = self.structure[self.boneName]["using"]
-		relStructDict = { k:v for k,v in relStructList }
+
+		structure = self.structure[self.boneName]
+
 		try:
-			if isinstance(val,list):
-				val = ", ".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["key"]) for x in val] )
-			elif isinstance(val, dict):
-				val = formatString(formatString(self.format,self.structure, val["dest"], prefix=["dest"]), relStructDict, val["rel"], prefix=["rel"] ) or val["key"]
+			if not isinstance(val, list):
+				val = [val]
+
+			val = ", ".join([(utils.formatString(
+								utils.formatString(self.format, x["dest"], structure["relskel"], prefix=["dest"]),
+									x["rel"], structure["using"], prefix=["rel"]) or x["key"]) for x in val])
 		except:
 			#We probably received some garbage
 			val = ""
+
 		return val
 
+class RelationalViewBoneDelegate(object):
 
-class RelationalViewBoneDelegate( object ):
-	cantSort = True
 	def __init__(self, module, boneName, structure):
 		super(RelationalViewBoneDelegate, self).__init__()
 		self.format = "$(dest.name)"
+
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
+
 		self.module = module
 		self.structure = structure
 		self.boneName = boneName
 
-	def render(self, data, field ):
-		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
+	def render(self, data, field):
+		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
 		val = data.get(field, "")
 
-		relStructList = relStructDict = self.structure[self.boneName].get("using")
-		if relStructList:
-			relStructDict = {k:v for k,v in relStructList}
-
-		res = ""
+		structure = self.structure[self.boneName]
 
 		try:
-			if isinstance(val, list):
+			if not isinstance(val, list):
+				val = [val]
+				count = 1
+			else:
 				count = len(val)
 				if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
 					val = val[:conf["maxMultiBoneEntries"] - 1]
 
-				if relStructList:
-					res = "\n".join( [ (formatString(formatString(self.format, self.structure, x["dest"], prefix=["dest"]), relStructDict, x["rel"], prefix=["rel"] ) or x["key"]) for x in val])
-				else:
-					res = "\n".join( [ (formatString(self.format, self.structure, x ) or x["key"]) for x in val] )
+			if structure["using"]:
+				res = "\n".join([(utils.formatString(
+									utils.formatString(self.format, x["dest"], structure["relskel"], prefix=["dest"]),
+										x["rel"], x["using"], prefix=["rel"]) or x["key"]) for x in val])
+			else:
+				res = "\n".join([(utils.formatString(self.format, x["dest"], self.structure["relskel"], prefix=["dest"])
+				                    or x["key"]) for x in val])
 
-				if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
-					res += "\n%s" % translate("and {count} more", count=count - conf["maxMultiBoneEntries"] - 1)
-
-			elif isinstance(val, dict):
-				if relStructList:
-					res = (formatString(
-							formatString(self.format, self.structure, val["dest"], prefix=["dest"]),
-								relStructDict, val["rel"], prefix=["rel"]) or val["key"])
-				else:
-					res = (formatString(
-							formatString(self.format, self.structure, val["dest"]),
-					                        self.structure, val) or val["dest"]["key"])
+			if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
+				res += "\n%s" % translate("and {count} more", count=count - conf["maxMultiBoneEntries"] - 1)
 
 		except:
 			#We probably received some garbage
-			pass
+			res = ""
 
 		lbl = html5.Label()
 
@@ -104,7 +102,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		Provides the widget for a relationalBone with multiple=False
 	"""
 
-	def __init__(self, srcModule, boneName, readOnly, destModule, format="$(name)", required=False,
+	def __init__(self, srcModule, boneName, readOnly, destModule, format="$(dest.name)", required=False,
 	                using = None, usingDescr = None, *args, **kwargs ):
 		"""
 			@param srcModule: Name of the module from which is referenced
@@ -375,13 +373,13 @@ class RelationalSingleSelectionBone(html5.Div):
 		assert self.selection["dest"]["key"] == data["values"]["key"]
 
 		if self.using:
-			res = (formatString(
-				formatString(self.format, data["structure"], data["values"], prefix=["dest"]),
-					self.using, self.selection["dest"], prefix=["rel"]) or data["values"]["key"])
+			res = (utils.formatString(
+					utils.formatString(self.format, data["values"], data["structure"], prefix=["dest"]),
+										self.selection["dest"], self.using, prefix=["rel"])
+		                or data["values"]["key"])
 		else:
-			res = (formatString(
-					formatString(self.format, data["structure"], data["values"], prefix=["dest"]),
-						data["structure"], data["values"]) or data["values"]["key"])
+			res = (utils.formatString(self.format, data["structure"], data["values"], prefix=["dest"])
+			        or data["values"]["key"])
 
 		self.selectionTxt["value"] = res
 
@@ -438,10 +436,10 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			data = self.data
 
 		self.txtLbl.removeAllChildren()
-		txt = formatString(self.parent.format, self.parent.relskel, data["dest"], prefix=["dest"])
+		txt = utils.formatString(self.parent.format, data["dest"], self.parent.relskel, prefix=["dest"])
 
 		if self.ie:
-			txt = formatString(txt, self.parent.using, self.ie.doSave(), prefix=["rel"])
+			txt = utils.formatString(txt, self.ie.doSave(), self.parent.using, prefix=["rel"])
 
 		html5.utils.textToHtml(self.txtLbl, txt)
 
