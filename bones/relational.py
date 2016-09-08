@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import html5, json, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
@@ -10,6 +9,13 @@ from i18n import translate
 from network import NetworkService
 from pane import Pane
 
+def getDefaultValues(structure):
+	defaultValues = {}
+	for k, v in utils.boneListToDict(structure).items():
+		if "params" in v.keys() and v["params"] and "defaultValue" in v["params"].keys():
+			defaultValues[k] = v["params"]["defaultValue"]
+
+	return defaultValues
 
 class RelationalBoneExtractor(object):
 	def __init__(self, module, boneName, structure):
@@ -65,6 +71,11 @@ class RelationalViewBoneDelegate(object):
 
 		structure = self.structure[self.boneName]
 
+		lbl = html5.Label()
+
+		if not val:
+			return lbl
+
 		try:
 			if not isinstance(val, list):
 				val = [val]
@@ -77,23 +88,22 @@ class RelationalViewBoneDelegate(object):
 			if structure["using"]:
 				res = "\n".join([(utils.formatString(
 									utils.formatString(self.format, x["dest"], structure["relskel"], prefix=["dest"]),
-										x["rel"], x["using"], prefix=["rel"]) or x["key"]) for x in val])
+										x["rel"], structure["using"], prefix=["rel"]) or x["key"]) for x in val])
 			else:
-				res = "\n".join([(utils.formatString(self.format, x["dest"], self.structure["relskel"], prefix=["dest"])
-				                    or x["key"]) for x in val])
+				res = "\n".join([(utils.formatString(
+									utils.formatString(self.format, x["dest"], structure["relskel"], prefix=["dest"]),
+				                                        x["dest"], structure["relskel"])
+				                        or x["key"]) for x in val])
 
 			if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
 				res += "\n%s" % translate("and {count} more", count=count - conf["maxMultiBoneEntries"] - 1)
 
 		except:
 			#We probably received some garbage
+			raise
 			res = ""
 
-		lbl = html5.Label()
-
-		if res:
-			html5.utils.textToHtml(lbl, res)
-
+		html5.utils.textToHtml(lbl, res)
 		return lbl
 
 
@@ -259,6 +269,8 @@ class RelationalSingleSelectionBone(html5.Div):
 					if self.ie:
 						self.removeChild(self.ie)
 
+					print("2 WITH ", data["rel"])
+
 					self.ie = InternalEdit(self.using, val["rel"], {},
 					                        readOnly=self.readOnly, defaultCat=self.usingDescr)
 					self.appendChild( self.ie )
@@ -282,7 +294,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		#return { self.boneName+".dest": self.selection["dest"]["key"], self.boneName+".rel": self.ie.doSave} if self.selection is not None else {}
 
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serialize()
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -322,15 +334,15 @@ class RelationalSingleSelectionBone(html5.Div):
 
 		self.selection.update(selection)
 
-		#self.selection["dest"] = selection
 		if selection:
-			NetworkService.request( self.destModule, "view/"+selection["dest"]["key"],
-			                            successHandler=self.onSelectionDataAvailable, cacheable=True)
+			NetworkService.request(self.destModule, "view/%s" % selection["dest"]["key"],
+			                        successHandler=self.onSelectionDataAvailable, cacheable=True)
 
 			self.selectionTxt["value"] = translate("Loading...")
 
 			if self.using and not self.ie:
-				self.ie = InternalEdit(self.using,{}, {}, readOnly=self.readOnly, defaultCat=self.usingDescr)
+				self.ie = InternalEdit(self.using, getDefaultValues(self.using), {},
+				                        readOnly=self.readOnly, defaultCat=self.usingDescr)
 				self.appendChild(self.ie)
 		else:
 			self.selectionTxt["value"] = ""
@@ -375,11 +387,13 @@ class RelationalSingleSelectionBone(html5.Div):
 		if self.using:
 			res = (utils.formatString(
 					utils.formatString(self.format, data["values"], data["structure"], prefix=["dest"]),
-										self.selection["dest"], self.using, prefix=["rel"])
+										self.selection["rel"], self.using, prefix=["rel"])
 		                or data["values"]["key"])
 		else:
-			res = (utils.formatString(self.format, data["structure"], data["values"], prefix=["dest"])
-			        or data["values"]["key"])
+			res = (utils.formatString(
+					utils.formatString(self.format, data["values"], data["structure"], prefix=["dest"]),
+						data["values"], data["structure"])
+			                or data["values"]["key"])
 
 		self.selectionTxt["value"] = res
 
@@ -422,6 +436,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.appendChild(wrapperDiv)
 
 		if using:
+			print("1 WITH ",data["rel"])
 			self.ie = InternalEdit(using, data["rel"], errorInfo,
 			                        readOnly = parent.readOnly,
 			                        defaultCat = parent.usingDescr)
@@ -641,8 +656,8 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 			Merges the selection made in the ListWidget into our value(s)
 		"""
-		selection = [{"dest": data,"rel":{}} for data in selection]
-		self.setSelection( selection )
+		selection = [{"dest": data, "rel": getDefaultValues(self.using)} for data in selection]
+		self.setSelection(selection)
 
 	def setSelection(self, selection):
 		"""

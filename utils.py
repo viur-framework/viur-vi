@@ -15,7 +15,7 @@ def boneListToDict(l):
 
 	return res
 
-def formatString(format, data, structure = None, prefix = None, unescape = False, _rec = 0):
+def formatString(format, data, structure = None, prefix = None, _rec = 0):
 	"""
 	Parses a string given by format and substitutes placeholders using values specified by data.
 
@@ -50,7 +50,7 @@ def formatString(format, data, structure = None, prefix = None, unescape = False
 	res = format
 
 	if isinstance(data,  list):
-		return ", ".join([formatString(format, x, structure, prefix, unescape, _rec = _rec + 1) for x in data])
+		return ", ".join([formatString(format, x, structure, prefix, _rec = _rec + 1) for x in data])
 
 	elif isinstance(data, str):
 		return data
@@ -75,7 +75,7 @@ def formatString(format, data, structure = None, prefix = None, unescape = False
 						val = ", ".join(val.values())
 
 				else:
-					val = None
+					continue
 
 			else:
 				res = formatString(res, val, structure, prefix + [key], _rec = _rec + 1)
@@ -83,12 +83,7 @@ def formatString(format, data, structure = None, prefix = None, unescape = False
 		elif isinstance(val, list) and len(val) > 0 and isinstance(val[0], dict):
 			res = formatString(res, val[0], structure, prefix + [key], _rec = _rec + 1)
 
-		if val:
-			res = res.replace("$(%s)" % (".".join(prefix + [key])), str(val))
-
-	# Unescape result?
-	if unescape:
-		return html5.utils.unescape(res)
+		res = res.replace("$(%s)" % (".".join(prefix + [key])), str(val))
 
 	return res
 
