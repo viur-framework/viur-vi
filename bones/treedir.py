@@ -1,40 +1,40 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from event import EventDispatcher
-
 import html5, utils
+from config import conf
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from utils import formatString
 from widgets.tree import TreeWidget, NodeWidget
 from widgets.file import FileWidget, LeafFileWidget
-from config import conf
 from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry
-from widgets.file import Uploader
 from i18n import translate
 from network import NetworkService
 from widgets.edit import EditWidget
 from pane import Pane
 
-
-class TreeDirMultiSelectionBoneEntry( RelationalMultiSelectionBoneEntry ):
+class TreeDirMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 	def __init__(self, *args, **kwargs):
-		super( TreeDirMultiSelectionBoneEntry, self ).__init__( *args, **kwargs )
+		super(TreeDirMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 		self["class"].append("fileentry")
 
-		if utils.getImagePreview( self.data ) is not None:
+		src = utils.getImagePreview(self.data)
+
+		if src is not None:
 			img = html5.Img()
-			img["src"] = utils.getImagePreview( self.data )
+			img["src"] = src
 			img["class"].append("previewimg")
 			self.appendChild(img)
+
 			# Move the img in front of the lbl
-			self.element.removeChild( img.element )
-			self.element.insertBefore( img.element, self.element.children.item(0) )
-		#Remove the editbutton. This wont work on directories; but we maybe need this for other modules?!
-		self.removeChild( self.editBtn )
+			self.element.removeChild(img.element)
+			self.element.insertBefore(img.element, self.element.children.item(0))
+
+		#Remove the editbutton. This won't work on directories; but we maybe need this for other modules?!
+		self.removeChild(self.editBtn)
 		self.editBtn = None
 
-	def fetchEntry(self, id):
-		NetworkService.request(self.module,"view/node/"+id, successHandler=self.onSelectionDataAviable, cacheable=True)
+	def fetchEntry(self, key):
+		NetworkService.request(self.module, "view/node/%s" % key,
+		                        successHandler=self.onSelectionDataAviable,
+		                        cacheable=True)
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -53,10 +53,8 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 			kwargs["destModule"] = kwargs["destModule"][ : kwargs["destModule"].find("_") ] # Remove _rootNode
 		super(TreeDirMultiSelectionBone, self).__init__( *args, **kwargs )
 
-
 	def onUploadSuccess(self, uploader, file ):
 		self.setSelection( [file] )
-
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -78,16 +76,19 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 				break
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
-		self.setSelection( [{"dest": x.data, "rel": {}} for x in selection if isinstance(x,NodeWidget)] )
+
+		self.setSelection([{"dest": x.data, "rel": {}} for x in selection if isinstance(x,NodeWidget)])
 
 	def setSelection(self, selection):
 		"""
 			Set our current value to 'selection'
+
 			@param selection: The new entry that this bone should reference
-			@type selection: dict
+			@type selection: dict | list
 		"""
 		if selection is None:
 			return
+
 		for data in selection:
 			entry = TreeDirMultiSelectionBoneEntry( self, self.destModule, data)
 			self.addEntry( entry )
@@ -119,7 +120,6 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""
-		print(" GOT TREEDIR onSelectionReturn CALL")
 		hasValidSelection = False
 		for s in selection:
 			if isinstance( s, NodeWidget ):
@@ -167,21 +167,17 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 
 
 
-def CheckForTreeDirBoneSingleSelection( modulName, boneName, skelStructure, *args, **kwargs ):
+def CheckForTreeDirBoneSingleSelection(moduleName, boneName, skelStructure, *args, **kwargs):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
-	return CheckForTreeDirBone( modulName, boneName, skelStructure ) and not isMultiple
+	return CheckForTreeDirBone(moduleName, boneName, skelStructure) and not isMultiple
 
-def CheckForTreeDirBoneMultiSelection( modulName, boneName, skelStructure, *args, **kwargs ):
+def CheckForTreeDirBoneMultiSelection(moduleName, boneName, skelStructure, *args, **kwargs):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
-	return CheckForTreeDirBone( modulName, boneName, skelStructure ) and isMultiple
+	return CheckForTreeDirBone(moduleName, boneName, skelStructure) and isMultiple
 
-def CheckForTreeDirBone(  modulName, boneName, skelStucture, *args, **kwargs ):
-	#print("CHECKING FILE BONE", skelStucture[boneName]["type"])
-	print( skelStucture[boneName]["type"] )
-	return( skelStucture[boneName]["type"].startswith("treedir.") )
+def CheckForTreeDirBone(moduleName, boneName, skelStucture, *args, **kwargs):
+	return skelStucture[boneName]["type"].startswith("treedir.")
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 5, CheckForTreeDirBoneSingleSelection, TreeDirSingleSelectionBone)
 editBoneSelector.insert( 5, CheckForTreeDirBoneMultiSelection, TreeDirMultiSelectionBone)
-#viewDelegateSelector.insert( 3, CheckForTreeDirBone, FileViewBoneDelegate)
-#extractorDelegateSelector.insert(3, CheckForTreeDirBone, FileBoneExtractor)
