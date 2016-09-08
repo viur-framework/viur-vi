@@ -69,6 +69,7 @@ def formatString(format, data, structure = None, prefix = None, _rec = 0):
 			if struct and ("$(%s)" % ".".join(prefix + [key])) in res:
 				langs = struct.get("languages")
 				if langs:
+					print("fomratString", conf["currentlanguage"])
 					if conf["currentlanguage"] in langs and conf["currentlanguage"] in val.keys():
 						val = val[conf["currentlanguage"]]
 					else:
