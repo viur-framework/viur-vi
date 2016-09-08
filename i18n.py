@@ -68,3 +68,10 @@ def setLanguage( lang ):
 	"""
 	global _currentLanguage
 	_currentLanguage = lang
+
+def getLanguage():
+	"""
+	Returns the current language
+	"""
+	global _currentLanguage
+	return _currentLanguage

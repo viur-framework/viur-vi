@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-import html5, pyjd, network
+import html5, i18n, pyjd, network
 
 from login import LoginScreen
 from admin import AdminScreen
@@ -40,6 +40,8 @@ if __name__ == '__main__':
 
 	# Configure vi as network render prefix
 	network.NetworkService.prefix = "/vi"
+
+	conf["currentlanguage"] = i18n.getLanguage()
 
 	app = Application()
 	html5.Body().appendChild(app)

@@ -1,11 +1,10 @@
-import html5
-import pyjd # this is dummy in pyjs.
+#-*- coding: utf-8 -*-
+
+import html5, utils
 from time import time
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
-from priorityqueue import viewDelegateSelector
-import utils
 from config import conf
 from i18n import translate
 
@@ -59,8 +58,7 @@ class HierarchyItem( html5.Li ):
 
 		self.appendChild(
 				html5.TextNode(
-						utils.formatString(format, utils.boneListToDict(self.structure),
-						                    self.data, unescape=True)))
+						html5.utils.unescape(utils.formatString(format, self.data, self.structure))))
 
 	def onDragOver(self, event):
 		"""
