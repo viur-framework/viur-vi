@@ -656,7 +656,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 			Merges the selection made in the ListWidget into our value(s)
 		"""
-		selection = [{"dest": data, "rel": getDefaultValues(self.using)} for data in selection]
+		selection = [{"dest": data, "rel": getDefaultValues(self.using) if self.using else None} for data in selection]
 		self.setSelection(selection)
 
 	def setSelection(self, selection):
