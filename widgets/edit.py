@@ -356,7 +356,8 @@ class EditWidget( html5.Div ):
 		self.wasInitialRequest = not len(data)>0
 
 		if self.module=="_tasks":
-			NetworkService.request( None, "/admin/%s/execute/%s" % (self.module, self.key), data,
+			NetworkService.request(None, "/admin/%s/execute/%s" % (self.module, self.key), data,
+			                        secure=len(data) > 0,
 			                        successHandler=self.setData,
 			                        failureHandler=self.showErrorMsg)
 
