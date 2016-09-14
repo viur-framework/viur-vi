@@ -16,7 +16,7 @@ from pane import Pane
 class FileBoneExtractor(object):
 	def __init__(self, modul, boneName, structure):
 		super(FileBoneExtractor, self).__init__()
-		self.format = "$(name)"
+		self.format = "$(dest.name)"
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
 		self.modul = modul
@@ -25,7 +25,9 @@ class FileBoneExtractor(object):
 
 	def renderFileentry(self, fileentry):
 		origin = eval("window.location.origin")
-		return fileentry["name"] + " " + origin + "/file/download/" + str(fileentry["dlkey"]) + "?download=1&fileName=" + str(fileentry["name"])
+		return ("%s %s/file/download/%s?download=1&fileName=%s" %
+		            (fileentry["dest"]["name"], origin,
+		                str(fileentry["dest"]["dlkey"]), str(fileentry["dest"]["name"])))
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)

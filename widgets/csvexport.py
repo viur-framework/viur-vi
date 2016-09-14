@@ -19,10 +19,7 @@ class CsvExport(Div):
 		"""
 		super(CsvExport, self).__init__()
 		self.module = parent.modul
-		self._currentCursor = None
-		# self._currentSearchStr = None
 		self._structure = None
-		self._currentRequests = []
 		self.columns = []
 		self.column_keys = dict()
 
@@ -94,9 +91,6 @@ class CsvExport(Div):
 
 
 	def onSkelStructureCompletion(self, req):
-		if not req in self._currentRequests:
-			return
-		self._currentRequests.remove(req)
 		data = NetworkService.decode(req)
 		self._structure = data["structure"]
 		tmpDict = {}
@@ -137,60 +131,48 @@ class CsvExport(Div):
 		errorDiv.appendChild(TextNode(txt))
 		self.appendChild(errorDiv)
 
-	def DIS_onNextBatchNeeded(self):
-		"""
-			Requests the next rows from the server and feed them to the table.
-		"""
-		if self._currentCursor is not None:
-			filter = self.filter.copy()
-			filter["amount"] = self._batchSize
-			filter["cursor"] = self._currentCursor
-			self._currentRequests.append(
-				NetworkService.request(self.module, "list", filter, successHandler=self.onCompletion,
-					failureHandler=self.showErrorMsg))
-			self._currentCursor = None
-
 	def reloadData(self):
 		"""
 			Removes all currently displayed data and refetches the first batch from the server.
 		"""
 		self.skelData = []
-		self._currentCursor = None
-		self._currentRequests = []
 		filter = self.filter.copy()
 		filter["amount"] = self._batchSize
-		self._currentRequests.append(
-			NetworkService.request(self.module, "list", filter, successHandler=self.onCompletion,
-			                       failureHandler=self.showErrorMsg))
+
+		NetworkService.request(self.module, "list", filter,
+		                        successHandler=self.onCompletion,
+		                        failureHandler=self.showErrorMsg)
 
 	def onCompletion(self, req):
 		"""
 			Pass the rows received to the datatable.
 			@param req: The network request that succeed.
 		"""
-		if not req in self._currentRequests:
-			return
-
-		self._currentRequests.remove(req)
 		data = NetworkService.decode(req)
 
 		self.emptyNotificationDiv["style"]["display"] = "none"
-		skeldata = data["skellist"]
-		self.skelData.extend(skeldata)
-		print("cursors", self._currentCursor, data["cursor"], len(skeldata))
-		if skeldata and "cursor" in data.keys():
-			self._currentCursor = data["cursor"]
-			self.DIS_onNextBatchNeeded()
+		self.skelData.extend(data["skellist"])
+
+		print(len(data["skellist"]), len(self.skelData))
+
+		if data["skellist"] and data.get("cursor"):
+			filter = self.filter.copy()
+			filter["amount"] = self._batchSize
+			filter["cursor"] = data["cursor"]
+
+			NetworkService.request(self.module, "list", filter,
+			                        successHandler=self.onCompletion,
+			                        failureHandler=self.showErrorMsg)
 		else:
-			self._currentCursor = None
 			self.dataArrived()
 
 	def on_btnExport_released(self, *args, **kwargs):
 		filter = self.filter.copy()
 		filter["amount"] = 1
-		self._currentRequests.append(
-			NetworkService.request(self.module, "list", filter, successHandler=self.onSkelStructureCompletion,
-			                       failureHandler=self.showErrorMsg))
+
+		NetworkService.request(self.module, "list", filter,
+		                        successHandler=self.onSkelStructureCompletion,
+		                        failureHandler=self.showErrorMsg)
 
 	def dataArrived(self):
 		lenData= len(self.skelData)
@@ -243,8 +225,11 @@ class CsvExport(Div):
 			tmpA["download"] = "export-%s-%s-%s-%s.csv" % (self.module, export_lang, encoding, datetime.now().strftime("%Y%m%d%H%M"))
 			tmpA.element.click()
 			conf["mainWindow"].removeWidget(self)
+
+			alert(u"%s Datasets exported" % len(self.skelData))
 		except Exception, err:
 			print("ERROR OCCURED...")
+			raise
 		finally:
 			conf["currentlanguage"] = current_lang
 
