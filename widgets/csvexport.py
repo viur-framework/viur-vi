@@ -38,8 +38,8 @@ class CsvExport(Div):
 
 		self.emptyNotificationDiv["style"]["display"] = "none"
 
-		if "viur.defaultlangsvalues" in conf["mainWindow"].config.keys():
-			lngList = conf["mainWindow"].config["viur.defaultlangsvalues"].items()
+		if "viur.defaultlangsvalues" in conf["server"].keys():
+			lngList = conf["server"]["viur.defaultlangsvalues"].items()
 
 			self.lang_select = Select()
 			self.lang_select["id"] = "lang-select"
