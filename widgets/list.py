@@ -119,7 +119,7 @@ class ListWidget( html5.Div ):
 		"""
 		defaultActions = ["add", "edit", "clone", "delete",
 		                  "|", "preview", "selectfields"]\
-		                 + (["|", "select","close"] if self.isSelector else [])+["|", "reload","selectfilter"]
+		                 + (["|", "select","close"] if self.isSelector else [])+["|", "reload","selectfilter","|", "exportcsv"]
 
 		# Extended actions from view?
 		if view and "actions" in view.keys():

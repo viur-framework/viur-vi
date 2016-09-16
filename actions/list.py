@@ -6,6 +6,7 @@ from config import conf
 from pane import Pane
 from widgets.repeatdate import RepeatDatePopup
 from widgets.csvexport import CsvExport
+from widgets.csvexport2 import ExportCsv
 from widgets.table import DataTable
 from widgets.preview import Preview
 from sidebarwidgets.internalpreview import InternalPreview
@@ -679,25 +680,37 @@ class CreateRecurrentAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRecurrentAction)
 
-
-class CsvExportAction( html5.ext.Button ):
+class ExportCsvAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
-		super(CsvExportAction, self ).__init__( translate("Export Csv"), *args, **kwargs )
+		super(ExportCsvAction, self).__init__(translate("EXPORT"), *args, **kwargs)
 		self["class"] = "icon download"
 
+	def onSelectionChanged(self, table, selection):
+		if selection:
+			if self.isDisabled:
+				self.isDisabled = False
+			self["disabled"] = False
+		else:
+			if not self.isDisabled:
+				self["disabled"] = True
+				self.isDisabled = True
+
+	def onClick(self, sender = None):
+		ExportCsv(translate("Export csv"), self.parent().parent(), self.parent().parent().getCurrentSelection())
+		return
+
+		html5.ext.YesNoDialog(translate("This will delete all dynamic data of the selected tasks and reset them."
+		                                " Are you sure?"), translate("Reset"),
+		                        yesCallback=self.onYesButtonClick)
+
+	#def onYesButtonClick(self, sender=None):
+		#ExportCsv(translate("Export csv"), self.parent().parent(), self.parent().parent().getCurrentSelection())
+
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		return actionName == "exportcsv" and (handler == "list" or handler.startswith("list."))
+	def isSuitableFor(module, handler, actionName):
+		return actionName == "exportcsv" and handler == "list" or handler.startswith("list.")
 
-	def onClick(self, sender=None):
-		pane = Pane(translate("Csv Exporter"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "exportcsv" ])
-		conf["mainWindow"].stackPane( pane )
-		edwg = CsvExport(self.parent().parent())
-		pane.addWidget( edwg )
-		pane.focus()
-
-actionDelegateSelector.insert( 1, CsvExportAction.isSuitableFor, CsvExportAction)
-
+actionDelegateSelector.insert(1, ExportCsvAction.isSuitableFor, ExportCsvAction)
 
 class SelectAllAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
