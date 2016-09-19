@@ -6,24 +6,31 @@ from priorityqueue import actionDelegateSelector, extractorDelegateSelector
 from i18n import translate, addTranslation
 
 class ExportCsv(html5.Progress):
-	def __init__(self, title, widget, selection, *args, **kwargs ):
+	def __init__(self, widget, selection, encoding = None, language = None,
+	                separator = None, lineSeparator = None, *args, **kwargs):
 		super(ExportCsv, self).__init__(*args, **kwargs)
 
-		self.title = title
+		if encoding is None or encoding not in ["utf-8", "iso-8859-15"]:
+			encoding = "utf-8"
+
+		if language is None or language not in conf["server"].keys():
+			language = conf["currentlanguage"]
+
 		self.widget = widget
 		self.module = widget.modul
 		self.params = self.widget.getFilter().copy()
 		self.params["amount"] = 99
 		self.data = []
 		self.structure = None
-		self.separator = ";"
-		self.lineSeparator = "\n"
-		self.encoding = "utf-8"
-		self.lang = "de"
+		self.separator = separator or ";"
+		self.lineSeparator = lineSeparator or "\n"
+		self.encoding = encoding
+		self.lang = language
 
 		conf["mainWindow"].log("progress", self)
 		self.parent()["class"].append("is_new")
 		self.parent()["class"].append("log_progress")
+		self.appendChild(html5.TextNode(translate("CSV-Export")))
 
 		DeferredCall(self.nextChunk)
 
@@ -142,8 +149,10 @@ class ExportCsv(html5.Progress):
 
 class ExportCsvStarter(html5.ext.Popup):
 
-	def __init__(self, *args, **kwargs ):
+	def __init__(self, widget, *args, **kwargs ):
 		super(ExportCsvStarter, self).__init__(title=translate("CSV Export"))
+
+		self.widget = widget
 
 		if "viur.defaultlangsvalues" in conf["server"].keys():
 			self.langSelect = html5.Select()
@@ -172,7 +181,7 @@ class ExportCsvStarter(html5.ext.Popup):
 			self.langSelect = None
 		
 		# Encoding
-		self.encodingSelect = Select()
+		self.encodingSelect = html5.Select()
 		self.encodingSelect["id"] = "encoding-select"
 
 		lbl = html5.Label(translate("Encoding"))
@@ -180,12 +189,12 @@ class ExportCsvStarter(html5.ext.Popup):
 
 		div = html5.Div()
 		div.appendChild(lbl)
-		div.appendChild(self.langSelect)
+		div.appendChild(self.encodingSelect)
 		div.addClass("bone")
 
 		self.appendChild(div)
 
-		for i, (k, v) in [("iso-8859-15", "ISO-8859-15"), ("utf-8", "UTF-8")]:
+		for i, (k, v) in enumerate([("iso-8859-15", "ISO-8859-15"), ("utf-8", "UTF-8")]):
 			opt = html5.Option()
 			opt["value"] = k
 
@@ -193,8 +202,9 @@ class ExportCsvStarter(html5.ext.Popup):
 				opt["selected"] = True
 
 			opt.appendChild(html5.TextNode(v))
+			self.encodingSelect.appendChild(opt)
 
-		div.html5.Div()
+		div = html5.Div()
 		div.addClass("button-container")
 		self.appendChild(div)
 
@@ -205,5 +215,12 @@ class ExportCsvStarter(html5.ext.Popup):
 		div.appendChild(self.exportBtn)
 
 	def onExportBtnClick(self, *args, **kwargs):
-		alert("Jo")
+		encoding = self.encodingSelect["options"].item(self.encodingSelect["selectedIndex"]).value
 
+		if self.langSelect:
+			language = self.langSelect["options"].item(self.langSelect["selectedIndex"]).value
+		else:
+			language = None
+
+		ExportCsv(self.widget, self.widget.getCurrentSelection(), encoding=encoding, language=language)
+		self.close()

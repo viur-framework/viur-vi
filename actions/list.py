@@ -5,8 +5,7 @@ from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
 from widgets.repeatdate import RepeatDatePopup
-from widgets.csvexport import CsvExport
-from widgets.csvexport2 import ExportCsv
+from widgets.csvexport2 import ExportCsvStarter
 from widgets.table import DataTable
 from widgets.preview import Preview
 from sidebarwidgets.internalpreview import InternalPreview
@@ -682,33 +681,15 @@ actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRec
 
 class ExportCsvAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
-		super(ExportCsvAction, self).__init__(translate("EXPORT"), *args, **kwargs)
+		super(ExportCsvAction, self).__init__(translate("CSV Export"), *args, **kwargs)
 		self["class"] = "icon download"
 
-	def onSelectionChanged(self, table, selection):
-		if selection:
-			if self.isDisabled:
-				self.isDisabled = False
-			self["disabled"] = False
-		else:
-			if not self.isDisabled:
-				self["disabled"] = True
-				self.isDisabled = True
-
 	def onClick(self, sender = None):
-		ExportCsv(translate("Export csv"), self.parent().parent(), self.parent().parent().getCurrentSelection())
-		return
-
-		html5.ext.YesNoDialog(translate("This will delete all dynamic data of the selected tasks and reset them."
-		                                " Are you sure?"), translate("Reset"),
-		                        yesCallback=self.onYesButtonClick)
-
-	#def onYesButtonClick(self, sender=None):
-		#ExportCsv(translate("Export csv"), self.parent().parent(), self.parent().parent().getCurrentSelection())
+		ExportCsvStarter(self.parent().parent())
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
-		return actionName == "exportcsv" and handler == "list" or handler.startswith("list.")
+		return actionName == "exportcsv" and (handler == "list" or handler.startswith("list."))
 
 actionDelegateSelector.insert(1, ExportCsvAction.isSuitableFor, ExportCsvAction)
 
