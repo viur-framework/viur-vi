@@ -63,6 +63,9 @@ class ExportCsv(html5.Progress):
 
 		assert self.structure
 
+		defaultLanguage = conf["currentlanguage"]
+		conf["currentlanguage"] = self.language
+
 		# Visualize progress
 		self["max"] = len(self.data)
 		self["value"] = 0
@@ -109,6 +112,8 @@ class ExportCsv(html5.Progress):
 			self["value"] += 1
 
 		# Virtual File
+		conf["currentlanguage"] = defaultLanguage
+
 		a = html5.A()
 		a.hide()
 		self.appendChild(a)
