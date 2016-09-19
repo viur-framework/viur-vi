@@ -140,3 +140,70 @@ class ExportCsv(html5.Progress):
 		self.parent().appendChild(msg)
 		self.parent().removeChild(self)
 
+class ExportCsvStarter(html5.ext.Popup):
+
+	def __init__(self, *args, **kwargs ):
+		super(ExportCsvStarter, self).__init__(title=translate("CSV Export"))
+
+		if "viur.defaultlangsvalues" in conf["server"].keys():
+			self.langSelect = html5.Select()
+			self.langSelect["id"] = "lang-select"
+		
+			lbl = html5.Label(translate("Language selection"))
+			lbl["for"] = "lang-select"
+		
+			div = html5.Div()
+			div.appendChild(lbl)
+			div.appendChild(self.langSelect)
+			div.addClass("bone")
+		
+			self.appendChild(div)
+		
+			for key, value in conf["server"]["viur.defaultlangsvalues"].items():
+				opt = html5.Option()
+				opt["value"] = key
+				opt.appendChild(html5.TextNode(value))
+
+				if key == conf["currentlanguage"]:
+					opt["selected"] = True
+
+				self.langSelect.appendChild(opt)
+		else:
+			self.langSelect = None
+		
+		# Encoding
+		self.encodingSelect = Select()
+		self.encodingSelect["id"] = "encoding-select"
+
+		lbl = html5.Label(translate("Encoding"))
+		lbl["for"] = "encoding-select"
+
+		div = html5.Div()
+		div.appendChild(lbl)
+		div.appendChild(self.langSelect)
+		div.addClass("bone")
+
+		self.appendChild(div)
+
+		for i, (k, v) in [("iso-8859-15", "ISO-8859-15"), ("utf-8", "UTF-8")]:
+			opt = html5.Option()
+			opt["value"] = k
+
+			if i == 0:
+				opt["selected"] = True
+
+			opt.appendChild(html5.TextNode(v))
+
+		div.html5.Div()
+		div.addClass("button-container")
+		self.appendChild(div)
+
+		self.cancelBtn = html5.ext.Button(translate("Cancel"), self.close)
+		div.appendChild(self.cancelBtn)
+
+		self.exportBtn = html5.ext.Button(translate("Export"), self.onExportBtnClick)
+		div.appendChild(self.exportBtn)
+
+	def onExportBtnClick(self, *args, **kwargs):
+		alert("Jo")
+
