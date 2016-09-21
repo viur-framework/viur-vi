@@ -7,11 +7,11 @@ from i18n import translate
 from config import conf
 
 class SelectOneBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( SelectOneBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -21,11 +21,11 @@ class SelectOneBoneExtractor( object ):
 
 
 class SelectOneViewBoneDelegate( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( SelectOneViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName = modulName
+		self.moduleName = moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -64,8 +64,8 @@ class SelectOneEditBone( html5.Select ):
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
-		return SelectOneEditBone(modulName, boneName,
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
+		return SelectOneEditBone(moduleName, boneName,
 		                            skelStructure[boneName].get("readonly", False),
 		                            skelStructure[boneName].get("values", {}))
 
@@ -124,7 +124,7 @@ class ExtendedSelectOneSearch( html5.Div ):
 	def canHandleExtension( extension, view, modul ):
 		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="selectone" or extension["type"].startswith("selectone.") ) )
 
-def CheckForSelectOneBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForSelectOneBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="selectone" )
 
 #Register this Bone in the global queue
