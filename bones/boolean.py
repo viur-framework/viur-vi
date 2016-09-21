@@ -66,7 +66,7 @@ class ExtendedBooleanSearch( html5.Div ):
 		super( ExtendedBooleanSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.modul = modul
+		self.module = modul
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()

@@ -36,7 +36,7 @@ class AddNodeAction( html5.ext.Button ):
 	def createDir(self, dialog, dirName ):
 		if len(dirName)==0:
 			return
-		r = NetworkService.request(self.parent().parent().modul,"add/node",{"node": self.parent().parent().node,"name":dirName}, secure=True, modifies=True, successHandler=self.onMkDir)
+		r = NetworkService.request(self.parent().parent().module,"add/node",{"node": self.parent().parent().node,"name":dirName}, secure=True, modifies=True, successHandler=self.onMkDir)
 		r.dirName = dirName
 
 	def onMkDir(self, req):
@@ -73,10 +73,10 @@ class EditAction( html5.ext.Button ):
 
 	def onSelectionActivated(self, table, selection ):
 		if not self.parent().parent().isSelector and len(selection)==1 and isinstance(selection[0],self.parent().parent().leafWidget):
-			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
+			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			skelType = "leaf"
-			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=selection[0].data["key"], skelType=skelType)
+			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=selection[0].data["key"], skelType=skelType)
 			pane.addWidget( edwg )
 			pane.focus()
 
@@ -110,14 +110,14 @@ class EditAction( html5.ext.Button ):
 				i = InputDialog( translate("Directory Name"), successHandler=self.editDir, value=s.data["name"] )
 				i.dirKey = s.data["key"]
 				return
-			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
+			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane, focus=True )
 			skelType = "leaf"
-			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["key"], skelType=skelType)
+			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=s.data["key"], skelType=skelType)
 			pane.addWidget( edwg )
 
 	def editDir(self, dialog, dirName ):
-		NetworkService.request( self.parent().parent().modul, "edit/node", {"key": dialog.dirKey,"name": dirName}, secure=True, modifies=True)
+		NetworkService.request( self.parent().parent().module, "edit/node", {"key": dialog.dirKey,"name": dirName}, secure=True, modifies=True)
 
 	def resetLoadingState(self):
 		pass

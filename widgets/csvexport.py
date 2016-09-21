@@ -18,7 +18,7 @@ class CsvExport(Div):
 			@param parent: parent module
 		"""
 		super(CsvExport, self).__init__()
-		self.module = parent.modul
+		self.module = parent.module
 		self._structure = None
 		self.columns = []
 		self.column_keys = dict()

@@ -90,7 +90,7 @@ class ExtendedNumericSearch( html5.Div ):
 		super( ExtendedNumericSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.modul = modul
+		self.module = modul
 		self.opMode = extension["mode"]
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		assert self.opMode in ["equals","from", "to","range"]
