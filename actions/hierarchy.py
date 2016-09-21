@@ -94,10 +94,10 @@ class EditAction( html5.ext.Button ):
 		for s in selection:
 			self.openEditor( s["key"] )
 
-	def openEditor( self, id ):
+	def openEditor(self, key):
 		pane = Pane(translate("Edit"), closeable=True)
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent().parent().module, EditWidget.appHierarchy, key=id)
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy, key=key)
 		pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -152,11 +152,11 @@ class CloneAction( html5.ext.Button ):
 		for s in selection:
 			self.openEditor( s["key"] )
 
-	def openEditor(self, id ):
+	def openEditor(self, key):
 		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_hierarchy", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().module, EditWidget.appHierarchy,
-		                        node=self.parent().parent().rootNode, key=id, clone=True )
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy,
+		                  node=self.parent().parent().rootNode, key=key, clone=True)
 		pane.addWidget( edwg )
 		pane.focus()
 

@@ -105,10 +105,10 @@ class EditAction( html5.ext.Button ):
 		for s in selection:
 			self.openEditor( s["key"] )
 
-	def openEditor(self, id ):
+	def openEditor(self, key):
 		pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent().parent().module, EditWidget.appList, key=id )
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key)
 		pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -165,10 +165,10 @@ class CloneAction( html5.ext.Button ):
 		for s in selection:
 			self.openEditor( s["key"] )
 
-	def openEditor(self, id ):
+	def openEditor(self, key):
 		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().module, EditWidget.appList, key=id, clone=True )
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key, clone=True)
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -650,10 +650,10 @@ class RecurrentDateAction( html5.ext.Button ):
 		for s in selection:
 			self.openEditor( s["key"] )
 
-	def openEditor(self, id ):
+	def openEditor(self, key):
 		pane = Pane(translate("Recurrent Events"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = RepeatDatePopup(self.parent().parent().module, key=id)
+		edwg = RepeatDatePopup(self.parent().parent().module, key=key)
 		pane.addWidget( edwg )
 		pane.focus()
 
