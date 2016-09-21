@@ -691,6 +691,8 @@ class ExportCsvAction(html5.ext.Button):
 	def isSuitableFor(module, handler, actionName):
 		return actionName == "exportcsv" and (handler == "list" or handler.startswith("list."))
 
+actionDelegateSelector.insert(1, ExportCsvAction.isSuitableFor, ExportCsvAction)
+
 class SelectAllAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(SelectAllAction, self ).__init__(translate("Select all"), *args, **kwargs)

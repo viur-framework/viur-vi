@@ -17,7 +17,7 @@ class ExportCsv(html5.Progress):
 			language = conf["currentlanguage"]
 
 		self.widget = widget
-		self.module = widget.modul
+		self.module = widget.module
 		self.params = self.widget.getFilter().copy()
 		self.params["amount"] = 99
 		self.data = []
@@ -64,7 +64,7 @@ class ExportCsv(html5.Progress):
 		assert self.structure
 
 		defaultLanguage = conf["currentlanguage"]
-		conf["currentlanguage"] = self.language
+		conf["currentlanguage"] = self.lang
 
 		# Visualize progress
 		self["max"] = len(self.data)
