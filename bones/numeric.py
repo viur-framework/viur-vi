@@ -7,11 +7,11 @@ from html5.keycodes import *
 from config import conf
 
 class NumericBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super(NumericBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render( self, data, field ):
 		# print("NumericBoneExtractor.render", data, field)
@@ -25,11 +25,11 @@ class NumericBoneExtractor( object ):
 
 
 class NumericViewBoneDelegate( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( NumericViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render( self, data, field ):
 		s =  conf[ "empty_value" ]
@@ -46,7 +46,7 @@ class NumericViewBoneDelegate( object ):
 		return html5.Label( s )
 
 class NumericEditBone( html5.Input ):
-	def __init__(self, modulName, boneName,readOnly,_min=False,_max=False,precision=False, *args, **kwargs ):
+	def __init__(self, moduleName, boneName,readOnly,_min=False,_max=False,precision=False, *args, **kwargs ):
 		super( NumericEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -63,12 +63,12 @@ class NumericEditBone( html5.Input ):
 			self["readonly"] = True
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		_min=skelStructure[ boneName ]["min"] if ("min" in skelStructure[ boneName ].keys()) else False
 		_max=skelStructure[ boneName ]["max"] if ("max" in skelStructure[ boneName ].keys()) else False
 		precision=skelStructure[ boneName ]["precision"] if ("precision" in skelStructure[ boneName ].keys()) else False
-		return( NumericEditBone( modulName, boneName, readOnly,_min,_max,precision ) )
+		return( NumericEditBone( moduleName, boneName, readOnly,_min,_max,precision ) )
 
 
 	def unserialize(self, data):
@@ -90,7 +90,7 @@ class ExtendedNumericSearch( html5.Div ):
 		super( ExtendedNumericSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.modul = modul
+		self.module = modul
 		self.opMode = extension["mode"]
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		assert self.opMode in ["equals","from", "to","range"]
@@ -134,7 +134,7 @@ class ExtendedNumericSearch( html5.Div ):
 
 
 
-def CheckForNumericBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForNumericBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="numeric" )
 
 #Register this Bone in the global queue

@@ -31,7 +31,7 @@ class ListWidget( html5.Div ):
 		super( ListWidget, self ).__init__(  )
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
-		self.modul = modul
+		self.module = modul
 		self.actionBar = ActionBar( modul, "list", currentAction="list" )
 		self.appendChild( self.actionBar )
 		self.sideBar = SideBar()
@@ -129,8 +129,8 @@ class ListWidget( html5.Div ):
 			defaultActions.extend( view[ "actions" ] or [] )
 
 		# Extended Actions from config?
-		elif conf["modules"] and self.modul in conf["modules"].keys():
-			cfg = conf["modules"][ self.modul ]
+		elif conf["modules"] and self.module in conf["modules"].keys():
+			cfg = conf["modules"][ self.module ]
 
 			if "actions" in cfg.keys() and cfg["actions"]:
 				if defaultActions[-1] != "|":
@@ -164,7 +164,7 @@ class ListWidget( html5.Div ):
 			filter = self.filter.copy()
 			filter["amount"] = self._batchSize
 			filter["cursor"] = self._currentCursor
-			self._currentRequests.append( NetworkService.request(self.modul, "list", filter,
+			self._currentRequests.append( NetworkService.request(self.module, "list", filter,
 			                                successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
 			                                    cacheable=True ) )
 			self._currentCursor = None
@@ -184,7 +184,7 @@ class ListWidget( html5.Div ):
 		"""
 			Refresh our view if element(s) in this modul have changed
 		"""
-		if module and module != self.modul:
+		if module and module != self.module:
 			return
 
 		self.reloadData()
@@ -200,7 +200,7 @@ class ListWidget( html5.Div ):
 		filter["amount"] = self._batchSize
 
 		self._currentRequests.append(
-			NetworkService.request( self.modul, "list", filter,
+			NetworkService.request( self.module, "list", filter,
 			                        successHandler=self.onCompletion,
 			                        failureHandler=self.showErrorMsg,
 			                        cacheable=True ) )
@@ -280,7 +280,7 @@ class ListWidget( html5.Div ):
 
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
+			delegateFactory = viewDelegateSelector.select( self.module, boneName, tmpDict )( self.module, boneName, tmpDict )
 			self.table.setCellRender( boneName, delegateFactory )
 			boneInfoList.append( boneInfo )
 
@@ -294,7 +294,7 @@ class ListWidget( html5.Div ):
 
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
+			delegateFactory = viewDelegateSelector.select( self.module, boneName, tmpDict )( self.module, boneName, tmpDict )
 			rendersDict[ boneName ] = delegateFactory
 			boneInfoList.append( boneInfo )
 

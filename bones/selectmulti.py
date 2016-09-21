@@ -7,11 +7,11 @@ from i18n import translate
 from config import conf
 
 class SelectMultiBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super(SelectMultiBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -27,11 +27,11 @@ class SelectMultiBoneExtractor( object ):
 		return conf[ "empty_value" ]
 
 class SelectMultiViewBoneDelegate( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( SelectMultiViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName = modulName
+		self.moduleName = moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -90,8 +90,8 @@ class SelectMultiEditBone(html5.Div):
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
-		return SelectMultiEditBone(modulName, boneName,
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
+		return SelectMultiEditBone(moduleName, boneName,
 		                            skelStructure[boneName].get("readonly", False),
 		                            skelStructure[boneName].get("values", {}))
 
@@ -120,7 +120,7 @@ class ExtendedSelectMultiSearch( html5.Div ):
 		super( ExtendedSelectMultiSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.modul = modul
+		self.module = modul
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
@@ -153,7 +153,7 @@ class ExtendedSelectMultiSearch( html5.Div ):
 	def canHandleExtension( extension, view, modul ):
 		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="selectmulti" or extension["type"].startswith("selectmulti.") ) )
 
-def CheckForSelectMultiBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForSelectMultiBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return skelStucture[boneName]["type"].startswith("selectmulti")
 
 #Register this Bone in the global queue
@@ -169,7 +169,7 @@ class AccessMultiSelectBone( html5.Div ):
 	def __init__(self, moduleName, boneName, readOnly, values, *args, **kwargs ):
 		super( AccessMultiSelectBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
-		self.modulName = moduleName
+		self.moduleName = moduleName
 		self.readOnly = readOnly
 		print(values)
 		self.values = {k: v for k, v in values}

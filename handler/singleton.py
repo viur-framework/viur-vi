@@ -3,7 +3,7 @@ from widgets import EditWidget
 from pane import Pane
 
 class SingletonHandler( Pane ):
-	def __init__(self, modulName, modulInfo, *args, **kwargs):
+	def __init__(self, moduleName, modulInfo, *args, **kwargs):
 		icon = "icons/modules/singleton.svg"
 
 		if "icon" in modulInfo.keys():
@@ -11,7 +11,7 @@ class SingletonHandler( Pane ):
 
 		super(SingletonHandler, self).__init__(modulInfo["visibleName"], icon)
 
-		self.modulName = modulName
+		self.moduleName = moduleName
 		self.modulInfo = modulInfo
 
 		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
@@ -21,7 +21,7 @@ class SingletonHandler( Pane ):
 
 	def canHandleInitialHash(self, pathList, params ):
 		if len(pathList) > 1:
-			if pathList[0] == self.modulName and pathList[1] == "edit":
+			if pathList[0] == self.moduleName and pathList[1] == "edit":
 				return True
 
 		return False
@@ -29,16 +29,16 @@ class SingletonHandler( Pane ):
 	def handleInitialHash(self, pathList, params):
 		assert self.canHandleInitialHash(pathList, params)
 
-		self.addWidget(EditWidget(self.modulName, EditWidget.appSingleton, hashArgs=(params or None)))
+		self.addWidget(EditWidget(self.moduleName, EditWidget.appSingleton, hashArgs=(params or None)))
 		self.focus()
 
 	@staticmethod
-	def canHandle( modulName, modulInfo ):
+	def canHandle( moduleName, modulInfo ):
 		return modulInfo["handler"]=="singleton" or modulInfo["handler"].startswith("singleton.")
 
 	def onClick(self, *args, **kwargs ):
 		if not self.widgetsDomElm.children():
-			self.addWidget(EditWidget(self.modulName, EditWidget.appSingleton))
+			self.addWidget(EditWidget(self.moduleName, EditWidget.appSingleton))
 
 		super(SingletonHandler, self).onClick(*args, **kwargs)
 

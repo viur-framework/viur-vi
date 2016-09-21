@@ -7,11 +7,11 @@ from config import conf
 
 
 class BaseBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
 		super(BaseBoneExtractor, self).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -23,11 +23,11 @@ class BaseViewBoneDelegate( object ):
 	"""
 		Base "Catch-All" delegate for everything not handled separately.
 	"""
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( BaseViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -43,16 +43,16 @@ class BaseEditBone( html5.Input ):
 		if self.readOnly:
 			self["disabled"] = True
 
-	def __init__(self, modulName, boneName, readOnly, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, readOnly, *args, **kwargs ):
 		super( BaseEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.setParams()
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( BaseEditBone( modulName, boneName, readOnly ) )
+		return( BaseEditBone( moduleName, boneName, readOnly ) )
 
 	def unserialize(self, data, extendedErrorInformation=None):
 		if self.boneName in data.keys():
@@ -71,7 +71,7 @@ class BaseEditBone( html5.Input ):
 
 
 
-def CheckForBaseBone(modulName, boneName, skelStucture, *args, **kwargs):
+def CheckForBaseBone(moduleName, boneName, skelStucture, *args, **kwargs):
 	res = str(skelStucture[boneName]["type"]).startswith("hidden")
 	print("checking basebone", str(skelStucture[boneName]["type"]), res)
 	return res

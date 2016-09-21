@@ -6,7 +6,7 @@ from priorityqueue import editBoneSelector, viewDelegateSelector
 from widgets.edit import InvalidBoneValueException
 from i18n import translate
 class PasswordEditBone( html5.Div ):
-	def __init__(self, modulName, boneName, readOnly, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, readOnly, *args, **kwargs ):
 		super( PasswordEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -16,17 +16,17 @@ class PasswordEditBone( html5.Div ):
 		self.secondinput["type"]="password"
 		self.appendChild(self.primeinput)
 		lbl=html5.Label(translate("reenter password"))
-		lbl["for"]==modulName+"_"+boneName+"_reenterpwd"
+		lbl["for"]==moduleName+"_"+boneName+"_reenterpwd"
 		self.appendChild(lbl)
-		self.secondinput["name"]=modulName+"_"+boneName+"_reenterpwd"
+		self.secondinput["name"]=moduleName+"_"+boneName+"_reenterpwd"
 		self.appendChild(self.secondinput)
 		if self.readOnly:
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( PasswordEditBone( modulName, boneName, readOnly ) )
+		return( PasswordEditBone( moduleName, boneName, readOnly ) )
 
 	def unserialize(self, data):
 		pass
@@ -45,7 +45,7 @@ class PasswordEditBone( html5.Div ):
 		pass
 
 
-def CheckForPasswordBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForPasswordBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return( str(skelStucture[boneName]["type"]).startswith("password") )
 
 

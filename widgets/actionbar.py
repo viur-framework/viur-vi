@@ -18,7 +18,7 @@ class ActionBar( html5.Div ):
 		super( ActionBar, self ).__init__(  )
 		self.actions = []
 		self.widgets = {}
-		self.modul = modul
+		self.module = modul
 		self.appType = appType
 		self.currentAction = currentAction
 		self["class"].append("actionbar")
@@ -36,7 +36,7 @@ class ActionBar( html5.Div ):
 			self.removeChild( c )
 		if self.currentAction is not None:
 			h3 = html5.H3()
-			h3["class"].append("modul_%s" % self.modul)
+			h3["class"].append("modul_%s" % self.module)
 			h3["class"].append("apptype_%s" %self.appType)
 			h3["class"].append("action_%s" %self.currentAction)
 
@@ -52,12 +52,12 @@ class ActionBar( html5.Div ):
 				span["class"].append( "spacer" )
 				self.appendChild( span )
 			else:
-				if self.modul is not None and self.modul in conf["modules"].keys():
-					handler = conf["modules"][self.modul]["handler"]
+				if self.module is not None and self.module in conf["modules"].keys():
+					handler = conf["modules"][self.module]["handler"]
 				else:
 					handler = ""
 
-				actionWdg = actionDelegateSelector.select( self.modul, handler, action )
+				actionWdg = actionDelegateSelector.select( self.module, handler, action )
 				if actionWdg is not None:
 					actionWdg = actionWdg()
 					self.appendChild( actionWdg )

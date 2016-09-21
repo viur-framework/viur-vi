@@ -19,7 +19,7 @@ class FileBoneExtractor(object):
 		self.format = "$(dest.name)"
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
-		self.modul = modul
+		self.module = modul
 		self.structure = structure
 		self.boneName = boneName
 
@@ -72,7 +72,7 @@ class FileViewBoneDelegate(object):
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
 
-		self.modul = modul
+		self.module = modul
 		self.structure = structure
 		self.boneName = boneName
 
@@ -160,7 +160,7 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 			self.element.insertBefore(img.element, self.element.children.item(0))
 
 	def fetchEntry(self, key):
-		NetworkService.request(self.modul,"view/leaf/"+key,
+		NetworkService.request(self.module,"view/leaf/"+key,
 		                        successHandler=self.onSelectionDataAvailable, cacheable=True)
 
 	def onEdit(self, *args, **kwargs):
@@ -334,15 +334,15 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 
 
-def CheckForFileBoneSingleSelection( modulName, boneName, skelStructure, *args, **kwargs ):
+def CheckForFileBoneSingleSelection( moduleName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
-	return CheckForFileBone( modulName, boneName, skelStructure ) and not isMultiple
+	return CheckForFileBone( moduleName, boneName, skelStructure ) and not isMultiple
 
-def CheckForFileBoneMultiSelection( modulName, boneName, skelStructure, *args, **kwargs ):
+def CheckForFileBoneMultiSelection( moduleName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
-	return CheckForFileBone( modulName, boneName, skelStructure ) and isMultiple
+	return CheckForFileBone( moduleName, boneName, skelStructure ) and isMultiple
 
-def CheckForFileBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForFileBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	#print("CHECKING FILE BONE", skelStucture[boneName]["type"])
 	return( skelStucture[boneName]["type"].startswith("treeitem.file") )
 

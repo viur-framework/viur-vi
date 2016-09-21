@@ -39,9 +39,9 @@ class AddAction( html5.ext.Button ):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = EditPane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_add" ])
+		pane = EditPane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList )
+		edwg = EditWidget( self.parent().parent().module, EditWidget.appList )
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -105,10 +105,10 @@ class EditAction( html5.ext.Button ):
 		for s in selection:
 			self.openEditor( s["key"] )
 
-	def openEditor(self, id ):
-		pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
+	def openEditor(self, key):
+		pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList, key=id )
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key)
 		pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -165,10 +165,10 @@ class CloneAction( html5.ext.Button ):
 		for s in selection:
 			self.openEditor( s["key"] )
 
-	def openEditor(self, id ):
-		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
+	def openEditor(self, key):
+		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appList, key=id, clone=True )
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key, clone=True)
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -230,7 +230,7 @@ class DeleteAction( html5.ext.Button ):
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
 		for x in deleteList:
-			NetworkService.request( self.parent().parent().modul, "delete", {"key": x}, secure=True, modifies=True )
+			NetworkService.request( self.parent().parent().module, "delete", {"key": x}, secure=True, modifies=True )
 
 	def resetLoadingState(self):
 		pass
@@ -272,7 +272,7 @@ class ListPreviewAction( html5.Span ):
 
 	def onAttach(self):
 		super(ListPreviewAction,self).onAttach()
-		modul = self.parent().parent().modul
+		modul = self.parent().parent().module
 		if modul in conf["modules"].keys():
 			modulConfig = conf["modules"][modul]
 			if "previewurls" in modulConfig.keys() and modulConfig["previewurls"]:
@@ -298,8 +298,8 @@ class ListPreviewAction( html5.Span ):
 			print(newUrl)
 
 			newUrl = newUrl \
-						.replace( "{{modul}}", self.parent().parent().modul)\
-							.replace("{{module}}", self.parent().parent().modul)
+						.replace( "{{modul}}", self.parent().parent().module)\
+							.replace("{{module}}", self.parent().parent().module)
 
 			for k, v in entry.items():
 				newUrl = newUrl.replace("{{%s}}" % k, v)
@@ -308,7 +308,7 @@ class ListPreviewAction( html5.Span ):
 
 			print(newUrl)
 			eval("""window.open('"""+newUrl+"""', 'ViPreview');""")
-			#widget = Preview( self.urls, selection[0], self.parent().parent().modul )
+			#widget = Preview( self.urls, selection[0], self.parent().parent().module )
 			#conf["mainWindow"].stackWidget( widget )
 
 	@staticmethod
@@ -350,7 +350,7 @@ class ListPreviewInlineAction( html5.ext.Button ):
 			return
 
 		# Disable internal Preview by config
-		module = self.parent().parent().modul
+		module = self.parent().parent().module
 		if conf["modules"][module].get("disableInternalPreview", not conf["internalPreview"]):
 			return
 
@@ -362,7 +362,7 @@ class ListPreviewInlineAction( html5.ext.Button ):
 		# Show internal preview when one entry is selected; Else, remove sidebar widget if
 		# it refers to an existing, internal preview.
 		if len(selection) == 1:
-			preview = InternalPreview( self.parent().parent().modul, self.parent().parent()._structure, selection[0])
+			preview = InternalPreview( self.parent().parent().module, self.parent().parent()._structure, selection[0])
 			self.parent().parent().sideBar.setWidget( preview )
 		else:
 			if isinstance( self.parent().parent().sideBar.getWidget(), InternalPreview ):
@@ -549,7 +549,7 @@ class ReloadAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		self["class"].append("is_loading")
-		NetworkService.notifyChange( self.parent().parent().modul )
+		NetworkService.notifyChange( self.parent().parent().module )
 
 	def resetLoadingState(self):
 		if "is_loading" in self["class"]:
@@ -568,7 +568,7 @@ class ListSelectFilterAction( html5.ext.Button ):
 
 	def onAttach(self):
 		super(ListSelectFilterAction,self).onAttach()
-		modul = self.parent().parent().modul
+		modul = self.parent().parent().module
 		if self.parent().parent().filterID:
 			#Its a predefined search - we wont override this
 			self["disabled"] = True
@@ -585,7 +585,7 @@ class ListSelectFilterAction( html5.ext.Button ):
 			self.parent().parent().sideBar.setWidget(None)
 			self.filterSelector = None
 		else:
-			self.filterSelector = FilterSelector(self.parent().parent().modul)
+			self.filterSelector = FilterSelector(self.parent().parent().module)
 			self.parent().parent().sideBar.setWidget(self.filterSelector)
 
 	@staticmethod
@@ -650,10 +650,10 @@ class RecurrentDateAction( html5.ext.Button ):
 		for s in selection:
 			self.openEditor( s["key"] )
 
-	def openEditor(self, id ):
-		pane = Pane(translate("Recurrent Events"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "action_edit" ])
+	def openEditor(self, key):
+		pane = Pane(translate("Recurrent Events"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = RepeatDatePopup(self.parent().parent().modul, key=id)
+		edwg = RepeatDatePopup(self.parent().parent().module, key=key)
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -690,7 +690,7 @@ class CsvExportAction( html5.ext.Button ):
 		return actionName == "exportcsv" and (handler == "list" or handler.startswith("list."))
 
 	def onClick(self, sender=None):
-		pane = Pane(translate("Csv Exporter"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_list", "exportcsv" ])
+		pane = Pane(translate("Csv Exporter"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "exportcsv" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = CsvExport(self.parent().parent())
 		pane.addWidget( edwg )
