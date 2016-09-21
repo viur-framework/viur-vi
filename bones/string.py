@@ -9,11 +9,11 @@ from i18n import translate
 
 
 class StringBoneExtractor(object):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
 		super(StringBoneExtractor, self).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName = modulName
+		self.moduleName = moduleName
 
 	def render(self, data, field):
 		if field in data.keys():
@@ -35,11 +35,11 @@ class StringBoneExtractor(object):
 
 
 class StringViewBoneDelegate( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( StringViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -137,9 +137,9 @@ class Tag(html5.Span):
 		self.parentBone.currentTagToDrag = None
 
 class StringEditBone(html5.Div):
-	def __init__(self, modulName, boneName, readOnly, multiple=False, languages=None, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, readOnly, multiple=False, languages=None, *args, **kwargs ):
 		super( StringEditBone,  self ).__init__( *args, **kwargs )
-		self.modulName = modulName
+		self.moduleName = moduleName
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.multiple = multiple
@@ -232,7 +232,7 @@ class StringEditBone(html5.Div):
 				self.input["readonly"] = True
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 
 		if boneName in skelStructure.keys():
@@ -244,7 +244,7 @@ class StringEditBone(html5.Div):
 				languages = skelStructure[ boneName ]["languages"]
 			else:
 				languages = None
-		return( StringEditBone( modulName, boneName, readOnly, multiple=multiple, languages=languages ) )
+		return( StringEditBone( moduleName, boneName, readOnly, multiple=multiple, languages=languages ) )
 
 	def onLangBtnClicked(self, btn):
 		self.setLang( btn.lang )
@@ -399,7 +399,7 @@ class StringEditBone(html5.Div):
 		return tag
 
 
-def CheckForStringBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForStringBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return str(skelStucture[boneName]["type"]).startswith("str")
 
 
@@ -408,7 +408,7 @@ class ExtendedStringSearch( html5.Div ):
 		super( ExtendedStringSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.modul = modul
+		self.module = modul
 		self.opMode = extension["mode"]
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		assert self.opMode in ["equals","from", "to", "prefix","range"]

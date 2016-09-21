@@ -47,8 +47,8 @@ class TopBarWidget( html5.Header ):
 		self.modulImg = html5.Label()
 		self.modulContainer.appendChild(self.modulImg)
 
-		self.modulName = html5.Span()
-		self.modulContainer.appendChild( self.modulName )
+		self.moduleName = html5.Span()
+		self.modulContainer.appendChild( self.moduleName )
 
 		for icon in conf[ "toplevelactions" ]:
 			widget = toplevelActionSelector.select( icon )
@@ -62,13 +62,13 @@ class TopBarWidget( html5.Header ):
 	def setCurrentModulDescr(self, descr, iconURL=None, iconClasses=None):
 		for c in self.modulImg._children[:]:
 			self.modulImg.removeChild(c)
-		for c in self.modulName._children[:]:
-			self.modulName.removeChild( c )
+		for c in self.moduleName._children[:]:
+			self.moduleName.removeChild( c )
 		for c in self.modulImg["class"]:
 			self.modulImg["class"].remove(c)
 
 		descr = html5.utils.unescape(descr)
-		self.modulName.appendChild(html5.TextNode(descr))
+		self.moduleName.appendChild(html5.TextNode(descr))
 
 		if iconURL is not None:
 			img = html5.Img()

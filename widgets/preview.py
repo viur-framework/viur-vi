@@ -6,7 +6,7 @@ class Preview( html5.Div ):
 		super( Preview, self ).__init__( *args, **kwargs )
 		self.urls = urls
 		self.entry = entry
-		self.modul = modul
+		self.module = modul
 		containerDiv = html5.Div()
 		containerDiv["class"].append("actionbar")
 		self.appendChild(containerDiv)
@@ -35,7 +35,7 @@ class Preview( html5.Div ):
 		self.setUrl( newUrl )
 
 	def setUrl(self, url ):
-		url = url.replace("{{id}}",self.entry["id"]).replace("{{modul}}",self.modul )
+		url = url.replace("{{id}}",self.entry["id"]).replace("{{modul}}",self.module )
 		self.previewFrame["src"] = url
 
 	def doClose(self, *args, **kwargs ):

@@ -28,8 +28,8 @@ class AddLeafAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		pane = Pane("Add", closeable=True)
-		conf["mainWindow"].stackPane( pane, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_add_leaf" ] )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
+		conf["mainWindow"].stackPane( pane, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_add_leaf" ] )
+		edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -60,9 +60,9 @@ class AddNodeAction( html5.ext.Button ):
 		return  correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane( translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_add_node" ])
+		pane = Pane( translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_add_node" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, node=self.parent().parent().node, skelType="node" )
+		edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="node" )
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -95,7 +95,7 @@ class EditAction( html5.ext.Button ):
 
 	def onSelectionActivated(self, table, selection ):
 		if not self.parent().parent().isSelector and len(selection)==1:
-			pane = Pane( translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
+			pane = Pane( translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			if isinstance( selection[0], self.parent().parent().nodeWidget):
 				skelType = "node"
@@ -103,7 +103,7 @@ class EditAction( html5.ext.Button ):
 				skelType = "leaf"
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(selection[0])))
-			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=selection[0].data["key"], skelType=skelType)
+			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=selection[0].data["key"], skelType=skelType)
 			pane.addWidget( edwg )
 			pane.focus()
 
@@ -142,7 +142,7 @@ class EditAction( html5.ext.Button ):
 				skelType = "leaf"
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(s)))
-			edwg = EditWidget( self.parent().parent().modul, EditWidget.appTree, key=s.data["key"], skelType=skelType, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_tree", "action_edit" ])
+			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=s.data["key"], skelType=skelType, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
 			pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -206,9 +206,9 @@ class DeleteAction( html5.ext.Button ):
 		deleteList = dialog.deleteList
 		for x in deleteList:
 			if isinstance(x,self.parent().parent().nodeWidget ):
-				NetworkService.request( self.parent().parent().modul, "delete/node", {"key": x.data["key"]}, secure=True, modifies=True )
+				NetworkService.request( self.parent().parent().module, "delete/node", {"key": x.data["key"]}, secure=True, modifies=True )
 			elif isinstance(x,self.parent().parent().leafWidget ):
-				NetworkService.request( self.parent().parent().modul, "delete/leaf", {"key": x.data["key"]}, secure=True, modifies=True )
+				NetworkService.request( self.parent().parent().module, "delete/leaf", {"key": x.data["key"]}, secure=True, modifies=True )
 
 	def resetLoadingState(self):
 		pass
@@ -229,7 +229,7 @@ class ReloadAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		self["class"].append("is_loading")
-		NetworkService.notifyChange( self.parent().parent().modul )
+		NetworkService.notifyChange( self.parent().parent().module )
 
 	def resetLoadingState(self):
 		if "is_loading" in self["class"]:
@@ -257,7 +257,7 @@ class SelectRootNode( html5.Select ):
 
 	def update(self):
 		self.removeAllChildren()
-		NetworkService.request( self.parent().parent().modul, "listRootNodes",
+		NetworkService.request( self.parent().parent().module, "listRootNodes",
 		                            successHandler=self.onRootNodesAvaiable,
 		                                cacheable=True )
 

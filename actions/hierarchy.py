@@ -28,9 +28,9 @@ class AddAction( html5.ext.Button ):
 
 
 	def onClick(self, sender=None):
-		pane = Pane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_hierarchy", "action_add" ])
+		pane = Pane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_hierarchy", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appHierarchy, node=self.parent().parent().rootNode )
+		edwg = EditWidget( self.parent().parent().module, EditWidget.appHierarchy, node=self.parent().parent().rootNode )
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -94,10 +94,10 @@ class EditAction( html5.ext.Button ):
 		for s in selection:
 			self.openEditor( s["key"] )
 
-	def openEditor( self, id ):
+	def openEditor(self, key):
 		pane = Pane(translate("Edit"), closeable=True)
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appHierarchy, key=id)
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy, key=key)
 		pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -152,11 +152,11 @@ class CloneAction( html5.ext.Button ):
 		for s in selection:
 			self.openEditor( s["key"] )
 
-	def openEditor(self, id ):
-		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().modul, "apptype_hierarchy", "action_edit" ])
+	def openEditor(self, key):
+		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_hierarchy", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().modul, EditWidget.appHierarchy,
-		                        node=self.parent().parent().rootNode, key=id, clone=True )
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy,
+		                  node=self.parent().parent().rootNode, key=key, clone=True)
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -219,7 +219,7 @@ class DeleteAction( html5.ext.Button ):
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
 		for x in deleteList:
-			NetworkService.request( self.parent().parent().modul, "delete", {"key": x}, secure=True, modifies=True )
+			NetworkService.request( self.parent().parent().module, "delete", {"key": x}, secure=True, modifies=True )
 
 	def resetLoadingState(self):
 		pass
@@ -242,7 +242,7 @@ class ReloadAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		self["class"].append("is_loading")
-		NetworkService.notifyChange( self.parent().parent().modul )
+		NetworkService.notifyChange( self.parent().parent().module )
 
 	def resetLoadingState(self):
 		if "is_loading" in self["class"]:
@@ -270,7 +270,7 @@ class SelectRootNode( html5.Select ):
 
 	def update(self):
 		self.removeAllChildren()
-		NetworkService.request( self.parent().parent().modul, "listRootNodes",
+		NetworkService.request( self.parent().parent().module, "listRootNodes",
 		                            successHandler=self.onRootNodesAvaiable,
 		                                cacheable=True )
 
