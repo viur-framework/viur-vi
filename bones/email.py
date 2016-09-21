@@ -8,11 +8,11 @@ from widgets.edit import InvalidBoneValueException
 import re
 
 class EmailBoneExtractor(object):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( EmailBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render(self, data, field):
 		if field in data.keys():
@@ -20,8 +20,8 @@ class EmailBoneExtractor(object):
 
 
 class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
-		super( EmailViewBoneDelegate, self ).__init__( modulName, boneName, skelStructure, *args, **kwargs)
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
+		super( EmailViewBoneDelegate, self ).__init__( moduleName, boneName, skelStructure, *args, **kwargs)
 
 	def getViewElement(self,labelstr,datafield):
 
@@ -42,13 +42,13 @@ class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
 		return(aa)
 
 class EmailEditBone( strBone.StringEditBone ):
-	def __init__(self, modulName, boneName,readOnly,*args, **kwargs ):
-		super( EmailEditBone,  self ).__init__( modulName, boneName,readOnly, *args, **kwargs )
+	def __init__(self, moduleName, boneName,readOnly,*args, **kwargs ):
+		super( EmailEditBone,  self ).__init__( moduleName, boneName,readOnly, *args, **kwargs )
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( EmailEditBone( modulName, boneName, readOnly ) )
+		return( EmailEditBone( moduleName, boneName, readOnly ) )
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
@@ -67,7 +67,7 @@ class EmailEditBone( strBone.StringEditBone ):
 		pass
 
 
-def CheckForEmailBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForEmailBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="str.email" )
 
 #Register this Bone in the global queue

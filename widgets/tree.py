@@ -23,7 +23,7 @@ class NodeWidget( html5.Div ):
 			@type structure: List
 		"""
 		super( NodeWidget, self ).__init__( *args, **kwargs )
-		self.modul = modul
+		self.module = modul
 		self.data = data
 		self.structure = structure
 		self.buildDescription()
@@ -40,9 +40,9 @@ class NodeWidget( html5.Div ):
 			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
 				params = boneInfo["params"]
 				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
-					wdg = viewDelegateSelector.select( self.modul, boneName, utils.boneListToDict(self.structure) )
+					wdg = viewDelegateSelector.select( self.module, boneName, utils.boneListToDict(self.structure) )
 					if wdg is not None:
-						self.appendChild( wdg(self.modul, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
+						self.appendChild( wdg(self.module, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
 						hasDescr = True
 		if not hasDescr:
 			self.appendChild( html5.TextNode( self.data["name"]))
@@ -80,7 +80,7 @@ class NodeWidget( html5.Div ):
 			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
 		except:
 			return
-		NetworkService.request(self.modul,"move",{"skelType": nodeType, "key":srcKey, "destNode": self.data["key"]}, modifies=True, secure=True)
+		NetworkService.request(self.module,"move",{"skelType": nodeType, "key":srcKey, "destNode": self.data["key"]}, modifies=True, secure=True)
 		event.preventDefault()
 		event.stopPropagation()
 
@@ -100,7 +100,7 @@ class LeafWidget( html5.Div ):
 			@type structure: List
 		"""
 		super( LeafWidget, self ).__init__( *args, **kwargs )
-		self.modul = modul
+		self.module = modul
 		self.data = data
 		self.structure = structure
 		self.buildDescription()
@@ -118,9 +118,9 @@ class LeafWidget( html5.Div ):
 			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
 				params = boneInfo["params"]
 				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
-					wdg = viewDelegateSelector.select( self.modul, boneName, utils.boneListToDict(self.structure) )
+					wdg = viewDelegateSelector.select( self.module, boneName, utils.boneListToDict(self.structure) )
 					if wdg is not None:
-						self.appendChild( wdg(self.modul, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
+						self.appendChild( wdg(self.module, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
 						hasDescr = True
 		if not hasDescr:
 			self.appendChild( html5.TextNode( self.data["name"]))
@@ -285,7 +285,7 @@ class TreeWidget( html5.Div ):
 		"""
 		super( TreeWidget, self ).__init__( )
 		self["class"].append("tree")
-		self.modul = modul
+		self.module = modul
 		self.rootNode = rootNode
 		self.node = node or rootNode
 		self.actionBar = ActionBar( modul, "tree" )
@@ -305,7 +305,7 @@ class TreeWidget( html5.Div ):
 		if self.rootNode:
 			self.reloadData()
 		else:
-			NetworkService.request(self.modul,"listRootNodes", successHandler=self.onSetDefaultRootNode)
+			NetworkService.request(self.module,"listRootNodes", successHandler=self.onSetDefaultRootNode)
 		self.path = []
 		self.sinkEvent( "onClick" )
 		#Proxy some events and functions of the original table
@@ -339,13 +339,13 @@ class TreeWidget( html5.Div ):
 
 
 	def onDataChanged(self, module, **kwargs):
-		if module != self.modul:
+		if module != self.module:
 
 			isRootNode = False
 			for k, v in conf["modules"].items():
 				if (k == module
 				    and v.get("handler") == "list"
-				    and v.get("rootNodeOf") == self.modul):
+				    and v.get("rootNodeOf") == self.module):
 
 					isRootNode = True
 					break
@@ -421,10 +421,10 @@ class TreeWidget( html5.Div ):
 			self.pathList.removeChild( c )
 		for p in [None]+self.path:
 			if p is None:
-				c = NodeWidget( self.modul, {"key":self.rootNode,"name":"root"}, [] )
+				c = NodeWidget( self.module, {"key":self.rootNode,"name":"root"}, [] )
 				c["class"].append("is_rootnode")
 			else:
-				c = NodeWidget( self.modul, p, [] )
+				c = NodeWidget( self.module, p, [] )
 			self.pathList.appendChild( c )
 			#DOM.appendChild( self.pathList, c.getElement() )
 			#c.onAttach()
@@ -441,12 +441,12 @@ class TreeWidget( html5.Div ):
 		if "amount" not in params:
 			params[ "amount" ] = self._batchSize
 
-		r = NetworkService.request(self.modul,"list/node", params,
+		r = NetworkService.request(self.module,"list/node", params,
 		                           successHandler=self.onRequestSucceded,
 		                           failureHandler=self.showErrorMsg )
 		r.reqType = "node"
 		self._currentRequests.append( r )
-		r = NetworkService.request(self.modul,"list/leaf", params,
+		r = NetworkService.request(self.module,"list/leaf", params,
 		                           successHandler=self.onRequestSucceded,
 		                           failureHandler=self.showErrorMsg )
 		r.reqType = "leaf"
@@ -459,9 +459,9 @@ class TreeWidget( html5.Div ):
 		data = NetworkService.decode( req )
 		for skel in data["skellist"]:
 			if req.reqType=="node":
-				n = self.nodeWidget( self.modul, skel, data["structure"] )
+				n = self.nodeWidget( self.module, skel, data["structure"] )
 			else:
-				n = self.leafWidget( self.modul, skel, data["structure"] )
+				n = self.leafWidget( self.module, skel, data["structure"] )
 
 			self.entryFrame.appendChild(n)
 			self.entryFrame.sortChildren( self.getChildKey )
@@ -470,7 +470,7 @@ class TreeWidget( html5.Div ):
 			self._currentCursor[ req.reqType ] = data["cursor"]
 
 			req.params[ "cursor" ] = data["cursor"]
-			r = NetworkService.request(self.modul,"list/%s" % req.reqType, req.params,
+			r = NetworkService.request(self.module,"list/%s" % req.reqType, req.params,
 		                           successHandler=self.onRequestSucceded,
 		                           failureHandler=self.showErrorMsg )
 			r.reqType = req.reqType

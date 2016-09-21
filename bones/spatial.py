@@ -7,7 +7,7 @@ from priorityqueue import editBoneSelector
 
 
 class SpatialBone(html5.Div):
-	def __init__(self, modulName, boneName, readOnly, *args, **kwargs):
+	def __init__(self, moduleName, boneName, readOnly, *args, **kwargs):
 		super(SpatialBone, self).__init__(*args, **kwargs)
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -17,17 +17,17 @@ class SpatialBone(html5.Div):
 		self.longitude["type"] = "number"
 		self.appendChild(self.latitude)
 		lbl = html5.Label(translate("longitude"))
-		lbl["for"] == modulName + "_" + boneName + "_longitude"
+		lbl["for"] == moduleName + "_" + boneName + "_longitude"
 		self.appendChild(lbl)
-		self.longitude["name"] = modulName + "_" + boneName + "_longitude"
+		self.longitude["name"] = moduleName + "_" + boneName + "_longitude"
 		self.appendChild(self.longitude)
 		if self.readOnly:
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure(modulName, boneName, skelStructure):
+	def fromSkelStructure(moduleName, boneName, skelStructure):
 		readOnly = "readonly" in skelStructure[boneName].keys() and skelStructure[boneName]["readonly"]
-		return SpatialBone(modulName, boneName, readOnly)
+		return SpatialBone(moduleName, boneName, readOnly)
 
 	def unserialize(self, data):
 		try:
@@ -45,7 +45,7 @@ class SpatialBone(html5.Div):
 		pass
 
 
-def CheckForSpatialBone(modulName, boneName, skelStucture, *args, **kwargs):
+def CheckForSpatialBone(moduleName, boneName, skelStucture, *args, **kwargs):
 	tmp = str(skelStucture[boneName]["type"]).startswith("spatial")
 	return tmp
 

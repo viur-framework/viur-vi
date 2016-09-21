@@ -12,7 +12,7 @@ class DateBoneExtractor( object ):
 		super( DateBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName = moduleName
+		self.moduleName = moduleName
 
 	def render(self, data, field):
 		if not(self.boneName in self.skelStructure
@@ -56,7 +56,7 @@ class DateViewBoneDelegate( object ):
 		super( DateViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName = moduleName
+		self.moduleName = moduleName
 
 	def render( self, data, field ):
 

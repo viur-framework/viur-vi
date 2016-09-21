@@ -7,11 +7,11 @@ from event import EventDispatcher
 from i18n import translate
 
 class BooleanBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( BooleanBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName = modulName
+		self.moduleName = moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -20,11 +20,11 @@ class BooleanBoneExtractor( object ):
 
 
 class BooleanViewBoneDelegate( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( BooleanViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName = modulName
+		self.moduleName = moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -33,7 +33,7 @@ class BooleanViewBoneDelegate( object ):
 
 class BooleanEditBone( html5.Input ):
 
-	def __init__(self, modulName, boneName,readOnly, *args, **kwargs ):
+	def __init__(self, moduleName, boneName,readOnly, *args, **kwargs ):
 		super( BooleanEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -43,9 +43,9 @@ class BooleanEditBone( html5.Input ):
 
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( BooleanEditBone( modulName, boneName, readOnly ) )
+		return( BooleanEditBone( moduleName, boneName, readOnly ) )
 
 	##read
 	def unserialize(self, data, extendedErrorInformation=None):
@@ -66,7 +66,7 @@ class ExtendedBooleanSearch( html5.Div ):
 		super( ExtendedBooleanSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.modul = modul
+		self.module = modul
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
@@ -105,7 +105,7 @@ class ExtendedBooleanSearch( html5.Div ):
 
 
 
-def CheckForBooleanBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForBooleanBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="bool" )
 
 #Register this Bone in the global queue
