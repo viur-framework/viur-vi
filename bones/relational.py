@@ -289,7 +289,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		if self.ie:
 			res.update(self.ie.doSave())
 		res["key"] = self.selection["dest"]["key"]
-		r = {"%s0.%s" % (self.boneName, k): v for (k,v ) in res.items()}
+		r = {"%s.0.%s" % (self.boneName, k): v for (k,v ) in res.items()}
 		return r
 		#return { self.boneName+".dest": self.selection["dest"]["key"], self.boneName+".rel": self.ie.doSave} if self.selection is not None else {}
 
@@ -633,9 +633,9 @@ class RelationalMultiSelectionBone(html5.Div):
 			currRes = entry.serialize()
 			if isinstance( currRes, dict ):
 				for k,v in currRes.items():
-					res["%s%s.%s" % (self.boneName,idx,k) ] = v
+					res["%s.%s.%s" % (self.boneName,idx,k) ] = v
 			else:
-				res["%s%s.key" % (self.boneName,idx) ] = currRes
+				res["%s.%s.key" % (self.boneName,idx) ] = currRes
 			idx += 1
 		return( res )
 		#return( { self.boneName: [x.data["key"] for x in self.entries]} )
