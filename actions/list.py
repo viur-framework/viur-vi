@@ -237,53 +237,57 @@ class DeleteAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
-class ListPreviewAction( html5.Span ):
+class ListPreviewAction(html5.Span):
+
 	def __init__(self, *args, **kwargs ):
-		super( ListPreviewAction, self ).__init__( *args, **kwargs )
+		super(ListPreviewAction, self ).__init__(*args, **kwargs)
+
 		self.urlCb = html5.Select()
-		self.appendChild( self.urlCb )
+		self.appendChild(self.urlCb)
+
 		btn = html5.ext.Button( translate("Preview"), callback=self.onClick )
 		btn["class"] = "icon preview"
 		self.appendChild(btn)
+
 		self.urls = None
 
 	def onChange(self, event):
 		event.stopPropagation()
 		newUrl = self.urlCb["options"].item(self.urlCb["selectedIndex"]).value
-		self.setUrl( newUrl )
+		self.setUrl(newUrl)
 
 	def rebuildCB(self, *args, **kwargs):
-		self.urlCb.element.innerHTML = ""
+		self.urlCb.removeAllChildren()
 
-		if not isinstance(self.urls, dict):
-			self.urlCb["style"]["display"] = "none"
+		if not isinstance(self.urls, dict) or len(self.urls.keys()) == 1:
+			self.urlCb.hide()
 			return
 
-		for name,url in self.urls.items():
+		for name, url in self.urls.items():
 			o = html5.Option()
 			o["value"] = url
 			o.appendChild(html5.TextNode(name))
 			self.urlCb.appendChild(o)
 
-		if len( self.urls.keys() ) == 1:
-			self.urlCb["style"]["display"] = "none"
-		else:
-			self.urlCb["style"]["display"] = ""
+		self.urlCb.show()
 
 	def onAttach(self):
 		super(ListPreviewAction,self).onAttach()
-		modul = self.parent().parent().module
-		if modul in conf["modules"].keys():
-			modulConfig = conf["modules"][modul]
-			if "previewurls" in modulConfig.keys() and modulConfig["previewurls"]:
-				self.urls = modulConfig["previewurls"]
-				self.rebuildCB()
 
+		module = self.parent().parent().module
+		if module in conf["modules"].keys():
+			moduleConfig = conf["modules"][module]
+
+			self.urls = moduleConfig.get("preview", moduleConfig.get("previewurls"))
+			if self.urls:
+				self.rebuildCB()
 
 	def onClick(self, sender=None):
 		if self.urls is None:
 			return
+
 		selection = self.parent().parent().getCurrentSelection()
+
 		if not selection:
 			return
 
@@ -295,8 +299,6 @@ class ListPreviewAction( html5.Span ):
 			else:
 				newUrl = self.urlCb["options"].item(self.urlCb["selectedIndex"]).value
 
-			print(newUrl)
-
 			newUrl = newUrl \
 						.replace( "{{modul}}", self.parent().parent().module)\
 							.replace("{{module}}", self.parent().parent().module)
@@ -306,10 +308,8 @@ class ListPreviewAction( html5.Span ):
 
 			newUrl = newUrl.replace("'", "\\'")
 
-			print(newUrl)
-			eval("""window.open('"""+newUrl+"""', 'ViPreview');""")
-			#widget = Preview( self.urls, selection[0], self.parent().parent().module )
-			#conf["mainWindow"].stackWidget( widget )
+			target = "%s-%s" % (self.parent().parent().module, entry.get("key"))
+			eval("""window.open('""" + newUrl + """', '""" + target + """');""")
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -320,10 +320,7 @@ class ListPreviewAction( html5.Span ):
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
-		isAvailable = False
-
-		if "previewurls" in conf["modules"][module].keys() and conf["modules"][module]["previewurls"]:
-			isAvailable = True
+		isAvailable = conf["modules"][module].get("preview", conf["modules"][module].get("previewurls"))
 
 		return correctAction and correctHandler and hasAccess and not isDisabled and isAvailable
 
