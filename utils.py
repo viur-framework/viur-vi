@@ -83,6 +83,8 @@ def formatString(format, data, structure = None, prefix = None, _rec = 0):
 
 		elif isinstance(val, list) and len(val) > 0 and isinstance(val[0], dict):
 			res = formatString(res, val[0], structure, prefix + [key], _rec = _rec + 1)
+		elif isinstance(val, list):
+			val = ", ".join(val)
 
 		res = res.replace("$(%s)" % (".".join(prefix + [key])), str(val))
 
