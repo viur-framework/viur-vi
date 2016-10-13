@@ -36,7 +36,7 @@ class InternalEdit(html5.Div):
 	def renderStructure(self, readOnly = False):
 		self.bones = {}
 
-		tmpDict = utils.boneListToDict( self.skelStructure )
+		tmpDict = {k: v for k, v in self.skelStructure}
 		fieldSets = {}
 		currRow = 0
 
@@ -531,7 +531,7 @@ class EditWidget( html5.Div ):
 		self.actionbar.resetLoadingState()
 		self.dataCache = data
 
-		tmpDict = utils.boneListToDict( data["structure"] )
+		tmpDict = {k: v for k, v in data["structure"]}
 		fieldSets = {}
 		currRow = 0
 		hasMissing = False

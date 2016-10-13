@@ -11,7 +11,7 @@ from pane import Pane
 
 def getDefaultValues(structure):
 	defaultValues = {}
-	for k, v in utils.boneListToDict(structure).items():
+	for k, v in {k: v for k, v in structure}.items():
 		if "params" in v.keys() and v["params"] and "defaultValue" in v["params"].keys():
 			defaultValues[k] = v["params"]["defaultValue"]
 

@@ -40,9 +40,12 @@ class NodeWidget( html5.Div ):
 			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
 				params = boneInfo["params"]
 				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
-					wdg = viewDelegateSelector.select( self.module, boneName, utils.boneListToDict(self.structure) )
+
+					structure = {k: v for k, v in self.structure}
+					wdg = viewDelegateSelector.select(self.module, boneName, structure)
+
 					if wdg is not None:
-						self.appendChild( wdg(self.module, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
+						self.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
 						hasDescr = True
 		if not hasDescr:
 			self.appendChild( html5.TextNode( self.data["name"]))
@@ -118,10 +121,14 @@ class LeafWidget( html5.Div ):
 			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
 				params = boneInfo["params"]
 				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
-					wdg = viewDelegateSelector.select( self.module, boneName, utils.boneListToDict(self.structure) )
+
+					structure = {k: v for k, v in self.structure}
+					wdg = viewDelegateSelector.select(self.module, boneName, structure)
+
 					if wdg is not None:
-						self.appendChild( wdg(self.module, boneName, utils.boneListToDict(self.structure) ).render( self.data, boneName ))
+						self.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
 						hasDescr = True
+
 		if not hasDescr:
 			self.appendChild( html5.TextNode( self.data["name"]))
 

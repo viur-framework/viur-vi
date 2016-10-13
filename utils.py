@@ -2,19 +2,6 @@
 import html5
 from config import conf
 
-def boneListToDict(l):
-	"""
-	The server sends the information as list; but the first thing
-	editWidget etc does, is building up an dictionary again.
-	If this hasn't happen yet, we do it here.
-	"""
-
-	res = {}
-	for key, bone in l:
-		res[key] = bone
-
-	return res
-
 def formatString(format, data, structure = None, prefix = None, _rec = 0):
 	"""
 	Parses a string given by format and substitutes placeholders using values specified by data.
