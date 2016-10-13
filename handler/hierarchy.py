@@ -6,13 +6,13 @@ from widgets.edit import EditWidget
 from i18n import translate
 
 class HierarchyHandler( Pane ):
-	def __init__(self, moduleName, modulInfo, *args, **kwargs):
+	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
 		icon = "icons/modules/hierarchy.svg"
-		if "icon" in modulInfo.keys():
-			icon = modulInfo["icon"]
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
 
-		super(HierarchyHandler, self).__init__(modulInfo["visibleName"], icon )
-		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
+		super(HierarchyHandler, self).__init__(moduleInfo["visibleName"], icon )
+		if "hideInMainBar" in moduleInfo.keys() and moduleInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
 		self.moduleName = moduleName
 		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
@@ -38,8 +38,8 @@ class HierarchyHandler( Pane ):
 
 
 	@staticmethod
-	def canHandle( moduleName, modulInfo ):
-		return( modulInfo["handler"]=="hierarchy" or modulInfo["handler"].startswith("hierarchy."))
+	def canHandle( moduleName, moduleInfo ):
+		return( moduleInfo["handler"]=="hierarchy" or moduleInfo["handler"].startswith("hierarchy."))
 
 	def onClick(self, *args, **kwargs ):
 		if not len(self.widgetsDomElm._children):

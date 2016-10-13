@@ -497,7 +497,7 @@ class TreeWidget( html5.Div ):
 			return("2-")
 
 	@staticmethod
-	def canHandle( modul, modulInfo ):
-		return( modulInfo["handler"].startswith("tree." ) )
+	def canHandle( modul, moduleInfo ):
+		return( moduleInfo["handler"].startswith("tree." ) )
 
 displayDelegateSelector.insert( 1, TreeWidget.canHandle, TreeWidget )

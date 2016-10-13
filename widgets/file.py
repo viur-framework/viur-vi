@@ -167,8 +167,8 @@ class FileWidget( TreeWidget ):
 		super( FileWidget, self ).setNode( node )
 
 	@staticmethod
-	def canHandle( modul, modulInfo ):
-		return( modulInfo["handler"].startswith("tree.simple.file" ) )
+	def canHandle( modul, moduleInfo ):
+		return( moduleInfo["handler"].startswith("tree.simple.file" ) )
 
 	def onDragOver(self, event):
 		event.preventDefault()
