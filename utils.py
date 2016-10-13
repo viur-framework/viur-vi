@@ -1,6 +1,4 @@
 #-*- coding: utf-8 -*-
-import html5
-from config import conf
 
 def formatString(format, data, structure = None, prefix = None, language = None, _rec = 0):
 	"""
