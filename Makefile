@@ -11,7 +11,7 @@ VI_CUSTOM	= 	../vi_customizing
 OUTPUT		=	$(wildcard ../appengine/)vi
 DEFAULTOPTS	=	-P Mozilla
 DEBUGOPTS	=	$(DEFAULTOPTS) -d
-DEPLOYOPTS	=	$(DEFAULTOPTS) -O --disable-debug --dynamic-link
+DEPLOYOPTS	=	$(DEFAULTOPTS) -S --disable-debug --dynamic-link
 LESSCOPTS	=	--include-path="$(VI_CUSTOM)/static:public/default"
 
 # Targets
