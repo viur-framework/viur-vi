@@ -58,7 +58,8 @@ class HierarchyItem( html5.Li ):
 
 		self.appendChild(
 				html5.TextNode(
-						html5.utils.unescape(utils.formatString(format, self.data, self.structure))))
+						html5.utils.unescape(utils.formatString(format, self.data, self.structure,
+						                                        language=conf["currentlanguage"]))))
 
 	def onDragOver(self, event):
 		"""
