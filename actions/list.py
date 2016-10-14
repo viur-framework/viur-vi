@@ -245,11 +245,13 @@ class ListPreviewAction(html5.Span):
 		self.urlCb = html5.Select()
 		self.appendChild(self.urlCb)
 
-		btn = html5.ext.Button( translate("Preview"), callback=self.onClick )
+		btn = html5.ext.Button(translate("Preview"), callback=self.onClick)
 		btn["class"] = "icon preview"
 		self.appendChild(btn)
-
 		self.urls = None
+
+		self["disabled"] = True
+		self.isDisabled = True
 
 	def onChange(self, event):
 		event.stopPropagation()
@@ -259,8 +261,11 @@ class ListPreviewAction(html5.Span):
 	def rebuildCB(self, *args, **kwargs):
 		self.urlCb.removeAllChildren()
 
+		if isinstance(self.urls, list):
+			self.urls = {x: x for x in self.urls}
+
 		if not isinstance(self.urls, dict) or len(self.urls.keys()) == 1:
-			self.urlCb.hide()
+			self.urlCb["style"]["display"] = "none"
 			return
 
 		for name, url in self.urls.items():
@@ -269,10 +274,11 @@ class ListPreviewAction(html5.Span):
 			o.appendChild(html5.TextNode(name))
 			self.urlCb.appendChild(o)
 
-		self.urlCb.show()
+		self.urlCb["style"]["display"] = ""
 
 	def onAttach(self):
 		super(ListPreviewAction,self).onAttach()
+		self.parent().parent().selectionChangedEvent.register(self)
 
 		module = self.parent().parent().module
 		if module in conf["modules"].keys():
@@ -281,6 +287,21 @@ class ListPreviewAction(html5.Span):
 			self.urls = moduleConfig.get("preview", moduleConfig.get("previewurls"))
 			if self.urls:
 				self.rebuildCB()
+
+	def onDetach(self):
+		self.parent().parent().selectionChangedEvent.unregister(self)
+		super(ListPreviewAction, self).onDetach()
+
+	def onSelectionChanged(self, table, selection):
+		if len(selection) > 0:
+			if self.isDisabled:
+				self.isDisabled = False
+				self["disabled"] = False
+
+		else:
+			if not self.isDisabled:
+				self["disabled"]= True
+				self.isDisabled = True
 
 	def onClick(self, sender=None):
 		if self.urls is None:
