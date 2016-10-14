@@ -8,21 +8,21 @@ from widgets.edit import EditWidget
 from i18n import translate
 
 class ListHandler( Pane ):
-	def __init__(self, moduleName, modulInfo, isView = False, *args, **kwargs):
+	def __init__(self, moduleName, moduleInfo, isView = False, *args, **kwargs):
 		icon = "icons/modules/list.svg"
-		if "icon" in modulInfo.keys():
-			icon = modulInfo["icon"]
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
 
-		super(ListHandler, self).__init__(modulInfo.get("visibleName", modulInfo["name"]), icon)
+		super(ListHandler, self).__init__(moduleInfo.get("visibleName", moduleInfo["name"]), icon)
 
 		self.moduleName = moduleName
-		self.modulInfo = modulInfo
+		self.moduleInfo = moduleInfo
 
-		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
+		if "hideInMainBar" in moduleInfo.keys() and moduleInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
 		else:
-			if "views" in modulInfo.keys():
-				for view in modulInfo["views"]:
+			if "views" in moduleInfo.keys():
+				for view in moduleInfo["views"]:
 					self.addChildPane(ListHandler(moduleName, view, isView=True))
 
 		if not isView:
@@ -41,10 +41,10 @@ class ListHandler( Pane ):
 		if pathList[1] == "list":
 			filter = None
 			columns = None
-			if "filter" in self.modulInfo.keys():
-				filter = self.modulInfo["filter"]
-			if "columns" in self.modulInfo.keys():
-				columns = self.modulInfo["columns"]
+			if "filter" in self.moduleInfo.keys():
+				filter = self.moduleInfo["filter"]
+			if "columns" in self.moduleInfo.keys():
+				columns = self.moduleInfo["columns"]
 			self.addWidget( ListWidget( self.moduleName, filter=filter, columns=columns ) )
 			self.focus()
 		elif pathList[1] == "add":
@@ -61,23 +61,23 @@ class ListHandler( Pane ):
 			pane.focus()
 
 	@staticmethod
-	def canHandle( moduleName, modulInfo ):
-		return( modulInfo["handler"]=="list" or modulInfo["handler"].startswith("list."))
+	def canHandle( moduleName, moduleInfo ):
+		return( moduleInfo["handler"]=="list" or moduleInfo["handler"].startswith("list."))
 
 	def onClick(self, *args, **kwargs ):
 		if not len(self.widgetsDomElm._children):
 			filter = None
 			columns = None
 
-			if "filter" in self.modulInfo.keys():
-				filter = self.modulInfo["filter"]
+			if "filter" in self.moduleInfo.keys():
+				filter = self.moduleInfo["filter"]
 
-			if "columns" in self.modulInfo.keys():
-				columns = self.modulInfo["columns"]
+			if "columns" in self.moduleInfo.keys():
+				columns = self.moduleInfo["columns"]
 
 			self.addWidget(ListWidget(self.moduleName, filter=filter,
-			                            columns=columns, filterID=self.modulInfo.get("__id"),
-			                            filterDescr=self.modulInfo.get("visibleName", "")))
+			                            columns=columns, filterID=self.moduleInfo.get("__id"),
+			                            filterDescr=self.moduleInfo.get("visibleName", "")))
 
 		super(ListHandler, self).onClick(*args, **kwargs)
 

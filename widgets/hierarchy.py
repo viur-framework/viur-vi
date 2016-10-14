@@ -52,13 +52,14 @@ class HierarchyItem( html5.Li ):
 		format = "$(name)"
 
 		if self.module in conf["modules"].keys():
-			modulInfo = conf["modules"][self.module]
-			if "format" in modulInfo.keys():
-				format = modulInfo["format"]
+			moduleInfo = conf["modules"][self.module]
+			if "format" in moduleInfo.keys():
+				format = moduleInfo["format"]
 
 		self.appendChild(
 				html5.TextNode(
-						html5.utils.unescape(utils.formatString(format, self.data, self.structure))))
+						html5.utils.unescape(utils.formatString(format, self.data, self.structure,
+						                                        language=conf["currentlanguage"]))))
 
 	def onDragOver(self, event):
 		"""

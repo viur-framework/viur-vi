@@ -11,7 +11,7 @@ from pane import Pane
 
 def getDefaultValues(structure):
 	defaultValues = {}
-	for k, v in utils.boneListToDict(structure).items():
+	for k, v in {k: v for k, v in structure}.items():
 		if "params" in v.keys() and v["params"] and "defaultValue" in v["params"].keys():
 			defaultValues[k] = v["params"]["defaultValue"]
 
@@ -44,10 +44,15 @@ class RelationalBoneExtractor(object):
 				val = [val]
 
 			val = ", ".join([(utils.formatString(
-								utils.formatString(self.format, x["dest"], structure["relskel"], prefix=["dest"]),
-									x["rel"], structure["using"], prefix=["rel"]) or x["key"]) for x in val])
+								utils.formatString(self.format, x["dest"], structure["relskel"],
+								                    prefix=["dest"], language=conf["currentlanguage"]),
+									x["rel"], structure["using"],
+										prefix=["rel"], language=conf["currentlanguage"])
+			                    or x["key"]) for x in val])
 		except:
 			#We probably received some garbage
+			print("Cannot build relational format, maybe garbage received?")
+			print(val)
 			val = ""
 
 		return val
@@ -87,20 +92,27 @@ class RelationalViewBoneDelegate(object):
 
 			if structure["using"]:
 				res = "\n".join([(utils.formatString(
-									utils.formatString(self.format, x["dest"], structure["relskel"], prefix=["dest"]),
-										x["rel"], structure["using"], prefix=["rel"]) or x["key"]) for x in val])
+									utils.formatString(self.format, x["dest"], structure["relskel"],
+									                    prefix=["dest"], language=conf["currentlanguage"]),
+										x["rel"], structure["using"],
+											prefix=["rel"], language=conf["currentlanguage"])
+				                  or x["key"]) for x in val])
 			else:
 				res = "\n".join([(utils.formatString(
-									utils.formatString(self.format, x["dest"], structure["relskel"], prefix=["dest"]),
-				                                        x["dest"], structure["relskel"])
-				                        or x["key"]) for x in val])
+									utils.formatString(self.format, x["dest"], structure["relskel"],
+									                    prefix=["dest"], language=conf["currentlanguage"]),
+														x["dest"], structure["relskel"],
+															language=conf["currentlanguage"])
+				                  or x["key"]) for x in val])
 
 			if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
 				res += "\n%s" % translate("and {count} more", count=count - conf["maxMultiBoneEntries"] - 1)
 
 		except:
 			#We probably received some garbage
-			raise
+			print("Cannot build relational format, maybe garbage received?")
+			print(val)
+
 			res = ""
 
 		html5.utils.textToHtml(lbl, res)
@@ -289,7 +301,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		if self.ie:
 			res.update(self.ie.doSave())
 		res["key"] = self.selection["dest"]["key"]
-		r = {"%s0.%s" % (self.boneName, k): v for (k,v ) in res.items()}
+		r = {"%s.0.%s" % (self.boneName, k): v for (k,v ) in res.items()}
 		return r
 		#return { self.boneName+".dest": self.selection["dest"]["key"], self.boneName+".rel": self.ie.doSave} if self.selection is not None else {}
 
@@ -386,13 +398,16 @@ class RelationalSingleSelectionBone(html5.Div):
 
 		if self.using:
 			res = (utils.formatString(
-					utils.formatString(self.format, data["values"], data["structure"], prefix=["dest"]),
-										self.selection["rel"], self.using, prefix=["rel"])
+					utils.formatString(self.format, data["values"], data["structure"],
+					                    prefix=["dest"], language=conf["currentlanguage"]),
+							self.selection["rel"], self.using,
+								prefix=["rel"], language=conf["currentlanguage"])
 		                or data["values"]["key"])
 		else:
 			res = (utils.formatString(
-					utils.formatString(self.format, data["values"], data["structure"], prefix=["dest"]),
-						data["values"], data["structure"])
+					utils.formatString(self.format, data["values"], data["structure"],
+					                    prefix=["dest"], language=conf["currentlanguage"]),
+						data["values"], data["structure"], language=conf["currentlanguage"])
 			                or data["values"]["key"])
 
 		self.selectionTxt["value"] = res
@@ -451,10 +466,12 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			data = self.data
 
 		self.txtLbl.removeAllChildren()
-		txt = utils.formatString(self.parent.format, data["dest"], self.parent.relskel, prefix=["dest"])
+		txt = utils.formatString(self.parent.format, data["dest"], self.parent.relskel,
+		                            prefix=["dest"], language=conf["currentlanguage"])
 
 		if self.ie:
-			txt = utils.formatString(txt, self.ie.doSave(), self.parent.using, prefix=["rel"])
+			txt = utils.formatString(txt, self.ie.doSave(), self.parent.using,
+			                            prefix=["rel"], language=conf["currentlanguage"])
 
 		html5.utils.textToHtml(self.txtLbl, txt)
 
@@ -633,9 +650,9 @@ class RelationalMultiSelectionBone(html5.Div):
 			currRes = entry.serialize()
 			if isinstance( currRes, dict ):
 				for k,v in currRes.items():
-					res["%s%s.%s" % (self.boneName,idx,k) ] = v
+					res["%s.%s.%s" % (self.boneName,idx,k) ] = v
 			else:
-				res["%s%s.key" % (self.boneName,idx) ] = currRes
+				res["%s.%s.key" % (self.boneName,idx) ] = currRes
 			idx += 1
 		return( res )
 		#return( { self.boneName: [x.data["key"] for x in self.entries]} )

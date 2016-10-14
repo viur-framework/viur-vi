@@ -1,21 +1,6 @@
 #-*- coding: utf-8 -*-
-import html5
-from config import conf
 
-def boneListToDict(l):
-	"""
-	The server sends the information as list; but the first thing
-	editWidget etc does, is building up an dictionary again.
-	If this hasn't happen yet, we do it here.
-	"""
-
-	res = {}
-	for key, bone in l:
-		res[key] = bone
-
-	return res
-
-def formatString(format, data, structure = None, prefix = None, _rec = 0):
+def formatString(format, data, structure = None, prefix = None, language = None, _rec = 0):
 	"""
 	Parses a string given by format and substitutes placeholders using values specified by data.
 
@@ -50,7 +35,7 @@ def formatString(format, data, structure = None, prefix = None, _rec = 0):
 	res = format
 
 	if isinstance(data,  list):
-		return ", ".join([formatString(format, x, structure, prefix, _rec = _rec + 1) for x in data])
+		return ", ".join([formatString(format, x, structure, prefix, language, _rec = _rec + 1) for x in data])
 
 	elif isinstance(data, str):
 		return data
@@ -69,9 +54,8 @@ def formatString(format, data, structure = None, prefix = None, _rec = 0):
 			if struct and ("$(%s)" % ".".join(prefix + [key])) in res:
 				langs = struct.get("languages")
 				if langs:
-					print("fomratString", conf["currentlanguage"])
-					if conf["currentlanguage"] in langs and conf["currentlanguage"] in val.keys():
-						val = val[conf["currentlanguage"]]
+					if language and language in langs and language in val.keys():
+						val = val[language]
 					else:
 						val = ", ".join(val.values())
 
@@ -79,10 +63,12 @@ def formatString(format, data, structure = None, prefix = None, _rec = 0):
 					continue
 
 			else:
-				res = formatString(res, val, structure, prefix + [key], _rec = _rec + 1)
+				res = formatString(res, val, structure, prefix + [key], language, _rec = _rec + 1)
 
 		elif isinstance(val, list) and len(val) > 0 and isinstance(val[0], dict):
-			res = formatString(res, val[0], structure, prefix + [key], _rec = _rec + 1)
+			res = formatString(res, val[0], structure, prefix + [key], language, _rec = _rec + 1)
+		elif isinstance(val, list):
+			val = ", ".join(val)
 
 		res = res.replace("$(%s)" % (".".join(prefix + [key])), str(val))
 

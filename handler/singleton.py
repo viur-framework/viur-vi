@@ -3,18 +3,18 @@ from widgets import EditWidget
 from pane import Pane
 
 class SingletonHandler( Pane ):
-	def __init__(self, moduleName, modulInfo, *args, **kwargs):
+	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
 		icon = "icons/modules/singleton.svg"
 
-		if "icon" in modulInfo.keys():
-			icon = modulInfo["icon"]
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
 
-		super(SingletonHandler, self).__init__(modulInfo["visibleName"], icon)
+		super(SingletonHandler, self).__init__(moduleInfo["visibleName"], icon)
 
 		self.moduleName = moduleName
-		self.modulInfo = modulInfo
+		self.moduleInfo = moduleInfo
 
-		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
+		if "hideInMainBar" in moduleInfo.keys() and moduleInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
 
 		initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
@@ -33,8 +33,8 @@ class SingletonHandler( Pane ):
 		self.focus()
 
 	@staticmethod
-	def canHandle( moduleName, modulInfo ):
-		return modulInfo["handler"]=="singleton" or modulInfo["handler"].startswith("singleton.")
+	def canHandle( moduleName, moduleInfo ):
+		return moduleInfo["handler"]=="singleton" or moduleInfo["handler"].startswith("singleton.")
 
 	def onClick(self, *args, **kwargs ):
 		if not self.widgetsDomElm.children():

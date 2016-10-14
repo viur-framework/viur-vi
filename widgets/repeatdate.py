@@ -67,7 +67,8 @@ class RepeatDatePopup(html5.Div):
 			data = NetworkService.decode( request )
 
 		try:
-			skelStructure = utils.boneListToDict(data["structure"])
+			skelStructure = {k: v for k, v in data["structure"]}
+
 		except AttributeError:
 			NetworkService.notifyChange(self.module)
 			conf["mainWindow"].removeWidget( self )

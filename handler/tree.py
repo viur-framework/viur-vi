@@ -6,16 +6,16 @@ from widgets.edit import EditWidget
 
 from i18n import translate
 class TreeHandler( Pane ):
-	def __init__(self, moduleName, modulInfo, *args, **kwargs):
+	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
 		icon = "icons/modules/tree.svg"
 
-		if "icon" in modulInfo.keys():
-			icon = modulInfo["icon"]
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
 
-		super( TreeHandler, self ).__init__(modulInfo["visibleName"], icon )
+		super( TreeHandler, self ).__init__(moduleInfo["visibleName"], icon )
 		self.moduleName = moduleName
-		self.modulInfo = modulInfo
-		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
+		self.moduleInfo = moduleInfo
+		if "hideInMainBar" in moduleInfo.keys() and moduleInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
 		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
 
@@ -29,7 +29,7 @@ class TreeHandler( Pane ):
 	def handleInitialHash(self, pathList, params):
 		assert self.canHandleInitialHash( pathList, params )
 		if pathList[1] == "list":
-			wdg = displayDelegateSelector.select( self.moduleName, self.modulInfo )
+			wdg = displayDelegateSelector.select( self.moduleName, self.moduleInfo )
 			assert wdg is not None, "Got no handler for %s" % self.moduleName
 			self.addWidget( wdg(self.moduleName ) )
 			self.focus()
@@ -41,12 +41,12 @@ class TreeHandler( Pane ):
 			pane.focus()
 
 	@staticmethod
-	def canHandle( moduleName, modulInfo ):
-		return( modulInfo["handler"]=="tree" or modulInfo["handler"].startswith("tree."))
+	def canHandle( moduleName, moduleInfo ):
+		return( moduleInfo["handler"]=="tree" or moduleInfo["handler"].startswith("tree."))
 
 	def onClick(self, *args, **kwargs ):
 		if not len(self.widgetsDomElm._children):
-			wdg = displayDelegateSelector.select( self.moduleName, self.modulInfo )
+			wdg = displayDelegateSelector.select( self.moduleName, self.moduleInfo )
 			assert wdg is not None, "Got no handler for %s" % self.moduleName
 			self.addWidget( wdg(self.moduleName ) )
 		super( TreeHandler, self ).onClick( *args, **kwargs )

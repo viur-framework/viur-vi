@@ -2,7 +2,7 @@ import html5
 from network import NetworkService, DeferredCall
 from config import conf
 from i18n import translate
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class UserLogoutMsg( html5.ext.Popup):
 	pollInterval = 120 # We query the server once a minute
