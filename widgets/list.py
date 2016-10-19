@@ -18,21 +18,21 @@ class ListWidget( html5.Div ):
 		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
 	"""
-	def __init__( self, modul, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
-	                batchSize = None, *args, **kwargs ):
+	def __init__(self, module, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
+	             batchSize = None, *args, **kwargs):
 		"""
-			@param modul: Name of the modul we shall handle. Must be a list application!
-			@type modul: string
+			@param module: Name of the modul we shall handle. Must be a list application!
+			@type module: string
 		"""
-		if not modul in conf["modules"].keys():
-			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=modul))
-			assert modul in conf["modules"].keys()
+		if not module in conf["modules"].keys():
+			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
+			assert module in conf["modules"].keys()
 
 		super( ListWidget, self ).__init__(  )
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
-		self.module = modul
-		self.actionBar = ActionBar( modul, "list", currentAction="list" )
+		self.module = module
+		self.actionBar = ActionBar(module, "list", currentAction="list")
 		self.appendChild( self.actionBar )
 		self.sideBar = SideBar()
 		self.appendChild( self.sideBar )
@@ -40,23 +40,23 @@ class ListWidget( html5.Div ):
 		myView = None
 
 		if filterID:
-			if conf["modules"] and modul in conf["modules"].keys():
-				if "views" in conf["modules"][ modul ].keys() and conf["modules"][ modul ]["views"]:
-					for v in conf["modules"][ modul ]["views"]:
+			if conf["modules"] and module in conf["modules"].keys():
+				if "views" in conf["modules"][ module].keys() and conf["modules"][ module]["views"]:
+					for v in conf["modules"][ module]["views"]:
 						if v["__id"] == filterID:
 							myView = v
 							break
 			if myView and "extendedFilters" in myView.keys() and myView["extendedFilters"]:
-				self.appendChild( CompoundFilter(myView, modul, embed=True))
+				self.appendChild(CompoundFilter(myView, module, embed=True))
 
 		checkboxes = (conf["modules"]
-		                and modul in conf["modules"].keys()
-						and "checkboxSelection" in conf["modules"][modul].keys()
-		                and conf["modules"][modul]["checkboxSelection"])
+		              and module in conf["modules"].keys()
+		              and "checkboxSelection" in conf["modules"][module].keys()
+		              and conf["modules"][module]["checkboxSelection"])
 		indexes = (conf["modules"]
-		            and modul in conf["modules"].keys()
-					and "indexes" in conf["modules"][modul].keys()
-		            and conf["modules"][modul]["indexes"])
+		           and module in conf["modules"].keys()
+		           and "indexes" in conf["modules"][module].keys()
+		           and conf["modules"][module]["indexes"])
 
 		self.table = DataTable( checkboxes=checkboxes, indexes=indexes, *args, **kwargs )
 		self.appendChild( self.table )
@@ -67,8 +67,8 @@ class ListWidget( html5.Div ):
 
 		if isSelector and filter is None and columns is None:
 			#Try to select a reasonable set of cols / filter
-			if conf["modules"] and modul in conf["modules"].keys():
-				tmpData = conf["modules"][modul]
+			if conf["modules"] and module in conf["modules"].keys():
+				tmpData = conf["modules"][module]
 				if "columns" in tmpData.keys():
 					columns = tmpData["columns"]
 				if "filter" in tmpData.keys():
@@ -244,10 +244,6 @@ class ListWidget( html5.Div ):
 		self.table["style"]["display"] = ""
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		self._structure = data["structure"]
-		tmpDict = {}
-
-		for key, bone in data["structure"]:
-			tmpDict[ key ] = bone
 
 		if not self._tableHeaderIsValid:
 			if not self.columns:
@@ -270,10 +266,7 @@ class ListWidget( html5.Div ):
 			return
 
 		boneInfoList = []
-		tmpDict = {}
-
-		for key, bone in self._structure:
-			tmpDict[ key ] = bone
+		tmpDict = {key: bone for key, bone in self._structure}
 
 		fields = [x for x in fields if x in tmpDict.keys()]
 		self.columns = fields
