@@ -258,10 +258,10 @@ class EditWidget( html5.Div ):
 		assert applicationType in [ EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree, EditWidget.appSingleton ] #Invalid Application-Type?
 
 		if applicationType==EditWidget.appHierarchy or applicationType==EditWidget.appTree:
-			assert id is not None or node is not None #Need either an id or an node
+			assert key is not None or node is not None #Need either an id or an node
 
 		if clone:
-			assert id is not None #Need an id if we should clone an entry
+			assert key is not None #Need an id if we should clone an entry
 			assert not applicationType==EditWidget.appSingleton # We cant clone a singleton
 			if applicationType==EditWidget.appHierarchy or applicationType==EditWidget.appTree:
 				assert node is not None #We still need a rootNode for cloning
@@ -277,6 +277,7 @@ class EditWidget( html5.Div ):
 		EditWidget.__editIdx_ += 1
 		self.applicationType = applicationType
 		self.key = key
+		self.mode = "edit" if self.key or applicationType == EditWidget.appSingleton else "add"
 		self.node = node
 		self.skelType = skelType
 		self.clone = clone
@@ -298,11 +299,15 @@ class EditWidget( html5.Div ):
 
 		self.editTaskID = None
 		self.wasInitialRequest = True #Wherever the last request attempted to save data or just fetched the form
-		self.actionbar = ActionBar( self.modul, self.applicationType, "edit" if self.key else "add" )
+		self.actionbar = ActionBar(self.modul, self.applicationType, self.mode)
 		self.appendChild( self.actionbar )
 		self.form = html5.Form()
 		self.appendChild(self.form)
-		self.actionbar.setActions(["save.close","save.continue","reset"])
+
+		if applicationType == EditWidget.appSingleton:
+			self.actionbar.setActions(["save.singleton", "reset"])
+		else:
+			self.actionbar.setActions(["save.close", "save.continue", "reset"])
 
 		self.reloadData()
 

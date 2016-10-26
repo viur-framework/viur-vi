@@ -25,6 +25,25 @@ class SaveContinue( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, SaveContinue.isSuitableFor, SaveContinue )
 
+class SaveSingleton(html5.ext.Button):
+	def __init__(self, *args, **kwargs):
+		super(SaveSingleton, self).__init__(translate("Save"), *args, **kwargs)
+		self["class"] = "icon save close"
+
+	@staticmethod
+	def isSuitableFor(module, handler, actionName):
+		return actionName == "save.singleton"
+
+	def onClick(self, sender=None):
+		self["class"].append("is_loading")
+		self.parent().parent().doSave(closeOnSuccess=False)
+
+	def resetLoadingState(self):
+		if "is_loading" in self["class"]:
+			self["class"].remove("is_loading")
+
+actionDelegateSelector.insert(1, SaveSingleton.isSuitableFor, SaveSingleton)
+
 class SaveClose( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( SaveClose, self ).__init__( translate("Save-Close"), *args, **kwargs )
