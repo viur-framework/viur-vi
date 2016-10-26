@@ -121,6 +121,9 @@ class ListWidget( html5.Div ):
 		                  "|", "preview", "selectfields"]\
 		                 + (["|", "select","close"] if self.isSelector else [])+["|", "reload","selectfilter"]
 
+		#if not self.isSelector:
+		#	defaultActions += ["|", "exportcsv"]
+
 		# Extended actions from view?
 		if view and "actions" in view.keys():
 			if defaultActions[-1] != "|":
