@@ -5,7 +5,7 @@ from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
 from widgets.repeatdate import RepeatDatePopup
-from widgets.csvexport2 import ExportCsvStarter
+from widgets.csvexport import ExportCsvStarter
 from widgets.table import DataTable
 from widgets.preview import Preview
 from sidebarwidgets.internalpreview import InternalPreview
@@ -661,8 +661,6 @@ class RecurrentDateAction( html5.ext.Button ):
 		pass
 
 actionDelegateSelector.insert( 1, RecurrentDateAction.isSuitableFor, RecurrentDateAction )
-
-
 
 class CreateRecurrentAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
