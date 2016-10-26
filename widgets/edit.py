@@ -11,7 +11,6 @@ from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
 from widgets.actionbar import ActionBar
 from i18n import translate
-import logics
 
 class InvalidBoneValueException(ValueError):
 	pass
@@ -269,10 +268,10 @@ class EditWidget( html5.Div ):
 		assert applicationType in [ EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree, EditWidget.appSingleton ] #Invalid Application-Type?
 
 		if applicationType==EditWidget.appHierarchy or applicationType==EditWidget.appTree:
-			assert id is not None or node is not None #Need either an id or an node
+			assert key is not None or node is not None #Need either an id or an node
 
 		if clone:
-			assert id is not None #Need an id if we should clone an entry
+			assert key is not None #Need an id if we should clone an entry
 			assert not applicationType==EditWidget.appSingleton # We cant clone a singleton
 			if applicationType==EditWidget.appHierarchy or applicationType==EditWidget.appTree:
 				assert node is not None #We still need a rootNode for cloning
@@ -288,14 +287,13 @@ class EditWidget( html5.Div ):
 		EditWidget.__editIdx_ += 1
 		self.applicationType = applicationType
 		self.key = key
-		self.mode = "edit" if self.key else "add"
+		self.mode = "edit" if self.key or applicationType == EditWidget.appSingleton else "add"
 		self.node = node
 		self.skelType = skelType
 		self.clone = clone
 		self.bones = {}
 		self.closeOnSuccess = False
 		self.logaction = logaction
-		self.logic = logics.Interpreter()
 
 		self._lastData = {} #Dict of structure and values received
 
@@ -318,54 +316,14 @@ class EditWidget( html5.Div ):
 		self.appendChild( self.actionbar )
 		self.form = html5.Form()
 		self.appendChild(self.form)
-		self.actionbar.setActions(["save.close","save.continue","reset"])
+
+		if applicationType == EditWidget.appSingleton:
+			self.actionbar.setActions(["save.singleton", "reset"])
+		else:
+			self.actionbar.setActions(["save.close", "save.continue", "reset"])
 
 		self.reloadData()
 		self.sinkEvent("onChange")
-
-	def performLogics(self):
-		fields = {}
-		for widget in self.bones.values():
-			fields.update(widget.serializeForPost())
-
-		for key, desc in self.dataCache["structure"]:
-			if desc.get("params") and desc["params"]:
-				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
-					logic = desc["params"].get(event)
-
-					if not logic:
-						continue
-
-					# Compile logic at first run
-					if isinstance(logic, str):
-						desc["params"][event] = self.logic.compile(logic)
-						if desc["params"][event] is None:
-							alert("viurLogics: Parse error in >%s<" % logic)
-							continue
-
-						logic = desc["params"][event]
-
-					res = self.logic.execute(logic, fields)
-					if event == "logic.evaluate":
-						self.bones[key].unserialize({key: str(res)})
-					elif res:
-						if event == "logic.visibleIf":
-							self.containers[key].show()
-						elif event == "logic.readonlyIf":
-							if not self.containers[key]["disabled"]:
-								self.containers[key]["disabled"] = True
-
-						# add more here...
-					else:
-						if event == "logic.visibleIf":
-							self.containers[key].hide()
-						elif event == "logic.readonlyIf":
-							if self.containers[key]["disabled"]:
-								self.containers[key]["disabled"] = False
-						# add more here...
-
-	def onChange(self, event):
-		self.performLogics()
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -675,8 +633,6 @@ class EditWidget( html5.Div ):
 
 		if hasMissing and not self.wasInitialRequest:
 			conf["mainWindow"].log("warning",translate("Could not save entry!"))
-
-		self.performLogics()
 
 	def unserialize(self, data):
 		"""
