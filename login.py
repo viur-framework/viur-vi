@@ -270,21 +270,21 @@ class LoginScreen(Screen):
 		self.show()
 		self.lock()
 
-		if not self.haveLoginHandlers:
-			NetworkService.request("user", "getAuthMethods",
-		                            successHandler=self.onGetAuthMethodsSuccess,
-		                            failureHandler=self.onGetAuthMethodsFailure)
-
-			return
-
-		conf["currentUser"] = None
-
 		#Enforce logout
 		if logout:
 			NetworkService.request("user", "logout",
 					                successHandler=self.onLogoutSuccess,
 					                failureHandler=self.onLogoutSuccess,
 					                secure=True)
+			return
+
+		conf["currentUser"] = None
+
+		if not self.haveLoginHandlers:
+			NetworkService.request("user", "getAuthMethods",
+		                            successHandler=self.onGetAuthMethodsSuccess,
+		                            failureHandler=self.onGetAuthMethodsFailure)
+
 			return
 
 		#Check if already logged in!
@@ -294,6 +294,7 @@ class LoginScreen(Screen):
 		                        failureHandler=self.doShowLogin)
 
 	def onLogoutSuccess(self, *args, **kwargs):
+		conf["currentUser"] = None
 		self.invoke()
 
 	def doShowLogin(self, *args, **kwargs):
@@ -313,7 +314,7 @@ class LoginScreen(Screen):
 			self.loginScreen.redirectNoAdmin()
 
 		print("User already logged in")
-		conf["theApp"].login()
+		conf["theApp"].admin()
 
 	def onGetAuthMethodsSuccess(self, req):
 		answ = NetworkService.decode(req)
