@@ -11,6 +11,7 @@ from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
 from widgets.actionbar import ActionBar
 from i18n import translate
+import logics
 
 class InvalidBoneValueException(ValueError):
 	pass
@@ -294,6 +295,7 @@ class EditWidget( html5.Div ):
 		self.bones = {}
 		self.closeOnSuccess = False
 		self.logaction = logaction
+		self.logic = logics.Interpreter()
 
 		self._lastData = {} #Dict of structure and values received
 
@@ -324,6 +326,50 @@ class EditWidget( html5.Div ):
 
 		self.reloadData()
 		self.sinkEvent("onChange")
+
+	def performLogics(self):
+		fields = {}
+		for widget in self.bones.values():
+			fields.update(widget.serializeForPost())
+
+		for key, desc in self.dataCache["structure"]:
+			if desc.get("params") and desc["params"]:
+				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
+					logic = desc["params"].get(event)
+
+					if not logic:
+						continue
+
+					# Compile logic at first run
+					if isinstance(logic, str):
+						desc["params"][event] = self.logic.compile(logic)
+						if desc["params"][event] is None:
+							alert("viurLogics: Parse error in >%s<" % logic)
+							continue
+
+						logic = desc["params"][event]
+
+					res = self.logic.execute(logic, fields)
+					if event == "logic.evaluate":
+						self.bones[key].unserialize({key: str(res)})
+					elif res:
+						if event == "logic.visibleIf":
+							self.containers[key].show()
+						elif event == "logic.readonlyIf":
+							if not self.containers[key]["disabled"]:
+								self.containers[key]["disabled"] = True
+
+						# add more here...
+					else:
+						if event == "logic.visibleIf":
+							self.containers[key].hide()
+						elif event == "logic.readonlyIf":
+							if self.containers[key]["disabled"]:
+								self.containers[key]["disabled"] = False
+						# add more here...
+
+	def onChange(self, event):
+		self.performLogics()
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -633,6 +679,8 @@ class EditWidget( html5.Div ):
 
 		if hasMissing and not self.wasInitialRequest:
 			conf["mainWindow"].log("warning",translate("Could not save entry!"))
+
+		self.performLogics()
 
 	def unserialize(self, data):
 		"""
