@@ -17,32 +17,56 @@ class Application(html5.Div):
 		conf["theApp"] = self
 
 		# Main Screens
-		self.loginScreen = LoginScreen()
+		self.loginScreen = None
 		self.adminScreen = None
 
-		self.loginScreen.invoke()
+		self.startup()
 
-	def login(self):
+	def startup(self):
+		network.NetworkService.request(None, "/vi/config",
+		                                successHandler=self.startupSuccess,
+										failureHandler=self.startupFailure,
+                                        cacheable=True)
+
+	def startupSuccess(self, req):
+		conf["mainConfig"] = network.NetworkService.decode(req)
+
 		if not self.adminScreen:
 			self.adminScreen = AdminScreen()
 
-		self.loginScreen.hide()
 		self.adminScreen.invoke()
+
+	def startupFailure(self, req, err):
+		if err in [403, 401]:
+			self.login()
+		else:
+			alert("startupFailure TODO")
+
+	def login(self, logout=False):
+		if not self.loginScreen:
+			self.loginScreen = LoginScreen()
+
+		self.loginScreen.invoke(logout=logout)
+
+	def admin(self):
+		if self.loginScreen:
+			self.loginScreen.hide()
+
+		self.startup()
 
 	def logout(self):
 		self.adminScreen.remove()
 		conf["mainWindow"] = self.adminScreen = None
-
-		self.loginScreen.invoke(logout=True)
+		self.login(logout=True)
 
 if __name__ == '__main__':
 	pyjd.setup("public/main.html")
 
 	# Configure vi as network render prefix
 	network.NetworkService.prefix = "/vi"
-
 	conf["currentlanguage"] = i18n.getLanguage()
 
+	# Application
 	app = Application()
 	html5.Body().appendChild(app)
 

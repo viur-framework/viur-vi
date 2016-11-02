@@ -3,6 +3,7 @@ from event import EventDispatcher
 from i18n import translate
 
 conf = {
+	"mainConfig": None,
 	"mainWindow": None,
 	"server": {},
 	"modules": { "_tasks" : { "handler" : "singleton", "name": "Tasks" } },
