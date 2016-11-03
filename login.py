@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
-
 import html5
+
 from network import NetworkService, DeferredCall
 from i18n import translate
 from event import EventDispatcher
@@ -219,7 +219,6 @@ class GoogleAccountLoginHandler(BaseLoginHandler):
 
 	def onLoginClick(self, sender = None):
 		self.lock()
-		eval("window.top.preventViUnloading = false;")
 		eval("window.top.location = \"/vi/user/auth_googleaccount/login\"")
 
 	@staticmethod
@@ -342,6 +341,5 @@ class LoginScreen(Screen):
 		alert("Fail")
 
 	def redirectNoAdmin(self):
-		eval("window.top.preventViUnloading = false;")
 		eval("window.top.location = \"/\"")
 

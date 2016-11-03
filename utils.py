@@ -84,3 +84,17 @@ def getImagePreview(data):
 		return ""
 
 	return None
+
+def setPreventUnloading(mode = True):
+	count = eval("window.top.preventViUnloading")
+
+	print("setPreventUnloading", count, mode)
+
+	if not mode:
+		if count == 0:
+			return
+
+	count += (1 if mode else -1)
+
+	eval("window.top.preventViUnloading = %d;" % count)
+	return count

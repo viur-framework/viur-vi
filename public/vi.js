@@ -1,24 +1,27 @@
 
 
-var preventViUnloading = true;
+var preventViUnloading = 0;
 /** prevent unloading! **/
-if (window.name!="fenster1") {
-    window.onbeforeunload = function() {
-        if( preventViUnloading ) {
-            return "Alle nicht gespeicherte Daten gehen verloren!";
-        } else {
-            return null;
+
+window.onbeforeunload =
+    function(e)
+    {
+        console.log("preventViUnloading = %d", preventViUnloading);
+
+        if( preventViUnloading )
+        {
+            e.returnValue = "Any unsafed data will get lost!";
+            return e.returnValue;
         }
     };
-} else {
-    window.close();
+
+function preventBack()
+{
+    window.history.forward();
 }
 
-
-function preventBack(){window.history.forward();}
-    setTimeout("preventBack()", 0);
-    window.onunload=function(){null};
-
+setTimeout(preventBack(), 0);
+window.onunload = function(){};
 
 function logError(msg, url, line, col, error)
 {
