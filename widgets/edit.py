@@ -296,7 +296,6 @@ class EditWidget(html5.Div):
 		self.logaction = logaction
 
 		self._lastData = {} #Dict of structure and values received
-		self._firstChange = True
 
 		if hashArgs:
 			self._hashArgs = parseHashParameters( hashArgs )
@@ -324,16 +323,12 @@ class EditWidget(html5.Div):
 			self.actionbar.setActions(["save.close", "save.continue", "reset"])
 
 		self.reloadData()
-		self.sinkEvent("onChange")
-
-	def onChange(self, event):
-		if self._firstChange:
-			utils.setPreventUnloading(True)
-			self._firstChange = False
 
 	def onDetach(self):
-		if not self._firstChange:
-			utils.setPreventUnloading(False)
+		utils.setPreventUnloading(False)
+
+	def onAttach(self):
+		utils.setPreventUnloading(True)
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -643,11 +638,6 @@ class EditWidget(html5.Div):
 
 		if hasMissing and not self.wasInitialRequest:
 			conf["mainWindow"].log("warning",translate("Could not save entry!"))
-
-		if not self._firstChange:
-			utils.setPreventUnloading(False)
-
-		self._firstChange = True
 		
 	def unserialize(self, data):
 		"""
