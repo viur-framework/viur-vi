@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
-
 import html5
+
 from config import conf
 from widgets import TopBarWidget
 from widgets.userlogoutmsg import UserLogoutMsg
@@ -342,6 +342,7 @@ class AdminScreen(Screen):
 
 	def removePane(self, pane):
 		assert pane in self.panes, "Cannot remove unknown pane!"
+
 		self.panes.remove( pane )
 		if pane == self.currentPane:
 			if self.panes:
@@ -363,7 +364,7 @@ class AdminScreen(Screen):
 		self.viewport.removeChild( pane.widgetsDomElm )
 
 	def addWidget(self, widget, pane ):
-		pane.addWidget( widget )
+		pane.addWidget(widget)
 
 	def stackWidget(self, widget ):
 		assert self.currentPane is not None, "Cannot stack a widget while no pane is active"
@@ -371,7 +372,8 @@ class AdminScreen(Screen):
 
 	def removeWidget(self, widget ):
 		for pane in self.panes:
-			if pane.containsWidget( widget ):
-				pane.removeWidget( widget )
+			if pane.containsWidget(widget):
+				pane.removeWidget(widget)
 				return
+
 		raise AssertionError("Tried to remove unknown widget %s" % str( widget ))

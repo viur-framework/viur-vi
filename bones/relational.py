@@ -249,13 +249,14 @@ class RelationalSingleSelectionBone(html5.Div):
 		if not self.selection:
 			return
 
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "module_%s" % self.destModule,
-		                                                                    "apptype_list", "action_edit" ] )
+		pane = Pane(translate("Edit"), closeable=True,
+		            iconClasses=["module_%s" % self.destModule, "apptype_list", "action_edit"])
 		conf["mainWindow"].stackPane( pane, focus=True )
 
 		try:
-			edwg = EditWidget( self.destModule, EditWidget.appList, key=self.selection["dest"]["key"] )
-			pane.addWidget( edwg )
+			edwg = EditWidget(self.destModule, EditWidget.appList, key=self.selection["dest"]["key"])
+			pane.addWidget(edwg)
+
 		except AssertionError:
 			conf["mainWindow"].removePane(pane)
 
@@ -360,7 +361,6 @@ class RelationalSingleSelectionBone(html5.Div):
 			self.selectionTxt["value"] = ""
 
 		self.updateButtons()
-
 
 	def updateButtons(self):
 		"""
