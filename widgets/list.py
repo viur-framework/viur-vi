@@ -172,7 +172,7 @@ class ListWidget( html5.Div ):
 			                                    cacheable=True ) )
 			self._currentCursor = None
 		else:
-			self.table.setDataProvider( None )
+			self.table.setDataProvider(None)
 
 	def onAttach(self):
 		super( ListWidget, self ).onAttach()
@@ -230,6 +230,7 @@ class ListWidget( html5.Div ):
 		"""
 		if not req in self._currentRequests:
 			return
+
 		self._currentRequests.remove( req )
 		self.actionBar.resetLoadingState()
 
@@ -257,9 +258,11 @@ class ListWidget( html5.Div ):
 			self.setFields( self.columns )
 
 
-		if "cursor" in data.keys():
+		if data["skellist"] and "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
-			self.table.setDataProvider( self )
+			self.table.setDataProvider(self)
+		else:
+			self.table.setDataProvider(None)
 
 		self.table.extend( data["skellist"] )
 
