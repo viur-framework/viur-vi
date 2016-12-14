@@ -1,14 +1,14 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
+
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from config import conf
 from event import EventDispatcher
 from html5.keycodes import *
 from i18n import translate
+from bones.base import BaseBoneExtractor
 
-
-class StringBoneExtractor(object):
+class StringBoneExtractor(BaseBoneExtractor):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
 		super(StringBoneExtractor, self).__init__()
 		self.skelStructure = skelStructure
@@ -32,7 +32,6 @@ class StringBoneExtractor(object):
 			else:
 				return str('"%s"' % data[field].replace("&quot;", "").replace(";", " ").replace('"', "'"))
 		return conf["empty_value"]
-
 
 class StringViewBoneDelegate( object ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):

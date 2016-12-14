@@ -1,12 +1,12 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from html5.keycodes import *
 from config import conf
+from bones.base import BaseBoneExtractor
 
-class NumericBoneExtractor( object ):
+class NumericBoneExtractor(BaseBoneExtractor):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super(NumericBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure

@@ -5,8 +5,9 @@ from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearch
 from event import EventDispatcher
 from i18n import translate
 from config import conf
+from bones.base import BaseBoneExtractor
 
-class SelectOneBoneExtractor( object ):
+class SelectOneBoneExtractor(BaseBoneExtractor):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( SelectOneBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure

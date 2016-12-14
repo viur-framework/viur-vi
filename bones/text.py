@@ -1,14 +1,14 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
+
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from config import conf
 from widgets.wysiwyg import Wysiwyg
-import utils
 from i18n import translate
+from bones.base import BaseBoneExtractor
 
 
-class TextBoneExtractor(object):
+class TextBoneExtractor(BaseBoneExtractor):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
 		super(TextBoneExtractor, self).__init__()
 		self.skelStructure = skelStructure

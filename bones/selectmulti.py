@@ -1,12 +1,12 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from i18n import translate
 from config import conf
+from bones.base import BaseBoneExtractor
 
-class SelectMultiBoneExtractor( object ):
+class SelectMultiBoneExtractor(BaseBoneExtractor):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super(SelectMultiBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
@@ -24,6 +24,7 @@ class SelectMultiBoneExtractor( object ):
 					if value:
 						result.append(value)
 			return ",".join(result)
+
 		return conf[ "empty_value" ]
 
 class SelectMultiViewBoneDelegate( object ):

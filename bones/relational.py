@@ -8,6 +8,7 @@ from config import conf
 from i18n import translate
 from network import NetworkService
 from pane import Pane
+from bones.base import BaseBoneExtractor
 
 def getDefaultValues(structure):
 	defaultValues = {}
@@ -17,7 +18,7 @@ def getDefaultValues(structure):
 
 	return defaultValues
 
-class RelationalBoneExtractor(object):
+class RelationalBoneExtractor(BaseBoneExtractor):
 	def __init__(self, module, boneName, structure):
 		super(RelationalBoneExtractor, self).__init__()
 		self.format = "$(dest.name)"
@@ -56,6 +57,33 @@ class RelationalBoneExtractor(object):
 			val = ""
 
 		return val
+
+	def raw(self, data, field):
+		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
+
+		if not field in data.keys():
+			return None
+
+		val = data[field]
+		structure = self.structure[self.boneName]
+
+		try:
+			if not isinstance(val, list):
+				val = [val]
+
+			val = [(utils.formatString(
+								utils.formatString(self.format, x["dest"], structure["relskel"],
+								                    prefix=["dest"], language=conf["currentlanguage"]),
+									x["rel"], structure["using"],
+										prefix=["rel"], language=conf["currentlanguage"])
+			                    or x["key"]) for x in val]
+		except:
+			#We probably received some garbage
+			print("Cannot build relational format, maybe garbage received?")
+			print(val)
+			return None
+
+		return val[0] if len(val) == 1 else val
 
 class RelationalViewBoneDelegate(object):
 

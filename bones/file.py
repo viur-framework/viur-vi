@@ -1,7 +1,4 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from event import EventDispatcher
-
 import html5, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from widgets.file import FileWidget, LeafFileWidget
@@ -12,8 +9,9 @@ from i18n import translate
 from network import NetworkService
 from widgets.edit import EditWidget
 from pane import Pane
+from bones.base import BaseBoneExtractor
 
-class FileBoneExtractor(object):
+class FileBoneExtractor(BaseBoneExtractor):
 	def __init__(self, modul, boneName, structure):
 		super(FileBoneExtractor, self).__init__()
 		self.format = "$(dest.name)"
