@@ -7,13 +7,7 @@ from widgets.wysiwyg import Wysiwyg
 from i18n import translate
 from bones.base import BaseBoneExtractor
 
-
 class TextBoneExtractor(BaseBoneExtractor):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
-		super(TextBoneExtractor, self).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName = moduleName
 
 	def render(self, data, field):
 		if field in data.keys():

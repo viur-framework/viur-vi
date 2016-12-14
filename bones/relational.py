@@ -20,15 +20,11 @@ def getDefaultValues(structure):
 
 class RelationalBoneExtractor(BaseBoneExtractor):
 	def __init__(self, module, boneName, structure):
-		super(RelationalBoneExtractor, self).__init__()
+		super(RelationalBoneExtractor, self).__init__(module, boneName, structure)
 		self.format = "$(dest.name)"
 
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
-
-		self.module = module
-		self.structure = structure
-		self.boneName = boneName
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
