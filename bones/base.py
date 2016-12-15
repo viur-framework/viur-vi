@@ -10,7 +10,7 @@ class BaseBoneExtractor(object):
 		super(BaseBoneExtractor, self).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.moduleName=moduleName
+		self.moduleName = moduleName
 
 	def render(self, data, field):
 		if field in data.keys():

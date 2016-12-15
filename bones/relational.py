@@ -61,7 +61,7 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 			return None
 
 		val = data[field]
-		structure = self.structure[self.boneName]
+		structure = self.skelStructure[self.boneName]
 
 		try:
 			if not isinstance(val, list):
