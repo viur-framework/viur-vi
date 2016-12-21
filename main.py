@@ -40,9 +40,9 @@ class Application(html5.Div):
 	def getVersionSuccess(self, req):
 		conf["server.version"] = network.NetworkService.decode(req)
 
-		if ((conf["server.version"][0] >= 0                             # check version?
-			and conf["server.version"][0] != conf["vi.version"][0]      # major version mismatch
-			or conf["server.version"][1] > conf["vi.version"][1])):     # minor version mismatch
+		if ((conf["server.version"][0] >= 0                              # check version?
+			and (conf["server.version"][0] != conf["vi.version"][0]      # major version mismatch
+				or conf["server.version"][1] > conf["vi.version"][1]))): # minor version mismatch
 
 			params = {
 				"server.version": ".".join(str(x) for x in conf["server.version"]),
