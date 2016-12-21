@@ -25,13 +25,13 @@ class Log( html5.Div ):
 
 		# Server version number
 		versionspan = html5.Span()
-		versionspan.appendChild(html5.TextNode("ViUR %s" % ".".join([str(x) for x in conf["server.version"]])))
+		versionspan.appendChild(html5.TextNode("ViUR v%s" % ".".join([str(x) for x in conf["server.version"]])))
 		versionspan["class"].append("serverspan")
 		versionDiv.appendChild(versionspan)
 
 		# Vi Version number
 		versionspan = html5.Span()
-		versionspan.appendChild(html5.TextNode("Vi %s%s" % (".".join([str(x) for x in conf["vi.version"]]), conf["vi.version.appendix"])))
+		versionspan.appendChild(html5.TextNode("Vi v%s%s" % (".".join([str(x) for x in conf["vi.version"]]), conf["vi.version.appendix"])))
 		versionspan["class"].append("versionspan")
 		versionDiv.appendChild(versionspan)
 
