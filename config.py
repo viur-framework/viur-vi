@@ -4,7 +4,7 @@ from i18n import translate
 
 conf = {
 	"vi.version": (2, 0, 0),
-	"vi.version.appendix": "beta",
+	"vi.version.appendix": "rc1",
 	"mainConfig": None,
 	"mainWindow": None,
 	"server": {},
