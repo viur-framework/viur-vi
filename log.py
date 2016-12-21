@@ -23,25 +23,33 @@ class Log( html5.Div ):
 		versionDiv = html5.Div()
 		versionDiv["class"].append("versiondiv")
 
-		# Version number
+		# Server version number
 		versionspan = html5.Span()
-		versionspan.appendChild(html5.TextNode("Version: %s%s" % (".".join([str(x) for x in conf["vi.version"]]), conf["vi.version.appendix"])))
+		versionspan.appendChild(html5.TextNode("ViUR %s" % ".".join([str(x) for x in conf["server.version"]])))
+		versionspan["class"].append("serverspan")
+		versionDiv.appendChild(versionspan)
+
+		# Vi Version number
+		versionspan = html5.Span()
+		versionspan.appendChild(html5.TextNode("Vi %s%s" % (".".join([str(x) for x in conf["vi.version"]]), conf["vi.version.appendix"])))
 		versionspan["class"].append("versionspan")
 		versionDiv.appendChild(versionspan)
 
 		#Try loading the revision and build date
 		try:
-			from version import builddate,revision
+			from version import builddate, revision
+
 			revspan = html5.Span()
-			revspan.appendChild( html5.TextNode( "Revision: %s" % revision ))
+			revspan.appendChild(html5.TextNode("Rev %s" % revision))
 			revspan["class"].append("revisionspan")
 
 			datespan = html5.Span()
-			datespan.appendChild( html5.TextNode( "Build Date: %s" % builddate ))
+			datespan.appendChild(html5.TextNode("Built %s" % builddate))
 			datespan["class"].append("datespan")
 
-			versionDiv.appendChild( datespan )
-			versionDiv.appendChild( revspan )
+			versionDiv.appendChild(revspan)
+			versionDiv.appendChild(datespan)
+
 		except:
 			pass
 
