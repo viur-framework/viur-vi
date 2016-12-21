@@ -79,10 +79,11 @@ hundreds of users.
 Help of any kind to extend and improve or enhance this project in any kind or
 way is always appreciated.
 
+Visit us at http://www.mausbrand.de!
+
 LICENSING
 =========
-This html5 library is Copyright (C) 2012-2016
-by mausbrand Informationssysteme GmbH.
+Copyright (C) 2012-2016 by mausbrand Informationssysteme GmbH.
 
 You may use, modify and distribute this software under the terms and conditions
 of the GNU Lesser General Public License (LGPL).
