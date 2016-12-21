@@ -37,7 +37,7 @@ This software is implemented on top of the PyJS framework and uses the
 
 - The **html5** library can be found at https://bitbucket.org/viur/html5
 - **pyjs** can be obtained from https://github.com/pyjs/pyjs
-- **lessc** is required to build securely
+- **lessc** is required to build securely (http://lesscss.org)
 
 Therefore, a PyJS build-environment must exist. To build all related files,
 there is also a compiler for the LESS overlay language required (lessc).
