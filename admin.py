@@ -1,62 +1,61 @@
-import pyjd
+#-*- coding: utf-8 -*-
 import html5
+
 from config import conf
 from widgets import TopBarWidget
 from widgets.userlogoutmsg import UserLogoutMsg
-import json
 from network import NetworkService, DeferredCall
+from event import viInitializedEvent, EventDispatcher
+from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
+from log import Log
+from pane import Pane, GroupPane
+from screen import Screen
+
+# THESE MUST REMAIN AND ARE QUEUED!!
 import handler
 import bones
 import actions
 import i18n
-from event import viInitializedEvent
-from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
-from log import Log
-from pane import Pane, GroupPane
-from i18n import translate
 
-try:
-	import vi_plugins
-except ImportError:
-	pass
-
-class CoreWindow( html5.Div ):
+class AdminScreen(Screen):
 
 	def __init__(self, *args, **kwargs ):
-		super( CoreWindow, self ).__init__( *args, **kwargs )
-		self["id"]="CoreWindow"
+		super(AdminScreen, self).__init__(*args, **kwargs)
+
+		self["id"] = "CoreWindow"
+		conf["mainWindow"] = self
+
 		self.topBar = TopBarWidget()
-		self.appendChild( self.topBar )
+		self.appendChild(self.topBar)
+
 		self.workSpace = html5.Div()
 		self.workSpace["class"] = "vi_workspace"
-		self.appendChild( self.workSpace )
+		self.appendChild(self.workSpace)
+
 		self.modulMgr = html5.Div()
 		self.modulMgr["class"] = "vi_wm"
-		self.appendChild( self.modulMgr )
+		self.appendChild(self.modulMgr)
+
 		self.modulList = html5.Nav()
 		self.modulList["class"] = "vi_manager"
-		self.modulMgr.appendChild( self.modulList )
+		self.modulMgr.appendChild(self.modulList)
+
 		self.modulListUl = html5.Ul()
 		self.modulListUl["class"] = "modullist"
-		self.modulList.appendChild( self.modulListUl )
+		self.modulList.appendChild(self.modulListUl)
+
 		self.viewport = html5.Div()
 		self.viewport["class"] = "vi_viewer"
-		self.workSpace.appendChild( self.viewport)
+		self.workSpace.appendChild(self.viewport)
+
 		self.logWdg = Log()
-		self.appendChild( self.logWdg )
-		#DOM.appendChild( self.modulMgr, self.modulList )
-		#self.modulList = ModulListWidget()
-		#self.adopt( self.modulList,self.modulMgr )
-		#self.modulList.onAttach()
+		self.appendChild(self.logWdg)
+
 		self.currentPane = None
 		self.nextPane = None #Which pane gains focus once the deferred call fires
 		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
-		self.config = None
-		self.user = None
-		self.userLoggedOutMsg=UserLogoutMsg()
-		self["class"].append("is_loading")
-		startupQueue.setFinalElem( self.startup )
-		self.sinkEvent('onUserTryedToLogin')
+		self.userLoggedOutMsg = UserLogoutMsg()
+
 		# Register the error-handling for this iframe
 		le = eval("window.top.logError")
 		w = eval("window")
@@ -64,69 +63,78 @@ class CoreWindow( html5.Div ):
 		w = eval("window.top")
 		w.onerror = le
 
-	def onUserTryedToLogin(self,event):
-		self.userLoggedOutMsg.testUserAvaiable()
+	def invoke(self):
+		self.show()
+		self.lock()
+
+		# Run queue
+		startupQueue.setFinalElem(self.startup)
+		startupQueue.run()
+
+	def getCurrentUser(self):
+		NetworkService.request("user", "view/self",
+		                        successHandler=self.getCurrentUserSuccess,
+		                        failureHandler=self.getCurrentUserFailure)
+
+	def getCurrentUserSuccess(self, req):
+		answ =  NetworkService.decode(req)
+		conf["currentUser"] = answ["values"]
+		self.startup()
+
+	def getCurrentUserFailure(self, req, code):
+		conf["theApp"].login()
 
 	def startup(self):
-		NetworkService.request( None, "/admin/config", successHandler=self.onConfigAvailable,
-					failureHandler=self.onError, cacheable=True )
-		NetworkService.request( "user", "view/self", successHandler=self.onUserAvaiable,
-					failureHandler=self.userLoggedOutMsg.onUserTestFail, cacheable=True )
+		config = conf["mainConfig"]
+		assert config
 
-	def log(self, type, msg ):
-		self.logWdg.log( type, msg )
+		if not conf["currentUser"]:
+			self.getCurrentUser()
+			return
 
-	def onConfigAvailable(self, req):
-		self.config = NetworkService.decode(req)
-		if self.user is not None:
-			self.postInit()
-	
-	def onUserAvaiable(self, req):
-		data = NetworkService.decode(req)
-		conf["currentUser"] = data["values"]
-		self.user = data
-		if self.config is not None:
-			self.postInit()
+		conf["server"] = config.get("configuration", {})
 
-	def postInit(self):
-		def getModulName(argIn):
-			try:
-				return( argIn[1]["name"].lower() )
-			except:
-				return( None )
+		moduleGroups = []
 
-		def getModulSortIndex(argIn):
-			try:
-				return( argIn[1]["sortIndex"] )
-			except:
-				return( None )
+		# Save module groups
+		if ("configuration" in config.keys()
+		    and isinstance(config["configuration"], dict)):
+
+			if ("modulGroups" in config["configuration"].keys()
+			    and isinstance(config["configuration"]["modulGroups"], list)):
+
+				alert("Hello! Your project is still using 'admin.modulGroups' for its module grouping information.\n"
+				        "Please rename it to 'admin.moduleGroups' (yes, with 'e') to avoid this alert message.\n\n"
+						"Thank you!")
+
+				moduleGroups = config["configuration"]["modulGroups"]
+
+			if ("moduleGroups" in config["configuration"].keys()
+		        and isinstance(config["configuration"]["moduleGroups"], list)):
+
+				moduleGroups = config["configuration"]["moduleGroups"]
 
 		# Modules
 		groups = {}
 		panes = []
-		userAccess = self.user["values"].get( "access" ) or []
+		userAccess = conf["currentUser"].get("access", [])
 		predefinedFilterCounter = 1
 
-		if ( "configuration" in self.config.keys()
-		     and isinstance( self.config["configuration"], dict )
-		     and "modulGroups" in self.config["configuration"].keys()
-		     and isinstance( self.config["configuration"]["modulGroups"], list) ):
+		for group in moduleGroups:
+			p = GroupPane(group["name"], iconURL=group["icon"])
 
-			for group in self.config["configuration"]["modulGroups"]:
-				p = GroupPane( group["name"], iconURL=group["icon"] )
+			groups[group["prefix"]] = p
+			if "sortIndex" in group.keys():
+				sortIndex = group["sortIndex"]
+			else:
+				sortIndex = None
 
-				groups[ group["prefix"] ] = p
-				if "sortIndex" in group.keys():
-					sortIndex = group["sortIndex"]
-				else:
-					sortIndex = None
-
-				panes.append( (group["name"], sortIndex, p) )
+			panes.append((group["name"], sortIndex, p))
 
 		# Sorting the 2nd level entries
-		sorted_modules = [(x,y) for x,y in self.config["modules"].items()]
-		sorted_modules.sort(key=getModulName)
-		sorted_modules.sort(key=getModulSortIndex, reverse=True)
+		sorted_modules = [(x,y) for x,y in config["modules"].items()]
+		sorted_modules.sort(key=lambda x: x[1].get("name", "").lower() or None)
+		sorted_modules.sort(key=lambda x: x[1].get("sortIndex"), reverse=True)
 
 		for module, info in sorted_modules:
 			if not "root" in userAccess and not any([x.startswith(module) for x in userAccess]):
@@ -140,14 +148,19 @@ class CoreWindow( html5.Div ):
 					v["__id"] = predefinedFilterCounter
 					predefinedFilterCounter += 1
 
-			handlerCls = HandlerClassSelector.select( module, info )
-			assert handlerCls is not None, "No handler available for modul %s" % module
+			handlerCls = HandlerClassSelector.select(module, info)
+			assert handlerCls is not None, "No handler available for module '%s'" % module
+
+			conf["modules"][module]["visibleName"] = conf["modules"][module]["name"]
 
 			isChild = False
 			for k in groups.keys():
 				if info["name"].startswith(k):
-					handler = handlerCls( module, info, groupName=k )
-					groups[k].addChildPane( handler )
+					conf["modules"][module]["visibleName"] = conf["modules"][module]["name"].replace(k, "")
+
+					handler = handlerCls(module, info)
+					groups[k].addChildPane(handler)
+
 					isChild = True
 					break
 
@@ -157,7 +170,7 @@ class CoreWindow( html5.Div ):
 					sortIndex = info["sortIndex"]
 				else:
 					sortIndex = None
-				panes.append( ( info["name"], sortIndex, handler ) )
+				panes.append((info["visibleName"], sortIndex, handler))
 
 		# Sorting our top level entries
 		panes.sort( key=lambda x: x[0] )
@@ -176,38 +189,68 @@ class CoreWindow( html5.Div ):
 		# Finalizing!
 		viInitializedEvent.fire()
 		DeferredCall( self.checkInitialHash )
-		self["class"].remove("is_loading")
+		self.unlock()
 
-	def checkInitialHash( self, *args, **kwargs ):
+	def remove(self):
+		self.userLoggedOutMsg.stopInterval()
+		self.userLoggedOutMsg = None
+		super(AdminScreen, self).remove()
+
+	def log(self, type, msg ):
+		self.logWdg.log( type, msg )
+
+	def checkInitialHash(self, *args, **kwargs):
 		urlHash = eval("window.top.location.hash")
 		if not urlHash:
 			return
+		
 		if "?" in urlHash:
-			hashStr = urlHash[ : urlHash.find("?") ]
-			paramsStr = urlHash[ urlHash.find("?")+1: ]
+			hashStr = urlHash[1:urlHash.find("?")]
+			paramsStr = urlHash[urlHash.find("?")+1:]
 		else:
-			hashStr = urlHash
+			hashStr = urlHash[1:]
 			paramsStr = ""
-		hashList = hashStr[1:].split("/")
-		hashList = [x for x in hashList if x]
-		params = {}
-		if paramsStr:
-			for pair in paramsStr.split("&"):
-				if not "=" in pair:
-					continue
-				key = pair[ :pair.find("=") ]
-				value = pair[ pair.find("=")+1: ]
-				if not (key and value):
-					continue
-				if key in params.keys():
-					if not isinstance( params[ key ], list ):
-						params[ key ] = [ params[ key ] ]
-					params[ key ].append( value )
-				else:
-					params[ key ] = value
-		gen = initialHashHandler.select( hashList, params )
+
+		self.execCall(hashStr, paramsStr)
+
+	def execCall(self, path, params = None):
+		"""
+		Performs an execution call.
+
+		:param path: Path to the module and action
+		:param params: Parameters passed to the module
+		"""
+		path = [x for x in path.split("/") if x]
+		
+		param = {}
+
+		if params:
+			if isinstance(params, dict):
+				param = params
+			else:
+				for pair in params.split("&"):
+					if not "=" in pair:
+						continue
+
+					key = pair[:pair.find("=")]
+					value = pair[pair.find("=") + 1:]
+
+					if not (key and value):
+						continue
+
+					if key in param.keys():
+						if not isinstance(param[key], list):
+							param[key] = [params[key]]
+
+						param[key].append(value)
+					else:
+						param[key] = value
+
+		print("execCall", path, param)
+
+		gen = initialHashHandler.select(path, param)
 		if gen:
-			gen( hashList, params )
+			gen(path, param)
 
 	def onError(self, req, code):
 		print("ONERROR")
@@ -224,12 +267,14 @@ class CoreWindow( html5.Div ):
 		#self.paneIdx += 1
 		if len(pane.childPanes)>0:
 			self._registerChildPanes( pane )
+
 		self.panes.append( pane )
+
 		if parentPane:
 			parentPane.addChildPane( pane )
-			pane.parent = parentPane
 		else:
 			self.modulListUl.appendChild( pane )
+
 		self.viewport.appendChild(pane.widgetsDomElm)
 		pane.widgetsDomElm["style"]["display"] = "none"
 		#DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
@@ -287,8 +332,17 @@ class CoreWindow( html5.Div ):
 
 		self.currentPane["class"].append("is_active")
 
+		# Also open parent panes, if not already done
+		pane = self.currentPane.parentPane
+		while isinstance(pane, Pane):
+			if pane.childDomElem["style"].get("display", "none") == "none":
+				pane.childDomElem["style"]["display"] = "block"
+
+			pane = pane.parentPane
+
 	def removePane(self, pane):
 		assert pane in self.panes, "Cannot remove unknown pane!"
+
 		self.panes.remove( pane )
 		if pane == self.currentPane:
 			if self.panes:
@@ -302,15 +356,15 @@ class CoreWindow( html5.Div ):
 			else:
 				self.nextPane = None
 
-		if pane.parent == self:
+		if pane.parentPane == self:
 			self.modulListUl.removeChild( pane )
 		else:
-			pane.parent.removeChildPane( pane )
+			pane.parentPane.removeChildPane( pane )
 
 		self.viewport.removeChild( pane.widgetsDomElm )
 
 	def addWidget(self, widget, pane ):
-		pane.addWidget( widget )
+		pane.addWidget(widget)
 
 	def stackWidget(self, widget ):
 		assert self.currentPane is not None, "Cannot stack a widget while no pane is active"
@@ -318,18 +372,8 @@ class CoreWindow( html5.Div ):
 
 	def removeWidget(self, widget ):
 		for pane in self.panes:
-			if pane.containsWidget( widget ):
-				pane.removeWidget( widget )
+			if pane.containsWidget(widget):
+				pane.removeWidget(widget)
 				return
+
 		raise AssertionError("Tried to remove unknown widget %s" % str( widget ))
-
-if __name__ == '__main__':
-	pyjd.setup("public/admin.html")
-	conf["mainWindow"] = CoreWindow()
-	html5.Body().appendChild( conf["mainWindow"] )
-	#RootPanel().add( conf["mainWindow"] )
-	#t.setFocus( True )
-	#conf["mainWindow"].addWidget(None,"test")
-	startupQueue.run()
-	pyjd.run()
-

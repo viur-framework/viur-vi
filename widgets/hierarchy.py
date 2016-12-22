@@ -1,11 +1,10 @@
-import html5
-import pyjd # this is dummy in pyjs.
+#-*- coding: utf-8 -*-
+
+import html5, utils
 from time import time
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
-from priorityqueue import viewDelegateSelector
-import utils
 from config import conf
 from i18n import translate
 
@@ -23,7 +22,7 @@ class HierarchyItem( html5.Li ):
 			@type structure: List
 		"""
 		super( HierarchyItem, self ).__init__( *args, **kwargs )
-		self.modul = modul
+		self.module = modul
 		self.data = data
 		self.structure = structure
 		self.expandLink = html5.A()
@@ -52,15 +51,15 @@ class HierarchyItem( html5.Li ):
 		"""
 		format = "$(name)"
 
-		if self.modul in conf["modules"].keys():
-			modulInfo = conf["modules"][self.modul]
-			if "format" in modulInfo.keys():
-				format = modulInfo["format"]
+		if self.module in conf["modules"].keys():
+			moduleInfo = conf["modules"][self.module]
+			if "format" in moduleInfo.keys():
+				format = moduleInfo["format"]
 
 		self.appendChild(
 				html5.TextNode(
-						utils.formatString(format, utils.boneListToDict(self.structure),
-						                    self.data, unescape=True)))
+						html5.utils.unescape(utils.formatString(format, self.data, self.structure,
+						                                        language=conf["currentlanguage"]))))
 
 	def onDragOver(self, event):
 		"""
@@ -106,7 +105,7 @@ class HierarchyItem( html5.Li ):
 		"""
 			We get dragged, store our id inside the datatransfer object.
 		"""
-		event.dataTransfer.setData( "Text", self.data["id"] )
+		event.dataTransfer.setData( "Text", self.data["key"] )
 		event.stopPropagation()
 
 	def onDrop(self, event):
@@ -126,7 +125,7 @@ class HierarchyItem( html5.Li ):
 		if offset >= height * 0.20 and offset <= height * 0.80:
 			print( "insert into" )
 			# Just make the item a child of us
-			NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":self.data["id"]}, secure=True, modifies=True )
+			NetworkService.request(self.module,"reparent",{"item":srcKey,"dest":self.data["key"]}, secure=True, modifies=True )
 		elif offset < height * 0.20:
 			#Insert this item *before* the current item
 			print( "insert before" )
@@ -139,7 +138,7 @@ class HierarchyItem( html5.Li ):
 							break
 						lastIdx = c.data["sortindex"]
 				newIdx = str((lastIdx+self.data["sortindex"])/2.0)
-				req = NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":parentID}, secure=True, successHandler=self.onItemReparented )
+				req = NetworkService.request(self.module,"reparent",{"item":srcKey,"dest":parentID}, secure=True, successHandler=self.onItemReparented )
 				req.newIdx = newIdx
 				req.item = srcKey
 		elif offset > height * 0.80:
@@ -159,7 +158,7 @@ class HierarchyItem( html5.Li ):
 							doUseNextChild = True
 
 				newIdx = str((lastIdx+self.data["sortindex"])/2.0)
-				req = NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":parentID},
+				req = NetworkService.request(self.module,"reparent",{"item":srcKey,"dest":parentID},
 				                                secure=True, successHandler=self.onItemReparented )
 				req.newIdx = newIdx
 				req.item = srcKey
@@ -169,7 +168,7 @@ class HierarchyItem( html5.Li ):
 			Called after a reparent-request finished; run the setIndex request afterwards.
 		"""
 		assert "newIdx" in dir(req)
-		NetworkService.request(self.modul,"setIndex",{"item":req.item,"index":req.newIdx}, secure=True, modifies=True )
+		NetworkService.request(self.module,"setIndex",{"item":req.item,"index":req.newIdx}, secure=True, modifies=True )
 
 	def toggleExpand(self):
 		"""
@@ -207,7 +206,7 @@ class HierarchyWidget( html5.Div ):
 			@type rootNode: String or None
 		"""
 		super( HierarchyWidget, self ).__init__( )
-		self.modul = modul
+		self.module = modul
 		self.rootNode = rootNode
 		self.actionBar = ActionBar( modul, "hierarchy" )
 		self.appendChild( self.actionBar )
@@ -225,7 +224,7 @@ class HierarchyWidget( html5.Div ):
 		if self.rootNode:
 			self.reloadData()
 		else:
-			NetworkService.request(self.modul,"listRootNodes", successHandler=self.onSetDefaultRootNode, failureHandler=self.showErrorMsg )
+			NetworkService.request(self.module,"listRootNodes", successHandler=self.onSetDefaultRootNode, failureHandler=self.showErrorMsg )
 		self.path = []
 		self.sinkEvent( "onClick", "onDblClick" )
 		##Proxy some events and functions of the original table
@@ -251,19 +250,23 @@ class HierarchyWidget( html5.Div ):
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
 
-	def onDataChanged(self, modul):
+	def onDataChanged(self, module, **kwargs):
 
-		if modul != self.modul:
+		if module != self.module:
+
 			isRootNode = False
 			for k, v in conf[ "modules" ].items():
-				if k == modul and v.get( "handler" ) == "list" and v.get( "rootNodeOf" ) == self.modul:
+				if (k == module
+				    and v.get("handler") == "list"
+				    and v.get("rootNodeOf") == self.module):
+
 					isRootNode = True
 					break
 
 			if not isRootNode:
 				return
 
-		self.actionBar.widgets[ "selectrootnode" ].update()
+		self.actionBar.widgets["selectrootnode"].update()
 		self.reloadData()
 
 	def onAttach(self):
@@ -310,7 +313,7 @@ class HierarchyWidget( html5.Div ):
 		if elem is None:
 			elem = self.entryFrame
 		for child in elem._children:
-			if child.data["id"]==key:
+			if child.data["key"]==key:
 				return( child )
 			tmp = self.itemForKey( key, child.ol )
 			if tmp is not None:
@@ -318,14 +321,18 @@ class HierarchyWidget( html5.Div ):
 		return( None )
 
 	def onClick(self, event):
-		item = self.itemForEvent( event )
+		item = self.itemForEvent(event)
+
 		if item is None:
 			return
-		if utils.doesEventHitWidgetOrChildren( event, item.expandLink ):
+
+		if html5.utils.doesEventHitWidgetOrChildren(event, item.expandLink):
 			item.toggleExpand()
+
 			if not item.isLoaded:
 				item.isLoaded = True
-				self.loadNode( item.data["id"] )
+				self.loadNode(item.data["key"])
+
 		else:
 			self.setCurrentItem( item )
 			self.selectionChangedEvent.fire( self, item )
@@ -375,7 +382,7 @@ class HierarchyWidget( html5.Div ):
 			for c in currNode._children[:]:
 				if isinstance( c, HierarchyItem ):
 					if c.isExpanded:
-						res.append( c.data["id"] )
+						res.append( c.data["key"] )
 					res.extend( collectExpandedNodes(c.ol) )
 			return( res )
 		self._expandedNodes = collectExpandedNodes( self.entryFrame )
@@ -399,7 +406,7 @@ class HierarchyWidget( html5.Div ):
 		if cursor:
 			params.update({"cursor": cursor})
 
-		r = NetworkService.request(self.modul, "list",
+		r = NetworkService.request(self.module, "list",
 		                            params,
 		                            successHandler=self.onRequestSucceded,
 		                            failureHandler=self.showErrorMsg)
@@ -427,13 +434,13 @@ class HierarchyWidget( html5.Div ):
 			assert ol is not None
 
 		for skel in data["skellist"]:
-			hi = HierarchyItem( self.modul, skel, data["structure"] )
+			hi = HierarchyItem( self.module, skel, data["structure"] )
 			ol.appendChild( hi )
-			if hi.data["id"] in self._expandedNodes:
+			if hi.data["key"] in self._expandedNodes:
 				hi.toggleExpand()
 				if not hi.isLoaded:
 					hi.isLoaded = True
-					self.loadNode( hi.data["id"] )
+					self.loadNode(hi.data["key"])
 
 		if not ol._children and ol != self.entryFrame:
 			ol.parent()["class"].append("has_no_childs")
@@ -457,7 +464,7 @@ class HierarchyWidget( html5.Div ):
 			We got a drop event. Make that item a direct child of our rootNode
 		"""
 		srcKey = event.dataTransfer.getData("Text")
-		NetworkService.request(self.modul,"reparent",{"item":srcKey,"dest":self.rootNode}, secure=True, modifies=True )
+		NetworkService.request(self.module,"reparent",{"item":srcKey,"dest":self.rootNode}, secure=True, modifies=True )
 		event.stopPropagation()
 
 	def onDragOver(self, event):

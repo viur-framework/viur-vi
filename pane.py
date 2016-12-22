@@ -1,5 +1,6 @@
-from config import conf
+#-*- coding: utf-8 -*-
 import html5
+from config import conf
 from i18n import translate
 
 class Pane( html5.Li ):
@@ -13,31 +14,42 @@ class Pane( html5.Li ):
 	"""
 	def __init__(self, descr, iconURL=None, iconClasses=None, closeable=False, collapseable=True ):
 		super( Pane, self ).__init__( )
+
+		self.parentPane = None
+
 		self.descr = descr
 		self.iconURL = iconURL
 		self.iconClasses = iconClasses
 		self.closeable = closeable
 		self.collapseable = collapseable
+
 		self.childPanes = []
+
 		self.widgetsDomElm = html5.Div()
 		self.widgetsDomElm["class"].append("has_no_child")
+
 		self.childDomElem = None
+
 		self.label = html5.A( )
 		self.label["class"].append("button")
+
 		h=html5.H3()
-		h.element.innerHTML=descr
+		h.element.innerHTML = descr
 
 		#self.label.element.innerHTML = descr #FIXME: descr fehlt
 		if iconURL is not None:
 			img = html5.Img()
 			img["src"] = iconURL
 			self.label.appendChild(img)
+
 		if iconClasses is not None:
 			for cls in iconClasses:
 				self.label["class"].append( cls )
+
 		self.label.appendChild(h)
 		self.appendChild( self.label )
 		self.sinkEvent("onClick")
+
 		#self.label.addClickListener( self.onClick )
 		if closeable:
 			self.closeBtn = html5.ext.Button(translate("Close"), self.onBtnCloseReleased)
@@ -59,6 +71,7 @@ class Pane( html5.Li ):
 		assert pane != self, "A pane cannot be a child of itself"
 
 		self.childPanes.append( pane )
+		pane.parentPane = self
 
 		if not self.childDomElem:
 			self.childDomElem = html5.Ul()
@@ -87,8 +100,12 @@ class Pane( html5.Li ):
 			@type pane: Pane
 		"""
 		assert pane in self.childPanes, "Cannot remove unknown child-pane %s from %s" % (str(pane),str(self))
+
 		self.childPanes.remove( pane )
 		self.childDomElem.removeChild( pane )
+
+		pane.parentPane = None
+
 		#DOM.removeChild( self.childDomElem, pane.getElement() )
 		if len(self.childPanes)==0: #No more children, remove the UL element
 			self.removeChild( self.childDomElem )
@@ -100,7 +117,7 @@ class Pane( html5.Li ):
 
 
 	def onDetach(self):
-		assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
+		#assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
 		#Kill all remaining children
 		for widget in self.widgetsDomElm._children[:]:
 			self.widgetsDomElm.removeChild(widget)
@@ -118,9 +135,11 @@ class Pane( html5.Li ):
 		"""
 		div = html5.Div()
 		div["class"].append("vi_operator")
-		div.appendChild( widget )
+		div.appendChild(widget)
+
 		for w in self.widgetsDomElm._children[:]:
 			w["disabled"] = True
+
 		self.widgetsDomElm.appendChild( div )
 		self.rebuildChildrenClassInfo()
 
@@ -147,12 +166,16 @@ class Pane( html5.Li ):
 		for c in self.widgetsDomElm._children:
 			if widget in c._children:
 				self.widgetsDomElm.removeChild( c )
+
 				if self.closeable and len(self.widgetsDomElm._children)==0:
 					conf["mainWindow"].removePane( self )
+
 				for w in self.widgetsDomElm._children[:]:
 					w["disabled"] = False
+
 				self.rebuildChildrenClassInfo()
 				return
+
 		raise ValueError("Cannot remove unknown widget %s" % str(widget))
 
 	def containsWidget(self, widget ):

@@ -7,11 +7,11 @@ from i18n import translate
 from config import conf
 
 class SelectOneBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( SelectOneBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -21,55 +21,53 @@ class SelectOneBoneExtractor( object ):
 
 
 class SelectOneViewBoneDelegate( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( SelectOneViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName = moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
-			aspan=html5.Span()
-			if data and field and field in self.skelStructure and data[field] and data[field] in self.skelStructure[field]["values"]:
-				aspan.appendChild(html5.TextNode(self.skelStructure[field]["values"][data[field]]))
+			if data and field and field in self.skelStructure:
+				options = {k: v for k, v in self.skelStructure[field]["values"]}
+
+				aspan = html5.Span()
+				aspan.appendChild(html5.TextNode(options.get(data[field], data[field])))
 				aspan["Title"]=data[field]
-				return(aspan)
-		return( html5.Label( conf[ "empty_value" ] ) )
+				return aspan
+
+		return html5.Label(conf["empty_value"])
 
 class SelectOneEditBone( html5.Select ):
 
-	def __init__(self, modulName, boneName, readOnly, values, sortBy="keys", *args, **kwargs ):
-		super( SelectOneEditBone,  self ).__init__( *args, **kwargs )
-		self.boneName = boneName
-		self["name"]=boneName
+	def __init__(self, moduleName, boneName, readOnly, values, *args, **kwargs):
+		super(SelectOneEditBone,  self).__init__(*args, **kwargs)
+		self["name"] = self.boneName = boneName
 		self.readOnly = readOnly
-		self.values=values
-		tmpList = values.items()
-		if sortBy=="keys":
-			tmpList.sort( key=lambda x: x[0] ) #Sort by keys
+
+		# Compatibility mode
+		if isinstance(values, dict):
+			self.values = [(k, v) for k, v in values.items()]
 		else:
-			tmpList.sort( key=lambda x: x[1] ) #Values
-		for key, value in tmpList:
-			aoption=html5.Option()
-			aoption["value"]=key
-			aoption.element.innerHTML=value
-			self.appendChild(aoption)
+			self.values = values
+
+		# Perform valuesOrder list
+		for (key, value) in self.values:
+			opt = html5.Option()
+			opt["value"] = key
+			opt.element.innerHTML = value
+
+			self.appendChild(opt)
+
 		if self.readOnly:
 			self["disabled"] = True
 
-
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		if "sortBy" in skelStructure[ boneName ].keys():
-			sortBy = skelStructure[ boneName ][ "sortBy" ]
-		else:
-			sortBy = "keys"
-		if "values" in skelStructure[ boneName ].keys():
-			values =skelStructure[ boneName ]["values"]
-		else:
-			values = {}
-		return( SelectOneEditBone( modulName, boneName, readOnly, values, sortBy ) )
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
+		return SelectOneEditBone(moduleName, boneName,
+		                            skelStructure[boneName].get("readonly", False),
+		                            skelStructure[boneName].get("values", {}))
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
@@ -92,7 +90,7 @@ class ExtendedSelectOneSearch( html5.Div ):
 		super( ExtendedSelectOneSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.modul = modul
+		self.module = modul
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
@@ -126,7 +124,7 @@ class ExtendedSelectOneSearch( html5.Div ):
 	def canHandleExtension( extension, view, modul ):
 		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="selectone" or extension["type"].startswith("selectone.") ) )
 
-def CheckForSelectOneBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForSelectOneBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="selectone" )
 
 #Register this Bone in the global queue

@@ -7,11 +7,11 @@ from i18n import translate
 from config import conf
 
 class SelectMultiBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super(SelectMultiBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -27,72 +27,73 @@ class SelectMultiBoneExtractor( object ):
 		return conf[ "empty_value" ]
 
 class SelectMultiViewBoneDelegate( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( SelectMultiViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName = moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
-			result=html5.Ul()
-			if len(data[field])<5:
-				loopLimit = len(data[field])
-			else:
-				loopLimit = 4
-			for fieldKey in data[field][:loopLimit]:
-				ali=html5.Li()
-				if not fieldKey in self.skelStructure[field]["values"].keys():
-					ali.appendChild(html5.TextNode(fieldKey))
-				else:
-					ali.appendChild(html5.TextNode( self.skelStructure[field]["values"][fieldKey] ) )
+			result = html5.Ul()
+			options = {k: v for k, v in self.skelStructure[field]["values"]}
+
+			for i, fieldKey in enumerate(data[field]):
+				if conf["maxMultiBoneEntries"] and i == conf["maxMultiBoneEntries"]:
+					ali = html5.Li()
+					ali.appendChild(
+						html5.TextNode(translate("and {count} more",
+						                            count=len(data[field]) - conf["maxMultiBoneEntries"] - 1)))
+					ali["class"].append("selectmulti_more_li")
+
+					result.appendChild(ali)
+					break
+
+				ali = html5.Li()
+				ali.appendChild(html5.TextNode(options.get(fieldKey, fieldKey)))
 				ali["Title"] = fieldKey
-				result.appendChild(ali)
-			if not len(data[field])<5:
-				ali=html5.Li()
-				ali.appendChild(html5.TextNode( translate("and {count} more",count=len(data[field])-4)) )
-				result.appendChild(ali)
-				ali["class"].append("selectmulti_more_li")
-			return( result)
-		return html5.Label("&nbsp; - &nbsp;")
 
-class SelectMultiEditBone( html5.Div ):
+				result.appendChild(ali)
 
-	def __init__(self, modulName, boneName,readOnly, values, sortBy="keys", *args, **kwargs ):
-		super( SelectMultiEditBone,  self ).__init__( *args, **kwargs )
+			return result
+
+		return html5.Label(conf["empty_value"])
+
+class SelectMultiEditBone(html5.Div):
+
+	def __init__(self, moduleName, boneName, readOnly, values, *args, **kwargs):
+		super(SelectMultiEditBone,  self ).__init__(*args, **kwargs)
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self.values=values
-		tmpList = values.items()
-		if sortBy=="keys":
-			tmpList.sort( key=lambda x: x[0] ) #Sort by keys
+
+		# Compatibility mode
+		if isinstance(values, dict):
+			self.values = [(k, v) for k, v in values.items()]
 		else:
-			tmpList.sort( key=lambda x: x[1] ) #Values
-		for key, value in tmpList:
-			alabel=html5.Label()
-			acheckbox=html5.Input()
-			acheckbox["type"]="checkbox"
-			acheckbox["name"]=key
+			self.values = values
+
+		# Perform valuesOrder list
+		for key, value in self.values:
+			alabel = html5.Label()
+			acheckbox = html5.Input()
+			acheckbox["type"] = "checkbox"
+			acheckbox["name"] = key
 			alabel.appendChild(acheckbox)
-			aspan=html5.Span()
-			aspan.element.innerHTML=value
+
+			aspan = html5.Span()
+			aspan.element.innerHTML = value
 			alabel.appendChild(aspan)
+
 			self.appendChild(alabel)
+
 		if self.readOnly:
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		if "sortBy" in skelStructure[ boneName ].keys():
-			sortBy = skelStructure[ boneName ][ "sortBy" ]
-		else:
-			sortBy = "keys"
-		if "values" in skelStructure[ boneName ].keys():
-			values =skelStructure[ boneName ]["values"]
-		else:
-			values = {}
-		return( SelectMultiEditBone( modulName, boneName, readOnly, values, sortBy ) )
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
+		return SelectMultiEditBone(moduleName, boneName,
+		                            skelStructure[boneName].get("readonly", False),
+		                            skelStructure[boneName].get("values", {}))
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
@@ -119,7 +120,7 @@ class ExtendedSelectMultiSearch( html5.Div ):
 		super( ExtendedSelectMultiSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.modul = modul
+		self.module = modul
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
@@ -152,7 +153,7 @@ class ExtendedSelectMultiSearch( html5.Div ):
 	def canHandleExtension( extension, view, modul ):
 		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="selectmulti" or extension["type"].startswith("selectmulti.") ) )
 
-def CheckForSelectMultiBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForSelectMultiBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return skelStucture[boneName]["type"].startswith("selectmulti")
 
 #Register this Bone in the global queue
@@ -168,9 +169,10 @@ class AccessMultiSelectBone( html5.Div ):
 	def __init__(self, moduleName, boneName, readOnly, values, *args, **kwargs ):
 		super( AccessMultiSelectBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
-		self.modulName = moduleName
+		self.moduleName = moduleName
 		self.readOnly = readOnly
-		self.values = values
+		print(values)
+		self.values = {k: v for k, v in values}
 
 		self.modules = {}
 		self.modulesbox = {}
@@ -178,7 +180,7 @@ class AccessMultiSelectBone( html5.Div ):
 
 		self.sinkEvent( "onClick" )
 
-		for value in values:
+		for value in self.values:
 			module = self.parseskelaccess( value )
 			if not module:
 				self.flags[ value ] = None
@@ -247,7 +249,7 @@ class AccessMultiSelectBone( html5.Div ):
 	def onClick( self, event ):
 		for module, toggles in self.modules.items():
 			for toggle in toggles.values():
-				if utils.doesEventHitWidgetOrChildren( event, toggle ):
+				if html5.utils.doesEventHitWidgetOrChildren(event, toggle):
 					if not "disabled" in toggle[ "class" ]:
 						if "active" in toggle[ "class" ]:
 							toggle[ "class" ].remove( "active" )
@@ -266,8 +268,8 @@ class AccessMultiSelectBone( html5.Div ):
 					event.preventDefault()
 					return
 
-			if utils.doesEventHitWidgetOrChildren( event, self.modulesbox[ module ] ):
-				self.modulesbox[ module ].parent()[ "class" ].remove( "partly" )
+			if html5.utils.doesEventHitWidgetOrChildren(event, self.modulesbox[module]):
+				self.modulesbox[ module ].parent()["class"].remove("partly")
 
 				for toggle in toggles.values():
 					if not "disabled" in toggle[ "class" ]:
@@ -303,14 +305,8 @@ class AccessMultiSelectBone( html5.Div ):
 
 	@staticmethod
 	def fromSkelStructure( moduleName, boneName, skelStructure ):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-
-		if "values" in skelStructure[ boneName ].keys():
-			values = skelStructure[ boneName ]["values"]
-		else:
-			values = {}
-
-		return( AccessMultiSelectBone( moduleName, boneName, readOnly, values ) )
+		return AccessMultiSelectBone(moduleName, boneName, skelStructure[ boneName ].get("readonly", False),
+		                                                    skelStructure[boneName].get("values", []))
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():

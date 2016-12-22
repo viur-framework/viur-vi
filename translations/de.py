@@ -43,7 +43,7 @@ lngDe = {
 	"My Files":u"Eigene Dateien",
 	"Settings":u"Einstellungen",
 	"Logout":u"Abmelden",
-	"Currently no entries":u"Es wurden keine Enträge gefunden",
+	"Currently no entries":u"Es wurden keine Einträge gefunden",
 	"Add Node":u"Knoten hinzufügen",
 	"You cannot drop more than one file here!":u"Es können nicht mehr als eine Datei hinzugefügt werden!",
     "Do you want to clone the entire hierarchy?":u"Soll die gesamte Hierarchie geklont werden?",
@@ -136,5 +136,26 @@ lngDe = {
 	"Failed to cancel order": u"Stornierung der Bestellung fehlgeschlagen",
 	"Language selection": u"Sprachauswahl",
 	"Encoding": u"Zeichensatz",
-	"and {count} more": u"Und {count} weitere"
+	"and {count} more": u"und {count} weitere",
+
+	# new login method
+	"vi.login.title": u"Login",
+	"vi.login.handler.userpassword": u"Benutzer",
+	"username": u"Benutzername",
+	"password": u"Kennwort",
+	"login": u"Einloggen",
+	"one time password": u"OTP-Token",
+	"verify": u"Authentifizieren",
+	"vi.login.handler.googleaccount": u"Google",
+	"login with google": u"Mit Google einloggen",
+
+	"the viur server (v{server.version}) is incompatible to this vi (v{vi.version}).":
+		u"Die Version des verwendeten ViUR servers (v{server.version}) ist inkompatibel mit diesem Vi (v{vi.version}).",
+	"please update either your server or vi!": u"Bitte aktualisieren Sie entweder den Server oder das Vi!",
+	"version mismatch": u"Versionen stimmen nicht überein",
+	"retry": u"Nochmal versuchen",
+
+	"the connection to the server could not be correctly established.":
+		u"Es konnte keine Verbindung zum Server aufgebaut werden.",
+	"communication error": u"Verbindungsfehler"
 }

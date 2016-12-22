@@ -9,11 +9,11 @@ from i18n import translate
 
 
 class TextBoneExtractor(object):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
 		super(TextBoneExtractor, self).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName = modulName
+		self.moduleName = moduleName
 
 	def render(self, data, field):
 		if field in data.keys():
@@ -34,11 +34,11 @@ class TextBoneExtractor(object):
 
 
 class TextViewBoneDelegate( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( TextViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName=modulName
+		self.moduleName=moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -61,7 +61,7 @@ class TextViewBoneDelegate( object ):
 		return( html5.Label( conf[ "empty_value" ] ) )
 
 class TextEditBone( html5.Div ):
-	def __init__(self, modulName, boneName,readOnly, isPlainText, languages=None, descrHint=None, *args, **kwargs ):
+	def __init__(self, moduleName, boneName,readOnly, isPlainText, languages=None, descrHint=None, *args, **kwargs ):
 		super( TextEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -180,12 +180,12 @@ class TextEditBone( html5.Div ):
 				abut["class"].remove("is_active")
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		isPlainText = "validHtml" in skelStructure[ boneName ].keys() and not skelStructure[ boneName ]["validHtml"]
 		langs = skelStructure[ boneName ]["languages"] if ("languages" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["languages"]) else None
 		descr = skelStructure[ boneName ]["descr"] if "descr" in skelStructure[ boneName ].keys() else None
-		return( TextEditBone( modulName, boneName, readOnly, isPlainText, langs, descrHint=descr ) )
+		return( TextEditBone( moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr ) )
 
 	def unserialize(self, data):
 		self.valuesdict.clear()
@@ -204,13 +204,13 @@ class TextEditBone( html5.Div ):
 
 	def serializeForPost(self):
 		if self.selectedLang:
-			self.valuesdict[self.selectedLang]=self.input["value"]
-			return( { self.boneName: self.valuesdict } )
+			self.valuesdict[self.selectedLang] = self.input["value"]
+			return {self.boneName: self.valuesdict}
 		else:
-			return( { self.boneName: self.input["value"] } )
+			return {self.boneName: self.input["value"]}
 
 	def onClick(self, event):
-		if utils.doesEventHitWidgetOrChildren( event, self.previewDiv ):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.previewDiv):
 			event.stopPropagation()
 			event.preventDefault()
 			if not self.readOnly:
@@ -220,7 +220,7 @@ class TextEditBone( html5.Div ):
 		pass
 
 
-def CheckForTextBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForTextBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="text" )
 
 #Register this Bone in the global queue

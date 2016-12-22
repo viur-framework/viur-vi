@@ -18,7 +18,7 @@ class RepeatDatePopup(html5.Div):
 
 	def __init__(self, modul, key):
 		super(RepeatDatePopup, self).__init__()
-		self.modul = modul
+		self.module = modul
 		self.editIdx = RepeatDatePopup.__editIdx_ #Iternal counter to ensure unique ids
 		RepeatDatePopup.__editIdx_ += 1
 		self.key = key
@@ -26,13 +26,13 @@ class RepeatDatePopup(html5.Div):
 		self.closeOnSuccess = False
 
 		h3 = html5.H3()
-		h3["class"].append("modul_%s" % self.modul)
+		h3["class"].append("modul_%s" % self.module)
 		h3["class"].append("apptype_list")
 
 		h3.appendChild(html5.TextNode(translate("create recurrent dates")))
 
 		self.wasInitialRequest = True
-		self.actionbar = ActionBar( self.modul, "list", "repeatdate")
+		self.actionbar = ActionBar( self.module, "list", "repeatdate")
 		self.appendChild( self.actionbar )
 		self.form = html5.Form()
 		self.appendChild(self.form)
@@ -45,13 +45,13 @@ class RepeatDatePopup(html5.Div):
 
 	def save(self, data):
 		self.wasInitialRequest = not len(data)>0
-		if self.modul=="_tasks":
+		if self.module=="_tasks":
 			return #FIXME!
 		else:
 			if not data:
-				NetworkService.request(self.modul,"view/%s" % self.key, successHandler=self.setData, failureHandler=self.showErrorMsg)
+				NetworkService.request(self.module,"view/%s" % self.key, successHandler=self.setData, failureHandler=self.showErrorMsg)
 			else:
-				NetworkService.request(self.modul, "add", data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg )
+				NetworkService.request(self.module, "add", data, secure=len(data)>0, successHandler=self.setData, failureHandler=self.showErrorMsg )
 
 	def setData( self, request=None, data=None, ignoreMissing=False ):
 		"""
@@ -67,9 +67,10 @@ class RepeatDatePopup(html5.Div):
 			data = NetworkService.decode( request )
 
 		try:
-			skelStructure = utils.boneListToDict(data["structure"])
+			skelStructure = {k: v for k, v in data["structure"]}
+
 		except AttributeError:
-			NetworkService.notifyChange(self.modul)
+			NetworkService.notifyChange(self.module)
 			conf["mainWindow"].removeWidget( self )
 			return
 
@@ -77,16 +78,16 @@ class RepeatDatePopup(html5.Div):
 		print("data", data)
 		print("action", data["action"])
 		if "action" in data and (data["action"] in ["addSuccess", "editSuccess"]):
-			NetworkService.notifyChange(self.modul)
+			NetworkService.notifyChange(self.module)
 			logDiv = html5.Div()
 			logDiv["class"].append("msg")
 			spanMsg = html5.Span()
 			spanMsg.appendChild( html5.TextNode( translate("Entry saved!") ))
 			spanMsg["class"].append("msgspan")
 			logDiv.appendChild(spanMsg)
-			if self.modul in conf["modules"].keys():
+			if self.module in conf["modules"].keys():
 				spanMsg = html5.Span()
-				spanMsg.appendChild( html5.TextNode( conf["modules"][self.modul]["name"] ))
+				spanMsg.appendChild( html5.TextNode( conf["modules"][self.module]["name"] ))
 				spanMsg["class"].append("modulspan")
 				logDiv.appendChild(spanMsg)
 			if "values" in data.keys() and "name" in data["values"].keys():
@@ -129,7 +130,7 @@ class RepeatDatePopup(html5.Div):
 		startdateLabel = html5.Label("Termin")
 		startdateLabel["class"].append("termin")
 		startdateLabel["class"].append("date")
-		startdate_id = "vi_%s_%s_edit_bn_%s" % ( self.editIdx, self.modul, "repeatdate")
+		startdate_id = "vi_%s_%s_edit_bn_%s" % ( self.editIdx, self.module, "repeatdate")
 		startdateLabel["for"] = startdate_id
 		startdate = date.DateViewBoneDelegate("termin", "startdate", skelStructure).render(data["values"], "startdate")
 		startdate["id"] = startdate_id
@@ -144,7 +145,7 @@ class RepeatDatePopup(html5.Div):
 		countLabel = html5.Label("Wiederholungen")
 		countLabel["class"].append("count")
 		countLabel["class"].append("numeric")
-		count_id = "vi_%s_%s_edit_bn_%s" % ( self.editIdx, self.modul, "count")
+		count_id = "vi_%s_%s_edit_bn_%s" % ( self.editIdx, self.module, "count")
 		countLabel["for"] = count_id
 
 		self.count = html5.Input()
@@ -214,4 +215,4 @@ class RepeatDatePopup(html5.Div):
 		# , "byweekday" : [box["name"] for box in self.byweekday if box["checked"]]
 		}
 		# r = rrule.rrule(2, dtstart=datetime(2014, 7,1, 18,00), count=7)
-		NetworkService.request(self.modul, "addrecurrent/%s" % self.key, data, secure=True, successHandler=self.setData, failureHandler=self.showErrorMsg )
+		NetworkService.request(self.module, "addrecurrent/%s" % self.key, data, secure=True, successHandler=self.setData, failureHandler=self.showErrorMsg )

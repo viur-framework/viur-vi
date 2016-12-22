@@ -5,8 +5,11 @@
 class StartupQueue( object ):
 	def __init__(self):
 		super(StartupQueue, self).__init__()
-		self.isRunning = False
 		self.q = []
+		self.reset()
+
+	def reset(self):
+		self.isRunning = False
 		self.currentElem = -1
 		self.finalElem = None
 
@@ -33,6 +36,7 @@ class StartupQueue( object ):
 			cb()
 		elif self.currentElem == len( self.q ): #We should call the final element
 			self.finalElem()
+			self.reset()
 		else:
 			raise RuntimeError("StartupQueue has no more elements to call. Someone called next() twice!")
 
@@ -66,6 +70,7 @@ initialHashHandler = PriorityQueue() # Provides the handler for the initial hash
 extendedSearchWidgetSelector = PriorityQueue() # Selects a widget used to perform user-customizable searches
 extractorDelegateSelector = PriorityQueue() # selects a widget used to extract raw data from bones including special features like multilanguage support
 toplevelActionSelector = PriorityQueue() # Top bar actions queue
+loginHandlerSelector = PriorityQueue() # Login handlers
 
 #OLD
 viewDelegateSelector = PriorityQueue() # Queried by listWidget to determine the viewDelegates for the table

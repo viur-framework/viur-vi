@@ -5,11 +5,11 @@ from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDeleg
 from config import conf
 
 class ColorBoneExtractor( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( ColorBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName = modulName
+		self.moduleName = moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -18,11 +18,11 @@ class ColorBoneExtractor( object ):
 
 
 class ColorViewBoneDelegate( object ):
-	def __init__(self, modulName, boneName, skelStructure, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( ColorViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.modulName = modulName
+		self.moduleName = moduleName
 
 	def render( self, data, field ):
 		if field in data.keys():
@@ -44,7 +44,7 @@ class ColorViewBoneDelegate( object ):
 
 class ColorEditBone( html5.Input ):
 
-	def __init__(self, modulName, boneName,readOnly, *args, **kwargs ):
+	def __init__(self, moduleName, boneName,readOnly, *args, **kwargs ):
 		super( ColorEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -54,9 +54,9 @@ class ColorEditBone( html5.Input ):
 
 
 	@staticmethod
-	def fromSkelStructure( modulName, boneName, skelStructure ):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( ColorEditBone( modulName, boneName, readOnly ) )
+		return( ColorEditBone( moduleName, boneName, readOnly ) )
 
 	##read
 	def unserialize(self, data, extendedErrorInformation=None):
@@ -71,7 +71,7 @@ class ColorEditBone( html5.Input ):
 	def serializeForDocument(self):
 		return( self.serialize( ) )
 
-def CheckForColorBone(  modulName, boneName, skelStucture, *args, **kwargs ):
+def CheckForColorBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="color" )
 
 #Register this Bone in the global queue

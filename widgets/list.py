@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import pyjd # this is dummy in pyjs.
 import json
 from config import conf
@@ -17,21 +18,21 @@ class ListWidget( html5.Div ):
 		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
 	"""
-	def __init__( self, modul, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
-	                batchSize = None, *args, **kwargs ):
+	def __init__(self, module, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
+	             batchSize = None, *args, **kwargs):
 		"""
-			@param modul: Name of the modul we shall handle. Must be a list application!
-			@type modul: string
+			@param module: Name of the modul we shall handle. Must be a list application!
+			@type module: string
 		"""
-		if not modul in conf["modules"].keys():
-			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=modul))
-			assert modul in conf["modules"].keys()
+		if not module in conf["modules"].keys():
+			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
+			assert module in conf["modules"].keys()
 
 		super( ListWidget, self ).__init__(  )
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
-		self.modul = modul
-		self.actionBar = ActionBar( modul, "list", currentAction="list" )
+		self.module = module
+		self.actionBar = ActionBar(module, "list", currentAction="list")
 		self.appendChild( self.actionBar )
 		self.sideBar = SideBar()
 		self.appendChild( self.sideBar )
@@ -39,23 +40,23 @@ class ListWidget( html5.Div ):
 		myView = None
 
 		if filterID:
-			if conf["modules"] and modul in conf["modules"].keys():
-				if "views" in conf["modules"][ modul ].keys() and conf["modules"][ modul ]["views"]:
-					for v in conf["modules"][ modul ]["views"]:
+			if conf["modules"] and module in conf["modules"].keys():
+				if "views" in conf["modules"][ module].keys() and conf["modules"][ module]["views"]:
+					for v in conf["modules"][ module]["views"]:
 						if v["__id"] == filterID:
 							myView = v
 							break
 			if myView and "extendedFilters" in myView.keys() and myView["extendedFilters"]:
-				self.appendChild( CompoundFilter(myView, modul, embed=True))
+				self.appendChild(CompoundFilter(myView, module, embed=True))
 
 		checkboxes = (conf["modules"]
-		                and modul in conf["modules"].keys()
-						and "checkboxSelection" in conf["modules"][modul].keys()
-		                and conf["modules"][modul]["checkboxSelection"])
+		              and module in conf["modules"].keys()
+		              and "checkboxSelection" in conf["modules"][module].keys()
+		              and conf["modules"][module]["checkboxSelection"])
 		indexes = (conf["modules"]
-		            and modul in conf["modules"].keys()
-					and "indexes" in conf["modules"][modul].keys()
-		            and conf["modules"][modul]["indexes"])
+		           and module in conf["modules"].keys()
+		           and "indexes" in conf["modules"][module].keys()
+		           and conf["modules"][module]["indexes"])
 
 		self.table = DataTable( checkboxes=checkboxes, indexes=indexes, *args, **kwargs )
 		self.appendChild( self.table )
@@ -66,8 +67,8 @@ class ListWidget( html5.Div ):
 
 		if isSelector and filter is None and columns is None:
 			#Try to select a reasonable set of cols / filter
-			if conf["modules"] and modul in conf["modules"].keys():
-				tmpData = conf["modules"][modul]
+			if conf["modules"] and module in conf["modules"].keys():
+				tmpData = conf["modules"][module]
 				if "columns" in tmpData.keys():
 					columns = tmpData["columns"]
 				if "filter" in tmpData.keys():
@@ -120,6 +121,9 @@ class ListWidget( html5.Div ):
 		                  "|", "preview", "selectfields"]\
 		                 + (["|", "select","close"] if self.isSelector else [])+["|", "reload","selectfilter"]
 
+		#if not self.isSelector:
+		#	defaultActions += ["|", "exportcsv"]
+
 		# Extended actions from view?
 		if view and "actions" in view.keys():
 			if defaultActions[-1] != "|":
@@ -128,8 +132,8 @@ class ListWidget( html5.Div ):
 			defaultActions.extend( view[ "actions" ] or [] )
 
 		# Extended Actions from config?
-		elif conf["modules"] and self.modul in conf["modules"].keys():
-			cfg = conf["modules"][ self.modul ]
+		elif conf["modules"] and self.module in conf["modules"].keys():
+			cfg = conf["modules"][ self.module ]
 
 			if "actions" in cfg.keys() and cfg["actions"]:
 				if defaultActions[-1] != "|":
@@ -163,7 +167,7 @@ class ListWidget( html5.Div ):
 			filter = self.filter.copy()
 			filter["amount"] = self._batchSize
 			filter["cursor"] = self._currentCursor
-			self._currentRequests.append( NetworkService.request(self.modul, "list", filter,
+			self._currentRequests.append( NetworkService.request(self.module, "list", filter,
 			                                successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
 			                                    cacheable=True ) )
 			self._currentCursor = None
@@ -179,11 +183,11 @@ class ListWidget( html5.Div ):
 		super( ListWidget, self ).onDetach()
 		NetworkService.removeChangeListener( self )
 
-	def onDataChanged(self, modul):
+	def onDataChanged(self, module, **kwargs):
 		"""
 			Refresh our view if element(s) in this modul have changed
 		"""
-		if modul and modul!=self.modul:
+		if module and module != self.module:
 			return
 
 		self.reloadData()
@@ -199,7 +203,7 @@ class ListWidget( html5.Div ):
 		filter["amount"] = self._batchSize
 
 		self._currentRequests.append(
-			NetworkService.request( self.modul, "list", filter,
+			NetworkService.request( self.module, "list", filter,
 			                        successHandler=self.onCompletion,
 			                        failureHandler=self.showErrorMsg,
 			                        cacheable=True ) )
@@ -243,10 +247,6 @@ class ListWidget( html5.Div ):
 		self.table["style"]["display"] = ""
 		self.emptyNotificationDiv["style"]["display"] = "none"
 		self._structure = data["structure"]
-		tmpDict = {}
-
-		for key, bone in data["structure"]:
-			tmpDict[ key ] = bone
 
 		if not self._tableHeaderIsValid:
 			if not self.columns:
@@ -267,25 +267,33 @@ class ListWidget( html5.Div ):
 		if not self._structure:
 			self._tableHeaderIsValid = False
 			return
+
 		boneInfoList = []
-		tmpDict = {}
-		for key, bone in self._structure:
-			tmpDict[ key ] = bone
+		tmpDict = {key: bone for key, bone in self._structure}
+
 		fields = [x for x in fields if x in tmpDict.keys()]
 		self.columns = fields
+
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
+			delegateFactory = viewDelegateSelector.select( self.module, boneName, tmpDict )( self.module, boneName, tmpDict )
 			self.table.setCellRender( boneName, delegateFactory )
 			boneInfoList.append( boneInfo )
-		self.table.setHeader( [x["descr"] for x in boneInfoList])
-		self.table.setShownFields( fields )
+
+		if conf["showBoneNames"]:
+			self.table.setHeader(fields)
+		else:
+			self.table.setHeader([x.get("descr", "") for x in boneInfoList])
+
+		self.table.setShownFields(fields)
 		rendersDict = {}
+
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			delegateFactory = viewDelegateSelector.select( self.modul, boneName, tmpDict )( self.modul, boneName, tmpDict )
+			delegateFactory = viewDelegateSelector.select( self.module, boneName, tmpDict )( self.module, boneName, tmpDict )
 			rendersDict[ boneName ] = delegateFactory
 			boneInfoList.append( boneInfo )
+
 		self.table.setCellRenders( rendersDict )
 		self._tableHeaderIsValid = True
 

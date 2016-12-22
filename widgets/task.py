@@ -12,9 +12,9 @@ class TaskWidget( html5.ext.Popup ):
 		self.title = title
 
 class ServerTaskWidget( TaskWidget ):
-	def __init__( self, title, id ):
+	def __init__( self, title, key ):
 		super( ServerTaskWidget, self ).__init__( title = title )
-		self.widget = EditWidget( "_tasks", EditWidget.appSingleton, id, logaction = "Task started!" )
+		self.widget = EditWidget( "_tasks", EditWidget.appSingleton, key, logaction = "Task started!" )
 		self.appendChild( self.widget )
 		self.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
 
@@ -69,7 +69,7 @@ class TaskSelectWidget( TaskWidget ):
 				task.get( "descr" ) or translate( "No description provided." ) ) )
 
 	def onChange(self, event):
-		if utils.doesEventHitWidgetOrChildren( event, self.select ):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.select):
 			self.setActiveTask()
 
 	def invokeTask(self, *args, **kwargs):
@@ -77,7 +77,7 @@ class TaskSelectWidget( TaskWidget ):
 		self.close()
 
 		if task[ "type" ] == "server":
-			ServerTaskWidget( task[ "name" ], task[ "id" ] )
+			ServerTaskWidget( task[ "name" ], task[ "key" ] )
 		elif task[ "type" ] == "client":
 			if not "task" in task.keys():
 				return

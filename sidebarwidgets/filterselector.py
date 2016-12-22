@@ -14,7 +14,7 @@ class CompoundFilter( html5.Div ):
 
 		self["class"].append("compoundfilter")
 		self.view = view
-		self.modul = modul
+		self.module = modul
 		self.embed = embed
 
 		if embed:
@@ -78,7 +78,7 @@ class FilterSelector( html5.Div ):
 		:return:
 		"""
 		super( FilterSelector, self ).__init__( *args, **kwargs )
-		self.modul = modul
+		self.module = modul
 		self.currentTarget = None
 		self.defaultFilter = True
 		self.sinkEvent("onClick")
@@ -91,12 +91,12 @@ class FilterSelector( html5.Div ):
 		"""
 		nextTarget = self.currentTarget
 		for c in self._children:
-			if c == self.currentTarget and not utils.doesEventHitWidgetOrChildren(event, c ):
+			if c == self.currentTarget and not html5.utils.doesEventHitWidgetOrChildren(event, c):
 				c["class"].append("collapsed")
 				c["class"].remove("expanded")
 				if nextTarget==self.currentTarget: #Did not change yet
 					nextTarget = None
-			elif c != self.currentTarget and utils.doesEventHitWidgetOrChildren(event, c ):
+			elif c != self.currentTarget and html5.utils.doesEventHitWidgetOrChildren(event, c):
 				c["class"].remove("collapsed")
 				c["class"].append("expanded")
 				nextTarget = c
@@ -118,11 +118,11 @@ class FilterSelector( html5.Div ):
 		activeFilter = self.parent().parent().filterID
 		isSearchDisabled=False
 
-		if self.modul in conf["modules"].keys():
-			modulConfig = conf["modules"][self.modul]
+		if self.module in conf["modules"].keys():
+			modulConfig = conf["modules"][self.module]
 			if "views" in modulConfig.keys() and modulConfig["views"]:
 				for view in modulConfig["views"]:
-					self.appendChild( CompoundFilter( view, self.modul ) )
+					self.appendChild( CompoundFilter( view, self.module ) )
 			if "disabledFunctions" in modulConfig.keys() and modulConfig[ "disabledFunctions" ] and "fulltext-search" in modulConfig[ "disabledFunctions" ]:
 				isSearchDisabled = True
 
@@ -141,8 +141,8 @@ class FilterSelector( html5.Div ):
 	def onStartSearch(self, searchTxt = None):
 		self.defaultFilter = not searchTxt
 
-		if self.modul in conf["modules"].keys():
-			modulConfig = conf["modules"][self.modul]
+		if self.module in conf["modules"].keys():
+			modulConfig = conf["modules"][self.module]
 			if "filter" in modulConfig.keys():
 				filter = modulConfig["filter"]
 			else:

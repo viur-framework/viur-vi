@@ -1,45 +1,45 @@
 from priorityqueue import HandlerClassSelector, displayDelegateSelector, initialHashHandler
 from widgets import EditWidget
-from config import conf
 from pane import Pane
 
-
 class SingletonHandler( Pane ):
-	def __init__(self, modulName, modulInfo, groupName=None, *args, **kwargs):
+	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
 		icon = "icons/modules/singleton.svg"
-		if "icon" in modulInfo.keys():
-			icon = modulInfo["icon"]
-		if groupName:
-			myDescr = modulInfo["name"].replace( groupName, "")
-		else:
-			myDescr = modulInfo["name"]
-		super( SingletonHandler, self ).__init__( myDescr, icon )
-		self.modulName = modulName
-		self.modulInfo = modulInfo
-		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
+
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
+
+		super(SingletonHandler, self).__init__(moduleInfo["visibleName"], icon)
+
+		self.moduleName = moduleName
+		self.moduleInfo = moduleInfo
+
+		if "hideInMainBar" in moduleInfo.keys() and moduleInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
-		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
+
+		initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
 
 	def canHandleInitialHash(self, pathList, params ):
-		if len(pathList)>1:
-			if pathList[0]==self.modulName and pathList[1]=="edit":
-				return( True )
-		return( False )
+		if len(pathList) > 1:
+			if pathList[0] == self.moduleName and pathList[1] == "edit":
+				return True
+
+		return False
 
 	def handleInitialHash(self, pathList, params):
-		assert self.canHandleInitialHash( pathList, params )
-		edwg = EditWidget( self.modulName, EditWidget.appSingleton, hashArgs=(params or None))
-		self.addWidget( edwg )
+		assert self.canHandleInitialHash(pathList, params)
+
+		self.addWidget(EditWidget(self.moduleName, EditWidget.appSingleton, hashArgs=(params or None)))
 		self.focus()
 
 	@staticmethod
-	def canHandle( modulName, modulInfo ):
-		return( modulInfo["handler"]=="singleton" or modulInfo["handler"].startswith("singleton."))
+	def canHandle( moduleName, moduleInfo ):
+		return moduleInfo["handler"]=="singleton" or moduleInfo["handler"].startswith("singleton.")
 
 	def onClick(self, *args, **kwargs ):
-		if not len(self.widgetsDomElm._children):
-			self.addWidget( EditWidget( modul=self.modulName, applicationType=EditWidget.appSingleton ) )
-		super( SingletonHandler, self ).onClick( *args, **kwargs )
+		if not self.widgetsDomElm.children():
+			self.addWidget(EditWidget(self.moduleName, EditWidget.appSingleton))
 
+		super(SingletonHandler, self).onClick(*args, **kwargs)
 
 HandlerClassSelector.insert( 3, SingletonHandler.canHandle, SingletonHandler )

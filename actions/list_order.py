@@ -41,8 +41,8 @@ class ShopMarkAction( html5.ext.Button ):
 				self.isDisabled = True
 
 	def setPayed(self, order ):
-		NetworkService.request( self.parent().parent().modul, self.action,
-		                            { "id": order[ "id" ] }, secure=True,
+		NetworkService.request( self.parent().parent().module, self.action,
+		                            { "key": order[ "key" ] }, secure=True,
 									successHandler=self.setPayedSucceeded,
 									failureHandler=self.setPayedFailed )
 
@@ -51,7 +51,7 @@ class ShopMarkAction( html5.ext.Button ):
 
 		if self.done + self.failed == self.total:
 			conf["mainWindow"].log("success", translate( self.txtSuccess, count=self.done ) )
-			NetworkService.notifyChange( self.parent().parent().modul )
+			NetworkService.notifyChange( self.parent().parent().module )
 
 	def setPayedFailed(self, response):
 		conf["mainWindow"].log( "error", translate( self.txtFailure ) )

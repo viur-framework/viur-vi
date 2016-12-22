@@ -6,24 +6,22 @@ from widgets.edit import EditWidget
 
 from i18n import translate
 class TreeHandler( Pane ):
-	def __init__(self, modulName, modulInfo, groupName=None, *args, **kwargs):
+	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
 		icon = "icons/modules/tree.svg"
-		if "icon" in modulInfo.keys():
-			icon = modulInfo["icon"]
-		if groupName:
-			myDescr = modulInfo["name"].replace( groupName, "")
-		else:
-			myDescr = modulInfo["name"]
-		super( TreeHandler, self ).__init__( myDescr, icon )
-		self.modulName = modulName
-		self.modulInfo = modulInfo
-		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
+
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
+
+		super( TreeHandler, self ).__init__(moduleInfo["visibleName"], icon )
+		self.moduleName = moduleName
+		self.moduleInfo = moduleInfo
+		if "hideInMainBar" in moduleInfo.keys() and moduleInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
 		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
 
 	def canHandleInitialHash(self, pathList, params ):
 		if len(pathList)>1:
-			if pathList[0]==self.modulName:
+			if pathList[0]==self.moduleName:
 				if pathList[1] in ["list"] or (pathList[1]=="edit" and len(pathList)>3 and pathList[2] in ["node","leaf"]):
 					return( True )
 		return( False )
@@ -31,26 +29,26 @@ class TreeHandler( Pane ):
 	def handleInitialHash(self, pathList, params):
 		assert self.canHandleInitialHash( pathList, params )
 		if pathList[1] == "list":
-			wdg = displayDelegateSelector.select( self.modulName, self.modulInfo )
-			assert wdg is not None, "Got no handler for %s" % self.modulName
-			self.addWidget( wdg(self.modulName ) )
+			wdg = displayDelegateSelector.select( self.moduleName, self.moduleInfo )
+			assert wdg is not None, "Got no handler for %s" % self.moduleName
+			self.addWidget( wdg(self.moduleName ) )
 			self.focus()
 		elif pathList[1] == "edit" and len(pathList)>3:
-			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_tree", "action_edit" ])
-			edwg = EditWidget( self.modulName, EditWidget.appTree, key=pathList[3], skelType=pathList[2], hashArgs=(params or None))
+			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.moduleName, "apptype_tree", "action_edit" ])
+			edwg = EditWidget( self.moduleName, EditWidget.appTree, key=pathList[3], skelType=pathList[2], hashArgs=(params or None))
 			pane.addWidget( edwg )
 			conf["mainWindow"].addPane( pane, parentPane=self)
 			pane.focus()
 
 	@staticmethod
-	def canHandle( modulName, modulInfo ):
-		return( modulInfo["handler"]=="tree" or modulInfo["handler"].startswith("tree."))
+	def canHandle( moduleName, moduleInfo ):
+		return( moduleInfo["handler"]=="tree" or moduleInfo["handler"].startswith("tree."))
 
 	def onClick(self, *args, **kwargs ):
 		if not len(self.widgetsDomElm._children):
-			wdg = displayDelegateSelector.select( self.modulName, self.modulInfo )
-			assert wdg is not None, "Got no handler for %s" % self.modulName
-			self.addWidget( wdg(self.modulName ) )
+			wdg = displayDelegateSelector.select( self.moduleName, self.moduleInfo )
+			assert wdg is not None, "Got no handler for %s" % self.moduleName
+			self.addWidget( wdg(self.moduleName ) )
 		super( TreeHandler, self ).onClick( *args, **kwargs )
 
 

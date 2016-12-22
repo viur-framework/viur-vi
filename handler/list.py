@@ -8,72 +8,78 @@ from widgets.edit import EditWidget
 from i18n import translate
 
 class ListHandler( Pane ):
-	def __init__(self, modulName, modulInfo, groupName=None, *args, **kwargs):
+	def __init__(self, moduleName, moduleInfo, isView = False, *args, **kwargs):
 		icon = "icons/modules/list.svg"
-		if "icon" in modulInfo.keys():
-			icon = modulInfo["icon"]
-		if groupName:
-			myDescr = modulInfo["name"].replace( groupName, "")
-		else:
-			myDescr = modulInfo["name"]
-		super( ListHandler, self ).__init__( myDescr, icon )
-		self.modulName = modulName
-		self.modulInfo = modulInfo
-		if "hideInMainBar" in modulInfo.keys() and modulInfo["hideInMainBar"]:
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
+
+		super(ListHandler, self).__init__(moduleInfo.get("visibleName", moduleInfo["name"]), icon)
+
+		self.moduleName = moduleName
+		self.moduleInfo = moduleInfo
+
+		if "hideInMainBar" in moduleInfo.keys() and moduleInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
 		else:
-			if "views" in modulInfo.keys():
-				for view in modulInfo["views"]:
-					self.addChildPane( ListHandler(modulName,view) )
-		initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash)
+			if "views" in moduleInfo.keys():
+				for view in moduleInfo["views"]:
+					self.addChildPane(ListHandler(moduleName, view, isView=True))
+
+		if not isView:
+			initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
 
 	def canHandleInitialHash(self, pathList, params ):
 		if len(pathList)>1:
-			if pathList[0]==self.modulName:
+			if pathList[0]==self.moduleName:
 				if pathList[1] in ["add","list"] or (pathList[1]=="edit" and len(pathList)>2):
-					return( True )
-		return( False )
+					return True
+
+		return False
 
 	def handleInitialHash(self, pathList, params):
 		assert self.canHandleInitialHash( pathList, params )
 		if pathList[1] == "list":
 			filter = None
 			columns = None
-			if "filter" in self.modulInfo.keys():
-				filter = self.modulInfo["filter"]
-			if "columns" in self.modulInfo.keys():
-				columns = self.modulInfo["columns"]
-			self.addWidget( ListWidget( self.modulName, filter=filter, columns=columns ) )
+			if "filter" in self.moduleInfo.keys():
+				filter = self.moduleInfo["filter"]
+			if "columns" in self.moduleInfo.keys():
+				columns = self.moduleInfo["columns"]
+			self.addWidget( ListWidget( self.moduleName, filter=filter, columns=columns ) )
 			self.focus()
 		elif pathList[1] == "add":
-			pane = Pane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_list", "action_add" ])
-			edwg = EditWidget( self.modulName, EditWidget.appList, hashArgs=(params or None) )
+			pane = Pane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.moduleName, "apptype_list", "action_add" ])
+			edwg = EditWidget( self.moduleName, EditWidget.appList, hashArgs=(params or None) )
 			pane.addWidget( edwg )
 			conf["mainWindow"].addPane( pane, parentPane=self)
 			pane.focus()
 		elif pathList[1] == "edit" and len(pathList)>2:
-			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.modulName, "apptype_list", "action_edit" ])
-			edwg = EditWidget( self.modulName, EditWidget.appList, key=pathList[2], hashArgs=(params or None))
+			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.moduleName, "apptype_list", "action_edit" ])
+			edwg = EditWidget( self.moduleName, EditWidget.appList, key=pathList[2], hashArgs=(params or None))
 			pane.addWidget( edwg )
 			conf["mainWindow"].addPane( pane, parentPane=self)
 			pane.focus()
 
 	@staticmethod
-	def canHandle( modulName, modulInfo ):
-		return( modulInfo["handler"]=="list" or modulInfo["handler"].startswith("list."))
+	def canHandle( moduleName, moduleInfo ):
+		return( moduleInfo["handler"]=="list" or moduleInfo["handler"].startswith("list."))
 
 	def onClick(self, *args, **kwargs ):
 		if not len(self.widgetsDomElm._children):
 			filter = None
 			columns = None
-			if "filter" in self.modulInfo.keys():
-				filter = self.modulInfo["filter"]
-			if "columns" in self.modulInfo.keys():
-				columns = self.modulInfo["columns"]
-			filterName = self.modulInfo["name"] if "name" in self.modulInfo.keys() else ""
-			filterID = self.modulInfo["__id"] if "__id" in self.modulInfo.keys() else None
-			self.addWidget( ListWidget( self.modulName, filter=filter, columns=columns, filterID=filterID, filterDescr=filterName ) )
-		super( ListHandler, self ).onClick( *args, **kwargs )
+
+			if "filter" in self.moduleInfo.keys():
+				filter = self.moduleInfo["filter"]
+
+			if "columns" in self.moduleInfo.keys():
+				columns = self.moduleInfo["columns"]
+
+			self.addWidget(ListWidget(self.moduleName, filter=filter,
+			                            columns=columns, filterID=self.moduleInfo.get("__id"),
+			                            filterDescr=self.moduleInfo.get("visibleName", "")))
+
+		super(ListHandler, self).onClick(*args, **kwargs)
 
 
 HandlerClassSelector.insert( 1, ListHandler.canHandle, ListHandler )
