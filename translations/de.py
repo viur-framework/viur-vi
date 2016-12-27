@@ -148,4 +148,14 @@ lngDe = {
 	"verify": u"Authentifizieren",
 	"vi.login.handler.googleaccount": u"Google",
 	"login with google": u"Mit Google einloggen",
+
+	"the viur server (v{server.version}) is incompatible to this vi (v{vi.version}).":
+		u"Die Version des verwendeten ViUR servers (v{server.version}) ist inkompatibel mit diesem Vi (v{vi.version}).",
+	"please update either your server or vi!": u"Bitte aktualisieren Sie entweder den Server oder das Vi!",
+	"version mismatch": u"Versionen stimmen nicht überein",
+	"retry": u"Nochmal versuchen",
+
+	"the connection to the server could not be correctly established.":
+		u"Es konnte keine Verbindung zum Server aufgebaut werden.",
+	"communication error": u"Verbindungsfehler"
 }

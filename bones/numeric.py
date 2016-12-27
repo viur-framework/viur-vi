@@ -72,14 +72,13 @@ class NumericEditBone( html5.Input ):
 
 
 	def unserialize(self, data):
-		if self.boneName in data.keys():
-			self["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
+		self["value"] = data.get(self.boneName, "")
 
 	def serializeForPost(self):
-		return( { self.boneName: self["value"] } )
+		return {self.boneName: self["value"]}
 
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serialize()
 
 	def setExtendedErrorInformation(self, errorInfo ):
 		pass
