@@ -2,38 +2,58 @@ import html5
 from network import DeferredCall
 from datetime import datetime
 from i18n import translate
+from config import conf
+
 class Log( html5.Div ):
 	"""
 		Provides the "messaging" center displayed at the bottom of VI
 	"""
 	def __init__(self):
-		super( Log, self ).__init__()
+		super(Log, self).__init__()
+
 		self["class"].append("vi_messenger")
 		openLink = html5.ext.Button(translate("Open message center"), self.toggleMsgCenter)
-		#openLink["href"] = "#statuslist"
-		#openLink.appendChild(html5.TextNode("Open message center"))
 		self.appendChild(openLink)
+
 		self.logUL = html5.Ul()
 		self.logUL["id"] = "statuslist"
 		self.logUL["class"].append( "statuslist" )
 		self.appendChild( self.logUL )
+
 		versionDiv = html5.Div()
 		versionDiv["class"].append("versiondiv")
-		#Try loading the version number
+
+		# Server version number
+		versionspan = html5.Span()
+		versionspan.appendChild(html5.TextNode("ViUR v%s" % ".".join([str(x) for x in conf["server.version"]])))
+		versionspan["class"].append("serverspan")
+		versionDiv.appendChild(versionspan)
+
+		# Vi Version number
+		versionspan = html5.Span()
+		versionspan.appendChild(html5.TextNode("Vi v%s%s" % (".".join([str(x) for x in conf["vi.version"]]), conf["vi.version.appendix"])))
+		versionspan["class"].append("versionspan")
+		versionDiv.appendChild(versionspan)
+
+		#Try loading the revision and build date
 		try:
-			from version import builddate,revision
+			from version import builddate, revision
+
 			revspan = html5.Span()
-			revspan.appendChild( html5.TextNode( "Revision: %s" % revision ))
+			revspan.appendChild(html5.TextNode("Rev %s" % revision))
 			revspan["class"].append("revisionspan")
+
 			datespan = html5.Span()
-			datespan.appendChild( html5.TextNode( "Build Date: %s" % builddate ))
+			datespan.appendChild(html5.TextNode("Built %s" % builddate))
 			datespan["class"].append("datespan")
-			versionDiv.appendChild( datespan )
-			versionDiv.appendChild( revspan )
+
+			versionDiv.appendChild(revspan)
+			versionDiv.appendChild(datespan)
+
 		except:
-			versionDiv.appendChild( html5.TextNode( "unknown build" ) )
-		self.appendChild( versionDiv )
-		#self.backlog = []
+			pass
+
+		self.appendChild(versionDiv)
 
 	def toggleMsgCenter(self, *args, **kwargs):
 		if "is_open" in self["class"]:

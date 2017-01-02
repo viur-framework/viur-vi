@@ -4,6 +4,7 @@ import html5, i18n, pyjd, network
 from login import LoginScreen
 from admin import AdminScreen
 from config import conf
+from i18n import translate
 
 try:
 	import vi_plugins
@@ -22,13 +23,47 @@ class Application(html5.Div):
 
 		self.startup()
 
-	def startup(self):
-		network.NetworkService.request(None, "/vi/config",
-		                                successHandler=self.startupSuccess,
-										failureHandler=self.startupFailure,
-                                        cacheable=True)
+	def startup(self, *args, **kwargs):
 
-	def startupSuccess(self, req):
+
+		if conf["server.version"] is None:
+			network.NetworkService.request(None, "/vi/getVersion",
+			                               successHandler=self.getVersionSuccess,
+			                               failureHandler=self.startupFailure,
+			                               cacheable=True)
+		else:
+			network.NetworkService.request(None, "/vi/config",
+			                                successHandler=self.getConfigSuccess,
+											failureHandler=self.startupFailure,
+	                                        cacheable=True)
+
+	def getVersionSuccess(self, req):
+		conf["server.version"] = network.NetworkService.decode(req)
+
+		if ((conf["server.version"][0] >= 0                              # check version?
+			and (conf["server.version"][0] != conf["vi.version"][0]      # major version mismatch
+				or conf["server.version"][1] > conf["vi.version"][1]))): # minor version mismatch
+
+			params = {
+				"server.version": ".".join(str(x) for x in conf["server.version"]),
+				"vi.version": ".".join(str(x) for x in conf["vi.version"]),
+			}
+
+			conf["server.version"] = None
+
+			html5.ext.Alert(
+				translate("The ViUR server (v{server.version}) is incompatible to this Vi (v{vi.version}).", **params)
+					+ "\n" + translate("Please update either your server or Vi!"),
+				title=translate("Version mismatch"),
+				okCallback=self.startup,
+				okLabel=translate("Retry")
+			)
+
+			return
+
+		self.startup()
+
+	def getConfigSuccess(self, req):
 		conf["mainConfig"] = network.NetworkService.decode(req)
 
 		if not self.adminScreen:
@@ -40,7 +75,12 @@ class Application(html5.Div):
 		if err in [403, 401]:
 			self.login()
 		else:
-			alert("startupFailure TODO")
+			html5.ext.Alert(
+				translate("The connection to the server could not be correctly established."),
+				title=translate("Communication error"),
+				okCallback=self.startup,
+				okLabel=translate("Retry")
+			)
 
 	def login(self, logout=False):
 		if not self.loginScreen:
