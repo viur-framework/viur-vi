@@ -475,7 +475,6 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.appendChild(wrapperDiv)
 
 		if using:
-			print("1 WITH ",data["rel"])
 			self.ie = InternalEdit(using, data["rel"], errorInfo,
 			                        readOnly = parent.readOnly,
 			                        defaultCat = parent.usingDescr)
