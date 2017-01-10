@@ -1,10 +1,9 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-
 import html5,re
 from priorityqueue import editBoneSelector, viewDelegateSelector
 from widgets.edit import InvalidBoneValueException
 from i18n import translate
+
 class PasswordEditBone( html5.Div ):
 	def __init__(self, moduleName, boneName, readOnly, *args, **kwargs ):
 		super( PasswordEditBone,  self ).__init__( *args, **kwargs )

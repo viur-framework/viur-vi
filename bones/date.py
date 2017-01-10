@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
@@ -6,8 +5,9 @@ from datetime import datetime
 import re
 from i18n import translate
 from config import conf
+from bones.base import BaseBoneExtractor
 
-class DateBoneExtractor( object ):
+class DateBoneExtractor(BaseBoneExtractor):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( DateBoneExtractor, self ).__init__()
 		self.skelStructure = skelStructure

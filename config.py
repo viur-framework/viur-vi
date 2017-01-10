@@ -3,16 +3,19 @@ from event import EventDispatcher
 from i18n import translate
 
 conf = {
+	"vi.version": (2, 0, 0),
+	"vi.version.appendix": "rc1",
 	"mainConfig": None,
 	"mainWindow": None,
 	"server": {},
-	"modules": { "_tasks" : { "handler" : "singleton", "name": "Tasks" } },
-	"tasks" : { "server" : [], "client" : [] },
+	"server.version": None,
+	"modules": {"_tasks": {"handler": "singleton", "name": "Tasks"}},
+	"tasks": {"server": [], "client": []},
 	"currentlanguage":"de",
 	"currentUser": None,
-	"empty_value": translate( "-" ),
+	"empty_value": translate("-"),
 	"initialHashEvent": EventDispatcher("initialHash"),
-    "toplevelactions": [ "tasks", "userstate", "logout" ],
+    "toplevelactions": ["tasks", "userstate", "logout"],
 	"batchSize": 20,
 	"showBoneNames": False,
 	"internalPreview": True,

@@ -5,19 +5,27 @@ import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from config import conf
 
-
-class BaseBoneExtractor( object ):
+class BaseBoneExtractor(object):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
 		super(BaseBoneExtractor, self).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.moduleName=moduleName
+		self.moduleName = moduleName
 
-	def render( self, data, field ):
+	def render(self, data, field):
 		if field in data.keys():
 			return str(data[field])
+
 		return conf["empty_value"]
 
+	def raw(self, data, field):
+		if field in data.keys():
+			if isinstance(data[field], list):
+				return [str(x) for x in data[field]]
+
+			return str(data[field])
+
+		return None
 
 class BaseViewBoneDelegate( object ):
 	"""
@@ -29,10 +37,11 @@ class BaseViewBoneDelegate( object ):
 		self.boneName = boneName
 		self.moduleName=moduleName
 
-	def render( self, data, field ):
+	def render(self, data, field):
 		if field in data.keys():
-			return( html5.Label(str( data[field])))
-		return( html5.Label( conf[ "empty_value" ] ) )
+			return html5.Label(str(data[field]))
+
+		return html5.Label(conf[ "empty_value" ])
 
 
 class BaseEditBone( html5.Input ):
