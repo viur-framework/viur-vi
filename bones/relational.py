@@ -38,7 +38,7 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 
 		try:
 			if not isinstance(val, list):
-				val = [val]
+				val = [val or ""]
 
 			val = ", ".join([(utils.formatString(
 								utils.formatString(self.format, x["dest"], structure["relskel"],
