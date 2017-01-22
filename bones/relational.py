@@ -211,7 +211,7 @@ class RelationalSingleSelectionBone(html5.Div):
 			self.remBtn["class"].append("cancel")
 			self.appendChild( self.remBtn )
 		else:
-			self.remBtn = None
+			self.remBtn = Nonemin
 
 		if self.readOnly:
 			self["disabled"] = True
@@ -452,8 +452,6 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			@type data: dict
 		"""
 		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
-
-		self["draggable"] = not parent.readOnly
 		self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd", "onChange")
 
 		self.parent = parent
@@ -461,6 +459,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.data = data
 
 		self.txtLbl = html5.Label()
+		self.txtLbl["draggable"] = not parent.readOnly
 
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild(self.txtLbl)
@@ -586,6 +585,8 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.usingDescr = usingDescr
 		self.relskel = relskel
 
+		self.changeEvent = EventDispatcher("change")
+
 		self.entries = []
 		self.extendedErrorInformation = {}
 		self.currentDrag = None
@@ -655,6 +656,9 @@ class RelationalMultiSelectionBone(html5.Div):
 			@param data: The data dictionary received.
 			@type data: dict
 		"""
+		self.selectionDiv.removeAllChildren()
+		self.entries = []
+
 		if self.boneName in data.keys():
 			val = data[ self.boneName ]
 			if isinstance( val, dict ):
@@ -687,6 +691,8 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 			Opens a ListWidget sothat the user can select new values
 		"""
+		print("onShowSelector")
+
 		currentSelector = ListWidget( self.destModule, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
@@ -698,6 +704,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 		selection = [{"dest": data, "rel": getDefaultValues(self.using) if self.using else None} for data in selection]
 		self.setSelection(selection)
+		self.changeEvent.fire(self)
 
 	def setSelection(self, selection):
 		"""
