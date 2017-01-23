@@ -544,6 +544,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry(self)
+		self.parent.changeEvent.fire(self.parent)
 
 	def serialize(self):
 		if self.ie:
@@ -585,7 +586,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.usingDescr = usingDescr
 		self.relskel = relskel
 
-		self.changeEvent = EventDispatcher("change")
+		self.changeEvent = EventDispatcher("boneChange")
 
 		self.entries = []
 		self.extendedErrorInformation = {}
@@ -670,9 +671,9 @@ class RelationalMultiSelectionBone(html5.Div):
 			Serializes our values into something that can be transferred to the server using POST.
 			@returns: dict
 		"""
-
 		res = {}
 		idx = 0
+
 		for entry in self.entries:
 			currRes = entry.serialize()
 			if isinstance( currRes, dict ):
@@ -680,9 +681,10 @@ class RelationalMultiSelectionBone(html5.Div):
 					res["%s.%s.%s" % (self.boneName,idx,k) ] = v
 			else:
 				res["%s.%s.key" % (self.boneName,idx) ] = currRes
+
 			idx += 1
-		return( res )
-		#return( { self.boneName: [x.data["key"] for x in self.entries]} )
+
+		return res
 
 	def serializeForDocument(self):
 		return self.serialize()
@@ -691,14 +693,12 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 			Opens a ListWidget sothat the user can select new values
 		"""
-		print("onShowSelector")
-
 		currentSelector = ListWidget( self.destModule, isSelector=True )
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
 
-	def onSelectionActivated(self, table, selection ):
+	def onSelectionActivated(self, table, selection):
 		"""
 			Merges the selection made in the ListWidget into our value(s)
 		"""
@@ -714,9 +714,11 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 		if selection is None:
 			return
+
 		for data in selection:
-			errIdx = len( self. entries )
+			errIdx = len(self.entries)
 			errDict = {}
+
 			if self.extendedErrorInformation:
 				for k,v in self.extendedErrorInformation.items():
 					k = k.replace("%s." % self.boneName, "")
@@ -725,10 +727,12 @@ class RelationalMultiSelectionBone(html5.Div):
 						idx = int( idx )
 					else:
 						continue
+
 					if idx == errIdx:
 						errDict[ errKey ] = v
+
 			entry = RelationalMultiSelectionBoneEntry( self, self.destModule, data, self.using, errDict )
-			self.addEntry( entry )
+			self.addEntry(entry)
 
 	def addEntry(self, entry):
 		"""
