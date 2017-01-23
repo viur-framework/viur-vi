@@ -211,7 +211,7 @@ class RelationalSingleSelectionBone(html5.Div):
 			self.remBtn["class"].append("cancel")
 			self.appendChild( self.remBtn )
 		else:
-			self.remBtn = Nonemin
+			self.remBtn = None
 
 		if self.readOnly:
 			self["disabled"] = True
