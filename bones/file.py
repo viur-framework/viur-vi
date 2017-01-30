@@ -1,7 +1,4 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from event import EventDispatcher
-
 import html5, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from widgets.file import FileWidget, LeafFileWidget
@@ -12,8 +9,9 @@ from i18n import translate
 from network import NetworkService
 from widgets.edit import EditWidget
 from pane import Pane
+from bones.base import BaseBoneExtractor
 
-class FileBoneExtractor(object):
+class FileBoneExtractor(BaseBoneExtractor):
 	def __init__(self, modul, boneName, structure):
 		super(FileBoneExtractor, self).__init__()
 		self.format = "$(dest.name)"
@@ -150,11 +148,13 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		super(FileMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 		self["class"].append("fileentry")
 
-		if utils.getImagePreview( self.data ) is not None:
+		image = utils.getImagePreview(self.data["dest"])
+		if image is not None:
 			img = html5.Img()
-			img["src"] = utils.getImagePreview( self.data )
+			img["src"] = image
 			img["class"].append("previewimg")
 			self.appendChild(img)
+
 			# Move the img in front of the lbl
 			self.element.removeChild(img.element)
 			self.element.insertBefore(img.element, self.element.children.item(0))
@@ -221,6 +221,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
 		self.setSelection( [{"dest": x.data, "rel": {}} for x in selection if isinstance(x, LeafFileWidget)] )
+		self.changeEvent.fire(self)
 
 	def setSelection(self, selection):
 		"""
@@ -228,6 +229,8 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 			@param selection: The new entry that this bone should reference
 			@type selection: dict | list[dict]
 		"""
+		print("setSelection", selection)
+
 		if selection is None:
 			return
 

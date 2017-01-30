@@ -40,9 +40,9 @@ class AdminScreen(Screen):
 		self.modulList["class"] = "vi_manager"
 		self.modulMgr.appendChild(self.modulList)
 
-		self.modulListUl = html5.Ul()
-		self.modulListUl["class"] = "modullist"
-		self.modulList.appendChild(self.modulListUl)
+		self.moduleListUl = html5.Ul()
+		self.moduleListUl["class"] = "modullist"
+		self.modulList.appendChild(self.moduleListUl)
 
 		self.viewport = html5.Div()
 		self.viewport["class"] = "vi_viewer"
@@ -273,7 +273,7 @@ class AdminScreen(Screen):
 		if parentPane:
 			parentPane.addChildPane( pane )
 		else:
-			self.modulListUl.appendChild( pane )
+			self.moduleListUl.appendChild( pane )
 
 		self.viewport.appendChild(pane.widgetsDomElm)
 		pane.widgetsDomElm["style"]["display"] = "none"
@@ -356,8 +356,8 @@ class AdminScreen(Screen):
 			else:
 				self.nextPane = None
 
-		if pane.parentPane == self:
-			self.modulListUl.removeChild( pane )
+		if not pane.parentPane or pane.parentPane is self:
+			self.moduleListUl.removeChild( pane )
 		else:
 			pane.parentPane.removeChildPane( pane )
 

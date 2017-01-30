@@ -8,6 +8,7 @@ from config import conf
 from i18n import translate
 from network import NetworkService
 from pane import Pane
+from bones.base import BaseBoneExtractor
 
 def getDefaultValues(structure):
 	defaultValues = {}
@@ -17,17 +18,13 @@ def getDefaultValues(structure):
 
 	return defaultValues
 
-class RelationalBoneExtractor(object):
+class RelationalBoneExtractor(BaseBoneExtractor):
 	def __init__(self, module, boneName, structure):
-		super(RelationalBoneExtractor, self).__init__()
+		super(RelationalBoneExtractor, self).__init__(module, boneName, structure)
 		self.format = "$(dest.name)"
 
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
-
-		self.module = module
-		self.structure = structure
-		self.boneName = boneName
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
@@ -41,7 +38,7 @@ class RelationalBoneExtractor(object):
 
 		try:
 			if not isinstance(val, list):
-				val = [val]
+				val = [val or ""]
 
 			val = ", ".join([(utils.formatString(
 								utils.formatString(self.format, x["dest"], structure["relskel"],
@@ -56,6 +53,33 @@ class RelationalBoneExtractor(object):
 			val = ""
 
 		return val
+
+	def raw(self, data, field):
+		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
+
+		if not field in data.keys():
+			return None
+
+		val = data[field]
+		structure = self.skelStructure[self.boneName]
+
+		try:
+			if not isinstance(val, list):
+				val = [val]
+
+			val = [(utils.formatString(
+								utils.formatString(self.format, x["dest"], structure["relskel"],
+								                    prefix=["dest"], language=conf["currentlanguage"]),
+									x["rel"], structure["using"],
+										prefix=["rel"], language=conf["currentlanguage"])
+			                    or x["key"]) for x in val]
+		except:
+			#We probably received some garbage
+			print("Cannot build relational format, maybe garbage received?")
+			print(val)
+			return None
+
+		return val[0] if len(val) == 1 else val
 
 class RelationalViewBoneDelegate(object):
 
@@ -428,8 +452,6 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			@type data: dict
 		"""
 		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
-
-		self["draggable"] = not parent.readOnly
 		self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd", "onChange")
 
 		self.parent = parent
@@ -437,6 +459,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.data = data
 
 		self.txtLbl = html5.Label()
+		self.txtLbl["draggable"] = not parent.readOnly
 
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild(self.txtLbl)
@@ -451,7 +474,6 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.appendChild(wrapperDiv)
 
 		if using:
-			print("1 WITH ",data["rel"])
 			self.ie = InternalEdit(using, data["rel"], errorInfo,
 			                        readOnly = parent.readOnly,
 			                        defaultCat = parent.usingDescr)
@@ -522,6 +544,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry(self)
+		self.parent.changeEvent.fire(self.parent)
 
 	def serialize(self):
 		if self.ie:
@@ -562,6 +585,8 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.using = using
 		self.usingDescr = usingDescr
 		self.relskel = relskel
+
+		self.changeEvent = EventDispatcher("boneChange")
 
 		self.entries = []
 		self.extendedErrorInformation = {}
@@ -632,6 +657,9 @@ class RelationalMultiSelectionBone(html5.Div):
 			@param data: The data dictionary received.
 			@type data: dict
 		"""
+		self.selectionDiv.removeAllChildren()
+		self.entries = []
+
 		if self.boneName in data.keys():
 			val = data[ self.boneName ]
 			if isinstance( val, dict ):
@@ -643,9 +671,9 @@ class RelationalMultiSelectionBone(html5.Div):
 			Serializes our values into something that can be transferred to the server using POST.
 			@returns: dict
 		"""
-
 		res = {}
 		idx = 0
+
 		for entry in self.entries:
 			currRes = entry.serialize()
 			if isinstance( currRes, dict ):
@@ -653,9 +681,10 @@ class RelationalMultiSelectionBone(html5.Div):
 					res["%s.%s.%s" % (self.boneName,idx,k) ] = v
 			else:
 				res["%s.%s.key" % (self.boneName,idx) ] = currRes
+
 			idx += 1
-		return( res )
-		#return( { self.boneName: [x.data["key"] for x in self.entries]} )
+
+		return res
 
 	def serializeForDocument(self):
 		return self.serialize()
@@ -669,12 +698,13 @@ class RelationalMultiSelectionBone(html5.Div):
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
 
-	def onSelectionActivated(self, table, selection ):
+	def onSelectionActivated(self, table, selection):
 		"""
 			Merges the selection made in the ListWidget into our value(s)
 		"""
 		selection = [{"dest": data, "rel": getDefaultValues(self.using) if self.using else None} for data in selection]
 		self.setSelection(selection)
+		self.changeEvent.fire(self)
 
 	def setSelection(self, selection):
 		"""
@@ -684,9 +714,11 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 		if selection is None:
 			return
+
 		for data in selection:
-			errIdx = len( self. entries )
+			errIdx = len(self.entries)
 			errDict = {}
+
 			if self.extendedErrorInformation:
 				for k,v in self.extendedErrorInformation.items():
 					k = k.replace("%s." % self.boneName, "")
@@ -695,10 +727,12 @@ class RelationalMultiSelectionBone(html5.Div):
 						idx = int( idx )
 					else:
 						continue
+
 					if idx == errIdx:
 						errDict[ errKey ] = v
+
 			entry = RelationalMultiSelectionBoneEntry( self, self.destModule, data, self.using, errDict )
-			self.addEntry( entry )
+			self.addEntry(entry)
 
 	def addEntry(self, entry):
 		"""

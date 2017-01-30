@@ -1,23 +1,9 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
 from config import conf
 from event import EventDispatcher
 from i18n import translate
-
-class BooleanBoneExtractor( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( BooleanBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName = moduleName
-
-	def render( self, data, field ):
-		if field in data.keys():
-			return str( data[field])
-		return conf[ "empty_value" ]
-
 
 class BooleanViewBoneDelegate( object ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
@@ -112,4 +98,3 @@ def CheckForBooleanBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 editBoneSelector.insert( 3, CheckForBooleanBone, BooleanEditBone)
 viewDelegateSelector.insert( 3, CheckForBooleanBone, BooleanViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedBooleanSearch.canHandleExtension, ExtendedBooleanSearch )
-extractorDelegateSelector.insert(3, CheckForBooleanBone, BooleanBoneExtractor)
