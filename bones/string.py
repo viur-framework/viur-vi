@@ -24,8 +24,9 @@ class StringBoneExtractor(BaseBoneExtractor):
 				return '"%s"' % resstr
 			elif isinstance(data[field], list):
 				return ", ".join([item.replace("&quot;", "").replace(";", " ").replace('"', "'") for item in data[field]])
-			else:
-				return str('"%s"' % data[field].replace("&quot;", "").replace(";", " ").replace('"', "'"))
+			elif data[field] is not None:
+				return str('"%s"' % str(data[field]).replace("&quot;", "").replace(";", " ").replace('"', "'"))
+
 		return conf["empty_value"]
 
 class StringViewBoneDelegate( object ):

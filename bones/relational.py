@@ -19,12 +19,12 @@ def getDefaultValues(structure):
 	return defaultValues
 
 class RelationalBoneExtractor(BaseBoneExtractor):
-	def __init__(self, module, boneName, structure):
-		super(RelationalBoneExtractor, self).__init__(module, boneName, structure)
+	def __init__(self, module, boneName, skelStructure):
+		super(RelationalBoneExtractor, self).__init__(module, boneName, skelStructure)
 		self.format = "$(dest.name)"
 
-		if "format" in structure[boneName].keys():
-			self.format = structure[boneName]["format"]
+		if "format" in skelStructure[boneName].keys():
+			self.format = skelStructure[boneName]["format"]
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
@@ -34,7 +34,7 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 		else:
 			val = ""
 
-		structure = self.structure[self.boneName]
+		structure = self.skelStructure[self.boneName]
 
 		try:
 			if not isinstance(val, list):
