@@ -3,8 +3,8 @@ from event import EventDispatcher
 from i18n import translate
 
 conf = {
-	"vi.version": (2, 0, 1),
-	"vi.version.appendix": "",
+	"vi.version": (2, 0, 0),
+	"vi.version.appendix": "viurLogics",
 	"mainConfig": None,
 	"mainWindow": None,
 	"server": {},
