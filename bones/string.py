@@ -381,7 +381,36 @@ class StringEditBone(html5.Div):
 		return res
 
 	def serializeForDocument(self):
-		return self.serialize()
+		if self.languages and self.multiple:
+			res = {}
+
+			for lang in self.languages:
+				res[lang] = []
+
+				for child in self.langEdits[lang].children():
+					if isinstance(child, Tag):
+						res[lang].append(child.input["value"])
+
+		elif self.languages and not self.multiple:
+			res = {}
+
+			for lang in self.languages:
+				txt = self.langEdits[lang]["value"]
+
+				if txt:
+					res[lang] = txt
+
+		elif not self.languages and self.multiple:
+			res = []
+
+			for child in self.tagContainer.children():
+				if isinstance(child, Tag):
+					res.append(child.input["value"])
+
+		elif not self.languages and not self.multiple:
+			res = self.input["value"]
+
+		return {self.boneName: res}
 
 	def genTag(self, tag, editMode=False, lang=None):
 		tag = Tag(self, tag, editMode, readonly = self.readOnly)

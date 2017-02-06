@@ -205,7 +205,7 @@ class DateEditBone( html5.Div ):
 		return {self.boneName: returnvalue}
 
 	def serializeForDocument(self):
-		return self.serialize()
+		return self.serializeForPost()
 
 def CheckForDateBone(moduleName, boneName, skelStucture, *args, **kwargs):
 	return skelStucture[boneName]["type"] == "date"

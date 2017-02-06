@@ -40,11 +40,11 @@ class BooleanEditBone( html5.Input ):
 
 	##save
 	def serializeForPost(self):
-		return ( { self.boneName: str(self._getChecked())} )
+		return {self.boneName: str(self._getChecked())}
 
 	##UNUSED
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serializeForPost()
 
 
 class ExtendedBooleanSearch( html5.Div ):

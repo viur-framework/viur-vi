@@ -203,6 +203,9 @@ class TextEditBone( html5.Div ):
 		else:
 			return {self.boneName: self.input["value"]}
 
+	def serializeForDocument(self):
+		return self.serializeForPost()
+
 	def onClick(self, event):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.previewDiv):
 			event.stopPropagation()

@@ -78,7 +78,7 @@ class NumericEditBone( html5.Input ):
 		return {self.boneName: self["value"]}
 
 	def serializeForDocument(self):
-		return self.serialize()
+		return self.serializeForPost()
 
 	def setExtendedErrorInformation(self, errorInfo ):
 		pass

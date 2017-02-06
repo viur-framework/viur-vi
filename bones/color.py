@@ -51,11 +51,11 @@ class ColorEditBone( html5.Input ):
 
 	##save
 	def serializeForPost(self):
-		return ( { self.boneName: str(self._getValue())} )
+		return { self.boneName: str(self._getValue())}
 
 	##UNUSED
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serializeForPost()
 
 def CheckForColorBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 	return( skelStucture[boneName]["type"]=="color" )

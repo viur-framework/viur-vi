@@ -45,7 +45,6 @@ class EmailEditBone( strBone.StringEditBone ):
 			return( { self.boneName: self.input["value"] } )
 		raise InvalidBoneValueException()
 
-
 	def setSpecialType(self):
 		self.input["type"]="email"
 

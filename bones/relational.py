@@ -319,19 +319,28 @@ class RelationalSingleSelectionBone(html5.Div):
 			Serializes our value into something that can be transferred to the server using POST.
 			@returns: dict
 		"""
-		if not (self.selection and "dest" in self.selection.keys() and "key" in self.selection["dest"].keys()):
-			# We have no value selected
-			return {}
 		res = {}
+
+		if not (self.selection and "dest" in self.selection.keys() and "key" in self.selection["dest"].keys()):
+			return res
+
 		if self.ie:
-			res.update(self.ie.doSave())
+			res.update(self.ie.serializeForPost())
+
 		res["key"] = self.selection["dest"]["key"]
-		r = {"%s.0.%s" % (self.boneName, k): v for (k,v ) in res.items()}
-		return r
-		#return { self.boneName+".dest": self.selection["dest"]["key"], self.boneName+".rel": self.ie.doSave} if self.selection is not None else {}
+
+		return {"%s.0.%s" % (self.boneName, k): v for (k,v ) in res.items()}
 
 	def serializeForDocument(self):
-		return self.serialize()
+		res = {"rel": {}, "dest": {}}
+
+		if (self.selection and "dest" in self.selection.keys() and "key" in self.selection["dest"].keys()):
+			if self.ie:
+				res["rel"].update(self.ie.serializeForDocument())
+
+			res["dest"]["key"] = self.selection["dest"]["key"]
+
+		return {self.boneName: res}
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -546,15 +555,22 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.parent.removeEntry(self)
 		self.parent.changeEvent.fire(self.parent)
 
-	def serialize(self):
+	def serializeForPost(self):
 		if self.ie:
-			res = {}
-			res.update(self.ie.doSave())
+			res = self.ie.serializeForPost()
 			res["key"] = self.data["dest"]["key"]
 			return res
 		else:
 			return {"key": self.data["dest"]["key"]}
 
+	def serializeForDocument(self):
+		res = {"rel": {}, "dest": {}}
+
+		if self.ie:
+			res["rel"] = self.ie.serializeForPost()
+
+		res["dest"]["key"] = self.data["dest"]["key"]
+		return res
 
 class RelationalMultiSelectionBone(html5.Div):
 	"""
@@ -675,7 +691,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		idx = 0
 
 		for entry in self.entries:
-			currRes = entry.serialize()
+			currRes = entry.serializeForPost()
 			if isinstance( currRes, dict ):
 				for k,v in currRes.items():
 					res["%s.%s.%s" % (self.boneName,idx,k) ] = v
@@ -687,7 +703,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		return res
 
 	def serializeForDocument(self):
-		return self.serialize()
+		return {self.boneName: [entry.serializeForDocument() for entry in self.entries]}
 
 	def onShowSelector(self, *args, **kwargs):
 		"""

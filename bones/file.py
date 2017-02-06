@@ -336,7 +336,6 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		self.updateButtons()
 
 
-
 def CheckForFileBoneSingleSelection( moduleName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
 	return CheckForFileBone( moduleName, boneName, skelStructure ) and not isMultiple

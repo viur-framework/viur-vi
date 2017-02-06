@@ -143,27 +143,41 @@ class InternalEdit(html5.Div):
 			self.form.appendChild( v )
 			v._section = None
 
+	def serializeForPost(self, validityCheck = False):
+		res = {}
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForPost())
+			except InvalidBoneValueException:
+				if validityCheck:
+					# Fixme: Bad hack..
+					lbl = bone.parent()._children[0]
+					if "is_valid" in lbl["class"]:
+						lbl["class"].remove("is_valid")
+					lbl["class"].append("is_invalid")
+					self.actionbar.resetLoadingState()
+					return None
+
+		return res
+
+	def serializeForDocument(self):
+		res = {}
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForDocument())
+			except InvalidBoneValueException as e:
+				res[key] = str(e)
+
+		return res
+
 	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
 		"""
 			Starts serializing and transmitting our values to the server.
 		"""
 		self.closeOnSuccess = closeOnSuccess
-
-		res = {}
-
-		for key, bone in self.bones.items():
-			try:
-				res.update( bone.serializeForPost( ) )
-			except InvalidBoneValueException:
-				#Fixme: Bad hack..
-				lbl = bone.parent()._children[0]
-				if "is_valid" in lbl["class"]:
-					lbl["class"].remove("is_valid")
-				lbl["class"].append("is_invalid")
-				self.actionbar.resetLoadingState()
-				return None
-
-		return res
+		return self.serializeForPost(True)
 
 	def unserialize(self, data):
 		"""
@@ -334,9 +348,12 @@ class EditWidget(html5.Div):
 		utils.setPreventUnloading(True)
 
 	def performLogics(self):
-		fields = {}
-		for widget in self.bones.values():
-			fields.update(widget.serializeForPost())
+		fields = self.serializeForDocument()
+
+		for k, v in fields.items():
+			print(k, v)
+
+		print("LOGICS")
 
 		for key, desc in self.dataCache["structure"]:
 			if desc.get("params") and desc["params"]:
@@ -356,6 +373,7 @@ class EditWidget(html5.Div):
 						logic = desc["params"][event]
 
 					res = self.logic.execute(logic, fields)
+
 					if event == "logic.evaluate":
 						self.bones[key].unserialize({key: str(res)})
 					elif res:
@@ -695,24 +713,46 @@ class EditWidget(html5.Div):
 		for bone in self.bones.values():
 			bone.unserialize(data)
 
+	def serializeForPost(self, validityCheck = False):
+		res = {}
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForPost())
+			except InvalidBoneValueException:
+				if validityCheck:
+					# Fixme: Bad hack..
+					lbl = bone.parent()._children[0]
+					if "is_valid" in lbl["class"]:
+						lbl["class"].remove("is_valid")
+					lbl["class"].append("is_invalid")
+					self.actionbar.resetLoadingState()
+					return None
+
+		return res
+
+	def serializeForDocument(self):
+		res = {}
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForDocument())
+			except InvalidBoneValueException as e:
+				res[key] = str(e)
+
+		return res
+
 	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
 		"""
 			Starts serializing and transmitting our values to the server.
 		"""
 		self.closeOnSuccess = closeOnSuccess
-		res = {}
-		for key, bone in self.bones.items():
-			try:
-				res.update( bone.serializeForPost( ) )
-			except InvalidBoneValueException:
-				#Fixme: Bad hack..
-				lbl = bone.parent()._children[0]
-				if "is_valid" in lbl["class"]:
-					lbl["class"].remove("is_valid")
-				lbl["class"].append("is_invalid")
-				self.actionbar.resetLoadingState()
-				return
-		self.save( res )
+
+		res = self.serializeForPost(True)
+		if res is None:
+			return None
+
+		self.save(res)
 
 class fieldset_A(A):
 	_baseClass = "a"
