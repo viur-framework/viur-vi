@@ -11,7 +11,6 @@ from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
 from widgets.actionbar import ActionBar
 from i18n import translate
-import logics
 
 class InvalidBoneValueException(ValueError):
 	pass
@@ -309,7 +308,6 @@ class EditWidget(html5.Div):
 		self.bones = {}
 		self.closeOnSuccess = False
 		self.logaction = logaction
-		self.logic = logics.Interpreter()
 		self.sinkEvent("onChange")
 
 		self._lastData = {} #Dict of structure and values received
@@ -350,11 +348,6 @@ class EditWidget(html5.Div):
 	def performLogics(self):
 		fields = self.serializeForDocument()
 
-		for k, v in fields.items():
-			print(k, v)
-
-		print("LOGICS")
-
 		for key, desc in self.dataCache["structure"]:
 			if desc.get("params") and desc["params"]:
 				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
@@ -365,17 +358,17 @@ class EditWidget(html5.Div):
 
 					# Compile logic at first run
 					if isinstance(logic, str):
-						desc["params"][event] = self.logic.compile(logic)
+						desc["params"][event] = conf["logics"].compile(logic)
 						if desc["params"][event] is None:
 							alert("viurLogics: Parse error in >%s<" % logic)
 							continue
 
 						logic = desc["params"][event]
 
-					res = self.logic.execute(logic, fields)
+					res = conf["logics"].execute(logic, fields)
 
 					if event == "logic.evaluate":
-						self.bones[key].unserialize({key: str(res)})
+						self.bones[key].unserialize({key: res})
 					elif res:
 						if event == "logic.visibleIf":
 							self.containers[key].show()

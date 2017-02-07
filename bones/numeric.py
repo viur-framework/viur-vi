@@ -83,7 +83,6 @@ class NumericEditBone( html5.Input ):
 	def setExtendedErrorInformation(self, errorInfo ):
 		pass
 
-
 class ExtendedNumericSearch( html5.Div ):
 	def __init__(self, extension, view, modul, *args, **kwargs ):
 		super( ExtendedNumericSearch, self ).__init__( *args, **kwargs )

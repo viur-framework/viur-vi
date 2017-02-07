@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 from event import EventDispatcher
 from i18n import translate
+from logics import Interpreter
 
 conf = {
 	"vi.version": (2, 0, 0),
@@ -19,5 +20,6 @@ conf = {
 	"batchSize": 20,
 	"showBoneNames": False,
 	"internalPreview": True,
-	"maxMultiBoneEntries": 5
+	"maxMultiBoneEntries": 5,
+	"logics": Interpreter()
 }
