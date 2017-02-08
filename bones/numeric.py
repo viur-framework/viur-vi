@@ -63,13 +63,18 @@ class NumericEditBone( html5.Input ):
 			self["readonly"] = True
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		_min=skelStructure[ boneName ]["min"] if ("min" in skelStructure[ boneName ].keys()) else False
-		_max=skelStructure[ boneName ]["max"] if ("max" in skelStructure[ boneName ].keys()) else False
-		precision=skelStructure[ boneName ]["precision"] if ("precision" in skelStructure[ boneName ].keys()) else False
-		return( NumericEditBone( moduleName, boneName, readOnly,_min,_max,precision ) )
+	def fromSkelStructure(moduleName, boneName, skelStructure):
+		params = skelStructure[boneName].get("params")
+		readOnly = skelStructure[boneName].get("readonly", False)
 
+		# View bone as readOnly even if it's not readOnly by system.
+		if not readOnly and params:
+			readOnly = params.get("style", "").lower() == "readonly"
+
+		return NumericEditBone(moduleName, boneName, readOnly,
+		                       skelStructure[boneName].get("min", False),
+		                       skelStructure[boneName].get("max", False),
+		                       skelStructure[boneName].get("precision", False))
 
 	def unserialize(self, data):
 		self["value"] = data.get(self.boneName, "")
@@ -126,14 +131,14 @@ class ExtendedNumericSearch( html5.Div ):
 		return( filter )
 
 	@staticmethod
-	def canHandleExtension( extension, view, modul ):
+	def canHandleExtension(extension, view, module):
 		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="numeric" or extension["type"].startswith("numeric.") ) )
 
 
 
 
-def CheckForNumericBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return( skelStucture[boneName]["type"]=="numeric" )
+def CheckForNumericBone(moduleName, boneName, skelStucture, *args, **kwargs):
+	return skelStucture[boneName]["type"] == "numeric"
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForNumericBone, NumericEditBone)

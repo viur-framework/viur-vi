@@ -5,7 +5,7 @@ from html5.a import A
 from html5.form import Fieldset
 from html5.ext import YesNoDialog
 
-from network import NetworkService
+from network import NetworkService, DeferredCall
 from config import conf
 from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
@@ -19,6 +19,9 @@ class InternalEdit(html5.Div):
 
 	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, defaultCat=""):
 		super(InternalEdit, self).__init__()
+
+		self.sinkEvent("onChange", "onKeyDown")
+
 		self.editIdx = 1
 		self.skelStructure = skelStructure
 		self.values = values
@@ -31,10 +34,11 @@ class InternalEdit(html5.Div):
 		self.renderStructure(readOnly=readOnly)
 
 		if values:
-			self.unserialize( values )
+			self.unserialize(values)
 
 	def renderStructure(self, readOnly = False):
 		self.bones = {}
+		self.containers = {}
 
 		tmpDict = {k: v for k, v in self.skelStructure}
 		fieldSets = {}
@@ -110,22 +114,20 @@ class InternalEdit(html5.Div):
 				tmp.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
 				descrLbl = tmp
 
-			containerDiv = html5.Div()
-			containerDiv.appendChild( descrLbl )
-			containerDiv.appendChild( widget )
+			self.containers[key] = html5.Div()
+			self.containers[key].appendChild(descrLbl)
+			self.containers[key].appendChild(widget)
 
 			if cat is not None:
-				fieldSets[cat]._section.appendChild(containerDiv)
+				fieldSets[cat]._section.appendChild(self.containers[key])
 			else:
-				self.form.appendChild(containerDiv)
+				self.form.appendChild(self.containers[key])
 
-			containerDiv["class"].append("bone")
-			containerDiv["class"].append("bone_"+key)
-			containerDiv["class"].append( bone["type"].replace(".","_") )
+			self.containers[key].addClass("bone", "bone_%s" % key, bone["type"].replace(".","_"))
 
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
-					containerDiv["class"].append(t)
+					self.containers[key].addClass(t)
 
 			currRow += 1
 			self.bones[key] = widget
@@ -183,7 +185,60 @@ class InternalEdit(html5.Div):
 			Applies the actual data to the bones.
 		"""
 		for bone in self.bones.values():
-			bone.unserialize( data )
+			bone.unserialize(data)
+
+		DeferredCall(self.performLogics)
+
+	def onChange(self, event):
+		DeferredCall(self.performLogics)
+
+	def onKeyDown(self, event):
+		event.stopPropagation()
+
+	def performLogics(self):
+
+		fields = self.serializeForDocument()
+		print(fields)
+
+		for key, desc in self.skelStructure:
+			if desc.get("params") and desc["params"]:
+				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
+					logic = desc["params"].get(event)
+
+					if not logic:
+						continue
+
+					# Compile logic at first run
+					if isinstance(logic, str):
+						desc["params"][event] = conf["logics"].compile(logic)
+						if desc["params"][event] is None:
+							alert("viurLogics: Parse error in >%s<" % logic)
+							continue
+
+						logic = desc["params"][event]
+
+					res = conf["logics"].execute(logic, fields)
+
+					print("logics", event, key, res)
+
+					if event == "logic.evaluate":
+						self.bones[key].unserialize({key: res})
+					elif res:
+						if event == "logic.visibleIf":
+							self.containers[key].show()
+						elif event == "logic.readonlyIf":
+							if not self.containers[key]["disabled"]:
+								self.containers[key]["disabled"] = True
+
+						# add more here...
+					else:
+						if event == "logic.visibleIf":
+							self.containers[key].hide()
+						elif event == "logic.readonlyIf":
+							if self.containers[key]["disabled"]:
+								self.containers[key]["disabled"] = False
+						# add more here...
+
 
 def parseHashParameters( src, prefix="" ):
 	"""
@@ -367,6 +422,8 @@ class EditWidget(html5.Div):
 
 					res = conf["logics"].execute(logic, fields)
 
+					print("logics", event, key, res)
+
 					if event == "logic.evaluate":
 						self.bones[key].unserialize({key: res})
 					elif res:
@@ -386,7 +443,7 @@ class EditWidget(html5.Div):
 						# add more here...
 
 	def onChange(self, event):
-		self.performLogics()
+		DeferredCall(self.performLogics)
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -697,7 +754,7 @@ class EditWidget(html5.Div):
 		if hasMissing and not self.wasInitialRequest:
 			conf["mainWindow"].log("warning",translate("Could not save entry!"))
 
-		self.performLogics()
+		DeferredCall(self.performLogics)
 
 	def unserialize(self, data):
 		"""
