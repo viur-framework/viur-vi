@@ -700,6 +700,9 @@ class RelationalMultiSelectionBone(html5.Div):
 
 			idx += 1
 
+		if not res:
+			res[self.boneName] = None
+
 		return res
 
 	def serializeForDocument(self):
