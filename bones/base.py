@@ -79,48 +79,7 @@ class BaseEditBone(html5.Input):
 	def setExtendedErrorInformation(self, errorInfo):
 		pass
 
-class BaseLabelBone(html5.Label):
-	"""
-		Show bone as (readonly) label.
-	"""
-	def __init__(self, moduleName, boneName, *args, **kwargs):
-		super(BaseLabelBone, self).__init__(*args, **kwargs)
-		self.boneName = boneName
-		self.value = None
-
-	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure):
-		return BaseLabelBone(moduleName, boneName)
-
-	@staticmethod
-	def checkForLabelStyle(moduleName, boneName, skelStructure):
-		if boneName in skelStructure.keys():
-			if "params" in skelStructure[boneName] and skelStructure[boneName]["params"]:
-				return skelStructure[boneName]["params"].get("style") == "label"
-
-		return False
-
-	def unserialize(self, data, extendedErrorInformation = None):
-		if self.boneName in data.keys():
-			self.value = data.get(self.boneName, "")
-
-			self.removeAllChildren()
-			self.appendChild(self.value)
-
-	def serializeForPost(self):
-		return {
-			self.boneName: self.value
-		}
-
-	def serializeForDocument(self):
-		return self.serializeForPost()
-
-	def setExtendedErrorInformation(self, errorInfo):
-		pass
-
 # Register this Bone in the global queue as generic fallback.
-
-editBoneSelector.insert(10, BaseLabelBone.checkForLabelStyle, BaseLabelBone)
 editBoneSelector.insert(0, lambda *args, **kwargs: True, BaseEditBone)
 viewDelegateSelector.insert(0, lambda *args, **kwargs: True, BaseViewBoneDelegate)
 extractorDelegateSelector.insert(0, lambda *args, **kwargs: True, BaseBoneExtractor)
