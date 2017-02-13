@@ -78,13 +78,14 @@ class SelectOneEditBone( html5.Select ):
 					aoption["selected"]=True
 
 	def serializeForPost(self):
-			for aoption in self._children:
-				if aoption["selected"]:
-					return( { self.boneName: aoption["value"] } )
-			return ({})
+		for opt in self.children():
+			if opt["selected"]:
+				return {self.boneName: opt["value"]}
+
+		return {}
 
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serializeForPost()
 
 class ExtendedSelectOneSearch( html5.Div ):
 	def __init__(self, extension, view, modul, *args, **kwargs ):
