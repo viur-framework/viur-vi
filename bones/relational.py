@@ -48,7 +48,7 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 			                    or x["key"]) for x in val])
 		except:
 			#We probably received some garbage
-			print("Cannot build relational format, maybe garbage received?")
+			print("%s: Cannot build relational format, maybe garbage received?" % self.boneName)
 			print(val)
 			val = ""
 
@@ -75,7 +75,7 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 			                    or x["key"]) for x in val]
 		except:
 			#We probably received some garbage
-			print("Cannot build relational format, maybe garbage received?")
+			print("%s: Cannot build relational format, maybe garbage received?" % self.boneName)
 			print(val)
 			return None
 
@@ -134,7 +134,7 @@ class RelationalViewBoneDelegate(object):
 
 		except:
 			#We probably received some garbage
-			print("Cannot build relational format, maybe garbage received?")
+			print("%s: Cannot build relational format, maybe garbage received?" % self.boneName)
 			print(val)
 
 			res = ""
@@ -177,6 +177,8 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.selectionTxt["readonly"] = True
 		self.appendChild( self.selectionTxt )
 		self.ie = None
+
+		self.changeEvent = EventDispatcher("boneChange")
 
 		# Selection button
 		if (destModule in conf["modules"].keys()
@@ -364,6 +366,8 @@ class RelationalSingleSelectionBone(html5.Div):
 			self.setSelection({"dest": selection[0]})
 		else:
 			self.setSelection(None)
+
+		self.changeEvent.fire(self)
 
 	def setSelection(self, selection):
 		"""

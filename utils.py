@@ -51,6 +51,7 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 		#print("%s%s: %s" % (_rec * " ", key, struct))
 
 		if isinstance(val, dict):
+			#print("%s%s: dict" % (_rec * " ", key))
 			if struct and ("$(%s)" % ".".join(prefix + [key])) in res:
 				langs = struct.get("languages")
 				if langs:
@@ -66,11 +67,28 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 				res = formatString(res, val, structure, prefix + [key], language, _rec = _rec + 1)
 
 		elif isinstance(val, list) and len(val) > 0 and isinstance(val[0], dict):
-			res = formatString(res, val[0], structure, prefix + [key], language, _rec = _rec + 1)
+			if struct and "dest" in val[0] and "rel" in val[0]:
+				if "relskel" in struct and "format" in struct:
+					format = struct["format"]
+					struct = struct["relskel"]
+
+				res = res.replace("$(%s)" % ".".join(prefix + [key]), ", ".join([formatString(format, v, struct, [], language, _rec=_rec + 1) for v in val]))
+			else:
+				res = formatString(res, val[0], struct, prefix + [key], language, _rec = _rec + 1)
+
 		elif isinstance(val, list):
+			#print("%s%s: list" % (_rec * " ", key))
 			val = ", ".join(val)
 
 		res = res.replace("$(%s)" % (".".join(prefix + [key])), str(val))
+
+	# if _rec == 0:
+	# 	print("format", format)
+	# 	print("data", data)
+	# 	print("structure", structure)
+	# 	print("prefix", prefix)
+	# 	print("language", language)
+	# 	print("===", res)
 
 	return res
 
@@ -98,3 +116,5 @@ def setPreventUnloading(mode = True):
 
 	eval("window.top.preventViUnloading = %d;" % count)
 	return count
+
+

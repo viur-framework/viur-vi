@@ -199,6 +199,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 
 	def onUploadSuccess(self, uploader, file ):
 		self.setSelection([{"dest": file,"rel":{}}])
+		self.changeEvent.fire(self)
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -268,6 +269,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 	def onUploadSuccess(self, uploader, file):
 		self.setSelection({"dest": file, "rel":{}})
+		self.changeEvent.fire(self)
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -289,7 +291,9 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 				break
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
+
 		self.setSelection([{"dest": x.data for x in selection if isinstance(x,LeafFileWidget)}][0] )
+		self.changeEvent.fire(self)
 
 	def onEdit(self, *args, **kwargs):
 		"""
