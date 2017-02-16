@@ -50,5 +50,6 @@ function logError(msg, url, line, col, error)
                                 || !url.indexOf("http://localhost") )
         return; /* Ignore */
 
-    Bugsnag.notify(error.toString(), msg.toString());
+    // DISABLED FOR NOW IT MAKES NO SENSE IN DEVELOPMENT VERSIONS...
+    //Bugsnag.notify(error.toString(), msg.toString());
 }
