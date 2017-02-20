@@ -11,13 +11,29 @@ from widgets.edit import EditWidget
 from pane import Pane
 from bones.base import BaseBoneExtractor
 
+class FilePreviewImage(html5.Div):
+	def __init__(self, imageSrc = None, *args, **kwargs):
+		super(FilePreviewImage, self).__init__(*args, **kwargs)
+		self.addClass("previewimg")
+
+		if imageSrc:
+			self.setImage(imageSrc)
+
+	def setImage(self, imageSrc):
+		if imageSrc:
+			self["style"]["background-image"] = "url('%s')" % imageSrc
+			self.show()
+		else:
+			self["style"]["background-image"] = None
+			self.hide()
+
 class FileBoneExtractor(BaseBoneExtractor):
-	def __init__(self, modul, boneName, structure):
+	def __init__(self, module, boneName, structure):
 		super(FileBoneExtractor, self).__init__()
 		self.format = "$(dest.name)"
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
-		self.module = modul
+		self.module = module
 		self.structure = structure
 		self.boneName = boneName
 
@@ -93,11 +109,8 @@ class FileViewBoneDelegate(object):
 			except:
 				pass
 
-		if utils.getImagePreview( fileEntry ):
-			aimg=html5.Img()
-			aimg["src"] = utils.getImagePreview( fileEntry )
-			aimg["alt"] = fileEntry["name"]
-			adiv.appendChild(aimg)
+		if utils.getImagePreview(fileEntry):
+			adiv.appendChild(FilePreviewImage(utils.getImagePreview(fileEntry)))
 
 		aspan=html5.Span()
 		aspan.appendChild(html5.TextNode(str(fileEntry.get("name", ""))))#fixme: formatstring!
@@ -147,17 +160,7 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 	def __init__(self, *args, **kwargs):
 		super(FileMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 		self["class"].append("fileentry")
-
-		image = utils.getImagePreview(self.data["dest"])
-		if image is not None:
-			img = html5.Img()
-			img["src"] = image
-			img["class"].append("previewimg")
-			self.appendChild(img)
-
-			# Move the img in front of the lbl
-			self.element.removeChild(img.element)
-			self.element.insertBefore(img.element, self.element.children.item(0))
+		self.prependChild(FilePreviewImage(utils.getImagePreview(self.data["dest"])))
 
 	def fetchEntry(self, key):
 		NetworkService.request(self.module,"view/leaf/"+key,
@@ -245,9 +248,8 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		super(FileSingleSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
 		self["class"].append("supports_upload")
-		self.previewImg = html5.Img()
-		self.previewImg["class"].append("previewimg")
-		self.appendChild( self.previewImg )
+
+		self.previewImg = FilePreviewImage()
 
 	def onDragOver(self, event):
 		super(FileSingleSelectionBone,self).onDragOver(event)
@@ -326,16 +328,9 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			                        cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
-			previewUrl = utils.getImagePreview(self.selection["dest"])
-
-			if previewUrl:
-				self.previewImg["src"] = previewUrl
-				self.previewImg["style"]["display"] = ""
-			else:
-				self.previewImg["style"]["display"] = "none"
+			self.previewImg.setImage(utils.getImagePreview(self.selection["dest"]))
 		else:
-			self.selectionTxt["value"] = ""
-			self.previewImg["style"]["display"] = "none"
+			self.previewImg.setImage(None)
 
 		self.updateButtons()
 

@@ -92,12 +92,12 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 
 	return res
 
-def getImagePreview(data):
+def getImagePreview(data, cropped = False, size = 150):
 	if "mimetype" in data.keys() and isinstance(data["mimetype"], str) and data["mimetype"].startswith("image/svg"):
 		return "/file/download/%s" % data["dlkey"]
 	elif "servingurl" in data.keys():
 		if data["servingurl"]:
-			return data["servingurl"] + "=s150-c"
+			return data["servingurl"] + ("=s%d" % size) + ("-c" if cropped else "")
 
 		return ""
 
