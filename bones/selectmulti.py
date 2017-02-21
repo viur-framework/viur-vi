@@ -7,13 +7,8 @@ from config import conf
 from bones.base import BaseBoneExtractor
 
 class SelectMultiBoneExtractor(BaseBoneExtractor):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super(SelectMultiBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName=moduleName
 
-	def render( self, data, field ):
+	def render(self, data, field):
 		if field in data.keys():
 			result = list()
 			for fieldKey in data[field]:

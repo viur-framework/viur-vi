@@ -29,13 +29,10 @@ class FilePreviewImage(html5.Div):
 
 class FileBoneExtractor(BaseBoneExtractor):
 	def __init__(self, module, boneName, structure):
-		super(FileBoneExtractor, self).__init__()
+		super(FileBoneExtractor, self).__init__(module, boneName, structure)
 		self.format = "$(dest.name)"
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
-		self.module = module
-		self.structure = structure
-		self.boneName = boneName
 
 	def renderFileentry(self, fileentry):
 		origin = eval("window.location.origin")

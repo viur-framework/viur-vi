@@ -8,13 +8,8 @@ from config import conf
 from bones.base import BaseBoneExtractor
 
 class SelectOneBoneExtractor(BaseBoneExtractor):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( SelectOneBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName=moduleName
 
-	def render( self, data, field ):
+	def render(self, data, field):
 		if field in data.keys():
 			if data and field and field in self.skelStructure and data[field] and data[field] in self.skelStructure[field]["values"]:
 				return self.skelStructure[field]["values"][data[field]]

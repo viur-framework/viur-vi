@@ -7,13 +7,8 @@ from config import conf
 from bones.base import BaseBoneExtractor
 
 class NumericBoneExtractor(BaseBoneExtractor):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super(NumericBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName=moduleName
 
-	def render( self, data, field ):
+	def render(self, data, field):
 		# print("NumericBoneExtractor.render", data, field)
 		if field in data.keys():
 			value = data[field]
@@ -21,6 +16,7 @@ class NumericBoneExtractor(BaseBoneExtractor):
 				return str(value)
 			elif isinstance(value, float):
 				return str(round(data[field], self.skelStructure[field].get("precision", 2))).replace(".", ",")
+
 		return "-23,42"
 
 
