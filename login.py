@@ -303,10 +303,18 @@ class LoginScreen(Screen):
 		conf["currentUser"] = None
 		self.invoke()
 
-	def doShowLogin(self, *args, **kwargs):
+	def doShowLogin(self, req, code, *args, **kwargs):
 		self.unlock()
 		self.show()
 		self.selectHandler()
+
+	def insufficientRights(self):
+		self.unlock()
+		self.hide()
+
+		html5.ext.Alert(translate("vi.login.insufficient-rights"),
+		                okLabel=translate("Login as different user"),
+		                okCallback=lambda: self.invoke(logout=True))
 
 	def doSkipLogin(self, req):
 		answ = NetworkService.decode(req)
@@ -316,8 +324,9 @@ class LoginScreen(Screen):
 
 		conf["currentUser"] = answ["values"]
 		if not any([x in conf["currentUser"].get("access", []) for x in ["admin", "root"]]):
-			self.reset()
-			self.loginScreen.redirectNoAdmin()
+			self.insufficientRights()
+			return
+			#self.loginScreen.redirectNoAdmin()
 
 		print("User already logged in")
 		conf["theApp"].admin()
