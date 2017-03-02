@@ -154,6 +154,10 @@ lngDe = {
 	"please update either your server or vi!": u"Bitte aktualisieren Sie entweder den Server oder das Vi!",
 	"version mismatch": u"Versionen stimmen nicht überein",
 	"retry": u"Nochmal versuchen",
+	"vi.login.insufficient-rights": u"Der aktuelle angemeldete Benutzer hat nicht genügend Rechte um diese "
+	                                u"Funktion zu verwenden.\n\nBitte loggen Sie sich unter einem anderen "
+	                                u"Benutzer mit entsprechenden Zugriffsrechten ein.",
+	"login as different user": u"Aktuellen Benutzer abmelden",
 
 	"the connection to the server could not be correctly established.":
 		u"Es konnte keine Verbindung zum Server aufgebaut werden.",
