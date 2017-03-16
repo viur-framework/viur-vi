@@ -139,7 +139,7 @@ class RelationalViewBoneDelegate(object):
 
 			res = ""
 
-		html5.utils.textToHtml(lbl, res)
+		html5.utils.textToHtml(lbl, html5.utils.unescape(res))
 		return lbl
 
 
