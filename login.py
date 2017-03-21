@@ -169,7 +169,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.verifyBtn["disabled"] = True
 		self.lock()
 
-		NetworkService.request("user", "f2_otp2factor/otp",
+		NetworkService.request("user", "f2_timebasedotp/otp",
 		                        params={"otptoken": self.otp["value"]},
 		                        secure=True,
 		                        successHandler=self.doVerifySuccess,
@@ -179,11 +179,17 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.unlock()
 		self.verifyBtn["disabled"] = False
 
-		if NetworkService.isOkay(req):
-			self.login()
-		else:
-			self.otp["value"] = ""
-			self.otp.focus()
+		res = re.search("JSON\(\((.*)\)\)", req.result)
+		if res:
+			print("RESULT >%s<" % res.group(1))
+			answ = json.loads(res.group(1))
+
+			if answ == "OKAY":
+				self.login()
+				return
+
+		self.otp["value"] = ""
+		self.otp.focus()
 
 	def doVerifyFailure(self, *args, **kwargs):
 		self.reset()
