@@ -53,3 +53,57 @@ function logError(msg, url, line, col, error)
     // DISABLED FOR NOW IT MAKES NO SENSE IN DEVELOPMENT VERSIONS...
     //Bugsnag.notify(error.toString(), msg.toString());
 }
+
+/*** ONLY PERMIT PASTING OF RAW TEXT ***/
+
+function removeTags(e)
+{
+    var clipboardData = e.clipboardData || window.clipboardData;
+    var pastedData = clipboardData.getData("Text");
+
+    cleanedData = pastedData.replace(/<\/?[^>]+(>|$)/g, "");
+    //console.log(e.target);
+
+    if((e.target.tagName.toLowerCase() === "div")
+        || (e.target.tagName.toLowerCase() === "textarea"))
+    {
+        e.stopPropagation();
+        e.preventDefault();
+
+        e.target.innerHTML = newPaste(e.target, e.target.innerHTML, cleanedData);
+    }
+    else if(e.target.tagName.toLowerCase() === "input")
+    {
+        e.stopPropagation();
+        e.preventDefault();
+
+        e.target.value = newPaste(e.target, e.target.value, cleanedData);
+    }
+}
+
+function newPaste(target, text, paste)
+{
+    var pos = getPosition(target);
+    return text.substr(0, pos) + paste + text.substr(pos);
+}
+
+function getPosition(elem)
+{
+    var pos = 0;
+
+    // IE Support
+    if(document.selection)
+    {
+        elem.focus();
+        var sel = document.selection.createRange();
+        sel.moveStart('character', -elem.value.length);
+        pos = sel.text.length;
+    }
+    // Firefox & Chrome support
+    else if(elem.selectionStart || elem.selectionStart == '0')
+        pos = elem.selectionStart;
+
+    return pos;
+}
+
+document.addEventListener("paste", removeTags);

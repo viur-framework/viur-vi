@@ -65,11 +65,11 @@ class StringViewBoneDelegate( object ):
 		labelstr = html5.utils.unescape(labelstr)
 
 		if not datafield:
-			return( html5.Label(labelstr))
+			return html5.Label(labelstr)
 		else:
 			aspan=html5.Span()
 			aspan.appendChild(html5.TextNode(labelstr))
-			aspan["Title"] = str(datafield)
+			aspan["title"] = str(datafield)
 			return aspan
 
 class Tag(html5.Span):

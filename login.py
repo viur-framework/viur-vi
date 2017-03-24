@@ -69,6 +69,17 @@ class BaseLoginHandler(html5.Li):
 	def reset(self):
 		pass
 
+	def parseAnswer(self, req):
+		res = re.search("JSON\(\((.*)\)\)", req.result)
+
+		if res:
+			answ = json.loads(res.group(1))
+		else:
+			answ = NetworkService.decode(req)
+
+		return answ
+
+
 class UserPasswordLoginHandler(BaseLoginHandler):
 	cssname = "userpassword"
 
@@ -140,24 +151,17 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.unlock()
 		self.loginBtn["disabled"] = False
 
-		res = re.search("JSON\(\((.*)\)\)", req.result)
-		if res:
-			print("RESULT >%s<" % res.group(1))
-			answ = json.loads(res.group(1))
+		answ = self.parseAnswer(req)
+		print("doLoginSuccess", answ)
 
-			if answ == "OKAY":
-				self.login()
-			elif answ == "X-VIUR-2FACTOR-TimeBasedOTP":
-				self.pwform.hide()
-				self.otpform.show()
-				self.otp.focus()
-			else:
-				self.password.focus()
+		if answ == "OKAY":
+			self.login()
+		elif answ == "X-VIUR-2FACTOR-TimeBasedOTP":
+			self.pwform.hide()
+			self.otpform.show()
+			self.otp.focus()
 		else:
-			print("Cannot read valid response from:")
-			print("---")
-			print(req.result)
-			print("---")
+			self.password.focus()
 
 	def doLoginFailure(self, *args, **kwargs):
 		alert("Fail")
@@ -169,7 +173,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.verifyBtn["disabled"] = True
 		self.lock()
 
-		NetworkService.request("user", "f2_otp2factor/otp",
+		NetworkService.request("user", "f2_timebasedotp/otp",
 		                        params={"otptoken": self.otp["value"]},
 		                        secure=True,
 		                        successHandler=self.doVerifySuccess,
@@ -179,11 +183,15 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.unlock()
 		self.verifyBtn["disabled"] = False
 
-		if NetworkService.isOkay(req):
+		answ = self.parseAnswer(req)
+		print("doVerifySuccess", answ)
+
+		if answ == "OKAY":
 			self.login()
-		else:
-			self.otp["value"] = ""
-			self.otp.focus()
+			return
+
+		self.otp["value"] = ""
+		self.otp.focus()
 
 	def doVerifyFailure(self, *args, **kwargs):
 		self.reset()
@@ -295,7 +303,6 @@ class LoginScreen(Screen):
 
 		#Check if already logged in!
 		NetworkService.request( "user", "view/self",
-		                        secure=True,
 		                        successHandler=self.doSkipLogin,
 		                        failureHandler=self.doShowLogin)
 
