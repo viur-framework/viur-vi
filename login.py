@@ -344,7 +344,9 @@ class LoginScreen(Screen):
 		methods = []
 		for method in answ:
 			handler = loginHandlerSelector.select(method[0], method[1])
-
+			if not handler:
+				print("Warning: Login-Handler \"%s\" with second factor \"%s\" unknown" % (method[0], method[1]))
+				continue
 			# Check if this handler is already inserted!
 			if not any([c.__class__.__name__ == handler.__name__ for c in self.loginMethodSelector._children]):
 				handler(self)
