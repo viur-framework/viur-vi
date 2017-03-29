@@ -99,7 +99,9 @@ class InternalEdit(html5.Div):
 					descrLbl["title"] = bone["error"]
 				else:
 					descrLbl["title"] = self.errorInformation[ key ]
-				fieldSets[ cat ]["class"].append("is_incomplete")
+
+				if fieldSets and cat in fieldSets:
+					fieldSets[cat]["class"].append("is_incomplete")
 
 			if bone["required"] and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
 				descrLbl["class"].append("is_valid")

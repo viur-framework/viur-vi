@@ -1,6 +1,6 @@
 from topbar import TopBarWidget
 from list import ListWidget
-from edit import EditWidget
+from edit import EditWidget, InternalEdit
 from table import DataTable
 from actionbar import ActionBar
 from tree import TreeWidget
