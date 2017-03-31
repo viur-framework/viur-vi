@@ -13,7 +13,8 @@ class SelectOneBoneExtractor(BaseBoneExtractor):
 		if field in data.keys():
 			if data and field and field in self.skelStructure and data[field] and data[field] in self.skelStructure[field]["values"]:
 				return self.skelStructure[field]["values"][data[field]]
-		return conf[ "empty_value" ]
+
+		return conf["empty_value"]
 
 
 class SelectOneViewBoneDelegate( object ):

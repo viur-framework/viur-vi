@@ -7,6 +7,7 @@ from event import EventDispatcher
 from config import conf
 from priorityqueue import loginHandlerSelector
 from screen import Screen
+from widgets import InternalEdit
 
 class LoginInputField(html5.Input):
 
@@ -118,6 +119,19 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.verifyBtn = html5.ext.Button(translate("Verify"), callback=self.onVerifyClick)
 		self.otpform.appendChild(self.verifyBtn)
 
+		# Universal edit widget
+		self.editform = html5.Div()
+		self.editform.hide()
+		self.mask.appendChild(self.editform)
+
+		self.edit = html5.Div()
+		self.editform.appendChild(self.edit)
+
+		self.editskey = self.editaction = self.editwidget = None
+
+		self.sendBtn = html5.ext.Button(translate("Send"), callback=self.onSendClick)
+		self.editform.appendChild(self.sendBtn)
+
 	def onKeyPress(self, event):
 		if event.keyCode == 13:
 			if html5.utils.doesEventHitWidgetOrChildren(event, self.username):
@@ -150,21 +164,36 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 	def doLoginSuccess(self, req):
 		self.unlock()
 		self.loginBtn["disabled"] = False
+		self.sendBtn["disabled"] = False
 
 		answ = self.parseAnswer(req)
 		print("doLoginSuccess", answ)
 
 		if answ == "OKAY":
 			self.login()
+
 		elif answ == "X-VIUR-2FACTOR-TimeBasedOTP":
 			self.pwform.hide()
+			self.editform.hide()
 			self.otpform.show()
 			self.otp.focus()
+
+		elif isinstance(answ, dict) and "action" in answ:
+			self.pwform.hide()
+			self.otpform.hide()
+			self.edit.removeAllChildren()
+
+			self.editaction = "auth_userpassword/%s" % answ["action"]
+			self.editwidget = InternalEdit(answ["structure"], answ["values"], defaultCat = None)
+			self.edit.appendChild(self.editwidget)
+			self.editskey = answ.get("skey")
+
+			self.editform.show()
 		else:
 			self.password.focus()
 
-	def doLoginFailure(self, *args, **kwargs):
-		alert("Fail")
+	def doLoginFailure(self, req, code, *args, **kwargs):
+		alert("Failure %d" % int(code))
 
 	def onVerifyClick(self, sender = None):
 		if not self.otp["value"]:
@@ -197,6 +226,24 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.reset()
 		self.enable()
 
+	def onSendClick(self, sender=None):
+		assert self.editwidget and self.editaction
+
+		self.lock()
+		self.sendBtn["disabled"] = True
+
+		params = self.editwidget.doSave()
+		if self.editskey:
+			params["skey"] = self.editskey
+
+		print(params)
+
+		NetworkService.request("user", self.editaction,
+		                        params=params,
+		                        secure=not self.editskey,
+		                        successHandler=self.doLoginSuccess,
+		                        failureHandler=self.doLoginFailure)
+
 	def reset(self):
 		self.loginBtn["disabled"] = False
 		self.verifyBtn["disabled"] = False
@@ -205,9 +252,13 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.username["value"] = ""
 		self.password["value"] = ""
 
+		self.edit.removeAllChildren()
+		self.editskey = self.editwidget = self.editaction = None
+
 	def enable(self):
 		self.pwform.show()
 		self.otpform.hide()
+		self.editform.hide()
 
 		super(UserPasswordLoginHandler, self).enable()
 		DeferredCall(self.focusLaterIdiot)

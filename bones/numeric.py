@@ -12,8 +12,10 @@ class NumericBoneExtractor(BaseBoneExtractor):
 		# print("NumericBoneExtractor.render", data, field)
 		if field in data.keys():
 			value = data[field]
+
 			if isinstance(value, int):
 				return str(value)
+
 			elif isinstance(value, float):
 				return str(round(data[field], self.skelStructure[field].get("precision", 2))).replace(".", ",")
 

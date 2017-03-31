@@ -11,6 +11,7 @@ class SelectMultiBoneExtractor(BaseBoneExtractor):
 	def render(self, data, field):
 		if field in data.keys():
 			result = list()
+
 			for fieldKey in data[field]:
 				if not fieldKey in self.skelStructure[field]["values"].keys():
 					result.append(fieldKey)
@@ -18,6 +19,7 @@ class SelectMultiBoneExtractor(BaseBoneExtractor):
 					value = self.skelStructure[field]["values"][fieldKey]
 					if value:
 						result.append(value)
+
 			return ",".join(result)
 
 		return conf[ "empty_value" ]
