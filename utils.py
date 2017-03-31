@@ -45,7 +45,11 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 
 	for key in data.keys():
 		val = data[key]
+
+		# Get structure if available
 		struct = structure.get(key) if structure else None
+		if isinstance(struct, list):
+			struct = {k: v for k, v in struct}
 
 		#print("%s%s: %s" % (_rec * " ", key, val))
 		#print("%s%s: %s" % (_rec * " ", key, struct))
@@ -79,6 +83,18 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 		elif isinstance(val, list):
 			#print("%s%s: list" % (_rec * " ", key))
 			val = ", ".join(val)
+
+		# Check for select-bones
+		if isinstance(struct, dict) and "values" in struct and struct["values"]:
+			vals = struct["values"]
+
+			if isinstance(vals, list):
+				vals = {k: v for k, v in vals}
+
+			# NO elif!
+			if isinstance(vals, dict):
+				if val in vals:
+					val = vals[val]
 
 		res = res.replace("$(%s)" % (".".join(prefix + [key])), str(val))
 
