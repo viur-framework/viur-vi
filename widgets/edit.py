@@ -240,6 +240,7 @@ class InternalEdit(html5.Div):
 								self.containers[key]["disabled"] = False
 						# add more here...
 
+
 def parseHashParameters( src, prefix="" ):
 	"""
 		Converts a flat dictionary containing dotted properties into a multi-dimensional one.
