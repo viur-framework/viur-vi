@@ -101,14 +101,16 @@ class SelectMultiEditBone(html5.Div):
 					alabel._children[0]["checked"]=True
 
 	def serializeForPost(self):
-		value=[]
+		value = []
+
 		for alabel in self._children:
 			if alabel._children[0]["checked"]:
 				value.append(alabel._children[0]["name"])
-		return( { self.boneName: value } )
+
+		return {self.boneName: value}
 
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serializeForPost()
 
 	def setExtendedErrorInformation(self, errorInfo ):
 		pass
@@ -335,10 +337,10 @@ class AccessMultiSelectBone( html5.Div ):
 				if "active" in self.modules[ module ][ state ][ "class" ]:
 					ret.append( "%s-%s" % ( module, state ) )
 
-		return { self.boneName: ret }
+		return {self.boneName: ret}
 
 	def serializeForDocument(self):
-		return self.serialize()
+		return self.serializeForPost()
 
 def CheckForAccessMultiSelectBone( moduleName, boneName, skelStucture ):
 	if skelStucture[boneName]["type"] == "selectmulti.access":
