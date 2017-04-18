@@ -161,5 +161,8 @@ lngDe = {
 
 	"the connection to the server could not be correctly established.":
 		u"Es konnte keine Verbindung zum Server aufgebaut werden.",
-	"communication error": u"Verbindungsfehler"
+	"communication error": u"Verbindungsfehler",
+
+	"true": u"Ja",
+	"false": u"Nein"
 }

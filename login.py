@@ -381,7 +381,7 @@ class LoginScreen(Screen):
 			return
 
 		conf["currentUser"] = answ["values"]
-		if not any([x in conf["currentUser"].get("access", []) for x in ["admin", "root"]]):
+		if not all([x in conf["currentUser"].get("access", []) for x in ["admin", "root"]]):
 			self.insufficientRights()
 			return
 			#self.loginScreen.redirectNoAdmin()

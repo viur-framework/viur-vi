@@ -50,6 +50,9 @@ class PasswordEditBone( html5.Div ):
 
 		raise InvalidBoneValueException()
 
+	def serializeForDocument(self):
+		return {self.boneName: self.primeinput["value"]}
+
 	def setExtendedErrorInformation(self, errorInfo ):
 		pass
 

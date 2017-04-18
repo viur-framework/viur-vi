@@ -198,9 +198,8 @@ class InternalEdit(html5.Div):
 		event.stopPropagation()
 
 	def performLogics(self):
-
 		fields = self.serializeForDocument()
-		print(fields)
+		print("InternalEdit.performLogics", fields)
 
 		for key, desc in self.skelStructure:
 			if desc.get("params") and desc["params"]:
@@ -214,14 +213,14 @@ class InternalEdit(html5.Div):
 					if isinstance(logic, str):
 						desc["params"][event] = conf["logics"].compile(logic)
 						if desc["params"][event] is None:
-							alert("viurLogics: Parse error in >%s<" % logic)
+							alert("ViUR logics: Parse error in >%s<" % logic)
 							continue
 
 						logic = desc["params"][event]
 
 					res = conf["logics"].execute(logic, fields)
 
-					print("logics", event, key, res)
+					print("InternalEdit.performLogics", event, key, res)
 
 					if event == "logic.evaluate":
 						self.bones[key].unserialize({key: res})
@@ -404,6 +403,7 @@ class EditWidget(html5.Div):
 
 	def performLogics(self):
 		fields = self.serializeForDocument()
+		print("EditWidget.performLogics", fields)
 
 		for key, desc in self.dataCache["structure"]:
 			if desc.get("params") and desc["params"]:
@@ -417,14 +417,14 @@ class EditWidget(html5.Div):
 					if isinstance(logic, str):
 						desc["params"][event] = conf["logics"].compile(logic)
 						if desc["params"][event] is None:
-							alert("viurLogics: Parse error in >%s<" % logic)
+							alert("ViUR logics: Parse error in >%s<" % logic)
 							continue
 
 						logic = desc["params"][event]
 
 					res = conf["logics"].execute(logic, fields)
 
-					print("logics", event, key, res)
+					print("EditWidget.performLogics", event, key, res)
 
 					if event == "logic.evaluate":
 						self.bones[key].unserialize({key: res})
@@ -784,7 +784,7 @@ class EditWidget(html5.Div):
 		return res
 
 	def serializeForDocument(self):
-		res = {}
+		res = self._lastData.get("values", {})
 
 		for key, bone in self.bones.items():
 			try:
