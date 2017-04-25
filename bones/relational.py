@@ -482,6 +482,20 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		else:
 			self.ie = None
 
+		# Edit button
+		if (self.parent.destModule in conf["modules"].keys()
+			and ("root" in conf["currentUser"]["access"]
+					or self.parent.destModule + "-edit" in conf["currentUser"]["access"])):
+
+			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit)
+			self.editBtn["class"].append("icon")
+			self.editBtn["class"].append("edit")
+			wrapperDiv.appendChild(self.editBtn)
+
+		else:
+			self.editBtn = None
+
+
 		self.updateLabel()
 
 	def updateLabel(self, data = None):
@@ -545,6 +559,18 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry(self)
+
+	def onEdit(self, sender = None):
+		pane = Pane(translate("Edit"), closeable=True,
+					iconClasses=["module_%s" % self.parent.destModule, "apptype_list", "action_edit"])
+		conf["mainWindow"].stackPane(pane, focus=True)
+
+		try:
+			edwg = EditWidget(self.parent.destModule, EditWidget.appList, key=self.data["dest"]["key"])
+			pane.addWidget(edwg)
+
+		except AssertionError:
+			conf["mainWindow"].removePane(pane)
 
 	def serialize(self):
 		if self.ie:
