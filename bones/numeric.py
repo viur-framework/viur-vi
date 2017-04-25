@@ -23,25 +23,28 @@ class NumericBoneExtractor(BaseBoneExtractor):
 
 
 class NumericViewBoneDelegate( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( NumericViewBoneDelegate, self ).__init__()
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
+		super(NumericViewBoneDelegate, self).__init__()
+
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.moduleName=moduleName
+		self.moduleName = moduleName
 
-	def render( self, data, field ):
-		s =  conf[ "empty_value" ]
+	def render(self, data, field):
+		s =  conf["empty_value"]
 		if field in data.keys():
 			try:
-				prec = self.skelStructure[field].get( "precision" )
+				prec = self.skelStructure[field].get("precision")
+
 				if prec and data[field] is not None:
 					s = ( "%." + str( prec ) + "f" ) % data[field]
 				else:
-					s = str( data[field] )
-			except:
-				return str(data[field])
+					s = str(data[field])
 
-		return html5.Label( s )
+			except:
+				s = str(data[field])
+
+		return html5.Label(s)
 
 class NumericEditBone( html5.Input ):
 	def __init__(self, moduleName, boneName,readOnly,_min=False,_max=False,precision=False, *args, **kwargs ):
