@@ -29,10 +29,9 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
 
-		if field in data.keys():
-			val = data[field]
-		else:
-			val = ""
+		val = data.get(field)
+		if not field:
+			return ""
 
 		structure = self.skelStructure[self.boneName]
 
@@ -48,7 +47,7 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 			                    or x["key"]) for x in val])
 		except:
 			#We probably received some garbage
-			print("%s: Cannot build relational format, maybe garbage received?" % self.boneName)
+			print("%s: RelationalBoneExtractor.render cannot build relational format, maybe garbage received?" % self.boneName)
 			print(val)
 			val = ""
 
@@ -57,10 +56,10 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 	def raw(self, data, field):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
 
-		if not field in data.keys():
+		val = data.get(field)
+		if not val:
 			return None
 
-		val = data[field]
 		structure = self.skelStructure[self.boneName]
 
 		try:
@@ -75,7 +74,7 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 			                    or x["key"]) for x in val]
 		except:
 			#We probably received some garbage
-			print("%s: Cannot build relational format, maybe garbage received?" % self.boneName)
+			print("%s: RelationalBoneExtractor.raw cannot build relational format, maybe garbage received?" % self.boneName)
 			print(val)
 			return None
 
@@ -96,14 +95,15 @@ class RelationalViewBoneDelegate(object):
 
 	def render(self, data, field):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
-		val = data.get(field, "")
-
-		structure = self.structure[self.boneName]
+		val = data.get(field)
 
 		lbl = html5.Label()
 
-		if not val:
+		if val is None:
+			lbl.appendChild(conf["empty_value"])
 			return lbl
+
+		structure = self.structure[self.boneName]
 
 		try:
 			if not isinstance(val, list):
@@ -134,7 +134,7 @@ class RelationalViewBoneDelegate(object):
 
 		except:
 			#We probably received some garbage
-			print("%s: Cannot build relational format, maybe garbage received?" % self.boneName)
+			print("%s: RelationalViewBoneDelegate.render cannot build relational format, maybe garbage received?" % self.boneName)
 			print(val)
 
 			res = ""
@@ -494,6 +494,20 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		else:
 			self.ie = None
 
+		# Edit button
+		if (self.parent.destModule in conf["modules"].keys()
+			and ("root" in conf["currentUser"]["access"]
+					or self.parent.destModule + "-edit" in conf["currentUser"]["access"])):
+
+			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit)
+			self.editBtn["class"].append("icon")
+			self.editBtn["class"].append("edit")
+			wrapperDiv.appendChild(self.editBtn)
+
+		else:
+			self.editBtn = None
+
+
 		self.updateLabel()
 
 	def updateLabel(self, data = None):
@@ -558,6 +572,18 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry(self)
 		self.parent.changeEvent.fire(self.parent)
+
+	def onEdit(self, sender = None):
+		pane = Pane(translate("Edit"), closeable=True,
+					iconClasses=["module_%s" % self.parent.destModule, "apptype_list", "action_edit"])
+		conf["mainWindow"].stackPane(pane, focus=True)
+
+		try:
+			edwg = EditWidget(self.parent.destModule, EditWidget.appList, key=self.data["dest"]["key"])
+			pane.addWidget(edwg)
+
+		except AssertionError:
+			conf["mainWindow"].removePane(pane)
 
 	def serializeForPost(self):
 		if self.ie:

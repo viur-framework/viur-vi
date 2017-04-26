@@ -199,7 +199,7 @@ class InternalEdit(html5.Div):
 
 	def performLogics(self):
 		fields = self.serializeForDocument()
-		print("InternalEdit.performLogics", fields)
+		#print("InternalEdit.performLogics", fields)
 
 		for key, desc in self.skelStructure:
 			if desc.get("params") and desc["params"]:
@@ -220,7 +220,7 @@ class InternalEdit(html5.Div):
 
 					res = conf["logics"].execute(logic, fields)
 
-					print("InternalEdit.performLogics", event, key, res)
+					#print("InternalEdit.performLogics", event, key, res)
 
 					if event == "logic.evaluate":
 						self.bones[key].unserialize({key: res})
@@ -403,7 +403,7 @@ class EditWidget(html5.Div):
 
 	def performLogics(self):
 		fields = self.serializeForDocument()
-		print("EditWidget.performLogics", fields)
+		#print("EditWidget.performLogics", fields)
 
 		for key, desc in self.dataCache["structure"]:
 			if desc.get("params") and desc["params"]:
@@ -424,7 +424,7 @@ class EditWidget(html5.Div):
 
 					res = conf["logics"].execute(logic, fields)
 
-					print("EditWidget.performLogics", event, key, res)
+					#print("EditWidget.performLogics", event, key, res)
 
 					if event == "logic.evaluate":
 						self.bones[key].unserialize({key: res})
@@ -703,7 +703,7 @@ class EditWidget(html5.Div):
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
-			print(key, bone["required"], bone["error"])
+
 			if bone["required"]:
 				descrLbl["class"].append("is_required")
 
