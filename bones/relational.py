@@ -19,12 +19,12 @@ def getDefaultValues(structure):
 	return defaultValues
 
 class RelationalBoneExtractor(BaseBoneExtractor):
-	def __init__(self, module, boneName, structure):
-		super(RelationalBoneExtractor, self).__init__(module, boneName, structure)
+	def __init__(self, module, boneName, skelStructure):
+		super(RelationalBoneExtractor, self).__init__(module, boneName, skelStructure)
 		self.format = "$(dest.name)"
 
-		if "format" in structure[boneName].keys():
-			self.format = structure[boneName]["format"]
+		if "format" in skelStructure[boneName].keys():
+			self.format = skelStructure[boneName]["format"]
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
@@ -34,7 +34,7 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 		else:
 			val = ""
 
-		structure = self.structure[self.boneName]
+		structure = self.skelStructure[self.boneName]
 
 		try:
 			if not isinstance(val, list):
@@ -482,6 +482,20 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		else:
 			self.ie = None
 
+		# Edit button
+		if (self.parent.destModule in conf["modules"].keys()
+			and ("root" in conf["currentUser"]["access"]
+					or self.parent.destModule + "-edit" in conf["currentUser"]["access"])):
+
+			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit)
+			self.editBtn["class"].append("icon")
+			self.editBtn["class"].append("edit")
+			wrapperDiv.appendChild(self.editBtn)
+
+		else:
+			self.editBtn = None
+
+
 		self.updateLabel()
 
 	def updateLabel(self, data = None):
@@ -545,6 +559,18 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry(self)
+
+	def onEdit(self, sender = None):
+		pane = Pane(translate("Edit"), closeable=True,
+					iconClasses=["module_%s" % self.parent.destModule, "apptype_list", "action_edit"])
+		conf["mainWindow"].stackPane(pane, focus=True)
+
+		try:
+			edwg = EditWidget(self.parent.destModule, EditWidget.appList, key=self.data["dest"]["key"])
+			pane.addWidget(edwg)
+
+		except AssertionError:
+			conf["mainWindow"].removePane(pane)
 
 	def serialize(self):
 		if self.ie:

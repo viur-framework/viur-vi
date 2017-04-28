@@ -8,11 +8,6 @@ from config import conf
 from bones.base import BaseBoneExtractor
 
 class DateBoneExtractor(BaseBoneExtractor):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( DateBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName = moduleName
 
 	def render(self, data, field):
 		if not(self.boneName in self.skelStructure

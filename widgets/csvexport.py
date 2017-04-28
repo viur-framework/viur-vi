@@ -8,7 +8,7 @@ from i18n import translate, addTranslation
 class ExportCsv(html5.Progress):
 	def __init__(self, widget, selection, encoding = None, language = None,
 	                separator = None, lineSeparator = None, *args, **kwargs):
-		super(ExportCsv, self).__init__(*args, **kwargs)
+		super(ExportCsv, self).__init__()
 
 		if encoding is None or encoding not in ["utf-8", "iso-8859-15"]:
 			encoding = "utf-8"
@@ -60,7 +60,6 @@ class ExportCsv(html5.Progress):
 			self.replaceWithMessage(translate("No datasets to export."), logClass="info")
 			return
 
-
 		assert self.structure
 
 		defaultLanguage = conf["currentlanguage"]
@@ -71,12 +70,15 @@ class ExportCsv(html5.Progress):
 		self["value"] = 0
 
 		cellRenderer = {}
-		struct = utils.boneListToDict(self.structure)
+		struct = {k: v for k, v in self.structure}
 		fields = {}
 		titles = []
 
+		print("H1")
+
 		idx = 0
 		for key, bone in self.structure:
+			print(key, bone)
 			#if bone["visible"] and ("params" not in bone or bone["params"] is None or "ignoreForCsvExport" not in bone[
 			#	"params"] or not bone["params"]["ignoreForCsvExport"]):
 			if bone["visible"]:
@@ -89,6 +91,7 @@ class ExportCsv(html5.Progress):
 
 				titles.append(bone.get("descr", key) or key)
 
+		print("H2")
 		# Export
 		content = self.separator.join(titles) + self.lineSeparator
 
@@ -96,6 +99,8 @@ class ExportCsv(html5.Progress):
 			row = [None for _ in range(len(fields.keys()))]
 
 			for key, value in entry.items():
+				print(key, value)
+
 				if key not in fields or value is None or str(value).lower() == "none":
 					continue
 
