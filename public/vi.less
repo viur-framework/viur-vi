@@ -507,7 +507,8 @@ p { margin-bottom: 10px;}
   text-shadow: none;
 }
 /* #vi_viewer
-================================================== */.vi_viewer {
+================================================== */
+.vi_viewer {
   margin-left: 15.7%;
   width: 84.3%;
   float: left;
@@ -521,6 +522,13 @@ p { margin-bottom: 10px;}
       min-width:500px; */
 
 }
+
+.vi_viewer.is_fullscreen
+{
+  margin-left: 0;
+  width: 100%;
+}
+
 /* #vi_operator
 ================================================== */
 .vi_operator {
@@ -649,6 +657,11 @@ background-color:#d6d6d6;
   background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.9)), to(rgba(255, 255, 255, 0.2)));
   background-image: -moz-linear-gradient(top center, rgba(238, 238, 238, 0.8) 20%, rgba(255, 255, 255, 0.2) 95%);
   z-index: 100;
+}
+
+.vi_viewer.is_fullscreen .vi_operator .actionbar
+{
+  width: 98%;
 }
 
 .has_multiple_children .actionbar {
