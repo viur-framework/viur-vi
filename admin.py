@@ -11,7 +11,7 @@ from log import Log
 from pane import Pane, GroupPane
 from screen import Screen
 
-# THESE MUST REMAIN AND ARE QUEUED!!
+# BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
 import handler
 import bones
 import actions
@@ -252,6 +252,17 @@ class AdminScreen(Screen):
 		if gen:
 			gen(path, param)
 
+	def switchFullscreen(self, fullscreen = True):
+		if fullscreen:
+			self.modulMgr.hide()
+			self.viewport.addClass("is_fullscreen")
+		else:
+			self.modulMgr.show()
+			self.viewport.removeClass("is_fullscreen")
+
+	def isFullscreen(self):
+		return "is_fullscreen" in self.viewport["class"]
+
 	def onError(self, req, code):
 		print("ONERROR")
 
@@ -271,9 +282,9 @@ class AdminScreen(Screen):
 		self.panes.append( pane )
 
 		if parentPane:
-			parentPane.addChildPane( pane )
+			parentPane.addChildPane(pane)
 		else:
-			self.moduleListUl.appendChild( pane )
+			self.moduleListUl.appendChild(pane)
 
 		self.viewport.appendChild(pane.widgetsDomElm)
 		pane.widgetsDomElm["style"]["display"] = "none"
@@ -357,9 +368,9 @@ class AdminScreen(Screen):
 				self.nextPane = None
 
 		if not pane.parentPane or pane.parentPane is self:
-			self.moduleListUl.removeChild( pane )
+			self.moduleListUl.removeChild(pane)
 		else:
-			pane.parentPane.removeChildPane( pane )
+			pane.parentPane.removeChildPane(pane)
 
 		self.viewport.removeChild( pane.widgetsDomElm )
 

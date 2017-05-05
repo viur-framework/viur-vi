@@ -18,6 +18,7 @@ class TopBarWidget( html5.Header ):
 			if "vi.name" in data["configuration"].keys():
 				self.modulH1.appendChild(html5.TextNode(data["configuration"]["vi.name"]))
 			#self.logoContainer["style"]["background-image"]="url('"+data["configuration"]["vi.logo"]+"')"
+
 	def onError(self, req, code):
 		print("ONERROR")
 
@@ -26,7 +27,8 @@ class TopBarWidget( html5.Header ):
 	"""
 	def __init__(self):
 		#DOM.setAttribute( self.element, "class", "vi_topbar")
-		super(TopBarWidget,self ).__init__( )
+		super(TopBarWidget,self ).__init__()
+
 		self["class"] = "vi_topbar"
 		anav=html5.Nav()
 		anav["class"].append("iconnav")
@@ -35,6 +37,8 @@ class TopBarWidget( html5.Header ):
 		#self.logoContainer = html5.Div()
 		#self.logoContainer["class"].append("logo")
 		#self.appendChild( self.logoContainer )
+
+		self.sinkEvent("onClick")
 
 		self.modulH1 = html5.H1()
 		self.modulH1._setClass("module")
@@ -58,6 +62,10 @@ class TopBarWidget( html5.Header ):
 		anav.appendChild(self.iconnav)
 		self.appendChild(anav)
 		self.getConf()
+
+	def onClick(self, event):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulH1):
+			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
 	def setCurrentModulDescr(self, descr, iconURL=None, iconClasses=None):
 		for c in self.modulImg._children[:]:
