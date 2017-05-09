@@ -188,7 +188,7 @@ class AdminScreen(Screen):
 
 		# Finalizing!
 		viInitializedEvent.fire()
-		DeferredCall(self.checkInitialHash)
+		DeferredCall( self.checkInitialHash )
 		self.unlock()
 
 	def remove(self):
@@ -200,7 +200,7 @@ class AdminScreen(Screen):
 		self.logWdg.log( type, msg )
 
 	def checkInitialHash(self, *args, **kwargs):
-		urlHash = conf["startupHash"]
+		urlHash = eval("window.top.location.hash")
 		if not urlHash:
 			return
 		

@@ -227,7 +227,7 @@ class RelationalSingleSelectionBone(html5.Div):
 			self.parent()["class"].remove("is_active")
 
 	@classmethod
-	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
+	def fromSkelStructure( cls, moduleName, boneName, skelStructure ):
 		"""
 			Constructs a new RelationalSingleSelectionBone from the parameters given in skelStructure.
 			@param moduleName: Name of the module which send us the skelStructure
@@ -666,7 +666,7 @@ class RelationalMultiSelectionBone(html5.Div):
 			self.parent()["class"].remove("is_active")
 
 	@classmethod
-	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
+	def fromSkelStructure( cls, moduleName, boneName, skelStructure ):
 		"""
 			Constructs a new RelationalMultiSelectionBone from the parameters given in skelStructure.
 			@param moduleName: Name of the module which send us the skelStructure

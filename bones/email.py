@@ -32,9 +32,9 @@ class EmailEditBone( strBone.StringEditBone ):
 		super( EmailEditBone,  self ).__init__( moduleName, boneName,readOnly, *args, **kwargs )
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return EmailEditBone(moduleName, boneName, readOnly)
+		return( EmailEditBone( moduleName, boneName, readOnly ) )
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():

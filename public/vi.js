@@ -60,19 +60,18 @@ function removeTags(e)
 {
     var clipboardData = e.clipboardData || window.clipboardData;
     var pastedData = clipboardData.getData("Text");
-    var cleanedData = pastedData.replace(/<\/?[^>]+(>|$)/g, "");
 
+    cleanedData = pastedData.replace(/<\/?[^>]+(>|$)/g, "");
     //console.log(e.target);
-    //console.log(cleanedData);
 
-    if((e.target.tagName.toLowerCase() === "div"))
+    if((e.target.tagName.toLowerCase() === "div")
+        || (e.target.tagName.toLowerCase() === "textarea"))
     {
         e.stopPropagation();
         e.preventDefault();
 
         e.target.innerHTML = newPaste(e.target, e.target.innerHTML, cleanedData);
     }
-    /*
     else if(e.target.tagName.toLowerCase() === "input")
     {
         e.stopPropagation();
@@ -80,7 +79,6 @@ function removeTags(e)
 
         e.target.value = newPaste(e.target, e.target.value, cleanedData);
     }
-    */
 }
 
 function newPaste(target, text, paste)

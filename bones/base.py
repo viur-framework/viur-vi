@@ -57,7 +57,7 @@ class BaseEditBone(html5.Input):
 		self.setParams()
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
+	def fromSkelStructure(moduleName, boneName, skelStructure):
 		return BaseEditBone(moduleName, boneName, skelStructure[boneName].get("readonly", False))
 
 	def setParams(self):

@@ -31,7 +31,7 @@ class PasswordEditBone( html5.Div ):
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		verify = True
 		if ("params" in skelStructure[boneName]
 		    and skelStructure[boneName]["params"]):

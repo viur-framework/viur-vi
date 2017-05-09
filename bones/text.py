@@ -174,12 +174,12 @@ class TextEditBone( html5.Div ):
 				abut["class"].remove("is_active")
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		isPlainText = "validHtml" in skelStructure[ boneName ].keys() and not skelStructure[ boneName ]["validHtml"]
 		langs = skelStructure[ boneName ]["languages"] if ("languages" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["languages"]) else None
 		descr = skelStructure[ boneName ]["descr"] if "descr" in skelStructure[ boneName ].keys() else None
-		return TextEditBone(moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr)
+		return( TextEditBone( moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr ) )
 
 	def unserialize(self, data):
 		self.valuesdict.clear()

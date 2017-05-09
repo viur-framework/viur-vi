@@ -40,9 +40,9 @@ class ColorEditBone( html5.Input ):
 
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return ColorEditBone(moduleName, boneName, readOnly)
+		return( ColorEditBone( moduleName, boneName, readOnly ) )
 
 	##read
 	def unserialize(self, data, extendedErrorInformation=None):
@@ -57,8 +57,8 @@ class ColorEditBone( html5.Input ):
 	def serializeForDocument(self):
 		return self.serializeForPost()
 
-def CheckForColorBone(moduleName, boneName, skelStucture, *args, **kwargs):
-	return skelStucture[boneName]["type"] == "color"
+def CheckForColorBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
+	return( skelStucture[boneName]["type"]=="color" )
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForColorBone, ColorEditBone)

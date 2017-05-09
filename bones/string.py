@@ -227,7 +227,7 @@ class StringEditBone(html5.Div):
 				self.input["readonly"] = True
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
+	def fromSkelStructure( moduleName, boneName, skelStructure ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 
 		if boneName in skelStructure.keys():
