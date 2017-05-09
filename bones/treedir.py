@@ -50,7 +50,9 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 
 	def __init__(self, *args, **kwargs):
 		if "destModul" in kwargs:
-			kwargs["destModul"] = kwargs["destModul"][ : kwargs["destModul"].find("_") ] # Remove _rootNode
+			if "_" in kwargs["destModul"]:
+				kwargs["destModul"] = kwargs["destModul"][ : kwargs["destModul"].find("_") ] # Remove _rootNode
+
 		super(TreeDirMultiSelectionBone, self).__init__( *args, **kwargs )
 
 
