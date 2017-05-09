@@ -88,7 +88,7 @@ class SelectMultiEditBone(html5.Div):
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		return SelectMultiEditBone(moduleName, boneName,
 		                            skelStructure[boneName].get("readonly", False),
 		                            skelStructure[boneName].get("values", {}))
@@ -304,7 +304,7 @@ class AccessMultiSelectBone( html5.Div ):
 				self.modulesbox[ module ].parent()[ "class" ].append( "partly" )
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		return AccessMultiSelectBone(moduleName, boneName, skelStructure[ boneName ].get("readonly", False),
 		                                                    skelStructure[boneName].get("values", []))
 

@@ -64,7 +64,7 @@ class NumericEditBone( html5.Input ):
 			self["readonly"] = True
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		params = skelStructure[boneName].get("params")
 		readOnly = skelStructure[boneName].get("readonly", False)
 

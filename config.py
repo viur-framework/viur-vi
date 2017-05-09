@@ -10,6 +10,7 @@ conf = {
 	"mainWindow": None,
 	"server": {},
 	"server.version": None,
+	"startupHash": eval("window.top.location.hash"),
 	"modules": {"_tasks": {"handler": "singleton", "name": "Tasks"}},
 	"tasks": {"server": [], "client": []},
 	"currentlanguage":"de",
