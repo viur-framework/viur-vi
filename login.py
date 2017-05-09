@@ -172,23 +172,23 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		if answ == "OKAY":
 			self.login()
 
-		elif answ == "X-VIUR-2FACTOR-TimeBasedOTP":
-			self.pwform.hide()
-			self.editform.hide()
-			self.otpform.show()
-			self.otp.focus()
-
 		elif isinstance(answ, dict) and "action" in answ:
-			self.pwform.hide()
-			self.otpform.hide()
-			self.edit.removeAllChildren()
+			if answ["action"] == "otp":
+				self.pwform.hide()
+				self.editform.hide()
+				self.otpform.show()
+				self.otp.focus()
+			else:
+				self.pwform.hide()
+				self.otpform.hide()
+				self.edit.removeAllChildren()
 
-			self.editaction = "auth_userpassword/%s" % answ["action"]
-			self.editwidget = InternalEdit(answ["structure"], answ["values"], defaultCat = None)
-			self.edit.appendChild(self.editwidget)
-			self.editskey = answ.get("skey")
+				self.editaction = "auth_userpassword/%s" % answ["action"]
+				self.editwidget = InternalEdit(answ["structure"], answ["values"], defaultCat = None)
+				self.edit.appendChild(self.editwidget)
+				self.editskey = answ["params"].get("skey")
 
-			self.editform.show()
+				self.editform.show()
 		else:
 			self.password.focus()
 
