@@ -29,9 +29,9 @@ class BooleanEditBone( html5.Input ):
 
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( BooleanEditBone( moduleName, boneName, readOnly ) )
+		return BooleanEditBone(moduleName, boneName, readOnly)
 
 	##read
 	def unserialize(self, data, extendedErrorInformation=None):
@@ -91,8 +91,8 @@ class ExtendedBooleanSearch( html5.Div ):
 
 
 
-def CheckForBooleanBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return( skelStucture[boneName]["type"]=="bool" )
+def CheckForBooleanBone(moduleName, boneName, skelStucture, *args, **kwargs):
+	return skelStucture[boneName]["type"] == "bool"
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForBooleanBone, BooleanEditBone)
