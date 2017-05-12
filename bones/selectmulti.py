@@ -342,7 +342,7 @@ class AccessMultiSelectBone( html5.Div ):
 	def serializeForDocument(self):
 		return self.serializeForPost()
 
-def CheckForAccessMultiSelectBone( moduleName, boneName, skelStucture ):
+def CheckForAccessMultiSelectBone(moduleName, boneName, skelStucture, *args, **kwargs):
 	if skelStucture[boneName]["type"] == "selectmulti.access":
 		return True
 
