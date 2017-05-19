@@ -381,10 +381,12 @@ class LoginScreen(Screen):
 			return
 
 		conf["currentUser"] = answ["values"]
-		if not all([x in conf["currentUser"].get("access", []) for x in ["admin", "root"]]):
-			self.insufficientRights()
-			return
-			#self.loginScreen.redirectNoAdmin()
+
+		if conf["vi.access.rights"]:
+			if not any([x in conf["currentUser"].get("access", []) for x in conf["vi.access.rights"]]):
+				self.insufficientRights()
+				return
+				#self.loginScreen.redirectNoAdmin()
 
 		print("User already logged in")
 		conf["theApp"].admin()
