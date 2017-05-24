@@ -482,7 +482,7 @@ class EditWidget(html5.Div):
 		self.wasInitialRequest = not len(data)>0
 
 		if self.module=="_tasks":
-			NetworkService.request(None, "/admin/%s/execute/%s" % (self.module, self.key), data,
+			NetworkService.request(None, "/vi/%s/execute/%s" % (self.module, self.key), data,
 			                        secure=len(data) > 0,
 			                        successHandler=self.setData,
 			                        failureHandler=self.showErrorMsg)
@@ -704,7 +704,8 @@ class EditWidget(html5.Div):
 			descrLbl["class"].append(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
-			if bone["required"]:
+			#print(key, bone["required"], bone["error"])
+			if bone["required"] or (bone.get("unique") and bone["error"]):
 				descrLbl["class"].append("is_required")
 
 				if bone["error"] is not None:

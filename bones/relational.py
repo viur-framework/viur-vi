@@ -336,11 +336,11 @@ class RelationalSingleSelectionBone(html5.Div):
 	def serializeForDocument(self):
 		res = {"rel": {}, "dest": {}}
 
-		if (self.selection and "dest" in self.selection.keys() and "key" in self.selection["dest"].keys()):
+		if (self.selection and "dest" in self.selection.keys()):
 			if self.ie:
 				res["rel"].update(self.ie.serializeForDocument())
 
-			res["dest"]["key"] = self.selection["dest"]["key"]
+			res["dest"] = self.selection["dest"]
 
 		return {self.boneName: res}
 
