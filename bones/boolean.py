@@ -14,8 +14,8 @@ class BooleanViewBoneDelegate( object ):
 
 	def render( self, data, field ):
 		if field in data.keys():
-			return( html5.Label(str( data[field])))
-		return( html5.Label(conf[ "empty_value" ]) )
+			return html5.Label(translate(str(data[field])))
+		return html5.Label(conf["empty_value"])
 
 class BooleanEditBone( html5.Input ):
 
@@ -29,9 +29,9 @@ class BooleanEditBone( html5.Input ):
 
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( BooleanEditBone( moduleName, boneName, readOnly ) )
+		return BooleanEditBone(moduleName, boneName, readOnly)
 
 	##read
 	def unserialize(self, data, extendedErrorInformation=None):
@@ -40,11 +40,11 @@ class BooleanEditBone( html5.Input ):
 
 	##save
 	def serializeForPost(self):
-		return ( { self.boneName: str(self._getChecked())} )
+		return {self.boneName: str(self._getChecked())}
 
 	##UNUSED
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serializeForPost()
 
 
 class ExtendedBooleanSearch( html5.Div ):
@@ -91,8 +91,8 @@ class ExtendedBooleanSearch( html5.Div ):
 
 
 
-def CheckForBooleanBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return( skelStucture[boneName]["type"]=="bool" )
+def CheckForBooleanBone(moduleName, boneName, skelStucture, *args, **kwargs):
+	return skelStucture[boneName]["type"] == "bool"
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForBooleanBone, BooleanEditBone)

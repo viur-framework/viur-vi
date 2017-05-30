@@ -174,12 +174,12 @@ class TextEditBone( html5.Div ):
 				abut["class"].remove("is_active")
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		isPlainText = "validHtml" in skelStructure[ boneName ].keys() and not skelStructure[ boneName ]["validHtml"]
 		langs = skelStructure[ boneName ]["languages"] if ("languages" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["languages"]) else None
 		descr = skelStructure[ boneName ]["descr"] if "descr" in skelStructure[ boneName ].keys() else None
-		return( TextEditBone( moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr ) )
+		return TextEditBone(moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr)
 
 	def unserialize(self, data):
 		self.valuesdict.clear()
@@ -202,6 +202,9 @@ class TextEditBone( html5.Div ):
 			return {self.boneName: self.valuesdict}
 		else:
 			return {self.boneName: self.input["value"]}
+
+	def serializeForDocument(self):
+		return self.serializeForPost()
 
 	def onClick(self, event):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.previewDiv):

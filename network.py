@@ -228,7 +228,7 @@ class NetworkService( object ):
 		return "%s%s_unused_time_stamp=%s" % (path, "&" if "?" in path else "?", cacheKey)
 
 	def __init__(self, module, url, params, successHandler, failureHandler, finishedHandler,
-	                modifies, cacheable, secure):
+	                modifies, cacheable, secure, kickoff):
 		"""
 			Constructs a new NetworkService request.
 			Should not be called directly (use NetworkService.request instead).
@@ -249,16 +249,21 @@ class NetworkService( object ):
 		self.modifies = modifies
 		self.cacheable = cacheable
 		self.secure = secure
+		self.delay = delay
 
-		if secure:
+		if kickoff:
+			self.kickoff()
+
+	def kickoff(self):
+		if self.secure:
 			self.waitingForSkey = True
 			self.doFetch("%s%s/skey" % (NetworkService.host, NetworkService.prefix), None, None)
 		else:
-			self.doFetch(NetworkService.urlForArgs(module, url, cacheable), params, None)
+			self.doFetch(NetworkService.urlForArgs(self.module, self.url, self.cacheable), self.params, None)
 
 	@staticmethod
 	def request(module, url, params=None, successHandler=None, failureHandler=None,
-		   finishedHandler=None, modifies=False, cacheable=False, secure=False):
+		   finishedHandler=None, modifies=False, cacheable=False, secure=False, kickoff=True):
 		"""
 			Performs an AJAX request. Handles caching and security-keys.
 
@@ -285,10 +290,11 @@ class NetworkService( object ):
 		"""
 		print("NS REQUEST", module, url, params )
 		assert not( cacheable and modifies ), "Cannot cache a request modifying data!"
-		#Seems not cacheable or not cached
-		return( NetworkService(module, url, params, successHandler, failureHandler, finishedHandler,
-				       modifies, cacheable, secure) )
 
+		#Seems not cacheable or not cached
+		return NetworkService(module, url, params,
+		                        successHandler, failureHandler, finishedHandler,
+				                    modifies, cacheable, secure, kickoff)
 
 	def doFetch(self, url, params, skey ):
 		"""

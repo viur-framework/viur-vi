@@ -5,7 +5,7 @@ from html5.a import A
 from html5.form import Fieldset
 from html5.ext import YesNoDialog
 
-from network import NetworkService
+from network import NetworkService, DeferredCall
 from config import conf
 from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
@@ -19,6 +19,9 @@ class InternalEdit(html5.Div):
 
 	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, defaultCat=""):
 		super(InternalEdit, self).__init__()
+
+		self.sinkEvent("onChange", "onKeyDown")
+
 		self.editIdx = 1
 		self.skelStructure = skelStructure
 		self.values = values
@@ -31,10 +34,11 @@ class InternalEdit(html5.Div):
 		self.renderStructure(readOnly=readOnly)
 
 		if values:
-			self.unserialize( values )
+			self.unserialize(values)
 
 	def renderStructure(self, readOnly = False):
 		self.bones = {}
+		self.containers = {}
 
 		tmpDict = {k: v for k, v in self.skelStructure}
 		fieldSets = {}
@@ -112,22 +116,20 @@ class InternalEdit(html5.Div):
 				tmp.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
 				descrLbl = tmp
 
-			containerDiv = html5.Div()
-			containerDiv.appendChild( descrLbl )
-			containerDiv.appendChild( widget )
+			self.containers[key] = html5.Div()
+			self.containers[key].appendChild(descrLbl)
+			self.containers[key].appendChild(widget)
 
 			if cat is not None:
-				fieldSets[cat]._section.appendChild(containerDiv)
+				fieldSets[cat]._section.appendChild(self.containers[key])
 			else:
-				self.form.appendChild(containerDiv)
+				self.form.appendChild(self.containers[key])
 
-			containerDiv["class"].append("bone")
-			containerDiv["class"].append("bone_"+key)
-			containerDiv["class"].append( bone["type"].replace(".","_") )
+			self.containers[key].addClass("bone", "bone_%s" % key, bone["type"].replace(".","_"))
 
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
-					containerDiv["class"].append(t)
+					self.containers[key].addClass(t)
 
 			currRow += 1
 			self.bones[key] = widget
@@ -144,34 +146,100 @@ class InternalEdit(html5.Div):
 			self.form.appendChild( v )
 			v._section = None
 
+	def serializeForPost(self, validityCheck = False):
+		res = {}
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForPost())
+			except InvalidBoneValueException:
+				if validityCheck:
+					# Fixme: Bad hack..
+					lbl = bone.parent()._children[0]
+					if "is_valid" in lbl["class"]:
+						lbl["class"].remove("is_valid")
+					lbl["class"].append("is_invalid")
+					self.actionbar.resetLoadingState()
+					return None
+
+		return res
+
+	def serializeForDocument(self):
+		res = {}
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForDocument())
+			except InvalidBoneValueException as e:
+				res[key] = str(e)
+
+		return res
+
 	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
 		"""
 			Starts serializing and transmitting our values to the server.
 		"""
 		self.closeOnSuccess = closeOnSuccess
-
-		res = {}
-
-		for key, bone in self.bones.items():
-			try:
-				res.update( bone.serializeForPost( ) )
-			except InvalidBoneValueException:
-				#Fixme: Bad hack..
-				lbl = bone.parent()._children[0]
-				if "is_valid" in lbl["class"]:
-					lbl["class"].remove("is_valid")
-				lbl["class"].append("is_invalid")
-				self.actionbar.resetLoadingState()
-				return None
-
-		return res
+		return self.serializeForPost(True)
 
 	def unserialize(self, data):
 		"""
 			Applies the actual data to the bones.
 		"""
 		for bone in self.bones.values():
-			bone.unserialize( data )
+			bone.unserialize(data)
+
+		DeferredCall(self.performLogics)
+
+	def onChange(self, event):
+		DeferredCall(self.performLogics)
+
+	def onKeyDown(self, event):
+		event.stopPropagation()
+
+	def performLogics(self):
+		fields = self.serializeForDocument()
+		#print("InternalEdit.performLogics", fields)
+
+		for key, desc in self.skelStructure:
+			if desc.get("params") and desc["params"]:
+				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
+					logic = desc["params"].get(event)
+
+					if not logic:
+						continue
+
+					# Compile logic at first run
+					if isinstance(logic, str):
+						desc["params"][event] = conf["logics"].compile(logic)
+						if desc["params"][event] is None:
+							alert("ViUR logics: Parse error in >%s<" % logic)
+							continue
+
+						logic = desc["params"][event]
+
+					res = conf["logics"].execute(logic, fields)
+
+					#print("InternalEdit.performLogics", event, key, res)
+
+					if event == "logic.evaluate":
+						self.bones[key].unserialize({key: res})
+					elif res:
+						if event == "logic.visibleIf":
+							self.containers[key].show()
+						elif event == "logic.readonlyIf":
+							if not self.containers[key]["disabled"]:
+								self.containers[key]["disabled"] = True
+
+						# add more here...
+					else:
+						if event == "logic.visibleIf":
+							self.containers[key].hide()
+						elif event == "logic.readonlyIf":
+							if self.containers[key]["disabled"]:
+								self.containers[key]["disabled"] = False
+						# add more here...
+
 
 def parseHashParameters( src, prefix="" ):
 	"""
@@ -296,6 +364,7 @@ class EditWidget(html5.Div):
 		self.bones = {}
 		self.closeOnSuccess = False
 		self.logaction = logaction
+		self.sinkEvent("onChange")
 
 		self._lastData = {} #Dict of structure and values received
 
@@ -332,6 +401,52 @@ class EditWidget(html5.Div):
 	def onAttach(self):
 		utils.setPreventUnloading(True)
 
+	def performLogics(self):
+		fields = self.serializeForDocument()
+		#print("EditWidget.performLogics", fields)
+
+		for key, desc in self.dataCache["structure"]:
+			if desc.get("params") and desc["params"]:
+				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
+					logic = desc["params"].get(event)
+
+					if not logic:
+						continue
+
+					# Compile logic at first run
+					if isinstance(logic, str):
+						desc["params"][event] = conf["logics"].compile(logic)
+						if desc["params"][event] is None:
+							alert("ViUR logics: Parse error in >%s<" % logic)
+							continue
+
+						logic = desc["params"][event]
+
+					res = conf["logics"].execute(logic, fields)
+
+					#print("EditWidget.performLogics", event, key, res)
+
+					if event == "logic.evaluate":
+						self.bones[key].unserialize({key: res})
+					elif res:
+						if event == "logic.visibleIf":
+							self.containers[key].show()
+						elif event == "logic.readonlyIf":
+							if not self.containers[key]["disabled"]:
+								self.containers[key]["disabled"] = True
+
+						# add more here...
+					else:
+						if event == "logic.visibleIf":
+							self.containers[key].hide()
+						elif event == "logic.readonlyIf":
+							if self.containers[key]["disabled"]:
+								self.containers[key]["disabled"] = False
+						# add more here...
+
+	def onChange(self, event):
+		DeferredCall(self.performLogics)
+
 	def showErrorMsg(self, req=None, code=None):
 		"""
 			Removes all currently visible elements and displays an error message
@@ -367,7 +482,7 @@ class EditWidget(html5.Div):
 		self.wasInitialRequest = not len(data)>0
 
 		if self.module=="_tasks":
-			NetworkService.request(None, "/admin/%s/execute/%s" % (self.module, self.key), data,
+			NetworkService.request(None, "/vi/%s/execute/%s" % (self.module, self.key), data,
 			                        secure=len(data) > 0,
 			                        successHandler=self.setData,
 			                        failureHandler=self.showErrorMsg)
@@ -588,8 +703,9 @@ class EditWidget(html5.Div):
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
-			print(key, bone["required"], bone["error"])
-			if bone["required"]:
+
+			#print(key, bone["required"], bone["error"])
+			if bone["required"] or (bone.get("unique") and bone["error"]):
 				descrLbl["class"].append("is_required")
 
 				if bone["error"] is not None:
@@ -640,7 +756,9 @@ class EditWidget(html5.Div):
 
 		if hasMissing and not self.wasInitialRequest:
 			conf["mainWindow"].log("warning",translate("Could not save entry!"))
-		
+
+		DeferredCall(self.performLogics)
+
 	def unserialize(self, data):
 		"""
 			Applies the actual data to the bones.
@@ -648,24 +766,46 @@ class EditWidget(html5.Div):
 		for bone in self.bones.values():
 			bone.unserialize(data)
 
+	def serializeForPost(self, validityCheck = False):
+		res = {}
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForPost())
+			except InvalidBoneValueException:
+				if validityCheck:
+					# Fixme: Bad hack..
+					lbl = bone.parent()._children[0]
+					if "is_valid" in lbl["class"]:
+						lbl["class"].remove("is_valid")
+					lbl["class"].append("is_invalid")
+					self.actionbar.resetLoadingState()
+					return None
+
+		return res
+
+	def serializeForDocument(self):
+		res = self._lastData.get("values", {})
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForDocument())
+			except InvalidBoneValueException as e:
+				res[key] = str(e)
+
+		return res
+
 	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
 		"""
 			Starts serializing and transmitting our values to the server.
 		"""
 		self.closeOnSuccess = closeOnSuccess
-		res = {}
-		for key, bone in self.bones.items():
-			try:
-				res.update( bone.serializeForPost( ) )
-			except InvalidBoneValueException:
-				#Fixme: Bad hack..
-				lbl = bone.parent()._children[0]
-				if "is_valid" in lbl["class"]:
-					lbl["class"].remove("is_valid")
-				lbl["class"].append("is_invalid")
-				self.actionbar.resetLoadingState()
-				return
-		self.save( res )
+
+		res = self.serializeForPost(True)
+		if res is None:
+			return None
+
+		self.save(res)
 
 class fieldset_A(A):
 	_baseClass = "a"

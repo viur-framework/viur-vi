@@ -31,7 +31,7 @@ class PasswordEditBone( html5.Div ):
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		verify = True
 		if ("params" in skelStructure[boneName]
 		    and skelStructure[boneName]["params"]):
@@ -49,6 +49,9 @@ class PasswordEditBone( html5.Div ):
 			return {self.boneName: self.primeinput["value"]}
 
 		raise InvalidBoneValueException()
+
+	def serializeForDocument(self):
+		return {self.boneName: self.primeinput["value"]}
 
 	def setExtendedErrorInformation(self, errorInfo ):
 		pass

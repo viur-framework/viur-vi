@@ -24,8 +24,9 @@ class StringBoneExtractor(BaseBoneExtractor):
 				return '"%s"' % resstr
 			elif isinstance(data[field], list):
 				return ", ".join([item.replace("&quot;", "").replace(";", " ").replace('"', "'") for item in data[field]])
-			else:
-				return str('"%s"' % data[field].replace("&quot;", "").replace(";", " ").replace('"', "'"))
+			elif data[field] is not None:
+				return str('"%s"' % str(data[field]).replace("&quot;", "").replace(";", " ").replace('"', "'"))
+
 		return conf["empty_value"]
 
 class StringViewBoneDelegate( object ):
@@ -226,7 +227,7 @@ class StringEditBone(html5.Div):
 				self.input["readonly"] = True
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 
 		if boneName in skelStructure.keys():
@@ -380,7 +381,36 @@ class StringEditBone(html5.Div):
 		return res
 
 	def serializeForDocument(self):
-		return self.serialize()
+		if self.languages and self.multiple:
+			res = {}
+
+			for lang in self.languages:
+				res[lang] = []
+
+				for child in self.langEdits[lang].children():
+					if isinstance(child, Tag):
+						res[lang].append(child.input["value"])
+
+		elif self.languages and not self.multiple:
+			res = {}
+
+			for lang in self.languages:
+				txt = self.langEdits[lang]["value"]
+
+				if txt:
+					res[lang] = txt
+
+		elif not self.languages and self.multiple:
+			res = []
+
+			for child in self.tagContainer.children():
+				if isinstance(child, Tag):
+					res.append(child.input["value"])
+
+		elif not self.languages and not self.multiple:
+			res = self.input["value"]
+
+		return {self.boneName: res}
 
 	def genTag(self, tag, editMode=False, lang=None):
 		tag = Tag(self, tag, editMode, readonly = self.readOnly)

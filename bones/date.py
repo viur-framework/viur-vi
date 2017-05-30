@@ -147,7 +147,7 @@ class DateEditBone( html5.Div ):
 				self.timeinput["readonly"] = True
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		date = skelStructure[ boneName ]["date"] if "date" in skelStructure[ boneName ].keys() else True
 		time = skelStructure[ boneName ]["time"] if "time" in skelStructure[ boneName ].keys() else True
@@ -200,7 +200,7 @@ class DateEditBone( html5.Div ):
 		return {self.boneName: returnvalue}
 
 	def serializeForDocument(self):
-		return self.serialize()
+		return self.serializeForPost()
 
 def CheckForDateBone(moduleName, boneName, skelStucture, *args, **kwargs):
 	return skelStucture[boneName]["type"] == "date"

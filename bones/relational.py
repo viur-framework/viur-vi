@@ -29,16 +29,15 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
 
-		if field in data.keys():
-			val = data[field]
-		else:
-			val = ""
+		val = data.get(field)
+		if not field:
+			return ""
 
 		structure = self.skelStructure[self.boneName]
 
 		try:
 			if not isinstance(val, list):
-				val = [val]
+				val = [val or ""]
 
 			val = ", ".join([(utils.formatString(
 								utils.formatString(self.format, x["dest"], structure["relskel"],
@@ -48,7 +47,7 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 			                    or x["key"]) for x in val])
 		except:
 			#We probably received some garbage
-			print("Cannot build relational format, maybe garbage received?")
+			print("%s: RelationalBoneExtractor.render cannot build relational format, maybe garbage received?" % self.boneName)
 			print(val)
 			val = ""
 
@@ -57,10 +56,10 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 	def raw(self, data, field):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
 
-		if not field in data.keys():
+		val = data.get(field)
+		if not val:
 			return None
 
-		val = data[field]
 		structure = self.skelStructure[self.boneName]
 
 		try:
@@ -75,7 +74,7 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 			                    or x["key"]) for x in val]
 		except:
 			#We probably received some garbage
-			print("Cannot build relational format, maybe garbage received?")
+			print("%s: RelationalBoneExtractor.raw cannot build relational format, maybe garbage received?" % self.boneName)
 			print(val)
 			return None
 
@@ -96,14 +95,15 @@ class RelationalViewBoneDelegate(object):
 
 	def render(self, data, field):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
-		val = data.get(field, "")
-
-		structure = self.structure[self.boneName]
+		val = data.get(field)
 
 		lbl = html5.Label()
 
-		if not val:
+		if val is None:
+			lbl.appendChild(conf["empty_value"])
 			return lbl
+
+		structure = self.structure[self.boneName]
 
 		try:
 			if not isinstance(val, list):
@@ -134,7 +134,7 @@ class RelationalViewBoneDelegate(object):
 
 		except:
 			#We probably received some garbage
-			print("Cannot build relational format, maybe garbage received?")
+			print("%s: RelationalViewBoneDelegate.render cannot build relational format, maybe garbage received?" % self.boneName)
 			print(val)
 
 			res = ""
@@ -177,6 +177,8 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.selectionTxt["readonly"] = True
 		self.appendChild( self.selectionTxt )
 		self.ie = None
+
+		self.changeEvent = EventDispatcher("boneChange")
 
 		# Selection button
 		if (destModule in conf["modules"].keys()
@@ -225,7 +227,7 @@ class RelationalSingleSelectionBone(html5.Div):
 			self.parent()["class"].remove("is_active")
 
 	@classmethod
-	def fromSkelStructure( cls, moduleName, boneName, skelStructure ):
+	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
 		"""
 			Constructs a new RelationalSingleSelectionBone from the parameters given in skelStructure.
 			@param moduleName: Name of the module which send us the skelStructure
@@ -319,19 +321,28 @@ class RelationalSingleSelectionBone(html5.Div):
 			Serializes our value into something that can be transferred to the server using POST.
 			@returns: dict
 		"""
-		if not (self.selection and "dest" in self.selection.keys() and "key" in self.selection["dest"].keys()):
-			# We have no value selected
-			return {}
 		res = {}
+
+		if not (self.selection and "dest" in self.selection.keys() and "key" in self.selection["dest"].keys()):
+			return res
+
 		if self.ie:
-			res.update(self.ie.doSave())
+			res.update(self.ie.serializeForPost())
+
 		res["key"] = self.selection["dest"]["key"]
-		r = {"%s.0.%s" % (self.boneName, k): v for (k,v ) in res.items()}
-		return r
-		#return { self.boneName+".dest": self.selection["dest"]["key"], self.boneName+".rel": self.ie.doSave} if self.selection is not None else {}
+
+		return {"%s.0.%s" % (self.boneName, k): v for (k,v ) in res.items()}
 
 	def serializeForDocument(self):
-		return self.serialize()
+		res = {"rel": {}, "dest": {}}
+
+		if (self.selection and "dest" in self.selection.keys()):
+			if self.ie:
+				res["rel"].update(self.ie.serializeForDocument())
+
+			res["dest"] = self.selection["dest"]
+
+		return {self.boneName: res}
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -355,6 +366,8 @@ class RelationalSingleSelectionBone(html5.Div):
 			self.setSelection({"dest": selection[0]})
 		else:
 			self.setSelection(None)
+
+		self.changeEvent.fire(self)
 
 	def setSelection(self, selection):
 		"""
@@ -452,8 +465,6 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			@type data: dict
 		"""
 		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
-
-		self["draggable"] = not parent.readOnly
 		self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd", "onChange")
 
 		self.parent = parent
@@ -461,6 +472,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.data = data
 
 		self.txtLbl = html5.Label()
+		self.txtLbl["draggable"] = not parent.readOnly
 
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild(self.txtLbl)
@@ -559,6 +571,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 	def onRemove(self, *args, **kwargs):
 		self.parent.removeEntry(self)
+		self.parent.changeEvent.fire(self.parent)
 
 	def onEdit(self, sender = None):
 		pane = Pane(translate("Edit"), closeable=True,
@@ -572,15 +585,22 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		except AssertionError:
 			conf["mainWindow"].removePane(pane)
 
-	def serialize(self):
+	def serializeForPost(self):
 		if self.ie:
-			res = {}
-			res.update(self.ie.doSave())
+			res = self.ie.serializeForPost()
 			res["key"] = self.data["dest"]["key"]
 			return res
 		else:
 			return {"key": self.data["dest"]["key"]}
 
+	def serializeForDocument(self):
+		res = {"rel": {}, "dest": {}}
+
+		if self.ie:
+			res["rel"] = self.ie.serializeForPost()
+
+		res["dest"]["key"] = self.data["dest"]["key"]
+		return res
 
 class RelationalMultiSelectionBone(html5.Div):
 	"""
@@ -611,6 +631,8 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.using = using
 		self.usingDescr = usingDescr
 		self.relskel = relskel
+
+		self.changeEvent = EventDispatcher("boneChange")
 
 		self.entries = []
 		self.extendedErrorInformation = {}
@@ -644,7 +666,7 @@ class RelationalMultiSelectionBone(html5.Div):
 			self.parent()["class"].remove("is_active")
 
 	@classmethod
-	def fromSkelStructure( cls, moduleName, boneName, skelStructure ):
+	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
 		"""
 			Constructs a new RelationalMultiSelectionBone from the parameters given in skelStructure.
 			@param moduleName: Name of the module which send us the skelStructure
@@ -681,6 +703,9 @@ class RelationalMultiSelectionBone(html5.Div):
 			@param data: The data dictionary received.
 			@type data: dict
 		"""
+		self.selectionDiv.removeAllChildren()
+		self.entries = []
+
 		if self.boneName in data.keys():
 			val = data[ self.boneName ]
 			if isinstance( val, dict ):
@@ -692,22 +717,26 @@ class RelationalMultiSelectionBone(html5.Div):
 			Serializes our values into something that can be transferred to the server using POST.
 			@returns: dict
 		"""
-
 		res = {}
 		idx = 0
+
 		for entry in self.entries:
-			currRes = entry.serialize()
+			currRes = entry.serializeForPost()
 			if isinstance( currRes, dict ):
 				for k,v in currRes.items():
 					res["%s.%s.%s" % (self.boneName,idx,k) ] = v
 			else:
 				res["%s.%s.key" % (self.boneName,idx) ] = currRes
+
 			idx += 1
-		return( res )
-		#return( { self.boneName: [x.data["key"] for x in self.entries]} )
+
+		if not res:
+			res[self.boneName] = None
+
+		return res
 
 	def serializeForDocument(self):
-		return self.serialize()
+		return {self.boneName: [entry.serializeForDocument() for entry in self.entries]}
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -718,12 +747,13 @@ class RelationalMultiSelectionBone(html5.Div):
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
 
-	def onSelectionActivated(self, table, selection ):
+	def onSelectionActivated(self, table, selection):
 		"""
 			Merges the selection made in the ListWidget into our value(s)
 		"""
 		selection = [{"dest": data, "rel": getDefaultValues(self.using) if self.using else None} for data in selection]
 		self.setSelection(selection)
+		self.changeEvent.fire(self)
 
 	def setSelection(self, selection):
 		"""
@@ -733,9 +763,11 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 		if selection is None:
 			return
+
 		for data in selection:
-			errIdx = len( self. entries )
+			errIdx = len(self.entries)
 			errDict = {}
+
 			if self.extendedErrorInformation:
 				for k,v in self.extendedErrorInformation.items():
 					k = k.replace("%s." % self.boneName, "")
@@ -744,10 +776,12 @@ class RelationalMultiSelectionBone(html5.Div):
 						idx = int( idx )
 					else:
 						continue
+
 					if idx == errIdx:
 						errDict[ errKey ] = v
+
 			entry = RelationalMultiSelectionBoneEntry( self, self.destModule, data, self.using, errDict )
-			self.addEntry( entry )
+			self.addEntry(entry)
 
 	def addEntry(self, entry):
 		"""

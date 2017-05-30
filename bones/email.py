@@ -32,9 +32,9 @@ class EmailEditBone( strBone.StringEditBone ):
 		super( EmailEditBone,  self ).__init__( moduleName, boneName,readOnly, *args, **kwargs )
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( EmailEditBone( moduleName, boneName, readOnly ) )
+		return EmailEditBone(moduleName, boneName, readOnly)
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
@@ -44,7 +44,6 @@ class EmailEditBone( strBone.StringEditBone ):
 		if not self["value"] or re.match("^[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._-]+.[a-zA-Z]{2,6}$",self.input["value"]):
 			return( { self.boneName: self.input["value"] } )
 		raise InvalidBoneValueException()
-
 
 	def setSpecialType(self):
 		self.input["type"]="email"

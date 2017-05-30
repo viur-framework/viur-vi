@@ -9,10 +9,10 @@ from bones.base import BaseBoneExtractor
 
 class SelectOneBoneExtractor(BaseBoneExtractor):
 
-	def render( self, data, field ):
-		if field in data.keys():
-			if data and field and field in self.skelStructure and data[field] and data[field] in self.skelStructure[field]["values"]:
-				return self.skelStructure[field]["values"][data[field]]
+	def render(self, data, field):
+		if field in data and field in self.skelStructure:
+			options = {k: v for k, v in self.skelStructure[field]["values"]}
+			return options.get(data[field], conf["empty_value"])
 
 		return conf["empty_value"]
 
@@ -61,7 +61,7 @@ class SelectOneEditBone( html5.Select ):
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		return SelectOneEditBone(moduleName, boneName,
 		                            skelStructure[boneName].get("readonly", False),
 		                            skelStructure[boneName].get("values", {}))
@@ -74,13 +74,14 @@ class SelectOneEditBone( html5.Select ):
 					aoption["selected"]=True
 
 	def serializeForPost(self):
-			for aoption in self._children:
-				if aoption["selected"]:
-					return( { self.boneName: aoption["value"] } )
-			return ({})
+		for opt in self.children():
+			if opt["selected"]:
+				return {self.boneName: opt["value"]}
+
+		return {}
 
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serializeForPost()
 
 class ExtendedSelectOneSearch( html5.Div ):
 	def __init__(self, extension, view, modul, *args, **kwargs ):

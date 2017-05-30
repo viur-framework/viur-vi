@@ -381,10 +381,12 @@ class LoginScreen(Screen):
 			return
 
 		conf["currentUser"] = answ["values"]
-		if not any([x in conf["currentUser"].get("access", []) for x in ["admin", "root"]]):
-			self.insufficientRights()
-			return
-			#self.loginScreen.redirectNoAdmin()
+
+		if conf["vi.access.rights"]:
+			if not any([x in conf["currentUser"].get("access", []) for x in conf["vi.access.rights"]]):
+				self.insufficientRights()
+				return
+				#self.loginScreen.redirectNoAdmin()
 
 		print("User already logged in")
 		conf["theApp"].admin()
@@ -395,7 +397,9 @@ class LoginScreen(Screen):
 		methods = []
 		for method in answ:
 			handler = loginHandlerSelector.select(method[0], method[1])
-
+			if not handler:
+				print("Warning: Login-Handler \"%s\" with second factor \"%s\" unknown" % (method[0], method[1]))
+				continue
 			# Check if this handler is already inserted!
 			if not any([c.__class__.__name__ == handler.__name__ for c in self.loginMethodSelector._children]):
 				handler(self)

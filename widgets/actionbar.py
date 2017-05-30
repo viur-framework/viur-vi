@@ -1,24 +1,24 @@
 import html5
+
 from priorityqueue import actionDelegateSelector
 from config import conf
 from i18n import translate
 
-
-class ActionBar( html5.Div ):
+class ActionBar(html5.Div):
 	"""
-		Provides the container for actions (add,edit,..) suitable for one modul (eg. for lists).
+		Provides the container for actions (add,edit,..) suitable for one module (eg. for lists).
 	"""
-	def __init__( self, modul, appType, currentAction=None, *args, **kwargs ):
+	def __init__(self, module = None, appType = None, currentAction = None, *args, **kwargs):
 		"""
-			@param modul: Name of the modul were going to handle
-			@type modul: String
+			@param module: Name of the modul were going to handle
+			@type module: String
 			@param appType: Type of the application (list, tree, hierarchy, ..)
 			@type appType: String
 		"""
 		super( ActionBar, self ).__init__(  )
 		self.actions = []
 		self.widgets = {}
-		self.module = modul
+		self.module = module
 		self.appType = appType
 		self.currentAction = currentAction
 		self["class"].append("actionbar")

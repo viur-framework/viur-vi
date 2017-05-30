@@ -11,15 +11,28 @@ from widgets.edit import EditWidget
 from pane import Pane
 from bones.base import BaseBoneExtractor
 
+class FilePreviewImage(html5.Div):
+	def __init__(self, imageSrc = None, *args, **kwargs):
+		super(FilePreviewImage, self).__init__(*args, **kwargs)
+		self.addClass("previewimg")
+
+		if imageSrc:
+			self.setImage(imageSrc)
+
+	def setImage(self, imageSrc):
+		if imageSrc:
+			self["style"]["background-image"] = "url('%s')" % imageSrc
+			self.show()
+		else:
+			self["style"]["background-image"] = None
+			self.hide()
+
 class FileBoneExtractor(BaseBoneExtractor):
-	def __init__(self, modul, boneName, structure):
-		super(FileBoneExtractor, self).__init__()
+	def __init__(self, module, boneName, structure):
+		super(FileBoneExtractor, self).__init__(module, boneName, structure)
 		self.format = "$(dest.name)"
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
-		self.module = modul
-		self.structure = structure
-		self.boneName = boneName
 
 	def renderFileentry(self, fileentry):
 		origin = eval("window.location.origin")
@@ -93,11 +106,8 @@ class FileViewBoneDelegate(object):
 			except:
 				pass
 
-		if utils.getImagePreview( fileEntry ):
-			aimg=html5.Img()
-			aimg["src"] = utils.getImagePreview( fileEntry )
-			aimg["alt"] = fileEntry["name"]
-			adiv.appendChild(aimg)
+		if utils.getImagePreview(fileEntry):
+			adiv.appendChild(FilePreviewImage(utils.getImagePreview(fileEntry)))
 
 		aspan=html5.Span()
 		aspan.appendChild(html5.TextNode(str(fileEntry.get("name", ""))))#fixme: formatstring!
@@ -147,15 +157,7 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 	def __init__(self, *args, **kwargs):
 		super(FileMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 		self["class"].append("fileentry")
-
-		if utils.getImagePreview( self.data ) is not None:
-			img = html5.Img()
-			img["src"] = utils.getImagePreview( self.data )
-			img["class"].append("previewimg")
-			self.appendChild(img)
-			# Move the img in front of the lbl
-			self.element.removeChild(img.element)
-			self.element.insertBefore(img.element, self.element.children.item(0))
+		self.prependChild(FilePreviewImage(utils.getImagePreview(self.data["dest"])))
 
 	def fetchEntry(self, key):
 		NetworkService.request(self.module,"view/leaf/"+key,
@@ -197,6 +199,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 
 	def onUploadSuccess(self, uploader, file ):
 		self.setSelection([{"dest": file,"rel":{}}])
+		self.changeEvent.fire(self)
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -219,6 +222,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
 		self.setSelection( [{"dest": x.data, "rel": {}} for x in selection if isinstance(x, LeafFileWidget)] )
+		self.changeEvent.fire(self)
 
 	def setSelection(self, selection):
 		"""
@@ -226,6 +230,8 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 			@param selection: The new entry that this bone should reference
 			@type selection: dict | list[dict]
 		"""
+		print("setSelection", selection)
+
 		if selection is None:
 			return
 
@@ -239,9 +245,8 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		super(FileSingleSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
 		self["class"].append("supports_upload")
-		self.previewImg = html5.Img()
-		self.previewImg["class"].append("previewimg")
-		self.appendChild( self.previewImg )
+
+		self.previewImg = FilePreviewImage()
 
 	def onDragOver(self, event):
 		super(FileSingleSelectionBone,self).onDragOver(event)
@@ -263,6 +268,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 	def onUploadSuccess(self, uploader, file):
 		self.setSelection({"dest": file, "rel":{}})
+		self.changeEvent.fire(self)
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
@@ -284,7 +290,9 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 				break
 		if not hasValidSelection: #Its just a folder that's been activated
 			return
+
 		self.setSelection([{"dest": x.data for x in selection if isinstance(x,LeafFileWidget)}][0] )
+		self.changeEvent.fire(self)
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -317,19 +325,11 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			                        cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
-			previewUrl = utils.getImagePreview(self.selection["dest"])
-
-			if previewUrl:
-				self.previewImg["src"] = previewUrl
-				self.previewImg["style"]["display"] = ""
-			else:
-				self.previewImg["style"]["display"] = "none"
+			self.previewImg.setImage(utils.getImagePreview(self.selection["dest"]))
 		else:
-			self.selectionTxt["value"] = ""
-			self.previewImg["style"]["display"] = "none"
+			self.previewImg.setImage(None)
 
 		self.updateButtons()
-
 
 
 def CheckForFileBoneSingleSelection( moduleName, boneName, skelStructure, *args, **kwargs ):
