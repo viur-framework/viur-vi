@@ -328,7 +328,7 @@ class EditWidget(html5.Div):
 			@type hashArgs: Dict
 		"""
 		if not module in conf["modules"].keys():
-			conf["mainWindow"].log("error", translate("The modulee '{modulee}' does not exist.", modulee=module))
+			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
 			assert module in conf["modules"].keys()
 
 		super( EditWidget, self ).__init__( *args, **kwargs )
