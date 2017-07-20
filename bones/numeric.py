@@ -22,7 +22,7 @@ class NumericBoneExtractor(BaseBoneExtractor):
 		return "-23,42"
 
 
-class NumericViewBoneDelegate( object ):
+class NumericViewBoneDelegate(object):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
 		super(NumericViewBoneDelegate, self).__init__()
 
@@ -46,42 +46,73 @@ class NumericViewBoneDelegate( object ):
 
 		return html5.Label(s)
 
-class NumericEditBone( html5.Input ):
-	def __init__(self, moduleName, boneName,readOnly,_min=False,_max=False,precision=False, *args, **kwargs ):
+class NumericEditBone(html5.Span):
+	def __init__(self, moduleName, boneName, readOnly, _min=False, _max=False, precision=False, currency=None,
+	                *args, **kwargs ):
 		super( NumericEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self["type"]="number"
+
+		self.input = html5.Input()
+		self.appendChild(self.input)
+
+		if currency:
+			self.appendChild(html5.Span(currency))
+
+		self.input["type"] = "number"
+
 		if _min:
-			self["min"]=_min
+			self.input["min"] = _min
+
 		if _max:
-			self["max"]=_max
+			self.input["max"] = _max
+
 		if precision:
-			self["step"]=pow(10,-precision)
+			self.input["step"] = pow(10, -precision)
 		else: #Precision is zero, treat as integer input
-			self["step"]=1
+			self.input["step"] = 1
+
 		if self.readOnly:
-			self["readonly"] = True
+			self.input["readonly"] = True
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		params = skelStructure[boneName].get("params")
 		readOnly = skelStructure[boneName].get("readonly", False)
 
+		currency = None
+
 		# View bone as readOnly even if it's not readOnly by system.
 		if not readOnly and params:
-			readOnly = params.get("style", "").lower() == "readonly"
+			style = params.get("style", "").lower()
+			for s in style.split(" "):
+				if s == "readonly":
+					readOnly = True
+
+				elif s.startswith("amount."):
+					currency = s.split(".", 1)[1]
+					currency = {
+						"euro": u"€",
+						"dollar": u"$",
+						"yen": u"¥",
+						"pound": u"£",
+						"baht": u"฿",
+						"bitcoin": u"฿"
+					}.get(currency, currency)
 
 		return NumericEditBone(moduleName, boneName, readOnly,
 		                       skelStructure[boneName].get("min", False),
 		                       skelStructure[boneName].get("max", False),
-		                       skelStructure[boneName].get("precision", False))
+		                       skelStructure[boneName].get("precision", False),
+		                       currency = currency)
 
 	def unserialize(self, data):
-		self["value"] = data.get(self.boneName, "")
+		self.input["value"] = data.get(self.boneName, "")
 
 	def serializeForPost(self):
-		return {self.boneName: self["value"]}
+		return {
+			self.boneName: self.input["value"]
+		}
 
 	def serializeForDocument(self):
 		return self.serializeForPost()

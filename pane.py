@@ -38,13 +38,20 @@ class Pane(html5.Li):
 
 		self.setText(descr, iconURL)
 
-		#self.label.addClickListener( self.onClick )
-		if closeable:
-			self.closeBtn = html5.ext.Button(translate("Close"), self.onBtnCloseReleased)
-			self.closeBtn["class"].append("closebtn")
-			self.appendChild(self.closeBtn)
-		else:
-			self.closeBtn = None
+		self.closeBtn = html5.ext.Button(translate("Close"), self.onBtnCloseReleased)
+		self.closeBtn.addClass("closebtn")
+		self.appendChild(self.closeBtn)
+
+		if not closeable:
+			self.closeBtn.hide()
+
+	def __setattr__(self, key, value):
+		super(Pane, self).__setattr__(key, value)
+		if key == "closeable":
+			if value:
+				self.closeBtn.show()
+			else:
+				self.closeBtn.hide()
 
 	def setText(self, descr = None, iconURL = None):
 		self.label.removeAllChildren()
@@ -94,8 +101,8 @@ class Pane(html5.Li):
 
 			self.appendChild( self.childDomElem )
 
-			if self.closeBtn:
-				self.closeBtn[ "style" ][ "display" ] = "none"
+			if self.closeable:
+				self.closeBtn.hide()
 
 		if ( pane.closeable
 			 and "display" in self.childDomElem[ "style" ]
@@ -123,9 +130,8 @@ class Pane(html5.Li):
 			#DOM.removeChild( self.getElement(), self.childDomElem )
 			self.childDomElem = None
 
-			if self.closeBtn:
-				self.closeBtn[ "style" ][ "display" ] = "initial"
-
+			if self.closeable:
+				self.closeBtn.show()
 
 	def onDetach(self):
 		#assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
