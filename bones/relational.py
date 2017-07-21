@@ -178,6 +178,8 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.appendChild( self.selectionTxt )
 		self.ie = None
 
+		self.context = None
+
 		self.changeEvent = EventDispatcher("boneChange")
 
 		# Selection button
@@ -268,6 +270,9 @@ class RelationalSingleSelectionBone(html5.Div):
 		return cls(moduleName, boneName, readOnly, destModule=destModule,
 		            format=format, required=required, using=using, usingDescr=usingDescr)
 
+	def setContext(self, context):
+		self.context = context
+
 	def onEdit(self, *args, **kwargs):
 		"""
 			Edit the reference.
@@ -280,7 +285,9 @@ class RelationalSingleSelectionBone(html5.Div):
 		conf["mainWindow"].stackPane( pane, focus=True )
 
 		try:
-			edwg = EditWidget(self.destModule, EditWidget.appList, key=self.selection["dest"]["key"])
+			edwg = EditWidget(self.destModule, EditWidget.appList,
+			                    key=self.selection["dest"]["key"],
+			                    context=self.context)
 			pane.addWidget(edwg)
 
 		except AssertionError:
@@ -302,13 +309,12 @@ class RelationalSingleSelectionBone(html5.Div):
 					val = val[0]
 				else:
 					val = None
+
 			if isinstance( val, dict ):
 				self.setSelection( val )
 				if self.using:
 					if self.ie:
 						self.removeChild(self.ie)
-
-					print("2 WITH ", data["rel"])
 
 					self.ie = InternalEdit(self.using, val["rel"], {},
 					                        readOnly=self.readOnly, defaultCat=self.usingDescr)
@@ -350,7 +356,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		"""
 
 		try:
-			currentSelector = ListWidget( self.destModule, isSelector=True )
+			currentSelector = ListWidget(self.destModule, isSelector=True, context=self.context)
 		except AssertionError:
 			return
 
@@ -386,6 +392,7 @@ class RelationalSingleSelectionBone(html5.Div):
 
 		if selection:
 			NetworkService.request(self.destModule, "view/%s" % selection["dest"]["key"],
+			                        self.context or {},
 			                        successHandler=self.onSelectionDataAvailable, cacheable=True)
 
 			self.selectionTxt["value"] = translate("Loading...")
@@ -579,7 +586,8 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		conf["mainWindow"].stackPane(pane, focus=True)
 
 		try:
-			edwg = EditWidget(self.parent.destModule, EditWidget.appList, key=self.data["dest"]["key"])
+			edwg = EditWidget(self.parent.destModule, EditWidget.appList, key=self.data["dest"]["key"],
+			                    context=self.parent.context)
 			pane.addWidget(edwg)
 
 		except AssertionError:
@@ -607,8 +615,9 @@ class RelationalMultiSelectionBone(html5.Div):
 		Provides the widget for a relationalBone with multiple=True
 	"""
 
-	def __init__(self, srcModule, boneName, readOnly, destModule, format="$(name)", using=None, usingDescr=None,
-	                relskel=None, *args, **kwargs ):
+	def __init__(self, srcModule, boneName, readOnly, destModule,
+	                format="$(dest.name)", using=None, usingDescr=None,
+	                relskel=None, *args, **kwargs):
 		"""
 			@param srcModule: Name of the module from which is referenced
 			@type srcModule: string
@@ -621,7 +630,7 @@ class RelationalMultiSelectionBone(html5.Div):
 			@param format: Specifies how entries should be displayed.
 			@type format: string
 		"""
-		super( RelationalMultiSelectionBone,  self ).__init__( *args, **kwargs )
+		super(RelationalMultiSelectionBone, self).__init__(*args, **kwargs)
 
 		self.srcModule = srcModule
 		self.boneName = boneName
@@ -637,6 +646,8 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.entries = []
 		self.extendedErrorInformation = {}
 		self.currentDrag = None
+
+		self.context = None
 
 		self.selectionDiv = html5.Div()
 		self.selectionDiv["class"].append("selectioncontainer")
@@ -738,11 +749,14 @@ class RelationalMultiSelectionBone(html5.Div):
 	def serializeForDocument(self):
 		return {self.boneName: [entry.serializeForDocument() for entry in self.entries]}
 
+	def setContext(self, context):
+		self.context = context
+
 	def onShowSelector(self, *args, **kwargs):
 		"""
-			Opens a ListWidget sothat the user can select new values
+			Opens a ListWidget so that the user can select new values
 		"""
-		currentSelector = ListWidget( self.destModule, isSelector=True )
+		currentSelector = ListWidget(self.destModule, isSelector=True, context=self.context)
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent()["class"].append("is_active")
@@ -853,14 +867,13 @@ class RelationalSearch( html5.Div ):
 		self.filterChangedEvent.fire()
 
 	def openSelector(self, *args, **kwargs):
-		currentSelector = ListWidget( self.extension["module"], isSelector=True )
+		currentSelector = ListWidget(self.extension["module"], isSelector=True)
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 
 	def onSelectionActivated(self, table,selection):
 		self.currentSelection = selection
 		self.filterChangedEvent.fire()
-
 
 	def updateFilter(self, filter):
 		if self.currentSelection:

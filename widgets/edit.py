@@ -17,7 +17,7 @@ class InvalidBoneValueException(ValueError):
 
 class InternalEdit(html5.Div):
 
-	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, defaultCat=""):
+	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, context=None, defaultCat=""):
 		super(InternalEdit, self).__init__()
 
 		self.sinkEvent("onChange", "onKeyDown")
@@ -27,6 +27,7 @@ class InternalEdit(html5.Div):
 		self.values = values
 		self.errorInformation = errorInformation
 		self.defaultCat = defaultCat
+		self.context = context
 
 		self.form = html5.Form()
 		self.appendChild(self.form)
@@ -187,6 +188,9 @@ class InternalEdit(html5.Div):
 			Applies the actual data to the bones.
 		"""
 		for bone in self.bones.values():
+			if "setContext" in dir(bone) and callable(bone.setContext):
+				bone.setContext(self.context)
+
 			bone.unserialize(data)
 
 		DeferredCall(self.performLogics)
@@ -308,7 +312,7 @@ class EditWidget(html5.Div):
 	__editIdx_ = 0 #Internal counter to ensure unique ids
 
 	def __init__(self, module, applicationType, key=0, node=None, skelType=None, clone=False,
-	                hashArgs=None, logaction = "Entry saved!", *args, **kwargs):
+	                hashArgs=None, context=None, logaction = "Entry saved!", *args, **kwargs):
 		"""
 			Initialize a new Edit or Add-Widget for the given module.
 			@param module: Name of the module
@@ -365,6 +369,8 @@ class EditWidget(html5.Div):
 		self.closeOnSuccess = False
 		self.logaction = logaction
 		self.sinkEvent("onChange")
+
+		self.context = context
 
 		self._lastData = {} #Dict of structure and values received
 
@@ -468,10 +474,9 @@ class EditWidget(html5.Div):
 			conf["mainWindow"].removeWidget(self)
 
 	def reloadData(self):
-		self.save( {} )
-		return
+		self.save({})
 
-	def save(self, data ):
+	def save(self, data):
 		"""
 			Creates the actual NetworkService request used to transmit our data.
 			If data is None, it fetches a clean add/edit form.
@@ -479,7 +484,13 @@ class EditWidget(html5.Div):
 			@param data: The values to transmit or None to fetch a new, clean add/edit form.
 			@type data: Dict or None
 		"""
-		self.wasInitialRequest = not len(data)>0
+		self.wasInitialRequest = not len(data) > 0
+
+		if self.context:
+			# Data takes precedence over context.
+			ndata = self.context.copy()
+			ndata.update(data.copy())
+			data = ndata
 
 		if self.module=="_tasks":
 			NetworkService.request(None, "/vi/%s/execute/%s" % (self.module, self.key), data,
@@ -764,6 +775,9 @@ class EditWidget(html5.Div):
 			Applies the actual data to the bones.
 		"""
 		for bone in self.bones.values():
+			if "setContext" in dir(bone) and callable(bone.setContext):
+				bone.setContext(self.context)
+
 			bone.unserialize(data)
 
 	def serializeForPost(self, validityCheck = False):

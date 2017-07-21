@@ -19,7 +19,7 @@ class ListWidget( html5.Div ):
 		to this table.
 	"""
 	def __init__(self, module, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
-	             batchSize = None, *args, **kwargs):
+	             batchSize = None, context = None, *args, **kwargs):
 		"""
 			@param module: Name of the modul we shall handle. Must be a list application!
 			@type module: string
@@ -32,8 +32,11 @@ class ListWidget( html5.Div ):
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
 		self.module = module
+		self.context = context
+
 		self.actionBar = ActionBar(module, "list", currentAction="list")
 		self.appendChild( self.actionBar )
+
 		self.sideBar = SideBar()
 		self.appendChild( self.sideBar )
 
@@ -164,12 +167,18 @@ class ListWidget( html5.Div ):
 			Requests the next rows from the server and feed them to the table.
 		"""
 		if self._currentCursor and not self.isDetaching:
-			filter = self.filter.copy()
+			filter = {}
+
+			if self.context:
+				filter.update(self.context)
+
+			filter.update(self.filter)
 			filter["amount"] = self._batchSize
 			filter["cursor"] = self._currentCursor
-			self._currentRequests.append( NetworkService.request(self.module, "list", filter,
+
+			self._currentRequests.append(NetworkService.request(self.module, "list", filter,
 			                                successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
-			                                    cacheable=True ) )
+			                                cacheable=True ) )
 			self._currentCursor = None
 		else:
 			self.table.setDataProvider(None)
@@ -199,14 +208,19 @@ class ListWidget( html5.Div ):
 		self.table.clear()
 		self._currentCursor = None
 		self._currentRequests = []
-		filter = self.filter.copy()
+
+		filter = {}
+		if self.context:
+			filter.update(self.context)
+
+		filter.update(self.filter)
 		filter["amount"] = self._batchSize
 
 		self._currentRequests.append(
-			NetworkService.request( self.module, "list", filter,
+			NetworkService.request(self.module, "list", filter,
 			                        successHandler=self.onCompletion,
 			                        failureHandler=self.showErrorMsg,
-			                        cacheable=True ) )
+			                        cacheable=True))
 
 	def setFilter(self, filter, filterID=None, filterDescr=None):
 		"""
