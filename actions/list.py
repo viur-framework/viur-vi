@@ -242,7 +242,7 @@ actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
 class ListPreviewAction(html5.Span):
 
-	def __init__(self, *args, **kwargs ):
+	def __init__(self, module, handler, actionName, *args, **kwargs ):
 		super(ListPreviewAction, self ).__init__(*args, **kwargs)
 
 		self.urlCb = html5.Select()

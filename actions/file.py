@@ -14,7 +14,7 @@ class FileSelectUploader( html5.Input ):
 		runs the callback if a file has been selected and removes itself from its parent.
 
 	"""
-	def __init__(self, *args, **kwargs):
+	def __init__(self, module, handler, actionName, *args, **kwargs):
 		super( FileSelectUploader, self ).__init__( *args, **kwargs )
 		self["type"] = "file"
 		self["style"]["display"] = "none"
