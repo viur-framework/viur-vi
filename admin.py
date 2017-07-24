@@ -290,6 +290,19 @@ class AdminScreen(Screen):
 		pane.widgetsDomElm["style"]["display"] = "none"
 		#DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
 
+	def insertPane(self, pane, insertAt):
+		if len(pane.childPanes)>0:
+			self._registerChildPanes(pane)
+
+		assert insertAt in self.panes
+
+		self.panes.insert(self.panes.index(insertAt), pane)
+
+		self.moduleListUl.insertBefore(pane, insertAt)
+
+		self.viewport.appendChild(pane.widgetsDomElm)
+		pane.widgetsDomElm["style"]["display"] = "none"
+
 	def stackPane(self, pane, focus=False):
 		assert self.currentPane is not None, "Cannot stack a pane. There's no current one."
 		self.addPane( pane, parentPane=self.currentPane )
