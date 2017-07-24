@@ -296,8 +296,7 @@ class AdminScreen(Screen):
 
 		assert insertAt in self.panes
 
-		self.panes.insert(self.panes.index(insertAt), pane)
-
+		self.panes.append(pane)
 		self.moduleListUl.insertBefore(pane, insertAt)
 
 		self.viewport.appendChild(pane.widgetsDomElm)
@@ -327,6 +326,11 @@ class AdminScreen(Screen):
 
 	def focusPane(self, pane):
 		assert pane in self.panes, "Cannot focus unknown pane!"
+
+		if not pane.focusable:
+			self.topBar.setCurrentModulDescr()
+			return
+
 		#print( pane.descr, self.currentPane.descr if self.currentPane else "(null)" )
 
 		# Click on the same pane?
@@ -343,7 +347,7 @@ class AdminScreen(Screen):
 
 		# Close current Pane
 		if self.currentPane is not None:
-			self.currentPane["class"].remove("is_active")
+			self.currentPane.removeClass("is_active")
 			self.currentPane.widgetsDomElm["style"]["display"] = "none"
 
 		# Focus wanted Pane
@@ -354,7 +358,7 @@ class AdminScreen(Screen):
 		if self.currentPane.collapseable and self.currentPane.childDomElem:
 			self.currentPane.childDomElem["style"]["display"] = "block"
 
-		self.currentPane["class"].append("is_active")
+		self.currentPane.addClass("is_active")
 
 		# Also open parent panes, if not already done
 		pane = self.currentPane.parentPane

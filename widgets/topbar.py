@@ -60,7 +60,7 @@ class TopBarWidget( html5.Header ):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulH1):
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
-	def setCurrentModulDescr(self, descr, iconURL=None, iconClasses=None):
+	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None):
 		for c in self.modulImg._children[:]:
 			self.modulImg.removeChild(c)
 		for c in self.moduleName._children[:]:
