@@ -715,7 +715,7 @@ class EditWidget(html5.Div):
 			descrLbl["class"].append(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
-			print(key, bone["required"], bone["error"])
+			#print(key, bone["required"], bone["error"])
 			if bone["required"] or (bone.get("unique") and bone["error"]):
 				descrLbl["class"].append("is_required")
 
@@ -757,7 +757,7 @@ class EditWidget(html5.Div):
 			self.form.appendChild( v )
 			v._section = None
 
-		print(data["values"])
+		#print(data["values"])
 		self.unserialize(data["values"])
 
 		if self._hashArgs: #Apply the default values (if any)
