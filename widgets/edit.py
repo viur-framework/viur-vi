@@ -494,49 +494,49 @@ class EditWidget(html5.Div):
 
 		if self.module=="_tasks":
 			NetworkService.request(None, "/vi/%s/execute/%s" % (self.module, self.key), data,
-			                        secure=len(data) > 0,
+			                        secure=not self.wasInitialRequest,
 			                        successHandler=self.setData,
 			                        failureHandler=self.showErrorMsg)
 
 		elif self.applicationType == EditWidget.appList: ## Application: List
 			if self.key and (not self.clone or not data):
 				NetworkService.request(self.module, "edit/%s" % self.key, data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 			else:
 				NetworkService.request(self.module, "add", data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg )
 
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
 			if self.key and (not self.clone or not data):
 				NetworkService.request(self.module, "edit/%s" % self.key, data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 			else:
 				NetworkService.request(self.module, "add/%s" % self.node, data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 
 		elif self.applicationType == EditWidget.appTree: ## Application: Tree
 			if self.key and not self.clone:
 				NetworkService.request(self.module, "edit/%s/%s" % (self.skelType, self.key), data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 			else:
 				NetworkService.request(self.module, "add/%s/%s" % (self.skelType, self.node), data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 
 		elif self.applicationType == EditWidget.appSingleton: ## Application: Singleton
 			NetworkService.request(self.module, "edit", data,
-			                       secure=len(data)>0,
+			                       secure=not self.wasInitialRequest,
 			                       successHandler=self.setData,
 			                       failureHandler=self.showErrorMsg)
 		else:
@@ -715,7 +715,7 @@ class EditWidget(html5.Div):
 			descrLbl["class"].append(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
-			#print(key, bone["required"], bone["error"])
+			print(key, bone["required"], bone["error"])
 			if bone["required"] or (bone.get("unique") and bone["error"]):
 				descrLbl["class"].append("is_required")
 
@@ -757,6 +757,7 @@ class EditWidget(html5.Div):
 			self.form.appendChild( v )
 			v._section = None
 
+		print(data["values"])
 		self.unserialize(data["values"])
 
 		if self._hashArgs: #Apply the default values (if any)
