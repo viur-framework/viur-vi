@@ -194,7 +194,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		event.stopPropagation()
 		files = event.dataTransfer.files
 		for x in range(0,files.length):
-			ul = Uploader(files.item(x), None )
+			ul = Uploader(files.item(x), None, context=self.context)
 			ul.uploadSuccess.register( self )
 
 	def onUploadSuccess(self, uploader, file ):
@@ -263,7 +263,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			return
 
 		for x in range(0,files.length):
-			ul = Uploader(files.item(x), None )
+			ul = Uploader(files.item(x), None, context = self.context)
 			ul.uploadSuccess.register( self )
 
 	def onUploadSuccess(self, uploader, file):

@@ -321,7 +321,7 @@ class EditWidget(html5.Div):
 			@type applicationType: Any of EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree or EditWidget.appSingleton
 			@param id: ID of the entry. If none, it will add a new Entry.
 			@type id: Number
-			@param rootNode: If applicationType==EditWidget.appHierarchy, the new entry will be added under this node, if applicationType==EditWidget,appTree the final node is derived from this and the path-parameter. 
+			@param rootNode: If applicationType==EditWidget.appHierarchy, the new entry will be added under this node, if applicationType==EditWidget,appTree the final node is derived from this and the path-parameter.
 			Has no effect if applicationType is not appHierarchy or appTree or if an id have been set.
 			@type rootNode: String
 			@param path: Specifies the path from the rootNode for new entries in a treeApplication
@@ -389,22 +389,34 @@ class EditWidget(html5.Div):
 
 		self.editTaskID = None
 		self.wasInitialRequest = True #Wherever the last request attempted to save data or just fetched the form
+
+		# Action bar
 		self.actionbar = ActionBar(self.module, self.applicationType, self.mode)
-		self.appendChild( self.actionbar )
+		self.appendChild(self.actionbar)
+
+		if module in conf["modules"] and conf["modules"][module]:
+			editActions = conf["modules"][module].get("editActions", [])
+		else:
+			editActions = []
+
+		if applicationType == EditWidget.appSingleton:
+			self.actionbar.setActions(["save.singleton", "reset"] + editActions)
+		else:
+			self.actionbar.setActions(["save.close", "save.continue", "reset"] + editActions)#
+
+		# Input form
 		self.form = html5.Form()
 		self.appendChild(self.form)
 
-		if applicationType == EditWidget.appSingleton:
-			self.actionbar.setActions(["save.singleton", "reset"])
-		else:
-			self.actionbar.setActions(["save.close", "save.continue", "reset"])
-
+		# Engage
 		self.reloadData()
 
 	def onDetach(self):
 		utils.setPreventUnloading(False)
+		super(EditWidget, self).onDetach()
 
 	def onAttach(self):
+		super(EditWidget, self).onAttach()
 		utils.setPreventUnloading(True)
 
 	def performLogics(self):
@@ -674,6 +686,15 @@ class EditWidget(html5.Div):
 		hasMissing = False
 		defaultCat = conf["modules"][self.module].get("visibleName", self.module)
 
+		contextVariable = conf["modules"][self.module].get("editContext")
+		if data and contextVariable:
+			if not self.context:
+				self.context = {}
+
+			self.context.update({
+				contextVariable: data["values"].get("key")
+			})
+
 		for key, bone in data["structure"]:
 			if not bone["visible"]:
 				continue
@@ -705,6 +726,9 @@ class EditWidget(html5.Div):
 			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
 			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
+
+			if "setContext" in dir(widget) and callable(widget.setContext):
+				widget.setContext(self.context)
 
 			#widget["class"].append(key)
 			#widget["class"].append(bone["type"].replace(".","_"))

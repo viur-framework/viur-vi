@@ -44,7 +44,7 @@ class Uploader( html5.Progress ):
 	"""
 		Uploads a file to the server while providing visual feedback of the progress.
 	"""
-	def __init__(self, file, node, *args, **kwargs):
+	def __init__(self, file, node, context = None, *args, **kwargs):
 		"""
 			@param file: The file to upload
 			@type file: A javascript "File" Object
@@ -54,6 +54,7 @@ class Uploader( html5.Progress ):
 		super(Uploader, self).__init__( *args, **kwargs )
 		self.uploadSuccess = EventDispatcher("uploadSuccess")
 		self.responseValue = None
+		self.context = context
 		#self.files = files
 		r = NetworkService.request("file","getUploadURL", successHandler=self.onUploadUrlAvaiable, secure=True)
 		r.file = file
@@ -76,9 +77,14 @@ class Uploader( html5.Progress ):
 		"""
 		formData = eval("new FormData();")
 		formData.append("file", req.file )
-		print(type(req.node))
+
+		if self.context:
+			for k, v in self.context.items():
+				formData.append(k, v)
+
 		if req.node and str(req.node)!="null":
 			formData.append("node", req.node )
+
 		formData.append("skey", NetworkService.decode(req) )
 		self.xhr = eval("new XMLHttpRequest()")
 		self.xhr.open("POST", req.destUrl )
