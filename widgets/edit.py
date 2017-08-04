@@ -12,6 +12,8 @@ from widgets.tooltip import ToolTip
 from widgets.actionbar import ActionBar
 from i18n import translate
 
+from widgets.list import ListWidget
+
 class InvalidBoneValueException(ValueError):
 	pass
 
@@ -371,6 +373,7 @@ class EditWidget(html5.Div):
 		self.sinkEvent("onChange")
 
 		self.context = context
+		self.views = {}
 
 		self._lastData = {} #Dict of structure and values received
 
@@ -676,6 +679,7 @@ class EditWidget(html5.Div):
 		#Clear the UI
 		self.clear()
 		self.bones = {}
+		self.views = {}
 		self.containers = {}
 		self.actionbar.resetLoadingState()
 		self.dataCache = data
@@ -687,7 +691,7 @@ class EditWidget(html5.Div):
 		defaultCat = conf["modules"][self.module].get("visibleName", self.module)
 
 		contextVariable = conf["modules"][self.module].get("editContext")
-		if data and contextVariable:
+		if self.mode == "edit" and contextVariable:
 			if not self.context:
 				self.context = {}
 
@@ -780,6 +784,47 @@ class EditWidget(html5.Div):
 		for k, v in tmpList:
 			self.form.appendChild( v )
 			v._section = None
+
+		# Views
+		views = conf["modules"][self.module].get("editViews")
+		if self.mode == "edit" and isinstance(views, list):
+			for view in views:
+				vmodule = view.get("module")
+				vvariable = view.get("context")
+
+				if not vmodule:
+					print("Misconfiured view: %s" % view)
+					continue
+
+				if vmodule not in conf["modules"]:
+					print("Module '%s' is not described." % vmodule)
+					continue
+
+				vdescr = conf["modules"][vmodule]
+
+				fs = html5.Fieldset()
+				fs.addClass("inactive")
+
+				fs["name"] = vmodule
+				legend = html5.Legend()
+				fshref = fieldset_A()
+				fshref.appendChild(html5.TextNode(vdescr.get("name", vmodule)))
+				legend.appendChild(fshref)
+				fs.appendChild(legend)
+				section = html5.Section()
+				fs.appendChild(section)
+				fs._section = section
+				fieldSets[vmodule] = fs
+
+				if vvariable:
+					context = self.context.copy()
+					context[vvariable] = data["values"]["key"]
+				else:
+					context = self.context
+
+				self.views[vmodule] = ListWidget(vmodule, filter=vdescr.get("filter", {}), context = context)
+				fs._section.appendChild(self.views[vmodule])
+				self.form.appendChild(fs)
 
 		#print(data["values"])
 		self.unserialize(data["values"])
