@@ -677,6 +677,10 @@ class RelationalMultiSelectionBone(html5.Div):
 
 		self.context = None
 
+		self.selectionDiv = html5.Div()
+		self.selectionDiv.addClass("selectioncontainer")
+		self.appendChild(self.selectionDiv)
+
 		if (destModule in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"] or destModule + "-view" in conf["currentUser"]["access"])):
 
@@ -686,10 +690,6 @@ class RelationalMultiSelectionBone(html5.Div):
 			self.appendChild( self.selectBtn )
 		else:
 			self.selectBtn = None
-
-		self.selectionDiv = html5.Div()
-		self.selectionDiv.addClass("selectioncontainer")
-		self.appendChild(self.selectionDiv)
 
 		if self.readOnly:
 			self["disabled"] = True
