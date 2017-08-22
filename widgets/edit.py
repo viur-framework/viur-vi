@@ -31,8 +31,7 @@ class InternalEdit(html5.Div):
 		self.defaultCat = defaultCat
 		self.context = context
 
-		self.form = html5.Form()
-		self.appendChild(self.form)
+		self.form = self
 
 		self.renderStructure(readOnly=readOnly)
 
@@ -74,6 +73,10 @@ class InternalEdit(html5.Div):
 				if firstCat:
 					fs["class"].append("active")
 					firstCat = False
+
+					if self.form is self:
+						self.form = html5.Form()
+						self.appendChild(self.form)
 
 				fs["name"] = cat or "empty"
 				legend = html5.Legend()
@@ -122,17 +125,16 @@ class InternalEdit(html5.Div):
 			self.containers[key] = html5.Div()
 			self.containers[key].appendChild(descrLbl)
 			self.containers[key].appendChild(widget)
-
-			if cat is not None:
-				fieldSets[cat]._section.appendChild(self.containers[key])
-			else:
-				self.form.appendChild(self.containers[key])
-
 			self.containers[key].addClass("bone", "bone_%s" % key, bone["type"].replace(".","_"))
 
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
 					self.containers[key].addClass(t)
+
+			if cat is not None:
+				fieldSets[cat]._section.appendChild(self.containers[key])
+			else:
+				self.form.appendChild(self.containers[key])
 
 			currRow += 1
 			self.bones[key] = widget

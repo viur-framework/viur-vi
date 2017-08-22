@@ -318,6 +318,7 @@ class RelationalSingleSelectionBone(html5.Div):
 
 					self.ie = InternalEdit(self.using, val["rel"], {},
 					                        readOnly=self.readOnly, defaultCat=self.usingDescr)
+
 					self.appendChild( self.ie )
 			else:
 				self.setSelection(None)
@@ -400,6 +401,8 @@ class RelationalSingleSelectionBone(html5.Div):
 			if self.using and not self.ie:
 				self.ie = InternalEdit(self.using, getDefaultValues(self.using), {},
 				                        readOnly=self.readOnly, defaultCat=self.usingDescr)
+				self.ie.addClass("relationwrapper")
+
 				self.appendChild(self.ie)
 		else:
 			self.selectionTxt["value"] = ""
@@ -472,7 +475,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			@type data: dict
 		"""
 		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
-		self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd", "onChange")
+		self.sinkEvent("onDrop", "onDragOver", "onDragLeave", "onDragStart", "onDragEnd", "onChange")
 
 		self.parent = parent
 		self.module = module
@@ -480,6 +483,8 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 		self.txtLbl = html5.Label()
 		self.txtLbl["draggable"] = not parent.readOnly
+
+		self.addClass("selectioncontainer-entry")
 
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild(self.txtLbl)
@@ -497,6 +502,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			self.ie = InternalEdit(using, data["rel"], errorInfo,
 			                        readOnly = parent.readOnly,
 			                        defaultCat = parent.usingDescr)
+			self.ie.addClass("relationwrapper")
 			self.appendChild(self.ie)
 		else:
 			self.ie = None
@@ -535,6 +541,8 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		if self.parent.readOnly:
 			return
 
+		self.addClass("is-dragging")
+
 		self.parent.currentDrag = self
 		event.dataTransfer.setData("application/json", json.dumps(self.data))
 		event.stopPropagation()
@@ -543,13 +551,32 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		if self.parent.readOnly:
 			return
 
+		if self.parent.currentDrag is not self:
+			self.addClass("is-dragging-over")
+			self.parent.currentOver = self
+
+		event.preventDefault()
+
+	def onDragLeave(self, event):
+		if self.parent.readOnly:
+			return
+
+		self.removeClass("is-dragging-over")
+		self.parent.currentOver = None
+
 		event.preventDefault()
 
 	def onDragEnd(self, event):
 		if self.parent.readOnly:
 			return
 
+		self.removeClass("is-dragging")
 		self.parent.currentDrag = None
+
+		if self.parent.currentOver:
+			self.parent.currentOver.removeClass("is-dragging-over")
+			self.parent.currentOver = None
+
 		event.stopPropagation()
 
 	def onDrop(self, event):
@@ -646,12 +673,9 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.entries = []
 		self.extendedErrorInformation = {}
 		self.currentDrag = None
+		self.currentOver = None
 
 		self.context = None
-
-		self.selectionDiv = html5.Div()
-		self.selectionDiv["class"].append("selectioncontainer")
-		self.appendChild(self.selectionDiv)
 
 		if (destModule in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"] or destModule + "-view" in conf["currentUser"]["access"])):
@@ -662,6 +686,10 @@ class RelationalMultiSelectionBone(html5.Div):
 			self.appendChild( self.selectBtn )
 		else:
 			self.selectBtn = None
+
+		self.selectionDiv = html5.Div()
+		self.selectionDiv.addClass("selectioncontainer")
+		self.appendChild(self.selectionDiv)
 
 		if self.readOnly:
 			self["disabled"] = True
