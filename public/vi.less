@@ -14,7 +14,7 @@
 
 @selectionoddcolor: rgba(250,0,0,0.2);
 @selectionevencolor: rgba(250,130,130,0.2);
- 
+
 @focusoddcolor: rgba(230,0,0,.7);
 @focusevencolor: rgba(230,15,15,.7);
 
@@ -515,7 +515,7 @@ p { margin-bottom: 10px;}
   position: relative;
   z-index: 1;
   background-color: #f4f4f4;
-  /*border-left:1px solid #ccc; 
+  /*border-left:1px solid #ccc;
       border-right:1px solid #ccc;
       padding: 80px 30px 45px;
       min-height: 400px;
@@ -824,7 +824,7 @@ button.save.close:before,
   background-position: 0px -16px;
 }
 button.activateselection:before {
-  background-position: 0px -32px;  
+  background-position: 0px -32px;
 }
 button.save.continue:before {
   background-position: -16px -16px;
@@ -850,13 +850,13 @@ button.selectfields:before {
   background-position: -112px -112px;
 }
 button.selectall:before {
-  background-position: -48px -64px; 
+  background-position: -48px -64px;
 }
 button.unselectall:before {
-  background-position: -64px -64px;  
+  background-position: -64px -64px;
 }
 button.selectinvert:before {
-  background-position: -80px -64px;   
+  background-position: -80px -64px;
 }
 button.lock:before {
   background-position: -96px -64px;
@@ -1050,7 +1050,7 @@ button.icon[type="button"]:hover {
 }
 
 .vi_operator .search button:hover {
-  border-color: #666;   
+  border-color: #666;
 }
 
 /* Red Buttons */
@@ -1107,7 +1107,7 @@ button.icon.add[type="button"] {
   background: -o-linear-gradient(top, #479c42 0%, #298342 100%);
   background: -ms-linear-gradient(top, #479c42 0%, #298342 100%);
   background: linear-gradient(to bottom, #479c42 0%, #298342 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0); 
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0);
 }
 
 
@@ -1170,7 +1170,7 @@ button.icon.add[type="button"] {
     color:#fff;
     overflow: visible;
     min-width: 120px;
-    letter-spacing: normal;   
+    letter-spacing: normal;
 }
 
 /* 120px wide Hover */
@@ -1211,7 +1211,7 @@ button.icon.is_disabled {
 ================================================== */
 
 .vi_operator > .preview {
-  margin-top: -70px; 
+  margin-top: -70px;
 }
 
 .vi_operator > .preview iframe {
@@ -1553,7 +1553,7 @@ input[type="password"],
 
 .linkeditor input[type="checkbox"] {width:15px}
 .linkeditor .newwindowlbl {font-size:0.8em;}
-.imageeditor input[type="checkbox"] {margin-top: 7px; margin-right:50%;} 
+.imageeditor input[type="checkbox"] {margin-top: 7px; margin-right:50%;}
 .imageeditor input[type="number"] {margin-right:50%;}
 .imageeditor label.widthlbl,
 .imageeditor label.heightlbl,
@@ -1601,10 +1601,10 @@ margin-right: -2px;
 .contentdiv[contenteditable] h3 {font-size:1em; font-weight:400;}
 
 .contentdiv[contenteditable] strong,
-.contentdiv[contenteditable] b {font-weight:800;} 
+.contentdiv[contenteditable] b {font-weight:800;}
 
 .contentdiv[contenteditable] em,
-.contentdiv[contenteditable] i {font-style:italic;} 
+.contentdiv[contenteditable] i {font-style:italic;}
 
 .contentdiv[contenteditable] ul {margin-left:30px; list-style-type:disc;}
 
@@ -1741,7 +1741,7 @@ input[type="checkbox"] {
 }
 
 input[type="password"]:nth-of-type(even) {
-  margin-top:12px;  
+  margin-top:12px;
 }
 
 .password div label {
@@ -2079,14 +2079,14 @@ thead tr:hover th {
   filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="@lightcolor", endColorstr="@maincolor");  background: -o-linear-gradient(top,@lightcolor,@maincolor);
   background-color:@lightcolor;
 }
-/* 
+/*
 tr:first-child td:first-child{
   border-width:0px 0px 1px 0px;
 }
 
 tr:first-child td:last-child{
   border-width:0px 0px 1px 1px;
-} 
+}
 */
 tr.is_focused td {color: #fff; padding:14px 7px;}
 tr.is_selected td, tr.is_focused.is_selected td{color:#fff;}
@@ -2119,7 +2119,7 @@ td span.index
 
 .emptynotification {
   width:20%;
-  margin:0 35% 55px; 
+  margin:0 35% 55px;
   text-align: center;
   padding:10px 5% 10px;
   border:1px solid #ccc;
@@ -2930,6 +2930,44 @@ textarea:disabled {
   border: 1px solid #ccc;
 }
 
+/* relationalBone dirty nice-style fix
+================================================== */
+.selectioncontainer-entry {
+  overflow: hidden;
+  margin-bottom: 40px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+
+.selectioncontainer-entry.is-dragging {
+  border: 3px solid #ccc;
+  opacity: .7;
+  height: 40px;
+}
+
+.selectioncontainer-entry.is-dragging-over {
+  border: 3px solid #cc0000;
+  opacity: .7;
+}
+
+.selectioncontainer-entry .relationwrapper {
+
+  overflow: hidden;
+  width: 100%;
+  padding: 20px;
+}
+
+.selectioncontainer-entry .labelwrapper {
+  overflow: hidden;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #eee;
+}
+
+.selectioncontainer-entry .relationwrapper .bone {
+  overflow: hidden;
+}
+
 /* #Custom Styles
 ================================================== */
 
@@ -2947,7 +2985,7 @@ textarea:disabled {
       width:20%;
     }
     .has_multiple_children .vi_operator:nth-of-type(even) {
-      width:60%;   
+      width:60%;
     }
     .has_multiple_children .actionbar,
     .has_multiple_children .breadcrumb,
@@ -2972,13 +3010,13 @@ textarea:disabled {
       width: 193px;
     }
     .has_multiple_children form fieldset legend {
-     min-width:0; 
+     min-width:0;
     }
     .has_multiple_children form fieldset legend a {
       font-size:0.8em;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;    
+      white-space: nowrap;
     }
     .has_multiple_children form fieldset section > div {
       padding-bottom:0;
@@ -3023,17 +3061,17 @@ textarea:disabled {
 }
 /* Tablet Portrait size to standard 960 (devices and browsers) */
 @media only screen and (min-width: 768px) and (max-width: 959px) {
-  
+
 }
 /* All Mobile Sizes (devices and browser) */
 @media only screen and (max-width: 767px) {
-  
+
 }
 /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
 @media only screen and (min-width: 480px) and (max-width: 767px) {
-  
+
 }
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (max-width: 479px) {
-  
+
 }
