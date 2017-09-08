@@ -251,28 +251,28 @@ class ReloadAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
 
-class SelectRootNode( html5.Select ):
+class SelectRootNode(html5.Select):
 	"""
 		Selector for hierarchy root nodes.
 	"""
 	def __init__(self, module, handler, actionName, *args, **kwargs):
 		super( SelectRootNode, self ).__init__( *args, **kwargs )
 		self.sinkEvent("onChange")
+		self.hide()
 
 	def onAttach(self):
-		super( SelectRootNode, self ).onAttach()
+		super(SelectRootNode, self).onAttach()
 		self.update()
-		self.parent().parent().rootNodeChangedEvent.register( self )
+		self.parent().parent().rootNodeChangedEvent.register(self)
 
 	def onDetach(self):
-		self.parent().parent().rootNodeChangedEvent.unregister( self )
-		super( SelectRootNode, self ).onDetach()
+		self.parent().parent().rootNodeChangedEvent.unregister(self)
+		super(SelectRootNode, self).onDetach()
 
 	def update(self):
 		self.removeAllChildren()
-		NetworkService.request( self.parent().parent().module, "listRootNodes",
-		                            successHandler=self.onRootNodesAvaiable,
-		                                cacheable=True )
+		NetworkService.request(self.parent().parent().module, "listRootNodes",
+		                        successHandler=self.onRootNodesAvailable)
 
 	def onRootNodeChanged(self, newNode):
 		for option in self._children:
@@ -280,19 +280,27 @@ class SelectRootNode( html5.Select ):
 				option["selected"] = True
 				return
 
-	def onRootNodesAvaiable(self, req):
-		res = NetworkService.decode( req )
+	def onRootNodesAvailable(self, req):
+		res = NetworkService.decode(req)
+
 		for node in res:
 			option = html5.Option()
 			option["value"] = node["key"]
-			option.appendChild( html5.TextNode( node["name"] ) )
+			option.appendChild(node["name"])
+
 			if node["key"] == self.parent().parent().rootNode:
 				option["selected"] = True
-			self.appendChild( option )
+
+			self.appendChild(option)
+
+		if len(self.children()) > 1:
+			self.show()
+		else:
+			self.hide()
 
 	def onChange(self, event):
 		newRootNode = self["options"].item(self["selectedIndex"]).value
-		self.parent().parent().setRootNode( newRootNode )
+		self.parent().parent().setRootNode(newRootNode)
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):

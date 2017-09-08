@@ -154,6 +154,7 @@ class FileViewBoneDelegate(object):
 		return html5.Div()
 
 class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
+
 	def __init__(self, *args, **kwargs):
 		super(FileMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 		self["class"].append("fileentry")
@@ -176,6 +177,11 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 			pane.addWidget(edwg)
 		except AssertionError:
 			conf["mainWindow"].removePane(pane)
+
+	def update(self):
+		NetworkService.request(self.parent.destModule, "view/leaf",
+		                        params={"key": self.data["dest"]["key"]},
+		                        successHandler=self.onModuleViewAvailable)
 
 class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 

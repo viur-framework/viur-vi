@@ -370,7 +370,7 @@ class HierarchyWidget( html5.Div ):
 		"""
 		self.rootNode = rootNode
 		self._currentCursor = None
-		self.rootNodeChangedEvent.fire( rootNode )
+		self.rootNodeChangedEvent.fire(rootNode)
 		self.reloadData()
 
 	def reloadData(self):

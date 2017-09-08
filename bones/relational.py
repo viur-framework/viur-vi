@@ -432,8 +432,8 @@ class RelationalSingleSelectionBone(html5.Div):
 		NetworkService.removeChangeListener(self)
 		super(RelationalSingleSelectionBone, self).onDetach()
 
-	def onDataChanged(self, module, **kwargs):
-		if module == self.destModule:
+	def onDataChanged(self, module, key = None, **kwargs):
+		if module == self.destModule and key == self.selection["dest"]["key"]:
 			self.setSelection(self.selection)
 
 	def onSelectionDataAvailable(self, req):
@@ -636,6 +636,30 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 		res["dest"]["key"] = self.data["dest"]["key"]
 		return res
+
+	def onAttach(self):
+		super(RelationalMultiSelectionBoneEntry, self).onAttach()
+		NetworkService.registerChangeListener(self)
+
+	def onDetach(self):
+		NetworkService.removeChangeListener(self)
+		super(RelationalMultiSelectionBoneEntry, self).onDetach()
+
+	def onDataChanged(self, module, key = None, **kwargs):
+		if module != self.parent.destModule or key != self.data["dest"]["key"]:
+			return
+
+		self.update()
+
+	def update(self):
+		NetworkService.request(self.parent.destModule, "view",
+		                        params={"key": self.data["dest"]["key"]},
+		                        successHandler=self.onModuleViewAvailable)
+
+	def onModuleViewAvailable(self, req):
+		answ = NetworkService.decode(req)
+		self.data["dest"] = answ["values"]
+		self.updateLabel()
 
 class RelationalMultiSelectionBone(html5.Div):
 	"""
