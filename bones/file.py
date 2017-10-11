@@ -334,6 +334,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			self.previewImg.setImage(utils.getImagePreview(self.selection["dest"]))
 		else:
 			self.previewImg.setImage(None)
+			self.selectionTxt["value"] = ""
 
 		self.updateButtons()
 
