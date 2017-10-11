@@ -516,7 +516,7 @@ class EditWidget(html5.Div):
 			                        failureHandler=self.showErrorMsg)
 
 		elif self.applicationType == EditWidget.appList: ## Application: List
-			if self.key and (not self.clone or not data):
+			if self.key and (not self.clone or self.wasInitialRequest):
 				NetworkService.request(self.module, "edit/%s" % self.key, data,
 				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
@@ -528,7 +528,7 @@ class EditWidget(html5.Div):
 				                       failureHandler=self.showErrorMsg )
 
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
-			if self.key and (not self.clone or not data):
+			if self.key and (not self.clone or self.wasInitialRequest):
 				NetworkService.request(self.module, "edit/%s" % self.key, data,
 				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,

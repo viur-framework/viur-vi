@@ -149,7 +149,7 @@ class RelationalSingleSelectionBone(html5.Div):
 	"""
 
 	def __init__(self, srcModule, boneName, readOnly, destModule, format="$(dest.name)", required=False,
-	                using = None, usingDescr = None, *args, **kwargs ):
+	                using = None, usingDescr = None, context = None, *args, **kwargs ):
 		"""
 			@param srcModule: Name of the module from which is referenced
 			@type srcModule: string
@@ -178,7 +178,8 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.appendChild( self.selectionTxt )
 		self.ie = None
 
-		self.context = None
+		self.baseContext = context
+		self.context = self.baseContext.copy() if self.baseContext else None
 
 		self.changeEvent = EventDispatcher("boneChange")
 
@@ -267,11 +268,22 @@ class RelationalSingleSelectionBone(html5.Div):
 		else:
 			usingDescr = skelStructure[boneName].get("descr", boneName)
 
+		if ("params" in skelStructure[boneName].keys()
+		    and skelStructure[boneName]["params"]
+			and "context" in skelStructure[boneName]["params"].keys()):
+			context = skelStructure[boneName]["params"]["context"]
+		else:
+			context = None
+
 		return cls(moduleName, boneName, readOnly, destModule=destModule,
-		            format=format, required=required, using=using, usingDescr=usingDescr)
+		            format=format, required=required, using=using, usingDescr=usingDescr,
+		            context = context)
 
 	def setContext(self, context):
-		self.context = context
+		self.context = self.baseContext.copy() if self.baseContext else None
+
+		if context:
+			self.context.update(context)
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -433,7 +445,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		super(RelationalSingleSelectionBone, self).onDetach()
 
 	def onDataChanged(self, module, key = None, **kwargs):
-		if module == self.destModule and key == self.selection["dest"]["key"]:
+		if module == self.destModule and self.selection and key == self.selection["dest"]["key"]:
 			self.setSelection(self.selection)
 
 	def onSelectionDataAvailable(self, req):
@@ -668,7 +680,7 @@ class RelationalMultiSelectionBone(html5.Div):
 
 	def __init__(self, srcModule, boneName, readOnly, destModule,
 	                format="$(dest.name)", using=None, usingDescr=None,
-	                relskel=None, *args, **kwargs):
+	                relskel=None, context = None, *args, **kwargs):
 		"""
 			@param srcModule: Name of the module from which is referenced
 			@type srcModule: string
@@ -699,7 +711,8 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.currentDrag = None
 		self.currentOver = None
 
-		self.context = None
+		self.baseContext = context
+		self.context = self.baseContext.copy() if self.baseContext else None
 
 		self.selectionDiv = html5.Div()
 		self.selectionDiv.addClass("selectioncontainer")
@@ -756,9 +769,16 @@ class RelationalMultiSelectionBone(html5.Div):
 		else:
 			usingDescr = skelStructure[boneName].get("descr", boneName)
 
+		if ("params" in skelStructure[boneName].keys()
+		    and skelStructure[boneName]["params"]
+			and "context" in skelStructure[boneName]["params"].keys()):
+			context = skelStructure[boneName]["params"]["context"]
+		else:
+			context = None
+
 		return cls(moduleName, boneName, readOnly,
 		            destModule=destModule, format=format, using=using, usingDescr = usingDescr,
-		                relskel=skelStructure[boneName].get("relskel"))
+		                relskel=skelStructure[boneName].get("relskel"), context = context)
 
 	def unserialize(self, data):
 		"""
@@ -802,7 +822,10 @@ class RelationalMultiSelectionBone(html5.Div):
 		return {self.boneName: [entry.serializeForDocument() for entry in self.entries]}
 
 	def setContext(self, context):
-		self.context = context
+		self.context = self.baseContext.copy() if self.baseContext else None
+
+		if context:
+			self.context.update(context)
 
 	def onShowSelector(self, *args, **kwargs):
 		"""
