@@ -49,6 +49,14 @@ version:
 $(OUTPUT): 
 	mkdir -p $@
 
+watch: $(OUTPUT) $(MAIN_CSS) version copyfiles
+	$(PYJSBUILD) -o $(OUTPUT) \
+        $(DEBUGOPTS) \
+        --bootloader=bootstrap_progress.js \
+        -I ./$(VI_CUSTOM) \
+		--enable-rebuilds \
+	        main.py
+
 debug: $(OUTPUT) $(MAIN_CSS) version copyfiles
 	@echo "--- STARTING DEBUG BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
