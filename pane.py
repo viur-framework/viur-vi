@@ -23,7 +23,6 @@ class Pane(html5.Li):
 		self.descr = descr
 		self.iconURL = iconURL
 		self.iconClasses = iconClasses
-		self.closeable = closeable
 		self.collapseable = collapseable
 		self.focusable = focusable
 
@@ -43,8 +42,7 @@ class Pane(html5.Li):
 		self.closeBtn.addClass("closebtn")
 		self.appendChild(self.closeBtn)
 
-		if not closeable:
-			self.closeBtn.hide()
+		self.closeable = closeable
 
 	def __setattr__(self, key, value):
 		super(Pane, self).__setattr__(key, value)
@@ -137,10 +135,12 @@ class Pane(html5.Li):
 	def onDetach(self):
 		#assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
 		#Kill all remaining children
-		for widget in self.widgetsDomElm._children[:]:
+		for widget in self.widgetsDomElm.children():
 			self.widgetsDomElm.removeChild(widget)
+
 		self.closeBtn = None
 		self.label = None
+
 		super(Pane,self).onDetach()
 
 	def addWidget(self, widget):
