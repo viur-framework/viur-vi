@@ -62,21 +62,15 @@ class ListHandler( Pane ):
 
 	@staticmethod
 	def canHandle( moduleName, moduleInfo ):
-		return( moduleInfo["handler"]=="list" or moduleInfo["handler"].startswith("list."))
+		return moduleInfo["handler"]=="list" or moduleInfo["handler"].startswith("list.")
 
-	def onClick(self, *args, **kwargs ):
-		if not len(self.widgetsDomElm._children):
-			filter = None
-			columns = None
-
-			if "filter" in self.moduleInfo.keys():
-				filter = self.moduleInfo["filter"]
-
-			if "columns" in self.moduleInfo.keys():
-				columns = self.moduleInfo["columns"]
-
-			self.addWidget(ListWidget(self.moduleName, filter=filter,
-			                            columns=columns, filterID=self.moduleInfo.get("__id"),
+	def onClick(self, *args, **kwargs):
+		if not self.widgetsDomElm.children():
+			self.addWidget(ListWidget(self.moduleName,
+			                            filter=self.moduleInfo.get("filter"),
+			                            columns=self.moduleInfo.get("columns"),
+			                            context=self.moduleInfo.get("context"),
+			                            filterID=self.moduleInfo.get("__id"),
 			                            filterDescr=self.moduleInfo.get("visibleName", "")))
 
 		super(ListHandler, self).onClick(*args, **kwargs)

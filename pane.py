@@ -42,11 +42,17 @@ class Pane(html5.Li):
 		self.closeBtn.addClass("closebtn")
 		self.appendChild(self.closeBtn)
 
+		if not closeable:
+			self.closeBtn.hide()
+
 		self.closeable = closeable
 
 	def __setattr__(self, key, value):
 		super(Pane, self).__setattr__(key, value)
+		print(key, value)
 		if key == "closeable":
+			print(key, value)
+
 			if value:
 				self.closeBtn.show()
 			else:
