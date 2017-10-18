@@ -1,4 +1,4 @@
-# ViUR Vi
+# ViUR Vi [![Build Status](https://travis-ci.org/viur-framework/vi.svg?branch=develop)](https://travis-ci.org/viur-framework/vi)
 
 **Vi** is a web-based administration client for [ViUR-applications](https://github.com/viur-framework/).
 
