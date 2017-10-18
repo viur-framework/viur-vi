@@ -8,7 +8,7 @@ script:
   - make
 
 before_install:
-  - npm install -g less
+  - npm install -g less request
   - wget https://github.com/viur-framework/pyjs/archive/0.8.1a.tar.gz
   - tar xvfz 0.8.1a.tar.gz
   - pushd pyjs-0.8.1a && sudo make system-install && popd
