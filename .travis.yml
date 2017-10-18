@@ -1,11 +1,14 @@
 language: python
 python:
   - "2.7"
+
 sudo: enabled
-script: make
+
+script:
+  - make
 
 before_install:
-  - npm install -g less-compiler
+  - npm install -g lessc
   - wget https://github.com/viur-framework/pyjs/archive/0.8.1a.tar.gz
   - tar xvfz 0.8.1a.tar.gz
   - pushd pyjs-0.8.1a && sudo make system-install && popd
