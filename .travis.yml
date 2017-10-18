@@ -10,7 +10,6 @@ script:
 before_install:
   - npm install -g less request
   - git clone https://github.com/viur-framework/pyjs.git
-  - pushd pyjs && sudo make system-install && popd
-  - touch *
+  - pushd pyjs && sudo python setup.py install && popd
   - git submodule init && git submodule update
  
