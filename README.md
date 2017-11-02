@@ -4,11 +4,11 @@
 
 ## About
 
-This software is a platform-independent HTML5-web-app that is written in Python and must be compiled to JavaScript using the [PyJS](https://github.com/pyjs/pyjs) transpiler.
+"Vi" (pronounced as "whee!") is an acronym for *visual interface*. It is a platform-independent HTML5-web-app that is written in Python and must be compiled into JavaScript using the [PyJS](https://github.com/pyjs/pyjs) transpiler.
 
-It was tested and runs very well with the latest versions of Google Chrome, Apple Safari, Mozilla Firefox and Microsoft Internet Explorer >= 9.
+It was tested and runs well with the latest versions of Chrome (Chromium), Firefox and Safari. Microsoft Edge and Internet Explorer >= 9 should also run it suitable as well.
 
-Pre-compiled and packaged versions can be obtained on the official [ViUR website](https://www.viur.is/download).
+Pre-compiled and packaged versions of the Vi can be obtained on the official [ViUR website](https://www.viur.is/download).
 
 ## Installation
 
@@ -16,18 +16,17 @@ The compiled web-app has to be put in a directory ``vi/`` within the ViUR applic
 
 Please check out the [ViUR documentation](https://docs.viur.is/latest) to get more information.
 
-## Dependencies
+## Requirements
 
-This software is implemented on top of the PyJS framework and uses the [html5 library](https://github.com/viur-framework/html5) which is also part of the ViUR open source project.
+This software is implemented on top of the [PyJS framework](https://github.com/pyjs/pyjs) and uses the [html5 library](https://github.com/viur-framework/html5) to create DOM objects, which is also part of the ViUR open source project.
 
 To build it on your own, [PyJS](https://github.com/pyjs/pyjs) and [{less}](http://lesscss.org/) is required.
 
 ## Building
 
-Because the Vi provides the ability to get easily customized and extended, this repository contains a simple Makefile for GNU make to get all compilation tasks and dependencies done.
+Because Vi provides the ability to get easily customized and extended, this repository contains a simple Makefile for GNU make to get all compilation tasks and dependencies done.
 
-By default, it builds into a directory called ``vi`` within the source root directory. In an advanced setup (project based setup), it builds into the folder ``../appengine/vi``, up one level of the working directory, which makes
-it suitable to use this repository as a submodule of an entire application's source repository.
+By default, it builds into a directory called ``vi`` within the source root directory. In an advanced setup (project based setup), it builds into the folder ``../appengine/vi`` or ``../deploy/vi``, up one level of the working directory, which makes it suitable to use this repository as a submodule of an entire applications source repository.
 
 After checking out vi, simply move into the working directory and type:
 
