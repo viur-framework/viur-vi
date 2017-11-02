@@ -8,7 +8,7 @@ conf = {
 	"vi.version": (2, 1, 0),
 
 	# Appendix to version
-	"vi.version.appendix": "devel",
+	"vi.version.appendix": "",
 
 	# Which access rights are required to open the Vi?
 	"vi.access.rights": ["admin", "root"],

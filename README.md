@@ -4,7 +4,7 @@
 
 ## About
 
-"Vi" (pronounced as "whee!") is an acronym for *visual interface*. It is a platform-independent HTML5-web-app that is written in Python and must be compiled into JavaScript using the [PyJS](https://github.com/pyjs/pyjs) transpiler.
+*Vi* (pronounced as "whee!") is an acronym for *visual interface*. It is a platform-independent HTML5-web-app that is written in Python and must be compiled into JavaScript using the [PyJS](https://github.com/pyjs/pyjs) transpiler.
 
 It was tested and runs well with the latest versions of Chrome (Chromium), Firefox and Safari. Microsoft Edge and Internet Explorer >= 9 should also run it suitable as well.
 
