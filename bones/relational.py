@@ -280,7 +280,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		            context = context)
 
 	def setContext(self, context):
-		self.context = self.baseContext.copy() if self.baseContext else None
+		self.context = self.baseContext.copy() if self.baseContext else {}
 
 		if context:
 			self.context.update(context)
@@ -822,7 +822,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		return {self.boneName: [entry.serializeForDocument() for entry in self.entries]}
 
 	def setContext(self, context):
-		self.context = self.baseContext.copy() if self.baseContext else None
+		self.context = self.baseContext.copy() if self.baseContext else {}
 
 		if context:
 			self.context.update(context)
