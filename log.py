@@ -23,37 +23,45 @@ class Log( html5.Div ):
 		versionDiv = html5.Div()
 		versionDiv["class"].append("versiondiv")
 
-		# Server version number
-		versionspan = html5.Span()
-		versionspan.appendChild(html5.TextNode("ViUR v%s" % ".".join([str(x) for x in conf["server.version"]])))
-		versionspan["class"].append("serverspan")
-		versionDiv.appendChild(versionspan)
+		# Server name and version number
+		name = conf["vi.viur"]
+		if name:
+			versionspan = html5.Span()
+			versionspan.appendChild("%s v%s" %
+				(name, ".".join([str(x) for x in conf["server.version"]])))
+			versionspan["class"].append("serverspan")
+			versionDiv.appendChild(versionspan)
 
-		# Vi Version number
-		versionspan = html5.Span()
-		versionspan.appendChild(html5.TextNode("Vi v%s%s" % (".".join([str(x) for x in conf["vi.version"]]), conf["vi.version.appendix"])))
-		versionspan["class"].append("versionspan")
-		versionDiv.appendChild(versionspan)
+		# Vi name and version number
+		name = conf["vi.name"]
+		if name:
+			versionspan = html5.Span()
+			versionspan.appendChild("%s v%s%s" % 
+				(name, ".".join([str(x) for x in conf["vi.version"]]),
+					conf["vi.version.appendix"]))
+			versionspan["class"].append("versionspan")
+			versionDiv.appendChild(versionspan)
 
-		#Try loading the revision and build date
-		try:
-			from version import builddate, revision
+			#Try loading the revision and build date
+			try:
+				from version import builddate, revision
 
-			revspan = html5.Span()
-			revspan.appendChild(html5.TextNode("Rev %s" % revision))
-			revspan["class"].append("revisionspan")
+				revspan = html5.Span()
+				revspan.appendChild(html5.TextNode("Rev %s" % revision))
+				revspan["class"].append("revisionspan")
 
-			datespan = html5.Span()
-			datespan.appendChild(html5.TextNode("Built %s" % builddate))
-			datespan["class"].append("datespan")
+				datespan = html5.Span()
+				datespan.appendChild(html5.TextNode("Built %s" % builddate))
+				datespan["class"].append("datespan")
 
-			versionDiv.appendChild(revspan)
-			versionDiv.appendChild(datespan)
+				versionDiv.appendChild(revspan)
+				versionDiv.appendChild(datespan)
 
-		except:
-			pass
+			except:
+				pass
 
-		self.appendChild(versionDiv)
+		if versionDiv.children():
+			self.appendChild(versionDiv)
 
 	def toggleMsgCenter(self, *args, **kwargs):
 		if "is_open" in self["class"]:
