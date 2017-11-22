@@ -129,7 +129,7 @@ class ExtendedSelectOneSearch( html5.Div ):
 
 def CheckForSelectOneBone(moduleName, boneName, skelStructure, *args, **kwargs):
 	return (((skelStructure[boneName]["type"] == "select" or skelStructure[boneName]["type"].startswith("select."))
-	        and not skelStructure.get("multiple", False))
+	        and not skelStructure[boneName].get("multiple", False))
 	        or ((skelStructure[boneName]["type"] == "selectone" or skelStructure[boneName]["type"].startswith("selectone."))))
 
 #Register this Bone in the global queue

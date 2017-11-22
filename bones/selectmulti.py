@@ -160,7 +160,7 @@ class ExtendedSelectMultiSearch( html5.Div ):
 
 def CheckForSelectMultiBone(moduleName, boneName, skelStructure, *args, **kwargs):
 	return (((skelStructure[boneName]["type"] == "select" or skelStructure[boneName]["type"].startswith("select."))
-	        and skelStructure.get("multiple", False))
+	        and skelStructure[boneName].get("multiple", False))
 	        or ((skelStructure[boneName]["type"] == "selectmulti" or skelStructure[boneName]["type"].startswith("selectmulti."))))
 
 #Register this Bone in the global queue
