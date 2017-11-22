@@ -120,10 +120,17 @@ class ExtendedSelectOneSearch( html5.Div ):
 
 	@staticmethod
 	def canHandleExtension( extension, view, modul ):
-		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="selectone" or extension["type"].startswith("selectone.") ) )
+		return (isinstance(extension, dict)
+		        and "type" in extension.keys()
+		        and (
+			            ((extension["type"] == "select" or extension["type"].startswith("select."))
+		                    and not extension.get("multiple", False))
+		            or (extension["type"] == "selectone" or extension["type"].startswith("selectone."))))
 
-def CheckForSelectOneBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return( skelStucture[boneName]["type"]=="selectone" )
+def CheckForSelectOneBone(moduleName, boneName, skelStructure, *args, **kwargs):
+	return (((skelStructure[boneName]["type"] == "select" or skelStructure[boneName]["type"].startswith("select."))
+	        and not skelStructure.get("multiple", False))
+	        or ((skelStructure[boneName]["type"] == "selectone" or skelStructure[boneName]["type"].startswith("selectone."))))
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForSelectOneBone, SelectOneEditBone)
