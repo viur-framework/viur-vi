@@ -3,7 +3,7 @@ import pyjd # this is dummy in pyjs.
 import json
 from config import conf
 from network import NetworkService
-from priorityqueue import viewDelegateSelector
+from priorityqueue import viewDelegateSelector, moduleHandlerSelector
 from widgets.table import DataTable
 from widgets.actionbar import ActionBar
 from widgets.sidebar import SideBar
@@ -12,7 +12,7 @@ from sidebarwidgets.filterselector import CompoundFilter
 from i18n import translate
 
 
-class ListWidget( html5.Div ):
+class ListWidget(html5.Div):
 	"""
 		Provides the interface to list-applications.
 		It acts as a data-provider for a DataTable and binds an action-bar
@@ -28,7 +28,7 @@ class ListWidget( html5.Div ):
 			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
 			assert module in conf["modules"].keys()
 
-		super( ListWidget, self ).__init__(  )
+		super(ListWidget, self).__init__()
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
 		self.module = module
@@ -326,3 +326,16 @@ class ListWidget( html5.Div ):
 
 		"""
 		self.table.activateCurrentSelection()
+
+	@staticmethod
+	def canHandle(moduleName, moduleInfo):
+		return moduleInfo["handler"] == "list" or moduleInfo["handler"].startswith("list.")
+
+	@staticmethod
+	def render(cls, moduleName, adminInfo, context):
+		filter = adminInfo.get("filter")
+		columns = adminInfo.get("columns")
+
+		return ListWidget(module=moduleName, filter=filter, columns=columns, context=context)
+
+moduleHandlerSelector.insert(1, ListWidget.canHandle, ListWidget.render)

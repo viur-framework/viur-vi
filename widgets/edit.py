@@ -697,8 +697,13 @@ class EditWidget(html5.Div):
 			if not self.context:
 				self.context = {}
 
+			if "=" in contextVariable:
+				contextVariable, contextKey = contextVariable.split("=", 1)
+			else:
+				contextKey = "key"
+
 			self.context.update({
-				contextVariable: data["values"].get("key")
+				contextVariable: data["values"].get(contextKey)
 			})
 
 		for key, bone in data["structure"]:

@@ -5,6 +5,7 @@ from time import time
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
+from priorityqueue import moduleHandlerSelector
 from config import conf
 from i18n import translate
 
@@ -12,17 +13,17 @@ class HierarchyItem( html5.Li ):
 	"""
 		Holds one entry in a hierarchy.
 	"""
-	def __init__(self, modul, data, structure, *args, **kwargs ):
+	def __init__(self, module, data, structure, *args, **kwargs):
 		"""
-			@param modul: Name of the modul we shall display data for
-			@type modul: String
+			@param module: Name of the modul we shall display data for
+			@type module: String
 			@param data: The data for that entry
 			@type data: Dict
 			@param structure: Skeleton structure for that modul (as received  from the server)
 			@type structure: List
 		"""
 		super( HierarchyItem, self ).__init__( *args, **kwargs )
-		self.module = modul
+		self.module = module
 		self.data = data
 		self.structure = structure
 		self.expandLink = html5.A()
@@ -186,29 +187,27 @@ class HierarchyItem( html5.Li ):
 			self.ol["style"]["display"] = "block"
 			self["class"].append("expaned")
 			self["class"].remove("unexpaned")
+
 		self.isExpanded = not self.isExpanded
 
-
-
-
-class HierarchyWidget( html5.Div ):
+class HierarchyWidget(html5.Div):
 	"""
 		Displays a hierarchy where entries are direct children of each other.
 		(There's only one type on entries in a HierarchyApplication. If you need to
 		differentiate between nodes/leafs use a TreeApplication instead)
 	"""
 
-	def __init__( self, modul, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
+	def __init__(self, module, rootNode=None, isSelector=False, context=None, *args, **kwargs):
 		"""
-			@param modul: Name of the modul we shall handle. Must be a hierarchy application!
-			@type modul: string
+			@param module: Name of the modul we shall handle. Must be a hierarchy application!
+			@type module: string
 			@param rootNode: The repository we shall display. If none, we try to select one.
 			@type rootNode: String or None
 		"""
 		super( HierarchyWidget, self ).__init__( )
-		self.module = modul
+		self.module = module
 		self.rootNode = rootNode
-		self.actionBar = ActionBar( modul, "hierarchy" )
+		self.actionBar = ActionBar(module, "hierarchy")
 		self.appendChild( self.actionBar )
 		self.entryFrame = html5.Ol()
 		self.entryFrame["class"].append("hierarchy")
@@ -218,15 +217,22 @@ class HierarchyWidget( html5.Div ):
 		self.rootNodeChangedEvent = EventDispatcher("rootNodeChanged")
 		self._currentCursor = None
 		self._currentRequests = []
-		self["class"].append("supports_drop")
+		self.addClass("supports_drop")
 		self.isSelector = isSelector
 		self._expandedNodes = []
+		self.context = context
+
 		if self.rootNode:
 			self.reloadData()
 		else:
-			NetworkService.request(self.module,"listRootNodes", successHandler=self.onSetDefaultRootNode, failureHandler=self.showErrorMsg )
+			NetworkService.request(self.module, "listRootNodes",
+			                       self.context or {},
+			                       successHandler=self.onSetDefaultRootNode,
+			                       failureHandler=self.showErrorMsg )
+
 		self.path = []
-		self.sinkEvent( "onClick", "onDblClick" )
+		self.sinkEvent("onClick", "onDblClick")
+
 		##Proxy some events and functions of the original table
 		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 		#	setattr( self, f, getattr(self.table,f))
@@ -406,6 +412,9 @@ class HierarchyWidget( html5.Div ):
 		if cursor:
 			params.update({"cursor": cursor})
 
+		if self.context:
+			params.update(self.context)
+
 		r = NetworkService.request(self.module, "list",
 		                            params,
 		                            successHandler=self.onRequestSucceded,
@@ -478,3 +487,19 @@ class HierarchyWidget( html5.Div ):
 		if self._currentCursor:
 			self.selectionActivatedEvent.fire( self, [self._currentCursor] )
 			conf["mainWindow"].removeWidget(self)
+
+	@staticmethod
+	def canHandle(moduleName, moduleInfo):
+		return moduleInfo["handler"] == "hierarchy" or moduleInfo["handler"].startswith("hierarchy.")
+
+	@staticmethod
+	def render(moduleName, adminInfo, context):
+		if "@rootNode" in context:
+			rootNode = context["@rootNode"]
+			del context["@rootNode"]
+		else:
+			rootNode = None
+
+		return HierarchyWidget(module=moduleName, rootNode=rootNode, context=context)
+
+moduleHandlerSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget.render)

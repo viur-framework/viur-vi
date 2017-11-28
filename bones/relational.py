@@ -280,10 +280,13 @@ class RelationalSingleSelectionBone(html5.Div):
 		            context = context)
 
 	def setContext(self, context):
-		self.context = self.baseContext.copy() if self.baseContext else {}
+		self.context = {}
 
 		if context:
 			self.context.update(context)
+
+		if self.baseContext:
+			self.context.update(self.baseContext)
 
 	def onEdit(self, *args, **kwargs):
 		"""

@@ -61,6 +61,7 @@ class PriorityQueue( object ):
 
 
 HandlerClassSelector = PriorityQueue() # Used during startup to select an Wrapper-Class
+moduleHandlerSelector = PriorityQueue() # Used to select an embedded widget to represent a module
 editBoneSelector = PriorityQueue() # Queried by editWidget to locate its bones
 actionDelegateSelector = PriorityQueue() # Locates an action for a given module/action-name
 displayDelegateSelector = PriorityQueue() # Selects a widget used to display data from a certain modul
