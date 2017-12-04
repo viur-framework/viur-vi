@@ -824,7 +824,7 @@ class EditWidget(html5.Div):
 				fieldSets[vmodule] = fs
 
 				if vvariable:
-					context = self.context.copy()
+					context = self.context.copy() if self.context else {}
 					context[vvariable] = data["values"]["key"]
 				else:
 					context = self.context
