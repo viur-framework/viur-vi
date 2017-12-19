@@ -9,18 +9,19 @@ from bones.base import BaseBoneExtractor
 class NumericBoneExtractor(BaseBoneExtractor):
 
 	def render(self, data, field):
-		# print("NumericBoneExtractor.render", data, field)
+		return str(self.raw(data, field)).replace(".", ",")
+
+	def raw(self, data, field):
 		if field in data.keys():
 			value = data[field]
 
 			if isinstance(value, int):
-				return str(value)
+				return value
 
 			elif isinstance(value, float):
-				return str(round(data[field], self.skelStructure[field].get("precision", 2))).replace(".", ",")
+				return round(value, self.skelStructure[field].get("precision", 2))
 
-		return "-23,42"
-
+		return 0
 
 class NumericViewBoneDelegate(object):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
