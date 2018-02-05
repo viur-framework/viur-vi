@@ -812,7 +812,7 @@ class EditWidget(html5.Div):
 				vdescr = conf["modules"][vmodule]
 
 				fs = html5.Fieldset()
-				fs.addClass("inactive")
+				fs.addClass("editview", "inactive")
 
 				if vclass:
 					fs.addClass(*vclass)
