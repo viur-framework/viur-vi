@@ -798,6 +798,8 @@ class EditWidget(html5.Div):
 			for view in views:
 				vmodule = view.get("module")
 				vvariable = view.get("context")
+				vclass = view.get("class")
+				vtitle = view.get("title")
 
 				if not vmodule:
 					print("Misconfiured view: %s" % view)
@@ -812,10 +814,13 @@ class EditWidget(html5.Div):
 				fs = html5.Fieldset()
 				fs.addClass("inactive")
 
+				if vclass:
+					fs.addClass(*vclass)
+
 				fs["name"] = vmodule
 				legend = html5.Legend()
 				fshref = fieldset_A()
-				fshref.appendChild(html5.TextNode(vdescr.get("name", vmodule)))
+				fshref.appendChild(html5.TextNode(vtitle or vdescr.get("name", vmodule)))
 				legend.appendChild(fshref)
 				fs.appendChild(legend)
 				section = html5.Section()
