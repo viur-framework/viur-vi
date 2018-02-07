@@ -33,18 +33,15 @@ class BooleanEditBone( html5.Input ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		return BooleanEditBone(moduleName, boneName, readOnly)
 
-	##read
 	def unserialize(self, data, extendedErrorInformation=None):
 		if self.boneName in data.keys():
 			self._setChecked(data[self.boneName])
 
-	##save
 	def serializeForPost(self):
 		return {self.boneName: str(self._getChecked())}
 
-	##UNUSED
 	def serializeForDocument(self):
-		return self.serializeForPost()
+		return {self.boneName: self._getChecked()}
 
 
 class ExtendedBooleanSearch( html5.Div ):
