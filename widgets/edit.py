@@ -51,10 +51,6 @@ class InternalEdit(html5.Div):
 
 		for key, bone in self.skelStructure:
 
-			#Skip over invisible bones
-			if not bone["visible"]:
-				continue
-
 			#Enforcing readOnly mode
 			if readOnly:
 				tmpDict[key]["readonly"] = True
@@ -138,6 +134,10 @@ class InternalEdit(html5.Div):
 
 			currRow += 1
 			self.bones[key] = widget
+
+			#Hide invisible bones
+			if not bone["visible"]:
+				self.containers[key].hide()
 
 		if len(fieldSets)==1:
 			for (k,v) in fieldSets.items():
@@ -707,10 +707,8 @@ class EditWidget(html5.Div):
 			})
 
 		for key, bone in data["structure"]:
-			if not bone["visible"]:
-				continue
 
-			cat = defaultCat
+			cat = defaultCat #meow!
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)
@@ -782,8 +780,12 @@ class EditWidget(html5.Div):
 					containerDiv["class"].append(t)
 
 			currRow += 1
-			self.bones[ key ] = widget
-			self.containers[ key ] = containerDiv
+			self.bones[key] = widget
+			self.containers[key] = containerDiv
+
+			#Hide invisible bones
+			if not bone["visible"]:
+				self.containers[key].hide()
 
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort(key=lambda x:x[0])
