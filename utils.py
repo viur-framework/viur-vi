@@ -113,7 +113,7 @@ def getImagePreview(data, cropped = False, size = 150):
 		return "/file/download/%s" % data["dlkey"]
 	elif "servingurl" in data.keys():
 		if data["servingurl"]:
-			return data["servingurl"] + ("=s%d" % size) + ("-c" if cropped else "")
+			return data["servingurl"] + (("=s%d" % size) if size else "") + ("-c" if cropped else "")
 
 		return ""
 
