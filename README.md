@@ -18,7 +18,7 @@ Please check out the [ViUR documentation](https://docs.viur.is/latest) to get mo
 
 ## Requirements
 
-This software is implemented on top of the [PyJS framework](https://github.com/pyjs/pyjs) and uses the [html5 library](https://github.com/viur-framework/html5) to create DOM objects, which is also part of the ViUR open source project.
+This software is implemented on top of the [PyJS framework](https://github.com/pyjs/pyjs) and uses the [html5 library](https://github.com/viur-framework/html5) to create DOM objects. The html5 library is also part of the ViUR open source project.
 
 To build it on your own, [PyJS](https://github.com/pyjs/pyjs) and [{less}](http://lesscss.org/) is required.
 
@@ -30,19 +30,19 @@ By default, it builds into a directory called ``vi`` within the source root dire
 
 After checking out vi, simply move into the working directory and type:
 
-```
+```bash
 $ make
 ```
 
 to create a deploy-able and speed-optimized version, run
 
-```
+```bash
 $ make deploy
 ```
 
 to remove all generated files and rebuild from scratch, type
 
-```
+```bash
 $ make clean
 $ make
 ```
@@ -51,9 +51,8 @@ $ make
 
 We take a great interest in your opinion about ViUR. We appreciate your feedback and are looking forward to hear about your ideas. Share your visions or questions with us and participate in ongoing discussions.
 
-- [ViUR on the web](https://www.viur.is)
-- [#ViUR on freenode IRC](https://webchat.freenode.net/?channels=viur)
-- [ViUR on Google Community](https://plus.google.com/communities/102034046048891029088)
+- [ViUR website](https://www.viur.is)
+- [ViUR on GitHub](https://github.com/viur-framework)
 - [ViUR on Twitter](https://twitter.com/weloveViUR)
 
 ## Credits
@@ -64,7 +63,7 @@ Help of any kind to extend and improve or enhance this project in any kind or wa
 
 ## License
 
-ViUR is Copyright (C) 2012-2017 by Mausbrand Informationssysteme GmbH.
+Copyright (C) 2012-2018 by Mausbrand Informationssysteme GmbH.
 
 Mausbrand and ViUR are registered trademarks of Mausbrand Informationssysteme GmbH.
 
