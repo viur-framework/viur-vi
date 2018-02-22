@@ -11,6 +11,18 @@ from widgets.edit import EditWidget
 from pane import Pane
 from bones.base import BaseBoneExtractor
 
+class FileImagePopup(html5.ext.Popup):
+	def __init__(self, image, *args, **kwargs ):
+		super(FileImagePopup, self).__init__(title=image.get("name", u"Unnamed Image"), className="image-viewer", *args, **kwargs)
+		self.sinkEvent("onClick")
+
+		img = html5.Img()
+		img["src"] = utils.getImagePreview(image, size=None)
+		self.appendChild(img)
+
+	def onClick(self, event):
+		self.close()
+
 class FilePreviewImage(html5.Div):
 	def __init__(self, image = None, size=150, *args, **kwargs):
 		super(FilePreviewImage, self).__init__(*args, **kwargs)
@@ -35,12 +47,7 @@ class FilePreviewImage(html5.Div):
 			self.hide()
 
 	def onClick(self, event):
-		img = html5.Img()
-		img["src"] = utils.getImagePreview(self.currentImage, size = None)
-
-		pop = html5.ext.Alert(img, self.currentImage.get("name", u"Unnamed Image"))
-		pop.addClass("image-viewer")
-
+		FileImagePopup(self.currentImage)
 
 class FileBoneExtractor(BaseBoneExtractor):
 	def __init__(self, module, boneName, structure):
