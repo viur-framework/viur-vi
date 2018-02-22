@@ -2369,6 +2369,32 @@ td span.index
   width: 0;
   margin: 0;
 }
+
+.type_image{
+  display: flex;
+  align-items: center;
+}
+
+.previewimg{
+  width: 60px;
+  height: 60px;
+  background-size: cover;
+  margin-right: 15px;
+}
+
+.supports_upload{
+  display: flex;
+
+  .previewimg{
+    width: 26px;
+    height: 26px;
+    background-size: cover;
+    border: 1px solid #ccc;
+    border-right-width: 0;
+    margin-right: 0;
+  }
+}
+
 .file img {
   float: left;
   margin-right: 10px;
@@ -2532,17 +2558,23 @@ progress[value]::-webkit-progress-value {
   height: 100%;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .alertbox {
-  width: 400px;
-  height: auto;
+  min-width: 400px;
+  max-width: 90vw;
+  max-height: 85vh;
   padding: 25px 25px 30px;
   background: #eee;
-  margin: 10% auto;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
   border: 1px solid #ccc;
-  border-bottom:1px solid @maincolor;
-  overflow: hidden;
+  border-bottom: 1px solid @maincolor;
+  margin: 5% auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .alertbox.task
@@ -2629,6 +2661,23 @@ progress[value]::-webkit-progress-value {
 
 .alertbox.selectfields ul { max-height: 400px; overflow-y: auto; margin-bottom:15px; }
 .alertbox.selectfields div.selectiontools { float:left; }
+
+.alertbox span.alert-msg{
+  max-height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  img{
+    max-width: 100%;
+    max-height: 67vh;
+  }
+}
+
+.alert-btn-ok{
+  align-self: flex-end;
+}
+
 
 /* #vi_login
 ================================================== */
