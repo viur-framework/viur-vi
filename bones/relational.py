@@ -173,8 +173,8 @@ class RelationalSingleSelectionBone(html5.Div):
 
 		self.selection = None
 		self.selectionTxt = html5.Input()
-		self.selectionTxt["type"] = "text"
 		self.selectionTxt["readonly"] = True
+		self.selectionTxt["type"] = "text"
 		self.appendChild( self.selectionTxt )
 		self.ie = None
 

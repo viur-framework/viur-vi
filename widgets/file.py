@@ -15,8 +15,8 @@ class LeafFileWidget( LeafWidget ):
 	def __init__(self, modul, data, structure, *args, **kwargs ):
 		super( LeafFileWidget, self ).__init__( modul, data, structure, *args, **kwargs )
 
-		if utils.getImagePreview( data ):
-			self.appendChild( html5.Img( utils.getImagePreview( data ) ) )
+		if utils.getImagePreview(data):
+			self.prependChild(html5.Img(utils.getImagePreview(data)))
 
 		if "mimetype" in data.keys():
 			try:

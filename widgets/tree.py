@@ -93,21 +93,20 @@ class LeafWidget( html5.Div ):
 	"""
 		Displays one Node (ie a file) inside a TreeWidget
 	"""
-	def __init__(self, modul, data, structure, *args, **kwargs ):
+	def __init__(self, module, data, structure, *args, **kwargs ):
 		"""
-			@param modul: Name of the modul for which we'll display data
-			@type modul: String
+			@param module: Name of the modul for which we'll display data
+			@type module: String
 			@param data: The data we're going to display
 			@type data: Dict
 			@param structure: The structure of that data as received from server
 			@type structure: List
 		"""
 		super( LeafWidget, self ).__init__( *args, **kwargs )
-		self.module = modul
+		self.module = module
 		self.data = data
 		self.structure = structure
 		self.buildDescription()
-		self.element.innerHTML = data["name"]
 		self["class"] = "treeitem leaf supports_drag"
 		self["draggable"] = True
 		self.sinkEvent("onDragStart")

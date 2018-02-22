@@ -32,22 +32,40 @@ class FilePreviewImage(html5.Div):
 		self.size = size
 
 		self.currentImage = None
-		if image:
-			self.setImage(image)
+		self.currentClass = None
+		self.setImage(image)
 
 	def setImage(self, image):
 		preview = utils.getImagePreview(image, cropped=True, size = self.size) if image else None
 
+		if self.currentClass:
+			self.removeClass(self.currentClass)
+			self.currentClass = None
+
+		if preview:
+			self.addClass("is-clickable")
+			self.currentImage = image
+		else:
+			if image:
+				preview = "icons/filetypes/file.svg"
+				mime = image.get("mimetype")
+				if mime:
+					for icon in ["bmp", "doc", "gif", "jpg", "pdf", "png", "tiff", "image", "audio", "video", "zip"]:
+						if icon in mime:
+							preview = "icons/filetypes/%s.svg" % icon
+							break
+
+			self.removeClass("is-clickable")
+			self.currentImage = None
+
 		if preview:
 			self["style"]["background-image"] = "url('%s')" % preview
-			self.currentImage = image
-			self.show()
 		else:
-			self["style"]["background-image"] = self.currentImage = None
-			self.hide()
+			self["style"]["background-image"] = None
 
 	def onClick(self, event):
-		FileImagePopup(self.currentImage)
+		if self.currentImage:
+			FileImagePopup(self.currentImage)
 
 class FileBoneExtractor(BaseBoneExtractor):
 	def __init__(self, module, boneName, structure):
@@ -64,18 +82,13 @@ class FileBoneExtractor(BaseBoneExtractor):
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
-		if field in data.keys():
-			val = data[field]
-		else:
-			val = ""
+		val = data.get(field, "")
 
 		if isinstance(val, list):
-			result = list()
-			for f in val:
-				result.append(self.renderFileentry(f))
-			return ", ".join(result)
+			return [self.renderFileentry(f) for f in val]
 		elif isinstance(val, dict):
 			return self.renderFileentry(val)
+
 		return val
 
 class FileViewBoneDelegate(object):
@@ -109,8 +122,7 @@ class FileViewBoneDelegate(object):
 			except:
 				pass
 
-		if utils.getImagePreview(fileEntry):
-			adiv.appendChild(FilePreviewImage(fileEntry))
+		adiv.appendChild(FilePreviewImage(fileEntry))
 
 		aspan=html5.Span()
 		aspan.appendChild(html5.TextNode(str(fileEntry.get("name", ""))))#fixme: formatstring!
@@ -130,20 +142,13 @@ class FileViewBoneDelegate(object):
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
-
-		if field in data.keys():
-			val = data[field]
-		else:
-			val = ""
+		val = data.get(field, "")
 
 		if isinstance(val, list):
 			#MultiFileBone
 			cell = html5.Div()
 
 			for f in val:
-				if cell.children():
-					cell.appendChild(html5.TextNode(", "))
-
 				cell.appendChild(self.renderFileentry(f))
 
 			return cell
