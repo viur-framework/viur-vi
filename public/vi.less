@@ -2380,15 +2380,11 @@ td span.index
   height: 60px;
   background-size: cover;
   margin-right: 15px;
-  cursor: pointer;
-
-  & + .labelwrapper{
-    float: left;
-    width: auto !important;
-  }
 }
 
 .supports_upload{
+  display: flex;
+
   .previewimg{
     width: 26px;
     height: 26px;
@@ -2396,23 +2392,7 @@ td span.index
     border: 1px solid #ccc;
     border-right-width: 0;
     margin-right: 0;
-    margin-left: 10px;
-    float: left;
-
-    & + input{
-      float: left;
-      width: calc(50% - 27px);
-    }
-
-    & + .labelwrapper{
-      margin-bottom: 5px;
-    }
-
   }
-}
-
-.selectioncontainer-entry:first-child{
-  padding-top: 10px;
 }
 
 .file img {
@@ -3009,19 +2989,9 @@ textarea:disabled {
 ================================================== */
 .selectioncontainer-entry {
   overflow: hidden;
-  margin-bottom: 0;
+  margin-bottom: 40px;
   background-color: #fff;
   border: 1px solid #ccc;
-  border-top-width: 0;
-  border-bottom-width: 0;
-
-  &:first-child{
-    border-top-width: 1px;
-  }
-
-  &:last-child{
-    border-bottom-width: 1px;
-  }
 }
 
 .selectioncontainer-entry.is-dragging {
@@ -3046,7 +3016,7 @@ textarea:disabled {
   overflow: hidden;
   width: 100%;
   border: none;
-  //border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 
 .selectioncontainer-entry .relationwrapper .bone {
