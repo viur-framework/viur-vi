@@ -665,6 +665,11 @@ background-color:#d6d6d6;
   margin-right: 6px;
 }
 
+.button.download{
+  align-self: center;
+  margin: 15px 15px 0 15px;
+}
+
 .vi_viewer.is_fullscreen .vi_operator .actionbar
 {
   width: 98%;
@@ -2606,8 +2611,11 @@ progress[value]::-webkit-progress-value {
   border-bottom: 1px solid @maincolor;
   margin: 5% auto;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+
+  &.image-viewer{
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .alertbox.task
