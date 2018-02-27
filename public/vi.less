@@ -1784,6 +1784,10 @@ select {
   display: inline-block;
 }
 
+.selectioncontainer{
+  width: calc(53% - 2px);
+}
+
 .tagcontainer {min-width: 50%;}
 
 .selectioncontainer button,
@@ -2366,15 +2370,32 @@ td span.index
 }
 
 .previewimg{
-  width: 60px;
-  height: 60px;
+  width: 30px;
+  height: 30px;
   background-size: cover;
   margin-right: 15px;
 
   & + .labelwrapper{
     float: left;
-    width: auto !important;
+    width: calc(100% - 27px) !important;
+    display: flex;
+
+    label{
+      height: 17px;
+      width: 100%;
+      flex: 1 1 auto;
+    }
+
+    button:last-child{
+      margin-right: 10px;
+    }
   }
+}
+
+.fileBoneViewCell{
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
 }
 
 .is-clickable {
@@ -2389,7 +2410,6 @@ td span.index
     border: 1px solid #ccc;
     border-right-width: 0;
     margin-right: 0;
-    margin-left: 10px;
     float: left;
 
     & + input{
@@ -3014,6 +3034,10 @@ textarea:disabled {
 
   &:last-child{
     border-bottom-width: 1px;
+  }
+
+  &.fileentry{
+    padding-left: 10px;
   }
 }
 
