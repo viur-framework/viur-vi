@@ -12,60 +12,105 @@ from pane import Pane
 from bones.base import BaseBoneExtractor
 
 class FileImagePopup(html5.ext.Popup):
-	def __init__(self, image, *args, **kwargs ):
-		super(FileImagePopup, self).__init__(title=image.get("name", u"Unnamed Image"), className="image-viewer", *args, **kwargs)
-		self.sinkEvent("onClick")
+	def __init__(self, preview, *args, **kwargs):
+		super(FileImagePopup, self).__init__(title=preview.currentFile.get("name", translate("Unnamed Image")), className="image-viewer", *args, **kwargs)
+		self.sinkEvent("onClick", "onDblClick")
+
+		self.preview = preview
 
 		img = html5.Img()
-		img["src"] = utils.getImagePreview(image, size=None)
+		img["src"] = utils.getImagePreview(preview.currentFile, size=None)
 		self.appendChild(img)
+
+		btn = html5.ext.Button(translate("Download"), self.onDownloadBtnClick)
+		btn.addClass("download")
+		self.appendChild(btn)
 
 	def onClick(self, event):
 		self.close()
 
+	def onDownloadBtnClick(self, sender = None):
+		self.preview.download()
+
 class FilePreviewImage(html5.Div):
-	def __init__(self, image = None, size=150, *args, **kwargs):
+	def __init__(self, file = None, size=150, *args, **kwargs):
 		super(FilePreviewImage, self).__init__(*args, **kwargs)
 		self.addClass("previewimg")
 		self.sinkEvent("onClick")
 
 		self.size = size
 
-		self.currentImage = None
-		self.currentClass = None
-		self.setImage(image)
+		self.downloadA = html5.A()
+		self.downloadA.hide()
+		self.appendChild(self.downloadA)
 
-	def setImage(self, image):
-		preview = utils.getImagePreview(image, cropped=True, size = self.size) if image else None
+		self.isImage = False
+		self.downloadOnly = False
+		self.currentFile = None
 
-		if self.currentClass:
-			self.removeClass(self.currentClass)
-			self.currentClass = None
+		self.setFile(file)
+
+	def setFile(self, file):
+		self.currentFile = file
+
+		preview = utils.getImagePreview(file, cropped=True, size = self.size) if file else None
 
 		if preview:
-			self.addClass("is-clickable")
-			self.currentImage = image
+			self.downloadOnly = self.isImage = True
+
 		else:
-			if image:
+			self.isImage = False
+			self.downloadOnly = True
+
+			if file:
 				preview = "icons/filetypes/file.svg"
-				mime = image.get("mimetype")
+				mime = file.get("mimetype")
 				if mime:
 					for icon in ["bmp", "doc", "gif", "jpg", "pdf", "png", "tiff", "image", "audio", "video", "zip"]:
 						if icon in mime:
 							preview = "icons/filetypes/%s.svg" % icon
+							self.downloadOnly = False
 							break
-
-			self.removeClass("is-clickable")
-			self.currentImage = None
 
 		if preview:
 			self["style"]["background-image"] = "url('%s')" % preview
 		else:
 			self["style"]["background-image"] = None
 
+		if self.currentFile:
+			self.addClass("is-clickable")
+		else:
+			self.removeClass("is-clickable")
+
+
+	def download(self):
+		if not self.currentFile:
+			return
+
+		self.downloadA["href"] = "/file/download/" + self.currentFile["dlkey"]
+		self.downloadA["download"] = self.currentFile.get("name", self.currentFile["dlkey"])
+		self.downloadA.element.click()
+
 	def onClick(self, event):
-		if self.currentImage:
-			FileImagePopup(self.currentImage)
+		if not self.currentFile:
+			return
+
+		if self.isImage:
+			FileImagePopup(self)
+		else:
+			w = eval("window")
+
+			if self.downloadOnly:
+				self.download()
+				return
+
+			file = "/file/download/%s" % self.currentFile["dlkey"]
+
+			if self.currentFile.get("name"):
+				file += "?fileName=%s" % self.currentFile["name"]
+
+			w.open(file)
+
 
 class FileBoneExtractor(BaseBoneExtractor):
 	def __init__(self, module, boneName, structure):
@@ -342,9 +387,9 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			                        cacheable=True)
 			self.selectionTxt["value"] = translate("Loading...")
 
-			self.previewImg.setImage(self.selection["dest"])
+			self.previewImg.setFile(self.selection["dest"])
 		else:
-			self.previewImg.setImage(None)
+			self.previewImg.setFile(None)
 			self.selectionTxt["value"] = ""
 
 		self.updateButtons()
