@@ -14,17 +14,24 @@ from bones.base import BaseBoneExtractor
 class FileImagePopup(html5.ext.Popup):
 	def __init__(self, preview, *args, **kwargs):
 		super(FileImagePopup, self).__init__(title=preview.currentFile.get("name", translate("Unnamed Image")), className="image-viewer", *args, **kwargs)
-		self.sinkEvent("onClick", "onDblClick")
-
+		self.sinkEvent("onClick")
 		self.preview = preview
 
 		img = html5.Img()
 		img["src"] = utils.getImagePreview(preview.currentFile, size=None)
 		self.appendChild(img)
 
+		div = html5.Div()
+		self.appendChild(div)
+
 		btn = html5.ext.Button(translate("Download"), self.onDownloadBtnClick)
-		btn.addClass("download")
-		self.appendChild(btn)
+		btn.addClass("icon", "download")
+		div.appendChild(btn)
+
+		btn = html5.ext.Button(translate("Close"), self.onClick)
+		btn.addClass("btn_no")
+		div.appendChild(btn)
+
 
 	def onClick(self, event):
 		self.close()
