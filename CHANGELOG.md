@@ -1,6 +1,6 @@
 # Change Log
 
-This file documents any relevant changes done to ViUR Vi since version 2.0.
+This file documents any relevant changes done to ViUR Vi since version 2.
 
 ## 2.2
 
@@ -12,6 +12,8 @@ Yet unreleased.
   - Context-editing actions
   - New widget selector for embedded widgets
   - Evaluation of "title" and "class" attributes in editViews
+- [ViUR logics](https://github.com/viur-framework/logics) v2.2 integrated, using much faster LALR parser
+- Network communication module (network.py) with manual kickoff and generic error handler
 
 ## 2.1
 
