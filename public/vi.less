@@ -1642,8 +1642,8 @@ input[type="checkbox"] {
   margin-right: 15px;
 }
 
-.bone.selectmulti div label,
-.bone.accessselectmulti div label {
+.bone.select div label,
+.bone.select.access div label {
   border: 1px solid #ccc;
   border-top-width:0;
   clear:left;
@@ -1651,32 +1651,32 @@ input[type="checkbox"] {
   width:320px;
 }
 
-.bone.selectmulti div  label:first-of-type
+.bone.select div  label:first-of-type
 {
   clear:none;
   margin-left:0;
   border: 1px solid #ccc;
 }
 
-.bone.selectmulti div label:nth-of-type(even)
+.bone.select div label:nth-of-type(even)
 {
   background-color:#eee;
 }
 
-.bone.selectmulti div label input
+.bone.select div label input
 {
   float:right;
   width:15px;
   margin-right:0;
 }
 
-.bone.selectmulti div label span
+.bone.select div label span
 {
   display:block;
   float:left;
 }
 
-.bone.selectmulti.access .access-state
+.bone.select.access .access-state
 {
   background-image: url('icons/user-rights_sprite.svg');
   background-repeat: no-repeat;
@@ -1695,55 +1695,55 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-.bone.selectmulti.access .access-state.view {
+.bone.select.access .access-state.view {
   background-position: 0px -26px;
 }
 
-.bone.selectmulti.access .access-state.edit {
+.bone.select.access .access-state.edit {
   background-position: -26px -26px;
 }
 
-.bone.selectmulti.access .access-state.delete {
+.bone.select.access .access-state.delete {
   background-position: -52px -26px;
 }
 
-.bone.selectmulti.access .access-state.add {
+.bone.select.access .access-state.add {
   background-position: -78px -26px;
 }
 
-.bone.selectmulti.access .access-state.view.active,
-.bone.selectmulti.access .access-state.view.disabled {
+.bone.select.access .access-state.view.active,
+.bone.select.access .access-state.view.disabled {
   background-position: 0px 0px;
 }
 
-.bone.selectmulti.access .access-state.edit.active,
-.bone.selectmulti.access .access-state.edit.disabled {
+.bone.select.access .access-state.edit.active,
+.bone.select.access .access-state.edit.disabled {
   background-position: -26px 0px;
 }
 
-.bone.selectmulti.access .access-state.delete.active,
-.bone.selectmulti.access .access-state.delete.disabled {
+.bone.select.access .access-state.delete.active,
+.bone.select.access .access-state.delete.disabled {
   background-position: -52px 0px;
 }
 
-.bone.selectmulti.access .access-state.add.active,
-.bone.selectmulti.access .access-state.add.disabled {
+.bone.select.access .access-state.add.active,
+.bone.select.access .access-state.add.disabled {
   background-position: -78px 0px;
 }
 
-.bone.selectmulti.access .access-state.active {
+.bone.select.access .access-state.active {
   border-color: @success;
   background-color: lighten(@success, 10%);
 }
 
-.bone.selectmulti.access .access-state:hover,
-.bone.selectmulti.access .access-state.active:hover {
+.bone.select.access .access-state:hover,
+.bone.select.access .access-state.active:hover {
   border-color:#555;
   background-color: #aaa;
 }
 
-.bone.selectmulti.access .access-state.disabled,
-.bone.selectmulti.access .access-state.disabled:hover {
+.bone.select.access .access-state.disabled,
+.bone.select.access .access-state.disabled:hover {
   border-color: #999;
   background-color: #ccc;
   pointer:not-allowed;

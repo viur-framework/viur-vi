@@ -151,10 +151,17 @@ class ExtendedSelectMultiSearch( html5.Div ):
 
 	@staticmethod
 	def canHandleExtension( extension, view, modul ):
-		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="selectmulti" or extension["type"].startswith("selectmulti.") ) )
+		return (isinstance(extension, dict)
+		        and "type" in extension.keys()
+		        and (
+			            ((extension["type"] == "select" or extension["type"].startswith("select."))
+		                    and extension.get("multiple", False))
+		            or (extension["type"] == "selectmulti" or extension["type"].startswith("selectmulti."))))
 
-def CheckForSelectMultiBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return skelStucture[boneName]["type"].startswith("selectmulti")
+def CheckForSelectMultiBone(moduleName, boneName, skelStructure, *args, **kwargs):
+	return (((skelStructure[boneName]["type"] == "select" or skelStructure[boneName]["type"].startswith("select."))
+	        and skelStructure[boneName].get("multiple", False))
+	        or ((skelStructure[boneName]["type"] == "selectmulti" or skelStructure[boneName]["type"].startswith("selectmulti."))))
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForSelectMultiBone, SelectMultiEditBone)
@@ -182,6 +189,7 @@ class AccessMultiSelectBone( html5.Div ):
 
 		for value in self.values:
 			module = self.parseskelaccess( value )
+
 			if not module:
 				self.flags[ value ] = None
 			elif not module[ 0 ] in self.modules.keys():
@@ -342,11 +350,9 @@ class AccessMultiSelectBone( html5.Div ):
 	def serializeForDocument(self):
 		return self.serializeForPost()
 
-def CheckForAccessMultiSelectBone(moduleName, boneName, skelStucture, *args, **kwargs):
-	if skelStucture[boneName]["type"] == "selectmulti.access":
-		return True
-
-	return False
+def CheckForAccessMultiSelectBone(moduleName, boneName, skelStructure, *args, **kwargs):
+	print(moduleName, boneName, skelStructure[boneName]["type"], skelStructure[boneName]["type"] in ["select.access", "selectmulti.access"])
+	return skelStructure[boneName]["type"] in ["select.access", "selectmulti.access"]
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 4, CheckForAccessMultiSelectBone, AccessMultiSelectBone )
