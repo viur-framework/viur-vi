@@ -6,6 +6,7 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 Yet unreleased.
 
+- Support of the new selectBone feature, replacing selectOneBone and selectMultiBone in server
 - Refactored image file preview and new image detail view
 - Bones configured as visible=False are rendered as hidden objects now, instead of ignoring them.
 - Improved context editing features and editViews feature (still in beta)
