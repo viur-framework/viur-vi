@@ -236,16 +236,14 @@ class InternalEdit(html5.Div):
 						if event == "logic.visibleIf":
 							self.containers[key].show()
 						elif event == "logic.readonlyIf":
-							if not self.containers[key]["disabled"]:
-								self.containers[key]["disabled"] = True
+							self.containers[key].disable()
 
 						# add more here...
 					else:
 						if event == "logic.visibleIf":
 							self.containers[key].hide()
 						elif event == "logic.readonlyIf":
-							if self.containers[key]["disabled"]:
-								self.containers[key]["disabled"] = False
+							self.containers[key].enable()
 						# add more here...
 
 
@@ -455,16 +453,14 @@ class EditWidget(html5.Div):
 						if event == "logic.visibleIf":
 							self.containers[key].show()
 						elif event == "logic.readonlyIf":
-							if not self.containers[key]["disabled"]:
-								self.containers[key]["disabled"] = True
+							self.containers[key].disable()
 
 						# add more here...
 					else:
 						if event == "logic.visibleIf":
 							self.containers[key].hide()
 						elif event == "logic.readonlyIf":
-							if self.containers[key]["disabled"]:
-								self.containers[key]["disabled"] = False
+							self.containers[key].enable()
 						# add more here...
 
 	def onChange(self, event):
