@@ -12,7 +12,7 @@ class AddLeafAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddLeafAction, self ).__init__( translate("Add"), *args, **kwargs )
-		self["class"] = "icon add leaf"
+		self["class"] = "btn btn-add-leaf"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -45,7 +45,7 @@ class AddNodeAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddNodeAction, self ).__init__(  translate("Add"), *args, **kwargs )
-		self["class"] = "icon add node"
+		self["class"] = "btn btn-add-node"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -79,7 +79,7 @@ class EditAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__(  translate("Edit"), *args, **kwargs )
-		self["class"] = "icon edit"
+		self["class"] = "btn btn-edit"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -158,7 +158,7 @@ class DeleteAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__(  translate("Delete"), *args, **kwargs )
-		self["class"] = "icon delete"
+		self["class"] = "btn btn-delete"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -221,19 +221,19 @@ class ReloadAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
-		self["class"] = "icon reload"
+		self["class"] = "btn btn-reload"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
 		return actionName=="reload" and (handler == "tree" or handler.startswith("tree."))
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
+		self["class"].append("is-loading")
 		NetworkService.notifyChange( self.parent().parent().module )
 
 	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
+		if "is-loading" in self["class"]:
+			self["class"].remove("is-loading")
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
@@ -244,6 +244,7 @@ class SelectRootNode( html5.Select ):
 	"""
 	def __init__(self, module, handler, actionName, *args, **kwargs):
 		super( SelectRootNode, self ).__init__( *args, **kwargs )
+		self["class"] = "select"
 		self.sinkEvent("onChange")
 
 	def onAttach(self):
@@ -295,7 +296,7 @@ class ReturnSelectionAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs ):
 		super( ReturnSelectionAction, self ).__init__( translate("Select"), *args, **kwargs )
-		self["class"] = "icon activateselection"
+		self["class"] = "btn btn-activateselection"
 
 	def onClick(self, sender=None):
 		self.parent().parent().returnCurrentSelection()

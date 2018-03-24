@@ -24,7 +24,7 @@ class AddAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddAction, self ).__init__(translate("Add"), *args, **kwargs )
-		self["class"] = "icon add list"
+		self["class"] = "btn btn-add-list"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -59,7 +59,7 @@ class EditAction( html5.ext.Button ):
 
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
-		self["class"] = "icon edit"
+		self["class"] = "btn btn-edit"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -126,7 +126,7 @@ class CloneAction( html5.ext.Button ):
 
 	def __init__(self, *args, **kwargs):
 		super( CloneAction, self ).__init__( translate("Clone"), *args, **kwargs )
-		self["class"] = "icon clone"
+		self["class"] = "btn btn-clone"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -188,7 +188,7 @@ class DeleteAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__( translate("Delete"), *args, **kwargs )
-		self["class"] = "icon delete"
+		self["class"] = "btn btn-delete"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -249,7 +249,7 @@ class ListPreviewAction(html5.Span):
 		self.appendChild(self.urlCb)
 
 		btn = html5.ext.Button(translate("Preview"), callback=self.onClick)
-		btn["class"] = "icon preview"
+		btn["class"] = "btn btn-preview"
 		self.appendChild(btn)
 		self.urls = None
 
@@ -354,7 +354,7 @@ actionDelegateSelector.insert( 2, ListPreviewAction.isSuitableFor, ListPreviewAc
 class ListPreviewInlineAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
 		super( ListPreviewInlineAction, self ).__init__( translate("Preview"), *args, **kwargs )
-		self["class"] = "icon preview"
+		self["class"] = "btn btn-preview"
 		self["disabled"] = True
 		self.urls = None
 
@@ -407,7 +407,7 @@ actionDelegateSelector.insert( 1, ListPreviewInlineAction.isSuitableFor, ListPre
 class CloseAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
 		super( CloseAction, self ).__init__( translate("Close"), *args, **kwargs )
-		self["class"] = "icon close"
+		self["class"] = "btn btn-close"
 
 	def onClick(self, sender=None):
 		conf["mainWindow"].removeWidget( self.parent().parent() )
@@ -421,7 +421,7 @@ actionDelegateSelector.insert( 1, CloseAction.isSuitableFor, CloseAction )
 class ActivateSelectionAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
 		super( ActivateSelectionAction, self ).__init__( translate("Select"), *args, **kwargs )
-		self["class"] = "icon activateselection"
+		self["class"] = "btn btn-activateselection"
 
 	def onClick(self, sender=None):
 		self.parent().parent().activateCurrentSelection()
@@ -494,7 +494,7 @@ class SelectFieldsPopup( html5.ext.Popup ):
 		self.appendChild(self.cancelBtn)
 
 	def doApply(self, *args, **kwargs):
-		self.applyBtn["class"].append("is_loading")
+		self.applyBtn["class"].append("is-loading")
 		self.applyBtn["disabled"] = True
 
 		res = []
@@ -528,7 +528,7 @@ class SelectFieldsPopup( html5.ext.Popup ):
 class SelectFieldsAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
 		super( SelectFieldsAction, self ).__init__( translate("Select fields"), *args, **kwargs )
-		self["class"] = "icon selectfields"
+		self["class"] = "btn btn-selectfields"
 		self["disabled"] = self.isDisabled = True
 
 	def onClick(self, sender=None):
@@ -560,7 +560,7 @@ class ReloadAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
-		self["class"] = "icon reload"
+		self["class"] = "btn btn-reload"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -569,12 +569,12 @@ class ReloadAction( html5.ext.Button ):
 		return correctAction and correctHandler
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
+		self["class"].append("is-loading")
 		NetworkService.notifyChange( self.parent().parent().module )
 
 	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
+		if "is-loading" in self["class"]:
+			self["class"].remove("is-loading")
 
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
@@ -583,7 +583,7 @@ actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 class ListSelectFilterAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
 		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), *args, **kwargs )
-		self["class"] = "icon selectfilter"
+		self["class"] = "btn btn-selectfilter"
 		self.urls = None
 		self.filterSelector = None
 
@@ -630,7 +630,7 @@ class RecurrentDateAction( html5.ext.Button ):
 
 	def __init__(self, *args, **kwargs):
 		super( RecurrentDateAction, self ).__init__( translate("Recurrent Events"), *args, **kwargs )
-		self["class"] = "icon createrecurrent_small"
+		self["class"] = "btn btn-createrecurrent-small"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -686,14 +686,14 @@ actionDelegateSelector.insert( 1, RecurrentDateAction.isSuitableFor, RecurrentDa
 class CreateRecurrentAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super(CreateRecurrentAction, self ).__init__( translate("Save-Close"), *args, **kwargs )
-		self["class"] = "icon save close"
+		self["class"] = "btn btn-save-close"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
 		return actionName=="create.recurrent"
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
+		self["class"].append("is-loading")
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRecurrentAction)
@@ -715,7 +715,7 @@ actionDelegateSelector.insert(1, ExportCsvAction.isSuitableFor, ExportCsvAction)
 class SelectAllAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(SelectAllAction, self ).__init__(translate("Select all"), *args, **kwargs)
-		self["class"] = "icon selectall"
+		self["class"] = "btn btn-selectall"
 		self["disabled"] = self.isDisabled = True
 
 	@staticmethod
@@ -746,7 +746,7 @@ actionDelegateSelector.insert(1, SelectAllAction.isSuitableFor, SelectAllAction)
 class UnSelectAllAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), *args, **kwargs)
-		self["class"] = "icon unselectall"
+		self["class"] = "btn btn-unselectall"
 		self["disabled"] = self.isDisabled = True
 
 	@staticmethod
@@ -776,7 +776,7 @@ actionDelegateSelector.insert(1, UnSelectAllAction.isSuitableFor, UnSelectAllAct
 class SelectInvertAction(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(SelectInvertAction, self ).__init__(translate("Invert selection"), *args, **kwargs)
-		self["class"] = "icon selectinvert"
+		self["class"] = "btn btn-selectinvert"
 		self["disabled"] = self.isDisabled = True
 
 	@staticmethod

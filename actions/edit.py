@@ -9,76 +9,76 @@ from i18n import translate
 class SaveContinue( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( SaveContinue, self ).__init__( translate("Save-Continue"), *args, **kwargs )
-		self["class"] = "icon save continue"
+		self["class"] = "btn btn-save-continue"
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="save.continue" )
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
+		self["class"].append("is-loading")
 		self.parent().parent().doSave(closeOnSuccess=False)
 
 	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
+		if "is-loading" in self["class"]:
+			self["class"].remove("is-loading")
 
 actionDelegateSelector.insert( 1, SaveContinue.isSuitableFor, SaveContinue )
 
 class SaveSingleton(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(SaveSingleton, self).__init__(translate("Save"), *args, **kwargs)
-		self["class"] = "icon save close"
+		self["class"] = "btn btn-save-close"
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
 		return actionName == "save.singleton" and module != "_tasks"
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
+		self["class"].append("is-loading")
 		self.parent().parent().doSave(closeOnSuccess=False)
 
 	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
+		if "is-loading" in self["class"]:
+			self["class"].remove("is-loading")
 
 actionDelegateSelector.insert(1, SaveSingleton.isSuitableFor, SaveSingleton)
 
 class ExecuteSingleton(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(ExecuteSingleton, self).__init__(translate("Execute"), *args, **kwargs)
-		self["class"] = "icon save close"
+		self["class"] = "btn btn-save-close"
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
 		return actionName == "save.singleton" and module == "_tasks"
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
+		self["class"].append("is-loading")
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
+		if "is-loading" in self["class"]:
+			self["class"].remove("is-loading")
 
 actionDelegateSelector.insert(1, ExecuteSingleton.isSuitableFor, ExecuteSingleton)
 
 class SaveClose( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( SaveClose, self ).__init__( translate("Save-Close"), *args, **kwargs )
-		self["class"] = "icon save close"
+		self["class"] = "btn btn-save-close"
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="save.close" )
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
+		self["class"].append("is-loading")
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
+		if "is-loading" in self["class"]:
+			self["class"].remove("is-loading")
 		pass
 
 actionDelegateSelector.insert( 1, SaveClose.isSuitableFor, SaveClose )

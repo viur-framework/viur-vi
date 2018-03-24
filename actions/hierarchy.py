@@ -12,7 +12,7 @@ class AddAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddAction, self ).__init__( translate("Add"), *args, **kwargs )
-		self["class"] = "icon add"
+		self["class"] = "btn btn-add"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -48,7 +48,7 @@ class EditAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
-		self["class"] = "icon edit"
+		self["class"] = "btn btn-edit"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -115,7 +115,7 @@ class CloneAction( html5.ext.Button ):
 
 	def __init__(self, *args, **kwargs):
 		super( CloneAction, self ).__init__( translate("Clone"), *args, **kwargs )
-		self["class"] = "icon clone"
+		self["class"] = "btn btn-clone"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -177,7 +177,7 @@ class DeleteAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__( translate("Delete"), *args, **kwargs )
-		self["class"] = "icon delete"
+		self["class"] = "btn btn-delete"
 		self["disabled"]= True
 		self.isDisabled = True
 
@@ -237,7 +237,7 @@ class ReloadAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
-		self["class"] = "icon reload"
+		self["class"] = "btn btn-reload"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -246,12 +246,12 @@ class ReloadAction( html5.ext.Button ):
 		return correctAction and correctHandler
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
+		self["class"].append("is-loading")
 		NetworkService.notifyChange( self.parent().parent().module )
 
 	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
+		if "is-loading" in self["class"]:
+			self["class"].remove("is-loading")
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
