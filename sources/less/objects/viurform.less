@@ -1,0 +1,658 @@
+@charset "UTF-8";
+/* ViURFORM */
+
+// Prefixes and objects:
+// .vi-
+// .viurForm
+
+/*
+
+#FIXME: Implement new viur forms!
+
+.viurForm {
+  color: #343434;
+  overflow: hidden;
+  width: 100%;
+}
+
+.vi-set {
+  width: 100%;
+  overflow: hidden;
+  color: #333;
+  border: 0;
+  padding: 0;
+  transition: all 1s ease;
+  margin: 0;
+  margin-top: 10px;
+}
+
+.vi-legend {
+  width: 100%;
+  position: relative;
+}
+
+.vi-legendBtn {
+  padding: 0 0 0 15px;
+  line-height: 40px;
+  display: block;
+  color: #555;
+  text-decoration: none;
+  background-color: #eee;
+  font-weight: 700;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  width:100%;
+}
+
+.vi-legendPlus {
+  display: inline-block;
+  float: right;
+  color: #343434;
+  width: 40px;
+  text-align: center;
+  font-weight: bold;
+  transition: all 1s ease;
+  font-weight: 900;
+  font-size: 1.8em;
+  .vi-set.is-active & {
+    transform: rotate(45deg);
+  }
+}
+
+.vi-section {
+  overflow: hidden;
+  max-height: 0px;
+  transition: max-height 1s ease;
+  .vi-set.is-active & {
+    max-height: 9999px;
+  }
+}
+
+.vi-bone {
+  display: flex;
+}
+
+.vi-label {
+  min-width: 25%;
+  align-self: flex-start;
+  border-right-width: 0;
+}
+
+.vi-boneTranslator {
+  flex: 1;
+  display: flex;
+}
+
+.vi-boneEditor {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+}
+
+.vi-selection {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.vi-relation {
+  display: flex;
+  flex: 1;
+}
+
+.vi-file {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+}
+
+.vi-textarea {
+  flex: 1
+}
+*/
+
+/* #vi_forms
+================================================== */
+
+fieldset.active{
+  height: inherit;
+}
+fieldset.active section{
+  display: block;
+}
+fieldset.inactive{
+  height: 40px;
+}
+fieldset.inactive section{
+  display: none;
+}
+
+/*Define Accordion box*/
+form {
+  color: #474747;
+  overflow: hidden;
+  width: 100%;
+}
+form fieldset {
+  width: 100%;
+  float: left;
+  overflow: hidden;
+  color: #333;
+  border: 0;
+  padding: 0;
+}
+form fieldset legend {
+  min-width: 580px;
+  width: 100%;
+  position: relative;
+}
+form fieldset legend a,
+legend a:visited {
+  padding: 8px 15px;
+  display: block;
+  font-weight: normal;
+  color: #555;
+  text-decoration: none;
+  background: #ddd;
+  border: 1px solid #bbb;
+}
+legend a:hover {
+  color: #666;
+  background: #ccc;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+form fieldset.is_incomplete:target legend a,
+form fieldset.is_incomplete legend a {
+  background-color: #1495de;
+  border-color: #073866;
+  color: #fff;
+}
+
+form fieldset.is_incomplete legend a:before {
+  background-image: url(icons/vi_actions_sprite_white.svg);
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  position: relative;
+  float: left;
+  margin-top: 1px;
+  margin-left: -4px;
+  margin-right: 5px;
+  background-position: -64px 0px;
+}
+
+/*General Accordion****************************************************************************/
+/*Set style of open slide*/
+form fieldset:target legend a {
+  color: #333;
+  background: #ffffff;
+}
+form fieldset legend a:before {
+  background-image: url(icons/vi_actions_sprite.svg);
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  position: relative;
+  float: left;
+  margin-top: 3px;
+  margin-left: 4px;
+  margin-right: 7px;
+  background-position: 0px -64px;
+}
+
+/*form fieldset.default legend a:before,*/
+form fieldset.active legend a:before,
+form fieldset:target legend a:before {
+  background-position: -16px -64px;
+}
+
+form fieldset.is_incomplete section,
+form fieldset:target section
+/*form fieldset.default section*/ {
+  display: block;
+}
+/*set style of closed slide*/
+form fieldset section,
+/*form fieldset:target ~ .default section*/ {
+  display: none;
+  border: 1px solid #eee;
+  padding: 3% 3% 5%;
+  background: #fcfcfc;
+  overflow: hidden;
+}
+/*Vertical Accordion *************************************************************************/
+form fieldset {
+  height: 40px;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  -o-transition: all 0.2s ease-out;
+  -ms-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+/*Set height of the slide*/
+form fieldset.is_incomplete,
+form fieldset:target,
+/*form fieldset.default*/ {
+  /*min-height: 150px;*/
+  height: auto;
+  width: 100%;
+}
+form fieldset section > div {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  /*border-bottom:1px dotted #ccc;*/
+  overflow: hidden;
+  width: 100%;
+  float: right;
+}
+.selectioncontainer .entrydescription,
+form label {
+  width: 220px;
+  float: left;
+  text-align: right;
+  padding: 4px 10px 5px;
+  min-height: 16px;
+  border: 1px dotted #ddd;
+  border-right-width: 0;
+  background: #f9f9f9;
+  overflow: hidden;
+  line-height: 1.4em;
+  font-size: 0.8em;
+}
+form label.text {
+  border-bottom: 0;
+  border-right-width: 1px;
+}
+form label.selectone {
+  border-right-width: 1px;
+}
+form label.is_required {
+  border-style: solid;
+  border-left-color: @mainColor;
+  border-left-width: 2px;
+  background: #fff;
+}
+form label.is_invalid {
+  background-color: #1495de;
+  border-color: #073866;
+  color: #fff;
+}
+form label.is_invalid:before {
+  background-image: url(icons/vi_actions_sprite_white.svg);
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  position: relative;
+  float: left;
+  margin-top: 1px;
+  margin-left: -4px;
+  margin-right: 5px;
+  background-position: -64px 0px;
+}
+form label.is_valid {
+  background-color: #469b41;
+  border-color: #288342;
+  color: #fff;
+}
+form label.is_valid:before {
+  background-image: url(icons/vi_actions_sprite_white.svg);
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  position: relative;
+  float: left;
+  margin-top: 1px;
+  margin-left: -4px;
+  margin-right: 5px;
+  background-position: 0px -16px;
+}
+
+.file .fileentry img {
+float: left;
+margin-right: 0px;
+height: 26px;
+border: 1px solid #ccc;
+border-right-width: 0;
+box-shadow: none;
+}
+
+input,
+textarea,
+select,
+input[type="text"],
+input[type="email"],
+input[type="date"],
+input[type="url"],
+input[type="password"],
+.text .preview,
+[contenteditable] {
+  display: inline-block;
+  font-size: 0.9em;
+  width: 50%;
+  margin-right: 15px;
+  padding: 4px 1.3% 6px;
+  height: 16px;
+  border: 1px solid #ccc;
+  border-bottom:1px solid @mainColor;
+  box-shadow: inset 0px 0px 3px #eee;
+  font-weight: 300;
+  border-radius: 0px;
+  background: #eaeaea;
+  /* Old browsers */
+
+  background: -moz-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
+  /* FF3.6+ */
+
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eaeaea), color-stop(100%, #fafafa));
+  /* Chrome,Safari4+ */
+
+  background: -webkit-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
+  /* Chrome10+,Safari5.1+ */
+
+  background: -o-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
+  /* Opera 11.10+ */
+
+  background: -ms-linear-gradient(top, #eaeaea 0%, #fafafa 100%);
+  /* IE10+ */
+
+  background: linear-gradient(to bottom, #eaeaea 0%, #fafafa 100%);
+  /* W3C */
+
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eaeaea', endColorstr='#fafafa', GradientType=0);
+  /* IE6-9 */
+
+}
+
+.compoundfilter select
+{
+  min-width: auto;
+
+}
+
+.bone.text .languagebuttons {
+    float:left;
+}
+
+.languagebuttons button.is_active, .languagebuttons button.is_filled.is_active {
+    background: linear-gradient(to bottom, #666 0%, #aaa 100%);
+    box-shadow:inset 1px 1px 2px rgba(0,0,0,0.2);
+    border-color:#666;
+    color:#fff !important;
+}
+
+.languagebuttons button.is_filled {
+    color: #fff;
+    background: transparent linear-gradient(to bottom, #298342 0%, #479C42 100%) repeat scroll 0% 0%;
+}
+
+/* #vi_input_bones
+================================================== */
+
+input[type="date"] {
+  width: 162px;
+}
+input[type="radio"],
+input[type="checkbox"] {
+  margin-right: 15px;
+}
+
+.bone.selectmulti div label,
+.bone.accessselectmulti div label {
+  border: 1px solid #ccc;
+  border-top-width:0;
+  clear:left;
+  margin-left:241px;
+  width:320px;
+}
+
+.bone.selectmulti div  label:first-of-type
+{
+  clear:none;
+  margin-left:0;
+  border: 1px solid #ccc;
+}
+
+.bone.selectmulti div label:nth-of-type(even)
+{
+  background-color:#eee;
+}
+
+.bone.selectmulti div label input
+{
+  float:right;
+  width:15px;
+  margin-right:0;
+}
+
+.bone.selectmulti div label span
+{
+  display:block;
+  float:left;
+}
+
+.bone.selectmulti.access .access-state
+{
+  background-image: url('icons/user-rights_sprite.svg');
+  background-repeat: no-repeat;
+  padding: 0;
+  margin: 2px;
+  width: 26px;
+  height: 26px;
+  border: 1px solid @failColor;
+  background-color: #ccc;
+  display: inline-block;
+  transition: all .3s ease;
+  -webkit-transition: all .3s ease;
+  -moz-transition: all .3s ease;
+  -ms-transition: all .3s ease;
+  transition: all .3s ease;
+  cursor: pointer;
+}
+
+.bone.selectmulti.access .access-state.view {
+  background-position: 0px -26px;
+}
+
+.bone.selectmulti.access .access-state.edit {
+  background-position: -26px -26px;
+}
+
+.bone.selectmulti.access .access-state.delete {
+  background-position: -52px -26px;
+}
+
+.bone.selectmulti.access .access-state.add {
+  background-position: -78px -26px;
+}
+
+.bone.selectmulti.access .access-state.view.active,
+.bone.selectmulti.access .access-state.view.disabled {
+  background-position: 0px 0px;
+}
+
+.bone.selectmulti.access .access-state.edit.active,
+.bone.selectmulti.access .access-state.edit.disabled {
+  background-position: -26px 0px;
+}
+
+.bone.selectmulti.access .access-state.delete.active,
+.bone.selectmulti.access .access-state.delete.disabled {
+  background-position: -52px 0px;
+}
+
+.bone.selectmulti.access .access-state.add.active,
+.bone.selectmulti.access .access-state.add.disabled {
+  background-position: -78px 0px;
+}
+
+.bone.selectmulti.access .access-state.active {
+  border-color: @successColor;
+  background-color: lighten(@successColor, 10%);
+}
+
+.bone.selectmulti.access .access-state:hover,
+.bone.selectmulti.access .access-state.active:hover {
+  border-color:#555;
+  background-color: #aaa;
+}
+
+.bone.selectmulti.access .access-state.disabled,
+.bone.selectmulti.access .access-state.disabled:hover {
+  border-color: #999;
+  background-color: #ccc;
+  pointer:not-allowed;
+}
+
+input[type="password"]:nth-of-type(even) {
+  margin-top:12px;
+}
+
+.password div label {
+  margin-top: 40px;
+  margin-left:-240px;
+}
+
+textarea, .text .preview {
+  width: 97.2%;
+  height: 120px;
+  line-height: 1.5em;
+}
+
+.text .preview {
+  overflow:hidden;
+  overflow-y:scroll;
+  border-bottom: 1px solid #777;
+  background: #f1f1f1;
+  text-overflow: ellipsis;
+  max-width: 1300px;
+}
+
+select {
+  width: auto;
+  min-width: 325px;
+  height: 28px;
+  /* margin-left: 15px; */
+  border-radius: 0;
+  border: 1px solid #ccc;
+  font-size: .75em;
+  font-weight: 100;
+  color: #444;
+}
+.selectioncontainer,
+.tagcontainer {
+  display: inline-block;
+}
+
+.selectioncontainer{
+  width: calc(53% - 2px);
+}
+
+.tagcontainer {min-width: 50%;}
+
+.selectioncontainer button,
+.tagcontainer button {
+  margin-right: 15px;
+}
+
+.tagcontainer button {margin-bottom: 5px;}
+
+.selectioncontainer .entrydescription,
+.selectioncontainer label {
+  border: 1px solid #ccc;
+  border-right-width: 0;
+  width: auto;
+  min-width: 220px;
+  max-width: 80%;
+  height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.selectioncontainer .entrydescription,
+.selectioncontainer label,
+.selectioncontainer button {
+  margin-bottom: 5px;
+}
+input:focus,
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=url]:focus,
+input[type=password]:focus,
+textarea:focus {
+  outline: 0;
+  border-color: @mainColor;
+}
+
+span.tag {
+  display:block;
+}
+.tag input[type=text] {
+  margin-right:0;
+  border-right-width: 0;
+  margin-bottom: 5px;
+  width: 220px;
+}
+
+form .treeitem input:focus,
+form .relational input:focus {
+  border-color: #939393;
+}
+form .treeitem:focus button:after,
+form .relational:focus button:after {
+  background-image: url(icons/vi_actions_sprite.svg);
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  position: relative;
+  float: right;
+  margin-top: 3px;
+  margin-left: 4px;
+  margin-right: 7px;
+  background-position: 0px -64px;
+}
+@media (max-width: 600px) {
+  form > div {
+    margin: 0 0 15px 0;
+  }
+  form > div > label,
+  legend {
+    width: 100%;
+    float: none;
+    margin: 0 0 5px 0;
+  }
+  form > div > div,
+  form > div > fieldset > div {
+    width: 100%;
+    float: none;
+  }
+  input[type=text],
+  input[type=email],
+  input[type=url],
+  input[type=password],
+  textarea,
+  select {
+    width: 100%;
+  }
+}
+
+/* #States
+================================================== */
+
+
+input:disabled,
+input[type="submit"]:disabled,
+button:disabled,
+input[type="text"]:disabled,
+select:disabled,
+textarea:disabled {
+  color: #222;
+  background: #e0e0e0;
+  border: 1px solid #ccc;
+}

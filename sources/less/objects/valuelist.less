@@ -1,0 +1,38 @@
+﻿@charset "UTF-8";
+
+/* Value List */
+
+.value {
+  &-list {
+    width: 100%;
+  }
+  &-item {
+    border-bottom: 1px dotted #ddd;
+    padding: 5px;
+    background: #f0f0f1;
+    color: #333;
+    display:flex;
+    &:nth-of-type(even) {
+      background: #f6f6f7;
+    }
+    &:hover {
+      background: @mainColor;
+      color: #fff;
+    }
+    &.is-active {
+      background: #008089;
+      color: #FFF
+    }
+  }
+  &-identifier {
+    flex-basis: 50%;
+    flex-grow: .2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 20px;
+  }
+  &-data {
+    font-weight: 600;
+  }
+}

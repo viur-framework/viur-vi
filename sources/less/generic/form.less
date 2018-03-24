@@ -1,0 +1,608 @@
+@charset "UTF-8";
+/* FORM PARTS */
+
+// Prefixes and objects:
+// .basicInput()
+// .input
+// .label
+// .select
+// .formGroup
+// .textarea
+// .switch
+// .radio
+// .check
+// .optionGroup
+// .inputGroup
+
+// Adjustments:
+
+// Padding:
+@inputPadding: @defaultPadding;
+@inputMargin: @defaultMargin;
+
+// Colors and shadows:
+@inputColor: #fff;
+@inputValidColor: @successColor;
+@inputDangerColor: @failColor;
+@inputHintColor: @hintColor;
+@inputRequiredColor: @mainColor;
+
+@inputShadow: 1;
+@inputShadowHover: 2;
+@inputShadowColor: @defaultShadowColor;
+
+// Height and width of all inputs and buttons.
+// This helps to align basic form elements.
+.basicInput(@padding:@defaultPadding, @margin:@defaultMargin, @borderRadius:@defaultBorderRadius) {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  display: inline-flex;
+  position: relative;
+  border-radius: @borderRadius;
+  padding: @padding @padding*3.75;
+  margin: @margin 0;
+  vertical-align: middle;
+  font-size: 1em;
+  font-weight: 200;
+  line-height:1.5;
+  .mq-print({
+    border:0;
+  });
+}
+
+// Arrows (up and down) in base64:
+.arrowsUpDownBg() {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 137.14286 50" height="50" width="80"><path d="M0 16.429l30-34.286 30 34.286H0zm0 17.142l30 34.286 30-34.286H0z"/></svg>');
+}
+
+/* Input */
+.input {
+  .basicInput;
+  background-color: @inputColor;
+  border: @defaultBorderWidth solid darken(@inputColor,10%);
+  color:contrast(@inputColor, #222222, #f4f4f4);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex:1;
+  max-width: 100%;
+  transition: all .3s ease;
+  //background-position: 150% center;
+  //background-size: 15px;
+  //background-repeat: no-repeat;
+  .inputGroup.is-invalid &,
+  &.is-invalid,
+  &[aria-invalid="true"],
+  &:invalid:not(:placeholder-shown) {
+    color: darken(@inputDangerColor, 15%);
+    border-color: @inputDangerColor;
+    background-color: lighten(@inputDangerColor, 40%);
+    //background-image: url(../icons/cross.svg);
+    //background-position: 95% center;
+    &:focus {
+      color: contrast(@inputColor, #222222, #f4f4f4);
+      background-color: @inputColor;
+      border-color: darken(@inputColor, 10%);
+      //background-position: 150% center;
+    }
+  }
+  .inputGroup.is-recommended &,
+  &.is-recommended {
+    color: darken(@inputHintColor, 15%);
+    border-color: @inputHintColor;
+    background-color: lighten(@inputHintColor, 40%);
+    //background-image: url(../icons/pen.svg);
+    //background-position: 95% center;
+    &:focus {
+      color: contrast(@inputColor, #222222, #f4f4f4);
+      background-color: @inputColor;
+      border-color: darken(@inputColor, 10%);
+      //background-position: 150% center;
+    }
+  }
+  .inputGroup.is-valid  &,
+  &.is-valid,
+  &:valid:not(:placeholder-shown):not([type="password"]) {
+    color: darken(@inputValidColor, 15%);
+    border-color: @inputValidColor;
+    background-color: lighten(@inputValidColor, 40%);
+    //background-image: url(../icons/check.svg);
+    //background-position: 95% center;
+    &:focus {
+      color: contrast(@inputColor, #222222, #f4f4f4);
+      background-color: @inputColor;
+      border-color: darken(@inputColor, 10%);
+      //background-position: 150% center;
+    }
+  }
+  &.is-readonly,
+  &:read-only,
+  &[aria-readonly="true"]{
+    color: contrast(@inputColor, #222222, #f4f4f4);
+    cursor: default;
+    .boxShadow(0);
+    border-color: darken(@inputColor,15%);
+    border-style: dashed;
+    border-bottom-style: solid;
+    background-color: darken(@inputColor, 5%);
+  }
+  &.is-disabled,
+  &:disabled,
+  &[aria-disabled="true"] {
+    color: #aaaaaa;
+    cursor: not-allowed;
+    .boxShadow(0);
+    border-color: darken(@inputColor,15%);
+    border-style: dashed;
+    background-color: darken(@inputColor, 5%);
+    //background-image:url('../icons/not-allowed.svg');
+    //background-position: 95% center;
+  }
+}
+
+// .is-secure mit Schloßsymbol?
+
+// placeholder text color
+.input::-webkit-input-placeholder {color:lighten(contrast(@inputColor, #222222, #f4f4f4), 50%); opacity: 1;}
+.input:-moz-placeholder {color:lighten(contrast(@inputColor, #222222, #f4f4f4), 50%); opacity: 1;}
+.input::-moz-placeholder {color:lighten(contrast(@inputColor, #222222, #f4f4f4), 50%); opacity: 1;}
+.input:-ms-input-placeholder {color:lighten(contrast(@inputColor, #222222, #f4f4f4), 50%); opacity: 1;}
+
+
+.input-vContrast {
+  background-color: darken(@inputColor,5%);
+  border: @defaultBorderWidth solid darken(@inputColor,15%);
+  color:contrast(darken(@inputColor,5%), #000000, #ffffff);
+}
+
+.input-vSmall {
+  font-size: .8em;
+  font-weight: 400;
+}
+
+.input-vLarge {
+  font-size: 1.25em;
+}
+
+/* Label */
+.label {
+  .basicInput;
+  align-self: flex-start;
+  white-space: nowrap;
+  background-color: darken(@inputColor,2%);
+  border: @defaultBorderWidth solid darken(@inputColor,12%);
+  color:contrast(darken(@inputColor,2%), #000000, #ffffff);
+  min-width: 190px;
+  .inputGroup.is-required &,
+  &.is-required {
+    border-left: @defaultBorderWidth+1px solid @inputRequiredColor;
+    color: @inputRequiredColor;
+    font-weight: 600;
+  }
+  .inputGroup.is-required &:after,
+  &.is-required:after {
+    content:'\00a0*';
+  }
+  .inputGroup.is-invalid &,
+  &.is-invalid {
+    color: darken(@inputDangerColor, 25%);
+    border-color: @inputDangerColor;
+    background-color: lighten(@inputDangerColor, 20%);
+  }
+  .inputGroup.is-recommended &,
+  &.is-recommended {
+    color: darken(@inputHintColor, 25%);
+    border-color: @inputHintColor;
+    background-color: lighten(@inputHintColor, 20%);
+  }
+  .inputGroup.is-valid  &,
+  &.is-valid {
+    color: darken(@inputValidColor, 25%);
+    border-color: @inputValidColor;
+    background-color: lighten(@inputValidColor, 20%);
+  }
+  &.is-disabled,
+  &:disabled {
+    color:#777777;
+    cursor: not-allowed;
+    .boxShadow(0);
+    border: @defaultBorderWidth dashed darken(@inputColor,20%);
+    background-color: darken(@inputColor, 5%);
+  }
+  .icon {margin: 0 .25em 0 -.1em;}
+}
+
+.label-vSmall {
+  font-size: .8em;
+  font-weight: 400;
+  min-width: 90px;
+}
+
+.label-vBlock {
+  width: 100%;
+  margin: 0;
+}
+
+/* Dropdown */
+.select {
+  .basicInput;
+  align-self: flex-start;
+  max-width: 100%;
+  min-width: 0;
+  flex: 1;
+  padding-right: 38px;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  .arrowsUpDownBg(); // arrows (up and down) in svg
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: right center;
+  transition: all .3s ease;
+  &:hover {
+    .boxShadow(@inputShadowHover, @inputShadowColor);
+  }
+  &.is-disabled,
+  &:disabled {
+    color:#777777;
+    cursor: not-allowed;
+    .boxShadow(0);
+    border: @defaultBorderWidth dashed darken(@inputColor,20%);
+    background-color: darken(@inputColor, 5%);
+  }
+  .inputGroup.is-valid  &,
+  &.is-valid {
+    color: darken(@inputValidColor, 15%);
+    border-color: @inputValidColor;
+    background-color: lighten(@inputValidColor, 40%);
+    &:focus {
+      color: contrast(@inputColor, #222222, #f4f4f4);
+      background-color: @inputColor;
+      border-color: darken(@inputColor, 10%);
+    }
+  }
+}
+
+.select-vSmall {
+  font-size: .8em;
+  font-weight: 400;
+  background-size: 10px;
+}
+
+/* Text area */
+.textarea {
+  resize: none;
+  margin: @inputMargin 0;
+  padding: @inputPadding @inputPadding*3.75;
+  width: 250px;
+  height: 180px;
+  background-color: @inputColor;
+  border: 1px solid darken(@inputColor,10%);
+  color:contrast(@inputColor, #222222, #f4f4f4);
+  transition: all .3s ease;
+  background-position: 150% center;
+  background-size: 15px;
+  background-repeat: no-repeat;
+  text-align: left;
+}
+
+.textarea-vBlock {
+  width:100%;
+  margin: 0;
+}
+
+/* Switch */
+// A simple, yet elegant, boolean switch.
+.switch {
+  .basicInput;
+  background-color: darken(@inputColor, 2%);
+  border: 1px solid darken(@inputColor, 12%);
+  color: contrast(darken(@inputColor, 2%), #000000, #ffffff);
+}
+
+.switch-input {
+  display: none;
+  &:checked + .switch-label {
+    background: lighten(@inputValidColor, 20%);
+  }
+  &:checked + .switch-label:after {
+    left: 50%;
+  }
+}
+
+.switch-label {
+  background: darken(@inputColor, 10%);
+  border-radius: @defaultBorderRadius;
+  padding: 2px;
+  transition: all .4s ease;
+  outline: 0;
+  display: block;
+  width: 3em;
+  height: 1.5em;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  &:after {
+    left: 0;
+    position: relative;
+    display: block;
+    content: "";
+    width: 50%;
+    height: 100%;
+    background: #fff;
+    transition: all .2s ease;
+    .boxShadow(@inputShadow, @inputShadowColor);
+  }
+}
+
+/* Radio button */
+.radio {
+  margin: @inputMargin 0;
+  vertical-align: middle;
+  display: inline-block;
+  background-color: darken(@inputColor, 2%);
+  border: 1px solid darken(@inputColor, 12%);
+  border-radius: @defaultBorderRadius;
+  color: contrast(darken(@inputColor, 2%), #000000, #ffffff);
+}
+.radio-input {
+  opacity: 0;
+  position: absolute;
+}
+.radio-label {
+  position: relative;
+  display: block;
+  outline: 0;
+  cursor: pointer;
+  &:before {
+    content:'';
+    background: #fff;
+    border: 2px solid darken(@inputColor, 10%);;
+    display: inline-block;
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
+    margin-top:-2px;
+    text-align: center;
+    border-radius: 50%;
+    transition: all .4s ease;
+    box-shadow: inset 0 0 0 2px #fff;
+  }
+  &:not(:empty){
+    padding: @inputPadding @inputPadding*3.75;
+    &:before {
+      margin-right: 10px;
+    }
+    &:hover {
+      background-color: @inputColor;
+    }
+  }
+}
+
+.radio-input:checked + .radio-label:before {
+  background: lighten(@inputValidColor, 20%);
+  border: 2px solid lighten(@inputValidColor, 10%);
+}
+
+/* Checkbox */
+.check {
+  margin: @inputMargin 0;
+  vertical-align: middle;
+  display: inline-block;
+  background-color: darken(@inputColor, 2%);
+  border: @defaultBorderWidth solid darken(@inputColor, 12%);
+  border-radius: @defaultBorderRadius;
+  color: contrast(darken(@inputColor, 2%), #000000, #ffffff);
+}
+.check-input {
+  opacity: 0;
+  position: absolute;
+}
+.check-label {
+  position: relative;
+  display: block;
+  outline: 0;
+  cursor: pointer;
+  &:before {
+    content:'';
+    background: #fff;
+    border: 2px solid darken(@inputColor, 10%);;
+    display: inline-block;
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
+    margin-top:-2px;
+    text-align: center;
+    transition: all .4s ease;
+    box-shadow: inset 0 0 0 2px #fff;
+  }
+  &:not(:empty){
+    padding: @inputPadding @inputPadding*3.75;
+    &:before {
+      margin-right: 10px;
+    }
+    &:hover {
+      background-color: @inputColor;
+    }
+  }
+}
+.check-input:checked + .check-label:before {
+  background: lighten(@inputValidColor, 20%);
+  border: 2px solid lighten(@inputValidColor, 10%);
+}
+
+/* Option group */
+// Group radio buttons or checkboxes together for multi-selection lists.
+.optionGroup {
+  display: flex;
+  flex-direction: column;
+  & .radio,
+  & .check {
+    width: 100%;
+    margin: 0;
+    position: relative;
+    border-width: 0 @defaultBorderWidth;
+    font-weight: 200;
+    font-size: .75em;
+    &:first-child {
+      border-width: @defaultBorderWidth;
+      border-bottom-width: 0;
+    }
+    &:last-child {
+      border-width: @defaultBorderWidth;
+      border-top-width: 0;
+    }
+    .mq-min(@breakSmall, {
+      width:auto;
+    });
+    & .radio-label,
+    & .check-label {
+      padding: @inputPadding*1.5 @inputPadding*3.75;
+      padding-right: 1.75em;
+    }
+  }
+}
+
+.optionGroup-vSelectionList {
+  max-height: 150px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  .radio,
+  .check {flex:1 0 auto;}
+  .radio-label,
+  .check-label {
+    white-space: nowrap;
+    padding-right: 30px;
+  }
+  .radio:not(:last-child) .radio-label,
+  .check:not(:last-child) .check-label {
+    border-bottom: @defaultBorderWidth solid darken(@inputColor, 20%);
+  }
+  .radio-label:before,
+  .check-label:before {content:none;}
+  .radio-input:checked + .radio-label,
+  .check-input:checked + .check-label {
+    background: lighten(@inputValidColor, 20%);
+    border-bottom: @defaultBorderWidth solid lighten(@inputValidColor, 10%);
+    color: #fff;
+    &:hover {
+      background-color: lighten(@inputValidColor, 10%);;
+    }
+  }
+}
+
+.input,
+.label + .input-vBlock,
+.label + .textarea-vBlock,
+.select,
+.switch,
+.radio {
+  .mq-max(@breakSmall, {
+    width: 100%;
+    margin: 0;
+    margin-bottom: 5px;
+  });
+}
+
+/* Input group */
+// Group buttons, labels and inputs together.
+.inputGroup {
+  display: flex;
+  flex-direction:column;
+  margin-bottom: @bottomSpace;
+  & .select,
+  & .input,
+  & .btn,
+  & .switch,
+  & .textarea,
+  & > .radio,
+  & > .check,
+  & .optionGroup {
+    width: 100%;
+    margin: 0;
+    position: relative;
+    .boxShadow(0);
+  }
+  & .btn {
+    .mq-max(@breakSmall, {margin-top: -1px;});
+    .mq-min(@breakSmall, {
+      margin-left: -1px;
+      max-width: 25vw;
+    });
+  }
+  & .label {
+    border-width: 0 @defaultBorderWidth;
+    width: 100%;
+    margin: 0;
+    &:first-child {
+      border-width: @defaultBorderWidth;
+      border-bottom-width: 0;
+    }
+    &:last-child {
+      border-width: @defaultBorderWidth;
+      border-top-width: 0;
+    }
+  }
+  .mq-min(@breakSmall, {
+    &:not(.inputGroup-vBlock) {
+      flex-flow: row;
+      & .label {
+        width: auto;
+        margin: @inputMargin 0;
+        float: left;
+        max-width: 25vw;
+        .boxShadow(@inputShadow,@inputShadowColor);
+        &:not(:first-child):not(:last-child) {
+          border-radius: 0;
+        }
+        &:first-child:not(:last-child) {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+        &:last-child:not(:first-child) {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        &:first-child {
+          border-width: @defaultBorderWidth;
+          border-right-width:0;
+        }
+        &:last-child {
+          border-width: @defaultBorderWidth;
+          border-left-width: 0;
+        }
+      }
+      & .select,
+      & .input,
+      & .btn,
+      & .switch,
+      & .textarea,
+      & > .radio,
+      & > .check,
+      & .optionGroup {
+        width: auto;
+        margin: @inputMargin 0;
+        .boxShadow(@inputShadow,@inputShadowColor);
+        &:not(:first-child):not(:last-child) {
+          border-radius: 0;
+        }
+        &:first-child:not(:last-child) {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+        &:last-child:not(:first-child) {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+      }
+    };
+  });
+  .mq-print({
+    display:block;
+  });
+}
+
+/* Form group */
+// Use formGroups to separate different inputs or inputGroups.
+.formGroup {
+  margin-bottom: @bottomSpace;
+}

@@ -1,0 +1,182 @@
+@charset "UTF-8";
+/* Vi CSS 2018 */
+
+// This is the master file.
+// It imports all less files in their intended order for easy mass-inclusion.
+// Should you need specific files, you can easily customize the imports.
+
+@import "ignite/ignite"; // Resets, basics, tools and generic elements.
+
+// Fundamental parts: positioning, type and utilities
+@import "foundation/appconf"; // variables and constants.
+@import "foundation/appwrap"; // page wrappers.
+
+// Initialize generic elements.
+@import "generic/button";
+
+// Menus
+@import "objects/topbar";
+@import "objects/modullist";
+@import "objects/actionbar";
+
+// Objects
+@import "objects/splash";
+@import "objects/viurform";
+@import "objects/viurtable";
+@import "objects/sidebarwidgets";
+
+@import "objects/progress";
+@import "objects/alert";
+@import "objects/tooltip";
+
+@import "objects/textedit";
+
+@import "objects/tree";
+@import "objects/hierarchy";
+@import "objects/messenger";
+
+@import "objects/login";
+
+// Bones
+@import "bones/relational";
+
+// Old stuff:
+.vi-screen.is_loading:after {
+    background-image: url(icons/is_loading32.gif);
+    background-position: center 35%;
+    background-repeat: no-repeat;
+    background-color:rgba(255,255,255,0.6);
+    position: absolute;
+    z-index:1000;
+    content:' ';
+    width:100%;
+    height:100%;
+    display:block;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+}
+
+/* #vi_tooltip
+================================================== */
+
+.emptynotification {
+  width:20%;
+  margin:0 35% 55px;
+  text-align: center;
+  padding:10px 5% 10px;
+  border:1px solid #ccc;
+  background:#eee;
+  border-radius: 3px;
+  color:#888;
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.1)
+}
+
+/* #Custom Styles
+================================================== */
+
+@import (optional) "customize/custom";
+
+/* #Media Queries
+================================================== */
+
+  /* Smaller than 1441px (devices and browsers) */
+  @media only screen and (max-width: 1440px) {
+    .modullist h3 {
+      font-size:0.8em;
+    }
+    .has_multiple_children .vi_operator {
+      width:20%;
+    }
+    .has_multiple_children .vi_operator:nth-of-type(even) {
+      width:60%;
+    }
+    .has_multiple_children .actionbar,
+    .has_multiple_children .breadcrumb,
+    .has_multiple_children .imageeditor,
+    .has_multiple_children .linkeditor {
+      width: 20%;
+    }
+    .has_multiple_children .vi_operator:nth-of-type(even) .actionbar,
+    .has_multiple_children .vi_operator:nth-of-type(even) .breadcrumb,
+    .has_multiple_children .vi_operator:nth-of-type(even) .imageeditor,
+    .has_multiple_children .vi_operator:nth-of-type(even) .linkeditor {
+      width: 60%;
+    }
+    .has_multiple_children form label, .has_multiple_children form label.text {
+      border: 1px dotted #ddd;
+      text-align: left;
+      width: 93%;
+      padding: 4px 3% 6px;
+    }
+    .selectioncontainer label {
+      border: 1px solid #ccc;
+      width: 193px;
+    }
+    .has_multiple_children form fieldset legend {
+     min-width:0;
+    }
+    .has_multiple_children form fieldset legend a {
+      font-size:0.8em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .has_multiple_children form fieldset section > div {
+      padding-bottom:0;
+    }
+    .has_multiple_children form fieldset input:disabled, .has_multiple_children form fieldset .preview.is_disabled, .has_multiple_children form fieldset input[type="submit"]:disabled, .has_multiple_children form fieldset button:disabled, .has_multiple_children form fieldset input[type="text"]:disabled, .has_multiple_children form fieldset select:disabled, .has_multiple_children form fieldset textarea:disabled {
+      display:none;
+    }
+    .has_multiple_children form fieldset .file .fileentry label {
+      width: 154px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+      border-top-width: 0;
+      margin-bottom: 0;
+    }
+    .has_multiple_children form fieldset .file .fileentry img {
+      border-top-width: 0;
+    }
+}
+
+/* Smaller than standard 960 (devices and browsers) */
+@media only screen and (max-width: 959px) {
+ .vi_manager {width: 56px; border-right:1px solid #bbb; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; transition: all 0.3s ease;}
+ .vi_manager:hover {width:298px; border-right:1px solid #bbb;}
+ .modullist {width:298px;}
+ .modullist ul {display:none;}
+ .vi_manager:hover .modullist ul {display:block;}
+ .vi_viewer {max-width:900px;margin-left:56px;}
+  .has_multiple_children .actionbar,
+  .has_multiple_children .breadcrumb,
+  .has_multiple_children .imageeditor,
+  .has_multiple_children .linkeditor,
+  .has_multiple_children .vi_operator {width: 20%; max-width:210px;}
+  .has_multiple_children .vi_operator:nth-of-type(even) .actionbar,
+  .has_multiple_children .vi_operator:nth-of-type(even) .breadcrumb,
+  .has_multiple_children .vi_operator:nth-of-type(even) .imageeditor,
+  .has_multiple_children .vi_operator:nth-of-type(even) .linkeditor,
+  .has_multiple_children .vi_operator:nth-of-type(even) {width: 70%;max-width:750px;}
+  .vi_operator .actionbar h3 {display:none;}
+  .vi_topbar .currentmodul {display:none;}
+}
+/* Tablet Portrait size to standard 960 (devices and browsers) */
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+
+}
+/* All Mobile Sizes (devices and browser) */
+@media only screen and (max-width: 767px) {
+
+}
+/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+
+}
+/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+@media only screen and (max-width: 479px) {
+
+}

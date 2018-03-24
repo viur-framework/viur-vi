@@ -1,0 +1,23 @@
+@charset "UTF-8";
+/* MESSAGES and ALERTS */
+
+.msg {
+  .msg(@msgColor: @hintColor,
+    @msgBorderWidth: 1px,
+    @msgBorderRadius: 0);
+  display: none;
+  opacity: 0;
+  transition: opacity .5s ease;
+  &.is-active {
+    display: block;
+    opacity: 1;
+  }
+}
+
+.msg-vSuccess {
+  .colorizeMsg(@successColor);
+}
+
+.msg-vError {
+  .colorizeMsg(@failColor);
+}

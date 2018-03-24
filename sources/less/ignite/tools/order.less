@@ -1,0 +1,28 @@
+@charset "UTF-8";
+// ---------------------------------------------------------------------------------------
+//    #ORDER MIXIN
+// ---------------------------------------------------------------------------------------
+
+@orderOrder: 'header', 'content', 'footer';
+
+.order(@elementName,@elementOffset) {
+
+    .loop(@elementName, @counter) when (@counter > 0) {
+
+        .loop(@elementName, @counter - 1);
+        .pickOrder(@elementName, @counter);
+
+    }
+
+    .loop(@elementName, length(@zIndexOrder));
+
+    .pickOrder(@elementName, @counter) when (extract(@orderOrder, @counter) = @elementName) {
+
+        order: @counter * 100 + @elementOffset;
+
+    }
+
+}
+
+// Example:
+.oContent {.order('content',0);}

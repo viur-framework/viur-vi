@@ -1,0 +1,235 @@
+@charset "UTF-8";
+/* TOPBAR */
+
+// Prefixes and objects:
+// .topbar-
+
+/*
+#FIXME: Implement new top bar!
+
+.topbar {
+  display: flex;
+  min-height:50px;
+  border-bottom: 2px solid @mainColor;
+  .boxShadow(1, #000);
+  .zIndex('nav',50);
+
+  & .item:not(:first-of-type) .item-content {
+    margin-left: 6.5px;
+  }
+
+  &-left {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  &-right {
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+
+  &-logo {
+    background: @mainColor;
+    color:#fff;
+    width: ~"calc(2.5rem + 3.75px)";
+    height: 100%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    & svg {
+      width:75%;
+      height: 75%;
+      fill:currentcolor;
+    }
+  }
+
+  &-title {
+    font-weight: 600;
+    color: @mainColor;
+  }
+}
+
+*/
+
+
+/* #vi_topbar
+================================================== */
+.vi_topbar {
+  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.2);
+  height: 45px;
+  width: 100%;
+  position: fixed;
+  z-index: 10;
+  border-bottom:1px solid @mainColor;
+  background-color: #eee;
+  background-color: rgba(238, 238, 238, 0.8);
+  background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.8)), to(rgba(255, 255, 255, 0.2)));
+  /* webkit */
+
+  background-image: -moz-linear-gradient(top center, rgba(238, 238, 238, 0.8) 20%, rgba(255, 255, 255, 0.2) 95%);
+  /* mozilla - FF3.6+ */
+
+}
+.vi_topbar h1,
+.vi_topbar h2,
+.vi_topbar span {
+  /*line-height: 1.9em;*/
+  position: relative;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+  letter-spacing: 1px;
+  font-weight: 600;
+  float: left;
+  width: auto;
+  color: #444;
+  display:block;
+  white-space: nowrap;
+}
+
+.vi_topbar h1 {min-width:15.7%; margin-right: .4%;}
+
+.vi_topbar h1:before {
+  content: ' ';
+  background-image: url('icons/vi_app_logo.png');
+  background-size: cover;
+  width: 45px;
+  height: 45px;
+  display: block;
+  /*z-index: 11;*/
+  float: left;
+  margin-right: 15px;
+}
+.vi_topbar .currentmodul {
+  position: relative;
+  text-align: center;
+  float: left;
+  width: auto;
+  margin-top:10px;
+}
+.vi_topbar .currentmodul img {
+  width: 32px;
+  height: 32px;
+  float: left;
+  margin: -5px 15px 0;
+}
+
+.iconnav {
+  position: relative;
+  font-size: .8em;
+  line-height: 2.4em;
+  float: right;
+}
+.iconnav li {
+  float: left;
+  color: #777;
+}
+.iconnav li a,
+.iconnav li a:link,
+.iconnav li a:visited {
+  border-left: 1px solid #fafafa;
+  border-bottom:2px solid @mainColor;
+  color: #777;
+  position: relative;
+  padding: 7px 7px 7px;
+  float: left;
+  text-decoration: none;
+  text-shadow: none;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.iconnav li a:hover,
+.iconnav li a:active {
+  color: #999;
+  text-shadow: 0px 1px 1px #fff;
+  background-color: #fff;
+  text-decoration: none;
+  border-bottom:2px solid @mainColor;
+  /*-moz-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); -webkit-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6);*/
+
+}
+.iconnav li.inactive a,
+.iconnav li.inactive a:link {
+  color: #444;
+}
+.iconnav li.logout a {
+  border-left: 1px solid #ddd;
+  background-color: #ddd;
+  -moz-box-shadow: inset 3px 1px 3px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 3px 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 3px 1px 3px rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid #777777;
+}
+/* Icon Links */
+.iconnav li a.icon {
+  color: transparent;
+  letter-spacing: -1em;
+  overflow: hidden;
+  min-width: 46px;
+}
+.iconnav li a.icon:before {
+  background-image: url(icons/vi_iconnav_sprite.svg);
+  background-repeat: no-repeat;
+  width: 32px;
+  height: 32px;
+  content: ' ';
+  position: relative;
+  float: left;
+  margin-top: -1px;
+  margin-left: 7px;
+  margin-right: 7px;
+}
+/* Action Icons */
+.iconnav li a.icon.dashboard:before {
+  background-position: 0px 0px;
+}
+.iconnav li a.icon.myfiles:before {
+  background-position: -32px 0px;
+}
+.iconnav li a.icon.accountmgnt:before {
+  background-position: -64px 0px;
+}
+.iconnav li a.icon.tasks:before {
+  background-position: -96px 0px;
+}
+.iconnav li a.icon.settings:before {
+  background-position: -96px 0px;
+}
+.iconnav li a.icon.logout:before {
+  background-position: -128px 0px;
+}
+.iconnav li a.icon.share:before {
+  background-position: -224px 0px;
+}
+.iconnav li a.icon.search:before {
+  background-position: -256px 0px;
+}
+
+.iconnav li a.icon:hover {
+  overflow: visible;
+  min-width: 130px;
+  letter-spacing: normal;
+}
+.iconnav li.logout a:hover {
+  background-color: #eee;
+  -moz-box-shadow: inset 1px 0px 3px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 1px 0px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 1px 0px 3px rgba(0, 0, 0, 0.2);
+  border-bottom:2px solid lighten(@mainColor, 10%);
+}
+.iconnav li a:hover,
+.iconnav li a:active {
+  color: #999;
+  background-color: #fff;
+  text-decoration: none;
+  border-bottom:2px solid lighten(@mainColor, 10%);
+  /*-moz-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); -webkit-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6);*/
+
+}
+.iconnav li.inactive a,
+.iconnav li.inactive a:link {
+  color: #444;
+}
+
+
+

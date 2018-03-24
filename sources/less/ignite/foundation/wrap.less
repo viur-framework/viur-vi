@@ -1,0 +1,92 @@
+@charset "UTF-8";
+
+/* #WRAPPER and BINDER */
+// Container to wrap up chunks of content over the whole width of the page.
+// Use it for different background colors oder images across the screen.
+
+// Objects and Prefixes:
+// .outerwrap
+// .wrap
+// .bind
+// .content
+// .sidebar-
+// .section
+
+.outerwrap {
+  display:flex;
+  flex-wrap:wrap;
+  min-height: 100%;
+}
+
+.wrap {
+  min-width:100%;
+  flex:1 100%;
+}
+
+// Container to center the content in the middle of the page.
+.bind {
+  max-width:@pageWidth;
+  padding:0 @outerSpace;
+  margin:0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 100%;
+  .mq-min(@breakSmall, {
+    .mq-landscape({flex-flow: row wrap;})
+  });
+  .mq-min(@breakMedium, {flex-flow: row wrap;});
+}
+
+/* Sidebars */
+.content ~ .sidebar {
+  font-size:.9em;
+  .order('content',4);
+  padding: @innerSpace 0 @bottomSpace;
+  flex:auto;
+  &:nth-of-type(2) {
+    flex: 0 0 20%;
+    .order('content',3);
+  } // second aside element on the right.
+  .mq-min(@breakSmall, {
+    .mq-landscape({flex: 0 0 25%; .order('content',4);
+      padding: @innerSpace 0 @bottomSpace @innerSpace;
+    });
+  });
+  .mq-min(@breakMedium, {
+    flex: 0 0 25%;
+    .order('content',4);
+    padding: @innerSpace 0 @bottomSpace @innerSpace;
+  });
+}
+
+.content ~ .sidebar-vLeft {
+  .mq-min(@breakMedium, {
+    padding: @innerSpace @innerSpace*3 @bottomSpace 0;
+    .order('content',1);
+  });
+}
+
+.content ~ .sidebar-vMarginal {
+  font-size: .8em;
+  flex: 0 0 15%;
+  min-width: 200px;
+}
+
+/* Content Containers */
+.content {
+  flex: 2 0;
+  min-width: 0;
+  .order('content',2);
+  max-width: 100%;
+  .mq-min(@breakMedium, {
+    .order('content',2);
+    });
+}
+
+/* Container to seperate chunks of content in the middle of the page. */
+.section {
+  min-width: 0; // Prevents overflows.
+  padding-top: @innerSpace;
+  padding-bottom: @bottomSpace;
+}

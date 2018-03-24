@@ -1,0 +1,94 @@
+@charset "UTF-8";
+/* Vi Lists */
+
+// Prefixes and objects:
+// .list-
+// .sublist-
+
+.list {
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color:#fff;
+  & .item {
+    border-bottom: 1px solid #dadad9;
+    &.is-active {
+      border-bottom-color: darken(@mainColor, 10%);
+    }
+  }
+  &-separator {
+    min-height: 40px;
+    background-color: #f5f5f5;
+    font-size:.9em;
+    padding: @defaultPadding @defaultPadding*1.25;
+    display:flex;
+    flex:0 0 auto;
+    border-bottom: 1px solid #dadad9;
+    color: @textColor;
+    &-content {
+      flex:1;
+      align-self: center;
+      margin-top: 3px;
+      margin-left: 5px;
+      margin-bottom: 3px;
+      margin-right: 13px;
+    }
+    &-headline {
+      font-weight: lighter;
+    }
+    &-subline {
+      font-size: .8em;
+      font-weight: bold;
+    }
+    &-action {
+      align-self: center;
+      padding-left: @defaultPadding*1.25;
+      padding-right: @defaultPadding*1.25;
+      color: @complementColor;
+      height: 1.6em;
+      min-width: 1.6em;
+      font-size: 1.2em;
+      line-height: 1.6;
+      text-align: center;
+      cursor:pointer;
+      border-radius: 8px;
+      &-small {
+        font-size: .7em;
+        border-radius: 4px;
+      }
+      .list-header:hover &,
+      .list-footer:hover & {
+        background-color: darken(@backgroundColor,10%);
+      }
+      .list-header &:hover,
+      .list-footer &:hover {
+        background-color: lighten(@failColor,10%);
+        color: #fff;
+      }
+    }
+    &--footer {
+      border-top: 1px solid #dadad9;
+      margin-top: auto;
+    }
+  }
+}
+
+.sublist {
+  & .item {
+    background-color: darken(@itemBackgroundColor,5%);
+    font-size: .7em;
+    min-height:38px;
+    &:hover {
+      background-color: darken(@itemBackgroundColor,10%);
+    }
+  }
+  & i {
+    height: 1.6em;
+    width: 1.6em;
+      & svg,
+      & img {
+        width: 90%;
+        height: 90%;
+      }
+  }
+}

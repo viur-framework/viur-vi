@@ -1,0 +1,33 @@
+@charset "UTF-8";
+/* GLOBAL STATES */
+// Different element or page states that can be applied on every part of the page.
+// States that are specific a certain object should be applied to the object itself.
+
+// The namespaces .is-, .has- and .no- are reserved for states.
+// Use .js- prefix to mark java script targets.
+
+
+// Selections
+::-moz-selection {
+  background-color: darken(@mainColor, 10%);
+  text-shadow: none;
+  color: contrast(@mainColor);
+}
+
+::selection {
+  background-color: darken(@mainColor, 10%);
+  text-shadow: none;
+  color: contrast(@mainColor);
+}
+
+.no-mobile {
+  .mq-max(@breakSmall,{display:none;});
+}
+
+.no-print {
+  .mq-print({display:none;})
+}
+
+:focus {
+  outline: 1px dotted #ddd;
+}

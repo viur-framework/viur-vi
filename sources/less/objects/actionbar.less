@@ -1,0 +1,140 @@
+@charset "UTF-8";
+/* ACTIONBAR */
+
+// Prefixes and objects:
+// .actionbar
+// .searchbar
+
+/*
+#FIXME: Implement new action bar!
+
+.actionbar {
+  padding: 6px 15px;
+  .boxShadow(1, #000);
+  min-height: 50px;
+}
+
+.searchbar {
+  padding: 0;
+  max-height: 0px;
+  overflow: hidden;
+  float: right;
+  margin: 0 15px 0 0;
+  transition: all 1s ease;
+  &.is-active {
+    padding: 0;
+    max-height: 300px;
+    overflow: visible;
+  }
+}
+*/
+
+
+/* #actionbar
+================================================== */
+.vi_operator .actionbar {
+  width: 83%;
+  /*min-width: 500px;*/
+  position: fixed;
+  margin-top: -105px;
+  margin-left: -1%;
+  padding: 15px 1%;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+  border: 1px solid #ccc;
+  border-bottom: 1px solid #bbb;
+  background-color: #eee;
+  background-color: rgba(210, 210, 210, 0.9);
+  background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.9)), to(rgba(255, 255, 255, 0.2)));
+  background-image: -moz-linear-gradient(top center, rgba(238, 238, 238, 0.8) 20%, rgba(255, 255, 255, 0.2) 95%);
+  z-index: 100;
+}
+
+.vi_operator .actionbar .button img {
+  height: 20px;
+  float: left;
+  margin-right: 6px;
+}
+
+.button.download{
+  align-self: center;
+  margin: 15px 15px 0 15px;
+}
+
+.vi_viewer.is_fullscreen .vi_operator .actionbar
+{
+  width: 98%;
+}
+
+.has_multiple_children .actionbar {
+  width:41%;
+}
+
+.vi_operator .actionbar h3:before {
+  content: '';
+  margin-top: -4px;
+  margin-left: -10px;
+  margin-right: 10px;
+  border-right: 1px solid #ccc;
+  width: 16px;
+  height: 16px;
+  float: left;
+  padding: 5px 6px 5px 4px;
+  background-image: url(icons/vi_actions_view_sprite.svg);
+  background-repeat: no-repeat;
+}
+.vi_operator .actionbar h3.action_list:before {
+  background-position: 0px 0px;
+}
+.vi_operator .actionbar h3.action_add:before {
+  background-position: -24px 0px;
+}
+.vi_operator .actionbar h3.action_edit:before {
+  background-position: -48px 0px;
+}
+.vi_operator .actionbar h3.action_Text:before {
+  background-position: -72px 0px;
+}
+.vi_operator .actionbar h3 {
+  line-height: 1em;
+  color: #222;
+  height: 16px;
+  padding: 4px 15px 6px 10px;
+  text-align: center;
+  background-color: #ddd;
+  background: -moz-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #dddddd));
+  background: -webkit-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+  background: -o-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+  background: -ms-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #dddddd 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#fff', EndColorStr='#ddd', GradientType=0);
+  float: left;
+  border: 1px solid #aaa;
+  border-right:2px solid @mainColor;
+  margin-right: 4px;
+}
+.actionbar .operations, button.selectfilter, button.text.save[type="button"], button.flipview[type="button"], button.icon.close[type="button"], button.icon.activateselection[type="button"] {
+  float: right;
+}
+.actionbar.is_disabled {
+  visibility: hidden;
+}
+
+.actionbar select {
+  height: 28px;
+  padding-top: 4px;
+  padding-bottom: 1px;
+  margin-right: 20px;
+}
+
+.actionbar .spacer
+{
+  width: 10px;
+  display: inline-block;
+}
+
+
+
+
+
+

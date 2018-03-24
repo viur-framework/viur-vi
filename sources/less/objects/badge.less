@@ -1,0 +1,77 @@
+@charset "UTF-8";
+/* BADGES and MARKERS */
+// Notification Badges are numerical indicators of how many items are associated with some kind of content.
+
+// Prefixes and objects:
+// .badge-
+// .marker-
+
+@badgeColor: @mainColor;
+
+.badge,
+.has-badge:after {
+  content: attr(data-badge);
+  display: inline-block;
+  pointer-events: none;
+  font-size: .7em;
+  font-weight: 700;
+  line-height: 1.5;
+  text-decoration: none;
+  text-shadow: none;
+  text-align: center;
+  vertical-align: middle;
+  letter-spacing: normal;
+  padding: 0 .45em;
+  margin: -3px -2px 0 10px;
+  color: contrast(lighten(@badgeColor,10%));
+  background: lighten(@badgeColor,10%);
+  border-radius: .1em;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.badge-vInverse,
+.has-badge-vInverse:after {
+  background:transparent;
+  color:inherit;
+  border:1px solid;
+  border-color:currentColor;
+  box-shadow: none;
+  padding: 0 .45em;
+}
+
+// Markers are used to provide additional information about something.
+
+@markerColor: @mainColor;
+
+.marker,
+.has-marker:after {
+  content: attr(aria-label);
+  display: inline-block;
+  pointer-events: none;
+  font-size: .7em;
+  font-weight: 700;
+  line-height: 1.6;
+  text-transform: UPPERCASE;
+  text-decoration: none;
+  text-shadow: none;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  letter-spacing: normal;
+  padding: .1em .6em;
+  margin: -2px -2px 0 .8em;
+  color: contrast(lighten(@markerColor,10%));
+  background: lighten(@markerColor,10%);
+  border-radius: .1em;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.marker-vInverse,
+.has-marker-vInverse:after {
+  background:transparent;
+  color:inherit;
+  border:1px solid;
+  border-color:currentColor;
+  box-shadow: none;
+  padding: 0 .45em;
+}

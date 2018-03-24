@@ -1,0 +1,20 @@
+@charset "UTF-8";
+/* Z-INDEX MIXIN */
+
+@zIndexOrder: 'background', 'content', 'tooltip', 'foreground', 'nav', 'overlay', 'alert', 'admin', 'dev';
+
+.zIndex(@elementName, @elementOffset) {
+
+  .loop(@elementName, @counter) when (@counter > 0) {
+    .loop(@elementName, @counter - 1);
+    .pickIndex(@elementName, @counter);
+  }
+
+  .loop(@elementName, length(@zIndexOrder));
+
+  .pickIndex(@elementName, @counter) when (extract(@zIndexOrder, @counter) = @elementName) {
+    z-index: @counter * 100 + @elementOffset;
+  }
+}
+
+.zDev {.zIndex('dev',0);}

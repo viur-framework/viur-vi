@@ -1,0 +1,507 @@
+@charset "UTF-8";
+/* BUTTONS */
+
+// Prefixes and objects:
+// .btn-
+// .btnGroup
+
+
+/*
+#FIXME: Implement new buttons!
+
+.btn {
+  .btn(
+    @btnBackgroundColor:#fff,
+    @btnPadding: @defaultPadding,
+    @btnMargin: @defaultMargin,
+    @btnBorderWidth: 0,
+    @btnBorderRadius: 4px,
+    @btnShadow: 0,
+    @btnShadowHover: 1,
+    @btnShadowColor: @defaultShadowColor);
+}
+
+.btn-vPrimary {
+  .colorizeBtn(
+    @backgroundColor: @successColor,
+    @btnBorderWidth: 0,
+    @btnShadow: 0,
+    @btnShadowHover: 1);
+}
+*/
+
+/* #vi_buttons
+================================================== */
+button[type="button"] {
+  border: 1px solid #999;
+  color: #222;
+  height: 16px;
+  padding: 6px 7px 20px;
+  margin: 0;
+  margin-right: 4px;
+  text-align: center;
+  background-color: #bbb;
+  background: -moz-linear-gradient(top, #dddddd 0%, #bbbbbb 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(100%, #bbbbbb));
+  background: -webkit-linear-gradient(top, #dddddd 0%, #bbbbbb 100%);
+  background: -o-linear-gradient(top, #dddddd 0%, #bbbbbb 100%);
+  background: -ms-linear-gradient(top, #dddddd 0%, #bbbbbb 100%);
+  background: linear-gradient(to bottom, #dddddd 0%, #bbbbbb 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#ddd', EndColorStr='#bbb', GradientType=0);
+  cursor: pointer;
+  -webkit-transition: all 0.3s 0.7s ease;
+  -moz-transition: all 0.3s 0.7s ease;
+  -o-transition: all 0.3s 0.7s ease;
+  transition: all 0.3s 0.7s ease;
+}
+button[type="button"]:hover {
+  border: 1px solid #666;
+  color: #222;
+  letter-spacing: normal;
+}
+/* Icon Buttons */
+button.icon,
+.vi_operator .search button,
+button.btn_yes,
+button.btn_no {
+  color: transparent;
+  letter-spacing: -1em;
+  overflow: hidden;
+  min-width: 28px;
+}
+/* Icons for Icon Buttons as Sprite */
+button.icon:before,
+.vi_operator .search button:before,
+.btn_yes:before,
+.btn_no:before,
+.modullist ul .action_add h3:before,
+.modullist ul .action_edit h3:before {
+  background-image: url(icons/vi_actions_sprite.svg);
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  content: ' ';
+  position: relative;
+  float: left;
+  margin-left: -1px;
+  margin-top: -1px;
+}
+/* Action Icons */
+button.add:before,
+button.new:before,
+.action_add h3:before {
+  background-position: -16px 0px;
+}
+button.edit:before,
+.action_edit h3:before {
+  background-position: -64px 0px;
+}
+button.clone:before {
+  background-position: -32px 0px;
+}
+button.download:before {
+  background-position: -16px -64px;
+}
+button.invite:before {
+  background-position: -80px -32px;
+}
+button.delete:before {
+  background-position: -48px 0px;
+}
+button.preview:before {
+  background-position: -96px 0px;
+}
+.vi_operator .search button:before,
+button.selectfilter:before,
+button.search:before {
+  background-position: -112px 0px;
+}
+button.text.save:before,
+button.save.close:before,
+.btn_yes:before {
+  background-position: 0px -16px;
+}
+button.activateselection:before {
+  background-position: 0px -32px;
+}
+button.save.continue:before {
+  background-position: -16px -16px;
+}
+button.save.new:before {
+  background-position: -32px -16px;
+}
+button.reset:before {
+  background-position: -64px -16px;
+}
+button.reload:before {
+  background-position: -80px -16px;
+}
+button.close:before,
+button.cancel:before,
+.btn_no:before {
+  background-position: 0px 0px;
+}
+button.select:before {
+  background-position: -112px -16px;
+}
+button.selectfields:before {
+  background-position: -112px -112px;
+}
+button.selectall:before {
+  background-position: -48px -64px;
+}
+button.unselectall:before {
+  background-position: -64px -64px;
+}
+button.selectinvert:before {
+  background-position: -80px -64px;
+}
+button.lock:before {
+  background-position: -96px -64px;
+}
+button.unlock:before {
+  background-position: -112px -64px;
+}
+button.textedit:before {
+  background-position: -96px -16px;
+}
+button.mkdir:before {
+  background-position: -32px -32px;
+}
+button.upload:before {
+  background-position: -48px -32px;
+}
+/* Billing Icons */
+button.markpayed:before {
+  background-position: 0px -48px;
+}
+button.marksend:before {
+  background-position: 0px -32px;
+}
+button.getbill:before {
+  background-position: -16px -48px;
+}
+button.getdeliverynote:before {
+  background-position: -16px -32px;
+}
+button.getbuchungsbestaetigung:before {
+  background-position: -64px -32px;
+}
+button.resend:before {
+  background-position: -80px -32px;
+}
+button.trans:before {
+  background-image: url(icons/actions/translate.svg);
+}
+button.import:before {
+  background-position: -96px -48px;
+}
+/* Newsletter Icons */
+button.send.newsletter:before {
+  background-position: -80px -32px;
+}
+button.send.preview:before {
+  background-position: -96px -32px;
+}
+button.stats:before {
+  background-position: -112px -32px;
+}
+
+/* Textedit Icons */
+button.text {
+  margin-bottom: 10px;
+}
+button.text.H1:before {
+  background-position: 0px -80px;
+}
+button.text.H2:before {
+  background-position: -16px -80px;
+}
+button.text.H3:before {
+  background-position: -32px -80px;
+}
+button.text.H1,
+button.text.H2 {
+  margin-right: 0;
+  border-right: 0;
+}
+button.text.bold:before {
+  background-position: -48px -80px;
+}
+button.text.italic:before {
+  background-position: -64px -80px;
+}
+button.text.underline:before {
+  background-position: -80px -80px;
+}
+button.text.strikeThrough:before {
+  background-position: -96px -80px;
+}
+button.text.bold,
+button.text.italic,
+button.text.underline {
+  margin-right: 0;
+  border-right: 0;
+}
+button.text.justifyRight:before {
+  background-position: 0px -96px;
+}
+button.text.justifyCenter:before {
+  background-position: -16px -96px;
+}
+button.text.justifyLeft:before {
+  background-position: -32px -96px;
+}
+button.text.justifyLeft,
+button.text.justifyCenter {
+  margin-right: 0;
+  border-right: 0;
+}
+button.text.BLOCKQUOTE:before {
+  background-position: -112px -80px;
+}
+button.text.insertOrderedList:before {
+  background-position: 0px -128px;
+}
+button.text.insertUnorderedList:before {
+  background-position: -16px -128px;
+}
+button.text.insertOrderedList {
+  margin-right: 0;
+  border-right: 0;
+}
+button.text.indent:before {
+  background-position: -32px -128px;
+}
+button.text.outdent:before {
+  background-position: -48px -128px;
+}
+button.text.indent {
+  margin-right: 0;
+  border-right: 0;
+}
+button.text.removeformat:before {
+  background-position: -80px -128px;
+}
+button.text.link:before {
+  background-position: -48px -48px;
+}
+button.text.redo:before {
+  background-position: -48px -16px;
+}
+button.text.undo:before {
+  background-position: -64px -16px;
+}
+button.text.undo {
+  margin-right: 0;
+  border-right: 0;
+}
+button.text.image:before {
+  background-position: -96px -96px;
+}
+button.text.image,
+button.text.link {
+  margin-right: 0;
+  border-right: 0;
+}
+button.flipview:before {
+  background-position: -64px -48px;
+}
+button.flipview.is_htmlview:before {
+  background-position: -96px -16px;
+}
+button.text.table:before {
+  background-position: 0px -112px;
+}
+button.text.table.remove.col:before {
+  background-position: -16px -112px;
+}
+button.text.table.remove.row:before {
+  background-position: -32px -112px;
+}
+button.text.table.newrow.before:before {
+  background-position: -48px -112px;
+}
+button.text.table.newrow.after:before {
+  background-position: -64px -112px;
+}
+button.text.table.newcol.before:before {
+  background-position: -80px -112px;
+}
+button.text.table.newcol.after:before {
+  background-position: -96px -112px;
+}
+button.text.table.remove.row,
+button.text.table.newrow.before,
+button.text.table.newrow.after,
+button.text.table.newcol.before {
+  margin-right: 0;
+  border-right: 0;
+}
+
+button.icon[type="button"]:hover {
+  border-color: #666;
+  overflow: visible;
+  color: #222;
+  min-width: 120px;
+  letter-spacing: normal;
+}
+
+.vi_operator .search button:hover {
+  border-color: #666;
+}
+
+/* Red Buttons */
+button.icon.close[type="button"],
+button.icon.delete[type="button"] {
+  border: 1px solid #e20614;
+  color: #fff;
+  background-color: #c31520;
+  background: -moz-linear-gradient(top, #e20614 0%, #c31520 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e20614), color-stop(100%, #c31520));
+  background: -webkit-linear-gradient(top, #e20614 0%, #c31520 100%);
+  background: -o-linear-gradient(top, #e20614 0%, #c31520 100%);
+  background: -ms-linear-gradient(top, #e20614 0%, #c31520 100%);
+  background: linear-gradient(to bottom, #e20614 0%, #c31520 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e20614', EndColorStr='#c31520', GradientType=0);
+}
+
+/* Red Button Hover */
+button.icon.close[type="button"]:hover,
+button.icon.cancel[type="button"]:hover,
+button.icon.delete[type="button"]:hover {
+  border: 1px solid #c31520;
+  color: #fff;
+  background-color: #e20614;
+  background: -moz-linear-gradient(top, #c31520 0%, #e20614 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #c31520), color-stop(100%, #e20614));
+  background: -webkit-linear-gradient(top, #c31520 0%, #e20614 100%);
+  background: -o-linear-gradient(top, #c31520 0%, #e20614 100%);
+  background: -ms-linear-gradient(top, #c31520 0%, #e20614 100%);
+  background: linear-gradient(to bottom, #c31520 0%, #e20614 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#c31520', EndColorStr='#e20614', GradientType=0);
+}
+
+/* White Icon Sprite for Red Buttons */
+button.icon.close[type="button"]:before,
+button.icon.delete[type="button"]:before,
+button.icon.cancel[type="button"]:hover:before,
+button.icon.delete[type="button"]:hover:before {
+  background-image: url(icons/vi_actions_sprite_white.svg);
+}
+
+
+/* Green Buttons */
+button.icon.save.close[type="button"],
+button.icon.activateselection[type="button"],
+button.text.save[type="button"],
+button.icon.add[type="button"] {
+  border: 1px solid #298342;
+  color: #fff;
+  background-color: #479c42;
+  background: -moz-linear-gradient(top, #479c42 0%, #298342 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #479c42), color-stop(100%, #298342));
+  background: -webkit-linear-gradient(top, #479c42 0%, #298342 100%);
+  background: -o-linear-gradient(top, #479c42 0%, #298342 100%);
+  background: -ms-linear-gradient(top, #479c42 0%, #298342 100%);
+  background: linear-gradient(to bottom, #479c42 0%, #298342 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#479c42', EndColorStr='#298342', GradientType=0);
+}
+
+
+/* Green Button Hover */
+button.icon.activateselection[type="button"]:hover,
+button.text.save[type="button"]:hover,
+button.icon.add[type="button"]:hover,
+button.icon.save.close[type="button"]:hover {
+  border: 1px solid #479c42;
+  color: #fff;
+  background-color: #298342;
+  background: -moz-linear-gradient(top, #298342 0%, #479c42 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #298342), color-stop(100%, #479c42));
+  background: -webkit-linear-gradient(top, #298342 0%, #479c42 100%);
+  background: -o-linear-gradient(top, #298342 0%, #479c42 100%);
+  background: -ms-linear-gradient(top, #298342 0%, #479c42 100%);
+  background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
+}
+
+/* White Icon Sprite for Green Buttons */
+button.icon.add[type="button"]:before,
+button.icon.activateselection[type="button"]:before,
+button.text.save[type="button"]:before,
+button.icon.add[type="button"]:hover:before,
+button.icon.save.close[type="button"]:before,
+button.icon.save.close[type="button"]:hover:before {
+  background-image: url(icons/vi_actions_sprite_white.svg);
+}
+
+/* Loading Buttons */
+button.icon.is_loading[type="button"]:before,
+button.is_loading[type="button"]:before,
+button.icon.is_loading[type="button"]:hover:before,
+button.is_loading[type="button"]:hover:before,
+button.icon.save.close.is_loading[type="button"]:hover:before {
+  background-image: url(icons/is_loading.gif);
+  background-position: 0px 0px;
+}
+
+/* Standard Buttons (28px wide, transparent Text) */
+button.icon.close[type="button"],
+button.icon.activateselection[type="button"],
+button.text.save[type="button"],
+button.icon.delete[type="button"],
+button.icon.delete.is_disabled[type="button"]:hover,
+button.icon.text[type="button"]:hover,
+button.icon.flipview[type="button"]:hover,
+button.icon.is_disabled[type="button"]:hover {
+  color: transparent;
+  letter-spacing: -1em;
+  overflow: hidden;
+  min-width: 28px;
+  transition-delay: 0;
+}
+
+/* Primary Buttons (120px wide without hover) */
+button.icon.save.close[type="button"],
+button.icon.add[type="button"] {
+    color:#fff;
+    overflow: visible;
+    min-width: 120px;
+    letter-spacing: normal;
+}
+
+/* 120px wide Hover */
+button.icon.delete[type="button"]:hover,
+button.icon.close[type="button"]:hover,
+button.icon.activateselection[type="button"]:hover,
+button.icon.save.close[type="button"]:hover {
+  overflow: visible;
+  min-width: 120px;
+  letter-spacing: normal;
+}
+
+/* Disabled Buttons */
+button.icon.delete.is_disabled[type="button"] {
+  background: #e0e0e0;
+}
+
+button.icon.delete.is_disabled[type="button"]:hover,
+button.icon.is_disabled[type="button"]:hover {
+  border-color: #999;
+  background: #e0e0e0;
+}
+button.icon.delete.is_disabled[type="button"]:before,
+button.icon.is_disabled:before {
+  opacity: 0.3;
+  background-image: url(icons/vi_actions_sprite.svg)!important;
+}
+
+button.icon.delete.is_disabled[type="button"],
+button.icon.is_disabled {
+  cursor: default;
+  color: transparent;
+  border: 1px solid #ccc;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+

@@ -1,0 +1,278 @@
+@charset "UTF-8";
+
+/* #APPLICATION WRAPPER */
+// Container to wrap up chunks of content over the whole width of the page.
+
+/*
+FIXME: New wrappers!
+
+html {
+  overflow-y: hidden;
+}
+
+.application-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  .zIndex('background',0);
+}
+
+.viewer-wrap {
+  width: 100%;
+  display: flex;
+  flex:1;
+  overflow-x:hidden;
+  overflow-y: auto;
+  .zIndex('content',2);
+}
+
+.main-wrap {
+  flex:1 80%;
+  display: flex;
+  flex-direction: column;
+}
+
+.manager-wrap {
+  .boxShadow(1, #000);
+  .zIndex('nav',40);
+  height: fit-content;
+}
+
+.content-wrap {
+  width: 100%;
+  flex:1;
+  overflow-y: scroll;
+  .zIndex('content',0);
+}
+
+// Container to center the content in the middle of the page.
+.bind {
+  padding:0 @outerSpace;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 100%;
+  .mq-min(@breakSmall, {
+    .mq-landscape({flex-flow: row wrap;})
+  });
+  .mq-min(@breakMedium, {flex-flow: row wrap;});
+}
+
+!* Sidebars *!
+.content ~ .sidebar {
+  font-size:.9em;
+  .order('content',4);
+  padding: @innerSpace 0 @bottomSpace;
+  flex:auto;
+  &:nth-of-type(2) {
+    flex: 0 0 20%;
+    .order('content',3);
+  } // second aside element on the right.
+  .mq-min(@breakSmall, {
+    .mq-landscape({flex: 0 0 25%; .order('content',4);
+      padding: @innerSpace 0 @bottomSpace @innerSpace;
+    });
+  });
+  .mq-min(@breakMedium, {
+    flex: 0 0 25%;
+    .order('content',4);
+    padding: @innerSpace 0 @bottomSpace @innerSpace;
+  });
+}
+
+.content ~ .sidebar-vLeft {
+  .mq-min(@breakMedium, {
+    padding: @innerSpace @innerSpace*3 @bottomSpace 0;
+    .order('content',1);
+  });
+}
+
+.content ~ .sidebar-vMarginal {
+  font-size: .8em;
+  flex: 0 0 15%;
+  min-width: 200px;
+}
+
+!* Content Containers *!
+.content {
+  flex: 2 0;
+  min-width: 0;
+  .order('content',2);
+  max-width: 100%;
+  .mq-min(@breakMedium, {
+    .order('content',2);
+    });
+}
+
+!* Container to seperate chunks of content in the middle of the page. *!
+.section {
+  min-width: 0; // Prevents overflows.
+  padding-top: @innerSpace;
+  padding-bottom: @bottomSpace;
+}
+*/
+
+.wrapper {
+  width: 100%;
+  font-size: .95em;
+  position: relative;
+  top: 0px;
+  height: 100%;
+  background-color: transparent;
+}
+
+/* #vi_manager
+================================================== */
+.vi_manager {
+  overflow: hidden;
+  overflow-y: auto;
+  z-index: 9;
+  width: 15.7%; /*298px*/
+  border-right: 1px solid #cccccc;
+  position: fixed;
+  background-color: #eeeeee;
+  height: 100%;
+}
+
+/* #vi_viewer
+================================================== */
+.vi_viewer {
+  margin-left: 15.7%;
+  width: 84.3%;
+  float: left;
+  position: relative;
+  z-index: 1;
+  background-color: #f4f4f4;
+  /*border-left:1px solid #ccc;
+      border-right:1px solid #ccc;
+      padding: 80px 30px 45px;
+      min-height: 400px;
+      min-width:500px; */
+
+}
+
+.vi_viewer.is_fullscreen
+{
+  margin-left: 0;
+  width: 100%;
+}
+
+/* #vi_operator
+================================================== */
+.vi_operator {
+  z-index: 20;
+  padding: 150px 1% 45px;
+  float: left;
+  width: 98%;
+  /*min-height: 500px;*/
+  background: #f6f6f6;
+  overflow: hidden;
+}
+
+.vi_operator > div.supports_drop {
+border-top: 1px dashed #ccc;
+padding: 20px 0;
+border-bottom: 1px dashed #ccc;
+margin-top: -20px;
+}
+
+.has_multiple_children .vi_operator {
+  width: 40.3%;
+  height: 100%;
+  position: fixed;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.vi_operator.is_disabled {
+  background-color: #ddd;
+  padding: 70px 1% 45px;
+}
+.vi_operator > .is_disabled {
+  opacity: .7;
+}
+.has_multiple_children .vi_operator:nth-of-type(even) {
+  right: 0;
+}
+.vi_operator .search,
+.vi_operator .compoundfilter {
+  width: 96%;
+  padding: 15px 1%;
+  background: #dcdcdc;
+  margin: 10px 1%;
+  border-radius: 2px;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  border:1px solid #d2d2d2;
+  transition:all .3s ease;
+  overflow: hidden;
+}
+
+.vi_operator .compoundfilter h2,
+.vi_operator .search h2 {
+  color: #777;
+  line-height: 1.4em;
+  font-size: 0.8em;
+  padding:0 15px;
+}
+
+.vi_operator .compoundfilter.collapsed .extendedfilter {
+    height: 0;
+    opacity: 0;
+    overflow:hidden;
+}
+
+.vi_operator .search.collapsed input,
+.vi_operator .search.collapsed button {display:none;}
+
+.vi_operator .search.expanded input {margin: 10px 15px;}
+
+.vi_operator .search.collapsed:hover,
+.vi_operator .compoundfilter.collapsed:hover {background-color:#e2e2e2; box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);}
+
+.vi_operator .search.expanded,
+.vi_operator .compoundfilter.expanded {
+box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+background-color:#d6d6d6;
+}
+
+.vi_operator .compoundfilter.expanded .extendedfilter {
+    margin-top:15px;
+}
+
+.vi_operator .compoundfilter.embed {
+    width: 98%;
+    margin: 0 0 20px;
+    background: #eee;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+.vi_operator .tree .search h2 {
+  width: 60px;
+  float: left;
+  text-align: center;
+  padding: 4px 10px 6px;
+  height: 16px;
+  border: 1px solid#bbb;
+  border-right-width: 0;
+  background: #e3e3e3;
+  color: #777;
+  overflow: hidden;
+  line-height: 1.4em;
+  font-size: 0.8em;
+  margin-left: 7px;
+}
+
+/* #preview
+================================================== */
+
+.vi_operator > .preview {
+  margin-top: -70px;
+}
+
+.vi_operator > .preview iframe {
+  width: 100%;
+  min-height: 80%;
+  border: 1px solid #ccc;
+  overflow:scroll;
+}
+

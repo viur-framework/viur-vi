@@ -1,0 +1,31 @@
+@charset "UTF-8";
+/* ViUR Ignite CSS 2017 */
+
+// This is the master file.
+// It imports all less files in their intended order for easy mass-inclusion.
+// Should you need specific files, you can easily customize the imports.
+
+// Reset
+@import "foundation/reset"; // resets all browsers to the same base state.
+
+// Fundamental parts: positioning, type and utilities
+@import "foundation/basic"; // classic basic styling.
+@import "foundation/wrap"; // page wrappers.
+
+// Generic elements: buttons, forms and messages
+@import "generic/bar"; // horizontal bars.
+@import "generic/button"; // some classic buttons.
+//@import "generic/burger"; // your own menu burger.
+//@import "generic/form"; // inputs, selects and other form elements.
+//@import "generic/grid"; // grid system.
+@import "generic/icon"; // inline SVG icons.
+@import "generic/message"; // hints, errors, warnings etc.
+@import "generic/table"; // a classic table layout.
+
+// Configuration and Mixins
+@import "tools/mediaqueries"; // really simple media queries.
+@import "tools/order";
+@import "tools/position";
+@import "tools/shadow"; // material design shadow mixin.
+@import "tools/state"; // is-, has-, no- etc.
+@import "tools/zindex"; // organize your z-indexes.

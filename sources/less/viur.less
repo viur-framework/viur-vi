@@ -1,0 +1,61 @@
+@charset "UTF-8";
+/* Vi CSS 2018 */
+
+// This is the master file.
+// It imports all less files in their intended order for easy mass-inclusion.
+// Should you need specific files, you can easily customize the imports.
+
+// Reset
+@import "../../ignite/less/foundation/reset"; // resets all browsers to the same base state.
+
+// Fundamental parts: positioning, type and utilities
+@import "foundation/appconf"; // variables and constants.
+@import "../../ignite/less/foundation/basic"; // classic basic styling.
+@import "foundation/appwrap"; // page wrappers.
+
+// Generic elements: buttons, forms and messages
+@import "../../ignite/less/generic/button"; // some classic buttons.
+@import "generic/button"; // customized buttons.
+@import "../../ignite/less/generic/form"; // inputs, selects and other form elements.
+@import "../../ignite/less/generic/message"; // hints, errors, warnings etc.
+@import "generic/bar"; // horizontal bars.
+@import "generic/icon";
+@import "generic/item";
+@import "generic/list";
+
+// Objects
+@import "objects/popup"; // popup dialog messages.
+@import "objects/tooltip"; // lightweight tooltips.
+@import "objects/badge"; // badges and marker.
+@import "objects/spinner"; // loading state for ajax requests.
+@import "objects/progress";
+@import "objects/pagination";
+@import "objects/image"; // base64 encoded images, image shapes and thumbnails.
+
+
+// Menus
+@import "objects/topbar";
+@import "objects/modullist";
+@import "objects/tabbar";
+@import "objects/actionbar";
+
+// List
+@import "objects/viurtable";
+
+// Edit
+@import "objects/viurform";
+
+// Configuration and Mixins
+@import "../../ignite/less/tools/util"; // utility classes.
+@import "../../ignite/less/tools/zindex"; // organize your z-indexes.
+@import "../../ignite/less/tools/state"; // is-, has-, no- etc.
+@import "../../ignite/less/tools/border";
+@import "../../ignite/less/tools/mediaqueries"; // really simple media queries.
+@import "../../ignite/less/tools/order";
+@import "../../ignite/less/tools/position";
+@import "../../ignite/less/tools/shadow"; // material design shadow mixin.
+
+
+
+
+
