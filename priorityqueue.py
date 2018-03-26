@@ -33,6 +33,7 @@ class StartupQueue( object ):
 			print("Running startup callback #%s" % str(self.currentElem))
 			cb()
 		elif self.currentElem == len( self.q ): #We should call the final element
+			#print("Running final callback %s" % str(self.finalElem))
 			self.finalElem()
 			self.reset()
 		else:

@@ -39,15 +39,18 @@ class TopBarWidget( html5.Header ):
 		self.moduleName = html5.Span()
 		self.modulContainer.appendChild( self.moduleName )
 
-		for icon in conf[ "toplevelactions" ]:
-			widget = toplevelActionSelector.select( icon )
-			if widget:
-				self.iconnav.appendChild( widget() )
-
 		anav.appendChild(self.iconnav)
 		self.appendChild(anav)
 
 		DeferredCall(self.setTitle, _delay=500)
+
+	def invoke(self):
+		self.iconnav.removeAllChildren()
+
+		for icon in conf["toplevelactions"]:
+			widget = toplevelActionSelector.select(icon)
+			if widget:
+				self.iconnav.appendChild(widget())
 
 	def setTitle(self):
 		if not conf["server"]:
