@@ -37,11 +37,11 @@ class SelectMultiViewBoneDelegate( object ):
 			options = {k: v for k, v in self.skelStructure[field]["values"]}
 
 			for i, fieldKey in enumerate(data[field]):
-				if conf["maxMultiBoneEntries"] and i == conf["maxMultiBoneEntries"]:
+				if conf["maxMultiBoneEntries"] and i + 1 > conf["maxMultiBoneEntries"]:
 					ali = html5.Li()
 					ali.appendChild(
 						html5.TextNode(translate("and {count} more",
-						                            count=len(data[field]) - conf["maxMultiBoneEntries"] - 1)))
+						                            count=len(data[field]) - conf["maxMultiBoneEntries"])))
 					ali["class"].append("selectmulti_more_li")
 
 					result.appendChild(ali)

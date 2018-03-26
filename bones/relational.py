@@ -111,8 +111,8 @@ class RelationalViewBoneDelegate(object):
 				count = 1
 			else:
 				count = len(val)
-				if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
-					val = val[:conf["maxMultiBoneEntries"] - 1]
+				if conf["maxMultiBoneEntries"] and count > conf["maxMultiBoneEntries"]:
+					val = val[:conf["maxMultiBoneEntries"]]
 
 			if structure["using"]:
 				res = "\n".join([(utils.formatString(
@@ -129,8 +129,8 @@ class RelationalViewBoneDelegate(object):
 															language=conf["currentlanguage"])
 				                  or x["key"]) for x in val])
 
-			if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
-				res += "\n%s" % translate("and {count} more", count=count - conf["maxMultiBoneEntries"] - 1)
+			if conf["maxMultiBoneEntries"] and count > conf["maxMultiBoneEntries"]:
+				res += "\n%s" % translate("and {count} more", count=count - conf["maxMultiBoneEntries"])
 
 		except:
 			#We probably received some garbage
