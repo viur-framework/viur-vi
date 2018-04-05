@@ -638,7 +638,7 @@ class EditWidget(html5.Div):
 			if "values" in data.keys() and "name" in data["values"].keys():
 				spanMsg = html5.Span()
 
-				name = data["values"].get("name", data["values"].get("key", ""))
+				name = data["values"].get("name") or data["values"].get("key", "")
 				if isinstance(name, dict):
 					if conf["currentlanguage"] in name.keys():
 						name = name[conf["currentlanguage"]]
