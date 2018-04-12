@@ -28,25 +28,25 @@ class AdminScreen(Screen):
 		self.topBar = TopBarWidget()
 		self.appendChild(self.topBar)
 
-		self.workSpace = html5.Div()
-		self.workSpace["class"] = "vi_workspace"
-		self.appendChild(self.workSpace)
+		#self.workSpace = html5.Div()
+		#self.workSpace["class"] = "vi-workspace"
+		#self.appendChild(self.workSpace)
 
 		self.modulMgr = html5.Div()
-		self.modulMgr["class"] = "vi_wm"
+		self.modulMgr["class"] = "vi-manager"
 		self.appendChild(self.modulMgr)
 
-		self.modulList = html5.Nav()
-		self.modulList["class"] = "vi_manager"
-		self.modulMgr.appendChild(self.modulList)
+		# self.modulList = html5.Nav()
+		# self.modulList["class"] = "vi-manager"
+		# self.modulMgr.appendChild(self.modulList)
 
-		self.moduleListUl = html5.Ul()
-		self.moduleListUl["class"] = "modullist"
-		self.modulList.appendChild(self.moduleListUl)
+		self.moduleList = html5.Nav()
+		self.moduleList["class"] = "vi-modulelist"
+		self.modulMgr.appendChild(self.moduleList)
 
 		self.viewport = html5.Div()
-		self.viewport["class"] = "vi_viewer"
-		self.workSpace.appendChild(self.viewport)
+		self.viewport["class"] = "vi-viewer"
+		self.appendChild(self.viewport)
 
 		self.logWdg = Log()
 		self.appendChild(self.logWdg)
@@ -203,7 +203,7 @@ class AdminScreen(Screen):
 		urlHash = conf["startupHash"]
 		if not urlHash:
 			return
-		
+
 		if "?" in urlHash:
 			hashStr = urlHash[1:urlHash.find("?")]
 			paramsStr = urlHash[urlHash.find("?")+1:]
@@ -221,7 +221,7 @@ class AdminScreen(Screen):
 		:param params: Parameters passed to the module
 		"""
 		path = [x for x in path.split("/") if x]
-		
+
 		param = {}
 
 		if params:
@@ -284,11 +284,10 @@ class AdminScreen(Screen):
 		if parentPane:
 			parentPane.addChildPane(pane)
 		else:
-			self.moduleListUl.appendChild(pane)
+			self.moduleList.appendChild(pane)
 
 		self.viewport.appendChild(pane.widgetsDomElm)
 		pane.widgetsDomElm["style"]["display"] = "none"
-		#DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
 
 	def insertPane(self, pane, insertAt):
 		if len(pane.childPanes)>0:
@@ -297,7 +296,7 @@ class AdminScreen(Screen):
 		assert insertAt in self.panes
 
 		self.panes.append(pane)
-		self.moduleListUl.insertBefore(pane, insertAt)
+		self.moduleList.insertBefore(pane, insertAt)
 
 		self.viewport.appendChild(pane.widgetsDomElm)
 		pane.widgetsDomElm["style"]["display"] = "none"
@@ -385,7 +384,7 @@ class AdminScreen(Screen):
 				self.nextPane = None
 
 		if not pane.parentPane or pane.parentPane is self:
-			self.moduleListUl.removeChild(pane)
+			self.moduleList.removeChild(pane)
 		else:
 			pane.parentPane.removeChildPane(pane)
 

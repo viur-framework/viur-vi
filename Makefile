@@ -18,12 +18,10 @@ LESSCOPTS	=	--include-path="$(VI_CUSTOM)/static:public/default"
 
 DEFAULT_CSS	=	public/default/vi.css
 
-MAIN_CSS	=	public/vi.css
-MAIN_LESS	= 	public/vi.less
-MORE_LESS	=	public/login.less
+MAIN_CSS	=	public/css/style.css
+MAIN_LESS	= 	sources/less/vi.less
 
-CUSTOM_LESS	=	public/default/vi_custom.less \
-				$(wildcard $(VI_CUSTOM)/static/vi_custom.less)
+CUSTOM_LESS	=	$(wildcard $(VI_CUSTOM)/static/vi_custom.less)
 
 # Rules
 
@@ -46,7 +44,7 @@ copyfiles:
 version:
 	./version.sh
 
-$(OUTPUT): 
+$(OUTPUT):
 	mkdir -p $@
 
 watch: $(OUTPUT) $(MAIN_CSS) version copyfiles
@@ -77,6 +75,6 @@ deploy: $(MAIN_CSS) version copyfiles
 
 tarfile: deploy
 	tar cvf "vi_`date +'%Y-%m-%d'`.tar" vi
-	
+
 clean: $(OUTPUT)
 	rm -rf $(MAIN_CSS) $(OUTPUT)/*

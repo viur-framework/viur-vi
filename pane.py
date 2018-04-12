@@ -3,13 +3,13 @@ import html5
 from config import conf
 from i18n import translate
 
-class Pane(html5.Li):
+class Pane(html5.Div):
 	"""
 		Base class for Panes.
-		
+
 		A pane represents a entry in the left menu as well
 		as a list of widgets associated with this pane.
-		
+
 		It is possible to stack panes on-top of each other.
 		If a pane is active, _all_ its child widgets are visible
 		(through they might overlap).
@@ -29,6 +29,7 @@ class Pane(html5.Li):
 		self.childPanes = []
 
 		self.widgetsDomElm = html5.Div()
+		self.widgetsDomElm["class"].append("vi-viewer-pane")
 		self.widgetsDomElm["class"].append("has_no_child")
 		self.childDomElem = None
 
@@ -158,7 +159,7 @@ class Pane(html5.Li):
 
 		"""
 		div = html5.Div()
-		div["class"].append("vi_operator")
+		div["class"].append("vi-operator")
 		div.appendChild(widget)
 
 		for w in self.widgetsDomElm._children[:]:

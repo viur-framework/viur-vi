@@ -1,39 +1,30 @@
 @charset "UTF-8";
 /* MESSENGER */
 
-.vi_messenger {
+.vi-messenger {
+  grid-area: messenger;
   box-shadow: 0px -3px 3px rgba(0, 0, 0, 0.2);
   width: 100%;
-  position: fixed;
-  top: 100%;
   border-top:2px solid @mainColor;
   border-bottom: 1px solid #cccccc;
   background-color: #eee;
   background-color: rgba(238, 238, 238, 0.9);
   background-image: -webkit-gradient(linear, right bottom, right top, from(rgba(238, 238, 238, 0.9)), to(rgba(255, 255, 255, 0.2)));
-  /* webkit example */
-
   background-image: -moz-linear-gradient(center bottom, rgba(238, 238, 238, 0.9) 20%, rgba(255, 255, 255, 0.2) 95%);
-  /* mozilla example - FF3.6+ */
-
   padding: 15px 0;
   z-index: 10;
-  margin-top: -30px;
-  height: 300px;
-  -webkit-transition: all 0.6s ease;
-  -moz-transition: all 0.6s ease;
-  -o-transition: all 0.6s ease;
+  height: 30px;
   transition: all 0.6s ease;
-  overflow: visible;
+  overflow: hidden;
 }
-.vi_messenger:hover {
-  margin-top: -82px;
+.vi-messenger:hover {
+  height: 80px;
 }
-.vi_messenger.is_open {
-  margin-top: -300px;
+.vi-messenger.is_open {
+  height: 300px;
   overflow-y: scroll;
 }
-.vi_messenger button[type="button"] {
+.vi-messenger button[type="button"] {
   height: 34px;
   margin-top: -17px;
   background: transparent;
@@ -45,9 +36,6 @@
   border-bottom: 1px solid #fafafa;
   border-top:2px solid @mainColor;
   padding: 6px 8px 80px;
-  -webkit-transition: all 0.3s ease;
-  -moz-transition: all 0.3s ease;
-  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
   color: transparent;
   letter-spacing: -1em;
@@ -57,12 +45,12 @@
   display: block;
   float: left;
 }
-.vi_messenger.is_open button[type="button"] {
+.vi-messenger.is_open button[type="button"] {
   position: fixed;
   padding-bottom: 7px;
 }
-.vi_messenger button[type="button"]:hover,
-.vi_messenger:hover button[type="button"] {
+.vi-messenger button[type="button"]:hover,
+.vi-messenger:hover button[type="button"] {
   color: #999;
   text-shadow: 0px 1px 1px #fff;
   background-color: #fff;
@@ -72,7 +60,7 @@
   min-width: 130px;
   letter-spacing: normal;
 }
-.vi_messenger button[type="button"]:before {
+.vi-messenger button[type="button"]:before {
   background-image: url(icons/vi_iconnav_sprite.svg);
   background-repeat: no-repeat;
   width: 32px;
@@ -84,13 +72,11 @@
   margin-left: 7px;
   background-position: -160px 0px;
 }
-.vi_messenger.is_uploading button[type="button"] {
+.vi-messenger.is_uploading button[type="button"] {
   background: rgba(255, 0, 0, 0.2);
   animation: uploading 5s linear 2s infinite alternate;
-  -webkit-animation: uploading 5s linear 2s infinite alternate;
-  /* Safari and Chrome: */
-
 }
+
 @keyframes uploading {
   0% {
     background: rgba(255, 0, 0, 0.1);
@@ -113,16 +99,16 @@
     background: rgba(255, 0, 0, 0.1);
   }
 }
-.vi_messenger.is_uploading button[type="button"]:hover,
-.vi_messenger.is_uploading:hover button[type="button"] {
+.vi-messenger.is_uploading button[type="button"]:hover,
+.vi-messenger.is_uploading:hover button[type="button"] {
   color: #fff;
   text-shadow: none;
 }
-.vi_messenger.is_uploading button[type="button"]:before {
+.vi-messenger.is_uploading button[type="button"]:before {
   background-image: url(icons/is_uploading.gif);
   background-position: 0px 0px;
 }
-.vi_messenger.is_open button[type="button"]:before {
+.vi-messenger.is_open button[type="button"]:before {
   background-position: -192px 0px;
 }
 .statuslist {
@@ -134,9 +120,6 @@
   padding: 14px;
   border-width: 1px;
   border-style: solid;
-  -webkit-transition: all 0.6s ease;
-  -moz-transition: all 0.6s ease;
-  -o-transition: all 0.6s ease;
   transition: all 0.6s ease;
   width: 472px;
   margin: 0 auto 15px;
@@ -200,9 +183,6 @@ display: block;
   border-width: 1px;
   border-style: solid;
   float: left;
-  -webkit-transition: all 0.6s ease;
-  -moz-transition: all 0.6s ease;
-  -o-transition: all 0.6s ease;
   transition: all 0.6s ease;
   background-image: url(icons/vi_message_icons_sprite_white.svg);
   background-repeat: no-repeat;
@@ -252,7 +232,7 @@ display: block;
   margin-top: -21px;
   margin-bottom: -21px;
 }
-.vi_messenger.is_open .statuslist li.is_new {
+.vi-messenger.is_open .statuslist li.is_new {
   position: relative;
   padding: 20px;
   width: 500px;
@@ -265,16 +245,16 @@ display: block;
   box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
 }
 
-.vi_messenger .versiondiv {
-font-size: .7em;
-color:#777;
-float:right;
-padding:2px 1%;
-margin-bottom:50px;
-border-top:1px dotted #ccc;
+.vi-messenger .versiondiv {
+  font-size: .7em;
+  color:#777;
+  float:right;
+  padding:2px 1%;
+  margin-bottom:50px;
+  border-top:1px dotted #ccc;
 }
 
-.vi_messenger .versiondiv span {
+.vi-messenger .versiondiv span {
   display:block;
 }
 

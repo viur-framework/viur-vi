@@ -2,19 +2,19 @@
 /* ACTIONBAR */
 
 // Prefixes and objects:
-// .actionbar
-// .searchbar
+// .vi-actionbar
+// .vi-searchbar
 
 /*
 #FIXME: Implement new action bar!
 
-.actionbar {
+.vi-actionbar {
   padding: 6px 15px;
   .boxShadow(1, #000);
   min-height: 50px;
 }
 
-.searchbar {
+.vi-searchbar {
   padding: 0;
   max-height: 0px;
   overflow: hidden;
@@ -32,14 +32,9 @@
 
 /* #actionbar
 ================================================== */
-.vi_operator .actionbar {
-  width: 83%;
-  /*min-width: 500px;*/
-  position: fixed;
-  margin-top: -105px;
-  margin-left: -1%;
-  padding: 15px 1%;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+.vi-operator .vi-actionbar {
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #ccc;
   border-bottom: 1px solid #bbb;
   background-color: #eee;
@@ -49,7 +44,7 @@
   z-index: 100;
 }
 
-.vi_operator .actionbar .button img {
+.vi-operator .vi-actionbar .button img {
   height: 20px;
   float: left;
   margin-right: 6px;
@@ -60,16 +55,16 @@
   margin: 15px 15px 0 15px;
 }
 
-.vi_viewer.is_fullscreen .vi_operator .actionbar
+/*.vi-viewer.is_fullscreen .vi-operator .vi-actionbar
 {
   width: 98%;
 }
 
-.has_multiple_children .actionbar {
+.has_multiple_children .vi-actionbar {
   width:41%;
-}
+}*/
 
-.vi_operator .actionbar h3:before {
+.vi-operator .vi-actionbar h3:before {
   content: '';
   margin-top: -4px;
   margin-left: -10px;
@@ -82,19 +77,19 @@
   background-image: url(icons/vi_actions_view_sprite.svg);
   background-repeat: no-repeat;
 }
-.vi_operator .actionbar h3.action_list:before {
+.vi-operator .vi-actionbar h3.action_list:before {
   background-position: 0px 0px;
 }
-.vi_operator .actionbar h3.action_add:before {
+.vi-operator .vi-actionbar h3.action_add:before {
   background-position: -24px 0px;
 }
-.vi_operator .actionbar h3.action_edit:before {
+.vi-operator .vi-actionbar h3.action_edit:before {
   background-position: -48px 0px;
 }
-.vi_operator .actionbar h3.action_Text:before {
+.vi-operator .vi-actionbar h3.action_Text:before {
   background-position: -72px 0px;
 }
-.vi_operator .actionbar h3 {
+.vi-operator .vi-actionbar h3 {
   line-height: 1em;
   color: #222;
   height: 16px;
@@ -113,21 +108,21 @@
   border-right:2px solid @mainColor;
   margin-right: 4px;
 }
-.actionbar .operations, button.selectfilter, button.text.save[type="button"], button.flipview[type="button"], button.icon.close[type="button"], button.icon.activateselection[type="button"] {
+.vi-actionbar .operations, button.selectfilter, button.text.save[type="button"], button.flipview[type="button"], button.icon.close[type="button"], button.icon.activateselection[type="button"] {
   float: right;
 }
-.actionbar.is_disabled {
+.vi-actionbar.is_disabled {
   visibility: hidden;
 }
 
-.actionbar select {
+.vi-actionbar select {
   height: 28px;
   padding-top: 4px;
   padding-bottom: 1px;
   margin-right: 20px;
 }
 
-.actionbar .spacer
+.vi-actionbar .spacer
 {
   width: 10px;
   display: inline-block;

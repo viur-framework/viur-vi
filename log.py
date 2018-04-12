@@ -11,7 +11,7 @@ class Log( html5.Div ):
 	def __init__(self):
 		super(Log, self).__init__()
 
-		self["class"].append("vi_messenger")
+		self["class"].append("vi-messenger")
 		openLink = html5.ext.Button(translate("Open message center"), self.toggleMsgCenter)
 		self.appendChild(openLink)
 

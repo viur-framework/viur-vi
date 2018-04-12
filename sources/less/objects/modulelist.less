@@ -2,29 +2,22 @@
 /* Modullist */
 
 // Prefixes and objects:
-// .modullist-
+// .vi-modulelist-
 
 /*
 #FIXME: Implement new modul list!
 
-.modullist {
+.vi-modulelist {
 
 }
 */
 
-
-.modullist {
+.vi-modulelist {
   overflow: hidden;
-  /*min-width:298px;*/
 }
-.modullist:first-of-type {
-  margin-top: 45px;
-}
-.modullist:last-of-type {
-  margin-bottom: 50px;
-}
-.modullist a,
-.modullist a:visited {
+
+.vi-modulelist a,
+.vi-modulelist a:visited {
   width: 100%;
   position: relative;
   border-bottom: 1px dotted #cccccc;
@@ -33,26 +26,17 @@
   height: auto;
   background-color: #f7f7f7;
   background: -moz-linear-gradient(top, #f2f2f2, #f7f7f7);
-  /* Firefox */
-
   background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#f7f7f7));
-  /* Safari, Chrome */
-
   padding: 12px 13px;
-  -webkit-transition: all 0.3s ease;
-  -moz-transition: all 0.3s ease;
-  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
-.modullist:nth-child(even) a {
+.vi-modulelist:nth-child(even) a {
   background-color: #e9e9e9;
   background: -moz-linear-gradient(top, #e4e4e4, #e9e9e9);
-  /* Firefox */
   background: -webkit-gradient(linear, left top, left bottom, from(#e4e4e4), to(#e9e9e9));
-  /* Safari, Chrome */
 }
 
-.modullist:nth-child(even) ul a {
+.vi-modulelist:nth-child(even) ul a {
   background-color: #d6d6d9;
   background: -moz-linear-gradient(top, #d0d0d3, #d6d6d9);
   /* Firefox */
@@ -60,22 +44,19 @@
   /* Safari, Chrome */
 }
 
-.modullist a:hover,
-.modullist a:active,
-.modullist ul a:hover,
-.modullist ul a:active {
+.vi-modulelist a:hover,
+.vi-modulelist a:active,
+.vi-modulelist ul a:hover,
+.vi-modulelist ul a:active {
   background: #fff;
   text-decoration: none;
-  /*background:-moz-linear-gradient(top, #eee, #ddd); /* Firefox */
-  /*background:-webkit-gradient(linear, left top, left bottom, from(#eee), to(#ddd)); /* Safari, Chrome */
-
 }
-.modullist img {
+.vi-modulelist img {
   width: 32px;
   height: 32px;
   float: left;
 }
-.modullist h3 {
+.vi-modulelist h3 {
   float: left;
   letter-spacing: 1px;
   margin-left: 15px;
@@ -87,13 +68,13 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.modullist ul img {
+.vi-modulelist ul img {
   width: 16px;
   height: 16px;
   float: left;
   margin-left: 16px;
 }
-.modullist ul h3 {
+.vi-modulelist ul h3 {
   float: left;
   letter-spacing: 1px;
   margin-left: 15px;
@@ -104,7 +85,7 @@
   color: #666;
 }
 
-.modullist ul a {
+.vi-modulelist ul a {
   background-color: #e9e9e9;
   background: -moz-linear-gradient(top, #e4e4e4, #e9e9e9);
   /* Firefox */
@@ -113,7 +94,7 @@
   /* Safari, Chrome */
 
 }
-.modullist ul ul a {
+.vi-modulelist ul ul a {
   background-color: #dbdbdc;
   background: -moz-linear-gradient(top, #d5d5d7, #dbdbdc);
   /* Firefox */
@@ -122,24 +103,24 @@
    /*padding: 7px 13px;*/
     border-bottom: 1px dotted #bbb;
 }
-.modullist ul ul img {
+.vi-modulelist ul ul img {
     margin-left: 44px;
 }
 
-.modullist ul ul ul img {
+.vi-modulelist ul ul ul img {
     margin-left: 64px;
 }
 
-.modullist ul button {
+.vi-modulelist ul button {
   margin-top: -32px;
   position: relative;
   float: right;
   margin-right: 10px;
 }
-.modullist ul ul button {
+.vi-modulelist ul ul button {
     /*margin-top: -27px;*/
 }
-.modullist ul button.closebtn {
+.vi-modulelist ul button.closebtn {
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   border-radius: 15px;
@@ -155,7 +136,7 @@
   letter-spacing: -1em;
   overflow: hidden;
 }
-.modullist ul button.closebtn:before {
+.vi-modulelist ul button.closebtn:before {
   width: 16px;
   height: 16px;
   content: ' ';
@@ -166,14 +147,14 @@
   background-repeat: no-repeat;
   background-position: 0px -64px;
 }
-.modullist ul button.closebtn:hover {
+.vi-modulelist ul button.closebtn:hover {
   overflow: visible;
   min-width: 90px;
   letter-spacing: normal;
   color: #eee;
 }
-.modullist li.is_active a {background: @focusoddcolor;}
-.modullist li.is_active h3 {
+.vi-modulelist li.is_active a {background: @focusoddcolor;}
+.vi-modulelist li.is_active h3 {
   color: #fff;
   text-shadow: none;
 }
