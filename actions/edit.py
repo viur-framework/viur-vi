@@ -94,9 +94,12 @@ class Refresh(html5.ext.Button):
 		return actionName == "refresh"
 
 	def onClick(self, sender=None):
-		html5.ext.YesNoDialog(translate("vi.action.edit.refresh.question"),
-		                        translate("vi.action.edit.refresh.title"),
-		                        yesCallback=self.performReload)
+		if self.parent().parent().modified:
+			html5.ext.YesNoDialog(translate("vi.action.edit.refresh.question"),
+		                            translate("vi.action.edit.refresh.title"),
+		                            yesCallback=self.performReload)
+		else:
+			self.performReload()
 
 	def performReload(self, sender=None):
 		self.addClass("is_loading")

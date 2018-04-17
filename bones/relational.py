@@ -162,7 +162,7 @@ class RelationalSingleSelectionBone(html5.Div):
 			@param format: Specifies how entries should be displayed.
 			@type format: string
 		"""
-		super( RelationalSingleSelectionBone,  self ).__init__( *args, **kwargs )
+		super(RelationalSingleSelectionBone,  self).__init__(*args, **kwargs)
 		self.srcModule = srcModule
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -175,7 +175,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.selectionTxt = html5.Input()
 		self.selectionTxt["readonly"] = True
 		self.selectionTxt["type"] = "text"
-		self.appendChild( self.selectionTxt )
+		self.appendChild(self.selectionTxt)
 		self.ie = None
 
 		self.baseContext = context
@@ -310,6 +310,7 @@ class RelationalSingleSelectionBone(html5.Div):
 
 	def onRemove(self, *args, **kwargs):
 		self.setSelection(None)
+		self.changeEvent.fire(self)
 
 	def unserialize(self, data):
 		"""
