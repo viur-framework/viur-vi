@@ -164,5 +164,9 @@ lngDe = {
 	"communication error": u"Verbindungsfehler",
 
 	"true": u"Ja",
-	"false": u"Nein"
+	"false": u"Nein",
+
+	"vi.action.edit.refresh.question": u"Dies wird den aktuellen Datensatz neu laden.\nÄnderungen gehen verloren.\n"
+	                                   u"Möchten Sie wirklich fortfahren?",
+	"vi.action.edit.refresh.title": u"Datensatz neu laden"
 }

@@ -403,9 +403,9 @@ class EditWidget(html5.Div):
 			editActions = []
 
 		if applicationType == EditWidget.appSingleton:
-			self.actionbar.setActions(["save.singleton", "reset"] + editActions)
+			self.actionbar.setActions(["save.singleton", "refresh"] + editActions)
 		else:
-			self.actionbar.setActions(["save.close", "save.continue", "reset"] + editActions)#
+			self.actionbar.setActions(["save.close", "save.continue", "refresh"] + editActions)
 
 		# Input form
 		self.form = html5.Form()

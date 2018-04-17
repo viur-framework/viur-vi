@@ -83,3 +83,27 @@ class SaveClose( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, SaveClose.isSuitableFor, SaveClose )
 
+
+class Refresh(html5.ext.Button):
+	def __init__(self, *args, **kwargs):
+		super(Refresh, self).__init__(translate("Reload"), *args, **kwargs)
+		self["class"] = "icon reload"
+
+	@staticmethod
+	def isSuitableFor(modul, handler, actionName):
+		return actionName == "refresh"
+
+	def onClick(self, sender=None):
+		html5.ext.YesNoDialog(translate("vi.action.edit.refresh.question"),
+		                        translate("vi.action.edit.refresh.title"),
+		                        yesCallback=self.performReload)
+
+	def performReload(self, sender=None):
+		self.addClass("is_loading")
+		self.parent().parent().reloadData()
+
+	def resetLoadingState(self):
+		self.removeClass("is_loading")
+
+
+actionDelegateSelector.insert(1, Refresh.isSuitableFor, Refresh)
