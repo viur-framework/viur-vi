@@ -1,20 +1,21 @@
-# Change Log
+# Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
 ## 2.2
 
-Yet unreleased.
+Released: Coming soon.
 
-- Support of the new selectBone feature, replacing selectOneBone and selectMultiBone in server
-- Refactored image file preview and new image detail view
-- Bones configured as visible=False are rendered as hidden objects now, instead of ignoring them.
+- Reload-button in edit masks with changes checking
+- Support of the new *selectBone* feature, replacing the former *selectOneBone* and *selectMultiBone* in server
+- Refactored image file preview and new image detail viewer
+- Bones configured as ``visible=False`` are rendered as hidden objects now, instead of ignoring them
 - Improved context editing features and editViews feature (still in beta)
   - Context-editing actions
   - New widget selector for embedded widgets
   - Evaluation of "title" and "class" attributes in editViews
-- [ViUR logics](https://github.com/viur-framework/logics) v2.2 integrated, using much faster LALR parser
-- Network communication module (network.py) with manual kickoff and generic error handler
+- [ViUR logics](https://github.com/viur-framework/logics) v2.2 integrated
+- Improved network communication module (network.py) with manual request kickoff and generic error handling
 
 ## 2.1
 
