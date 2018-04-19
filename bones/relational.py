@@ -790,14 +790,15 @@ class RelationalMultiSelectionBone(html5.Div):
 			@param data: The data dictionary received.
 			@type data: dict
 		"""
-		self.selectionDiv.removeAllChildren()
-		self.entries = []
-
 		if self.boneName in data.keys():
-			val = data[ self.boneName ]
-			if isinstance( val, dict ):
-				val = [ val ]
-			self.setSelection( val )
+			self.selectionDiv.removeAllChildren()
+			self.entries = []
+
+			val = data[self.boneName]
+			if isinstance(val, dict):
+				val = [val]
+
+			self.setSelection(val)
 
 	def serializeForPost(self):
 		"""
