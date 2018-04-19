@@ -16,6 +16,11 @@ Released: Coming soon.
   - Evaluation of "title" and "class" attributes in editViews
 - [ViUR logics](https://github.com/viur-framework/logics) v2.2 integrated
 - Improved network communication module (network.py) with manual request kickoff and generic error handling
+- Bugfixes
+  - relatonalBone(multiple=True) loose values when unserialize() is called twice (happens under some cirumstances)
+  - Counting of "Anx X more..." in relationalBone(multiple=True) and selectBone(multiple=True) was incorrect
+  - Making AdminScreen instances re-usable with different users
+  - Tooltips shall always be expandable
 
 ## 2.1
 
