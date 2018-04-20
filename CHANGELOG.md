@@ -18,7 +18,7 @@ Released: Coming soon.
 - Improved network communication module (network.py) with manual request kickoff and generic error handling
 - Bugfixes
   - relatonalBone(multiple=True) loose values when unserialize() is called twice (happens under some cirumstances)
-  - Counting of "Anx X more..." in relationalBone(multiple=True) and selectBone(multiple=True) was incorrect
+  - Counting of "And X more..." in relationalBone(multiple=True) and selectBone(multiple=True) was incorrect
   - Making AdminScreen instances re-usable with different users
   - Tooltips shall always be expandable
 
