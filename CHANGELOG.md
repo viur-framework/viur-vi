@@ -2,9 +2,9 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
-## 2.2
+## 2.2 Etna
 
-Released: Coming soon.
+Release date: Apr 23, 2018
 
 - Reload-button in edit masks with changes checking
 - Support of the new *selectBone* feature, replacing the former *selectOneBone* and *selectMultiBone* in server
@@ -24,7 +24,7 @@ Released: Coming soon.
 
 ## 2.1
 
-Released: Nov 2, 2017
+Release date: Nov 2, 2017
 
 - Made [ViUR logics](https://github.com/viur-framework/logics) permanently available as a Beta feature. Logics can be used for dynamic mask behaviors by providing test expressions that influence bone readonly/visibility states. Check out the [README in ViUR/logics](https://github.com/viur-framework/logics/blob/master/README.md) for more information and examples.
 - Generally refactored all supported bones to provide a consistent API (``bone.serializeForPost()``, ``bone.serializeForDocument()``, and much more)
@@ -40,7 +40,7 @@ Released: Nov 2, 2017
 
 ## 2.0
 
-Released: Dec 22, 2016
+Release date: Dec 22, 2016
 
 - ViUR server 2.0.x compliance
 - "id" was renamed to "key"
