@@ -2,17 +2,19 @@
 
 /* InlineSVG Icons */
 
-.icon {
-  display: inline-block;
-  vertical-align: text-top;
-  fill: currentcolor;
-  color:inherit;
-  width:1em;
-  height:1em;
-  & path {fill:inherit; stroke: none;}
-}
+& when (@form=icon) {
+  .icon {
+    display: inline-block;
+    vertical-align: text-top;
+    fill: currentcolor;
+    color: inherit;
+    width: 1em;
+    height: 1em;
+    & path { fill: inherit; stroke: none; }
+  }
 
-.colorizeIcon(@color) {
-  & .icon,
-  &.icon {color: darken(@color, 25%);};
+  .colorizeIcon(@color) {
+    & .icon,
+    &.icon { color: darken(@color, 25%); }
+  }
 }

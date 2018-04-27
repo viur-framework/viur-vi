@@ -27,7 +27,7 @@ class NodeWidget( html5.Div ):
 		self.data = data
 		self.structure = structure
 		self.buildDescription()
-		self["class"] = "treeitem node supports_drag supports_drop"
+		self["class"] = "tree-item node is-drop-target is-draggable"
 		self["draggable"] = True
 		self.sinkEvent("onDragOver","onDrop","onDragStart", "onDragLeave")
 
@@ -54,8 +54,8 @@ class NodeWidget( html5.Div ):
 		"""
 			Check if we can handle the drag-data
 		"""
-		if not "insert_here" in self["class"]:
-			self["class"].append("insert_here")
+		if not "insert-here" in self["class"]:
+			self["class"].append("insert-here")
 		try:
 			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
 		except:
@@ -64,8 +64,8 @@ class NodeWidget( html5.Div ):
 		event.stopPropagation()
 
 	def onDragLeave(self, event):
-		if "insert_here" in self["class"]:
-			self["class"].remove("insert_here")
+		if "insert-here" in self["class"]:
+			self["class"].remove("insert-here")
 		return( super(NodeWidget, self).onDragLeave(event))
 
 	def onDragStart(self, event):
@@ -107,7 +107,7 @@ class LeafWidget( html5.Div ):
 		self.data = data
 		self.structure = structure
 		self.buildDescription()
-		self["class"] = "treeitem leaf supports_drag"
+		self["class"] = "tree-item leaf is-draggable"
 		self["draggable"] = True
 		self.sinkEvent("onDragStart")
 

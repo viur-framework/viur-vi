@@ -6,7 +6,7 @@
   margin-bottom: 250px;
 }
 
-.hierarchyitem {
+.hierarchy-item {
   padding: 7px;
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
@@ -16,44 +16,44 @@
   background: #fcfcfc;
   border: 1px solid #ddd;
 }
-.hierarchyitem:first-of-type {
+.hierarchy-item:first-of-type {
   margin: 0;
 }
-.hierarchyitem:nth-of-type(odd) {
+.hierarchy-item:nth-of-type(odd) {
   background: #ececec;
 }
-.hierarchyitem:nth-of-type(odd) ol .hierarchyitem:first-child {
+.hierarchy-item:nth-of-type(odd) ol .hierarchy-item:first-child {
   margin-top: 0;
 }
-.hierarchyitem:nth-of-type(odd) ol .hierarchyitem:nth-of-type(odd),
-.hierarchyitem:nth-of-type(odd) ol .hierarchyitem:nth-of-type(even),
-.hierarchyitem:nth-of-type(even) ol .hierarchyitem:nth-of-type(odd),
-.hierarchyitem:nth-of-type(even) ol .hierarchyitem:nth-of-type(even) {
+.hierarchy-item:nth-of-type(odd) ol .hierarchy-item:nth-of-type(odd),
+.hierarchy-item:nth-of-type(odd) ol .hierarchy-item:nth-of-type(even),
+.hierarchy-item:nth-of-type(even) ol .hierarchy-item:nth-of-type(odd),
+.hierarchy-item:nth-of-type(even) ol .hierarchy-item:nth-of-type(even) {
   background: transparent;
   border: 0;
 }
-.hierarchyitem.expaned ol ol {
+.hierarchy-item.is-expanded ol ol {
   border-left: 2px dashed #ccc;
   border-bottom: 1px dashed #ddd;
 }
-.hierarchyitem.expaned.has_no_childs ol ol {
+.hierarchy-item.is-expanded.has-no-child ol ol {
   border-bottom: 0;
 }
-.hierarchyitem.expaned ol {
+.hierarchy-item.is-expanded ol {
   margin-top: 7px;
   /*border:1px solid #ddd;*/
   background:#e5e5e5;
 }
-.hierarchyitem.expaned ol li {
+.hierarchy-item.is-expanded ol li {
   padding-left: 35px;
 }
-.hierarchyitem a {
+.hierarchy-item a {
   color: transparent;
   letter-spacing: -1em;
   overflow: hidden;
 }
-.expaned > a:before,
-.unexpaned > a:before {
+.is-expanded > a:before,
+.is-collapsed > a:before {
   background-image: url(icons/vi_actions_sprite.svg);
   background-repeat: no-repeat;
   width: 16px;
@@ -66,13 +66,20 @@
   margin-right: 7px;
   background-position: 0px -64px;
 }
-.expaned > a:before {
+.is-expanded > a:before {
   background-position: -16px -64px;
 }
-.has_no_childs > a:before {
+.has-no-child > a:before {
   background-position: -32px -64px;
 }
-.hierarchyitem.is_focused, .hierarchyitem ol .hierarchyitem.is_focused:nth-of-type(odd), .hierarchyitem ol .hierarchyitem.is_focused:nth-of-type(even) {background: @focusoddcolor; color: #fff; padding-top:14px; padding-bottom:14px;}
+.hierarchy-item.is_focused,
+.hierarchy-item ol .hierarchy-item.is_focused:nth-of-type(odd),
+.hierarchy-item ol .hierarchy-item.is_focused:nth-of-type(even) {
+  background: @focusoddcolor;
+  color: #fff;
+  padding-top:14px;
+  padding-bottom:14px;
+}
 
 [draggable] {
   -moz-user-select: none;
@@ -80,9 +87,9 @@
   -webkit-user-select: none;
   user-select: none;
 }
-.treeitem.insert_before,
-.hierarchyitem.insert_before {border-top:2px solid @mainColor !important;}
-.treeitem.insert_here,
-.hierarchyitem.insert_here {border:1px solid @mainColor !important; padding:12px 7px !important;}
-.treeitem.insert_after,
-.hierarchyitem.insert_after {border-bottom:2px solid @mainColor !important;}
+.tree-item.insert-before,
+.hierarchy-item.insert-before {border-top:2px solid @mainColor !important;}
+.tree-item.insert-here,
+.hierarchy-item.insert-here {border:1px solid @mainColor !important; padding:12px 7px !important;}
+.tree-item.insert-after,
+.hierarchy-item.insert-after {border-bottom:2px solid @mainColor !important;}

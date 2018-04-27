@@ -6,21 +6,22 @@
 // .alert-
 
 /* Messages */
-.msg(@msgColor: @hintColor,
+.msg(
+  @msgColor: @hintColor,
   @msgBorderWidth: @defaultBorderWidth,
-  @msgBorderRadius: 3px) {
+  @msgBorderRadius: 3px) when (@message=true) {
   position: relative;
   padding: 15px;
   margin-bottom: 20px;
   font-size: .9rem;
-  color: darken(@msgColor,25%);
+  color: darken(@msgColor, 25%);
   background-color: lighten(@msgColor, 40%);
-  border: @msgBorderWidth solid darken(@msgColor,15%);
+  border: @msgBorderWidth solid darken(@msgColor, 15%);
   border-radius: @msgBorderRadius;
   p:last-child {
     margin-bottom: 0;
   }
-  &.has-icon {padding-left:4em; min-height: 5em;}
+  &.has-icon { padding-left: 4em; min-height: 5em; }
   & .icon {
     position: absolute;
     display: block;
@@ -31,12 +32,12 @@
     transform: translateX(-45%);
   }
   & a {
-    color:darken(@msgColor,35%);
-    border-bottom: 1px solid fadeout(darken(@msgColor,35%),50%);
+    color: darken(@msgColor, 35%);
+    border-bottom: 1px solid fadeout(darken(@msgColor, 35%), 50%);
   }
 
   &-headline {
-    font-size:.9rem;
+    font-size: .9rem;
     font-weight: 600;
     color: inherit;
   }
@@ -76,29 +77,28 @@
 // Variations
 .colorizeMsg(
   @color,
-  @msgBorderWidth: @defaultBorderWidth) {
-  color: darken(@color,25%);
+  @msgBorderWidth: @defaultBorderWidth) when (@message=true) {
+  color: darken(@color, 25%);
   background-color: lighten(@color, 35%);
-  border-color: darken(@color,15%);
+  border-color: darken(@color, 15%);
   & a {
-    color:darken(@color,35%);
-    border-bottom: @msgBorderWidth solid fadeout(darken(@color,35%),50%);
+    color: darken(@color, 35%);
+    border-bottom: @msgBorderWidth solid fadeout(darken(@color, 35%), 50%);
   }
 }
 
-
 /* Alerts */
-.alert(@alertColor: @hintColor,
+.alert(
+  @alertColor: @hintColor,
   @alertBorderWidth: @defaultBorderWidth,
-  @alertBorderRadius: 3px
-  ) {
+  @alertBorderRadius: 3px) when (@message=true) {
   user-select: none;
   position: relative;
   padding: 8px 10px;
   font-size: .8rem;
-  color: darken(@alertColor,25%);
+  color: darken(@alertColor, 25%);
   background-color: lighten(@alertColor, 40%);
-  border: @alertBorderWidth solid darken(@alertColor,15%);
+  border: @alertBorderWidth solid darken(@alertColor, 15%);
   border-radius: @alertBorderRadius;
   min-width: 300px;
   max-width: 25%;
@@ -106,11 +106,11 @@
   clear: both;
   margin-bottom: 10px;
   cursor: default;
-  .zIndex('alert',1);
+  .zIndex('alert', 1);
   p:last-child {
     margin-bottom: 0;
   }
-  &.has-icon {padding-left:2em;}
+  &.has-icon { padding-left: 2em; }
   & .icon {
     position: absolute;
     display: block;
@@ -121,12 +121,12 @@
     transform: translateX(-50%);
   }
   a {
-    color:darken(@alertColor,35%);
+    color: darken(@alertColor, 35%);
     text-decoration: underline;
   }
 
   &-headline {
-    font-size:.8rem;
+    font-size: .8rem;
     font-weight: 600;
     color: inherit;
   }
@@ -134,21 +134,21 @@
   // Contain the messages
   &Group {
     position: fixed;
-    top:0;
-    right:0;
+    top: 0;
+    right: 0;
     padding: 25px;
-    .zIndex('alert',0);
+    .zIndex('alert', 0);
   }
 }
 
-
 // Variations
-.colorizeAlert(@color) {
-  color: darken(@color,25%);
+.colorizeAlert(@color) when (@message=true) {
+  color: darken(@color, 25%);
   background-color: lighten(@color, 35%);
-  border-color: darken(@color,15%);
+  border-color: darken(@color, 15%);
   a {
-    color:darken(@color,35%);
+    color: darken(@color, 35%);
     text-decoration: underline;
   }
 }
+

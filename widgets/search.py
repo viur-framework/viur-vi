@@ -38,8 +38,8 @@ class Search( html5.Div ):
 			event.stopPropagation()
 
 	def resetLoadingState(self):
-		if "is_loading" in self.btn["class"]:
-			self.btn["class"].remove("is_loading")
+		if "is-loading" in self.btn["class"]:
+			self.btn["class"].remove("is-loading")
 
 	def reevaluate(self):
 		self.doSearch()

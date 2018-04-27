@@ -285,10 +285,10 @@ class StringEditBone(html5.Div):
 				#self.langBtns[lang]["class"].remove("is_filled")
 				#self.langBtns[lang]["class"].remove("is_unfilled")
 
-				if not "is_active" in self.langBtns[lang]["class"]:
-					self.langBtns[lang]["class"].append("is_active")
+				if not "is-active" in self.langBtns[lang]["class"]:
+					self.langBtns[lang]["class"].append("is-active")
 			else:
-				self.langBtns[lang]["class"].remove("is_active")
+				self.langBtns[lang]["class"].remove("is-active")
 
 	def setLang(self, lang):
 		if self.currentLanguage:
@@ -300,10 +300,10 @@ class StringEditBone(html5.Div):
 
 		for btn in self.buttonContainer._children:
 			if btn.lang == lang:
-				if "is_active" not in btn[ "class" ]:
-					btn[ "class" ].append( "is_active" )
+				if "is-active" not in btn[ "class" ]:
+					btn[ "class" ].append( "is-active" )
 			else:
-				btn[ "class" ].remove( "is_active" )
+				btn[ "class" ].remove( "is-active" )
 
 	def onBtnGenTag(self, btn):
 		tag = self.genTag("", lang=btn.lang)

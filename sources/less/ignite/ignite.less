@@ -9,23 +9,25 @@
 @import "foundation/reset"; // resets all browsers to the same base state.
 
 // Fundamental parts: positioning, type and utilities
+@import "foundation/appconf"; // fallback variables.
 @import "foundation/basic"; // classic basic styling.
 @import "foundation/wrap"; // page wrappers.
 
 // Generic elements: buttons, forms and messages
+// Opt-in, e.g.: @bar: true;
 @import "generic/bar"; // horizontal bars.
-@import "generic/button"; // some classic buttons.
-//@import "generic/burger"; // your own menu burger.
+@import "generic/button"; // some classic buttons. Initialize/customize: .btn()
+@import "generic/burger"; // your own menu burger. Initialize/customize: .burger()
 @import "generic/form"; // inputs, selects and other form elements.
-//@import "generic/grid"; // grid system.
 @import "generic/icon"; // inline SVG icons.
-@import "generic/message"; // hints, errors, warnings etc.
-@import "generic/table"; // a classic table layout.
+@import "generic/message"; // hints, errors, warnings etc. Initialize/customize: .msg()
+@import "generic/table"; // a classic table layout. Initialize/customize: .table()
 
 // Configuration and Mixins
-@import "tools/mediaqueries"; // really simple media queries.
-@import "tools/order";
-@import "tools/position";
-@import "tools/shadow"; // material design shadow mixin.
-@import "tools/state"; // is-, has-, no- etc.
-@import "tools/zindex"; // organize your z-indexes.
+@import "mixins/basicinput"; // makes all inputs, buttons etc. look alike.
+@import "mixins/mediaqueries"; // really simple media queries.
+@import "mixins/order"; // order mixin for flex layouts.
+@import "mixins/position"; // absolute positioning in vertical and horizontal center.
+@import "mixins/shadow"; // material design shadow mixin.
+@import "mixins/state"; // global is-, has-, no- etc.
+@import "mixins/zindex"; // organize your z-indexes.

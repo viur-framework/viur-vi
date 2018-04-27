@@ -13,6 +13,7 @@
 
 // Initialize generic elements.
 @import "generic/button";
+@import "generic/message";
 
 // Menus
 @import "objects/topbar";
@@ -40,9 +41,11 @@
 // Bones
 @import "bones/relational";
 
+@import (optional) "../../../vi_customizing/custom";
+
 // Old stuff:
-.vi-screen.is_loading:after {
-    background-image: url(icons/is_loading32.gif);
+.vi-screen.is-loading:after {
+    background-image: url(../icons/is-loading32.gif);
     background-position: center 35%;
     background-repeat: no-repeat;
     background-color:rgba(255,255,255,0.6);
@@ -58,26 +61,6 @@
     bottom:0;
 }
 
-/* #vi_tooltip
-================================================== */
-
-.emptynotification {
-  width:20%;
-  margin:0 35% 55px;
-  text-align: center;
-  padding:10px 5% 10px;
-  border:1px solid #ccc;
-  background:#eee;
-  border-radius: 3px;
-  color:#888;
-  box-shadow: 2px 2px 3px rgba(0,0,0,0.1)
-}
-
-/* #Custom Styles
-================================================== */
-
-@import (optional) "customize/custom";
-
 /* #Media Queries
 ================================================== */
 
@@ -86,25 +69,25 @@
     .modullist h3 {
       font-size:0.8em;
     }
-    .has_multiple_children .vi_operator {
+    .has-multiple-children .vi_operator {
       width:20%;
     }
-    .has_multiple_children .vi_operator:nth-of-type(even) {
+    .has-multiple-children .vi_operator:nth-of-type(even) {
       width:60%;
     }
-    .has_multiple_children .actionbar,
-    .has_multiple_children .breadcrumb,
-    .has_multiple_children .imageeditor,
-    .has_multiple_children .linkeditor {
+    .has-multiple-children .actionbar,
+    .has-multiple-children .breadcrumb,
+    .has-multiple-children .imageeditor,
+    .has-multiple-children .linkeditor {
       width: 20%;
     }
-    .has_multiple_children .vi_operator:nth-of-type(even) .actionbar,
-    .has_multiple_children .vi_operator:nth-of-type(even) .breadcrumb,
-    .has_multiple_children .vi_operator:nth-of-type(even) .imageeditor,
-    .has_multiple_children .vi_operator:nth-of-type(even) .linkeditor {
+    .has-multiple-children .vi_operator:nth-of-type(even) .actionbar,
+    .has-multiple-children .vi_operator:nth-of-type(even) .breadcrumb,
+    .has-multiple-children .vi_operator:nth-of-type(even) .imageeditor,
+    .has-multiple-children .vi_operator:nth-of-type(even) .linkeditor {
       width: 60%;
     }
-    .has_multiple_children form label, .has_multiple_children form label.text {
+    .has-multiple-children form label, .has-multiple-children form label.text {
       border: 1px dotted #ddd;
       text-align: left;
       width: 93%;
@@ -114,22 +97,28 @@
       border: 1px solid #ccc;
       width: 193px;
     }
-    .has_multiple_children form fieldset legend {
+    .has-multiple-children form fieldset legend {
      min-width:0;
     }
-    .has_multiple_children form fieldset legend a {
+    .has-multiple-children form fieldset legend a {
       font-size:0.8em;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .has_multiple_children form fieldset section > div {
+    .has-multiple-children form fieldset section > div {
       padding-bottom:0;
     }
-    .has_multiple_children form fieldset input:disabled, .has_multiple_children form fieldset .preview.is_disabled, .has_multiple_children form fieldset input[type="submit"]:disabled, .has_multiple_children form fieldset button:disabled, .has_multiple_children form fieldset input[type="text"]:disabled, .has_multiple_children form fieldset select:disabled, .has_multiple_children form fieldset textarea:disabled {
+    .has-multiple-children form fieldset input:disabled,
+    .has-multiple-children form fieldset .preview.is-disabled,
+    .has-multiple-children form fieldset input[type="submit"]:disabled,
+    .has-multiple-children form fieldset button:disabled,
+    .has-multiple-children form fieldset input[type="text"]:disabled,
+    .has-multiple-children form fieldset select:disabled,
+    .has-multiple-children form fieldset textarea:disabled {
       display:none;
     }
-    .has_multiple_children form fieldset .file .fileentry label {
+    .has-multiple-children form fieldset .file .fileentry label {
       width: 154px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -138,45 +127,37 @@
       border-top-width: 0;
       margin-bottom: 0;
     }
-    .has_multiple_children form fieldset .file .fileentry img {
+    .has-multiple-children form fieldset .file .fileentry img {
       border-top-width: 0;
     }
 }
 
 /* Smaller than standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
- .vi_manager {width: 56px; border-right:1px solid #bbb; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; transition: all 0.3s ease;}
+ .vi_manager {
+   width: 56px;
+   border-right:1px solid #bbb;
+   -webkit-transition: all 0.3s ease;
+   -moz-transition: all 0.3s ease;
+   -o-transition: all 0.3s ease;
+   transition: all 0.3s ease;
+ }
  .vi_manager:hover {width:298px; border-right:1px solid #bbb;}
  .modullist {width:298px;}
  .modullist ul {display:none;}
  .vi_manager:hover .modullist ul {display:block;}
  .vi_viewer {max-width:900px;margin-left:56px;}
-  .has_multiple_children .actionbar,
-  .has_multiple_children .breadcrumb,
-  .has_multiple_children .imageeditor,
-  .has_multiple_children .linkeditor,
-  .has_multiple_children .vi_operator {width: 20%; max-width:210px;}
-  .has_multiple_children .vi_operator:nth-of-type(even) .actionbar,
-  .has_multiple_children .vi_operator:nth-of-type(even) .breadcrumb,
-  .has_multiple_children .vi_operator:nth-of-type(even) .imageeditor,
-  .has_multiple_children .vi_operator:nth-of-type(even) .linkeditor,
-  .has_multiple_children .vi_operator:nth-of-type(even) {width: 70%;max-width:750px;}
+  .has-multiple-children .actionbar,
+  .has-multiple-children .breadcrumb,
+  .has-multiple-children .imageeditor,
+  .has-multiple-children .linkeditor,
+  .has-multiple-children .vi_operator {width: 20%; max-width:210px;}
+  .has-multiple-children .vi_operator:nth-of-type(even) .actionbar,
+  .has-multiple-children .vi_operator:nth-of-type(even) .breadcrumb,
+  .has-multiple-children .vi_operator:nth-of-type(even) .imageeditor,
+  .has-multiple-children .vi_operator:nth-of-type(even) .linkeditor,
+  .has-multiple-children .vi_operator:nth-of-type(even) {width: 70%;max-width:750px;}
   .vi_operator .actionbar h3 {display:none;}
   .vi_topbar .currentmodul {display:none;}
 }
-/* Tablet Portrait size to standard 960 (devices and browsers) */
-@media only screen and (min-width: 768px) and (max-width: 959px) {
 
-}
-/* All Mobile Sizes (devices and browser) */
-@media only screen and (max-width: 767px) {
-
-}
-/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
-@media only screen and (min-width: 480px) and (max-width: 767px) {
-
-}
-/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
-@media only screen and (max-width: 479px) {
-
-}

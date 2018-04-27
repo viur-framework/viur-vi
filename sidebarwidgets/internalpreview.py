@@ -7,7 +7,7 @@ class InternalPreview( html5.Ul ):
 	def __init__(self, modul, structure, item, *args, **kwargs):
 		super( InternalPreview, self ).__init__( *args, **kwargs )
 
-		self["class"].append("internalpreview")
+		self["class"].append("sbw-internalpreview")
 
 		tmpDict = {key: bone for key, bone in structure}
 

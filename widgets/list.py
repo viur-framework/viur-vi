@@ -101,8 +101,9 @@ class ListWidget(html5.Div):
 		self.emptyNotificationDiv = html5.Div()
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
 		self.emptyNotificationDiv["class"].append("emptynotification")
+		self.emptyNotificationDiv["class"].append("msg")
 		self.appendChild(self.emptyNotificationDiv)
-		self.emptyNotificationDiv["style"]["display"] = "none"
+		self.emptyNotificationDiv["class"].remove("is-active")
 		self.table["style"]["display"] = "none"
 		self.filterDescriptionSpan = html5.Span()
 		self.appendChild( self.filterDescriptionSpan )
@@ -255,12 +256,12 @@ class ListWidget(html5.Div):
 				self.table.setDataProvider(None) #We cant load any more results
 			else:
 				self.table["style"]["display"] = "none"
-				self.emptyNotificationDiv["style"]["display"] = ""
-				#self.element.innerHTML = "<center><strong>Keine Ergebnisse</strong></center>"
+				self.emptyNotificationDiv["class"].append("is-active")
+			#self.element.innerHTML = "<center><strong>Keine Ergebnisse</strong></center>"
 			return
 
 		self.table["style"]["display"] = ""
-		self.emptyNotificationDiv["style"]["display"] = "none"
+		self.emptyNotificationDiv["class"].remove("is-active")
 		self._structure = data["structure"]
 
 		if not self._tableHeaderIsValid:

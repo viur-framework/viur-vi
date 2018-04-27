@@ -13,7 +13,7 @@ class AddNodeAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddNodeAction, self ).__init__( translate("Add Node"), *args, **kwargs )
-		self["class"] = "btn btn-mkdir"
+		self["class"] = "btn btn-vSmall btn-mkdir btn-vPrimary"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -57,7 +57,7 @@ class EditAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
-		self["class"] = "btn btn-edit"
+		self["class"] = "btn btn-vSmall btn-edit"
 		self["disabled"]= True
 		self.isDisabled=True
 

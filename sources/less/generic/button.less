@@ -17,8 +17,6 @@
     @btnShadowColor: @defaultShadowColor);
 }
 
-/*
-#FIXME: Implement new buttons!
 .btn-vPrimary {
   .colorizeBtn(
     @backgroundColor: @successColor,
@@ -26,37 +24,11 @@
     @btnShadow: 0,
     @btnShadowHover: 1);
 }
-*/
+
 
 /* #vi_buttons
 ================================================== */
-/*button[type="button"] {
-  border: 1px solid #999;
-  color: #222;
-  height: 16px;
-  padding: 6px 7px 20px;
-  margin: 0;
-  margin-right: 4px;
-  text-align: center;
-  background-color: #bbb;
-  background: -moz-linear-gradient(top, #dddddd 0%, #bbbbbb 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(100%, #bbbbbb));
-  background: -webkit-linear-gradient(top, #dddddd 0%, #bbbbbb 100%);
-  background: -o-linear-gradient(top, #dddddd 0%, #bbbbbb 100%);
-  background: -ms-linear-gradient(top, #dddddd 0%, #bbbbbb 100%);
-  background: linear-gradient(to bottom, #dddddd 0%, #bbbbbb 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#ddd', EndColorStr='#bbb', GradientType=0);
-  cursor: pointer;
-  -webkit-transition: all 0.3s 0.7s ease;
-  -moz-transition: all 0.3s 0.7s ease;
-  -o-transition: all 0.3s 0.7s ease;
-  transition: all 0.3s 0.7s ease;
-}
-button[type="button"]:hover {
-  border: 1px solid #666;
-  color: #222;
-  letter-spacing: normal;
-}*/
+
 /* Icon Buttons */
 button.icon,
 .vi_operator .search button,
@@ -435,12 +407,12 @@ button.icon.save.close[type="button"]:hover:before {
 }
 
 /* Loading Buttons */
-button.icon.is_loading[type="button"]:before,
-button.is_loading[type="button"]:before,
-button.icon.is_loading[type="button"]:hover:before,
-button.is_loading[type="button"]:hover:before,
-button.icon.save.close.is_loading[type="button"]:hover:before {
-  background-image: url(icons/is_loading.gif);
+button.icon.is-loading[type="button"]:before,
+button.is-loading[type="button"]:before,
+button.icon.is-loading[type="button"]:hover:before,
+button.is-loading[type="button"]:hover:before,
+button.icon.save.close.is-loading[type="button"]:hover:before {
+  background-image: url(icons/is-loading.gif);
   background-position: 0px 0px;
 }
 
@@ -449,10 +421,10 @@ button.icon.close[type="button"],
 button.icon.activateselection[type="button"],
 button.text.save[type="button"],
 button.icon.delete[type="button"],
-button.icon.delete.is_disabled[type="button"]:hover,
+button.icon.delete.is-disabled[type="button"]:hover,
 button.icon.text[type="button"]:hover,
 button.icon.flipview[type="button"]:hover,
-button.icon.is_disabled[type="button"]:hover {
+button.icon.is-disabled[type="button"]:hover {
   color: transparent;
   letter-spacing: -1em;
   overflow: hidden;
@@ -480,23 +452,23 @@ button.icon.save.close[type="button"]:hover {
 }
 
 /* Disabled Buttons */
-button.icon.delete.is_disabled[type="button"] {
+button.icon.delete.is-disabled[type="button"] {
   background: #e0e0e0;
 }
 
-button.icon.delete.is_disabled[type="button"]:hover,
-button.icon.is_disabled[type="button"]:hover {
+button.icon.delete.is-disabled[type="button"]:hover,
+button.icon.is-disabled[type="button"]:hover {
   border-color: #999;
   background: #e0e0e0;
 }
-button.icon.delete.is_disabled[type="button"]:before,
-button.icon.is_disabled:before {
+button.icon.delete.is-disabled[type="button"]:before,
+button.icon.is-disabled:before {
   opacity: 0.3;
   background-image: url(icons/vi_actions_sprite.svg)!important;
 }
 
-button.icon.delete.is_disabled[type="button"],
-button.icon.is_disabled {
+button.icon.delete.is-disabled[type="button"],
+button.icon.is-disabled {
   cursor: default;
   color: transparent;
   border: 1px solid #ccc;

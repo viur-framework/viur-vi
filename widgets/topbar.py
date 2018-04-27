@@ -14,7 +14,7 @@ class TopBarWidget( html5.Header ):
 		#DOM.setAttribute( self.element, "class", "vi_topbar")
 		super(TopBarWidget,self ).__init__()
 
-		self["class"] = "vi_topbar"
+		self["class"] = "vi-topbar"
 		anav=html5.Nav()
 		anav["class"].append("iconnav")
 		self.iconnav=html5.Ul()
@@ -103,7 +103,7 @@ class UserState(html5.Li):
 
 		aa = html5.A()
 		aa["title"] = user[ "name" ]
-		aa["class"].append("icon accountmgnt")
+		aa["class"].append("topicon accountmgnt")
 		aa.appendChild( html5.TextNode( user[ "name" ] ) )
 		self.appendChild(aa)
 
@@ -121,7 +121,7 @@ class Tasks(html5.Li):
 		self.hide()
 
 		a = html5.A()
-		a[ "class" ].append( "icon tasks" )
+		a[ "class" ].append( "topicon tasks" )
 		a.appendChild( html5.TextNode( translate( "Tasks" ) ) )
 		self.appendChild( a )
 
@@ -174,7 +174,7 @@ class Logout(html5.Li):
 	def __init__(self):
 		super(Logout,self).__init__()
 		aa=html5.A()
-		aa["class"].append("icon logout")
+		aa["class"].append("topicon logout")
 		aa.appendChild(html5.TextNode(translate("Logout")))
 		self.appendChild(aa)
 		self.sinkEvent("onClick")

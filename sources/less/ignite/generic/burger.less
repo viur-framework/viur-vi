@@ -1,86 +1,67 @@
 @charset "UTF-8";
-/* ---------------------------------------------------------------------------------------
-    #MENU #BURGER
---------------------------------------------------------------------------------------- */
+/* #MENU #BURGER */
 
 // Less Burger © 2015, Mark Rabey. Released under the MIT License.
 // https://github.com/MarkRabey/less-burger
 
-.burger(@width: 30px, @height: 5px, @gutter: 3px, @color: #000, @border-radius: 0, @transition-duration: .3s) {
-  display: block;
-  align-self: center;
-  .mq-min(@breakMedium, {display:none;});
+& when (@burger=true) {
+  .burger(@width: 30px, @height: 5px, @gutter: 3px, @color: #000, @border-radius: 0, @transition-duration: .3s) {
+    display: block;
+    align-self: center;
+    .mq-min(@breakMedium, { display: none; });
 
-  &-box {
-    cursor:pointer;
-    position: relative;
-    margin-top: @height + @gutter;
-    margin-bottom: @height + @gutter;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    &-box {
+      cursor: pointer;
+      position: relative;
+      margin-top: @height + @gutter;
+      margin-bottom: @height + @gutter;
+      user-select: none;
 
-    &,
+      &,
+      &:before,
+      &:after {
+        display: block;
+        width: @width;
+        height: @height;
+        background-color: @color;
+        .border-radius(@border-radius);
+        transition-property: background-color, transform;
+        transition-duration: @transition-duration;
+      }
+
+      &:before,
+      &:after {
+        position: absolute;
+        content: "";
+      }
+
+      &:before {
+        top: -(@height + @gutter);
+      }
+
+      &:after {
+        top: @height + @gutter;
+      }
+    }
+  }
+
+  // Burger animations
+  .burger-to-cross(@height: 5px, @gutter: 3px, @color: #000) {
     &:before,
     &:after {
-      display: block;
-      width: @width;
-      height: @height;
       background-color: @color;
-      .border-radius(@border-radius);
-      -webkit-transition-property: background-color, -webkit-transform;
-      -moz-transition-property: background-color, -moz-transform;
-      -o-transition-property: background-color, -o-transform;
-      transition-property: background-color, transform;
-
-      -webkit-transition-duration: @transition-duration;
-      -moz-transition-duration: @transition-duration;
-      -o-transition-duration: @transition-duration;
-      transition-duration: @transition-duration;
     }
 
-    &:before,
-    &:after {
-      position: absolute;
-      content: "";
+    & {
+      background-color: transparent;
     }
 
     &:before {
-      top: -(@height + @gutter);
+      transform: translateY(@gutter + @height) rotate(45deg);
     }
 
     &:after {
-      top: @height + @gutter;
+      transform: translateY(-(@gutter + @height)) rotate(-45deg);
     }
-  }
-}
-
-
-// Burger animations
-.burger-to-cross(@height: 5px, @gutter: 3px, @color: #000) {
-  &:before,
-  &:after {
-    background-color: @color;
-  }
-
-  & {
-    background-color: transparent;
-  }
-
-  &:before {
-    -webkit-transform: translateY(@gutter + @height) rotate(45deg);
-    -moz-transform: translateY(@gutter + @height) rotate(45deg);
-    -ms-transform: translateY(@gutter + @height) rotate(45deg);
-    -o-transform: translateY(@gutter + @height) rotate(45deg);
-    transform: translateY(@gutter + @height) rotate(45deg);
-  }
-
-  &:after {
-    -webkit-transform: translateY(-(@gutter + @height)) rotate(-45deg);
-    -moz-transform: translateY(-(@gutter + @height)) rotate(-45deg);
-    -ms-transform: translateY(-(@gutter + @height)) rotate(-45deg);
-    -o-transform: translateY(-(@gutter + @height)) rotate(-45deg);
-    transform: translateY(-(@gutter + @height)) rotate(-45deg);
   }
 }

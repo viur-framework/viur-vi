@@ -108,11 +108,11 @@ class TextEditBone( html5.Div ):
 
 	def _setDisabled(self, disable):
 		"""
-			Reset the is_active flag (if any)
+			Reset the is-active flag (if any)
 		"""
 		super(TextEditBone, self)._setDisabled( disable )
-		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
-			self.parent()["class"].remove("is_active")
+		if not disable and not self._disabledState and "is-active" in self.parent()["class"]:
+			self.parent()["class"].remove("is-active")
 
 	def openTxt(self, *args, **kwargs):
 		assert self.currentEditor is None
@@ -123,7 +123,7 @@ class TextEditBone( html5.Div ):
 		self.currentEditor.saveTextEvent.register( self )
 		self.currentEditor.abortTextEvent.register(self)
 		conf["mainWindow"].stackWidget( self.currentEditor )
-		self.parent()["class"].append("is_active")
+		self.parent()["class"].append("is-active")
 
 	def closeEditor(self):
 		if not self.currentEditor:
@@ -168,10 +168,10 @@ class TextEditBone( html5.Div ):
 					abut["class"].append("is_unfilled")
 
 			if abut["value"]==self.selectedLang:
-				if not "is_active" in abut["class"]:
-					abut["class"].append("is_active")
+				if not "is-active" in abut["class"]:
+					abut["class"].append("is-active")
 			else:
-				abut["class"].remove("is_active")
+				abut["class"].remove("is-active")
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):

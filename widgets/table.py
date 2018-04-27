@@ -534,8 +534,8 @@ class DataTable( html5.Div ):
 		self._dataProvider = obj
 		self._isAjaxLoading = False
 
-		if "is_loading" in self.table["class"]:
-			self.table["class"].remove("is_loading")
+		if "is-loading" in self.table["class"]:
+			self.table["class"].remove("is-loading")
 
 	def onCursorMoved(self, table, row):
 		"""
@@ -569,8 +569,8 @@ class DataTable( html5.Div ):
 		self._model.append( obj )
 		self._renderObject( obj )
 		self._isAjaxLoading = False
-		if "is_loading" in self.table["class"]:
-			self.table["class"].remove("is_loading")
+		if "is-loading" in self.table["class"]:
+			self.table["class"].remove("is-loading")
 		self.testIfNextBatchNeededImmediately()
 
 	def extend(self, objList):
@@ -585,8 +585,8 @@ class DataTable( html5.Div ):
 			self._model.append( obj )
 			self._renderObject( obj, tableIsPrepared=True )
 			self._isAjaxLoading = False
-			if "is_loading" in self.table["class"]:
-				self.table["class"].remove("is_loading")
+			if "is-loading" in self.table["class"]:
+				self.table["class"].remove("is-loading")
 		self.testIfNextBatchNeededImmediately()
 
 	def testIfNextBatchNeededImmediately(self):
@@ -606,8 +606,8 @@ class DataTable( html5.Div ):
 
 			if self._dataProvider:
 				self._isAjaxLoading = True
-				if not "is_loading" in self.table["class"]:
-					self.table["class"].append("is_loading")
+				if not "is-loading" in self.table["class"]:
+					self.table["class"].append("is-loading")
 				self._dataProvider.onNextBatchNeeded()
 
 	def remove(self, objOrIndex):
@@ -698,8 +698,8 @@ class DataTable( html5.Div ):
 			if self._dataProvider:
 
 				self._isAjaxLoading = True
-				if not "is_loading" in self.table["class"]:
-					self.table["class"].append("is_loading")
+				if not "is-loading" in self.table["class"]:
+					self.table["class"].append("is-loading")
 
 				self._dataProvider.onNextBatchNeeded()
 

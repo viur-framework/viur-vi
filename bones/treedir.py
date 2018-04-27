@@ -63,7 +63,7 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 		currentSelector = FileWidget( self.destModule, isSelector="node" )
 		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is_active")
+		self.parent()["class"].append("is-active")
 
 	def onSelectionReturn(self, table, selection ):
 		"""
@@ -114,7 +114,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		currentSelector = TreeWidget( self.destModule, isSelector="node" )
 		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is_active")
+		self.parent()["class"].append("is-active")
 
 	def onSelectionReturn(self, table, selection ):
 		"""

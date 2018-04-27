@@ -223,11 +223,11 @@ class RelationalSingleSelectionBone(html5.Div):
 
 	def _setDisabled(self, disable):
 		"""
-			Reset the is_active flag (if any)
+			Reset the is-active flag (if any)
 		"""
 		super(RelationalSingleSelectionBone, self)._setDisabled( disable )
-		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
-			self.parent()["class"].remove("is_active")
+		if not disable and not self._disabledState and "is-active" in self.parent()["class"]:
+			self.parent()["class"].remove("is-active")
 
 	@classmethod
 	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
@@ -378,7 +378,7 @@ class RelationalSingleSelectionBone(html5.Div):
 
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is_active")
+		self.parent()["class"].append("is-active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""
@@ -738,11 +738,11 @@ class RelationalMultiSelectionBone(html5.Div):
 
 	def _setDisabled(self, disable):
 		"""
-			Reset the is_active flag (if any)
+			Reset the is-active flag (if any)
 		"""
 		super(RelationalMultiSelectionBone, self)._setDisabled( disable )
-		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
-			self.parent()["class"].remove("is_active")
+		if not disable and not self._disabledState and "is-active" in self.parent()["class"]:
+			self.parent()["class"].remove("is-active")
 
 	@classmethod
 	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
@@ -837,7 +837,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		currentSelector = ListWidget(self.destModule, isSelector=True, context=self.context)
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is_active")
+		self.parent()["class"].append("is-active")
 
 	def onSelectionActivated(self, table, selection):
 		"""

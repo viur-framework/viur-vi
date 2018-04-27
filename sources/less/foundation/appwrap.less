@@ -10,7 +10,7 @@ html {
 .vi-screen {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(100px, 200px) 1fr;
+  grid-template-columns: minmax(min-content, 20%) 1fr;
   grid-template-rows: 50px 1fr min-content;
   grid-template-areas:
     "topbar topbar"
@@ -23,7 +23,6 @@ html {
 
 .vi-viewer {
   grid-area: viewer;
-  width: 100%;
   overflow-x:hidden;
   overflow-y: auto;
   .zIndex('content',2);
@@ -128,81 +127,32 @@ html {
   float: left;
   background: #f6f6f6;
   overflow: hidden;
+  width: 100%;
 }
 
-.vi-operator > div.supports_drop {
+.vi-operator > div.is-drop-target {
   border-top: 1px dashed #ccc;
   padding: 20px 0;
   border-bottom: 1px dashed #ccc;
   margin-top: -20px;
 }
 
-.has_multiple_children .vi-operator {
+.has-multiple-children .vi-operator {
   width: 50%;
   position: fixed;
   overflow-y: auto;
   overflow-x: hidden;
 }
-.vi-operator.is_disabled {
+.vi-operator.is-disabled {
   background-color: #ddd;
 }
-.vi-operator > .is_disabled {
+.vi-operator > .is-disabled {
   opacity: .7;
 }
-.has_multiple_children .vi-operator:nth-of-type(even) {
+.has-multiple-children .vi-operator:nth-of-type(even) {
   right: 0;
 }
-.vi-operator .search,
-.vi-operator .compoundfilter {
-  width: 96%;
-  padding: 15px 1%;
-  background: #dcdcdc;
-  margin: 10px 1%;
-  border-radius: 2px;
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  border:1px solid #d2d2d2;
-  transition:all .3s ease;
-  overflow: hidden;
-}
 
-.vi-operator .compoundfilter h2,
-.vi-operator .search h2 {
-  color: #777;
-  line-height: 1.4em;
-  font-size: 0.8em;
-  padding:0 15px;
-}
-
-.vi-operator .compoundfilter.collapsed .extendedfilter {
-    height: 0;
-    opacity: 0;
-    overflow:hidden;
-}
-
-.vi-operator .search.collapsed input,
-.vi-operator .search.collapsed button {display:none;}
-
-.vi-operator .search.expanded input {margin: 10px 15px;}
-
-.vi-operator .search.collapsed:hover,
-.vi-operator .compoundfilter.collapsed:hover {background-color:#e2e2e2; box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);}
-
-.vi-operator .search.expanded,
-.vi-operator .compoundfilter.expanded {
-box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
-background-color:#d6d6d6;
-}
-
-.vi-operator .compoundfilter.expanded .extendedfilter {
-    margin-top:15px;
-}
-
-.vi-operator .compoundfilter.embed {
-    width: 98%;
-    margin: 0 0 20px;
-    background: #eee;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
 .vi-operator .tree .search h2 {
   width: 60px;
   float: left;

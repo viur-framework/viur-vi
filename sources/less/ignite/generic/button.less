@@ -5,199 +5,198 @@
 // .btn-
 // .btnGroup
 
-@btnMargin: @defaultMargin;
-
-.btn(
-  @btnBackgroundColor:#e7e5e5,
-  @btnPadding: @defaultPadding,
-  @btnMargin: @defaultMargin,
-  @btnBorderWidth: @defaultBorderWidth,
-  @btnBorderRadius: @defaultBorderRadius,
-  @btnShadow: 1,
-  @btnShadowHover: 2,
-  @btnShadowColor: @defaultShadowColor) {
-  .basicInput(@btnPadding, @btnMargin, @btnBorderRadius);
-  color: contrast(@btnBackgroundColor, #222222, #f4f4f4);
-  background-color: @btnBackgroundColor;
-  border: @btnBorderWidth solid darken(@btnBackgroundColor, 10%);
-  .boxShadow(@btnShadow, @btnShadowColor);
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
-  transition: all .3s ease;
-  &:link,
-  &:visited {color:contrast(@btnBackgroundColor, #222222, #f4f4f4);}
-  &:hover {
-    color: contrast(lighten(@btnBackgroundColor, 5%));
-    background-color: lighten(@btnBackgroundColor, 5%);
-    .boxShadow(@btnShadowHover, @btnShadowColor);
-  }
-  &:active,
-  &.is-active {
-    color: contrast(lighten(@btnBackgroundColor, 10%));
-    background-color: lighten(@btnBackgroundColor, 10%);
-  }
-  &.is-disabled,
-  &:disabled,
-  &[aria-disabled=true]{
-    &:hover,
-    & {
-      color: darken(desaturate(@btnBackgroundColor, 20%), 10%);
-      cursor: not-allowed;
-      border-style: dashed;
-      background-color: lighten(desaturate(@btnBackgroundColor, 20%), 30%);
-      .boxShadow(0);
-    }
-  }
-  &.is-busy,
-  &.is-loading,
-  &[aria-busy=true] {
-    cursor: progress;
-    & .single-spinner {
-      margin-right: 1em;
-    }
+  .btn(
+    @btnBackgroundColor:#e7e5e5,
+    @btnPadding: @defaultPadding,
+    @btnMargin: @defaultMargin,
+    @btnBorderWidth: @defaultBorderWidth,
+    @btnBorderRadius: @defaultBorderRadius,
+    @btnShadow: 1,
+    @btnShadowHover: 2,
+    @btnShadowColor: @defaultShadowColor) when (@button=true) {
+    .basicInput(@btnPadding, @btnMargin, @btnBorderRadius);
+    color: contrast(@btnBackgroundColor, #222222, #f4f4f4);
+    background-color: @btnBackgroundColor;
+    border: @btnBorderWidth solid darken(@btnBackgroundColor, 10%);
+    .boxShadow(@btnShadow, @btnShadowColor);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    transition: all .3s ease;
+    &:link,
+    &:visited { color: contrast(@btnBackgroundColor, #222222, #f4f4f4); }
     &:hover {
-      .boxShadow(@btnShadow, @btnShadowColor);
+      color: contrast(lighten(@btnBackgroundColor, 5%));
+      background-color: lighten(@btnBackgroundColor, 5%);
+      .boxShadow(@btnShadowHover, @btnShadowColor);
     }
-  }
-  & .icon {
-    align-self: center;
-    &:first-child{
-      margin-left: -.1em;
-      margin-right: .25em;
+    &:active,
+    &.is-active {
+      color: contrast(lighten(@btnBackgroundColor, 10%));
+      background-color: lighten(@btnBackgroundColor, 10%);
     }
-  }
-  &-vSmall {
-    font-size: .8em;
-    & .icon:first-child {margin-right: .15em;}
-  }
-  &-vBig {
-    font-size: 1.2em;
-  }
-  &-vBlock {
-    margin: @btnMargin 0;
-    width: 100%;
-    display: block;
-    text-align: center;
-  }
-
-  &Group {
-    vertical-align: middle;
-    display: inline-flex;
-    .btn {
-      margin-right: 0px;
-      margin-left: -1px;
-      float: left;
-      position: relative;
-      .zIndex('content',0);
-      &:not(:first-child):not(:last-child) {
-        border-radius: 0;
-      }
-      &:first-child:not(:last-child) {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-      }
-      &:last-child:not(:first-child) {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-      }
-      &:first-of-type {
-        margin-left: @btnMargin;
-      }
-      &.btn:last-of-type {
-        margin-right: @btnMargin;
-      }
-      // Bring any button into forefront for proper borders given negative margin below
+    &.is-disabled,
+    &:disabled,
+    &[aria-disabled=true] {
       &:hover,
-      &:active,
-      &.is-selected {
-        .zIndex('content',2);
-      }
-      &.is-disabled,
-      &.is-disabled:hover {
-      .zIndex('content',0); // stay down!
-      }
-      &:focus {
-        .zIndex('content',3);
+      & {
+        color: darken(desaturate(@btnBackgroundColor, 20%), 10%);
+        cursor: not-allowed;
+        border-style: dashed;
+        background-color: lighten(desaturate(@btnBackgroundColor, 20%), 30%);
+        .boxShadow(0);
       }
     }
-  }
-}
+    &.is-busy,
+    &.is-loading,
+    &[aria-busy=true] {
+      cursor: progress;
+      & .single-spinner {
+        margin-right: 1em;
+      }
+      &:hover {
+        .boxShadow(@btnShadow, @btnShadowColor);
+      }
+    }
+    & .icon {
+      align-self: center;
+      &:first-child {
+        margin-left: -.1em;
+        margin-right: .25em;
+      }
+    }
+    &-vSmall {
+      font-size: .8em;
+      & .icon:first-child { margin-right: .15em; }
+    }
+    &-vBig {
+      font-size: 1.2em;
+    }
+    &-vBlock {
+      margin: @btnMargin 0;
+      width: 100%;
+      display: block;
+      text-align: center;
+    }
 
-.colorizeBtn(
-  @backgroundColor,
-  @btnBorderWidth: @defaultBorderWidth,
-  @btnShadow: 1,
-  @btnShadowHover: 2) {
-  font-weight: 400;
-  color: contrast(darken(@backgroundColor, 15%), #222222, #f4f4f4);
-  background-color: @backgroundColor;
-  border: @btnBorderWidth solid darken(@backgroundColor, 10%);
-  .boxShadow(@btnShadow, @backgroundColor);
-  &:link,
-  &:visited {color:contrast(darken(@backgroundColor, 15%), #222222, #f4f4f4);}
-  &:hover {
-    color: contrast(darken(@backgroundColor, 15%));
-    background-color: lighten(@backgroundColor, 5%);
-    border: @btnBorderWidth solid darken(@backgroundColor, 5%);
-    .boxShadow(@btnShadowHover, @backgroundColor);
-  }
-  &:active,
-  &.is-active {
-    color: contrast(darken(@backgroundColor,20%));
-    background-color: lighten(@backgroundColor, 10%);
-    border: @btnBorderWidth solid lighten(@backgroundColor, 5%);
-  }
-  &.is-disabled,
-  &:disabled,
-  &[aria-disabled=true] {
-    &:hover,
-    & {
-      color: lighten(desaturate(@backgroundColor, 20%), 10%);
-      .boxShadow(0);
-      border-style: dashed;
-      background-color: lighten(desaturate(@backgroundColor, 20%), 30%);
+    &Group {
+      vertical-align: middle;
+      display: inline-flex;
+      .btn {
+        margin-right: 0px;
+        margin-left: -1px;
+        float: left;
+        position: relative;
+        .zIndex('content', 0);
+        &:not(:first-child):not(:last-child) {
+          border-radius: 0;
+        }
+        &:first-child:not(:last-child) {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+        &:last-child:not(:first-child) {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+        &:first-of-type {
+          margin-left: @btnMargin;
+        }
+        &.btn:last-of-type {
+          margin-right: @btnMargin;
+        }
+        // Bring any button into forefront for proper borders given negative margin below
+        &:hover,
+        &:active,
+        &.is-selected {
+          .zIndex('content', 2);
+        }
+        &.is-disabled,
+        &.is-disabled:hover {
+          .zIndex('content', 0); // stay down!
+        }
+        &:focus {
+          .zIndex('content', 3);
+        }
+      }
     }
   }
-  .btnGroup & {
-    .zIndex('content',1); // border colors are important here.
-  }
-}
 
-.invertColorizedBtn(
-  @backgroundColor,
-  @btnBorderWidth: @defaultBorderWidth,
-  @btnShadow: 1,
-  @btnShadowHover: 2){
-  color: darken(@backgroundColor,5%);
-  border: @btnBorderWidth solid darken(@backgroundColor, 10%);
-  .boxShadow(@btnShadow, @backgroundColor);
-  &:link,
-  &:visited {color:darken(@backgroundColor,5%);}
-  &:hover {
-    color: contrast(darken(@backgroundColor, 15%));
-    background-color: lighten(@backgroundColor, 5%);
-    border: @btnBorderWidth solid darken(@backgroundColor, 5%);
-    .boxShadow(@btnShadowHover, @backgroundColor);
-  }
-  &:active,
-  &.is-active {
-    color: contrast(darken(@backgroundColor,20%));
-    background-color: lighten(@backgroundColor, 10%);
-    border: @btnBorderWidth solid lighten(@backgroundColor, 5%);
-  }
-  &.is-disabled,
-  &:disabled,
-  &[aria-disabled=true] {
-    &:hover,
-    & {
-      color: lighten(desaturate(@backgroundColor, 20%), 30%);
-      background-color: lighten(desaturate(@backgroundColor, 20%), 15%);
-      border: @btnBorderWidth dashed lighten(desaturate(@backgroundColor, 20%), 30%);
-      .boxShadow(0);
+  .colorizeBtn(
+    @backgroundColor,
+    @btnBorderWidth: @defaultBorderWidth,
+    @btnShadow: 1,
+    @btnShadowHover: 2) when (@button=true) {
+    font-weight: 400;
+    color: contrast(darken(@backgroundColor, 15%), #222222, #f4f4f4);
+    background-color: @backgroundColor;
+    border: @btnBorderWidth solid darken(@backgroundColor, 10%);
+    .boxShadow(@btnShadow, @backgroundColor);
+    &:link,
+    &:visited { color: contrast(darken(@backgroundColor, 15%), #222222, #f4f4f4); }
+    &:hover {
+      color: contrast(darken(@backgroundColor, 15%));
+      background-color: lighten(@backgroundColor, 5%);
+      border: @btnBorderWidth solid darken(@backgroundColor, 5%);
+      .boxShadow(@btnShadowHover, @backgroundColor);
+    }
+    &:active,
+    &.is-active {
+      color: contrast(darken(@backgroundColor, 20%));
+      background-color: lighten(@backgroundColor, 10%);
+      border: @btnBorderWidth solid lighten(@backgroundColor, 5%);
+    }
+    &.is-disabled,
+    &:disabled,
+    &[aria-disabled=true] {
+      &:hover,
+      & {
+        color: lighten(desaturate(@backgroundColor, 20%), 10%);
+        .boxShadow(0);
+        border-style: dashed;
+        background-color: lighten(desaturate(@backgroundColor, 20%), 30%);
+      }
+    }
+    .btnGroup & {
+      .zIndex('content', 1); // border colors are important here.
     }
   }
-  .btnGroup & {
-    .zIndex('content',1); // border colors are important here.
+
+  .invertColorizedBtn(
+    @backgroundColor,
+    @btnBorderWidth: @defaultBorderWidth,
+    @btnShadow: 1,
+    @btnShadowHover: 2) when (@button=true) {
+    color: darken(@backgroundColor, 5%);
+    border: @btnBorderWidth solid darken(@backgroundColor, 10%);
+    .boxShadow(@btnShadow, @backgroundColor);
+    &:link,
+    &:visited { color: darken(@backgroundColor, 5%); }
+    &:hover {
+      color: contrast(darken(@backgroundColor, 15%));
+      background-color: lighten(@backgroundColor, 5%);
+      border: @btnBorderWidth solid darken(@backgroundColor, 5%);
+      .boxShadow(@btnShadowHover, @backgroundColor);
+    }
+    &:active,
+    &.is-active {
+      color: contrast(darken(@backgroundColor, 20%));
+      background-color: lighten(@backgroundColor, 10%);
+      border: @btnBorderWidth solid lighten(@backgroundColor, 5%);
+    }
+    &.is-disabled,
+    &:disabled,
+    &[aria-disabled=true] {
+      &:hover,
+      & {
+        color: lighten(desaturate(@backgroundColor, 20%), 30%);
+        background-color: lighten(desaturate(@backgroundColor, 20%), 15%);
+        border: @btnBorderWidth dashed lighten(desaturate(@backgroundColor, 20%), 30%);
+        .boxShadow(0);
+      }
+    }
+    .btnGroup & {
+      .zIndex('content', 1); // border colors are important here.
+    }
   }
-}
+

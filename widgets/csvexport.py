@@ -28,8 +28,8 @@ class ExportCsv(html5.Progress):
 		self.lang = language
 
 		conf["mainWindow"].log("progress", self)
-		self.parent()["class"].append("is_new")
-		self.parent()["class"].append("log_progress")
+		self.parent()["class"].append("is-new")
+		self.parent()["class"].append("log-progress")
 		self.appendChild(html5.TextNode(translate("CSV-Export")))
 
 		DeferredCall(self.nextChunk)
@@ -149,7 +149,7 @@ class ExportCsv(html5.Progress):
 
 	def replaceWithMessage(self, message, logClass="success"):
 		self.parent()["class"] = []
-		self.parent()["class"].append("log_%s" % logClass)
+		self.parent()["class"].append("log-%s" % logClass)
 
 		msg = html5.Span()
 		html5.utils.textToHtml(msg, message)
@@ -167,17 +167,17 @@ class ExportCsvStarter(html5.ext.Popup):
 		if "viur.defaultlangsvalues" in conf["server"].keys():
 			self.langSelect = html5.Select()
 			self.langSelect["id"] = "lang-select"
-		
+
 			lbl = html5.Label(translate("Language selection"))
 			lbl["for"] = "lang-select"
-		
+
 			div = html5.Div()
 			div.appendChild(lbl)
 			div.appendChild(self.langSelect)
 			div.addClass("bone")
-		
+
 			self.appendChild(div)
-		
+
 			for key, value in conf["server"]["viur.defaultlangsvalues"].items():
 				opt = html5.Option()
 				opt["value"] = key
@@ -189,7 +189,7 @@ class ExportCsvStarter(html5.ext.Popup):
 				self.langSelect.appendChild(opt)
 		else:
 			self.langSelect = None
-		
+
 		# Encoding
 		self.encodingSelect = html5.Select()
 		self.encodingSelect["id"] = "encoding-select"

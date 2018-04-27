@@ -12,20 +12,21 @@ class CompoundFilter( html5.Div ):
 	def __init__(self, view, modul, embed=False, *args, **kwargs ):
 		super( CompoundFilter, self ).__init__( *args, **kwargs)
 
-		self["class"].append("compoundfilter")
+		self["class"].append("sbw-compoundfilter")
 		self.view = view
 		self.module = modul
 		self.embed = embed
 
 		if embed:
-			self["class"].append("embed")
-			self["class"].append("expanded")
+			self["class"].append("sbw-compoundfilter-vEmbed")
+			self["class"].append("is-expanded")
 		else:
-			self["class"].append("standalone")
-			self["class"].append("collapsed")
+			self["class"].append("sbw-compoundfilter-vStandalone")
+			self["class"].append("is-collapsed")
 
 		if "name" in view.keys():
 			h2 = html5.H2()
+			h2["class"].append("sbw-compoundfilter-name")
 			h2.appendChild( html5.TextNode( view["name"] ) )
 			self.appendChild( h2 )
 
@@ -36,7 +37,7 @@ class CompoundFilter( html5.Div ):
 
 			if wdg is not None:
 				container = html5.Div()
-				container["class"].append("extendedfilter")
+				container["class"].append("sbw-compoundfilter-extended")
 				wdg = wdg( extension, view, modul )
 				container.appendChild( wdg )
 				self.appendChild( container )
@@ -92,13 +93,13 @@ class FilterSelector( html5.Div ):
 		nextTarget = self.currentTarget
 		for c in self._children:
 			if c == self.currentTarget and not html5.utils.doesEventHitWidgetOrChildren(event, c):
-				c["class"].append("collapsed")
-				c["class"].remove("expanded")
+				c.addClass("is-collapsed")
+				c.removeClass("is-expanded")
 				if nextTarget==self.currentTarget: #Did not change yet
 					nextTarget = None
 			elif c != self.currentTarget and html5.utils.doesEventHitWidgetOrChildren(event, c):
-				c["class"].remove("collapsed")
-				c["class"].append("expanded")
+				c.removeClass("is-collapsed")
+				c.addClass("is-expanded")
 				nextTarget = c
 
 		if self.currentTarget != nextTarget:
@@ -128,7 +129,7 @@ class FilterSelector( html5.Div ):
 
 		if not isSearchDisabled:
 			self.search = Search()
-			self.search["class"].append("collapsed")
+			self.search["class"].append("is-collapsed")
 			self.appendChild(self.search)
 			self.search.startSearchEvent.register( self )
 

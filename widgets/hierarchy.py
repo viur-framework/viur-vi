@@ -39,10 +39,10 @@ class HierarchyItem( html5.Li ):
 		self.appendChild(self.ol)
 		self.currentMargin = None
 		self.ol["style"]["display"] = "none"
-		self["class"].append("hierarchyitem")
-		self["class"].append("unexpaned")
-		self["class"].append("supports_drag")
-		self["class"].append("supports_drop")
+		self["class"].append("hierarchy-item")
+		self["class"].append("is-collapsed")
+		self["class"].append("is-draggable")
+		self["class"].append("is-drop-target")
 		self["draggable"] = True
 		self.sinkEvent("onDragStart", "onDrop", "onDragOver","onDragLeave")
 
@@ -73,21 +73,21 @@ class HierarchyItem( html5.Li ):
 		# Before
 		if self.currentMargin is None and offset < height * 0.20:
 			self.currentMargin = "top"
-			self["class"].remove("insert_here")
-			self["class"].remove("insert_after")
-			self["class"].append("insert_before")
+			self["class"].remove("insert-here")
+			self["class"].remove("insert-after")
+			self["class"].append("insert-before")
 		# After
 		elif self.currentMargin is None and offset > height * 0.80:
 			self.currentMargin = "bottom"
-			self["class"].remove("insert_here")
-			self["class"].remove("insert_before")
-			self["class"].append("insert_after")
+			self["class"].remove("insert-here")
+			self["class"].remove("insert-before")
+			self["class"].append("insert-after")
 		# Within
 		elif self.currentMargin and offset >= height * 0.20 and offset <= height * 0.80:
 			self.currentMargin = None
-			self["class"].remove("insert_before")
-			self["class"].remove("insert_after")
-			self["class"].append("insert_here")
+			self["class"].remove("insert-before")
+			self["class"].remove("insert-after")
+			self["class"].append("insert-here")
 
 		event.preventDefault()
 		event.stopPropagation()
@@ -96,9 +96,9 @@ class HierarchyItem( html5.Li ):
 		"""
 			Remove all drop indicating classes.
 		"""
-		self["class"].remove("insert_before")
-		self["class"].remove("insert_after")
-		self["class"].remove("insert_here")
+		self["class"].remove("insert-before")
+		self["class"].remove("insert-after")
+		self["class"].remove("insert-here")
 		self.currentMargin = None
 		super(HierarchyItem,self).onDragLeave( event )
 
@@ -181,12 +181,12 @@ class HierarchyItem( html5.Li ):
 		"""
 		if self.isExpanded:
 			self.ol["style"]["display"] = "none"
-			self["class"].remove("expaned")
-			self["class"].append("unexpaned")
+			self["class"].remove("is-expanded")
+			self["class"].append("is-collapsed")
 		else:
 			self.ol["style"]["display"] = "block"
-			self["class"].append("expaned")
-			self["class"].remove("unexpaned")
+			self["class"].append("is-expanded")
+			self["class"].remove("is-collapsed")
 
 		self.isExpanded = not self.isExpanded
 
@@ -217,7 +217,7 @@ class HierarchyWidget(html5.Div):
 		self.rootNodeChangedEvent = EventDispatcher("rootNodeChanged")
 		self._currentCursor = None
 		self._currentRequests = []
-		self.addClass("supports_drop")
+		self.addClass("is-drop-target")
 		self.isSelector = isSelector
 		self._expandedNodes = []
 		self.context = context
@@ -452,7 +452,7 @@ class HierarchyWidget(html5.Div):
 					self.loadNode(hi.data["key"])
 
 		if not ol._children and ol != self.entryFrame:
-			ol.parent()["class"].append("has_no_childs")
+			ol.parent()["class"].append("has-no-child")
 
 		if data["skellist"] and data["cursor"]:
 			self.loadNode(req.node, data["cursor"])
