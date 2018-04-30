@@ -108,3 +108,6 @@ class Log( html5.Div ):
 
 	def removeNewCls(self,span):
 		span["class"].remove("is_new")
+
+	def reset(self):
+		self.logUL.removeAllChildren()

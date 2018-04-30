@@ -1,9 +1,5 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-import sys, os
-import json
-import string, random, time
+import os, sys, json, string, random, time
 
 class DeferredCall( object ):
 	"""
@@ -102,6 +98,11 @@ class NetworkService( object ):
 	_cache = {} # module->Cache index map (for requests that can be cached)
 	host = ""
 	prefix = "/json"
+	defaultFailureHandler = None
+
+	retryCodes = [0, -1, 500, 502]
+	retryMax = 3
+	retryDelay = 5000
 
 	@staticmethod
 	def notifyChange(module, **kwargs):
@@ -236,7 +237,7 @@ class NetworkService( object ):
 		super(NetworkService, self).__init__()
 
 		self.result = None
-		self.status = "running"
+		self.status = None
 		self.waitingForSkey = False
 		self.module = module
 		self.url = url
@@ -249,12 +250,15 @@ class NetworkService( object ):
 		self.modifies = modifies
 		self.cacheable = cacheable
 		self.secure = secure
-		self.delay = delay
 
+		self.kickoffs = 0
 		if kickoff:
 			self.kickoff()
 
 	def kickoff(self):
+		self.status = "running"
+		self.kickoffs += 1
+
 		if self.secure:
 			self.waitingForSkey = True
 			self.doFetch("%s%s/skey" % (NetworkService.host, NetworkService.prefix), None, None)
@@ -296,30 +300,36 @@ class NetworkService( object ):
 		                        successHandler, failureHandler, finishedHandler,
 				                    modifies, cacheable, secure, kickoff)
 
-	def doFetch(self, url, params, skey ):
+	def doFetch(self, url, params, skey):
 		"""
 			Internal function performing the actual AJAX request.
 		"""
 		if params:
 			if skey:
 				params["skey"] = skey
+
 			contentType = None
-			if isinstance( params, dict):
-				multipart, boundary = NetworkService.genReqStr( params )
-				contentType = b'multipart/form-data; boundary='+boundary+b'; charset=utf-8'
-			elif isinstance( params, bytes ):
-				contentType =  b'application/x-www-form-urlencoded'
+
+			if isinstance(params, dict):
+				multipart, boundary = NetworkService.genReqStr(params)
+				contentType = b"multipart/form-data; boundary=" + boundary + b"; charset=utf-8"
+			elif isinstance(params, bytes):
+				contentType =  b"application/x-www-form-urlencoded"
 				multipart = params
 			else:
-				print( params )
-				print( type( params ) )
-			HTTPRequest().asyncPost(url, multipart, self, content_type=contentType )
+				print(params)
+				print(type(params))
+				multipart = params
+
+			HTTPRequest().asyncPost(url, multipart, self, content_type=contentType)
+
 		else:
 			if skey:
 				if "?" in url:
 					url += "&skey=%s" % skey
 				else:
 					url += "?skey=%s" % skey
+
 			HTTPRequest().asyncGet(url, self)
 
 	def onCompletion(self, text):
@@ -344,11 +354,10 @@ class NetworkService( object ):
 					DeferredCall(NetworkService.notifyChange, self.module, _delay=2500)
 					#NetworkService.notifyChange( self.module )
 				raise
+
 			# Remove references to our handlers
-			self.successHandler = []
-			self.finishedHandler = []
-			self.failureHandler = []
-			self.params = None
+			self.clear()
+
 			if self.modifies:
 				DeferredCall(NetworkService.notifyChange, self.module, _delay=2500)
 
@@ -358,17 +367,38 @@ class NetworkService( object ):
 		"""
 		self.status = "failed"
 		self.result = text
+
+		print("onError", self.kickoffs, self.retryMax, int(code), self.retryCodes)
+
+		if self.kickoffs < self.retryMax and int(code) in self.retryCodes:
+			logError = eval("window.top.logError")
+			if logError and self.kickoffs == self.retryMax - 1:
+				logError("NetworkService.onError code:%s module:%s url:%s params:%s" % (code, self.module, self.url, self.params))
+
+			print("error %d, kickoff %d, will retry now" % (int(code), self.kickoffs))
+			DeferredCall(self.kickoff, _delay=self.retryDelay)
+			return
+
 		for s in self.failureHandler:
-			s( self, code )
+			s(self, code)
+
+		if not self.failureHandler and self.defaultFailureHandler:
+			self.defaultFailureHandler(self, code)
+
+		if not self.defaultFailureHandler:
+			self.clear()
+
 		for s in self.finishedHandler:
-			s( self )
-		self.successHandler = []
-		self.finishedHandler = []
-		self.failureHandler = []
-		self.params = None
+			s(self)
 
 	def onTimeout(self, text):
 		"""
 			Internal hook for the AJAX call.
 		"""
-		self.onError( text, -1 )
+		self.onError(text, -1)
+
+	def clear(self):
+		self.successHandler = []
+		self.finishedHandler = []
+		self.failureHandler = []
+		self.params = None

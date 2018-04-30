@@ -111,8 +111,8 @@ class RelationalViewBoneDelegate(object):
 				count = 1
 			else:
 				count = len(val)
-				if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
-					val = val[:conf["maxMultiBoneEntries"] - 1]
+				if conf["maxMultiBoneEntries"] and count > conf["maxMultiBoneEntries"]:
+					val = val[:conf["maxMultiBoneEntries"]]
 
 			if structure["using"]:
 				res = "\n".join([(utils.formatString(
@@ -129,8 +129,8 @@ class RelationalViewBoneDelegate(object):
 															language=conf["currentlanguage"])
 				                  or x["key"]) for x in val])
 
-			if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
-				res += "\n%s" % translate("and {count} more", count=count - conf["maxMultiBoneEntries"] - 1)
+			if conf["maxMultiBoneEntries"] and count > conf["maxMultiBoneEntries"]:
+				res += "\n%s" % translate("and {count} more", count=count - conf["maxMultiBoneEntries"])
 
 		except:
 			#We probably received some garbage
@@ -162,7 +162,7 @@ class RelationalSingleSelectionBone(html5.Div):
 			@param format: Specifies how entries should be displayed.
 			@type format: string
 		"""
-		super( RelationalSingleSelectionBone,  self ).__init__( *args, **kwargs )
+		super(RelationalSingleSelectionBone,  self).__init__(*args, **kwargs)
 		self.srcModule = srcModule
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -175,7 +175,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.selectionTxt = html5.Input()
 		self.selectionTxt["readonly"] = True
 		self.selectionTxt["type"] = "text"
-		self.appendChild( self.selectionTxt )
+		self.appendChild(self.selectionTxt)
 		self.ie = None
 
 		self.baseContext = context
@@ -310,6 +310,7 @@ class RelationalSingleSelectionBone(html5.Div):
 
 	def onRemove(self, *args, **kwargs):
 		self.setSelection(None)
+		self.changeEvent.fire(self)
 
 	def unserialize(self, data):
 		"""
@@ -789,14 +790,15 @@ class RelationalMultiSelectionBone(html5.Div):
 			@param data: The data dictionary received.
 			@type data: dict
 		"""
-		self.selectionDiv.removeAllChildren()
-		self.entries = []
-
 		if self.boneName in data.keys():
-			val = data[ self.boneName ]
-			if isinstance( val, dict ):
-				val = [ val ]
-			self.setSelection( val )
+			self.selectionDiv.removeAllChildren()
+			self.entries = []
+
+			val = data[self.boneName]
+			if isinstance(val, dict):
+				val = [val]
+
+			self.setSelection(val)
 
 	def serializeForPost(self):
 		"""

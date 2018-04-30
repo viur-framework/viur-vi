@@ -4,11 +4,11 @@
 
 ## About
 
-*Vi* (pronounced as "whee!") is an acronym for *visual interface*. It is a platform-independent HTML5-web-app that is written in Python and must be compiled into JavaScript using the [PyJS](https://github.com/pyjs/pyjs) transpiler.
+*Vi* (pronounced as "whee!", and standing as an acronym for *visual interface*), is a platform-independent HTML5-web-app providing a powerful on-line administration interface for applications implemented using the  [ViUR framework](https://github.com/viur-framework/).
 
-It was tested and runs well with the latest versions of Chrome (Chromium), Firefox and Safari. Microsoft Edge and Internet Explorer >= 9 should also run it suitable as well.
+*Vi* is written in Python and must be compiled into JavaScript using the [PyJS](https://github.com/pyjs/pyjs) transpiler. It was tested and runs well with the latest versions of Chrome (Chromium), Firefox and Safari. Microsoft Edge and Internet Explorer >= 9 should also run it suitable as well.
 
-Pre-compiled and packaged versions of the Vi can be obtained on the official [ViUR website](https://www.viur.is/download).
+Pre-compiled and pre-packaged versions of the Vi can be obtained on the official [ViUR website](https://www.viur.is/download).
 
 ## Installation
 
@@ -18,17 +18,17 @@ Please check out the [ViUR documentation](https://docs.viur.is/latest) to get mo
 
 ## Requirements
 
-This software is implemented on top of the [PyJS framework](https://github.com/pyjs/pyjs) and uses the [html5 library](https://github.com/viur-framework/html5) to create DOM objects. The html5 library is also part of the ViUR open source project.
+This software is implemented on top of the [PyJS framework](https://github.com/pyjs/pyjs) and uses the [html5 library](https://github.com/viur-framework/html5) to create DOM objects and the [logics expression language](https://github.com/viur-framework/logics) to serve for customized run-time condition evaluations. The *html5 library* and *logics* are also part of the ViUR open source project.
 
-To build it on your own, [PyJS](https://github.com/pyjs/pyjs) and [{less}](http://lesscss.org/) is required.
+To build Vi on your own, [PyJS](https://github.com/pyjs/pyjs) and [{less}](http://lesscss.org/) is required.
 
 ## Building
 
 Because Vi provides the ability to get easily customized and extended, this repository contains a simple Makefile for GNU make to get all compilation tasks and dependencies done.
 
-By default, it builds into a directory called ``vi`` within the source root directory. In an advanced setup (project based setup), it builds into the folder ``../appengine/vi`` or ``../deploy/vi``, up one level of the working directory, which makes it suitable to use this repository as a submodule of an entire applications source repository.
+By default, it builds into a directory called ``vi`` within the source root directory. In an advanced setup (project based setup), it builds into the folder ``../appengine/vi`` or ``../deploy/vi``, up one level of the working directory, which makes it suitable to use this repository as a submodule of an entire applications source repository. This configuration is used in the [ViUR base project](https://github.com/viur-framework/base).
 
-After checking out vi, simply move into the working directory and type:
+After checking out Vi, simply move into the working directory and type:
 
 ```bash
 $ make
@@ -52,6 +52,7 @@ $ make
 We take a great interest in your opinion about ViUR. We appreciate your feedback and are looking forward to hear about your ideas. Share your visions or questions with us and participate in ongoing discussions.
 
 - [ViUR website](https://www.viur.is)
+- [#ViUR on freenode IRC](https://webchat.freenode.net/?channels=viur)
 - [ViUR on GitHub](https://github.com/viur-framework)
 - [ViUR on Twitter](https://twitter.com/weloveViUR)
 

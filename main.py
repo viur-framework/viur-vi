@@ -86,6 +86,10 @@ class Application(html5.Div):
 		if not self.loginScreen:
 			self.loginScreen = LoginScreen()
 
+		if self.adminScreen:
+			self.adminScreen.reset()
+			self.adminScreen.hide()
+
 		self.loginScreen.invoke(logout=logout)
 
 	def admin(self):
@@ -95,8 +99,6 @@ class Application(html5.Div):
 		self.startup()
 
 	def logout(self):
-		self.adminScreen.remove()
-		conf["mainWindow"] = self.adminScreen = None
 		self.login(logout=True)
 
 if __name__ == '__main__':

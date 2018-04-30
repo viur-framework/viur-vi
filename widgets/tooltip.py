@@ -17,7 +17,10 @@ class ToolTip(html5.Div):
 		self.appendChild( span )
 
 	def toggleMsgCenter(self, *args, **kwargs):
-		if "is_open" in self["class"]:
-			self["class"].remove("is_open")
-		else:
-			self["class"].append("is_open")
+		self.toggleClass("is_open")
+
+	def _setDisabled(self, disabled):
+		return
+
+	def _getDisabled(self):
+		return False

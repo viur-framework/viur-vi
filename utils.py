@@ -59,8 +59,8 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 			if struct and ("$(%s)" % ".".join(prefix + [key])) in res:
 				langs = struct.get("languages")
 				if langs:
-					if language and language in langs and language in val.keys():
-						val = val[language]
+					if language and language in langs:
+						val = val.get(language, "")
 					else:
 						val = ", ".join(val.values())
 

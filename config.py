@@ -5,10 +5,10 @@ from logics import Interpreter
 
 conf = {
 	# Vi version number
-	"vi.version": (2, 1, 1),
+	"vi.version": (2, 2, 0),
 
 	# Appendix to version
-	"vi.version.appendix": "develop",
+	"vi.version.appendix": "",
 
 	# Vi server name
 	"vi.viur": "ViUR",
