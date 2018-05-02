@@ -28,21 +28,13 @@ class AdminScreen(Screen):
 		self.topBar = TopBarWidget()
 		self.appendChild(self.topBar)
 
-		#self.workSpace = html5.Div()
-		#self.workSpace["class"] = "vi-workspace"
-		#self.appendChild(self.workSpace)
-
-		self.modulMgr = html5.Div()
-		self.modulMgr["class"] = "vi-manager"
-		self.appendChild(self.modulMgr)
-
-		# self.modulList = html5.Nav()
-		# self.modulList["class"] = "vi-manager"
-		# self.modulMgr.appendChild(self.modulList)
+		self.moduleMgr = html5.Div()
+		self.moduleMgr["class"] = "vi-manager"
+		self.appendChild(self.moduleMgr)
 
 		self.moduleList = html5.Nav()
 		self.moduleList["class"] = "vi-modulelist"
-		self.modulMgr.appendChild(self.moduleList)
+		self.moduleMgr.appendChild(self.moduleList)
 
 		self.viewport = html5.Div()
 		self.viewport["class"] = "vi-viewer"
@@ -65,7 +57,7 @@ class AdminScreen(Screen):
 		w.onerror = le
 
 	def reset(self):
-		self.moduleListUl.removeAllChildren()
+		self.moduleList.removeAllChildren()
 		self.viewport.removeAllChildren()
 		self.logWdg.reset()
 

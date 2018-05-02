@@ -2211,13 +2211,89 @@ button.icon.is-disabled {
 }
 /* MESSAGES and ALERTS */
 .msg {
+  position: relative;
+  padding: 15px;
+  margin-bottom: 20px;
+  font-size: .9rem;
+  color: #0e536f;
+  background-color: #d0edf9;
+  border: 1px solid #14759c;
+  border-radius: 4px;
   display: none;
   opacity: 0;
   transition: opacity .5s ease;
 }
+.msg p:last-child {
+  margin-bottom: 0;
+}
+.msg.has-icon {
+  padding-left: 4em;
+  min-height: 5em;
+}
+.msg .icon {
+  position: absolute;
+  display: block;
+  height: 2.4em;
+  width: 2.4em;
+  margin-left: -2em;
+  margin-top: 5px;
+  transform: translateX(-45%);
+}
+.msg a {
+  color: #093142;
+  border-bottom: 1px solid rgba(9, 49, 66, 0.5);
+}
+.msg-headline {
+  font-size: .9rem;
+  font-weight: 600;
+  color: inherit;
+}
+.msg-close {
+  float: right;
+  width: 34px;
+  height: 44px;
+  margin: -11px;
+  line-height: 40px;
+  color: inherit;
+  text-align: center;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  -webkit-appearance: none;
+  opacity: 0.6;
+}
+.msg-close:hover {
+  opacity: 1;
+}
+.msg-vFull {
+  margin-top: -1px;
+  border-width: 0 0;
+  border-radius: 0;
+}
+.msgGroup {
+  margin-bottom: 10px;
+}
 .msg.is-active {
   display: block;
   opacity: 1;
+}
+.msg-vSuccess {
+  color: #23511f;
+  background-color: #c0e5bc;
+  border-color: #34762d;
+}
+.msg-vSuccess a {
+  color: #132c11;
+  border-bottom: 0 solid rgba(19, 44, 17, 0.5);
+}
+.msg-vError {
+  color: #a21309;
+  background-color: #fde1df;
+  border-color: #d2190b;
+}
+.msg-vError a {
+  color: #710e06;
+  border-bottom: 0 solid rgba(113, 14, 6, 0.5);
 }
 /* TOPBAR */
 .vi-topbar {
