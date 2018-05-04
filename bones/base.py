@@ -77,7 +77,7 @@ class BaseEditBone(html5.Input):
 		return self.serializeForPost()
 
 	def setExtendedErrorInformation(self, errorInfo):
-		pass
+		print(errorInfo)
 
 # Register this Bone in the global queue as generic fallback.
 editBoneSelector.insert(0, lambda *args, **kwargs: True, BaseEditBone)
