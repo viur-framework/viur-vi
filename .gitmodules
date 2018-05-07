@@ -7,3 +7,6 @@
 [submodule "html5"]
 	path = html5
 	url = https://github.com/viur-framework/html5.git
+[submodule "sources/less/ignite"]
+	path = sources/less/ignite
+	url = git@github.com:viur-framework/ignite.git
