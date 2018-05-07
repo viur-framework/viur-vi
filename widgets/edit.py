@@ -1,40 +1,46 @@
 # -*- coding: utf-8 -*-
-
 import html5, utils
+
 from html5.a import A
 from html5.form import Fieldset
 from html5.ext import YesNoDialog
 
-from network import NetworkService
+from network import NetworkService, DeferredCall
 from config import conf
 from priorityqueue import editBoneSelector
 from widgets.tooltip import ToolTip
 from widgets.actionbar import ActionBar
 from i18n import translate
 
+from widgets.list import ListWidget
+
 class InvalidBoneValueException(ValueError):
 	pass
 
 class InternalEdit(html5.Div):
 
-	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, defaultCat=""):
+	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, context=None, defaultCat=""):
 		super(InternalEdit, self).__init__()
+
+		self.sinkEvent("onChange", "onKeyDown")
+
 		self.editIdx = 1
 		self.skelStructure = skelStructure
 		self.values = values
 		self.errorInformation = errorInformation
 		self.defaultCat = defaultCat
+		self.context = context
 
-		self.form = html5.Form()
-		self.appendChild(self.form)
+		self.form = self
 
 		self.renderStructure(readOnly=readOnly)
 
 		if values:
-			self.unserialize( values )
+			self.unserialize(values)
 
 	def renderStructure(self, readOnly = False):
 		self.bones = {}
+		self.containers = {}
 
 		tmpDict = {k: v for k, v in self.skelStructure}
 		fieldSets = {}
@@ -44,10 +50,6 @@ class InternalEdit(html5.Div):
 		firstCat = True
 
 		for key, bone in self.skelStructure:
-
-			#Skip over invisible bones
-			if not bone["visible"]:
-				continue
 
 			#Enforcing readOnly mode
 			if readOnly:
@@ -67,6 +69,10 @@ class InternalEdit(html5.Div):
 				if firstCat:
 					fs["class"].append("active")
 					firstCat = False
+
+					if self.form is self:
+						self.form = html5.Form()
+						self.appendChild(self.form)
 
 				fs["name"] = cat or "empty"
 				legend = html5.Legend()
@@ -99,7 +105,9 @@ class InternalEdit(html5.Div):
 					descrLbl["title"] = bone["error"]
 				else:
 					descrLbl["title"] = self.errorInformation[ key ]
-				fieldSets[ cat ]["class"].append("is_incomplete")
+
+				if fieldSets and cat in fieldSets:
+					fieldSets[cat]["class"].append("is_incomplete")
 
 			if bone["required"] and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
 				descrLbl["class"].append("is_valid")
@@ -110,25 +118,26 @@ class InternalEdit(html5.Div):
 				tmp.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
 				descrLbl = tmp
 
-			containerDiv = html5.Div()
-			containerDiv.appendChild( descrLbl )
-			containerDiv.appendChild( widget )
-
-			if cat is not None:
-				fieldSets[cat]._section.appendChild(containerDiv)
-			else:
-				self.form.appendChild(containerDiv)
-
-			containerDiv["class"].append("bone")
-			containerDiv["class"].append("bone_"+key)
-			containerDiv["class"].append( bone["type"].replace(".","_") )
+			self.containers[key] = html5.Div()
+			self.containers[key].appendChild(descrLbl)
+			self.containers[key].appendChild(widget)
+			self.containers[key].addClass("bone", "bone_%s" % key, bone["type"].replace(".","_"))
 
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
-					containerDiv["class"].append(t)
+					self.containers[key].addClass(t)
+
+			if cat is not None:
+				fieldSets[cat]._section.appendChild(self.containers[key])
+			else:
+				self.form.appendChild(self.containers[key])
 
 			currRow += 1
 			self.bones[key] = widget
+
+			#Hide invisible bones
+			if not bone["visible"]:
+				self.containers[key].hide()
 
 		if len(fieldSets)==1:
 			for (k,v) in fieldSets.items():
@@ -142,34 +151,101 @@ class InternalEdit(html5.Div):
 			self.form.appendChild( v )
 			v._section = None
 
+	def serializeForPost(self, validityCheck = False):
+		res = {}
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForPost())
+			except InvalidBoneValueException:
+				if validityCheck:
+					# Fixme: Bad hack..
+					lbl = bone.parent()._children[0]
+					if "is_valid" in lbl["class"]:
+						lbl["class"].remove("is_valid")
+					lbl["class"].append("is_invalid")
+					self.actionbar.resetLoadingState()
+					return None
+
+		return res
+
+	def serializeForDocument(self):
+		res = {}
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForDocument())
+			except InvalidBoneValueException as e:
+				res[key] = str(e)
+
+		return res
+
 	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
 		"""
 			Starts serializing and transmitting our values to the server.
 		"""
 		self.closeOnSuccess = closeOnSuccess
-
-		res = {}
-
-		for key, bone in self.bones.items():
-			try:
-				res.update( bone.serializeForPost( ) )
-			except InvalidBoneValueException:
-				#Fixme: Bad hack..
-				lbl = bone.parent()._children[0]
-				if "is_valid" in lbl["class"]:
-					lbl["class"].remove("is_valid")
-				lbl["class"].append("is_invalid")
-				self.actionbar.resetLoadingState()
-				return None
-
-		return res
+		return self.serializeForPost(True)
 
 	def unserialize(self, data):
 		"""
 			Applies the actual data to the bones.
 		"""
 		for bone in self.bones.values():
-			bone.unserialize( data )
+			if "setContext" in dir(bone) and callable(bone.setContext):
+				bone.setContext(self.context)
+
+			bone.unserialize(data)
+
+		DeferredCall(self.performLogics)
+
+	def onChange(self, event):
+		DeferredCall(self.performLogics)
+
+	def onKeyDown(self, event):
+		event.stopPropagation()
+
+	def performLogics(self):
+		fields = self.serializeForDocument()
+		#print("InternalEdit.performLogics", fields)
+
+		for key, desc in self.skelStructure:
+			if desc.get("params") and desc["params"]:
+				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
+					logic = desc["params"].get(event)
+
+					if not logic:
+						continue
+
+					# Compile logic at first run
+					if isinstance(logic, str):
+						desc["params"][event] = conf["logics"].compile(logic)
+						if desc["params"][event] is None:
+							alert("ViUR logics: Parse error in >%s<" % logic)
+							continue
+
+						logic = desc["params"][event]
+
+					res = conf["logics"].execute(logic, fields)
+
+					#print("InternalEdit.performLogics", event, key, res)
+
+					if event == "logic.evaluate":
+						self.bones[key].unserialize({key: res})
+					elif res:
+						if event == "logic.visibleIf":
+							self.containers[key].show()
+						elif event == "logic.readonlyIf":
+							self.containers[key].disable()
+
+						# add more here...
+					else:
+						if event == "logic.visibleIf":
+							self.containers[key].hide()
+						elif event == "logic.readonlyIf":
+							self.containers[key].enable()
+						# add more here...
+
 
 def parseHashParameters( src, prefix="" ):
 	"""
@@ -230,7 +306,7 @@ def parseHashParameters( src, prefix="" ):
 	return res
 
 
-class EditWidget( html5.Div ):
+class EditWidget(html5.Div):
 	appList = "list"
 	appHierarchy = "hierarchy"
 	appTree = "tree"
@@ -238,7 +314,7 @@ class EditWidget( html5.Div ):
 	__editIdx_ = 0 #Internal counter to ensure unique ids
 
 	def __init__(self, module, applicationType, key=0, node=None, skelType=None, clone=False,
-	             hashArgs=None, logaction = "Entry saved!", *args, **kwargs ):
+	                hashArgs=None, context=None, logaction = "Entry saved!", *args, **kwargs):
 		"""
 			Initialize a new Edit or Add-Widget for the given module.
 			@param module: Name of the module
@@ -247,7 +323,7 @@ class EditWidget( html5.Div ):
 			@type applicationType: Any of EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree or EditWidget.appSingleton
 			@param id: ID of the entry. If none, it will add a new Entry.
 			@type id: Number
-			@param rootNode: If applicationType==EditWidget.appHierarchy, the new entry will be added under this node, if applicationType==EditWidget,appTree the final node is derived from this and the path-parameter. 
+			@param rootNode: If applicationType==EditWidget.appHierarchy, the new entry will be added under this node, if applicationType==EditWidget,appTree the final node is derived from this and the path-parameter.
 			Has no effect if applicationType is not appHierarchy or appTree or if an id have been set.
 			@type rootNode: String
 			@param path: Specifies the path from the rootNode for new entries in a treeApplication
@@ -258,10 +334,10 @@ class EditWidget( html5.Div ):
 			@type hashArgs: Dict
 		"""
 		if not module in conf["modules"].keys():
-			conf["mainWindow"].log("error", translate("The modulee '{modulee}' does not exist.", modulee=module))
+			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
 			assert module in conf["modules"].keys()
 
-		super( EditWidget, self ).__init__( *args, **kwargs )
+		super(EditWidget, self ).__init__(*args, **kwargs)
 		self.module = module
 
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
@@ -288,42 +364,110 @@ class EditWidget( html5.Div ):
 		self.applicationType = applicationType
 		self.key = key
 		self.mode = "edit" if self.key or applicationType == EditWidget.appSingleton else "add"
+		self.modified = False
 		self.node = node
 		self.skelType = skelType
 		self.clone = clone
 		self.bones = {}
 		self.closeOnSuccess = False
 		self.logaction = logaction
+		self.sinkEvent("onChange")
+
+		self.context = context
+		self.views = {}
 
 		self._lastData = {} #Dict of structure and values received
 
 		if hashArgs:
-			self._hashArgs = parseHashParameters( hashArgs )
-			'''
-			warningNode = html5.TextNode("Warning: Values shown below got overriden by the Link you clicked on and do NOT represent the actual values!\n"+\
-						"Doublecheck them before saving!")
-			warningSpan = html5.Span()
-			warningSpan["class"].append("warning")
-			warningSpan.appendChild( warningNode )
-			self.appendChild( warningSpan )
-			'''
+			self._hashArgs = parseHashParameters(hashArgs)
 		else:
 			self._hashArgs = None
 
 		self.editTaskID = None
 		self.wasInitialRequest = True #Wherever the last request attempted to save data or just fetched the form
+
+		# Action bar
 		self.actionbar = ActionBar(self.module, self.applicationType, self.mode)
-		self.appendChild( self.actionbar )
+		self.appendChild(self.actionbar)
+
+		editActions = []
+
+		if self.mode == "edit":
+			editActions.append("refresh")
+
+		if module in conf["modules"] and conf["modules"][module]:
+			editActions.extend(conf["modules"][module].get("editActions", []))
+
+		print("editActions", editActions)
+
+		if applicationType == EditWidget.appSingleton:
+			self.actionbar.setActions(["save.singleton"] + editActions)
+		else:
+			self.actionbar.setActions(["save.close", "save.continue"] + editActions)
+
+		# Input form
 		self.form = html5.Form()
 		self.appendChild(self.form)
 
-		if applicationType == EditWidget.appSingleton:
-			self.actionbar.setActions(["save.singleton", "reset"])
-		else:
-			self.actionbar.setActions(["save.close", "save.continue", "reset"])
-
+		# Engage
 		self.reloadData()
-		self.sinkEvent("onChange")
+
+	def onDetach(self):
+		utils.setPreventUnloading(False)
+		super(EditWidget, self).onDetach()
+
+	def onAttach(self):
+		super(EditWidget, self).onAttach()
+		utils.setPreventUnloading(True)
+
+	def performLogics(self):
+		fields = self.serializeForDocument()
+		#print("EditWidget.performLogics", fields)
+
+		for key, desc in self.dataCache["structure"]:
+			if desc.get("params") and desc["params"]:
+				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
+					logic = desc["params"].get(event)
+
+					if not logic:
+						continue
+
+					# Compile logic at first run
+					if isinstance(logic, str):
+						desc["params"][event] = conf["logics"].compile(logic)
+						if desc["params"][event] is None:
+							alert("ViUR logics: Parse error in >%s<" % logic)
+							continue
+
+						logic = desc["params"][event]
+
+					res = conf["logics"].execute(logic, fields)
+
+					#print("EditWidget.performLogics", event, key, res)
+
+					if event == "logic.evaluate":
+						self.bones[key].unserialize({key: res})
+					elif res:
+						if event == "logic.visibleIf":
+							self.containers[key].show()
+						elif event == "logic.readonlyIf":
+							self.containers[key].disable()
+
+						# add more here...
+					else:
+						if event == "logic.visibleIf":
+							self.containers[key].hide()
+						elif event == "logic.readonlyIf":
+							self.containers[key].enable()
+						# add more here...
+
+	def onChange(self, event):
+		self.modified = True
+		DeferredCall(self.performLogics)
+
+	def onBoneChange(self, bone):
+		self.modified = True
+		DeferredCall(self.performLogics)
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -346,10 +490,9 @@ class EditWidget( html5.Div ):
 			conf["mainWindow"].removeWidget(self)
 
 	def reloadData(self):
-		self.save( {} )
-		return
+		self.save({})
 
-	def save(self, data ):
+	def save(self, data):
 		"""
 			Creates the actual NetworkService request used to transmit our data.
 			If data is None, it fetches a clean add/edit form.
@@ -357,53 +500,59 @@ class EditWidget( html5.Div ):
 			@param data: The values to transmit or None to fetch a new, clean add/edit form.
 			@type data: Dict or None
 		"""
-		self.wasInitialRequest = not len(data)>0
+		self.wasInitialRequest = not len(data) > 0
+
+		if self.context:
+			# Data takes precedence over context.
+			ndata = self.context.copy()
+			ndata.update(data.copy())
+			data = ndata
 
 		if self.module=="_tasks":
-			NetworkService.request(None, "/admin/%s/execute/%s" % (self.module, self.key), data,
-			                        secure=len(data) > 0,
+			NetworkService.request(None, "/vi/%s/execute/%s" % (self.module, self.key), data,
+			                        secure=not self.wasInitialRequest,
 			                        successHandler=self.setData,
 			                        failureHandler=self.showErrorMsg)
 
 		elif self.applicationType == EditWidget.appList: ## Application: List
-			if self.key and (not self.clone or not data):
+			if self.key and (not self.clone or self.wasInitialRequest):
 				NetworkService.request(self.module, "edit/%s" % self.key, data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 			else:
 				NetworkService.request(self.module, "add", data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg )
 
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
-			if self.key and (not self.clone or not data):
+			if self.key and (not self.clone or self.wasInitialRequest):
 				NetworkService.request(self.module, "edit/%s" % self.key, data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 			else:
 				NetworkService.request(self.module, "add/%s" % self.node, data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 
 		elif self.applicationType == EditWidget.appTree: ## Application: Tree
 			if self.key and not self.clone:
 				NetworkService.request(self.module, "edit/%s/%s" % (self.skelType, self.key), data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 			else:
 				NetworkService.request(self.module, "add/%s/%s" % (self.skelType, self.node), data,
-				                       secure=len(data) > 0,
+				                       secure=not self.wasInitialRequest,
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 
 		elif self.applicationType == EditWidget.appSingleton: ## Application: Singleton
 			NetworkService.request(self.module, "edit", data,
-			                       secure=len(data)>0,
+			                       secure=not self.wasInitialRequest,
 			                       successHandler=self.setData,
 			                       failureHandler=self.showErrorMsg)
 		else:
@@ -469,9 +618,11 @@ class EditWidget( html5.Div ):
 		assert (request or data)
 
 		if request:
-			data = NetworkService.decode( request )
+			data = NetworkService.decode(request)
 
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
+			self.modified = False
+
 			logDiv = html5.Div()
 			logDiv["class"].append("msg")
 			spanMsg = html5.Span()
@@ -492,7 +643,7 @@ class EditWidget( html5.Div ):
 			if "values" in data.keys() and "name" in data["values"].keys():
 				spanMsg = html5.Span()
 
-				name = data["values"]["name"]
+				name = data["values"].get("name") or data["values"].get("key", "")
 				if isinstance(name, dict):
 					if conf["currentlanguage"] in name.keys():
 						name = name[conf["currentlanguage"]]
@@ -531,9 +682,11 @@ class EditWidget( html5.Div ):
 		#Clear the UI
 		self.clear()
 		self.bones = {}
+		self.views = {}
 		self.containers = {}
 		self.actionbar.resetLoadingState()
 		self.dataCache = data
+		self.modified = False
 
 		tmpDict = {k: v for k, v in data["structure"]}
 		fieldSets = {}
@@ -541,11 +694,23 @@ class EditWidget( html5.Div ):
 		hasMissing = False
 		defaultCat = conf["modules"][self.module].get("visibleName", self.module)
 
-		for key, bone in data["structure"]:
-			if not bone["visible"]:
-				continue
+		contextVariable = conf["modules"][self.module].get("editContext")
+		if self.mode == "edit" and contextVariable:
+			if not self.context:
+				self.context = {}
 
-			cat = defaultCat
+			if "=" in contextVariable:
+				contextVariable, contextKey = contextVariable.split("=", 1)
+			else:
+				contextKey = "key"
+
+			self.context.update({
+				contextVariable: data["values"].get(contextKey)
+			})
+
+		for key, bone in data["structure"]:
+
+			cat = defaultCat #meow!
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)
@@ -573,6 +738,12 @@ class EditWidget( html5.Div ):
 			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
+			if "setContext" in dir(widget) and callable(widget.setContext):
+				widget.setContext(self.context)
+
+			if "changeEvent" in dir(widget):
+				widget.changeEvent.register(self)
+
 			#widget["class"].append(key)
 			#widget["class"].append(bone["type"].replace(".","_"))
 			#self.prepareCol(currRow,1)
@@ -581,8 +752,9 @@ class EditWidget( html5.Div ):
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
-			print(key, bone["required"], bone["error"])
-			if bone["required"]:
+
+			#print(key, bone["required"], bone["error"])
+			if bone["required"] or (bone.get("unique") and bone["error"]):
 				descrLbl["class"].append("is_required")
 
 				if bone["error"] is not None:
@@ -613,20 +785,74 @@ class EditWidget( html5.Div ):
 					containerDiv["class"].append(t)
 
 			currRow += 1
-			self.bones[ key ] = widget
-			self.containers[ key ] = containerDiv
+			self.bones[key] = widget
+			self.containers[key] = containerDiv
+
+			#Hide invisible bones
+			if not bone["visible"]:
+				self.containers[key].hide()
 
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
-		tmpList.sort( key=lambda x:x[0])
+		tmpList.sort(key=lambda x:x[0])
 
-		for k,v in tmpList:
+		for k, v in tmpList:
 			self.form.appendChild( v )
 			v._section = None
 
+		# Views
+		views = conf["modules"][self.module].get("editViews")
+		if self.mode == "edit" and isinstance(views, list):
+			for view in views:
+				vmodule = view.get("module")
+				vvariable = view.get("context")
+				vclass = view.get("class")
+				vtitle = view.get("title")
+				vcolumns = view.get("columns")
+
+				if not vmodule:
+					print("Misconfiured view: %s" % view)
+					continue
+
+				if vmodule not in conf["modules"]:
+					print("Module '%s' is not described." % vmodule)
+					continue
+
+				vdescr = conf["modules"][vmodule]
+
+				fs = html5.Fieldset()
+				fs.addClass("editview", "inactive")
+
+				if vclass:
+					fs.addClass(*vclass)
+
+				fs["name"] = vmodule
+				legend = html5.Legend()
+				fshref = fieldset_A()
+				fshref.appendChild(html5.TextNode(vtitle or vdescr.get("name", vmodule)))
+				legend.appendChild(fshref)
+				fs.appendChild(legend)
+				section = html5.Section()
+				fs.appendChild(section)
+				fs._section = section
+				fieldSets[vmodule] = fs
+
+				if vvariable:
+					context = self.context.copy() if self.context else {}
+					context[vvariable] = data["values"]["key"]
+				else:
+					context = self.context
+
+				self.views[vmodule] = ListWidget(vmodule, filter=vdescr.get("filter", {}),
+				                                    columns = vcolumns or vdescr.get("columns"),
+				                                    context = context)
+				fs._section.appendChild(self.views[vmodule])
+				self.form.appendChild(fs)
+
+		#print(data["values"])
 		self.unserialize(data["values"])
 
 		if self._hashArgs: #Apply the default values (if any)
-			self.unserialize( self._hashArgs )
+			self.unserialize(self._hashArgs)
 			self._hashArgs = None
 
 		self._lastData = data
@@ -634,31 +860,58 @@ class EditWidget( html5.Div ):
 		if hasMissing and not self.wasInitialRequest:
 			conf["mainWindow"].log("warning",translate("Could not save entry!"))
 
+		DeferredCall(self.performLogics)
+
 	def unserialize(self, data):
 		"""
 			Applies the actual data to the bones.
 		"""
 		for bone in self.bones.values():
-			bone.unserialize( data )
+			if "setContext" in dir(bone) and callable(bone.setContext):
+				bone.setContext(self.context)
+
+			bone.unserialize(data)
+
+	def serializeForPost(self, validityCheck = False):
+		res = {}
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForPost())
+			except InvalidBoneValueException:
+				if validityCheck:
+					# Fixme: Bad hack..
+					lbl = bone.parent()._children[0]
+					if "is_valid" in lbl["class"]:
+						lbl["class"].remove("is_valid")
+					lbl["class"].append("is_invalid")
+					self.actionbar.resetLoadingState()
+					return None
+
+		return res
+
+	def serializeForDocument(self):
+		res = self._lastData.get("values", {})
+
+		for key, bone in self.bones.items():
+			try:
+				res.update(bone.serializeForDocument())
+			except InvalidBoneValueException as e:
+				res[key] = str(e)
+
+		return res
 
 	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
 		"""
 			Starts serializing and transmitting our values to the server.
 		"""
 		self.closeOnSuccess = closeOnSuccess
-		res = {}
-		for key, bone in self.bones.items():
-			try:
-				res.update( bone.serializeForPost( ) )
-			except InvalidBoneValueException:
-				#Fixme: Bad hack..
-				lbl = bone.parent()._children[0]
-				if "is_valid" in lbl["class"]:
-					lbl["class"].remove("is_valid")
-				lbl["class"].append("is_invalid")
-				self.actionbar.resetLoadingState()
-				return
-		self.save( res )
+
+		res = self.serializeForPost(True)
+		if res is None:
+			return None
+
+		self.save(res)
 
 class fieldset_A(A):
 	_baseClass = "a"

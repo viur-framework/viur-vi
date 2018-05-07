@@ -39,9 +39,10 @@ class AddAction( html5.ext.Button ):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = EditPane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_add" ])
+		pane = EditPane(translate("Add"), closeable=True,
+		                iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().module, EditWidget.appList )
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, context=self.parent().parent().context)
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -108,7 +109,8 @@ class EditAction( html5.ext.Button ):
 	def openEditor(self, key):
 		pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key)
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key,
+		                    context=self.parent().parent().context)
 		pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -168,7 +170,8 @@ class CloneAction( html5.ext.Button ):
 	def openEditor(self, key):
 		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key, clone=True)
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key, clone=True,
+		                    context=self.parent().parent().context)
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -239,7 +242,7 @@ actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
 class ListPreviewAction(html5.Span):
 
-	def __init__(self, *args, **kwargs ):
+	def __init__(self, module, handler, actionName, *args, **kwargs ):
 		super(ListPreviewAction, self ).__init__(*args, **kwargs)
 
 		self.urlCb = html5.Select()

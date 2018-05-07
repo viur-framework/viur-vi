@@ -1,32 +1,19 @@
 # -*- coding: utf-8 -*-
 import html5
-from network import NetworkService
+from network import NetworkService, DeferredCall
 from i18n import translate
 from config import conf
 from widgets.task import TaskSelectWidget
 from priorityqueue import toplevelActionSelector
 
 class TopBarWidget( html5.Header ):
-
-	def getConf(self):
-		NetworkService.request( None, "/admin/config", successHandler=self.onCompletion,
-					failureHandler=self.onError, cacheable=True )
-
-	def onCompletion(self, req):
-		data = NetworkService.decode(req)
-		if "configuration" in data.keys() and isinstance( data["configuration"], dict):
-			if "vi.name" in data["configuration"].keys():
-				self.modulH1.appendChild(html5.TextNode(data["configuration"]["vi.name"]))
-			#self.logoContainer["style"]["background-image"]="url('"+data["configuration"]["vi.logo"]+"')"
-	def onError(self, req, code):
-		print("ONERROR")
-
 	"""
 		Provides the top-bar of VI
 	"""
 	def __init__(self):
 		#DOM.setAttribute( self.element, "class", "vi_topbar")
-		super(TopBarWidget,self ).__init__( )
+		super(TopBarWidget,self ).__init__()
+
 		self["class"] = "vi_topbar"
 		anav=html5.Nav()
 		anav["class"].append("iconnav")
@@ -35,6 +22,8 @@ class TopBarWidget( html5.Header ):
 		#self.logoContainer = html5.Div()
 		#self.logoContainer["class"].append("logo")
 		#self.appendChild( self.logoContainer )
+
+		self.sinkEvent("onClick")
 
 		self.modulH1 = html5.H1()
 		self.modulH1._setClass("module")
@@ -50,16 +39,32 @@ class TopBarWidget( html5.Header ):
 		self.moduleName = html5.Span()
 		self.modulContainer.appendChild( self.moduleName )
 
-		for icon in conf[ "toplevelactions" ]:
-			widget = toplevelActionSelector.select( icon )
-			if widget:
-				self.iconnav.appendChild( widget() )
-
 		anav.appendChild(self.iconnav)
 		self.appendChild(anav)
-		self.getConf()
 
-	def setCurrentModulDescr(self, descr, iconURL=None, iconClasses=None):
+		DeferredCall(self.setTitle, _delay=500)
+
+	def invoke(self):
+		self.iconnav.removeAllChildren()
+
+		for icon in conf["toplevelactions"]:
+			widget = toplevelActionSelector.select(icon)
+			if widget:
+				self.iconnav.appendChild(widget())
+
+	def setTitle(self):
+		if not conf["server"]:
+			DeferredCall(self.setTitle, _delay=500)
+			return
+
+		title = conf["server"].get("vi.name", "Visual Interface")
+		self.modulH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
+
+	def onClick(self, event):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulH1):
+			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
+
+	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None):
 		for c in self.modulImg._children[:]:
 			self.modulImg.removeChild(c)
 		for c in self.moduleName._children[:]:
@@ -125,7 +130,7 @@ class Tasks(html5.Li):
 		self.appendChild( a )
 
 		if not conf[ "tasks" ][ "server" ]:
-			NetworkService.request( None, "/admin/_tasks/list",
+			NetworkService.request( None, "/vi/_tasks/list",
 		        successHandler=self.onTaskListAvailable,
 		        cacheable=False )
 

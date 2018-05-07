@@ -242,7 +242,7 @@ class SelectRootNode( html5.Select ):
 	"""
 		Allows selecting a different rootNode in Tree applications
 	"""
-	def __init__(self, *args, **kwargs):
+	def __init__(self, module, handler, actionName, *args, **kwargs):
 		super( SelectRootNode, self ).__init__( *args, **kwargs )
 		self.sinkEvent("onChange")
 

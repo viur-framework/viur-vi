@@ -148,4 +148,25 @@ lngDe = {
 	"verify": u"Authentifizieren",
 	"vi.login.handler.googleaccount": u"Google",
 	"login with google": u"Mit Google einloggen",
+
+	"the viur server (v{server.version}) is incompatible to this vi (v{vi.version}).":
+		u"Die Version des verwendeten ViUR servers (v{server.version}) ist inkompatibel mit diesem Vi (v{vi.version}).",
+	"please update either your server or vi!": u"Bitte aktualisieren Sie entweder den Server oder das Vi!",
+	"version mismatch": u"Versionen stimmen nicht überein",
+	"retry": u"Nochmal versuchen",
+	"vi.login.insufficient-rights": u"Der aktuelle angemeldete Benutzer hat nicht genügend Rechte um diese "
+	                                u"Funktion zu verwenden.\n\nBitte loggen Sie sich unter einem anderen "
+	                                u"Benutzer mit entsprechenden Zugriffsrechten ein.",
+	"login as different user": u"Aktuellen Benutzer abmelden",
+
+	"the connection to the server could not be correctly established.":
+		u"Es konnte keine Verbindung zum Server aufgebaut werden.",
+	"communication error": u"Verbindungsfehler",
+
+	"true": u"Ja",
+	"false": u"Nein",
+
+	"vi.action.edit.refresh.question": u"Dies wird den aktuellen Datensatz neu laden.\nÄnderungen gehen verloren.\n"
+	                                   u"Möchten Sie wirklich fortfahren?",
+	"vi.action.edit.refresh.title": u"Datensatz neu laden"
 }

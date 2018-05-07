@@ -1,21 +1,7 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector
 from config import conf
-
-class ColorBoneExtractor( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( ColorBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName = moduleName
-
-	def render( self, data, field ):
-		if field in data.keys():
-			return str(data[field])
-		return conf[ "empty_value" ]
-
 
 class ColorViewBoneDelegate( object ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
@@ -54,9 +40,9 @@ class ColorEditBone( html5.Input ):
 
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( ColorEditBone( moduleName, boneName, readOnly ) )
+		return ColorEditBone(moduleName, boneName, readOnly)
 
 	##read
 	def unserialize(self, data, extendedErrorInformation=None):
@@ -65,16 +51,15 @@ class ColorEditBone( html5.Input ):
 
 	##save
 	def serializeForPost(self):
-		return ( { self.boneName: str(self._getValue())} )
+		return { self.boneName: str(self._getValue())}
 
 	##UNUSED
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serializeForPost()
 
-def CheckForColorBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return( skelStucture[boneName]["type"]=="color" )
+def CheckForColorBone(moduleName, boneName, skelStucture, *args, **kwargs):
+	return skelStucture[boneName]["type"] == "color"
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForColorBone, ColorEditBone)
 viewDelegateSelector.insert( 3, CheckForColorBone, ColorViewBoneDelegate)
-extractorDelegateSelector.insert(3, CheckForColorBone, ColorBoneExtractor)

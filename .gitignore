@@ -7,6 +7,10 @@ public/vi.css
 output
 .idea
 *.bak
+*.pyc
 *.iml
 public/vi_custom.less
+
+pynetree/.hg
+pynetree/.hgignore
 

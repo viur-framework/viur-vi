@@ -1,19 +1,13 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
+
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from config import conf
 from widgets.wysiwyg import Wysiwyg
-import utils
 from i18n import translate
+from bones.base import BaseBoneExtractor
 
-
-class TextBoneExtractor(object):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
-		super(TextBoneExtractor, self).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName = moduleName
+class TextBoneExtractor(BaseBoneExtractor):
 
 	def render(self, data, field):
 		if field in data.keys():
@@ -180,12 +174,12 @@ class TextEditBone( html5.Div ):
 				abut["class"].remove("is_active")
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		isPlainText = "validHtml" in skelStructure[ boneName ].keys() and not skelStructure[ boneName ]["validHtml"]
 		langs = skelStructure[ boneName ]["languages"] if ("languages" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["languages"]) else None
 		descr = skelStructure[ boneName ]["descr"] if "descr" in skelStructure[ boneName ].keys() else None
-		return( TextEditBone( moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr ) )
+		return TextEditBone(moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr)
 
 	def unserialize(self, data):
 		self.valuesdict.clear()
@@ -208,6 +202,9 @@ class TextEditBone( html5.Div ):
 			return {self.boneName: self.valuesdict}
 		else:
 			return {self.boneName: self.input["value"]}
+
+	def serializeForDocument(self):
+		return self.serializeForPost()
 
 	def onClick(self, event):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.previewDiv):

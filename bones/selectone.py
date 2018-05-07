@@ -5,19 +5,16 @@ from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearch
 from event import EventDispatcher
 from i18n import translate
 from config import conf
+from bones.base import BaseBoneExtractor
 
-class SelectOneBoneExtractor( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( SelectOneBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName=moduleName
+class SelectOneBoneExtractor(BaseBoneExtractor):
 
-	def render( self, data, field ):
-		if field in data.keys():
-			if data and field and field in self.skelStructure and data[field] and data[field] in self.skelStructure[field]["values"]:
-				return self.skelStructure[field]["values"][data[field]]
-		return conf[ "empty_value" ]
+	def render(self, data, field):
+		if field in data and field in self.skelStructure:
+			options = {k: v for k, v in self.skelStructure[field]["values"]}
+			return options.get(data[field], conf["empty_value"])
+
+		return conf["empty_value"]
 
 
 class SelectOneViewBoneDelegate( object ):
@@ -64,7 +61,7 @@ class SelectOneEditBone( html5.Select ):
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		return SelectOneEditBone(moduleName, boneName,
 		                            skelStructure[boneName].get("readonly", False),
 		                            skelStructure[boneName].get("values", {}))
@@ -77,13 +74,14 @@ class SelectOneEditBone( html5.Select ):
 					aoption["selected"]=True
 
 	def serializeForPost(self):
-			for aoption in self._children:
-				if aoption["selected"]:
-					return( { self.boneName: aoption["value"] } )
-			return ({})
+		for opt in self.children():
+			if opt["selected"]:
+				return {self.boneName: opt["value"]}
+
+		return {}
 
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serializeForPost()
 
 class ExtendedSelectOneSearch( html5.Div ):
 	def __init__(self, extension, view, modul, *args, **kwargs ):
@@ -122,10 +120,17 @@ class ExtendedSelectOneSearch( html5.Div ):
 
 	@staticmethod
 	def canHandleExtension( extension, view, modul ):
-		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="selectone" or extension["type"].startswith("selectone.") ) )
+		return (isinstance(extension, dict)
+		        and "type" in extension.keys()
+		        and (
+			            ((extension["type"] == "select" or extension["type"].startswith("select."))
+		                    and not extension.get("multiple", False))
+		            or (extension["type"] == "selectone" or extension["type"].startswith("selectone."))))
 
-def CheckForSelectOneBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return( skelStucture[boneName]["type"]=="selectone" )
+def CheckForSelectOneBone(moduleName, boneName, skelStructure, *args, **kwargs):
+	return (((skelStructure[boneName]["type"] == "select" or skelStructure[boneName]["type"].startswith("select."))
+	        and not skelStructure[boneName].get("multiple", False))
+	        or ((skelStructure[boneName]["type"] == "selectone" or skelStructure[boneName]["type"].startswith("selectone."))))
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForSelectOneBone, SelectOneEditBone)

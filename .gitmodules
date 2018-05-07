@@ -1,6 +1,9 @@
 [submodule "public/icons"]
 	path = public/icons
-	url = https://bitbucket.org/viur/icons.git
+	url = https://github.com/viur-framework/icons.git
+[submodule "logics"]
+	path = logics
+	url = https://github.com/viur-framework/logics.git
 [submodule "html5"]
 	path = html5
-	url = git@bitbucket.org:viur/html5.git
+	url = https://github.com/viur-framework/html5.git

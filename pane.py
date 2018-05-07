@@ -1,64 +1,85 @@
-from config import conf
+#-*- coding: utf-8 -*-
 import html5
+from config import conf
 from i18n import translate
 
-class Pane( html5.Li ):
+class Pane(html5.Li):
 	"""
 		Base class for Panes.
+		
 		A pane represents a entry in the left menu as well
 		as a list of widgets associated with this pane.
+		
 		It is possible to stack panes on-top of each other.
 		If a pane is active, _all_ its child widgets are visible
 		(through they might overlap).
 	"""
-	def __init__(self, descr, iconURL=None, iconClasses=None, closeable=False, collapseable=True ):
-		super( Pane, self ).__init__( )
+	def __init__(self, descr=None, iconURL=None, iconClasses=None, closeable=False, collapseable=True, focusable=True):
+		super(Pane, self).__init__()
 
 		self.parentPane = None
+		self.sinkEvent("onClick")
 
 		self.descr = descr
 		self.iconURL = iconURL
 		self.iconClasses = iconClasses
-		self.closeable = closeable
 		self.collapseable = collapseable
+		self.focusable = focusable
 
 		self.childPanes = []
 
 		self.widgetsDomElm = html5.Div()
 		self.widgetsDomElm["class"].append("has_no_child")
-
 		self.childDomElem = None
 
-		self.label = html5.A( )
+		self.label = html5.A()
 		self.label["class"].append("button")
+		self.appendChild(self.label)
 
-		h=html5.H3()
-		h.element.innerHTML = descr
+		self.setText(descr, iconURL)
 
-		#self.label.element.innerHTML = descr #FIXME: descr fehlt
+		self.closeBtn = html5.ext.Button(translate("Close"), self.onBtnCloseReleased)
+		self.closeBtn.addClass("closebtn")
+		self.appendChild(self.closeBtn)
+
+		if not closeable:
+			self.closeBtn.hide()
+
+		self.closeable = closeable
+
+	def __setattr__(self, key, value):
+		super(Pane, self).__setattr__(key, value)
+		if key == "closeable":
+			if value:
+				self.closeBtn.show()
+			else:
+				self.closeBtn.hide()
+
+	def setText(self, descr = None, iconURL = None):
+		self.label.removeAllChildren()
+
+		if iconURL is None:
+			iconURL = self.iconURL
+
 		if iconURL is not None:
 			img = html5.Img()
 			img["src"] = iconURL
 			self.label.appendChild(img)
 
-		if iconClasses is not None:
-			for cls in iconClasses:
-				self.label["class"].append( cls )
+		if self.iconClasses is not None:
+			for cls in self.iconClasses:
+				self.label.addClass(cls)
 
-		self.label.appendChild(h)
-		self.appendChild( self.label )
-		self.sinkEvent("onClick")
+		if descr is None:
+			descr = self.descr
 
-		#self.label.addClickListener( self.onClick )
-		if closeable:
-			self.closeBtn = html5.ext.Button(translate("Close"), self.onBtnCloseReleased)
-			self.closeBtn["class"].append("closebtn")
-			self.appendChild(self.closeBtn)
-		else:
-			self.closeBtn = None
+		if descr is not None:
+			h = html5.H3()
+			h.appendChild(descr)
+			self.label.appendChild(h)
 
 	def onBtnCloseReleased(self, *args, **kwargs):
-		conf["mainWindow"].removePane( self )
+		conf["mainWindow"].removePane(self)
 
 	def addChildPane(self, pane):
 		"""
@@ -82,8 +103,8 @@ class Pane( html5.Li ):
 
 			self.appendChild( self.childDomElem )
 
-			if self.closeBtn:
-				self.closeBtn[ "style" ][ "display" ] = "none"
+			if self.closeable:
+				self.closeBtn.hide()
 
 		if ( pane.closeable
 			 and "display" in self.childDomElem[ "style" ]
@@ -111,17 +132,18 @@ class Pane( html5.Li ):
 			#DOM.removeChild( self.getElement(), self.childDomElem )
 			self.childDomElem = None
 
-			if self.closeBtn:
-				self.closeBtn[ "style" ][ "display" ] = "initial"
-
+			if self.closeable:
+				self.closeBtn.show()
 
 	def onDetach(self):
 		#assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
 		#Kill all remaining children
-		for widget in self.widgetsDomElm._children[:]:
+		for widget in self.widgetsDomElm.children():
 			self.widgetsDomElm.removeChild(widget)
+
 		self.closeBtn = None
 		self.label = None
+
 		super(Pane,self).onDetach()
 
 	def addWidget(self, widget):
@@ -134,9 +156,11 @@ class Pane( html5.Li ):
 		"""
 		div = html5.Div()
 		div["class"].append("vi_operator")
-		div.appendChild( widget )
+		div.appendChild(widget)
+
 		for w in self.widgetsDomElm._children[:]:
 			w["disabled"] = True
+
 		self.widgetsDomElm.appendChild( div )
 		self.rebuildChildrenClassInfo()
 
@@ -163,12 +187,16 @@ class Pane( html5.Li ):
 		for c in self.widgetsDomElm._children:
 			if widget in c._children:
 				self.widgetsDomElm.removeChild( c )
+
 				if self.closeable and len(self.widgetsDomElm._children)==0:
 					conf["mainWindow"].removePane( self )
+
 				for w in self.widgetsDomElm._children[:]:
 					w["disabled"] = False
+
 				self.rebuildChildrenClassInfo()
 				return
+
 		raise ValueError("Cannot remove unknown widget %s" % str(widget))
 
 	def containsWidget(self, widget ):

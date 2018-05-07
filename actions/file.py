@@ -7,7 +7,7 @@ from pane import Pane
 from widgets.file import Uploader, LeafFileWidget
 from i18n import translate
 
-class FileSelectUploader( html5.Input ):
+class FileSelectUploader(html5.Input):
 	"""
 		Small wrapper around <input type="file">.
 		Creates the element; executes the click (=opens the file dialog);
@@ -22,7 +22,7 @@ class FileSelectUploader( html5.Input ):
 
 	def onChange(self, event):
 		if event.target.files.length > 0:
-			Uploader( event.target.files.item(0), self.parent().node )
+			Uploader(event.target.files.item(0), self.parent().node)
 
 		self.parent().removeChild( self )
 
@@ -49,7 +49,7 @@ class AddLeafAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		uploader = FileSelectUploader()
-		self.parent().parent().appendChild( uploader )
+		self.parent().parent().appendChild(uploader)
 		uploader.element.click()
 
 	def resetLoadingState(self):

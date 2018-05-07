@@ -1,21 +1,17 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from i18n import translate
 from config import conf
+from bones.base import BaseBoneExtractor
 
-class SelectMultiBoneExtractor( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super(SelectMultiBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName=moduleName
+class SelectMultiBoneExtractor(BaseBoneExtractor):
 
-	def render( self, data, field ):
+	def render(self, data, field):
 		if field in data.keys():
 			result = list()
+
 			for fieldKey in data[field]:
 				if not fieldKey in self.skelStructure[field]["values"].keys():
 					result.append(fieldKey)
@@ -23,7 +19,9 @@ class SelectMultiBoneExtractor( object ):
 					value = self.skelStructure[field]["values"][fieldKey]
 					if value:
 						result.append(value)
+
 			return ",".join(result)
+
 		return conf[ "empty_value" ]
 
 class SelectMultiViewBoneDelegate( object ):
@@ -39,11 +37,11 @@ class SelectMultiViewBoneDelegate( object ):
 			options = {k: v for k, v in self.skelStructure[field]["values"]}
 
 			for i, fieldKey in enumerate(data[field]):
-				if conf["maxMultiBoneEntries"] and i == conf["maxMultiBoneEntries"]:
+				if conf["maxMultiBoneEntries"] and i + 1 > conf["maxMultiBoneEntries"]:
 					ali = html5.Li()
 					ali.appendChild(
 						html5.TextNode(translate("and {count} more",
-						                            count=len(data[field]) - conf["maxMultiBoneEntries"] - 1)))
+						                            count=len(data[field]) - conf["maxMultiBoneEntries"])))
 					ali["class"].append("selectmulti_more_li")
 
 					result.appendChild(ali)
@@ -90,7 +88,7 @@ class SelectMultiEditBone(html5.Div):
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		return SelectMultiEditBone(moduleName, boneName,
 		                            skelStructure[boneName].get("readonly", False),
 		                            skelStructure[boneName].get("values", {}))
@@ -103,14 +101,16 @@ class SelectMultiEditBone(html5.Div):
 					alabel._children[0]["checked"]=True
 
 	def serializeForPost(self):
-		value=[]
+		value = []
+
 		for alabel in self._children:
 			if alabel._children[0]["checked"]:
 				value.append(alabel._children[0]["name"])
-		return( { self.boneName: value } )
+
+		return {self.boneName: value}
 
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serializeForPost()
 
 	def setExtendedErrorInformation(self, errorInfo ):
 		pass
@@ -151,10 +151,17 @@ class ExtendedSelectMultiSearch( html5.Div ):
 
 	@staticmethod
 	def canHandleExtension( extension, view, modul ):
-		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="selectmulti" or extension["type"].startswith("selectmulti.") ) )
+		return (isinstance(extension, dict)
+		        and "type" in extension.keys()
+		        and (
+			            ((extension["type"] == "select" or extension["type"].startswith("select."))
+		                    and extension.get("multiple", False))
+		            or (extension["type"] == "selectmulti" or extension["type"].startswith("selectmulti."))))
 
-def CheckForSelectMultiBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return skelStucture[boneName]["type"].startswith("selectmulti")
+def CheckForSelectMultiBone(moduleName, boneName, skelStructure, *args, **kwargs):
+	return (((skelStructure[boneName]["type"] == "select" or skelStructure[boneName]["type"].startswith("select."))
+	        and skelStructure[boneName].get("multiple", False))
+	        or ((skelStructure[boneName]["type"] == "selectmulti" or skelStructure[boneName]["type"].startswith("selectmulti."))))
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForSelectMultiBone, SelectMultiEditBone)
@@ -182,6 +189,7 @@ class AccessMultiSelectBone( html5.Div ):
 
 		for value in self.values:
 			module = self.parseskelaccess( value )
+
 			if not module:
 				self.flags[ value ] = None
 			elif not module[ 0 ] in self.modules.keys():
@@ -304,7 +312,7 @@ class AccessMultiSelectBone( html5.Div ):
 				self.modulesbox[ module ].parent()[ "class" ].append( "partly" )
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		return AccessMultiSelectBone(moduleName, boneName, skelStructure[ boneName ].get("readonly", False),
 		                                                    skelStructure[boneName].get("values", []))
 
@@ -337,16 +345,14 @@ class AccessMultiSelectBone( html5.Div ):
 				if "active" in self.modules[ module ][ state ][ "class" ]:
 					ret.append( "%s-%s" % ( module, state ) )
 
-		return { self.boneName: ret }
+		return {self.boneName: ret}
 
 	def serializeForDocument(self):
-		return self.serialize()
+		return self.serializeForPost()
 
-def CheckForAccessMultiSelectBone( moduleName, boneName, skelStucture ):
-	if skelStucture[boneName]["type"] == "selectmulti.access":
-		return True
-
-	return False
+def CheckForAccessMultiSelectBone(moduleName, boneName, skelStructure, *args, **kwargs):
+	print(moduleName, boneName, skelStructure[boneName]["type"], skelStructure[boneName]["type"] in ["select.access", "selectmulti.access"])
+	return skelStructure[boneName]["type"] in ["select.access", "selectmulti.access"]
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 4, CheckForAccessMultiSelectBone, AccessMultiSelectBone )

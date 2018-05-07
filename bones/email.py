@@ -1,23 +1,9 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from config import conf
+from priorityqueue import editBoneSelector, viewDelegateSelector
 import bones.string as strBone
 from widgets.edit import InvalidBoneValueException
 import re
-
-class EmailBoneExtractor(object):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( EmailBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName=moduleName
-
-	def render(self, data, field):
-		if field in data.keys():
-			return str(data[field])
-
 
 class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
@@ -46,9 +32,9 @@ class EmailEditBone( strBone.StringEditBone ):
 		super( EmailEditBone,  self ).__init__( moduleName, boneName,readOnly, *args, **kwargs )
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( EmailEditBone( moduleName, boneName, readOnly ) )
+		return EmailEditBone(moduleName, boneName, readOnly)
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
@@ -58,7 +44,6 @@ class EmailEditBone( strBone.StringEditBone ):
 		if not self["value"] or re.match("^[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._-]+.[a-zA-Z]{2,6}$",self.input["value"]):
 			return( { self.boneName: self.input["value"] } )
 		raise InvalidBoneValueException()
-
 
 	def setSpecialType(self):
 		self.input["type"]="email"
@@ -73,4 +58,3 @@ def CheckForEmailBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
 #Register this Bone in the global queue
 editBoneSelector.insert( 4, CheckForEmailBone, EmailEditBone)
 viewDelegateSelector.insert( 4, CheckForEmailBone, EmailViewBoneDelegate)
-extractorDelegateSelector.insert(4, CheckForEmailBone, EmailBoneExtractor)

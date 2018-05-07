@@ -3,7 +3,7 @@ import pyjd # this is dummy in pyjs.
 import json
 from config import conf
 from network import NetworkService
-from priorityqueue import viewDelegateSelector
+from priorityqueue import viewDelegateSelector, moduleHandlerSelector
 from widgets.table import DataTable
 from widgets.actionbar import ActionBar
 from widgets.sidebar import SideBar
@@ -12,14 +12,14 @@ from sidebarwidgets.filterselector import CompoundFilter
 from i18n import translate
 
 
-class ListWidget( html5.Div ):
+class ListWidget(html5.Div):
 	"""
 		Provides the interface to list-applications.
 		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
 	"""
 	def __init__(self, module, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
-	             batchSize = None, *args, **kwargs):
+	             batchSize = None, context = None, *args, **kwargs):
 		"""
 			@param module: Name of the modul we shall handle. Must be a list application!
 			@type module: string
@@ -28,12 +28,15 @@ class ListWidget( html5.Div ):
 			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
 			assert module in conf["modules"].keys()
 
-		super( ListWidget, self ).__init__(  )
+		super(ListWidget, self).__init__()
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
 		self.module = module
+		self.context = context
+
 		self.actionBar = ActionBar(module, "list", currentAction="list")
 		self.appendChild( self.actionBar )
+
 		self.sideBar = SideBar()
 		self.appendChild( self.sideBar )
 
@@ -164,15 +167,21 @@ class ListWidget( html5.Div ):
 			Requests the next rows from the server and feed them to the table.
 		"""
 		if self._currentCursor and not self.isDetaching:
-			filter = self.filter.copy()
+			filter = {}
+
+			if self.context:
+				filter.update(self.context)
+
+			filter.update(self.filter)
 			filter["amount"] = self._batchSize
 			filter["cursor"] = self._currentCursor
-			self._currentRequests.append( NetworkService.request(self.module, "list", filter,
+
+			self._currentRequests.append(NetworkService.request(self.module, "list", filter,
 			                                successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
-			                                    cacheable=True ) )
+			                                cacheable=True ) )
 			self._currentCursor = None
 		else:
-			self.table.setDataProvider( None )
+			self.table.setDataProvider(None)
 
 	def onAttach(self):
 		super( ListWidget, self ).onAttach()
@@ -199,14 +208,19 @@ class ListWidget( html5.Div ):
 		self.table.clear()
 		self._currentCursor = None
 		self._currentRequests = []
-		filter = self.filter.copy()
+
+		filter = {}
+		if self.context:
+			filter.update(self.context)
+
+		filter.update(self.filter)
 		filter["amount"] = self._batchSize
 
 		self._currentRequests.append(
-			NetworkService.request( self.module, "list", filter,
+			NetworkService.request(self.module, "list", filter,
 			                        successHandler=self.onCompletion,
 			                        failureHandler=self.showErrorMsg,
-			                        cacheable=True ) )
+			                        cacheable=True))
 
 	def setFilter(self, filter, filterID=None, filterDescr=None):
 		"""
@@ -230,6 +244,7 @@ class ListWidget( html5.Div ):
 		"""
 		if not req in self._currentRequests:
 			return
+
 		self._currentRequests.remove( req )
 		self.actionBar.resetLoadingState()
 
@@ -257,9 +272,11 @@ class ListWidget( html5.Div ):
 			self.setFields( self.columns )
 
 
-		if "cursor" in data.keys():
+		if data["skellist"] and "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
-			self.table.setDataProvider( self )
+			self.table.setDataProvider(self)
+		else:
+			self.table.setDataProvider(None)
 
 		self.table.extend( data["skellist"] )
 
@@ -309,3 +326,16 @@ class ListWidget( html5.Div ):
 
 		"""
 		self.table.activateCurrentSelection()
+
+	@staticmethod
+	def canHandle(moduleName, moduleInfo):
+		return moduleInfo["handler"] == "list" or moduleInfo["handler"].startswith("list.")
+
+	@staticmethod
+	def render(cls, moduleName, adminInfo, context):
+		filter = adminInfo.get("filter")
+		columns = adminInfo.get("columns")
+
+		return ListWidget(module=moduleName, filter=filter, columns=columns, context=context)
+
+moduleHandlerSelector.insert(1, ListWidget.canHandle, ListWidget.render)

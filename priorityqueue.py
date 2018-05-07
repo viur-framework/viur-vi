@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 
 class StartupQueue( object ):
 	def __init__(self):
@@ -35,6 +33,7 @@ class StartupQueue( object ):
 			print("Running startup callback #%s" % str(self.currentElem))
 			cb()
 		elif self.currentElem == len( self.q ): #We should call the final element
+			#print("Running final callback %s" % str(self.finalElem))
 			self.finalElem()
 			self.reset()
 		else:
@@ -63,6 +62,7 @@ class PriorityQueue( object ):
 
 
 HandlerClassSelector = PriorityQueue() # Used during startup to select an Wrapper-Class
+moduleHandlerSelector = PriorityQueue() # Used to select an embedded widget to represent a module
 editBoneSelector = PriorityQueue() # Queried by editWidget to locate its bones
 actionDelegateSelector = PriorityQueue() # Locates an action for a given module/action-name
 displayDelegateSelector = PriorityQueue() # Selects a widget used to display data from a certain modul

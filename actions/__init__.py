@@ -4,3 +4,4 @@ from actions import tree
 from actions import tree_simple
 from actions import file
 from actions import edit
+from actions import context

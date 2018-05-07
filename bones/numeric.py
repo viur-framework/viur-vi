@@ -1,89 +1,125 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from html5.keycodes import *
 from config import conf
+from bones.base import BaseBoneExtractor
 
-class NumericBoneExtractor( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super(NumericBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName=moduleName
+class NumericBoneExtractor(BaseBoneExtractor):
 
-	def render( self, data, field ):
-		# print("NumericBoneExtractor.render", data, field)
+	def render(self, data, field):
+		return str(self.raw(data, field)).replace(".", ",")
+
+	def raw(self, data, field):
 		if field in data.keys():
 			value = data[field]
+
 			if isinstance(value, int):
-				return str(value)
+				return value
+
 			elif isinstance(value, float):
-				return str(round(data[field], self.skelStructure[field].get("precision", 2))).replace(".", ",")
-		return "-23,42"
+				return round(value, self.skelStructure[field].get("precision", 2))
 
+		return 0
 
-class NumericViewBoneDelegate( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( NumericViewBoneDelegate, self ).__init__()
+class NumericViewBoneDelegate(object):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
+		super(NumericViewBoneDelegate, self).__init__()
+
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.moduleName=moduleName
+		self.moduleName = moduleName
 
-	def render( self, data, field ):
-		s =  conf[ "empty_value" ]
+	def render(self, data, field):
+		s =  conf["empty_value"]
 		if field in data.keys():
 			try:
-				prec = self.skelStructure[field].get( "precision" )
+				prec = self.skelStructure[field].get("precision")
+
 				if prec and data[field] is not None:
 					s = ( "%." + str( prec ) + "f" ) % data[field]
 				else:
-					s = str( data[field] )
+					s = str(data[field])
+
 			except:
-				return str(data[field])
+				s = str(data[field])
 
-		return html5.Label( s )
+		return html5.Label(s)
 
-class NumericEditBone( html5.Input ):
-	def __init__(self, moduleName, boneName,readOnly,_min=False,_max=False,precision=False, *args, **kwargs ):
+class NumericEditBone(html5.Span):
+	def __init__(self, moduleName, boneName, readOnly, _min=False, _max=False, precision=False, currency=None,
+	                *args, **kwargs ):
 		super( NumericEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self["type"]="number"
+
+		self.input = html5.Input()
+		self.appendChild(self.input)
+
+		if currency:
+			self.appendChild(html5.Span(currency))
+
+		self.input["type"] = "number"
+
 		if _min:
-			self["min"]=_min
+			self.input["min"] = _min
+
 		if _max:
-			self["max"]=_max
+			self.input["max"] = _max
+
 		if precision:
-			self["step"]=pow(10,-precision)
+			self.input["step"] = pow(10, -precision)
 		else: #Precision is zero, treat as integer input
-			self["step"]=1
+			self.input["step"] = 1
+
 		if self.readOnly:
-			self["readonly"] = True
+			self.input["readonly"] = True
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		_min=skelStructure[ boneName ]["min"] if ("min" in skelStructure[ boneName ].keys()) else False
-		_max=skelStructure[ boneName ]["max"] if ("max" in skelStructure[ boneName ].keys()) else False
-		precision=skelStructure[ boneName ]["precision"] if ("precision" in skelStructure[ boneName ].keys()) else False
-		return( NumericEditBone( moduleName, boneName, readOnly,_min,_max,precision ) )
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
+		params = skelStructure[boneName].get("params")
+		readOnly = skelStructure[boneName].get("readonly", False)
 
+		currency = None
+
+		# View bone as readOnly even if it's not readOnly by system.
+		if not readOnly and params:
+			style = params.get("style", "").lower()
+			for s in style.split(" "):
+				if s == "readonly":
+					readOnly = True
+
+				elif s.startswith("amount."):
+					currency = s.split(".", 1)[1]
+					currency = {
+						"euro": u"€",
+						"dollar": u"$",
+						"yen": u"¥",
+						"pound": u"£",
+						"baht": u"฿",
+						"bitcoin": u"฿"
+					}.get(currency, currency)
+
+		return NumericEditBone(moduleName, boneName, readOnly,
+		                       skelStructure[boneName].get("min", False),
+		                       skelStructure[boneName].get("max", False),
+		                       skelStructure[boneName].get("precision", False),
+		                       currency = currency)
 
 	def unserialize(self, data):
-		if self.boneName in data.keys():
-			self["value"] = data[ self.boneName ] if data[ self.boneName ] else ""
+		self.input["value"] = data.get(self.boneName, "")
 
 	def serializeForPost(self):
-		return( { self.boneName: self["value"] } )
+		return {
+			self.boneName: self.input["value"]
+		}
 
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return self.serializeForPost()
 
 	def setExtendedErrorInformation(self, errorInfo ):
 		pass
-
 
 class ExtendedNumericSearch( html5.Div ):
 	def __init__(self, extension, view, modul, *args, **kwargs ):
@@ -128,14 +164,14 @@ class ExtendedNumericSearch( html5.Div ):
 		return( filter )
 
 	@staticmethod
-	def canHandleExtension( extension, view, modul ):
+	def canHandleExtension(extension, view, module):
 		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="numeric" or extension["type"].startswith("numeric.") ) )
 
 
 
 
-def CheckForNumericBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return( skelStucture[boneName]["type"]=="numeric" )
+def CheckForNumericBone(moduleName, boneName, skelStucture, *args, **kwargs):
+	return skelStucture[boneName]["type"] == "numeric"
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForNumericBone, NumericEditBone)

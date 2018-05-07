@@ -8,10 +8,16 @@ from config import conf
 from widgets.file import FileWidget
 from i18n import translate
 
-class BasicTextAction( html5.ext.Button ):
+class BasicEditorAction(html5.ext.Button):
+
+	def execCommand(self, *args, **kwargs):
+		return self.parent().parent().editor.execCommand(*args, **kwargs)
+
+class BasicTextAction(BasicEditorAction):
 	cmd = None
 	isActiveTag = None
 	title = None
+
 	def __init__(self, *args, **kwargs):
 		assert self.cmd is not None
 		super( BasicTextAction, self ).__init__( self.cmd, *args, **kwargs )
@@ -39,7 +45,7 @@ class BasicTextAction( html5.ext.Button ):
 				self["class"].remove("isactive")
 
 	def onClick(self, sender=None):
-		eval("window.top.document.execCommand(\"%s\", false, null)" % self.cmd)
+		self.execCommand(self.cmd)
 
 	def resetLoadingState(self):
 		pass
@@ -50,6 +56,9 @@ class TextStyleBold( BasicTextAction ):
 	isActiveTag = "B"
 	title = translate("Bold")
 
+	#def onClick(self, sender = None):
+	#	self.parent().parent().editor.toggleSelection("strong")
+
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.bold", TextStyleBold )
 
 class TextStyleItalic( BasicTextAction ):
@@ -57,27 +66,15 @@ class TextStyleItalic( BasicTextAction ):
 	isActiveTag = "I"
 	title = translate("Italic")
 
+	#def onClick(self, sender=None):
+	#	self.parent().parent().editor.toggleSelection("em")
+
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.italic", TextStyleItalic )
-
-class TextStyleUnderline( BasicTextAction ):
-	cmd = "underline"
-	isActiveTag = "U"
-	title = translate("Underline")
-
-actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.underline", TextStyleUnderline )
-
-class TextStyleStrikeThrough( BasicTextAction ):
-	cmd = "strikeThrough"
-	isActiveTag = "STRIKE"
-	title = translate("Strike through")
-actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="style.text.strikeThrough", TextStyleStrikeThrough )
-
 
 
 class BasicFormatBlockAction( BasicTextAction ):
 	def onClick(self, sender=None):
-		eval("window.top.document.execCommand(\"formatBlock\", false, \"%s\")" % self.cmd)
-
+		self.execCommand("formatBlock", self.cmd)
 
 class TextStyleH1( BasicFormatBlockAction ):
 	cmd = "H1"
@@ -170,17 +167,22 @@ class TextRemoveFormat( BasicTextAction ):
 	title = translate("Remove all formatting")
 
 	def onClick(self, sender=None):
-		eval("window.top.document.execCommand(\"%s\", false, null)" % self.cmd)
+		self.execCommand(self.cmd)
+
 		node = eval("window.top.getSelection().anchorNode")
+
 		i = 10
-		while i>0 and node and node != self.parent().parent().contentDiv.element:
+		while i>0 and node and node != self.parent().parent().editor.element:
 			i -= 1
+
 			if not "tagName" in dir( node ):
 				node = node.parentNode
 				continue
+
 			if node.tagName in ["H%s" % x for x in range(0,6)]:
-				eval("window.top.document.execCommand(\"formatBlock\", false, 'div')")
+				self.execCommand("formatBlock", "div")
 				return
+
 			node = node.parentNode
 
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.removeformat", TextRemoveFormat )
@@ -189,7 +191,7 @@ actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=
 
 
 
-class TextInsertImageAction( html5.ext.Button ):
+class TextInsertImageAction(BasicEditorAction):
 	def __init__(self, *args, **kwargs):
 		super( TextInsertImageAction, self ).__init__( translate("Insert Image"), *args, **kwargs )
 		self["class"] = "icon text image"
@@ -201,14 +203,19 @@ class TextInsertImageAction( html5.ext.Button ):
 		conf["mainWindow"].stackWidget( currentSelector )
 
 	def onSelectionActivated(self, selectWdg, selection):
+		print("onSelectionActivated")
+
 		if not selection:
 			return
+
+		print(selection)
+
 		for item in selection:
 			dataUrl = "/file/download/%s/%s" % (item.data["dlkey"], item.data["name"].replace("\"",""))
 			if "mimetype" in item.data.keys() and item.data["mimetype"].startswith("image/"):
-				eval("window.top.document.execCommand(\"insertImage\", false, \""+dataUrl+"\")" )
+				self.execCommand("insertImage", dataUrl)
 			else:
-				eval("window.top.document.execCommand(\"createLink\", false, \""+dataUrl+"?download=1\")" )
+				self.execCommand("createLink", dataUrl + "?download=1")
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -219,7 +226,7 @@ class TextInsertImageAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, TextInsertImageAction.isSuitableFor, TextInsertImageAction )
 
-class TextInsertLinkAction( html5.ext.Button ):
+class TextInsertLinkAction(BasicEditorAction):
 	newLinkIdx = 0
 	def __init__(self, *args, **kwargs):
 		super( TextInsertLinkAction, self ).__init__( translate("Insert Link"), *args, **kwargs )
@@ -228,15 +235,13 @@ class TextInsertLinkAction( html5.ext.Button ):
 
 	def onClick(self, sender=None):
 		newLinkTarget = "#linkidx-%s-%s" % (TextInsertLinkAction.newLinkIdx, time() )
-		eval("window.top.document.execCommand(\"createLink\", false, \"#"+newLinkTarget+"\")" )
+
+		self.execCommand("createLink", "#%s" % newLinkTarget)
 		self.parent().parent().linkEditor.openLink(newLinkTarget)
 
 	def createLink(self, dialog, value):
 		if value:
-			self.parent().parent().contentDiv.focus()
-			#eval("window.top.document.execCommand(\"createLink\", false, \""+value.replace("\"","")+"\")" )
-
-
+			self.parent().parent().editor.focus()
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -302,7 +307,6 @@ class CreateTablePopup( html5.ext.Popup ):
 			innerHtml += "</tr>"
 		innerHtml += "</table>"
 		self.targetNode.innerHTML = self.targetNode.innerHTML+innerHtml
-		#eval("window.top.document.execCommand(\"insertHTML\", false, \"%s\")" % innerHtml )
 		self.doClose()
 
 class TextInsertTableAction( html5.ext.Button ):
@@ -312,7 +316,7 @@ class TextInsertTableAction( html5.ext.Button ):
 		self["title"] = translate("Insert Table")
 
 	def onClick(self, sender=None):
-		self.parent().parent().contentDiv.focus()
+		self.parent().parent().editor.focus()
 		node = eval("window.top.getSelection().anchorNode")
 
 		if node:
@@ -336,7 +340,7 @@ class TableInsertRowBeforeAction( html5.ext.Button ):
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().anchorNode")
 		i = 10
-		while i>0 and node and node != self.parent().parent().contentDiv.element:
+		while i>0 and node and node != self.parent().parent().editor.element:
 			i -= 1
 			if not "tagName" in dir( node ):
 				node = node.parentNode
@@ -368,7 +372,7 @@ class TableInsertRowAfterAction( html5.ext.Button ):
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().anchorNode")
 		i = 10
-		while i>0 and node and node != self.parent().parent().contentDiv.element:
+		while i>0 and node and node != self.parent().parent().editor.element:
 			i -= 1
 			if not "tagName" in dir( node ):
 				node = node.parentNode
@@ -407,7 +411,7 @@ class TableInsertColBeforeAction( html5.ext.Button ):
 		table = None
 		i = 10
 		#Try to extract the relevat nodes from the dom
-		while i>0 and node and node != self.parent().parent().contentDiv.element:
+		while i>0 and node and node != self.parent().parent().editor.element:
 			i -= 1
 			if not "tagName" in dir( node ):
 				node = node.parentNode
@@ -472,7 +476,7 @@ class TableInsertColAfterAction( html5.ext.Button ):
 		table = None
 		i = 10
 		#Try to extract the relevat nodes from the dom
-		while i>0 and node and node != self.parent().parent().contentDiv.element:
+		while i>0 and node and node != self.parent().parent().editor.element:
 			i -= 1
 			if not "tagName" in dir( node ):
 				node = node.parentNode
@@ -539,7 +543,7 @@ class TableRemoveRowAction( html5.ext.Button ):
 	def onClick(self, sender=None):
 		node = eval("window.top.getSelection().anchorNode")
 		i = 10
-		while i>0 and node and node != self.parent().parent().contentDiv.element:
+		while i>0 and node and node != self.parent().parent().editor.element:
 			i -= 1
 			if not "tagName" in dir( node ):
 				node = node.parentNode
@@ -573,7 +577,7 @@ class TableRemoveColAction( html5.ext.Button ):
 		table = None
 		i = 10
 		#Try to extract the relevat nodes from the dom
-		while i>0 and node and node != self.parent().parent().contentDiv.element:
+		while i>0 and node and node != self.parent().parent().editor.element:
 			i -= 1
 			if not "tagName" in dir( node ):
 				node = node.parentNode
@@ -644,7 +648,7 @@ class TextAbortAction( html5.ext.Button ):
 		self["title"] = translate("Abort")
 
 	def onClick(self, event):
-		if self.parent().parent().contentDiv.changed():
+		if self.parent().parent().editor.changed():
 			html5.ext.popup.YesNoDialog(translate("Any changes will be lost. Do you really want to abort?"),
 			                            yesCallback=self.doAbort)
 		else:
@@ -732,7 +736,7 @@ class LinkEditor( html5.Div ):
 		return( None )
 
 	def openLink(self, linkTarget):
-		self.doOpen( self.findHref( linkTarget, self.parent().contentDiv.element ) )
+		self.doOpen( self.findHref( linkTarget, self.parent().editor.element ) )
 		self.linkTxt["value"] = ""
 		self.linkTxt.focus()
 
@@ -829,7 +833,7 @@ class ImageEditor( html5.Div ):
 		return( None )
 
 	def openLink(self, linkTarget):
-		self.doOpen( self.findHref( linkTarget, self.parent().contentDiv.element ) )
+		self.doOpen( self.findHref( linkTarget, self.parent().editor.element ) )
 		self.linkTxt["value"] = ""
 		self.linkTxt.focus()
 
@@ -877,20 +881,80 @@ class FlipViewAction( html5.ext.Button ):
 		pass
 actionDelegateSelector.insert( 1, lambda modul, handler, actionName: actionName=="text.flipView", FlipViewAction )
 
-class Contentdiv(html5.Div):
+class Editor(html5.Div):
 	def __init__(self, html, *args, **kwargs ):
-		super(Contentdiv, self).__init__(*args, **kwargs)
+		super(Editor, self).__init__(*args, **kwargs)
 
 		self["contenteditable"] = True
-		self["class"].append("contentdiv")
+		self.addClass("contentdiv")
 
 		self.initial_txt = self.element.innerHTML = html
-
-		self.sinkEvent("onBlur")
-		self.sinkEvent("onFocus")
+		self.sinkEvent("onBlur", "onFocus", "onKeyDown")
 
 	def changed(self):
 		return self.initial_txt != self.element.innerHTML
+
+	#def onKeyDown(self, e):
+	#	if e.keyCode == 13:
+	#		print("br")
+	#		return False
+
+	def toggleSelection(self, tagName):
+		"""
+		This was a test...
+		"""
+
+		sel = eval("window.top.document.getSelection()")
+		range = sel.getRangeAt(0)
+		current = range.extractContents()
+
+		try:
+			print(current)
+			print(current.nodeType)
+			print(current.tagName)
+		except:
+			pass
+
+		if current.nodeType == 11 and current.firstElementChild: #DocumentFragment
+			current = current.firstElementChild
+
+		try:
+			print(current)
+			print(current.nodeType)
+			print(current.tagName)
+		except:
+			pass
+
+		if current and current.nodeType == 1 and str(current.tagName).upper() == tagName.upper():
+			print("Toggle OFF")
+
+			if current.hasChildNodes():
+				while current.firstChild:
+					range.insertNode(current.firstChild)
+
+		else:
+			print("Toggle ON")
+
+			new = eval("window.top.document.createElement(\"%s\")" % tagName)
+			new.appendChild(current)
+
+			range.insertNode(new)
+
+		print("%s done" % tagName)
+
+	def execCommand(self, commandName, valueArgument=None):
+		"""
+		Wraps the document.execCommand() function for easier usage.
+		"""
+
+		if valueArgument is None:
+			valueArgument = "null"
+		else:
+			valueArgument = "\"%s\"" % str(valueArgument)
+
+		print("execCommand(\"%s\", false, %s)" % (commandName, valueArgument))
+		return bool(eval("window.top.document.execCommand(\"%s\", false, %s)" % (commandName, valueArgument)))
+
 
 class Wysiwyg( html5.Div ):
 	def __init__(self, editHtml, actionBarHint=translate("Text Editor"), *args, **kwargs ):
@@ -899,9 +963,7 @@ class Wysiwyg( html5.Div ):
 		self.saveTextEvent = EventDispatcher("saveText")
 		self.abortTextEvent = EventDispatcher("abortText")
 		self.textActions = ["style.text.bold",
-		                    "style.text.italic",
-		                    "style.text.underline",
-		                    "style.text.strikeThrough"]+\
+		                    "style.text.italic"]+\
 		                   ["style.text.h%s" % x for x in range(0,4)]+\
 		                   ["text.removeformat",
 							"style.text.justifyCenter",
@@ -937,9 +999,9 @@ class Wysiwyg( html5.Div ):
 		self.imgEditor = ImageEditor()
 		self.appendChild(self.imgEditor)
 
-		self.contentDiv = Contentdiv(editHtml)
+		self.editor = Editor(editHtml)
 
-		self.appendChild( self.contentDiv )
+		self.appendChild( self.editor )
 		self.actionbar.setActions( self.textActions )
 		#btn = html5.ext.Button("Apply", self.saveText)
 		#btn["class"].append("icon apply")
@@ -950,7 +1012,7 @@ class Wysiwyg( html5.Div ):
 		self.sinkEvent("onMouseDown", "onMouseUp", "onMouseMove", "onClick")
 
 	def flipView(self, *args, **kwargs ):
-		htmlStr = self.contentDiv.element.innerHTML
+		htmlStr = self.editor.element.innerHTML
 		if self.isWysiwygMode:
 			self.imgEditor.doClose()
 			self.linkEditor.doClose()
@@ -1011,12 +1073,12 @@ class Wysiwyg( html5.Div ):
 					outStr += indestStr*indent
 				outStr += inStr[0]
 				inStr = inStr[ 1: ]
-			self.contentDiv.element.innerHTML = outStr
+			self.editor.element.innerHTML = outStr
 			self.actionbar.setActions( ["text.flipView"] )
 		else:
 			htmlStr = re.sub(r'<[^>]*?>', '', htmlStr)
 			htmlStr = htmlStr.replace("&nbsp;","").replace("&nbsp;","")
-			self.contentDiv.element.innerHTML = htmlStr.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
+			self.editor.element.innerHTML = htmlStr.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
 			self.actionbar.setActions( self.textActions )
 
 		self.isWysiwygMode = not self.isWysiwygMode
@@ -1024,7 +1086,7 @@ class Wysiwyg( html5.Div ):
 
 
 	def saveText(self, *args, **kwargs):
-		self.saveTextEvent.fire(self, self.contentDiv.element.innerHTML)
+		self.saveTextEvent.fire(self, self.editor.element.innerHTML)
 
 	def abortText(self, *args, **kwargs):
 		self.abortTextEvent.fire(self)
@@ -1049,7 +1111,7 @@ class Wysiwyg( html5.Div ):
 
 		node = eval("window.top.getSelection().anchorNode")
 
-		while node and node != self.contentDiv.element:
+		while node and node != self.editor.element:
 			#FIXME.. emit cursormoved event
 			node = node.parentNode
 
@@ -1098,15 +1160,15 @@ class Wysiwyg( html5.Div ):
 
 		super(Wysiwyg, self).onClick( event )
 		domWdg = event.target
-		isContentDivTarget = False
+		isEditorTarget = False
 
 		while domWdg:
-			if domWdg==self.contentDiv.element:
-				isContentDivTarget = True
+			if domWdg==self.editor.element:
+				isEditorTarget = True
 				break
 			domWdg = domWdg.parentNode
 
-		if not isContentDivTarget:
+		if not isEditorTarget:
 			return
 
 		node = eval("window.top.getSelection().anchorNode")
@@ -1114,7 +1176,7 @@ class Wysiwyg( html5.Div ):
 		i = 10
 
 		#Try to extract the relevant nodes from the dom
-		while i>0 and node and node != self.contentDiv.element:
+		while i>0 and node and node != self.editor.element:
 			i -= 1
 			nodeStack.append(node)
 			node = node.parentNode

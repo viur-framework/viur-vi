@@ -1,17 +1,17 @@
 #-*- coding: utf-8 -*-
-
 import html5
+
 from config import conf
 from widgets import TopBarWidget
 from widgets.userlogoutmsg import UserLogoutMsg
 from network import NetworkService, DeferredCall
-from event import viInitializedEvent, EventDispatcher
+from event import viInitializedEvent
 from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from log import Log
 from pane import Pane, GroupPane
 from screen import Screen
 
-# THESE MUST REMAIN AND ARE QUEUED!!
+# BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
 import handler
 import bones
 import actions
@@ -32,17 +32,17 @@ class AdminScreen(Screen):
 		self.workSpace["class"] = "vi_workspace"
 		self.appendChild(self.workSpace)
 
-		self.modulMgr = html5.Div()
-		self.modulMgr["class"] = "vi_wm"
-		self.appendChild(self.modulMgr)
+		self.moduleMgr = html5.Div()
+		self.moduleMgr["class"] = "vi_wm"
+		self.appendChild(self.moduleMgr)
 
-		self.modulList = html5.Nav()
-		self.modulList["class"] = "vi_manager"
-		self.modulMgr.appendChild(self.modulList)
+		self.moduleList = html5.Nav()
+		self.moduleList["class"] = "vi_manager"
+		self.moduleMgr.appendChild(self.moduleList)
 
-		self.modulListUl = html5.Ul()
-		self.modulListUl["class"] = "modullist"
-		self.modulList.appendChild(self.modulListUl)
+		self.moduleListUl = html5.Ul()
+		self.moduleListUl["class"] = "modullist"
+		self.moduleList.appendChild(self.moduleListUl)
 
 		self.viewport = html5.Div()
 		self.viewport["class"] = "vi_viewer"
@@ -54,7 +54,8 @@ class AdminScreen(Screen):
 		self.currentPane = None
 		self.nextPane = None #Which pane gains focus once the deferred call fires
 		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
-		self.userLoggedOutMsg = UserLogoutMsg()
+
+		self.userLoggedOutMsg = None
 
 		# Register the error-handling for this iframe
 		le = eval("window.top.logError")
@@ -63,27 +64,53 @@ class AdminScreen(Screen):
 		w = eval("window.top")
 		w.onerror = le
 
+	def reset(self):
+		self.moduleListUl.removeAllChildren()
+		self.viewport.removeAllChildren()
+		self.logWdg.reset()
+
+		self.currentPane = None
+		self.nextPane = None
+		self.panes = []
+
+		if self.userLoggedOutMsg:
+			self.userLoggedOutMsg.stopInterval()
+			self.userLoggedOutMsg = None
+
 	def invoke(self):
 		self.show()
 		self.lock()
 
+		self.reset()
+
+		# Run queue
 		startupQueue.setFinalElem(self.startup)
 		startupQueue.run()
 
-	def remove(self):
-		self.userLoggedOutMsg.stopInterval()
-		self.userLoggedOutMsg = None
-		super(AdminScreen, self).remove()
+	def getCurrentUser(self):
+		NetworkService.request("user", "view/self",
+		                        successHandler=self.getCurrentUserSuccess,
+		                        failureHandler=self.getCurrentUserFailure)
+
+	def getCurrentUserSuccess(self, req):
+		answ =  NetworkService.decode(req)
+		conf["currentUser"] = answ["values"]
+		self.startup()
+
+	def getCurrentUserFailure(self, req, code):
+		conf["theApp"].login()
 
 	def startup(self):
-		NetworkService.request(None, "/vi/config", successHandler=self.postInit,
-								failureHandler=self.onError, cacheable=True)
+		config = conf["mainConfig"]
+		assert config
 
-	def log(self, type, msg ):
-		self.logWdg.log( type, msg )
+		if not conf["currentUser"]:
+			self.getCurrentUser()
+			return
 
-	def postInit(self, req):
-		config = NetworkService.decode(req)
+		self.userLoggedOutMsg = UserLogoutMsg()
+		self.topBar.invoke()
+
 		conf["server"] = config.get("configuration", {})
 
 		moduleGroups = []
@@ -180,11 +207,14 @@ class AdminScreen(Screen):
 
 		# Finalizing!
 		viInitializedEvent.fire()
-		DeferredCall( self.checkInitialHash )
+		DeferredCall(self.checkInitialHash)
 		self.unlock()
 
+	def log(self, type, msg ):
+		self.logWdg.log( type, msg )
+
 	def checkInitialHash(self, *args, **kwargs):
-		urlHash = eval("window.top.location.hash")
+		urlHash = conf["startupHash"]
 		if not urlHash:
 			return
 		
@@ -236,6 +266,17 @@ class AdminScreen(Screen):
 		if gen:
 			gen(path, param)
 
+	def switchFullscreen(self, fullscreen = True):
+		if fullscreen:
+			self.moduleMgr.hide()
+			self.viewport.addClass("is_fullscreen")
+		else:
+			self.moduleMgr.show()
+			self.viewport.removeClass("is_fullscreen")
+
+	def isFullscreen(self):
+		return "is_fullscreen" in self.viewport["class"]
+
 	def onError(self, req, code):
 		print("ONERROR")
 
@@ -255,13 +296,25 @@ class AdminScreen(Screen):
 		self.panes.append( pane )
 
 		if parentPane:
-			parentPane.addChildPane( pane )
+			parentPane.addChildPane(pane)
 		else:
-			self.modulListUl.appendChild( pane )
+			self.moduleListUl.appendChild(pane)
 
 		self.viewport.appendChild(pane.widgetsDomElm)
 		pane.widgetsDomElm["style"]["display"] = "none"
 		#DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
+
+	def insertPane(self, pane, insertAt):
+		if len(pane.childPanes)>0:
+			self._registerChildPanes(pane)
+
+		assert insertAt in self.panes
+
+		self.panes.append(pane)
+		self.moduleListUl.insertBefore(pane, insertAt)
+
+		self.viewport.appendChild(pane.widgetsDomElm)
+		pane.widgetsDomElm["style"]["display"] = "none"
 
 	def stackPane(self, pane, focus=False):
 		assert self.currentPane is not None, "Cannot stack a pane. There's no current one."
@@ -287,6 +340,11 @@ class AdminScreen(Screen):
 
 	def focusPane(self, pane):
 		assert pane in self.panes, "Cannot focus unknown pane!"
+
+		if not pane.focusable:
+			self.topBar.setCurrentModulDescr()
+			return
+
 		#print( pane.descr, self.currentPane.descr if self.currentPane else "(null)" )
 
 		# Click on the same pane?
@@ -303,7 +361,7 @@ class AdminScreen(Screen):
 
 		# Close current Pane
 		if self.currentPane is not None:
-			self.currentPane["class"].remove("is_active")
+			self.currentPane.removeClass("is_active")
 			self.currentPane.widgetsDomElm["style"]["display"] = "none"
 
 		# Focus wanted Pane
@@ -314,7 +372,7 @@ class AdminScreen(Screen):
 		if self.currentPane.collapseable and self.currentPane.childDomElem:
 			self.currentPane.childDomElem["style"]["display"] = "block"
 
-		self.currentPane["class"].append("is_active")
+		self.currentPane.addClass("is_active")
 
 		# Also open parent panes, if not already done
 		pane = self.currentPane.parentPane
@@ -326,6 +384,7 @@ class AdminScreen(Screen):
 
 	def removePane(self, pane):
 		assert pane in self.panes, "Cannot remove unknown pane!"
+
 		self.panes.remove( pane )
 		if pane == self.currentPane:
 			if self.panes:
@@ -339,15 +398,15 @@ class AdminScreen(Screen):
 			else:
 				self.nextPane = None
 
-		if pane.parentPane == self:
-			self.modulListUl.removeChild( pane )
+		if not pane.parentPane or pane.parentPane is self:
+			self.moduleListUl.removeChild(pane)
 		else:
-			pane.parentPane.removeChildPane( pane )
+			pane.parentPane.removeChildPane(pane)
 
 		self.viewport.removeChild( pane.widgetsDomElm )
 
 	def addWidget(self, widget, pane ):
-		pane.addWidget( widget )
+		pane.addWidget(widget)
 
 	def stackWidget(self, widget ):
 		assert self.currentPane is not None, "Cannot stack a widget while no pane is active"
@@ -355,7 +414,8 @@ class AdminScreen(Screen):
 
 	def removeWidget(self, widget ):
 		for pane in self.panes:
-			if pane.containsWidget( widget ):
-				pane.removeWidget( widget )
+			if pane.containsWidget(widget):
+				pane.removeWidget(widget)
 				return
+
 		raise AssertionError("Tried to remove unknown widget %s" % str( widget ))

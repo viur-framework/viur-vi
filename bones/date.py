@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
@@ -6,13 +5,9 @@ from datetime import datetime
 import re
 from i18n import translate
 from config import conf
+from bones.base import BaseBoneExtractor
 
-class DateBoneExtractor( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( DateBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName = moduleName
+class DateBoneExtractor(BaseBoneExtractor):
 
 	def render(self, data, field):
 		if not(self.boneName in self.skelStructure
@@ -152,7 +147,7 @@ class DateEditBone( html5.Div ):
 				self.timeinput["readonly"] = True
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		date = skelStructure[ boneName ]["date"] if "date" in skelStructure[ boneName ].keys() else True
 		time = skelStructure[ boneName ]["time"] if "time" in skelStructure[ boneName ].keys() else True
@@ -205,7 +200,7 @@ class DateEditBone( html5.Div ):
 		return {self.boneName: returnvalue}
 
 	def serializeForDocument(self):
-		return self.serialize()
+		return self.serializeForPost()
 
 def CheckForDateBone(moduleName, boneName, skelStucture, *args, **kwargs):
 	return skelStucture[boneName]["type"] == "date"

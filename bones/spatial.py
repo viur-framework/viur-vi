@@ -25,7 +25,7 @@ class SpatialBone(html5.Div):
 			self["disabled"] = True
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[boneName].keys() and skelStructure[boneName]["readonly"]
 		return SpatialBone(moduleName, boneName, readOnly)
 

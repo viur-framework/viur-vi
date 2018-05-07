@@ -599,6 +599,13 @@ class DataTable( html5.Div ):
 		for c in self.table._children:
 			if "clientHeight" in dir(c.element):
 				sumHeight += c.element.clientHeight
+		if not sumHeight:  # We'll get no height if not visible, so we'll append our self to the body for a moment
+			parent = self.parent()
+			parent.removeChild(self)
+			html5.Body().appendChild(self)
+			sumHeight = self.table.element.clientHeight
+			html5.Body().removeChild(self)
+			parent.appendChild(self)
 
 		if (not self._isAjaxLoading
 			and (self._loadOnDisplay

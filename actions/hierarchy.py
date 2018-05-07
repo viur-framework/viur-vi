@@ -30,7 +30,9 @@ class AddAction( html5.ext.Button ):
 	def onClick(self, sender=None):
 		pane = Pane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_hierarchy", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().module, EditWidget.appHierarchy, node=self.parent().parent().rootNode )
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy,
+		                    node=self.parent().parent().rootNode,
+		                    context=self.parent().parent().context)
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -97,7 +99,8 @@ class EditAction( html5.ext.Button ):
 	def openEditor(self, key):
 		pane = Pane(translate("Edit"), closeable=True)
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy, key=key)
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy, key=key,
+		                    context=self.parent().parent().context)
 		pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -156,7 +159,9 @@ class CloneAction( html5.ext.Button ):
 		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_hierarchy", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy,
-		                  node=self.parent().parent().rootNode, key=key, clone=True)
+		                  node=self.parent().parent().rootNode, key=key,
+		                    context=self.parent().parent().context,
+		                    clone=True)
 		pane.addWidget( edwg )
 		pane.focus()
 
@@ -251,28 +256,30 @@ class ReloadAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
 
-class SelectRootNode( html5.Select ):
+class SelectRootNode(html5.Select):
 	"""
 		Selector for hierarchy root nodes.
 	"""
-	def __init__(self, *args, **kwargs):
+	def __init__(self, module, handler, actionName, *args, **kwargs):
 		super( SelectRootNode, self ).__init__( *args, **kwargs )
 		self.sinkEvent("onChange")
+		self.hide()
 
 	def onAttach(self):
-		super( SelectRootNode, self ).onAttach()
-		self.update()
-		self.parent().parent().rootNodeChangedEvent.register( self )
+		super(SelectRootNode, self).onAttach()
+		self.parent().parent().rootNodeChangedEvent.register(self)
+
+		if self.parent().parent().rootNode is None:
+			self.update()
 
 	def onDetach(self):
-		self.parent().parent().rootNodeChangedEvent.unregister( self )
-		super( SelectRootNode, self ).onDetach()
+		self.parent().parent().rootNodeChangedEvent.unregister(self)
+		super(SelectRootNode, self).onDetach()
 
 	def update(self):
 		self.removeAllChildren()
-		NetworkService.request( self.parent().parent().module, "listRootNodes",
-		                            successHandler=self.onRootNodesAvaiable,
-		                                cacheable=True )
+		NetworkService.request(self.parent().parent().module, "listRootNodes",
+		                        successHandler=self.onRootNodesAvailable)
 
 	def onRootNodeChanged(self, newNode):
 		for option in self._children:
@@ -280,19 +287,27 @@ class SelectRootNode( html5.Select ):
 				option["selected"] = True
 				return
 
-	def onRootNodesAvaiable(self, req):
-		res = NetworkService.decode( req )
+	def onRootNodesAvailable(self, req):
+		res = NetworkService.decode(req)
+
 		for node in res:
 			option = html5.Option()
 			option["value"] = node["key"]
-			option.appendChild( html5.TextNode( node["name"] ) )
+			option.appendChild(node["name"])
+
 			if node["key"] == self.parent().parent().rootNode:
 				option["selected"] = True
-			self.appendChild( option )
+
+			self.appendChild(option)
+
+		if len(self.children()) > 1:
+			self.show()
+		else:
+			self.hide()
 
 	def onChange(self, event):
 		newRootNode = self["options"].item(self["selectedIndex"]).value
-		self.parent().parent().setRootNode( newRootNode )
+		self.parent().parent().setRootNode(newRootNode)
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):

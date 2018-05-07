@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import html5, utils
 from config import conf
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector
 from widgets.tree import TreeWidget, NodeWidget
 from widgets.file import FileWidget, LeafFileWidget
 from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry

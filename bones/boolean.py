@@ -1,23 +1,9 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
 from config import conf
 from event import EventDispatcher
 from i18n import translate
-
-class BooleanBoneExtractor( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( BooleanBoneExtractor, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName = moduleName
-
-	def render( self, data, field ):
-		if field in data.keys():
-			return str( data[field])
-		return conf[ "empty_value" ]
-
 
 class BooleanViewBoneDelegate( object ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
@@ -28,8 +14,8 @@ class BooleanViewBoneDelegate( object ):
 
 	def render( self, data, field ):
 		if field in data.keys():
-			return( html5.Label(str( data[field])))
-		return( html5.Label(conf[ "empty_value" ]) )
+			return html5.Label(translate(str(data[field])))
+		return html5.Label(conf["empty_value"])
 
 class BooleanEditBone( html5.Input ):
 
@@ -43,22 +29,19 @@ class BooleanEditBone( html5.Input ):
 
 
 	@staticmethod
-	def fromSkelStructure( moduleName, boneName, skelStructure ):
+	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return( BooleanEditBone( moduleName, boneName, readOnly ) )
+		return BooleanEditBone(moduleName, boneName, readOnly)
 
-	##read
 	def unserialize(self, data, extendedErrorInformation=None):
 		if self.boneName in data.keys():
 			self._setChecked(data[self.boneName])
 
-	##save
 	def serializeForPost(self):
-		return ( { self.boneName: str(self._getChecked())} )
+		return {self.boneName: str(self._getChecked())}
 
-	##UNUSED
 	def serializeForDocument(self):
-		return( self.serialize( ) )
+		return {self.boneName: self._getChecked()}
 
 
 class ExtendedBooleanSearch( html5.Div ):
@@ -105,11 +88,10 @@ class ExtendedBooleanSearch( html5.Div ):
 
 
 
-def CheckForBooleanBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return( skelStucture[boneName]["type"]=="bool" )
+def CheckForBooleanBone(moduleName, boneName, skelStucture, *args, **kwargs):
+	return skelStucture[boneName]["type"] == "bool"
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 3, CheckForBooleanBone, BooleanEditBone)
 viewDelegateSelector.insert( 3, CheckForBooleanBone, BooleanViewBoneDelegate)
 extendedSearchWidgetSelector.insert( 1, ExtendedBooleanSearch.canHandleExtension, ExtendedBooleanSearch )
-extractorDelegateSelector.insert(3, CheckForBooleanBone, BooleanBoneExtractor)
