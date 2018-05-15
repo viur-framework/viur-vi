@@ -217,12 +217,29 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 
 	def __init__(self, *args, **kwargs):
 		super(FileMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
-		self["class"].append("fileentry")
-		self.prependChild(FilePreviewImage(self.data["dest"]))
+		self.addClass("fileentry")
+
+		self.previewImg = FilePreviewImage()
+		self.prependChild(self.previewImg)
+
+		if self.data["dest"]:
+			if "key" in self.data["dest"] and len(self.data["dest"]) == 1:
+				self.fetchEntry(self.data["dest"]["key"])
+			else:
+				self.previewImg.setFile(self.data["dest"])
 
 	def fetchEntry(self, key):
-		NetworkService.request(self.module,"view/leaf/"+key,
-		                        successHandler=self.onSelectionDataAvailable, cacheable=True)
+		NetworkService.request(self.module, "view/leaf/" + key,
+		                        successHandler=self.onSelectionDataAvailable,
+		                        cacheable=True)
+
+	def onSelectionDataAvailable(self, req):
+		data = NetworkService.decode(req)
+		assert self.data["dest"]["key"] == data["values"]["key"]
+		self.data["dest"] = data["values"]
+
+		self.updateLabel()
+		self.previewImg.setFile(self.data["dest"])
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -296,8 +313,6 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 			@param selection: The new entry that this bone should reference
 			@type selection: dict | list[dict]
 		"""
-		print("setSelection", selection)
-
 		if selection is None:
 			return
 
