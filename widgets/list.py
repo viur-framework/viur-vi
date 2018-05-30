@@ -332,7 +332,8 @@ class ListWidget(html5.Div):
 		return moduleInfo["handler"] == "list" or moduleInfo["handler"].startswith("list.")
 
 	@staticmethod
-	def render(cls, moduleName, adminInfo, context):
+	def render(moduleName, adminInfo, context):
+
 		filter = adminInfo.get("filter")
 		columns = adminInfo.get("columns")
 
