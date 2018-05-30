@@ -788,9 +788,13 @@ class EditWidget(html5.Div):
 			self.bones[key] = widget
 			self.containers[key] = containerDiv
 
-			#Hide invisible bones
-			if not bone["visible"]:
+			#Hide invisible bones or logic-flavored bones with their default desire
+			if not bone["visible"] or (bone["params"] and bone["params"].get("logic.visibleIf")):
 				self.containers[key].hide()
+
+			# NO elif!
+			if bone["params"] and bone["params"].get("logic.readonlyIf"):
+				self.containers[key].disable()
 
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort(key=lambda x:x[0])
