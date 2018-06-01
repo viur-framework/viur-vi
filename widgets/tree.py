@@ -4,7 +4,7 @@ from network import NetworkService
 from widgets.actionbar import ActionBar
 from widgets.search import Search
 from event import EventDispatcher
-from priorityqueue import displayDelegateSelector, viewDelegateSelector
+from priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
 import utils
 from html5.keycodes import *
 from config import conf
@@ -280,7 +280,7 @@ class TreeWidget( html5.Div ):
 	leafWidget = LeafWidget
 	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload"]
 
-	def __init__( self, modul, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
+	def __init__( self, module, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
@@ -291,10 +291,10 @@ class TreeWidget( html5.Div ):
 		"""
 		super( TreeWidget, self ).__init__( )
 		self["class"].append("tree")
-		self.module = modul
+		self.module = module
 		self.rootNode = rootNode
 		self.node = node or rootNode
-		self.actionBar = ActionBar( modul, "tree" )
+		self.actionBar = ActionBar( module, "tree" )
 		self.appendChild( self.actionBar )
 		self.pathList = html5.Div()
 		self.pathList["class"].append("breadcrumb")
@@ -499,4 +499,14 @@ class TreeWidget( html5.Div ):
 	def canHandle( modul, moduleInfo ):
 		return( moduleInfo["handler"].startswith("tree." ) )
 
+	@staticmethod
+	def render(moduleName, adminInfo, context):
+		filter = adminInfo.get("filter")
+		columns = adminInfo.get("columns")
+
+		rootNode = context.get("rootNode") if context else None
+
+		return TreeWidget(module=moduleName,rootNode=rootNode, context=context)
+
 displayDelegateSelector.insert( 1, TreeWidget.canHandle, TreeWidget )
+moduleHandlerSelector.insert(1, TreeWidget.canHandle, TreeWidget.render)

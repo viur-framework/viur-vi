@@ -249,7 +249,7 @@ class AccessMultiSelectBone( html5.Div ):
 
 	def parseskelaccess( self, value ):
 		for state in self.states:
-			if value.endswith( state ):
+			if value.endswith( "-" + state ):
 				return ( value[ 0 :  -( len( state ) + 1 ) ], state )
 
 		return False
