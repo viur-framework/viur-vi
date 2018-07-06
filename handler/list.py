@@ -17,12 +17,21 @@ class ListHandler( Pane ):
 
 		self.moduleName = moduleName
 		self.moduleInfo = moduleInfo
+		self.mode = moduleInfo.get("mode", "normal")
+		assert self.mode in ["normal", "hidden", "group"]
 
-		if "hideInMainBar" in moduleInfo.keys() and moduleInfo["hideInMainBar"]:
-			self["style"]["display"] = "none"
+		if self.mode == "hidden" or moduleInfo.get("hideInMainBar", False):
+			self.hide()
+
 		else:
 			if "views" in moduleInfo.keys():
 				for view in moduleInfo["views"]:
+
+					# Inherit some default attributes from moduleInfo, if not overridden
+					for inherit in ["icon", "columns", "filter", "context"]:
+						if inherit not in view and inherit in moduleInfo:
+							view[inherit] = moduleInfo[inherit]
+
 					self.addChildPane(ListHandler(moduleName, view, isView=True))
 
 		if not isView:
@@ -65,7 +74,7 @@ class ListHandler( Pane ):
 		return moduleInfo["handler"]=="list" or moduleInfo["handler"].startswith("list.")
 
 	def onClick(self, *args, **kwargs):
-		if not self.widgetsDomElm.children():
+		if self.mode == "normal" and not self.widgetsDomElm.children():
 			self.addWidget(ListWidget(self.moduleName,
 			                            filter=self.moduleInfo.get("filter"),
 			                            columns=self.moduleInfo.get("columns"),
