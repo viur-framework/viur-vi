@@ -419,3 +419,10 @@ class AdminScreen(Screen):
 				return
 
 		raise AssertionError("Tried to remove unknown widget %s" % str( widget ))
+
+	def containsWidget(self, widget):
+		for pane in self.panes:
+			if pane.containsWidget(widget):
+				return pane
+
+		return None
