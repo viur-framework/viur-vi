@@ -331,6 +331,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		self.prependChild(self.previewImg)
 
 		self.selection = None
+		self.currentSelector = None
 
 	def onDragOver(self, event):
 		super(FileSingleSelectionBone,self).onDragOver(event)
@@ -358,12 +359,15 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = FileWidget( self.destModule, isSelector="leaf" )
-		currentSelector.selectionReturnEvent.register( self )
-		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is_active")
+		self.currentSelector = conf.get("fileSelector")
+		if not self.currentSelector:
+			conf["fileSelector"] = self.currentSelector = FileWidget(self.destModule, isSelector="leaf")
 
-	def onSelectionReturn(self, table, selection ):
+		self.currentSelector.selectionReturnEvent.register(self)
+		conf["mainWindow"].stackWidget(self.currentSelector)
+		self.parent().addClass("is_active")
+
+	def onSelectionReturn(self, table, selection):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""
@@ -377,6 +381,12 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 		self.setSelection([{"dest": x.data for x in selection if isinstance(x,LeafFileWidget)}][0] )
 		self.changeEvent.fire(self)
+
+	def onDetach(self):
+		super(FileSingleSelectionBone, self).onDetach()
+
+		if self.currentSelector:
+			self.currentSelector.selectionReturnEvent.unregister(self)
 
 	def onEdit(self, *args, **kwargs):
 		"""
