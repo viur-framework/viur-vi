@@ -171,25 +171,20 @@ class AdminScreen(Screen):
 			assert handlerCls is not None, "No handler available for module '%s'" % module
 
 			conf["modules"][module]["visibleName"] = conf["modules"][module]["name"]
+			handler = None
 
-			isChild = False
 			for k in groups.keys():
 				if info["name"].startswith(k):
 					conf["modules"][module]["visibleName"] = conf["modules"][module]["name"].replace(k, "")
-
 					handler = handlerCls(module, info)
 					groups[k].addChildPane(handler)
-
-					isChild = True
 					break
 
-			if not isChild:
-				handler = handlerCls( module, info )
-				if "sortIndex" in info.keys():
-					sortIndex = info["sortIndex"]
-				else:
-					sortIndex = None
-				panes.append((info["visibleName"], sortIndex, handler))
+			if not handler:
+				handler = handlerCls(module, info)
+				panes.append((info["visibleName"], info.get("sortIndex"), handler))
+
+			conf["modules"][module]["_handler"] = handler
 
 		# Sorting our top level entries
 		panes.sort( key=lambda x: x[0] )
