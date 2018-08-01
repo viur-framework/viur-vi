@@ -19,7 +19,8 @@ class InvalidBoneValueException(ValueError):
 
 class InternalEdit(html5.Div):
 
-	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, context=None, defaultCat=""):
+	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, context=None, defaultCat="",
+	                    module = None):
 		super(InternalEdit, self).__init__()
 
 		self.sinkEvent("onChange", "onKeyDown")
@@ -30,13 +31,12 @@ class InternalEdit(html5.Div):
 		self.errorInformation = errorInformation
 		self.defaultCat = defaultCat
 		self.context = context
+		self.module = module
 
 		self.form = self
 
 		self.renderStructure(readOnly=readOnly)
-
-		if values:
-			self.unserialize(values)
+		self.unserialize(values)
 
 	def renderStructure(self, readOnly = False):
 		self.bones = {}
@@ -85,8 +85,8 @@ class InternalEdit(html5.Div):
 				fs._section = section
 				fieldSets[cat] = fs
 
-			wdgGen = editBoneSelector.select(None, key, tmpDict)
-			widget = wdgGen.fromSkelStructure(None, key, tmpDict)
+			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
+			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 
 			descrLbl = html5.Label(bone["descr"])
@@ -187,7 +187,7 @@ class InternalEdit(html5.Div):
 		self.closeOnSuccess = closeOnSuccess
 		return self.serializeForPost(True)
 
-	def unserialize(self, data):
+	def unserialize(self, data = None):
 		"""
 			Applies the actual data to the bones.
 		"""
@@ -195,7 +195,8 @@ class InternalEdit(html5.Div):
 			if "setContext" in dir(bone) and callable(bone.setContext):
 				bone.setContext(self.context)
 
-			bone.unserialize(data)
+			if data is not None:
+				bone.unserialize(data)
 
 		DeferredCall(self.performLogics)
 
@@ -867,7 +868,7 @@ class EditWidget(html5.Div):
 
 		DeferredCall(self.performLogics)
 
-	def unserialize(self, data):
+	def unserialize(self, data = None):
 		"""
 			Applies the actual data to the bones.
 		"""
@@ -875,7 +876,8 @@ class EditWidget(html5.Div):
 			if "setContext" in dir(bone) and callable(bone.setContext):
 				bone.setContext(self.context)
 
-			bone.unserialize(data)
+			if data is not None:
+				bone.unserialize(data)
 
 	def serializeForPost(self, validityCheck = False):
 		res = {}
