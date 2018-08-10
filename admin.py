@@ -134,28 +134,22 @@ class AdminScreen(Screen):
 				moduleGroups = config["configuration"]["moduleGroups"]
 
 		# Modules
-		groups = {}
+		groupPanes = {}
 		panes = []
 		userAccess = conf["currentUser"].get("access", [])
 		predefinedFilterCounter = 1
 
+		# First create group panes, if configured
 		for group in moduleGroups:
-			p = GroupPane(group["name"], iconURL=group["icon"])
+			groupPanes[group["prefix"]] = GroupPane(group["name"], iconURL=group.get("icon"))
+			panes.append((group["name"], group.get("sortIndex", 0), groupPanes[group["prefix"]]))
 
-			groups[group["prefix"]] = p
-			if "sortIndex" in group.keys():
-				sortIndex = group["sortIndex"]
-			else:
-				sortIndex = None
+		# Sort all modules first
+		sortedModules = [(x, y) for x, y in config["modules"].items()]
+		sortedModules.sort(key=lambda entry: (-entry[1].get("sortIndex", 0), entry[1].get("name", "")))
 
-			panes.append((group["name"], sortIndex, p))
-
-		# Sorting the 2nd level entries
-		sorted_modules = [(x,y) for x,y in config["modules"].items()]
-		sorted_modules.sort(key=lambda x: x[1].get("name", "").lower() or None)
-		sorted_modules.sort(key=lambda x: x[1].get("sortIndex"), reverse=True)
-
-		for module, info in sorted_modules:
+		# When create module panes
+		for module, info in sortedModules:
 			if not "root" in userAccess and not any([x.startswith(module) for x in userAccess]):
 				#Skip this module, as the user couldn't interact with it anyway
 				continue
@@ -173,32 +167,33 @@ class AdminScreen(Screen):
 			conf["modules"][module]["visibleName"] = conf["modules"][module]["name"]
 			handler = None
 
-			for k in groups.keys():
+			for k in groupPanes.keys():
 				if info["name"].startswith(k):
 					conf["modules"][module]["visibleName"] = conf["modules"][module]["name"].replace(k, "")
 					handler = handlerCls(module, info)
-					groups[k].addChildPane(handler)
+					groupPanes[k].addChildPane(handler)
 					break
 
 			if not handler:
 				handler = handlerCls(module, info)
-				panes.append((info["visibleName"], info.get("sortIndex"), handler))
+				panes.append((info["visibleName"], info.get("sortIndex", 0), handler))
 
 			conf["modules"][module]["_handler"] = handler
 
 		# Sorting our top level entries
-		panes.sort( key=lambda x: x[0] )
-		panes.sort( key=lambda x: x[1], reverse=True )
+		panes.sort(key=lambda entry: (-entry[1], entry[0]))
 
 		# Push the panes, ignore group panes with no children (due to right restrictions)
-		for k, v, pane in panes:
+		for name, idx, pane in panes:
+			#print("idx", name, idx)
+
 			# Don't display GroupPanes without children.
-			if ( isinstance( pane, GroupPane )
-			     and ( not pane.childPanes
-			           or all( child[ "style" ].get( "display" ) == "none" for child in pane.childPanes ) ) ):
+			if (isinstance(pane, GroupPane)
+				and (not pane.childPanes
+				        or all(c["style"].get("display") == "none" for c in pane.childPanes))):
 				continue
 
-			self.addPane( pane )
+			self.addPane(pane)
 
 		# Finalizing!
 		viInitializedEvent.fire()
