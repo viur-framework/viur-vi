@@ -484,20 +484,22 @@ class TreeWidget( html5.Div ):
 		else:
 			self._currentCursor[ req.reqType ] = None
 
-	def getChildKey(self, widget ):
+	def getChildKey(self, widget):
 		"""
 			Derives a string used to sort the entries in our entryframe
 		"""
-		if isinstance( widget, self.nodeWidget ):
-			return("0-%s" % widget.data["name"].lower())
-		elif isinstance( widget, self.leafWidget ):
-			return("1-%s" % widget.data["name"].lower())
+		name = (widget.data.get("name") or "").lower()
+
+		if isinstance(widget, self.nodeWidget):
+			return "0-%s" % name
+		elif isinstance(widget, self.leafWidget):
+			return "1-%s" % name
 		else:
-			return("2-")
+			return "2-"
 
 	@staticmethod
-	def canHandle( modul, moduleInfo ):
-		return( moduleInfo["handler"].startswith("tree." ) )
+	def canHandle(moduleName, moduleInfo):
+		return moduleInfo["handler"].startswith("tree.")
 
 	@staticmethod
 	def render(moduleName, adminInfo, context):
