@@ -142,11 +142,11 @@ class AdminScreen(Screen):
 		# First create group panes, if configured
 		for group in moduleGroups:
 			groupPanes[group["prefix"]] = GroupPane(group["name"], iconURL=group.get("icon"))
-			panes.append((group["name"], group.get("sortIndex", 0), groupPanes[group["prefix"]]))
+			panes.append((group["name"], group.get("sortIndex"), groupPanes[group["prefix"]]))
 
 		# Sort all modules first
 		sortedModules = [(x, y) for x, y in config["modules"].items()]
-		sortedModules.sort(key=lambda entry: (-entry[1].get("sortIndex", 0), entry[1].get("name", "")))
+		sortedModules.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1].get("sortIndex") is None else 0, entry[1].get("sortIndex", 0), entry[1].get("name")))
 
 		# When create module panes
 		for module, info in sortedModules:
@@ -176,12 +176,12 @@ class AdminScreen(Screen):
 
 			if not handler:
 				handler = handlerCls(module, info)
-				panes.append((info["visibleName"], info.get("sortIndex", 0), handler))
+				panes.append((info["visibleName"], info.get("sortIndex"), handler))
 
 			conf["modules"][module]["_handler"] = handler
 
 		# Sorting our top level entries
-		panes.sort(key=lambda entry: (-entry[1], entry[0]))
+		panes.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1] is None else 0, entry[1] or 0, entry[0]))
 
 		# Push the panes, ignore group panes with no children (due to right restrictions)
 		for name, idx, pane in panes:
