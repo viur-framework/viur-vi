@@ -80,7 +80,8 @@ class ListHandler( Pane ):
 			                            columns=self.moduleInfo.get("columns"),
 			                            context=self.moduleInfo.get("context"),
 			                            filterID=self.moduleInfo.get("__id"),
-			                            filterDescr=self.moduleInfo.get("visibleName", "")))
+			                            filterDescr=self.moduleInfo.get("visibleName", ""),
+			                            autoload=self.moduleInfo.get("autoload", True)))
 
 		super(ListHandler, self).onClick(*args, **kwargs)
 
