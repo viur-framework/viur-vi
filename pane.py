@@ -209,9 +209,11 @@ class Pane(html5.Li):
 				return( True )
 		return( False )
 
-	def onClick(self, event, *args, **kwargs ):
+	def onClick(self, event = None, *args, **kwargs ):
 		self.focus()
-		event.stopPropagation()
+
+		if event:
+			event.stopPropagation()
 
 	def focus(self):
 		conf["mainWindow"].focusPane( self )
