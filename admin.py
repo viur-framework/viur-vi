@@ -339,11 +339,12 @@ class AdminScreen(Screen):
 
 		# Click on the same pane?
 		if pane == self.currentPane:
-			if self.currentPane.collapseable and self.currentPane.childDomElem:
-				if self.currentPane.childDomElem["style"]["display"] == "none":
-					self.currentPane.childDomElem["style"]["display"] = "block"
+			if self.currentPane.collapseable:
+				if self.currentPane.isExpanded:
+					self.currentPane.collapse()
 				else:
-					self.currentPane.childDomElem["style"]["display"] = "none"
+					self.currentPane.expand()
+
 			return
 
 		self.panes.remove( pane ) # Move the pane to the end of the list

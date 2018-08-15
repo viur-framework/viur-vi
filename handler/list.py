@@ -110,6 +110,8 @@ class ListHandler( Pane ):
 		self._buildViewPanes(self.requestedViews, register = True)
 
 		conf["mainWindow"].unlock()
-		super(ListHandler, self).onClick()
+
+		if not self.isExpanded:
+			super(ListHandler, self).onClick()
 
 HandlerClassSelector.insert( 1, ListHandler.canHandle, ListHandler )
