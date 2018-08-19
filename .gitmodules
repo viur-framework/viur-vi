@@ -1,4 +1,4 @@
-[submodule "public/icons"]
+[submodule "sources/embedsvg/icons"]
 	path = public/icons
 	url = https://github.com/viur-framework/icons.git
 [submodule "logics"]
