@@ -1,25 +1,15 @@
-// Project data
-
-var appURL = 'http://www.viur.is';
-var appName = 'My App';
-var appDescription = 'This is my application';
-
-var developerName = 'Mausbrand Infosys';
-var developerURL = 'http://mausbrand.de/';
-
-var backgroundColor = '#fff'; // Background color of app icons.
+// Gulp Vi
 
 var srcpaths = {
   less: './less/**/*.less',
-  icons: './embedsvg/icons/**/*',
-  logos: './embedsvg/logos/**/*',
-  js : './js/**/*.js'
+  images: './images/**/*',
+  embedsvg: './embedsvg/**/*',
 };
 
 var destpaths = {
   css: '../public/css',
+  images: '../public/images',
   embedsvg: '../public/embedsvg',
-  js: '../public/js'
 };
 
 // Variables and requirements
@@ -43,42 +33,51 @@ const imagemin = require('gulp-imagemin');
 const pngquant = require('imagemin-pngquant');
 const cheerio = require('gulp-cheerio');
 
-const favicons = require('gulp-favicons');
-
 // compilation and postproduction of LESS to CSS
 gulp.task('css', function () {
-	//gulp.start('dev')
-    var processors = [
-    	nocomments, // discard comments
-    	focus, // add focus to hover-states
-    	zindex, // reduce z-index values
-    ];
-    return gulp.src('./less/vi.less')
-        .pipe(less({
-      		paths: [ path.join(__dirname, 'less', 'includes') ]
-    	})) // compile less to css
-        .pipe(autoprefixer({
-            browsers: ['last 2 versions'],
-            cascade: false
-        })) // add vendor prefixes
-		.pipe(postcss(processors)) // clean up css
-		.pipe(jmq({
-			log: true
-		}))
-        .pipe(rename('style.css'))
-        .pipe(gulp.dest(destpaths.css)) // save cleaned version
-        .pipe(nano()) // minify css
-        .pipe(rename('style.min.css')) // save minified version
-    	.pipe(gulp.dest(destpaths.css));
+  //gulp.start('dev')
+  var processors = [
+    nocomments, // discard comments
+    focus, // add focus to hover-states
+    zindex, // reduce z-index values
+  ];
+  return gulp.src('./less/vi.less')
+    .pipe(less({
+      paths: [path.join(__dirname, 'less', 'includes')]
+    })) // compile less to css
+    .pipe(autoprefixer({
+      browsers: ['last 2 versions'],
+      cascade: false
+    })) // add vendor prefixes
+    .pipe(postcss(processors)) // clean up css
+    .pipe(jmq({
+      log: true
+    }))
+    .pipe(rename('style.css'))
+    .pipe(gulp.dest(destpaths.css)) // save cleaned version
+    .pipe(nano()) // minify css
+    .pipe(rename('style.min.css')) // save minified version
+    .pipe(gulp.dest(destpaths.css));
 });
 
-gulp.task ('icons', function () {
-	return gulp.src(srcpaths.icons)
-	.pipe(imagemin({
-		progressive: true,
-		svgoPlugins: [{removeViewBox: false}],
-		use: [pngquant()]
-	}))
+// reduce images for web
+gulp.task('images', function () {
+  return gulp.src(srcpaths.images)
+    .pipe(imagemin({
+      progressive: true,
+      svgoPlugins: [{removeViewBox: false}],
+      use: [pngquant()]
+    }))
+    .pipe(gulp.dest(destpaths.images));
+});
+
+gulp.task('embedsvg', function () {
+  return gulp.src(srcpaths.embedsvg)
+    .pipe(imagemin({
+      progressive: true,
+      svgoPlugins: [{removeViewBox: false}],
+      use: [pngquant()]
+    }))
     .pipe(cheerio({
       run: function ($, file) {
         $('style').remove()
@@ -89,31 +88,22 @@ gulp.task ('icons', function () {
       },
       parserOptions: {xmlMode: true}
     }))
-	.pipe(rename({prefix: "icon-"}))
-	.pipe(gulp.dest(destpaths.embedsvg));
-});
-
-gulp.task ('logos', function () {
-	return gulp.src(srcpaths.logos)
-	.pipe(imagemin({
-		progressive: true,
-		svgoPlugins: [{removeViewBox: false}],
-		use: [pngquant()]
-	}))
-    .pipe(cheerio({
-      run: function ($, file) {
-        $('svg').addClass('logo')
-      },
-      parserOptions: {xmlMode: true}
+    .pipe(rename(function (path) {
+      if (path.extname) {
+        if (path.dirname === '.') {
+          path.dirname = '';
+        }
+        path.basename = path.dirname + '-' + path.basename;
+        path.dirname = '';
+      }
     }))
-	.pipe(rename({prefix: "logo-"}))
-	.pipe(gulp.dest(destpaths.embedsvg));
+    .pipe(gulp.dest(destpaths.embedsvg));
 });
 
 gulp.task('watch', function () {
-   gulp.watch(srcpaths.less, ['css']);
-   gulp.watch(srcpaths.icons, ['icons']);
-   gulp.watch(srcpaths.logos, ['logos']);
+  gulp.watch(srcpaths.less, ['css']);
+  gulp.watch(srcpaths.embedsvg, ['embedsvg']);
+  gulp.watch(srcpaths.images, ['images']);
 });
 
-gulp.task('default', ['css', 'icons', 'logos']);
+gulp.task('default', gulp.series(['css', 'embedsvg', 'images']));
