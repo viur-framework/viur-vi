@@ -17,10 +17,10 @@ class Screen(html5.Div):
 		self.hide()
 
 	def lock(self):
-		self.addClass("is_loading")
+		self.addClass("is-loading")
 
 	def unlock(self):
-		self.removeClass("is_loading")
+		self.removeClass("is-loading")
 
 	def invoke(self):
 		"""Is called to show the screen"""

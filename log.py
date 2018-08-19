@@ -80,8 +80,8 @@ class Log( html5.Div ):
 		assert type in ["success", "error", "warning", "info", "progress"]
 
 		liwrap = html5.Li()
-		liwrap["class"].append("log_"+type)
-		liwrap["class"].append("is_new")
+		liwrap["class"].append("log-"+type)
+		liwrap["class"].append("is-new")
 
 		spanDate = html5.Span()
 		spanDate.appendChild( html5.TextNode( datetime.now().strftime("%H:%M:%S") ))
@@ -107,7 +107,7 @@ class Log( html5.Div ):
 			self.logUL.element.insertBefore( liwrap.element, self.logUL.element.children.item(0) )
 
 	def removeNewCls(self,span):
-		span["class"].remove("is_new")
+		span["class"].remove("is-new")
 
 	def reset(self):
 		self.logUL.removeAllChildren()

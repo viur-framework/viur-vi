@@ -298,7 +298,7 @@ class LoginScreen(Screen):
 
 	def __init__(self, *args, **kwargs):
 		super(LoginScreen, self).__init__(*args, **kwargs)
-		self.addClass("vi-login")
+		self.addClass("vi-login-screen")
 
 		# --- Surrounding Dialog ---
 		self.dialog = html5.Div()
@@ -319,7 +319,7 @@ class LoginScreen(Screen):
 		# Logo
 		img = html5.Img()
 		img.addClass("vi-login-logo")
-		img["src"] = "login-logo.png"
+		img["src"] = "images/vi-login-logo.svg"
 		header.appendChild(img)
 
 		# --- Dialog ---

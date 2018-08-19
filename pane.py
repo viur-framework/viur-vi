@@ -30,7 +30,7 @@ class Pane(html5.Div):
 
 		self.widgetsDomElm = html5.Div()
 		self.widgetsDomElm["class"].append("vi-viewer-pane")
-		self.widgetsDomElm["class"].append("has_no_child")
+		self.widgetsDomElm["class"].append("has-no-child")
 		self.childDomElem = None
 
 		self.label = html5.A()
@@ -166,18 +166,18 @@ class Pane(html5.Div):
 		self.rebuildChildrenClassInfo()
 
 	def rebuildChildrenClassInfo(self):
-		if "has_no_child" in self.widgetsDomElm["class"]:
-			self.widgetsDomElm["class"].remove("has_no_child")
-		if "has_single_child" in self.widgetsDomElm["class"]:
-			self.widgetsDomElm["class"].remove("has_single_child")
-		if "has_multiple_children" in self.widgetsDomElm["class"]:
-			self.widgetsDomElm["class"].remove("has_multiple_children")
+		if "has-no-child" in self.widgetsDomElm["class"]:
+			self.widgetsDomElm.removeClass("has-no-child")
+		if "has-single-child" in self.widgetsDomElm["class"]:
+			self.widgetsDomElm.removeClass("has-single-child")
+		if "has-multiple-children" in self.widgetsDomElm["class"]:
+			self.widgetsDomElm.removeClass("has-multiple-children")
 		if len(self.widgetsDomElm._children)==0:
-			self.widgetsDomElm["class"].append("has_no_child")
+			self.widgetsDomElm.addClass("has-no-child")
 		elif len(self.widgetsDomElm._children)==1:
-			self.widgetsDomElm["class"].append("has_single_child")
+			self.widgetsDomElm.addClass("has-single-child")
 		else:
-			self.widgetsDomElm["class"].append("has_multiple_children")
+			self.widgetsDomElm.addClass("has-multiple-children")
 
 	def removeWidget(self, widget):
 		"""
@@ -226,13 +226,16 @@ class GroupPane( Pane ):
 		super( GroupPane, self ).__init__( *args, **kwargs )
 		self.childDomElem = html5.Ul()
 		self.childDomElem["style"]["display"] = "none"
+		self.addClass("vi-viewer-grouppane")
 		self.appendChild( self.childDomElem )
 
 	def onClick(self, event, *args, **kwargs ):
 		if self.childDomElem["style"]["display"] == "none":
 			self.childDomElem["style"]["display"] = "block"
+			self.addClass("is-active")
 		else:
 			self.childDomElem["style"]["display"] = "none"
+			self.removeClass("is-active")
 		event.stopPropagation()
 
 	def onFocus(self,event):

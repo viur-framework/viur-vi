@@ -352,7 +352,7 @@ class AdminScreen(Screen):
 
 		# Close current Pane
 		if self.currentPane is not None:
-			self.currentPane.removeClass("is_active")
+			self.currentPane.removeClass("is-active")
 			self.currentPane.widgetsDomElm["style"]["display"] = "none"
 
 		# Focus wanted Pane
@@ -363,7 +363,7 @@ class AdminScreen(Screen):
 		if self.currentPane.collapseable and self.currentPane.childDomElem:
 			self.currentPane.childDomElem["style"]["display"] = "block"
 
-		self.currentPane.addClass("is_active")
+		self.currentPane.addClass("is-active")
 
 		# Also open parent panes, if not already done
 		pane = self.currentPane.parentPane
