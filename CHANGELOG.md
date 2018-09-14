@@ -6,6 +6,7 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 Release date: Apr 23, 2018
 
+- v2.2.1: Bugfix on the bones configured as ``visible=False`` feature
 - Reload-button in edit masks with changes checking
 - Support of the new *selectBone* feature, replacing the former *selectOneBone* and *selectMultiBone* in server
 - Refactored image file preview and new image detail viewer
