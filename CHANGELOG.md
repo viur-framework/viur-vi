@@ -6,6 +6,7 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 Currently under development.
 
+- Prints the path to the current module or entity into the address bar.
 - Improvements of the List-module handler (ListHandler); Please check out
   [the corresponding wiki](https://github.com/viur-framework/vi/wiki/adminInfo-in-List-modules) entry for usage and code examples.
   - ListHandler views are now inheriting ``"icon"``, ``"columns"``,

@@ -388,7 +388,7 @@ class EditWidget(html5.Div):
 		self.wasInitialRequest = True #Wherever the last request attempted to save data or just fetched the form
 
 		# Action bar
-		self.actionbar = ActionBar(self.module, self.applicationType, self.mode)
+		self.actionbar = ActionBar(self.module, self.applicationType, (self.mode if not clone else "clone"))
 		self.appendChild(self.actionbar)
 
 		editActions = []
@@ -399,12 +399,18 @@ class EditWidget(html5.Div):
 		if module in conf["modules"] and conf["modules"][module]:
 			editActions.extend(conf["modules"][module].get("editActions", []))
 
-		print("editActions", editActions)
-
 		if applicationType == EditWidget.appSingleton:
 			self.actionbar.setActions(["save.singleton"] + editActions)
 		else:
 			self.actionbar.setActions(["save.close", "save.continue"] + editActions)
+
+		# Set path
+		if applicationType == EditWidget.appSingleton:
+			conf["theApp"].setPath(module + "/" + self.mode)
+		elif self.mode == "edit":
+			conf["theApp"].setPath(module + "/" + (self.mode if not clone else "clone") + "/" + self.key)
+		else:
+			conf["theApp"].setPath(module + "/" + self.mode)
 
 		# Input form
 		self.form = html5.Form()

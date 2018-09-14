@@ -35,5 +35,4 @@ class Screen(html5.Div):
 		if title is None:
 			title = self.__class__.__name__
 
-		document = eval("top.document")
-		document.title = "%s - ViUR Visual Interface" % title
+		conf["theApp"].setTitle(title)

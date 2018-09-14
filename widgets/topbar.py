@@ -6,7 +6,7 @@ from config import conf
 from widgets.task import TaskSelectWidget
 from priorityqueue import toplevelActionSelector
 
-class TopBarWidget( html5.Header ):
+class TopBarWidget(html5.Header):
 	"""
 		Provides the top-bar of VI
 	"""
@@ -84,8 +84,7 @@ class TopBarWidget( html5.Header ):
 			for cls in iconClasses:
 				self.modulImg["class"].append( cls )
 
-		eval("top.document.title='%s'" % descr.replace("'", "\\'"))
-
+		conf["theApp"].setTitle(descr)
 
 class UserState(html5.Li):
 	def __init__(self):

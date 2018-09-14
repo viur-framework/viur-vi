@@ -101,6 +101,17 @@ class Application(html5.Div):
 	def logout(self):
 		self.login(logout=True)
 
+	def setTitle(self, title):
+		document = eval("top.document")
+		document.title = "%s - ViUR Visual Interface" % title
+
+	def setPath(self, path = ""):
+		#history = eval("history")
+		#history.pushState(path, )
+		window = eval("window")
+		window.top.location.hash = path
+
+
 if __name__ == '__main__':
 	pyjd.setup("public/main.html")
 
