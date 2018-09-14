@@ -484,6 +484,8 @@ class TreeWidget( html5.Div ):
 		else:
 			self._currentCursor[ req.reqType ] = None
 
+		self.actionBar.resetLoadingState()
+
 	def getChildKey(self, widget):
 		"""
 			Derives a string used to sort the entries in our entryframe
@@ -503,12 +505,8 @@ class TreeWidget( html5.Div ):
 
 	@staticmethod
 	def render(moduleName, adminInfo, context):
-		filter = adminInfo.get("filter")
-		columns = adminInfo.get("columns")
-
 		rootNode = context.get("rootNode") if context else None
-
 		return TreeWidget(module=moduleName,rootNode=rootNode, context=context)
 
-displayDelegateSelector.insert( 1, TreeWidget.canHandle, TreeWidget )
+displayDelegateSelector.insert(1, TreeWidget.canHandle, TreeWidget)
 moduleHandlerSelector.insert(1, TreeWidget.canHandle, TreeWidget.render)

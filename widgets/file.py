@@ -1,7 +1,7 @@
 import html5, utils
 from network import NetworkService, DeferredCall
 from widgets.tree import TreeWidget, LeafWidget
-from priorityqueue import displayDelegateSelector
+from priorityqueue import displayDelegateSelector, moduleHandlerSelector
 from event import EventDispatcher
 from config import conf
 import json
@@ -189,4 +189,10 @@ class FileWidget( TreeWidget ):
 		for x in range(0,files.length):
 			Uploader(files.item(x), self.node )
 
+	@staticmethod
+	def render(moduleName, adminInfo, context):
+		rootNode = context.get("rootNode") if context else None
+		return FileWidget(module=moduleName, rootNode=rootNode, context=context)
+
 displayDelegateSelector.insert( 3, FileWidget.canHandle, FileWidget )
+moduleHandlerSelector.insert(3, FileWidget.canHandle, FileWidget.render)

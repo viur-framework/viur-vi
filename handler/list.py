@@ -19,25 +19,62 @@ class ListHandler( Pane ):
 		self.moduleInfo = moduleInfo
 		self.mode = moduleInfo.get("mode", "normal")
 		assert self.mode in ["normal", "hidden", "group"]
+		self.requestedViews = None
 
 		if self.mode == "hidden" or moduleInfo.get("hideInMainBar", False):
 			self.hide()
 
 		else:
-			if "views" in moduleInfo.keys():
-				for view in moduleInfo["views"]:
-
-					# Inherit some default attributes from moduleInfo, if not overridden
-					for inherit in ["icon", "columns", "filter", "context"]:
-						if inherit not in view and inherit in moduleInfo:
-							view[inherit] = moduleInfo[inherit]
-
-					self.addChildPane(ListHandler(moduleName, view, isView=True))
+			if "views" in moduleInfo:
+				self._buildViewPanes(moduleInfo["views"])
 
 		if not isView:
 			initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
 
-	def canHandleInitialHash(self, pathList, params ):
+	def _buildViewPanes(self, views, register = False):
+		for view in views:
+			# Extend some inherited attributes from moduleInfo, if not overridden
+			for inherit in ["+name", "+columns", "+filter", "+context", "+actions"]:
+				if inherit in view:
+					inherit = inherit[1:]
+
+					if inherit in self.moduleInfo:
+						if isinstance(self.moduleInfo[inherit], list):
+							assert isinstance(view["+" + inherit], list)
+
+							if inherit not in view:
+								view[inherit] = self.moduleInfo[inherit][:]
+
+							view[inherit].extend(view["+" + inherit])
+						elif isinstance(self.moduleInfo[inherit], dict):
+							assert isinstance(view["+" + inherit], dict)
+
+							if inherit not in view:
+								view[inherit] = self.moduleInfo[inherit].copy()
+
+							view[inherit].update(view["+" + inherit])
+
+						else:
+							view[inherit] = self.moduleInfo[inherit] + view["+" + inherit]
+
+					else:
+						view[inherit] = view["+" + inherit]
+
+					del view["+" + inherit]
+
+			# Inherit some default attributes from moduleInfo, if not overridden or extended
+			for inherit in ["icon", "columns", "filter", "context"]:
+				if inherit not in view and inherit in self.moduleInfo:
+					view[inherit] = self.moduleInfo[inherit]
+
+			pane = ListHandler(self.moduleName, view, isView=True)
+
+			if not register:
+				self.addChildPane(pane)
+			else:
+				conf["mainWindow"].addPane(pane, self)
+
+	def canHandleInitialHash(self, pathList, params):
 		if len(pathList)>1:
 			if pathList[0]==self.moduleName:
 				if pathList[1] in ["add","list"] or (pathList[1]=="edit" and len(pathList)>2):
@@ -75,15 +112,35 @@ class ListHandler( Pane ):
 
 	def onClick(self, *args, **kwargs):
 		if self.mode == "normal" and not self.widgetsDomElm.children():
-			self.addWidget(ListWidget(self.moduleName,
-			                            filter=self.moduleInfo.get("filter"),
-			                            columns=self.moduleInfo.get("columns"),
-			                            context=self.moduleInfo.get("context"),
-			                            filterID=self.moduleInfo.get("__id"),
-			                            filterDescr=self.moduleInfo.get("visibleName", ""),
-			                            autoload=self.moduleInfo.get("autoload", True)))
+			self.addWidget(
+				ListWidget(self.moduleName,
+		            filter=self.moduleInfo.get("filter"),
+		            columns=self.moduleInfo.get("columns"),
+		            context=self.moduleInfo.get("context"),
+		            filterID=self.moduleInfo.get("__id"),
+		            filterDescr=self.moduleInfo.get("visibleName", ""),
+		            autoload=self.moduleInfo.get("autoload", True)
+				)
+			)
+
+		if self.requestedViews is None and "views.request" in self.moduleInfo:
+			conf["mainWindow"].lock()
+
+			NetworkService.request(
+				self.moduleName,
+				self.moduleInfo["views.request"],
+			    successHandler=self._onRequestViewsAvailable
+			)
 
 		super(ListHandler, self).onClick(*args, **kwargs)
 
+	def _onRequestViewsAvailable(self, req):
+		self.requestedViews = NetworkService.decode(req)
+		self._buildViewPanes(self.requestedViews, register = True)
+
+		conf["mainWindow"].unlock()
+
+		if not self.isExpanded:
+			super(ListHandler, self).onClick()
 
 HandlerClassSelector.insert( 1, ListHandler.canHandle, ListHandler )
