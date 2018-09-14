@@ -19,7 +19,8 @@ class InvalidBoneValueException(ValueError):
 
 class InternalEdit(html5.Div):
 
-	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, context=None, defaultCat=""):
+	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, context=None, defaultCat="",
+	                    module = None):
 		super(InternalEdit, self).__init__()
 
 		self.sinkEvent("onChange", "onKeyDown")
@@ -30,13 +31,12 @@ class InternalEdit(html5.Div):
 		self.errorInformation = errorInformation
 		self.defaultCat = defaultCat
 		self.context = context
+		self.module = module
 
 		self.form = self
 
 		self.renderStructure(readOnly=readOnly)
-
-		if values:
-			self.unserialize(values)
+		self.unserialize(values)
 
 	def renderStructure(self, readOnly = False):
 		self.bones = {}
@@ -85,8 +85,8 @@ class InternalEdit(html5.Div):
 				fs._section = section
 				fieldSets[cat] = fs
 
-			wdgGen = editBoneSelector.select(None, key, tmpDict)
-			widget = wdgGen.fromSkelStructure(None, key, tmpDict)
+			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
+			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 
 			descrLbl = html5.Label(bone["descr"])
@@ -187,7 +187,7 @@ class InternalEdit(html5.Div):
 		self.closeOnSuccess = closeOnSuccess
 		return self.serializeForPost(True)
 
-	def unserialize(self, data):
+	def unserialize(self, data = None):
 		"""
 			Applies the actual data to the bones.
 		"""
@@ -195,7 +195,8 @@ class InternalEdit(html5.Div):
 			if "setContext" in dir(bone) and callable(bone.setContext):
 				bone.setContext(self.context)
 
-			bone.unserialize(data)
+			if data is not None:
+				bone.unserialize(data)
 
 		DeferredCall(self.performLogics)
 
@@ -788,9 +789,13 @@ class EditWidget(html5.Div):
 			self.bones[key] = widget
 			self.containers[key] = containerDiv
 
-			#Hide invisible bones
-			if not bone["visible"]:
+			#Hide invisible bones or logic-flavored bones with their default desire
+			if not bone["visible"] or (bone["params"] and bone["params"].get("logic.visibleIf")):
 				self.containers[key].hide()
+
+			# NO elif!
+			if bone["params"] and bone["params"].get("logic.readonlyIf"):
+				self.containers[key].disable()
 
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort(key=lambda x:x[0])
@@ -808,6 +813,7 @@ class EditWidget(html5.Div):
 				vclass = view.get("class")
 				vtitle = view.get("title")
 				vcolumns = view.get("columns")
+				vfilter = view.get("filter")
 
 				if not vmodule:
 					print("Misconfiured view: %s" % view)
@@ -842,7 +848,7 @@ class EditWidget(html5.Div):
 				else:
 					context = self.context
 
-				self.views[vmodule] = ListWidget(vmodule, filter=vdescr.get("filter", {}),
+				self.views[vmodule] = ListWidget(vmodule, filter=vfilter or vdescr.get("filter", {}),
 				                                    columns = vcolumns or vdescr.get("columns"),
 				                                    context = context)
 				fs._section.appendChild(self.views[vmodule])
@@ -862,7 +868,7 @@ class EditWidget(html5.Div):
 
 		DeferredCall(self.performLogics)
 
-	def unserialize(self, data):
+	def unserialize(self, data = None):
 		"""
 			Applies the actual data to the bones.
 		"""
@@ -870,12 +876,16 @@ class EditWidget(html5.Div):
 			if "setContext" in dir(bone) and callable(bone.setContext):
 				bone.setContext(self.context)
 
-			bone.unserialize(data)
+			if data is not None:
+				bone.unserialize(data)
 
 	def serializeForPost(self, validityCheck = False):
 		res = {}
 
 		for key, bone in self.bones.items():
+			if key == "key":
+				continue #ignore the key, it is stored in self.key!
+
 			try:
 				res.update(bone.serializeForPost())
 			except InvalidBoneValueException:

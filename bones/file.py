@@ -217,12 +217,29 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 
 	def __init__(self, *args, **kwargs):
 		super(FileMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
-		self["class"].append("fileentry")
-		self.prependChild(FilePreviewImage(self.data["dest"]))
+		self.addClass("fileentry")
+
+		self.previewImg = FilePreviewImage()
+		self.prependChild(self.previewImg)
+
+		if self.data["dest"]:
+			if "key" in self.data["dest"] and len(self.data["dest"]) == 1:
+				self.fetchEntry(self.data["dest"]["key"])
+			else:
+				self.previewImg.setFile(self.data["dest"])
 
 	def fetchEntry(self, key):
-		NetworkService.request(self.module,"view/leaf/"+key,
-		                        successHandler=self.onSelectionDataAvailable, cacheable=True)
+		NetworkService.request(self.module, "view/leaf/" + key,
+		                        successHandler=self.onSelectionDataAvailable,
+		                        cacheable=True)
+
+	def onSelectionDataAvailable(self, req):
+		data = NetworkService.decode(req)
+		assert self.data["dest"]["key"] == data["values"]["key"]
+		self.data["dest"] = data["values"]
+
+		self.updateLabel()
+		self.previewImg.setFile(self.data["dest"])
 
 	def onEdit(self, *args, **kwargs):
 		"""
@@ -296,8 +313,6 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 			@param selection: The new entry that this bone should reference
 			@type selection: dict | list[dict]
 		"""
-		print("setSelection", selection)
-
 		if selection is None:
 			return
 
@@ -316,6 +331,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		self.prependChild(self.previewImg)
 
 		self.selection = None
+		self.currentSelector = None
 
 	def onDragOver(self, event):
 		super(FileSingleSelectionBone,self).onDragOver(event)
@@ -343,12 +359,22 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = FileWidget( self.destModule, isSelector="leaf" )
-		currentSelector.selectionReturnEvent.register( self )
-		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is-active")
+		if not self.currentSelector:
+			fileSelector = conf.get("fileSelector")
 
-	def onSelectionReturn(self, table, selection ):
+			if not fileSelector or conf["mainWindow"].containsWidget(fileSelector):
+				fileSelector = FileWidget(self.destModule, isSelector="leaf")
+
+			if not conf.get("fileSelector"):
+				conf["fileSelector"] = fileSelector
+
+			self.currentSelector = fileSelector
+			self.currentSelector.selectionReturnEvent.register(self)
+
+		conf["mainWindow"].stackWidget(self.currentSelector)
+		self.parent().addClass("is_active")
+
+	def onSelectionReturn(self, table, selection):
 		"""
 			Merges the selection made in the TreeWidget into our value(s)
 		"""
@@ -362,6 +388,12 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 		self.setSelection([{"dest": x.data for x in selection if isinstance(x,LeafFileWidget)}][0] )
 		self.changeEvent.fire(self)
+
+	def onDetach(self):
+		super(FileSingleSelectionBone, self).onDetach()
+
+		if self.currentSelector:
+			self.currentSelector.selectionReturnEvent.unregister(self)
 
 	def onEdit(self, *args, **kwargs):
 		"""

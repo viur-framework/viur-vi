@@ -47,6 +47,7 @@ class Pane(html5.Div):
 			self.closeBtn.hide()
 
 		self.closeable = closeable
+		self.isExpanded = False
 
 	def __setattr__(self, key, value):
 		super(Pane, self).__setattr__(key, value)
@@ -210,34 +211,49 @@ class Pane(html5.Div):
 				return( True )
 		return( False )
 
-	def onClick(self, event, *args, **kwargs ):
+	def onClick(self, event = None, *args, **kwargs ):
 		self.focus()
-		event.stopPropagation()
+
+		if event:
+			event.stopPropagation()
+
+	def expand(self):
+		if self.childDomElem and self.collapseable and not self.isExpanded:
+			self.childDomElem["style"]["display"] = "initial"
+			self.addClass("is-active")
+			self.isExpanded = True
+
+	def collapse(self):
+		if self.childDomElem and self.collapseable and self.isExpanded:
+			self.childDomElem["style"]["display"] = "none"
+			self.removeClass("is-active")
+			self.isExpanded = False
 
 	def focus(self):
-		conf["mainWindow"].focusPane( self )
+		conf["mainWindow"].focusPane(self)
 
-class GroupPane( Pane ):
+class GroupPane(Pane):
 	"""
 		This pane groups subpanes; it cannot have direct childrens
 	"""
 
-	def __init__(self, *args, **kwargs ):
-		super( GroupPane, self ).__init__( *args, **kwargs )
+	def __init__(self, *args, **kwargs):
+		super(GroupPane, self ).__init__(*args, **kwargs)
+		self.addClass("vi-viewer-grouppane")
+
 		self.childDomElem = html5.Ul()
 		self.childDomElem["style"]["display"] = "none"
-		self.addClass("vi-viewer-grouppane")
-		self.appendChild( self.childDomElem )
+		self.appendChild(self.childDomElem)
 
-	def onClick(self, event, *args, **kwargs ):
-		if self.childDomElem["style"]["display"] == "none":
-			self.childDomElem["style"]["display"] = "block"
-			self.addClass("is-active")
+	def onClick(self, event = None, *args, **kwargs):
+		if self.isExpanded:
+			self.collapse()
 		else:
-			self.childDomElem["style"]["display"] = "none"
-			self.removeClass("is-active")
-		event.stopPropagation()
+			self.expand()
 
-	def onFocus(self,event):
-		if len( self.childPanes )>0:
-			conf["mainWindow"].focusPane( self.childPanes[0] )
+		if event:
+			event.stopPropagation()
+
+	def onFocus(self, event):
+		if len(self.childPanes) > 0:
+			conf["mainWindow"].focusPane(self.childPanes[0])

@@ -15,14 +15,21 @@ class ContextAction(html5.ext.Button):
 		vars = dsc[2].split(",")
 
 		assert mod in conf["modules"], "The module '%s' must provide an adminInfo when run in a context action"
-		self.adminInfo = conf["modules"][mod]
+		adminInfo = conf["modules"][mod]
 
-		title = self.adminInfo.get("visibleName", self.adminInfo.get("name"), mod)
-		icon = self.adminInfo.get("icon")
+		if "visibleName" in adminInfo:
+			title = adminInfo["visibleName"]
+		elif "name" in adminInfo:
+			title = adminInfo["name"]
+		else:
+			title = mod
 
-		super(ContextAction, self).__init__(title, *args, **kwargs)
+		icon = adminInfo.get("icon")
+
+		super(ContextAction, self).__init__(txt=title, *args, **kwargs)
 
 		self.widget = None
+		self.adminInfo = adminInfo
 		self.contextModule = mod
 		self.contextVariables = vars
 

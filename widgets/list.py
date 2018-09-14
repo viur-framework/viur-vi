@@ -19,7 +19,7 @@ class ListWidget(html5.Div):
 		to this table.
 	"""
 	def __init__(self, module, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
-	             batchSize = None, context = None, *args, **kwargs):
+	             batchSize = None, context = None, autoload = True, *args, **kwargs):
 		"""
 			@param module: Name of the modul we shall handle. Must be a list application!
 			@type module: string
@@ -109,7 +109,9 @@ class ListWidget(html5.Div):
 		self.appendChild( self.filterDescriptionSpan )
 		self.filterDescriptionSpan["class"].append("filterdescription")
 		self.updateFilterDescription()
-		self.reloadData()
+
+		if autoload:
+			self.reloadData()
 
 	def updateFilterDescription(self):
 		self.filterDescriptionSpan.removeAllChildren()
@@ -233,6 +235,13 @@ class ListWidget(html5.Div):
 		self.updateFilterDescription()
 		self.reloadData()
 
+	def setContext(self, context):
+		"""
+			Applies a new context.
+		"""
+		self.context = context
+		self.reloadData()
+
 	def getFilter(self):
 		if self.filter:
 			return( {k:v for k,v in self.filter.items()})
@@ -333,7 +342,8 @@ class ListWidget(html5.Div):
 		return moduleInfo["handler"] == "list" or moduleInfo["handler"].startswith("list.")
 
 	@staticmethod
-	def render(cls, moduleName, adminInfo, context):
+	def render(moduleName, adminInfo, context):
+
 		filter = adminInfo.get("filter")
 		columns = adminInfo.get("columns")
 

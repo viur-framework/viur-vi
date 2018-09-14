@@ -246,11 +246,14 @@ class SelectRootNode( html5.Select ):
 		super( SelectRootNode, self ).__init__( *args, **kwargs )
 		self["class"] = "select"
 		self.sinkEvent("onChange")
+		self.hide()
 
 	def onAttach(self):
 		super( SelectRootNode, self ).onAttach()
-		self.update()
 		self.parent().parent().rootNodeChangedEvent.register( self )
+
+		if self.parent().parent().rootNode is None:
+			self.update()
 
 	def onDetach(self):
 		self.parent().parent().rootNodeChangedEvent.unregister( self )
@@ -277,6 +280,11 @@ class SelectRootNode( html5.Select ):
 			if node["key"] == self.parent().parent().rootNode:
 				option["selected"] = True
 			self.appendChild( option )
+
+		if len(self.children()) > 1:
+			self.show()
+		else:
+			self.hide()
 
 	def onChange(self, event):
 		newRootNode = self["options"].item(self["selectedIndex"]).value

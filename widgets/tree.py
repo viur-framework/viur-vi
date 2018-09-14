@@ -4,7 +4,7 @@ from network import NetworkService
 from widgets.actionbar import ActionBar
 from widgets.search import Search
 from event import EventDispatcher
-from priorityqueue import displayDelegateSelector, viewDelegateSelector
+from priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
 import utils
 from html5.keycodes import *
 from config import conf
@@ -280,7 +280,7 @@ class TreeWidget( html5.Div ):
 	leafWidget = LeafWidget
 	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload"]
 
-	def __init__( self, modul, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
+	def __init__( self, module, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
@@ -291,10 +291,10 @@ class TreeWidget( html5.Div ):
 		"""
 		super( TreeWidget, self ).__init__( )
 		self["class"].append("tree")
-		self.module = modul
+		self.module = module
 		self.rootNode = rootNode
 		self.node = node or rootNode
-		self.actionBar = ActionBar( modul, "tree" )
+		self.actionBar = ActionBar( module, "tree" )
 		self.appendChild( self.actionBar )
 		self.pathList = html5.Div()
 		self.pathList["class"].append("breadcrumb")
@@ -484,19 +484,29 @@ class TreeWidget( html5.Div ):
 		else:
 			self._currentCursor[ req.reqType ] = None
 
-	def getChildKey(self, widget ):
+		self.actionBar.resetLoadingState()
+
+	def getChildKey(self, widget):
 		"""
 			Derives a string used to sort the entries in our entryframe
 		"""
-		if isinstance( widget, self.nodeWidget ):
-			return("0-%s" % widget.data["name"].lower())
-		elif isinstance( widget, self.leafWidget ):
-			return("1-%s" % widget.data["name"].lower())
+		name = (widget.data.get("name") or "").lower()
+
+		if isinstance(widget, self.nodeWidget):
+			return "0-%s" % name
+		elif isinstance(widget, self.leafWidget):
+			return "1-%s" % name
 		else:
-			return("2-")
+			return "2-"
 
 	@staticmethod
-	def canHandle( modul, moduleInfo ):
-		return( moduleInfo["handler"].startswith("tree." ) )
+	def canHandle(moduleName, moduleInfo):
+		return moduleInfo["handler"].startswith("tree.")
 
-displayDelegateSelector.insert( 1, TreeWidget.canHandle, TreeWidget )
+	@staticmethod
+	def render(moduleName, adminInfo, context):
+		rootNode = context.get("rootNode") if context else None
+		return TreeWidget(module=moduleName,rootNode=rootNode, context=context)
+
+displayDelegateSelector.insert(1, TreeWidget.canHandle, TreeWidget)
+moduleHandlerSelector.insert(1, TreeWidget.canHandle, TreeWidget.render)
