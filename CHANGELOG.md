@@ -8,21 +8,22 @@ Currently under development.
 
 - Improvements of the List-module handler (ListHandler); Please check out
   [the corresponding wiki](https://github.com/viur-framework/vi/wiki/adminInfo-in-List-modules) entry for usage and code examples.
-  - ListHandler views are now inheriting "icon", "columns", "filter"
-    and "context" from the provided adminInfo, if not explicitly overridden.
-  - ListHandler views can now be extended using the parameters "+name",
-    "+columns", "+filter", "+context", "+actions", which is then appended or
-    merged into their appropriate positions.
-  - The parameter "views.request" can be used to additionally load views on
-    demand from the server by calling a function, returning a "views"-like
+  - ListHandler views are now inheriting ``"icon"``, ``"columns"``,
+    ``"filter"`` and ``"context"`` from the provided adminInfo, if not
+	explicitly overridden.
+  - ListHandler views can now be extended using the parameters ``"+name"``,
+    ``"+columns"``, ``"+filter"``, ``"+context"``, ``"+actions"``, which is
+	then appended or merged into their appropriate positions.
+  - The parameter ``"views.request"`` can be used to additionally load views
+    on demand from the server by calling a function, returning a "views"-like
 	list of views configuration as in a standard adminInfo. The function is
 	invoked when the user clicks on a view with appropriate position, with
 	only a short delay.
-  - The parameter "mode" can be set to "normal" (default), "hidden" or "group"
-    to let List-modules behave like Groups, where the underlying views provide
-	the neccessary module functionalities.
-- The adminInfo["sortIndex"] value is now ordered correctly in ascending order,
-  and works as expected on all browsers.
+  - The parameter ``"mode"`` can be set to ``"normal"`` (default), ``"hidden"``
+    or ``"group"`` to let List-modules behave like Groups, where the
+	underlying views provide the neccessary module functionalities.
+- The ``adminInfo["sortIndex"]`` value is now ordered correctly in ascending
+  order, and works as expected on all browsers.
 - File selector is cached globally for a better user experience (you don't have
   to navigate to the previous location again and again and again...)
 - ViUR logics integration updated and made their rendering smoothier.
