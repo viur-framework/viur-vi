@@ -883,6 +883,9 @@ class EditWidget(html5.Div):
 		res = {}
 
 		for key, bone in self.bones.items():
+			if key == "key":
+				continue #ignore the key, it is stored in self.key!
+
 			try:
 				res.update(bone.serializeForPost())
 			except InvalidBoneValueException:
