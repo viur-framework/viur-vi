@@ -369,7 +369,8 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 				conf["fileSelector"] = fileSelector
 
 			self.currentSelector = fileSelector
-			self.currentSelector.selectionReturnEvent.register(self)
+
+		self.currentSelector.selectionReturnEvent.register(self, reset=True)
 
 		conf["mainWindow"].stackWidget(self.currentSelector)
 		self.parent().addClass("is_active")
