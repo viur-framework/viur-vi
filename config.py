@@ -14,7 +14,10 @@ conf = {
 	"vi.viur": "ViUR",
 
 	# Vi name
-	"vi.name": "Vi",
+	"vi.name": "ViUR Visual Interface",
+
+	# Title delimiter
+	"vi.title.delimiter": " - ",
 
 	# Which access rights are required to open the Vi?
 	"vi.access.rights": ["admin", "root"],

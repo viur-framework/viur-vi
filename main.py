@@ -101,9 +101,19 @@ class Application(html5.Div):
 	def logout(self):
 		self.login(logout=True)
 
-	def setTitle(self, title):
+	def setTitle(self, title = None):
 		document = eval("top.document")
-		document.title = "%s - ViUR Visual Interface" % title
+
+		if title:
+			title = [title]
+		else:
+			title = []
+
+		addendum = conf.get("vi.name")
+		if addendum:
+			title.append(addendum)
+
+		document.title = conf["vi.title.delimiter"].join(title)
 
 	def setPath(self, path = ""):
 		#history = eval("history")

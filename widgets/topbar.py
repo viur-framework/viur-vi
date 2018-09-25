@@ -57,8 +57,9 @@ class TopBarWidget(html5.Header):
 			DeferredCall(self.setTitle, _delay=500)
 			return
 
-		title = conf["server"].get("vi.name", "Visual Interface")
-		self.modulH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
+		title = conf["server"].get("vi.name")
+		if title:
+			self.modulH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
 
 	def onClick(self, event):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulH1):
