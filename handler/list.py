@@ -83,17 +83,24 @@ class ListHandler(Pane):
 
 		return False
 
+	def _createWidget(self):
+		return ListWidget(
+			self.moduleName,
+           filter=self.moduleInfo.get("filter"),
+           columns=self.moduleInfo.get("columns"),
+           context=self.moduleInfo.get("context"),
+           filterID=self.moduleInfo.get("__id"),
+           filterDescr=self.moduleInfo.get("visibleName", ""),
+           autoload=self.moduleInfo.get("autoload", True)
+		)
+
 	def handleInitialHash(self, pathList, params):
 		assert self.canHandleInitialHash(pathList, params)
+
 		if pathList[1] == "list":
-			filter = None
-			columns = None
-			if "filter" in self.moduleInfo.keys():
-				filter = self.moduleInfo["filter"]
-			if "columns" in self.moduleInfo.keys():
-				columns = self.moduleInfo["columns"]
-			self.addWidget(ListWidget(self.moduleName, filter=filter, columns=columns))
+			self.addWidget(self._createWidget())
 			self.focus()
+
 		elif pathList[1] == "add":
 			pane = Pane(translate("Add"), closeable=True,
 			            iconClasses=["module_%s" % self.moduleName, "apptype_list", "action_add"])
@@ -101,6 +108,7 @@ class ListHandler(Pane):
 			pane.addWidget(edwg)
 			conf["mainWindow"].addPane(pane, parentPane=self)
 			pane.focus()
+
 		elif pathList[1] in ["edit", "clone"] and len(pathList) > 2:
 			pane = Pane(translate("Edit"), closeable=True,
 			            iconClasses=["module_%s" % self.moduleName, "apptype_list", "action_edit"])
@@ -117,16 +125,7 @@ class ListHandler(Pane):
 		conf["theApp"].setPath(self.moduleName + "/list")
 
 		if self.mode == "normal" and not self.widgetsDomElm.children():
-			self.addWidget(
-				ListWidget(self.moduleName,
-				           filter=self.moduleInfo.get("filter"),
-				           columns=self.moduleInfo.get("columns"),
-				           context=self.moduleInfo.get("context"),
-				           filterID=self.moduleInfo.get("__id"),
-				           filterDescr=self.moduleInfo.get("visibleName", ""),
-				           autoload=self.moduleInfo.get("autoload", True)
-				           )
-			)
+			self.addWidget(self._createWidget())
 
 		if self.requestedViews is None and "views.request" in self.moduleInfo:
 			conf["mainWindow"].lock()
