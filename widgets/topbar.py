@@ -53,11 +53,7 @@ class TopBarWidget(html5.Header):
 				self.iconnav.appendChild(widget())
 
 	def setTitle(self):
-		if not conf["server"]:
-			DeferredCall(self.setTitle, _delay=500)
-			return
-
-		title = conf["server"].get("vi.name")
+		title = conf.get("vi.name")
 		if title:
 			self.modulH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
 

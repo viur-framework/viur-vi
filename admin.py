@@ -108,10 +108,13 @@ class AdminScreen(Screen):
 			self.getCurrentUser()
 			return
 
+		conf["server"] = config.get("configuration", {})
+
+		if "vi.name" in conf["server"]:
+			conf["vi.name"] = str(conf["server"]["vi.name"])
+
 		self.userLoggedOutMsg = UserLogoutMsg()
 		self.topBar.invoke()
-
-		conf["server"] = config.get("configuration", {})
 
 		moduleGroups = []
 
