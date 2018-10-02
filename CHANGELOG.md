@@ -2,9 +2,13 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
-## 2.3 Kilauea
+## [develop]
 
-Currently under development.
+Current development version.
+
+## [2.3] Kilauea
+
+Release date: Oct 2, 2018
 
 - Prints the path to the current module or entity into the address bar.
 - Improvements of the List-module handler (ListHandler); Please check out
@@ -27,11 +31,11 @@ Currently under development.
   order, and works as expected on all browsers.
 - File selector is cached globally for a better user experience (you don't have
   to navigate to the previous location again and again and again...)
-- ViUR logics integration updated and made their rendering smoothier.
+- ViUR logics integration updated and made their rendering smoother.
 - Bugfix: FileWidget which wasn't recognized by moduleHandlerSelector.
 - Bugfix: Reset the actionbar loading state in tree module.
 
-## 2.2 Etna
+## [2.2] Etna
 
 Release date: Apr 23, 2018
 
@@ -52,7 +56,7 @@ Release date: Apr 23, 2018
   - Making AdminScreen instances re-usable with different users
   - Tooltips shall always be expandable
 
-## 2.1
+## [2.1]
 
 Release date: Nov 2, 2017
 
@@ -68,7 +72,7 @@ Release date: Nov 2, 2017
 - New README.md and CHANGELOG.md
 - v2.1.1: File add button was not working
 
-## 2.0
+## [2.0]
 
 Release date: Dec 22, 2016
 
@@ -76,3 +80,10 @@ Release date: Dec 22, 2016
 - "id" was renamed to "key"
 - Supporting of universal user module
 - Styling
+
+
+[develop]: https://github.com/viur-framework/vi/compare/v2.3.0...develop
+[2.3]: https://github.com/viur-framework/vi/compare/v2.2.0...v2.3.0
+[2.2]: https://github.com/viur-framework/vi/compare/v2.1.0...v2.2.0
+[2.1]: https://github.com/viur-framework/vi/compare/v2.0.0...v2.1.0
+[2.0]: https://github.com/viur-framework/vi/compare/v1.1.0...v2.0.0
