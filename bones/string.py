@@ -73,14 +73,18 @@ class StringViewBoneDelegate( object ):
 			return aspan
 
 class Tag(html5.Span):
-	def __init__(self, parentBone, tag, isEditMode, readonly=False, *args, **kwargs ):
+	def __init__(self, parentBone, tag, isEditMode, readonly=False, multiLine=False, *args, **kwargs ):
 		super(Tag, self).__init__(*args, **kwargs)
 		self["class"].append("tag")
 
 		self.parentBone = parentBone
 
-		self.input = html5.Input()
-		self.input["type"] = "text"
+		if multiLine:
+			self.input = html5.Textarea()
+		else:
+			self.input = html5.Input()
+			self.input["type"] = "text"
+
 		self.input["value"] = tag
 		self.appendChild(self.input)
 
@@ -132,7 +136,7 @@ class Tag(html5.Span):
 		self.parentBone.currentTagToDrag = None
 
 class StringEditBone(html5.Div):
-	def __init__(self, moduleName, boneName, readOnly, multiple=False, languages=None, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, readOnly, multiple=False, languages=None, multiLine=False, *args, **kwargs ):
 		super( StringEditBone,  self ).__init__( *args, **kwargs )
 		self.moduleName = moduleName
 		self.boneName = boneName
@@ -191,15 +195,19 @@ class StringEditBone(html5.Div):
 				langBtn.lang = lang
 				self.buttonContainer.appendChild(langBtn)
 
-				inputField = html5.Input()
-				inputField["type"] = "text"
+				if multiLine:
+					inputField = html5.Textarea()
+				else:
+					inputField = html5.Input()
+					inputField["type"] = "text"
+
 				inputField["style"]["display"] = "none"
 				inputField["class"].append("lang_%s" % lang)
 
 				if self.readOnly:
 					inputField["readonly"] = True
 
-				self.languagesContainer.appendChild( inputField )
+				self.languagesContainer.appendChild(inputField)
 				self.langEdits[lang] = inputField
 				self.langBtns[lang] = langBtn
 
@@ -219,9 +227,14 @@ class StringEditBone(html5.Div):
 				self.tagContainer.appendChild(addBtn)
 
 		else: #not languages and not multiple:
-			self.input = html5.Input()
-			self.input["type"] = "text"
-			self.appendChild( self.input )
+
+			if multiLine:
+				self.input = html5.Textarea()
+			else:
+				self.input = html5.Input()
+				self.input["type"] = "text"
+
+			self.appendChild(self.input)
 
 			if self.readOnly:
 				self.input["readonly"] = True
@@ -231,15 +244,11 @@ class StringEditBone(html5.Div):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 
 		if boneName in skelStructure.keys():
-			if "multiple" in skelStructure[ boneName ].keys():
-				multiple = skelStructure[ boneName ]["multiple"]
-			else:
-				multiple = False
-			if "languages" in skelStructure[ boneName ].keys():
-				languages = skelStructure[ boneName ]["languages"]
-			else:
-				languages = None
-		return( StringEditBone( moduleName, boneName, readOnly, multiple=multiple, languages=languages ) )
+			multiple = skelStructure[boneName].get("multiple", False)
+			languages = skelStructure[boneName].get("languages")
+			multiLine = skelStructure[boneName].get("type") == "str.markdown"
+
+		return StringEditBone(moduleName, boneName, readOnly, multiple=multiple, languages=languages, multiLine=multiLine)
 
 	def onLangBtnClicked(self, btn):
 		self.setLang( btn.lang )
