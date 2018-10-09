@@ -10,7 +10,7 @@ from widgets.actionbar import ActionBar
 from network import NetworkService
 import utils
 from config import conf
-from widgets.edit import fieldset_A
+from widgets.edit import EditWidgetFieldset
 
 class RepeatDatePopup(html5.Div):
 
@@ -110,21 +110,9 @@ class RepeatDatePopup(html5.Div):
 
 		fieldSets = {}
 		cat = "byweek"
-		fs = html5.Fieldset()
-		fs["class"] = cat
-		if cat=="byweek":
-			fs["class"].append("active")
 
-		fs["name"] = cat
-		legend = html5.Legend()
-		fshref = fieldset_A()
-		fshref.appendChild(html5.TextNode(cat) )
-		legend.appendChild( fshref )
-		fs.appendChild(legend)
-		section = html5.Section()
-		fs.appendChild(section)
-		fs._section = section
-		fieldSets[ cat ] = fs
+		fieldSets[cat] = EditWidgetFieldset(cat)
+		fieldSets[cat].addClass("active")
 
 		self.dtstart = data["values"]["startdate"]
 		startdateLabel = html5.Label("Termin")
