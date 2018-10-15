@@ -308,9 +308,9 @@ class EditWidgetFieldset(html5.Fieldset):
 		legend = html5.Legend()
 		self.appendChild(legend)
 
-		a = html5.A()
-		a.appendChild(html5.TextNode(title or cat))
-		legend.appendChild(a)
+		self.title = html5.A()
+		self.title.appendChild(html5.TextNode(title or cat))
+		legend.appendChild(self.title)
 
 		section = html5.Section()
 		self.appendChild(section)
@@ -340,6 +340,8 @@ class EditWidgetFieldset(html5.Fieldset):
 			self.activate()
 
 	def onClick(self, event):
+		if not html5.utils.doesEventHitWidgetOrChildren(event, self.title):
+			return
 		for child in self.parent().children():
 			if html5.utils.doesEventHitWidgetOrChildren(event, child):
 				if child is self:
