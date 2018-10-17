@@ -6,6 +6,8 @@
   src: url("./font/summernote.eot?#iefix") format("embedded-opentype"), url("./font/summernote.woff?e557617934c52ea068954af79ed7c221") format("woff"), url("./font/summernote.ttf?e557617934c52ea068954af79ed7c221") format("truetype")
 }
 
+
+
 [class^="note-icon-"]:before, [class*=" note-icon-"]:before {
   display: inline-block;
   font: normal normal normal 14px summernote;
@@ -834,7 +836,9 @@ a.note-dropdown-item {
 }
 
 .note-editor {
-  position: relative
+  position: relative;
+  clear: both;
+  width: 100%;
 }
 
 .note-editor .note-dropzone {
@@ -915,7 +919,7 @@ a.note-dropdown-item {
   color: #000;
   word-wrap: break-word;
   background-color: #fff;
-  min-height: 50vh;
+  height: 40vh;
 }
 
 .note-editor.note-frame .note-editing-area .note-editable[contenteditable="false"] {

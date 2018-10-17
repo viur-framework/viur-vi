@@ -204,10 +204,10 @@ class AdminScreen(Screen):
 		self.unlock()
 
 		# DEBUG
-		from widgets.wysiwyg import Wysiwyg
-		pane = Pane("Texteditor")
-		pane.addWidget(Wysiwyg("Hello World"))
-		conf["mainWindow"].addPane(pane)
+		# from widgets.wysiwyg import Wysiwyg
+		# pane = Pane("Texteditor")
+		# pane.addWidget(Wysiwyg("Hello World"))
+		# conf["mainWindow"].addPane(pane)
 
 	def log(self, type, msg ):
 		self.logWdg.log( type, msg )

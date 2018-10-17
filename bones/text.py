@@ -3,7 +3,7 @@ import html5
 
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from config import conf
-from widgets.wysiwyg import Wysiwyg
+from widgets.htmleditor import HtmlEditor
 from i18n import translate
 from bones.base import BaseBoneExtractor
 
@@ -70,8 +70,10 @@ class TextEditBone(html5.Div):
 		self.currentEditor = None
 		self.valuesdict = dict()
 
-		##multilangbone
+		# multilangbone
 		if self.languages:
+			self.value = {lng: "" for lng in self.languages}
+
 			if "currentlanguage" in conf and conf["currentlanguage"] in self.languages:
 				self.selectedLang = conf["currentlanguage"]
 			elif len(self.languages) > 0:
@@ -87,28 +89,38 @@ class TextEditBone(html5.Div):
 
 			self.appendChild(self.langButContainer)
 			self.refreshLangButContainer()
-
-		self.input = html5.Textarea()
-		self.appendChild(self.input)
-		self.previewDiv = html5.Div()
-		self.previewDiv["class"].append("preview")
-		self.appendChild(self.previewDiv)
-
-		if self.isPlainText:
-			self.previewDiv["style"]["display"] = "none"
 		else:
-			self.input["style"]["display"] = "none"
+			self.value = ""
 
-		if readOnly:
-			self.input["readonly"] = True
+		if not readOnly and not self.isPlainText:
+			self.input = HtmlEditor()
+		else:
+			self.input = html5.Textarea()
+			if readOnly:
+				self.input["readonly"] = True
 
-		elif not readOnly and not self.isPlainText:
-			openEditorBtn = html5.ext.Button(translate("Edit Text"), self.openTxt)
-			openEditorBtn["class"].append("textedit")
-			openEditorBtn["class"].append("icon")
-			self.appendChild(openEditorBtn)
+		self.appendChild(self.input)
 
-		self.sinkEvent("onClick")
+	# self.sinkEvent("onClick")
+
+	# def onAttach(self):
+	# 	super(TextEditBone, self).onAttach()
+	#
+	# 	if self.value and not readOnly and not self.isPlainText:
+	# 		if self.languages:
+	# 			self.edit["value"] = self.value.get(self.selectedLang)
+	# 		else:
+	# 			self.edit["value"] = self.value
+	#
+	# def onDetach(self):
+	# 	super(TextEditBone, self).onDetach()
+	# 	self.updateValue()
+	#
+	# def updateValue(self):
+	# 	if self.languages:
+	# 		self.value[self.selectedLang] = self.edit["value"]
+	# 	else:
+	# 		self.value = self.edit["value"]
 
 	def _setDisabled(self, disable):
 		"""
@@ -118,38 +130,6 @@ class TextEditBone(html5.Div):
 		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
 			self.parent()["class"].remove("is_active")
 
-	def openTxt(self, *args, **kwargs):
-		assert self.currentEditor is None
-		actionBarHint = self.boneName
-		if self.descrHint:
-			actionBarHint = self.descrHint
-		self.currentEditor = Wysiwyg(self.input["value"], actionBarHint=actionBarHint)
-		self.currentEditor.saveTextEvent.register(self)
-		self.currentEditor.abortTextEvent.register(self)
-		conf["mainWindow"].stackWidget(self.currentEditor)
-		self.parent()["class"].append("is_active")
-
-	def closeEditor(self):
-		if not self.currentEditor:
-			return
-
-		conf["mainWindow"].removeWidget(self.currentEditor)
-		self.currentEditor = None
-
-	def onSaveText(self, editor, txt):
-		assert self.currentEditor is not None
-
-		self.input["value"] = txt
-
-		if not self.isPlainText:
-			self.previewDiv.element.innerHTML = self.input["value"]
-
-		self.closeEditor()
-
-	def onAbortText(self, editor):
-		assert self.currentEditor is not None
-		self.closeEditor()
-
 	def changeLang(self, btn):
 		self.valuesdict[self.selectedLang] = self.input["value"]
 		self.selectedLang = btn["value"]
@@ -158,7 +138,7 @@ class TextEditBone(html5.Div):
 		else:
 			self.input["value"] = ""
 		if not self.isPlainText:
-			self.previewDiv.element.innerHTML = self.input["value"]
+			self.input.element.innerHTML = self.input["value"]
 		self.refreshLangButContainer()
 
 	def refreshLangButContainer(self):
@@ -182,7 +162,7 @@ class TextEditBone(html5.Div):
 		readOnly = "readonly" in skelStructure[boneName].keys() and skelStructure[boneName]["readonly"]
 		isPlainText = "validHtml" in skelStructure[boneName].keys() and not skelStructure[boneName]["validHtml"]
 		langs = skelStructure[boneName]["languages"] if (
-				"languages" in skelStructure[boneName].keys() and skelStructure[boneName]["languages"]) else None
+			"languages" in skelStructure[boneName].keys() and skelStructure[boneName]["languages"]) else None
 		descr = skelStructure[boneName]["descr"] if "descr" in skelStructure[boneName].keys() else None
 		return TextEditBone(moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr)
 
@@ -200,7 +180,7 @@ class TextEditBone(html5.Div):
 			else:
 				self.input["value"] = data[self.boneName] if data[self.boneName] else ""
 		if not self.isPlainText:
-			self.previewDiv.element.innerHTML = self.input["value"]
+			self.input.element.innerHTML = self.input["value"]
 
 	def serializeForPost(self):
 		if self.selectedLang:
@@ -211,13 +191,6 @@ class TextEditBone(html5.Div):
 
 	def serializeForDocument(self):
 		return self.serializeForPost()
-
-	def onClick(self, event):
-		if html5.utils.doesEventHitWidgetOrChildren(event, self.previewDiv):
-			event.stopPropagation()
-			event.preventDefault()
-			if not self.readOnly:
-				self.openTxt()
 
 	def setExtendedErrorInformation(self, errorInfo):
 		pass

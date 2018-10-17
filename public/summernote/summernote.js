@@ -1,6 +1,6 @@
-function createSummernote(elem) {
+function createSummernote(input) {
 	// create summernote instance
-	$(elem).summernote({
+	$(input).summernote({
 		callbacks: {
 			onKeyup: function (e) {
 				if (e.keyCode === 8) {
@@ -16,7 +16,7 @@ function createSummernote(elem) {
 			onPaste: function (e) {
 				var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
 				e.preventDefault();
-				$(elem).summernote('insertText', bufferText);
+				$(input).summernote('insertText', bufferText);
 			}
 		},
 		lang: 'de-DE',
@@ -26,7 +26,8 @@ function createSummernote(elem) {
 			['elements', ['picture', 'table', 'link']],
 			['list', ['ul', 'ol']],
 			['indent', ['indentIn', 'indentOut']],
-			['history', ['undo', 'redo']]
+			['history', ['undo', 'redo']],
+			['codeview']
 		],
 		prettifyHtml: true,
 		buttons: {
@@ -112,7 +113,11 @@ function createSummernote(elem) {
 		styleWithSpan: false
 	});
 
-	$(elem).on("focusout", function () {
+	// .note-editor needs a fixed width, otherwise CodeMirror calculate a wrong with and the content will overflow
+	$('.note-editor').width($('.note-editor').width())
+
+
+	$(input).on("focusout", function () {
 		setTimeout(function () {
 			$(".note-popover").hide();
 			$(".note-image-popover").hide();
@@ -124,7 +129,7 @@ function createSummernote(elem) {
 		$(".note-image-popover").hide();
 	});
 
-	return $(elem);
+	return $(input);
 }
 
 window.top.createSummernote = createSummernote;
