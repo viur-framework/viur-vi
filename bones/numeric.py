@@ -2,7 +2,6 @@
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
-from html5.keycodes import *
 from config import conf
 from bones.base import BaseBoneExtractor
 
@@ -146,7 +145,7 @@ class ExtendedNumericSearch( html5.Div ):
 			self.appendChild( self.input2 )
 
 	def onKeyDown(self, event):
-		if isReturn(event.keyCode):
+		if html5.isReturn(event.keyCode):
 			self.filterChangedEvent.fire()
 
 	def updateFilter(self, filter):
