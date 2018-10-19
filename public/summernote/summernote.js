@@ -23,11 +23,12 @@ function createSummernote(input) {
 		toolbar: [
 			['Stil', ['bold', 'italic', 'underline', 'clear']],
 			['Alignment', ['alignLeft', 'alignCenter', 'alignRight', 'alignJustify']],
-			['elements', ['picture', 'table', 'link']],
+			['elements', [ 'table', 'link']],
 			['list', ['ul', 'ol']],
 			['indent', ['indentIn', 'indentOut']],
 			['history', ['undo', 'redo']],
-			['codeview']
+			['codeview'],
+			['foo', ['viurPicture']]
 		],
 		prettifyHtml: true,
 		buttons: {
@@ -37,6 +38,7 @@ function createSummernote(input) {
 			alignJustify: customButton('note-icon-align-justify', 'Blocksatz CTRL+SHIFT+J', 'justifyFull'),
 			indentIn: customButton('note-icon-align-indent', 'Einrückung + (CTRL+RIGHTBRACKET)', 'indent'),
 			indentOut: customButton('note-icon-align-outdent', 'Einrückung - (CTRL+LEFTBRACKET)', 'outdent'),
+			viurPicture: viurPictureBtn,
 		},
 		codemirror: { // codemirror options
 			mode: 'text/html',
@@ -134,8 +136,8 @@ function createSummernote(input) {
 
 window.top.createSummernote = createSummernote;
 
-function customButton (className, tooltip, invokeCmd) {
-	return function(context) {
+function customButton(className, tooltip, invokeCmd) {
+	return function (context) {
 		var ui = $.summernote.ui;
 
 		// create button
@@ -151,3 +153,25 @@ function customButton (className, tooltip, invokeCmd) {
 		return button.render(); // return button as jquery object
 	}
 }
+
+var viurPictureBtn = function (context) {
+	var ui = $.summernote.ui;
+
+	// create button
+	var button = ui.button({
+		contents: '<i class="note-icon-picture"/>',
+		tooltip: 'Bild',
+		container: 'body',
+		click: function () {
+			var boneName = $(context.layoutInfo.note[0]).data('bonename');
+			console.debug(boneName);
+			$('.viur-insert-image-btn[data-bonename="'+boneName+'"]').trigger('click');
+			console.debug($('.viur-insert-image-btn[data-bonename="'+boneName+'"]'))
+			//console.log(context)
+			//console.log($.summernote)
+			//context.invoke("createLink", {text:'foo',url:'bar'})
+		}
+	});
+
+	return button.render(); // return button as jquery object
+};

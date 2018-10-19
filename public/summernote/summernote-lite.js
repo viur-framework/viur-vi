@@ -1,11 +1,11 @@
 /**
- * Super simple wysiwyg editor v0.8.9
+ * Super simple wysiwyg editor v0.8.10
  * https://summernote.org
  *
  * Copyright 2013- Alan Hong. and other contributors
  * summernote may be freely distributed under the MIT license.
  *
- * Date: 2017-12-25T06:39Z
+ * Date: 2018-10-19T15:47Z
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery')) :
@@ -246,13 +246,14 @@ var ModalUI = /** @class */ (function () {
 }());
 
 var editor = renderer.create('<div class="note-editor note-frame"/>');
-var toolbar = renderer.create('<div class="note-toolbar"/>');
+var toolbar = renderer.create('<div class="note-toolbar" role="toolbar"/>');
 var editingArea = renderer.create('<div class="note-editing-area"/>');
-var codable = renderer.create('<textarea class="note-codable"/>');
-var editable = renderer.create('<div class="note-editable" contentEditable="true"/>');
+var codable = renderer.create('<textarea class="note-codable" role="textbox" aria-multiline="true"/>');
+var editable = renderer.create('<div class="note-editable" contentEditable="true" role="textbox" aria-multiline="true"/>');
 var statusbar = renderer.create([
-    '<div class="note-statusbar">',
-    '  <div class="note-resizebar">',
+    '<output class="note-status-output" role="status" aria-live="polite"/>',
+    '<div class="note-statusbar" role="resize">',
+    '  <div class="note-resizebar" role="seperator" aria-orientation="horizontal" aria-label="resize">',
     '    <div class="note-icon-bar"/>',
     '    <div class="note-icon-bar"/>',
     '    <div class="note-icon-bar"/>',
@@ -260,11 +261,17 @@ var statusbar = renderer.create([
     '</div>'
 ].join(''));
 var airEditor = renderer.create('<div class="note-editor"/>');
-var airEditable = renderer.create('<div class="note-editable" contentEditable="true"/>');
+var airEditable = renderer.create([
+    '<output class="note-status-output" role="status" aria-live="polite"/>',
+    '<div class="note-editable" contentEditable="true" role="textbox" aria-multiline="true"/>'
+].join(''));
 var buttonGroup = renderer.create('<div class="note-btn-group">');
-var button = renderer.create('<button type="button" class="note-btn">', function ($node, options) {
+var button = renderer.create('<button type="button" class="note-btn" role="button" tabindex="-1">', function ($node, options) {
     // set button type
     if (options && options.tooltip) {
+        $node.attr({
+            'aria-label': options.tooltip
+        });
         $node.data('_lite_tooltip', new TooltipUI($node, {
             title: options.tooltip,
             container: options.container
@@ -279,15 +286,15 @@ var button = renderer.create('<button type="button" class="note-btn">', function
         }));
     }
 });
-var dropdown = renderer.create('<div class="note-dropdown-menu">', function ($node, options) {
+var dropdown = renderer.create('<div class="note-dropdown-menu" role="list">', function ($node, options) {
     var markup = $.isArray(options.items) ? options.items.map(function (item) {
         var value = (typeof item === 'string') ? item : (item.value || '');
         var content = options.template ? options.template(item) : item;
-        var $temp = $('<a class="note-dropdown-item" href="#" data-value="' + value + '"></a>');
+        var $temp = $('<a class="note-dropdown-item" href="#" data-value="' + value + '" role="listitem" aria-label="' + item + '"></a>');
         $temp.html(content).data('item', item);
         return $temp;
     }) : options.items;
-    $node.html(markup);
+    $node.html(markup).attr({ 'aria-label': options.title });
     $node.on('click', '> .note-dropdown-item', function (e) {
         var $a = $(this);
         var item = $a.data('item');
@@ -300,15 +307,15 @@ var dropdown = renderer.create('<div class="note-dropdown-menu">', function ($no
         }
     });
 });
-var dropdownCheck = renderer.create('<div class="note-dropdown-menu note-check">', function ($node, options) {
+var dropdownCheck = renderer.create('<div class="note-dropdown-menu note-check" role="list">', function ($node, options) {
     var markup = $.isArray(options.items) ? options.items.map(function (item) {
         var value = (typeof item === 'string') ? item : (item.value || '');
         var content = options.template ? options.template(item) : item;
-        var $temp = $('<a class="note-dropdown-item" href="#" data-value="' + value + '"></a>');
+        var $temp = $('<a class="note-dropdown-item" href="#" data-value="' + value + '" role="listitem" aria-label="' + item + '"></a>');
         $temp.html([icon(options.checkClassName), ' ', content]).data('item', item);
         return $temp;
     }) : options.items;
-    $node.html(markup);
+    $node.html(markup).attr({ 'aria-label': options.title });
     $node.on('click', '> .note-dropdown-item', function (e) {
         var $a = $(this);
         var item = $a.data('item');
@@ -459,15 +466,18 @@ var palette = renderer.create('<div class="note-color-palette"/>', function ($no
     for (var row = 0, rowSize = options.colors.length; row < rowSize; row++) {
         var eventName = options.eventName;
         var colors = options.colors[row];
+        var colorsName = options.colorsName[row];
         var buttons = [];
         for (var col = 0, colSize = colors.length; col < colSize; col++) {
             var color = colors[col];
+            var colorName = colorsName[col];
             buttons.push([
                 '<button type="button" class="note-btn note-color-btn"',
                 'style="background-color:', color, '" ',
                 'data-event="', eventName, '" ',
                 'data-value="', color, '" ',
-                'title="', color, '" ',
+                'title="', colorName, '" ',
+                'aria-label="', colorName, '" ',
                 'data-toggle="button" tabindex="-1"></button>'
             ].join(''));
         }
@@ -517,6 +527,12 @@ var colorDropdownButton = function (opt, type) {
                     '    </button>',
                     '  </div>',
                     '  <div class="note-holder" data-event="backColor"/>',
+                    '  <div class="btn-sm">',
+                    '    <input type="color" id="html5bcp" class="note-btn btn-default" value="#21104A" style="width:100%;" data-value="cp">',
+                    '    <button type="button" class="note-color-reset btn" data-event="backColor" data-value="cpbackColor">',
+                    opt.lang.color.cpSelect,
+                    '    </button>',
+                    '  </div>',
                     '</div>',
                     '<div class="note-btn-group btn-foreground-color">',
                     '  <div class="note-palette-title">' + opt.lang.color.foreground + '</div>',
@@ -527,6 +543,12 @@ var colorDropdownButton = function (opt, type) {
                     '    </button>',
                     '  </div>',
                     '  <div class="note-holder" data-event="foreColor"/>',
+                    '  <div class="btn-sm">',
+                    '    <input type="color" id="html5fcp" class="note-btn btn-default" value="#21104A" style="width:100%;" data-value="cp">',
+                    '    <button type="button" class="note-color-reset btn" data-event="foreColor" data-value="cpforeColor">',
+                    opt.lang.color.cpSelect,
+                    '    </button>',
+                    '  </div>',
                     '</div>',
                     '</div>'
                 ].join(''),
@@ -551,6 +573,17 @@ var colorDropdownButton = function (opt, type) {
                     var $button = $(event.target);
                     var eventName = $button.data('event');
                     var value = $button.data('value');
+                    var foreinput = document.getElementById('html5fcp').value;
+                    var backinput = document.getElementById('html5bcp').value;
+                    if (value === 'cp') {
+                        event.stopPropagation();
+                    }
+                    else if (value === 'cpbackColor') {
+                        value = backinput;
+                    }
+                    else if (value === 'cpforeColor') {
+                        value = foreinput;
+                    }
                     if (eventName && value) {
                         var key = eventName === 'backColor' ? 'background-color' : 'color';
                         var $color = $button.closest('.note-color').find('.note-recent-color');
@@ -572,15 +605,18 @@ var colorDropdownButton = function (opt, type) {
         ]
     }).render();
 };
-var dialog = renderer.create('<div class="note-modal" tabindex="-1"/>', function ($node, options) {
+var dialog = renderer.create('<div class="note-modal" aria-hidden="false" tabindex="-1" role="dialog"/>', function ($node, options) {
     if (options.fade) {
         $node.addClass('fade');
     }
+    $node.attr({
+        'aria-label': options.title
+    });
     $node.html([
         '  <div class="note-modal-content">',
         (options.title
             ? '    <div class="note-modal-header">' +
-                '      <button type="button" class="close"><i class="note-icon-close"></i></button>' +
+                '      <button type="button" class="close" aria-label="Close" aria-hidden="true"><i class="note-icon-close"></i></button>' +
                 '      <h4 class="note-modal-title">' + options.title + '</h4>' +
                 '    </div>' : ''),
         '    <div class="note-modal-body">' + options.body + '</div>',
@@ -673,8 +709,9 @@ var popover = renderer.create([
 var checkbox = renderer.create('<div class="checkbox"></div>', function ($node, options) {
     $node.html([
         ' <label' + (options.id ? ' for="' + options.id + '"' : '') + '>',
-        ' <input type="checkbox"' + (options.id ? ' id="' + options.id + '"' : ''),
-        (options.checked ? ' checked' : '') + '/>',
+        ' <input role="checkbox" type="checkbox"' + (options.id ? ' id="' + options.id + '"' : ''),
+        (options.checked ? ' checked' : ''),
+        ' aria-checked="' + (options.checked ? 'true' : 'false') + '"/>',
         (options.text ? options.text : ''),
         '</label>'
     ].join(''));
@@ -889,7 +926,8 @@ $$1.extend($$1.summernote.lang, {
             transparent: 'Transparent',
             setTransparent: 'Set transparent',
             reset: 'Reset',
-            resetToDefault: 'Reset to default'
+            resetToDefault: 'Reset to default',
+            cpSelect: 'Select'
         },
         shortcut: {
             shortcuts: 'Keyboard shortcuts',
@@ -977,7 +1015,7 @@ var isEdge = /Edge\/\d+/.test(userAgent);
 var hasCodeMirror = !!window.CodeMirror;
 if (!hasCodeMirror && isSupportAmd) {
     // Webpack
-    if (typeof __webpack_require__ === 'function') {
+    if (typeof __webpack_require__ === 'function') { // eslint-disable-line
         try {
             // If CodeMirror can't be resolved, `require.resolve` will throw an
             // exception and `hasCodeMirror` won't be set to `true`.
@@ -1153,10 +1191,9 @@ function namespaceToCamel(namespace, prefix) {
  * @return {Function}
  */
 function debounce(func, wait, immediate) {
-    var _this = this;
     var timeout;
     return function () {
-        var context = _this;
+        var context = this;
         var args = arguments;
         var later = function () {
             timeout = null;
@@ -2899,9 +2936,16 @@ var WrappedRange = /** @class */ (function () {
         var contentsContainer = $$1('<div></div>').html(markup)[0];
         var childNodes = lists.from(contentsContainer.childNodes);
         var rng = this.wrapBodyInlineWithPara().deleteContents();
-        return childNodes.reverse().map(function (childNode) {
+        if (rng.so > 0) {
+            childNodes = childNodes.reverse();
+        }
+        childNodes = childNodes.map(function (childNode) {
             return rng.insertNode(childNode);
-        }).reverse();
+        });
+        if (rng.so > 0) {
+            childNodes = childNodes.reverse();
+        }
+        return childNodes;
     };
     /**
      * returns text in range
@@ -2998,7 +3042,7 @@ var range = {
         if (arguments.length === 4) {
             return new WrappedRange(sc, so, ec, eo);
         }
-        else if (arguments.length === 2) {
+        else if (arguments.length === 2) { // collapsed
             ec = sc;
             eo = so;
             return new WrappedRange(sc, so, ec, eo);
@@ -3030,7 +3074,7 @@ var range = {
             ec = nativeRng.endContainer;
             eo = nativeRng.endOffset;
         }
-        else {
+        else { // IE8: TextRange
             var textRange = document.selection.createRange();
             var textRangeEnd = textRange.duplicate();
             textRangeEnd.collapse(false);
@@ -3212,6 +3256,18 @@ var History = /** @class */ (function () {
         this.stackOffset = 0;
         // Apply that snapshot.
         this.applySnapshot(this.stack[this.stackOffset]);
+    };
+    /**
+    *  @method commit
+    *  Resets history stack, but keeps current editor's content.
+    */
+    History.prototype.commit = function () {
+        // Clear the stack.
+        this.stack = [];
+        // Restore stackOffset to its original value.
+        this.stackOffset = -1;
+        // Record our first snapshot (of nothing).
+        this.recordUndo();
     };
     /**
     * @method reset
@@ -4362,6 +4418,10 @@ var Editor = /** @class */ (function () {
             var linkText = linkInfo.text;
             var isNewWindow = linkInfo.isNewWindow;
             var rng = linkInfo.range || _this.createRange();
+            var additionalTextLength = linkText.length - rng.toString().length;
+            if (additionalTextLength > 0 && _this.isLimited(additionalTextLength)) {
+                return;
+            }
             var isTextChanged = rng.toString() !== linkText;
             // handle spaced urls from input
             if (typeof linkUrl === 'string') {
@@ -4371,9 +4431,12 @@ var Editor = /** @class */ (function () {
                 linkUrl = _this.options.onCreateLink(linkUrl);
             }
             else {
-                // if url doesn't match an URL schema, set http:// as default
-                linkUrl = /^[A-Za-z][A-Za-z0-9+-.]*\:[\/\/]?/.test(linkUrl)
-                    ? linkUrl : 'http://' + linkUrl;
+                // if url is not relative,
+                if (!/^\.?\/(.*)/.test(linkUrl)) {
+                    // if url doesn't match an URL schema, set http:// as default
+                    linkUrl = /^[A-Za-z][A-Za-z0-9+-.]*\:[\/\/]?/.test(linkUrl)
+                        ? linkUrl : 'http://' + linkUrl;
+                }
             }
             var anchors = [];
             if (isTextChanged) {
@@ -4658,6 +4721,14 @@ var Editor = /** @class */ (function () {
         this.history.undo();
         this.context.triggerEvent('change', this.$editable.html());
     };
+    /*
+    * commit
+    */
+    Editor.prototype.commit = function () {
+        this.context.triggerEvent('before.command', this.$editable.html());
+        this.history.commit();
+        this.context.triggerEvent('change', this.$editable.html());
+    };
     /**
      * redo
      */
@@ -4679,6 +4750,7 @@ var Editor = /** @class */ (function () {
      * @param {Boolean} isPreventTrigger
      */
     Editor.prototype.afterCommand = function (isPreventTrigger) {
+        this.normalizeContent();
         this.history.recordUndo();
         if (!isPreventTrigger) {
             this.context.triggerEvent('change', this.$editable.html());
@@ -4721,11 +4793,10 @@ var Editor = /** @class */ (function () {
      * run given function between beforeCommand and afterCommand
      */
     Editor.prototype.wrapCommand = function (fn) {
-        var _this = this;
         return function () {
-            _this.beforeCommand();
-            fn.apply(_this, arguments);
-            _this.afterCommand();
+            this.beforeCommand();
+            fn.apply(this, arguments);
+            this.afterCommand();
         };
     };
     /**
@@ -4760,7 +4831,7 @@ var Editor = /** @class */ (function () {
      * insertImages
      * @param {File[]} files
      */
-    Editor.prototype.insertImages = function (files) {
+    Editor.prototype.insertImagesAsDataURL = function (files) {
         var _this = this;
         $$1.each(files, function (idx, file) {
             var filename = file.name;
@@ -4775,21 +4846,6 @@ var Editor = /** @class */ (function () {
                 });
             }
         });
-    };
-    /**
-     * insertImagesOrCallback
-     * @param {File[]} files
-     */
-    Editor.prototype.insertImagesOrCallback = function (files) {
-        var callbacks = this.options.callbacks;
-        // If onImageUpload this.options setted
-        if (callbacks.onImageUpload) {
-            this.context.triggerEvent('image.upload', files);
-            // else insert Image as dataURL
-        }
-        else {
-            this.insertImages(files);
-        }
     };
     /**
      * return selected plain text
@@ -4871,8 +4927,9 @@ var Editor = /** @class */ (function () {
             text: rng.toString(),
             url: $anchor.length ? $anchor.attr('href') : ''
         };
-        // Define isNewWindow when anchor exists.
+        // When anchor exists,
         if ($anchor.length) {
+            // Set isNewWindow by checking its target.
             linkInfo.isNewWindow = $anchor.attr('target') === '_blank';
         }
         return linkInfo;
@@ -4968,6 +5025,12 @@ var Editor = /** @class */ (function () {
      */
     Editor.prototype.empty = function () {
         this.context.invoke('code', dom.emptyPara);
+    };
+    /**
+     * normalize content
+     */
+    Editor.prototype.normalizeContent = function () {
+        this.$editable[0].normalize();
     };
     return Editor;
 }());
@@ -5245,6 +5308,7 @@ var Statusbar = /** @class */ (function () {
     };
     Statusbar.prototype.destroy = function () {
         this.$statusbar.off();
+        this.$statusbar.addClass('locked');
     };
     return Statusbar;
 }());
@@ -5357,7 +5421,7 @@ var Handle = /** @class */ (function () {
                     _this.$document.off('mousemove', onMouseMove_1);
                     _this.context.invoke('editor.afterCommand');
                 });
-                if (!$target_1.data('ratio')) {
+                if (!$target_1.data('ratio')) { // original ratio.
                     $target_1.data('ratio', $target_1.height() / $target_1.width());
                 }
             }
@@ -5421,7 +5485,7 @@ var Handle = /** @class */ (function () {
 }());
 
 var defaultScheme = 'http://';
-var linkPattern = /^([A-Za-z][A-Za-z0-9+-.]*\:[\/\/]?|mailto:[A-Z0-9._%+-]+@)?(www\.)?(.+)$/i;
+var linkPattern = /^([A-Za-z][A-Za-z0-9+-.]*\:[\/]{2}|mailto:[A-Z0-9._%+-]+@)?(www\.)?(.+)$/i;
 var AutoLink = /** @class */ (function () {
     function AutoLink(context) {
         var _this = this;
@@ -5578,6 +5642,159 @@ var Buttons = /** @class */ (function () {
         name = name.toLowerCase();
         return ((name !== '') && this.isFontInstalled(name) && ($$1.inArray(name, genericFamilies) === -1));
     };
+    Buttons.prototype.colorPalette = function (className, tooltip, backColor, foreColor) {
+        var _this = this;
+        return this.ui.buttonGroup({
+            className: 'note-color ' + className,
+            children: [
+                this.button({
+                    className: 'note-current-color-button',
+                    contents: this.ui.icon(this.options.icons.font + ' note-recent-color'),
+                    tooltip: tooltip,
+                    click: function (e) {
+                        var $button = $$1(e.currentTarget);
+                        if (backColor && foreColor) {
+                            _this.context.invoke('editor.color', {
+                                backColor: $button.attr('data-backColor'),
+                                foreColor: $button.attr('data-foreColor')
+                            });
+                        }
+                        else if (backColor) {
+                            _this.context.invoke('editor.color', {
+                                backColor: $button.attr('data-backColor')
+                            });
+                        }
+                        else if (foreColor) {
+                            _this.context.invoke('editor.color', {
+                                foreColor: $button.attr('data-foreColor')
+                            });
+                        }
+                    },
+                    callback: function ($button) {
+                        var $recentColor = $button.find('.note-recent-color');
+                        if (backColor) {
+                            $recentColor.css('background-color', '#FFFF00');
+                            $button.attr('data-backColor', '#FFFF00');
+                        }
+                        if (!foreColor) {
+                            $recentColor.css('color', 'transparent');
+                        }
+                    }
+                }),
+                this.button({
+                    className: 'dropdown-toggle',
+                    contents: this.ui.dropdownButtonContents('', this.options),
+                    tooltip: this.lang.color.more,
+                    data: {
+                        toggle: 'dropdown'
+                    }
+                }),
+                this.ui.dropdown({
+                    items: (backColor ? [
+                        '<div class="note-palette">',
+                        '  <div class="note-palette-title">' + this.lang.color.background + '</div>',
+                        '  <div>',
+                        '    <button type="button" class="note-color-reset btn btn-light" data-event="backColor" data-value="inherit">',
+                        this.lang.color.transparent,
+                        '    </button>',
+                        '  </div>',
+                        '  <div class="note-holder" data-event="backColor"/>',
+                        '  <div>',
+                        '    <button type="button" class="note-color-select btn" data-event="openPalette" data-value="backColorPicker">',
+                        this.lang.color.cpSelect,
+                        '    </button>',
+                        '    <input type="color" id="backColorPicker" class="note-btn note-color-select-btn" value="#FFFF00" data-event="backColorPalette">',
+                        '  </div>',
+                        '  <div class="note-holder-custom" id="backColorPalette" data-event="backColor"/>',
+                        '</div>'
+                    ].join('') : '') +
+                        (foreColor ? [
+                            '<div class="note-palette">',
+                            '  <div class="note-palette-title">' + this.lang.color.foreground + '</div>',
+                            '  <div>',
+                            '    <button type="button" class="note-color-reset btn btn-light" data-event="removeFormat" data-value="foreColor">',
+                            this.lang.color.resetToDefault,
+                            '    </button>',
+                            '  </div>',
+                            '  <div class="note-holder" data-event="foreColor"/>',
+                            '  <div>',
+                            '    <button type="button" class="note-color-select btn" data-event="openPalette" data-value="foreColorPicker">',
+                            this.lang.color.cpSelect,
+                            '    </button>',
+                            '    <input type="color" id="foreColorPicker" class="note-btn note-color-select-btn" value="#000000" data-event="foreColorPalette">',
+                            '  <div class="note-holder-custom" id="foreColorPalette" data-event="foreColor"/>',
+                            '</div>'
+                        ].join('') : ''),
+                    callback: function ($dropdown) {
+                        $dropdown.find('.note-holder').each(function (idx, item) {
+                            var $holder = $$1(item);
+                            $holder.append(_this.ui.palette({
+                                colors: _this.options.colors,
+                                colorsName: _this.options.colorsName,
+                                eventName: $holder.data('event'),
+                                container: _this.options.container,
+                                tooltip: _this.options.tooltip
+                            }).render());
+                        });
+                        /* TODO: do we have to record recent custom colors within cookies? */
+                        var customColors = [
+                            ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF']
+                        ];
+                        $dropdown.find('.note-holder-custom').each(function (idx, item) {
+                            var $holder = $$1(item);
+                            $holder.append(_this.ui.palette({
+                                colors: customColors,
+                                colorsName: customColors,
+                                eventName: $holder.data('event'),
+                                container: _this.options.container,
+                                tooltip: _this.options.tooltip
+                            }).render());
+                        });
+                        $dropdown.find('input[type=color]').each(function (idx, item) {
+                            $$1(item).change(function () {
+                                var $chip = $dropdown.find('#' + $$1(this).data('event')).find('.note-color-btn').first();
+                                var color = this.value.toUpperCase();
+                                $chip.css('background-color', color)
+                                    .attr('aria-label', color)
+                                    .attr('data-value', color)
+                                    .attr('data-original-title', color);
+                                $chip.click();
+                            });
+                        });
+                    },
+                    click: function (event) {
+                        event.stopPropagation();
+                        var $parent = $$1('.' + className);
+                        var $button = $$1(event.target);
+                        var eventName = $button.data('event');
+                        var value = $button.attr('data-value');
+                        if (eventName === 'openPalette') {
+                            var $picker = $parent.find('#' + value);
+                            var $palette = $$1($parent.find('#' + $picker.data('event')).find('.note-color-row')[0]);
+                            // Shift palette chips
+                            var $chip = $palette.find('.note-color-btn').last().detach();
+                            // Set chip attributes
+                            var color = $picker.val();
+                            $chip.css('background-color', color)
+                                .attr('aria-label', color)
+                                .attr('data-value', color)
+                                .attr('data-original-title', color);
+                            $palette.prepend($chip);
+                            $picker.click();
+                        }
+                        else if (lists.contains(['backColor', 'foreColor'], eventName)) {
+                            var key = eventName === 'backColor' ? 'background-color' : 'color';
+                            var $color = $button.closest('.note-color').find('.note-recent-color');
+                            var $currentButton = $button.closest('.note-color').find('.note-current-color-button');
+                            $color.css(key, value);
+                            $currentButton.attr('data-' + eventName, value);
+                            _this.context.invoke('editor.' + eventName, value);
+                        }
+                    }
+                })
+            ]
+        }).render();
+    };
     Buttons.prototype.addToolbarButtons = function () {
         var _this = this;
         this.context.memo('button.style', function () {
@@ -5593,6 +5810,7 @@ var Buttons = /** @class */ (function () {
                 _this.ui.dropdown({
                     className: 'dropdown-style',
                     items: _this.options.styleTags,
+                    title: _this.lang.style.style,
                     template: function (item) {
                         if (typeof item === 'string') {
                             item = { tag: item, title: (_this.lang.style.hasOwnProperty(item) ? _this.lang.style[item] : item) };
@@ -5613,7 +5831,7 @@ var Buttons = /** @class */ (function () {
                 return _this.button({
                     className: 'note-btn-style-' + item,
                     contents: '<div data-value="' + item + '">' + item.toUpperCase() + '</div>',
-                    tooltip: item.toUpperCase(),
+                    tooltip: _this.lang.style[item],
                     click: _this.context.createInvokeHandler('editor.formatBlock')
                 }).render();
             });
@@ -5701,6 +5919,7 @@ var Buttons = /** @class */ (function () {
                     className: 'dropdown-fontname',
                     checkClassName: _this.options.icons.menuCheck,
                     items: _this.options.fontNames.filter(_this.isFontInstalled.bind(_this)),
+                    title: _this.lang.font.name,
                     template: function (item) {
                         return '<span style="font-family: \'' + item + '\'">' + item + '</span>';
                     },
@@ -5722,87 +5941,19 @@ var Buttons = /** @class */ (function () {
                     className: 'dropdown-fontsize',
                     checkClassName: _this.options.icons.menuCheck,
                     items: _this.options.fontSizes,
+                    title: _this.lang.font.size,
                     click: _this.context.createInvokeHandlerAndUpdateState('editor.fontSize')
                 })
             ]).render();
         });
         this.context.memo('button.color', function () {
-            return _this.ui.buttonGroup({
-                className: 'note-color',
-                children: [
-                    _this.button({
-                        className: 'note-current-color-button',
-                        contents: _this.ui.icon(_this.options.icons.font + ' note-recent-color'),
-                        tooltip: _this.lang.color.recent,
-                        click: function (e) {
-                            var $button = $$1(e.currentTarget);
-                            _this.context.invoke('editor.color', {
-                                backColor: $button.attr('data-backColor'),
-                                foreColor: $button.attr('data-foreColor')
-                            });
-                        },
-                        callback: function ($button) {
-                            var $recentColor = $button.find('.note-recent-color');
-                            $recentColor.css('background-color', '#FFFF00');
-                            $button.attr('data-backColor', '#FFFF00');
-                        }
-                    }),
-                    _this.button({
-                        className: 'dropdown-toggle',
-                        contents: _this.ui.dropdownButtonContents('', _this.options),
-                        tooltip: _this.lang.color.more,
-                        data: {
-                            toggle: 'dropdown'
-                        }
-                    }),
-                    _this.ui.dropdown({
-                        items: [
-                            '<div class="note-palette">',
-                            '  <div class="note-palette-title">' + _this.lang.color.background + '</div>',
-                            '  <div>',
-                            '    <button type="button" class="note-color-reset btn btn-light" data-event="backColor" data-value="inherit">',
-                            _this.lang.color.transparent,
-                            '    </button>',
-                            '  </div>',
-                            '  <div class="note-holder" data-event="backColor"/>',
-                            '</div>',
-                            '<div class="note-palette">',
-                            '  <div class="note-palette-title">' + _this.lang.color.foreground + '</div>',
-                            '  <div>',
-                            '    <button type="button" class="note-color-reset btn btn-light" data-event="removeFormat" data-value="foreColor">',
-                            _this.lang.color.resetToDefault,
-                            '    </button>',
-                            '  </div>',
-                            '  <div class="note-holder" data-event="foreColor"/>',
-                            '</div>'
-                        ].join(''),
-                        callback: function ($dropdown) {
-                            $dropdown.find('.note-holder').each(function (idx, item) {
-                                var $holder = $$1(item);
-                                $holder.append(_this.ui.palette({
-                                    colors: _this.options.colors,
-                                    eventName: $holder.data('event'),
-                                    container: _this.options.container,
-                                    tooltip: _this.options.tooltip
-                                }).render());
-                            });
-                        },
-                        click: function (event) {
-                            var $button = $$1(event.target);
-                            var eventName = $button.data('event');
-                            var value = $button.data('value');
-                            if (eventName && value) {
-                                var key = eventName === 'backColor' ? 'background-color' : 'color';
-                                var $color = $button.closest('.note-color').find('.note-recent-color');
-                                var $currentButton = $button.closest('.note-color').find('.note-current-color-button');
-                                $color.css(key, value);
-                                $currentButton.attr('data-' + eventName, value);
-                                _this.context.invoke('editor.' + eventName, value);
-                            }
-                        }
-                    })
-                ]
-            }).render();
+            return _this.colorPalette('note-color-all', _this.lang.color.recent, true, true);
+        });
+        this.context.memo('button.forecolor', function () {
+            return _this.colorPalette('note-color-fore', _this.lang.color.foreground, false, true);
+        });
+        this.context.memo('button.backcolor', function () {
+            return _this.colorPalette('note-color-back', _this.lang.color.background, true, false);
         });
         this.context.memo('button.ul', function () {
             return _this.button({
@@ -5890,6 +6041,7 @@ var Buttons = /** @class */ (function () {
                     items: _this.options.lineHeights,
                     checkClassName: _this.options.icons.menuCheck,
                     className: 'dropdown-line-height',
+                    title: _this.lang.font.height,
                     click: _this.context.createInvokeHandler('editor.lineHeight')
                 })
             ]).render();
@@ -5905,6 +6057,7 @@ var Buttons = /** @class */ (function () {
                     }
                 }),
                 _this.ui.dropdown({
+                    title: _this.lang.table.table,
                     className: 'note-table',
                     items: [
                         '<div class="note-dimension-picker">',
@@ -5958,7 +6111,7 @@ var Buttons = /** @class */ (function () {
             return _this.button({
                 className: 'btn-fullscreen',
                 contents: _this.ui.icon(_this.options.icons.arrowsAlt),
-                tooltip: _this.options.fullscreen,
+                tooltip: _this.lang.options.fullscreen,
                 click: _this.context.createInvokeHandler('fullscreen.toggle')
             }).render();
         });
@@ -5966,7 +6119,7 @@ var Buttons = /** @class */ (function () {
             return _this.button({
                 className: 'btn-codeview',
                 contents: _this.ui.icon(_this.options.icons.code),
-                tooltip: _this.options.codeview,
+                tooltip: _this.lang.options.codeview,
                 click: _this.context.createInvokeHandler('codeview.toggle')
             }).render();
         });
@@ -5987,7 +6140,7 @@ var Buttons = /** @class */ (function () {
         this.context.memo('button.help', function () {
             return _this.button({
                 contents: _this.ui.icon(_this.options.icons.question),
-                tooltip: _this.options.help,
+                tooltip: _this.lang.options.help,
                 click: _this.context.createInvokeHandler('helpDialog.show')
             }).render();
         });
@@ -6446,7 +6599,7 @@ var LinkDialog = /** @class */ (function () {
             var $linkText = _this.$dialog.find('.note-link-text');
             var $linkUrl = _this.$dialog.find('.note-link-url');
             var $linkBtn = _this.$dialog.find('.note-link-btn');
-            var $openInNewWindow = _this.$dialog.find('input[type=checkbox]');
+            var $openInNewWindow = _this.$dialog.find('#sn-checkbox-open-in-new-window');
             _this.ui.onDialogShown(_this.$dialog, function () {
                 _this.context.triggerEvent('dialog.shown');
                 // if no url was given, copy text to url
@@ -6480,9 +6633,9 @@ var LinkDialog = /** @class */ (function () {
                 _this.toggleLinkBtn($linkBtn, $linkText, $linkUrl);
                 _this.bindEnterKey($linkUrl, $linkBtn);
                 _this.bindEnterKey($linkText, $linkBtn);
-                var isChecked = linkInfo.isNewWindow !== undefined
+                var isNewWindowChecked = linkInfo.isNewWindow !== undefined
                     ? linkInfo.isNewWindow : _this.context.options.linkTargetBlank;
-                $openInNewWindow.prop('checked', isChecked);
+                $openInNewWindow.prop('checked', isNewWindowChecked);
                 $linkBtn.one('click', function (event) {
                     event.preventDefault();
                     deferred.resolve({
@@ -6642,11 +6795,24 @@ var ImageDialog = /** @class */ (function () {
             // [workaround] hide dialog before restore range for IE range focus
             _this.ui.hideDialog(_this.$dialog);
             _this.context.invoke('editor.restoreRange');
-            if (typeof data === 'string') {
-                _this.context.invoke('editor.insertImage', data);
+            if (typeof data === 'string') { // image url
+                // If onImageLinkInsert set,
+                if (_this.options.callbacks.onImageLinkInsert) {
+                    _this.context.triggerEvent('image.link.insert', data);
+                }
+                else {
+                    _this.context.invoke('editor.insertImage', data);
+                }
             }
-            else {
-                _this.context.invoke('editor.insertImagesOrCallback', data);
+            else { // array of files
+                // If onImageUpload set,
+                if (_this.options.callbacks.onImageUpload) {
+                    _this.context.triggerEvent('image.upload', data);
+                }
+                else {
+                    // else insert Image as dataURL
+                    _this.context.invoke('editor.insertImagesAsDataURL', data);
+                }
             }
         }).fail(function () {
             _this.context.invoke('editor.restoreRange');
@@ -6847,7 +7013,8 @@ var VideoDialog = /** @class */ (function () {
     };
     VideoDialog.prototype.createVideoNode = function (url) {
         // video url patterns(youtube, instagram, vimeo, dailymotion, youku, mp4, ogg, webm)
-        var ytRegExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+        var ytRegExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w|-]{11})(?:(?:[\?&]t=)(\S+))?$/;
+        var ytRegExpForStart = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/;
         var ytMatch = url.match(ytRegExp);
         var igRegExp = /(?:www\.|\/\/)instagram\.com\/p\/(.[a-zA-Z0-9_-]*)/;
         var igMatch = url.match(igRegExp);
@@ -6872,9 +7039,18 @@ var VideoDialog = /** @class */ (function () {
         var $video;
         if (ytMatch && ytMatch[1].length === 11) {
             var youtubeId = ytMatch[1];
+            var start = 0;
+            if (typeof ytMatch[2] !== 'undefined') {
+                var ytMatchForStart = ytMatch[2].match(ytRegExpForStart);
+                if (ytMatchForStart) {
+                    for (var n = [3600, 60, 1], i = 0, r = n.length; i < r; i++) {
+                        start += (typeof ytMatchForStart[i + 1] !== 'undefined' ? n[i] * parseInt(ytMatchForStart[i + 1], 10) : 0);
+                    }
+                }
+            }
             $video = $$1('<iframe>')
                 .attr('frameborder', 0)
-                .attr('src', '//www.youtube.com/embed/' + youtubeId)
+                .attr('src', '//www.youtube.com/embed/' + youtubeId + (start > 0 ? '?start=' + start : ''))
                 .attr('width', '640').attr('height', '360');
         }
         else if (igMatch && igMatch[0].length) {
@@ -7000,7 +7176,7 @@ var HelpDialog = /** @class */ (function () {
         var $container = this.options.dialogsInBody ? this.$body : this.$editor;
         var body = [
             '<p class="text-center">',
-            '<a href="http://summernote.org/" target="_blank">Summernote 0.8.9</a> · ',
+            '<a href="http://summernote.org/" target="_blank">Summernote 0.8.10</a> · ',
             '<a href="https://github.com/summernote/summernote" target="_blank">Project</a> · ',
             '<a href="https://github.com/summernote/summernote/issues" target="_blank">Issues</a>',
             '</p>'
@@ -7161,9 +7337,9 @@ var HintPopover = /** @class */ (function () {
         }).render().appendTo(this.options.container);
         this.$popover.hide();
         this.$content = this.$popover.find('.popover-content,.note-popover-content');
-        this.$content.on('click', '.note-hint-item', function () {
+        this.$content.on('click', '.note-hint-item', function (e) {
             _this.$content.find('.active').removeClass('active');
-            $$1(_this).addClass('active');
+            $$1(e.currentTarget).addClass('active');
             _this.replace();
         });
     };
@@ -7560,7 +7736,7 @@ $$1.fn.extend({
 });
 
 $$1.summernote = $$1.extend($$1.summernote, {
-    version: '0.8.9',
+    version: '0.8.10',
     ui: ui,
     plugins: {},
     options: {
@@ -7632,6 +7808,7 @@ $$1.summernote = $$1.extend($$1.summernote, {
         airMode: false,
         width: null,
         height: null,
+        linkTargetBlank: true,
         focus: false,
         tabSize: 4,
         styleWithSpan: true,
@@ -7659,6 +7836,17 @@ $$1.summernote = $$1.extend($$1.summernote, {
             ['#9C0000', '#B56308', '#BD9400', '#397B21', '#104A5A', '#085294', '#311873', '#731842'],
             ['#630000', '#7B3900', '#846300', '#295218', '#083139', '#003163', '#21104A', '#4A1031']
         ],
+        // http://chir.ag/projects/name-that-color/
+        colorsName: [
+            ['Black', 'Tundora', 'Dove Gray', 'Star Dust', 'Pale Slate', 'Gallery', 'Alabaster', 'White'],
+            ['Red', 'Orange Peel', 'Yellow', 'Green', 'Cyan', 'Blue', 'Electric Violet', 'Magenta'],
+            ['Azalea', 'Karry', 'Egg White', 'Zanah', 'Botticelli', 'Tropical Blue', 'Mischka', 'Twilight'],
+            ['Tonys Pink', 'Peach Orange', 'Cream Brulee', 'Sprout', 'Casper', 'Perano', 'Cold Purple', 'Careys Pink'],
+            ['Mandy', 'Rajah', 'Dandelion', 'Olivine', 'Gulf Stream', 'Viking', 'Blue Marguerite', 'Puce'],
+            ['Guardsman Red', 'Fire Bush', 'Golden Dream', 'Chelsea Cucumber', 'Smalt Blue', 'Boston Blue', 'Butterfly Bush', 'Cadillac'],
+            ['Sangria', 'Mai Tai', 'Buddha Gold', 'Forest Green', 'Eden', 'Venice Blue', 'Meteorite', 'Claret'],
+            ['Rosewood', 'Cinnamon', 'Olive', 'Parsley', 'Tiber', 'Midnight Blue', 'Valentino', 'Loulou']
+        ],
         lineHeights: ['1.0', '1.2', '1.4', '1.5', '1.6', '1.8', '2.0', '3.0'],
         tableClassName: 'table table-bordered',
         insertTableMaxSize: {
@@ -7678,7 +7866,8 @@ $$1.summernote = $$1.extend($$1.summernote, {
             onKeydown: null,
             onSubmit: null,
             onImageUpload: null,
-            onImageUploadError: null
+            onImageUploadError: null,
+            onImageLinkInsert: null
         },
         codemirror: {
             mode: 'text/html',

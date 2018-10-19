@@ -54,8 +54,8 @@ class TextViewBoneDelegate(object):
 				return (aspan)
 			else:
 				# no langobject
-				return (html5.Label(str(data[field])))
-		return (html5.Label(conf["empty_value"]))
+				return html5.Label(str(data[field]))
+		return html5.Label(conf["empty_value"])
 
 
 class TextEditBone(html5.Div):
@@ -67,7 +67,6 @@ class TextEditBone(html5.Div):
 		self.isPlainText = isPlainText
 		self.languages = languages
 		self.descrHint = descrHint
-		self.currentEditor = None
 		self.valuesdict = dict()
 
 		# multilangbone
@@ -94,33 +93,13 @@ class TextEditBone(html5.Div):
 
 		if not readOnly and not self.isPlainText:
 			self.input = HtmlEditor()
+			self.input.boneName = self.boneName
 		else:
 			self.input = html5.Textarea()
 			if readOnly:
 				self.input["readonly"] = True
 
 		self.appendChild(self.input)
-
-	# self.sinkEvent("onClick")
-
-	# def onAttach(self):
-	# 	super(TextEditBone, self).onAttach()
-	#
-	# 	if self.value and not readOnly and not self.isPlainText:
-	# 		if self.languages:
-	# 			self.edit["value"] = self.value.get(self.selectedLang)
-	# 		else:
-	# 			self.edit["value"] = self.value
-	#
-	# def onDetach(self):
-	# 	super(TextEditBone, self).onDetach()
-	# 	self.updateValue()
-	#
-	# def updateValue(self):
-	# 	if self.languages:
-	# 		self.value[self.selectedLang] = self.edit["value"]
-	# 	else:
-	# 		self.value = self.edit["value"]
 
 	def _setDisabled(self, disable):
 		"""
@@ -137,8 +116,7 @@ class TextEditBone(html5.Div):
 			self.input["value"] = self.valuesdict[self.selectedLang]
 		else:
 			self.input["value"] = ""
-		if not self.isPlainText:
-			self.input.element.innerHTML = self.input["value"]
+
 		self.refreshLangButContainer()
 
 	def refreshLangButContainer(self):
@@ -179,8 +157,6 @@ class TextEditBone(html5.Div):
 				self.input["value"] = self.valuesdict[self.selectedLang]
 			else:
 				self.input["value"] = data[self.boneName] if data[self.boneName] else ""
-		if not self.isPlainText:
-			self.input.element.innerHTML = self.input["value"]
 
 	def serializeForPost(self):
 		if self.selectedLang:
