@@ -164,12 +164,7 @@ var viurPictureBtn = function (context) {
 		container: 'body',
 		click: function () {
 			var boneName = $(context.layoutInfo.note[0]).data('bonename');
-			console.debug(boneName);
 			$('.viur-insert-image-btn[data-bonename="'+boneName+'"]').trigger('click');
-			console.debug($('.viur-insert-image-btn[data-bonename="'+boneName+'"]'))
-			//console.log(context)
-			//console.log($.summernote)
-			//context.invoke("createLink", {text:'foo',url:'bar'})
 		}
 	});
 
