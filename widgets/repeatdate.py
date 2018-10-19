@@ -1,6 +1,5 @@
 import html5
 
-from html5.ext.popup import Popup
 from event import EventDispatcher
 from priorityqueue import editBoneSelector
 from i18n import translate
