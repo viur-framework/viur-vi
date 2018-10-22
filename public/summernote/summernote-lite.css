@@ -897,6 +897,14 @@ a.note-dropdown-item {
   vertical-align: sub
 }
 
+.note-editor .note-editing-area .note-editable ul {margin-left:30px; list-style-type:disc;}
+
+.note-editor .note-editing-area .note-editable ul ul {list-style-type:square;}
+
+.note-editor .note-editing-area .note-editable ol {margin-left:30px; list-style-type:decimal;}
+
+.note-editor .note-editing-area .note-editable ol ol {list-style-type:lower-latin;}
+
 .note-editor.note-frame {
   border: 1px solid #a9a9a9
 }

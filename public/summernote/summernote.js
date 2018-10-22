@@ -21,6 +21,7 @@ function createSummernote(input) {
 		},
 		lang: 'de-DE',
 		toolbar: [
+			['style'],
 			['Stil', ['bold', 'italic', 'underline', 'clear']],
 			['Alignment', ['alignLeft', 'alignCenter', 'alignRight', 'alignJustify']],
 			['elements', [ 'table', 'link']],
@@ -106,7 +107,7 @@ function createSummernote(input) {
 				'CMD+K': 'linkDialog.show'
 			}
 		},
-		styleTags: ['p', 'h1', 'h2'],
+		styleTags: ['p', 'h1', 'h2', 'h3', 'h4'],
 		focus: true,
 		dialogsInBody: true,
 		disableResizeEditor: true,
