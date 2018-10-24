@@ -14,3 +14,4 @@ public/vi_custom.less
 pynetree/.hg
 pynetree/.hgignore
 
+node_modules

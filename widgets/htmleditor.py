@@ -22,19 +22,19 @@ class TextInsertImageAction(html5.ext.Button):
 		conf["mainWindow"].stackWidget(currentSelector)
 
 	def onSelectionActivated(self, selectWdg, selection):
-		print "onSelectionActivated"
+		print("onSelectionActivated")
 
 		if not selection:
 			return
 
-		print selection
+		print(selection)
 
 		for item in selection:
 			if "mimetype" in item.data.keys() and item.data["mimetype"].startswith("image/"):
 				dataUrl = getImagePreview(item.data)
 
 				self.summernote.summernote("editor.insertImage", dataUrl, item.data["name"].replace("\"", ""))
-				print "insert img %s" % dataUrl
+				print("insert img %s" % dataUrl)
 			else:
 				dataUrl = "/file/download/%s/%s" % (
 					item.data["dlkey"], item.data["name"].replace("\"", ""))
@@ -42,7 +42,7 @@ class TextInsertImageAction(html5.ext.Button):
 
 				self.summernote.summernote("editor.createLink",
 										   JS("{url: @{{dataUrl}}, text: @{{text}}, isNewWindow: true}"))
-				print "insert link %s<%s> " % (text, dataUrl)
+				print("insert link %s<%s> " % (text, dataUrl))
 
 	@staticmethod
 	def isSuitableFor(modul, handler, actionName):
@@ -53,7 +53,10 @@ class TextInsertImageAction(html5.ext.Button):
 
 
 class HtmlEditor(html5.Textarea):
+	initSources = False
+
 	def __init__(self, *args, **kwargs):
+		self._attachSources()
 		super(HtmlEditor, self).__init__(*args, **kwargs)
 
 		self.value = ""
@@ -62,11 +65,26 @@ class HtmlEditor(html5.Textarea):
 		self.summernoteContainer = self
 		self.boneName = ""
 
+	def _attachSources(self):
+		if not HtmlEditor.initSources:
+			print("initialize HTML Editor libaries")
+
+			js = html5.Script()
+			js["src"] = "htmleditor/htmleditor.min.js"
+			html5.Head().appendChild(js)
+
+			css = html5.Link()
+			css["rel"] = "stylesheet"
+			css["href"] = "htmleditor/htmleditor.min.css"
+			html5.Head().appendChild(css)
+
+		HtmlEditor.initSources = True
+
 	def _attachSummernote(self, retry=0):
 		elem = self.summernoteContainer.element
 
 		try:
-			self.summernote = JS("""window.top.createSummernote(@{{elem}})""")
+			self.summernote = JS("""window.top.summernoteEditor(@{{elem}})""")
 
 		except:
 			if retry >= 3:

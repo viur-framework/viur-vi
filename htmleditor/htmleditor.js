@@ -1,4 +1,4 @@
-function createSummernote(input) {
+function summernoteEditor(input) {
 	// create summernote instance
 	$(input).summernote({
 		callbacks: {
@@ -22,14 +22,14 @@ function createSummernote(input) {
 		lang: 'de-DE',
 		toolbar: [
 			['style'],
-			['Stil', ['bold', 'italic', 'underline', 'clear']],
+			['Stil', ['bold', 'italic', 'underline']],
 			['Alignment', ['alignLeft', 'alignCenter', 'alignRight', 'alignJustify']],
-			['elements', [ 'table', 'link']],
+			['elements', ['link', 'viurPicture', 'table']],
 			['list', ['ul', 'ol']],
 			['indent', ['indentIn', 'indentOut']],
 			['history', ['undo', 'redo']],
-			['codeview'],
-			['foo', ['viurPicture']]
+			['clear'],
+			['codeview']
 		],
 		prettifyHtml: true,
 		buttons: {
@@ -135,7 +135,7 @@ function createSummernote(input) {
 	return $(input);
 }
 
-window.top.createSummernote = createSummernote;
+window.top.summernoteEditor = summernoteEditor;
 
 function customButton(className, tooltip, invokeCmd) {
 	return function (context) {
@@ -165,7 +165,7 @@ var viurPictureBtn = function (context) {
 		container: 'body',
 		click: function () {
 			var boneName = $(context.layoutInfo.note[0]).data('bonename');
-			$('.viur-insert-image-btn[data-bonename="'+boneName+'"]').trigger('click');
+			$('.viur-insert-image-btn[data-bonename="' + boneName + '"]').trigger('click');
 		}
 	});
 

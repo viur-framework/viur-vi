@@ -5,7 +5,7 @@
         bold: 'Fett',
         italic: 'Kursiv',
         underline: 'Unterstreichen',
-        clear: 'Zurücksetzen',
+        clear: 'Formatierung zurücksetzen',
         height: 'Zeilenhöhe',
         name: 'Font Family',
         strikethrough: 'Durchgestrichen',
