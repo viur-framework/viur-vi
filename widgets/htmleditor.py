@@ -56,7 +56,6 @@ class HtmlEditor(html5.Textarea):
 	initSources = False
 
 	def __init__(self, *args, **kwargs):
-		self._attachSources()
 		super(HtmlEditor, self).__init__(*args, **kwargs)
 
 		self.value = ""
@@ -65,9 +64,11 @@ class HtmlEditor(html5.Textarea):
 		self.summernoteContainer = self
 		self.boneName = ""
 
+		self._attachSources()
+
 	def _attachSources(self):
 		if not HtmlEditor.initSources:
-			print("initialize HTML Editor libaries")
+			print("initialize HTML Editor libraries")
 
 			js = html5.Script()
 			js["src"] = "htmleditor/htmleditor.min.js"

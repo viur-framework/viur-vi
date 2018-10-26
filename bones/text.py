@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import html5
-
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from config import conf
-from widgets.htmleditor import HtmlEditor
-from i18n import translate
 from bones.base import BaseBoneExtractor
+from config import conf
+from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
+from widgets.htmleditor import HtmlEditor
 
 
 class TextBoneExtractor(BaseBoneExtractor):
