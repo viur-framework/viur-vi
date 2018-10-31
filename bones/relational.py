@@ -2,8 +2,7 @@
 import html5, json, utils
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
-from widgets.list import ListWidget
-from widgets.edit import InternalEdit, EditWidget
+from widgets import ListWidget, EditWidget, InternalEdit
 from config import conf
 from i18n import translate
 from network import NetworkService

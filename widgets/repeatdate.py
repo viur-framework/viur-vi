@@ -10,7 +10,7 @@ from widgets.actionbar import ActionBar
 from network import NetworkService
 import utils
 from config import conf
-from widgets.edit import EditWidgetFieldset
+from widgets.accordion import AccordionFieldset
 
 class RepeatDatePopup(html5.Div):
 
@@ -111,7 +111,7 @@ class RepeatDatePopup(html5.Div):
 		fieldSets = {}
 		cat = "byweek"
 
-		fieldSets[cat] = EditWidgetFieldset(cat)
+		fieldSets[cat] = AccordionFieldset(cat)
 		fieldSets[cat].addClass("active")
 
 		self.dtstart = data["values"]["startdate"]

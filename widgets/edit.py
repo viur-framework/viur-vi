@@ -1,241 +1,17 @@
 # -*- coding: utf-8 -*-
 import html5, utils
 
-from html5.ext import YesNoDialog
-
 from network import NetworkService, DeferredCall
 from config import conf
 from priorityqueue import editBoneSelector
-from widgets.tooltip import ToolTip
-from widgets.actionbar import ActionBar
 from i18n import translate
 
+from exception import InvalidBoneValueException
+
+from widgets.tooltip import ToolTip
+from widgets.actionbar import ActionBar
 from widgets.list import ListWidget
-
-class InvalidBoneValueException(ValueError):
-	pass
-
-class InternalEdit(html5.Div):
-
-	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False, context=None, defaultCat="",
-	                    module = None):
-		super(InternalEdit, self).__init__()
-
-		self.sinkEvent("onChange", "onKeyDown")
-
-		self.editIdx = 1
-		self.skelStructure = skelStructure
-		self.values = values
-		self.errorInformation = errorInformation
-		self.defaultCat = defaultCat
-		self.context = context
-		self.module = module
-
-		self.form = self
-
-		self.renderStructure(readOnly=readOnly)
-		self.unserialize(values)
-
-	def renderStructure(self, readOnly = False):
-		self.bones = {}
-		self.containers = {}
-
-		tmpDict = {k: v for k, v in self.skelStructure}
-		fieldSets = {}
-		currRow = 0
-
-		defaultCat = self.defaultCat
-		firstCat = True
-
-		for key, bone in self.skelStructure:
-
-			#Enforcing readOnly mode
-			if readOnly:
-				tmpDict[key]["readonly"] = True
-
-			cat = defaultCat
-
-			if ("params" in bone.keys()
-			    and isinstance(bone["params"],dict)
-			    and "category" in bone["params"].keys()):
-				cat = bone["params"]["category"]
-
-			if cat is not None and not cat in fieldSets.keys():
-				fs = html5.Fieldset()
-				fs["class"] = cat
-
-				if firstCat:
-					fs["class"].append("active")
-					firstCat = False
-
-					if self.form is self:
-						self.form = html5.Form()
-						self.appendChild(self.form)
-
-				fieldSets[cat] = EditWidgetFieldset(cat)
-
-			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
-			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
-			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
-
-			descrLbl = html5.Label(bone["descr"])
-			descrLbl["class"].append(key)
-			descrLbl["class"].append(bone["type"].replace(".","_"))
-			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, None, "internal", cat or "empty", key)
-
-			if bone["required"]:
-				descrLbl["class"].append("is_required")
-
-			if (bone["required"]
-			    and (bone["error"] is not None
-			            or (self.errorInformation and key in self.errorInformation.keys()))):
-				descrLbl["class"].append("is_invalid")
-				if bone["error"]:
-					descrLbl["title"] = bone["error"]
-				else:
-					descrLbl["title"] = self.errorInformation[ key ]
-
-				if fieldSets and cat in fieldSets:
-					fieldSets[cat]["class"].append("is_incomplete")
-
-			if bone["required"] and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
-				descrLbl["class"].append("is_valid")
-
-			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
-				tmp = html5.Span()
-				tmp.appendChild(descrLbl)
-				tmp.appendChild( ToolTip(longText=bone["params"]["tooltip"]) )
-				descrLbl = tmp
-
-			self.containers[key] = html5.Div()
-			self.containers[key].appendChild(descrLbl)
-			self.containers[key].appendChild(widget)
-			self.containers[key].addClass("bone", "bone_%s" % key, bone["type"].replace(".","_"))
-
-			if "." in bone["type"]:
-				for t in bone["type"].split("."):
-					self.containers[key].addClass(t)
-
-			if cat is not None:
-				fieldSets[cat]._section.appendChild(self.containers[key])
-			else:
-				self.form.appendChild(self.containers[key])
-
-			currRow += 1
-			self.bones[key] = widget
-
-			#Hide invisible bones
-			if not bone["visible"]:
-				self.containers[key].hide()
-
-		if len(fieldSets)==1:
-			for (k,v) in fieldSets.items():
-				if not "active" in v["class"]:
-					v["class"].append("active")
-
-		tmpList = [(k,v) for (k,v) in fieldSets.items()]
-		tmpList.sort( key=lambda x:x[0])
-
-		for k,v in tmpList:
-			self.form.appendChild( v )
-			v._section = None
-
-	def serializeForPost(self, validityCheck = False):
-		res = {}
-
-		for key, bone in self.bones.items():
-			try:
-				res.update(bone.serializeForPost())
-			except InvalidBoneValueException:
-				if validityCheck:
-					# Fixme: Bad hack..
-					lbl = bone.parent()._children[0]
-					if "is_valid" in lbl["class"]:
-						lbl["class"].remove("is_valid")
-					lbl["class"].append("is_invalid")
-					self.actionbar.resetLoadingState()
-					return None
-
-		return res
-
-	def serializeForDocument(self):
-		res = {}
-
-		for key, bone in self.bones.items():
-			try:
-				res.update(bone.serializeForDocument())
-			except InvalidBoneValueException as e:
-				res[key] = str(e)
-
-		return res
-
-	def doSave( self, closeOnSuccess=False, *args, **kwargs ):
-		"""
-			Starts serializing and transmitting our values to the server.
-		"""
-		self.closeOnSuccess = closeOnSuccess
-		return self.serializeForPost(True)
-
-	def unserialize(self, data = None):
-		"""
-			Applies the actual data to the bones.
-		"""
-		for bone in self.bones.values():
-			if "setContext" in dir(bone) and callable(bone.setContext):
-				bone.setContext(self.context)
-
-			if data is not None:
-				bone.unserialize(data)
-
-		DeferredCall(self.performLogics)
-
-	def onChange(self, event):
-		DeferredCall(self.performLogics)
-
-	def onKeyDown(self, event):
-		event.stopPropagation()
-
-	def performLogics(self):
-		fields = self.serializeForDocument()
-		#print("InternalEdit.performLogics", fields)
-
-		for key, desc in self.skelStructure:
-			if desc.get("params") and desc["params"]:
-				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
-					logic = desc["params"].get(event)
-
-					if not logic:
-						continue
-
-					# Compile logic at first run
-					if isinstance(logic, str):
-						desc["params"][event] = conf["logics"].compile(logic)
-						if desc["params"][event] is None:
-							alert("ViUR logics: Parse error in >%s<" % logic)
-							continue
-
-						logic = desc["params"][event]
-
-					res = conf["logics"].execute(logic, fields)
-
-					#print("InternalEdit.performLogics", event, key, res)
-
-					if event == "logic.evaluate":
-						self.bones[key].unserialize({key: res})
-					elif res:
-						if event == "logic.visibleIf":
-							self.containers[key].show()
-						elif event == "logic.readonlyIf":
-							self.containers[key].disable()
-
-						# add more here...
-					else:
-						if event == "logic.visibleIf":
-							self.containers[key].hide()
-						elif event == "logic.readonlyIf":
-							self.containers[key].enable()
-						# add more here...
-
+from widgets.accordion import Accordion
 
 def parseHashParameters( src, prefix="" ):
 	"""
@@ -296,58 +72,6 @@ def parseHashParameters( src, prefix="" ):
 	return res
 
 
-class EditWidgetFieldset(html5.Fieldset):
-
-	def __init__(self, cat, title = None):
-		super(EditWidgetFieldset, self).__init__()
-		self.sinkEvent("onClick")
-
-		self.addClass("inactive")
-		self["name"] = cat
-
-		legend = html5.Legend()
-		self.appendChild(legend)
-
-		self.title = html5.A()
-		self.title.appendChild(html5.TextNode(title or cat))
-		legend.appendChild(self.title)
-
-		section = html5.Section()
-		self.appendChild(section)
-		self._section = section
-
-	def checkVisibility(self):
-		if all([child.isHidden() for child in self._section.children()]):
-			self.hide()
-		else:
-			self.show()
-
-	def activate(self):
-		self.removeClass("inactive")
-		self.addClass("active")
-
-	def deactivate(self):
-		self.removeClass("active")
-		self.addClass("inactive")
-
-	def isActive(self):
-		return "inactive" not in self["class"]
-
-	def toggle(self):
-		if self.isActive():
-			self.deactivate()
-		else:
-			self.activate()
-
-	def onClick(self, event):
-		if not html5.utils.doesEventHitWidgetOrChildren(event, self.title):
-			return
-
-		for child in self.parent().children():
-			if child is self:
-				self.toggle()
-			else:
-				child.deactivate()
 
 class EditWidget(html5.Div):
 	appList = "list"
@@ -455,8 +179,8 @@ class EditWidget(html5.Div):
 			conf["theApp"].setPath(module + "/" + self.mode)
 
 		# Input form
-		self.form = html5.Form()
-		self.appendChild(self.form)
+		self.accordion = html5.Accordion()
+		self.appendChild(self.accordion)
 
 		# Engage
 		self.reloadData()
@@ -611,8 +335,7 @@ class EditWidget(html5.Div):
 		"""
 			Removes all visible bones/forms/fieldsets.
 		"""
-		for c in self.form._children[ : ]:
-			self.form.removeChild( c )
+		self.accordion.removeAllChildren()
 
 	def closeOrContinue(self, sender=None ):
 		NetworkService.notifyChange(self.module, key=self.key, action=self.mode)
@@ -716,13 +439,15 @@ class EditWidget(html5.Div):
 			if askHierarchyCloning and self.clone:
 				# for lists, which are rootNode entries of hierarchies, ask to clone entire hierarchy
 				if self.applicationType == EditWidget.appList and "rootNodeOf" in conf[ "modules" ][ self.module ]:
-					YesNoDialog( translate( u"Do you want to clone the entire hierarchy?" ),
-				                    yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
+					html5.ext.YesNoDialog(translate(u"Do you want to clone the entire hierarchy?"),
+				                            yesCallback=self.doCloneHierarchy,
+				                            noCallback=self.closeOrContinue)
 					return
 				# for cloning within a hierarchy, ask for cloning all subentries.
 				elif self.applicationType == EditWidget.appHierarchy:
-					YesNoDialog( translate( u"Do you want to clone all subentries of this item?" ),
-				                    yesCallback=self.doCloneHierarchy, noCallback=self.closeOrContinue )
+					html5.ext.YesNoDialog(translate(u"Do you want to clone all subentries of this item?"),
+				                            yesCallback=self.doCloneHierarchy,
+				                            noCallback=self.closeOrContinue)
 					return
 
 			self.closeOrContinue()
@@ -738,7 +463,7 @@ class EditWidget(html5.Div):
 		self.modified = False
 
 		tmpDict = {k: v for k, v in data["structure"]}
-		fieldSets = {}
+		segments = {}
 		firstCat = None
 		currRow = 0
 		hasMissing = False
@@ -767,8 +492,8 @@ class EditWidget(html5.Div):
 			    and "category" in bone["params"].keys()):
 				cat = bone["params"]["category"]
 
-			if not cat in fieldSets.keys():
-				fieldSets[cat] = EditWidgetFieldset(cat)
+			if not cat in segments.keys():
+				segments[cat] = self.accordion.addSegment(cat)
 
 			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
 			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
@@ -792,7 +517,7 @@ class EditWidget(html5.Div):
 				if bone["error"] is not None:
 					descrLbl["class"].append("is_invalid")
 					descrLbl["title"] = bone["error"]
-					fieldSets[ cat ]["class"].append("is_incomplete")
+					segments[cat]["class"].append("is_incomplete")
 					hasMissing = True
 				elif bone["error"] is None and not self.wasInitialRequest:
 					descrLbl["class"].append("is_valid")
@@ -809,7 +534,7 @@ class EditWidget(html5.Div):
 			    and "tooltip" in bone["params"].keys()):
 				containerDiv.appendChild(ToolTip(longText=bone["params"]["tooltip"]))
 
-			fieldSets[cat]._section.appendChild(containerDiv)
+			segments[cat].addWidget(containerDiv)
 			containerDiv.addClass("bone", "bone_%s" % key, bone["type"].replace(".","_"))
 
 			if "." in bone["type"]:
@@ -824,14 +549,14 @@ class EditWidget(html5.Div):
 			if not bone["visible"] or (bone["params"] and bone["params"].get("logic.visibleIf")):
 				self.containers[key].hide()
 			elif bone["visible"] and not firstCat:
-				firstCat = fieldSets[cat]
+				firstCat = segments[cat]
 
 			# NO elif!
 			if bone["params"] and bone["params"].get("logic.readonlyIf"):
 				self.containers[key].disable()
 
-		# Hide all fieldSets where all fields are invisible
-		for fs in fieldSets.values():
+		# Hide all segments where all fields are invisible
+		for fs in segments.values():
 			fs.checkVisibility()
 
 		# Show default category
@@ -839,7 +564,7 @@ class EditWidget(html5.Div):
 			firstCat.removeClass("inactive")
 			firstCat.addClass("active")
 
-		tmpList = [(k,v) for (k,v) in fieldSets.items()]
+		tmpList = [(k,v) for (k,v) in segments.items()]
 		tmpList.sort(key=lambda x:x[0])
 
 		for k, v in tmpList:
@@ -867,13 +592,13 @@ class EditWidget(html5.Div):
 
 				vdescr = conf["modules"][vmodule]
 
-				fs = html5.Fieldset()
-				fs.addClass("editview", "inactive")
+				fs = AccordionFieldset(vmodule, vtitle or vdescr.get("name", vmodule))
+				fs.addClass("editview")
 
 				if vclass:
 					fs.addClass(*vclass)
 
-				fieldSets[vmodule] = EditWidgetFieldset(vmodule, vtitle or vdescr.get("name", vmodule))
+				segments[vmodule] = fs
 
 				if vvariable:
 					context = self.context.copy() if self.context else {}

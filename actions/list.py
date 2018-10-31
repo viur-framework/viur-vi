@@ -623,66 +623,6 @@ class ListSelectFilterAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, ListSelectFilterAction.isSuitableFor, ListSelectFilterAction )
 
-class RecurrentDateAction( html5.ext.Button ):
-	"""
-		Allows editing an entry in a list-module.
-	"""
-
-	def __init__(self, *args, **kwargs):
-		super( RecurrentDateAction, self ).__init__( translate("Recurrent Events"), *args, **kwargs )
-		self["class"] = "icon createrecurrent_small"
-		self["disabled"]= True
-		self.isDisabled=True
-
-	def onAttach(self):
-		super(RecurrentDateAction,self).onAttach()
-		self.parent().parent().selectionChangedEvent.register( self )
-
-	def onDetach(self):
-		self.parent().parent().selectionChangedEvent.unregister( self )
-		super(RecurrentDateAction,self).onDetach()
-
-	def onSelectionChanged(self, table, selection ):
-		if len(selection)>0:
-			if self.isDisabled:
-				self.isDisabled = False
-			self["disabled"]= False
-		else:
-			if not self.isDisabled:
-				self["disabled"]= True
-				self.isDisabled = True
-
-	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		if module is None or module not in conf["modules"].keys():
-			return False
-
-		correctAction = actionName=="repeatdate"
-		correctHandler = handler == "list.calendar" or handler.startswith("list.calendar.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
-		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "edit" in conf["modules"][module]["disabledFunctions"]
-
-		return correctAction and correctHandler and hasAccess and not isDisabled
-
-	def onClick(self, sender=None):
-		selection = self.parent().parent().getCurrentSelection()
-		if not selection:
-			return
-		for s in selection:
-			self.openEditor( s["key"] )
-
-	def openEditor(self, key):
-		pane = Pane(translate("Recurrent Events"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
-		conf["mainWindow"].stackPane( pane )
-		edwg = RepeatDatePopup(self.parent().parent().module, key=key)
-		pane.addWidget( edwg )
-		pane.focus()
-
-	def resetLoadingState(self):
-		pass
-
-actionDelegateSelector.insert( 1, RecurrentDateAction.isSuitableFor, RecurrentDateAction )
-
 class CreateRecurrentAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super(CreateRecurrentAction, self ).__init__( translate("Save-Close"), *args, **kwargs )

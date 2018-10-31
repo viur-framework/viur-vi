@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import html5,re
+import html5, re
 from priorityqueue import editBoneSelector, viewDelegateSelector
-from widgets.edit import InvalidBoneValueException
+from exception import InvalidBoneValueException
 from i18n import translate
 
 class PasswordEditBone( html5.Div ):
