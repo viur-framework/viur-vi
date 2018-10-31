@@ -1,5 +1,4 @@
 import html5
-from html5.keycodes import isReturn
 from event import EventDispatcher
 from i18n import translate
 
@@ -32,7 +31,7 @@ class Search( html5.Div ):
 		self.startSearchEvent.fire( None )
 
 	def onKeyDown(self, event):
-		if isReturn(event.keyCode):
+		if html5.isReturn(event.keyCode):
 			self.doSearch()
 			event.preventDefault()
 			event.stopPropagation()
