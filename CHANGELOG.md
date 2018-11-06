@@ -4,7 +4,10 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 ## [develop]
 
-Current development version.
+This is the current development version.
+
+- Several modifications required to use new, minimized html5 library
+- Allow for file preview popup also in file widget.
 
 ## [2.3] Kilauea
 
