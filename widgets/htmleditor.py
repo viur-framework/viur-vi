@@ -86,7 +86,6 @@ class HtmlEditor(html5.Textarea):
 
 		try:
 			self.summernote = JS("""window.top.summernoteEditor(@{{elem}})""")
-
 		except:
 			if retry >= 3:
 				alert("Unable to connect summernote, please contact technical support...")
@@ -96,7 +95,13 @@ class HtmlEditor(html5.Textarea):
 			network.DeferredCall(self._attachSummernote, retry=retry + 1, _delay=1000)
 			return
 
+		imagebtn = TextInsertImageAction(summernote=self.summernote, boneName=self.boneName)
+		self.parent().appendChild(imagebtn)
+
 		self.summernote.on("summernote.change", self.onEditorChange)
+
+		if not self.enabled:
+			self.summernote.summernote("disable")
 
 		if self.value:
 			self["value"] = self.value
@@ -109,13 +114,7 @@ class HtmlEditor(html5.Textarea):
 
 		self._attachSummernote()
 
-		if not self.enabled:
-			self.summernote.summernote("disable")
-
 		self.element.setAttribute("data-bonename", self.boneName)
-
-		imagebtn = TextInsertImageAction(summernote=self.summernote, boneName=self.boneName)
-		self.parent().appendChild(imagebtn)
 
 	def onDetach(self):
 		super(HtmlEditor, self).onDetach()

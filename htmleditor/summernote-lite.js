@@ -5188,6 +5188,7 @@ var CodeView = /** @class */ (function () {
         this.$editor = context.layoutInfo.editor;
         this.$editable = context.layoutInfo.editable;
         this.$codable = context.layoutInfo.codable;
+        this.$statusbar = context.layoutInfo.statusbar;
         this.options = context.options;
     }
     CodeView.prototype.sync = function () {
@@ -5241,6 +5242,7 @@ var CodeView = /** @class */ (function () {
             // CodeMirror hasn't Padding.
             cmEditor_1.setSize(null, this.$editable.outerHeight());
             this.$codable.data('cmEditor', cmEditor_1);
+            this.$statusbar.hide();
         }
         else {
             this.$codable.on('blur', function (event) {
@@ -5257,6 +5259,7 @@ var CodeView = /** @class */ (function () {
             var cmEditor = this.$codable.data('cmEditor');
             this.$codable.val(cmEditor.getValue());
             cmEditor.toTextArea();
+            this.$statusbar.show();
         }
         var value = dom.value(this.$codable, this.options.prettifyHtml) || dom.emptyPara;
         var isChange = this.$editable.html() !== value;

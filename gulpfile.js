@@ -41,5 +41,11 @@ gulp.task('css', function () {
 		.pipe(gulp.dest('./public/htmleditor/'))
 });
 
+gulp.task('watch', function () {
+	gulp.watch('htmleditor/**/*.less', ['css']);
+	gulp.watch('htmleditor/**/*.css', ['css']);
+	gulp.watch('htmleditor/**/*.js', ['js']);
+});
+
 // do all
 gulp.task('default', ['clean', 'css', 'js', 'font']);

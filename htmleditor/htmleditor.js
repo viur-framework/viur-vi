@@ -110,26 +110,43 @@ function summernoteEditor(input) {
 		styleTags: ['p', 'h1', 'h2', 'h3', 'h4'],
 		focus: true,
 		dialogsInBody: true,
-		disableResizeEditor: true,
 		disableDragAndDrop: true,
 		airMode: false,
+		height: 400,
 		styleWithSpan: false
 	});
 
+
 	// .note-editor needs a fixed width, otherwise CodeMirror calculate a wrong with and the content will overflow
-	$('.note-editor').width($('.note-editor').width())
+	$('.note-btn.btn-codeview').hover(function () {
+		var $noteEditor = $(this).closest('.note-editor');
 
+		if (!$noteEditor.hasClass('fixed-width')) {
+			var width = $noteEditor.width();
+			console.debug('set width of %o fixed to %spx', $noteEditor, width);
 
-	$(input).on("focusout", function () {
+			$noteEditor.width(width).addClass('fixed-width');
+		}
+	});
+
+	$('.note-editor').on("focusout", function () {
 		setTimeout(function () {
 			$(".note-popover").hide();
 			$(".note-image-popover").hide();
-		}, 500)
+		}, 100)
 	});
 
 	$("*").on("scroll", function () {
 		$(".note-popover").hide();
 		$(".note-image-popover").hide();
+	});
+
+	$.event.addProp('dataTransfer');
+	// catch drag events and replace data with plaintext
+	$("*").on('dragstart', function (e) {
+		var plainStr = e.originalEvent.dataTransfer.getData("text/plain");
+		e.dataTransfer.clearData();
+		e.dataTransfer.setData("text/plain", plainStr);
 	});
 
 	return $(input);

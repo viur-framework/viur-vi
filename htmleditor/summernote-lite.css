@@ -839,6 +839,7 @@ a.note-dropdown-item {
   position: relative;
   clear: both;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .note-editor .note-dropzone {
@@ -927,7 +928,6 @@ a.note-dropdown-item {
   color: #000;
   word-wrap: break-word;
   background-color: #fff;
-  height: 40vh;
 }
 
 .note-editor.note-frame .note-editing-area .note-editable[contenteditable="false"] {
