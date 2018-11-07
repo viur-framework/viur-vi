@@ -342,12 +342,10 @@ class EditWidgetFieldset(html5.Fieldset):
 	def onClick(self, event):
 		if not html5.utils.doesEventHitWidgetOrChildren(event, self.title):
 			return
+
 		for child in self.parent().children():
-			if html5.utils.doesEventHitWidgetOrChildren(event, child):
-				if child is self:
-					self.toggle()
-				else:
-					self.activate()
+			if child is self:
+				self.toggle()
 			else:
 				child.deactivate()
 
