@@ -2,15 +2,12 @@ function summernoteEditor(input) {
 	// create summernote instance
 	$(input).summernote({
 		callbacks: {
-			onKeyup: function (e) {
-				if (e.keyCode === 8) {
-					// var el = getSelection().getRangeAt(0).commonAncestorContainer; //.parentNode.parentNode;
-					var $selectionContainer = $(getSelection().getRangeAt(0).commonAncestorContainer);
-					var $editor = $selectionContainer.closest(".note-editable");
+			onChange: function (e) {
+				var $selectionContainer = $(getSelection().getRangeAt(0).commonAncestorContainer);
+				var $editor = $selectionContainer.closest(".note-editable");
 
-					// in case we are joining two paragraphs, prevent span and inline style being inserted
-					$editor.find("span[style]").contents().unwrap();
-				}
+				// in case we are joining two paragraphs or styling plain text, prevent span and inline style being inserted
+				$editor.find("span[style]").contents().unwrap();
 			},
 			// clean html/css crud out of copied text before pasting
 			onPaste: function (e) {
