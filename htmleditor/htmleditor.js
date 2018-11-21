@@ -44,7 +44,8 @@ function summernoteEditor(input) {
 		codemirror: { // codemirror options
 			mode: 'text/html',
 			htmlMode: true,
-			lineNumbers: true
+			lineNumbers: true,
+      lineWrapping: true,
 		},
 		keyMap: {
 			pc: {
@@ -107,26 +108,13 @@ function summernoteEditor(input) {
 				'CMD+K': 'linkDialog.show'
 			}
 		},
-		styleTags: ['p', 'h1', 'h2', 'h3', 'h4'],
+		styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
 		focus: true,
 		dialogsInBody: true,
 		disableDragAndDrop: true,
 		airMode: false,
 		height: 400,
 		styleWithSpan: false
-	});
-
-
-	// .note-editor needs a fixed width, otherwise CodeMirror calculate a wrong with and the content will overflow
-	$('.note-btn.btn-codeview').hover(function () {
-		var $noteEditor = $(this).closest('.note-editor');
-
-		if (!$noteEditor.hasClass('fixed-width')) {
-			var width = $noteEditor.width();
-			console.debug('set width of %o fixed to %spx', $noteEditor, width);
-
-			$noteEditor.width(width).addClass('fixed-width');
-		}
 	});
 
 	$('.note-editor').on("focusout", function () {

@@ -22,7 +22,7 @@ gulp.task('js', function () {
 		"htmleditor/codemirror.js",
 		"htmleditor/codemirror_mode_xml.js",
 		"htmleditor/summernote-lite.js",
-		"htmleditor/summernote-de-DE.js",
+		"htmleditor/summernote-de-DE.min.js",
 		"htmleditor/htmleditor.js"
 	])
 		.pipe(concat('htmleditor.min.js'))
