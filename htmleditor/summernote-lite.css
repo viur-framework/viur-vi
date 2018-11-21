@@ -907,7 +907,8 @@ a.note-dropdown-item {
 .note-editor .note-editing-area .note-editable ol ol {list-style-type:lower-latin;}
 
 .note-editor.note-frame {
-  border: 1px solid #a9a9a9
+  border: 1px solid #a9a9a9;
+  display: inline-grid;
 }
 
 .note-editor.note-frame.codeview .note-editing-area .note-editable {
