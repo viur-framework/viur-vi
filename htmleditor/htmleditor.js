@@ -44,8 +44,7 @@ function summernoteEditor(input) {
 		codemirror: { // codemirror options
 			mode: 'text/html',
 			htmlMode: true,
-			lineNumbers: true,
-      lineWrapping: true,
+			lineNumbers: true
 		},
 		keyMap: {
 			pc: {
