@@ -179,7 +179,7 @@ class EditWidget(html5.Div):
 			conf["theApp"].setPath(module + "/" + self.mode)
 
 		# Input form
-		self.accordion = html5.Accordion()
+		self.accordion = Accordion()
 		self.appendChild(self.accordion)
 
 		# Engage
@@ -492,7 +492,7 @@ class EditWidget(html5.Div):
 			    and "category" in bone["params"].keys()):
 				cat = bone["params"]["category"]
 
-			if not cat in segments.keys():
+			if cat not in segments:
 				segments[cat] = self.accordion.addSegment(cat)
 
 			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
@@ -506,21 +506,22 @@ class EditWidget(html5.Div):
 				widget.changeEvent.register(self)
 
 			descrLbl = html5.Label(key if conf["showBoneNames"] else bone.get("descr", key))
-			descrLbl["class"].append(key)
-			descrLbl["class"].append(bone["type"].replace(".","_"))
+			descrLbl.addClass(key, bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
 			#print(key, bone["required"], bone["error"])
 			if bone["required"] or (bone.get("unique") and bone["error"]):
-				descrLbl["class"].append("is_required")
+				descrLbl.addClass("is_required")
 
 				if bone["error"] is not None:
-					descrLbl["class"].append("is_invalid")
+					descrLbl.addClass("is_invalid")
+					segments[cat].addClass("is_incomplete")
+
 					descrLbl["title"] = bone["error"]
-					segments[cat]["class"].append("is_incomplete")
 					hasMissing = True
+
 				elif bone["error"] is None and not self.wasInitialRequest:
-					descrLbl["class"].append("is_valid")
+					descrLbl.addClass("is_valid")
 
 			if isinstance(bone["error"], dict):
 				widget.setExtendedErrorInformation(bone["error"])
@@ -564,13 +565,6 @@ class EditWidget(html5.Div):
 			firstCat.removeClass("inactive")
 			firstCat.addClass("active")
 
-		tmpList = [(k,v) for (k,v) in segments.items()]
-		tmpList.sort(key=lambda x:x[0])
-
-		for k, v in tmpList:
-			self.form.appendChild( v )
-			v._section = None
-
 		# Views
 		views = conf["modules"][self.module].get("editViews")
 		if self.mode == "edit" and isinstance(views, list):
@@ -592,13 +586,12 @@ class EditWidget(html5.Div):
 
 				vdescr = conf["modules"][vmodule]
 
-				fs = AccordionFieldset(vmodule, vtitle or vdescr.get("name", vmodule))
-				fs.addClass("editview")
+				if vmodule not in segments:
+					segments[vmodule] = self.accordion.addSegment(vmodule, vtitle or vdescr.get("name", vmodule))
+					segments[vmodule].addClass("editview")
 
 				if vclass:
-					fs.addClass(*vclass)
-
-				segments[vmodule] = fs
+					segments[vmodule].addClass(*vclass)
 
 				if vvariable:
 					context = self.context.copy() if self.context else {}
@@ -609,7 +602,7 @@ class EditWidget(html5.Div):
 				self.views[vmodule] = ListWidget(vmodule, filter=vfilter or vdescr.get("filter", {}),
 				                                    columns = vcolumns or vdescr.get("columns"),
 				                                    context = context)
-				fs._section.appendChild(self.views[vmodule])
+				segments[vmodule].addWidget(self.views[vmodule])
 				self.form.appendChild(fs)
 
 		#print(data["values"])

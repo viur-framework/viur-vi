@@ -18,7 +18,7 @@ class AccordionSegment(html5.Fieldset):
 		legend.appendChild(self.title)
 
 		self._section = html5.Section()
-		self.appendChild(section)
+		self.appendChild(self._section)
 
 	def checkVisibility(self):
 		if all([child.isHidden() for child in self._section.children()]):
@@ -60,6 +60,7 @@ class Accordion(html5.Form):
 
 	def addSegment(self, ident, title = None, *args):
 		seg = AccordionSegment(ident, title)
+		self.appendChild(seg)
 
 		for widget in args:
 			seg.addWidget(widget)

@@ -1,4 +1,4 @@
-from accordion import AccordionFieldset
+from accordion import Accordion
 from topbar import TopBarWidget
 from list import ListWidget
 from edit import EditWidget
