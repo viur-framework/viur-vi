@@ -115,10 +115,11 @@ class Application(html5.Div):
 
 	def setPath(self, path = ""):
 		hash = html5.window.top.location.hash
-		if "?" in hash:
+		if "?" in hash and not "?" in path:
 			hash = hash.split("?", 1)[1]
 			if hash:
 				hash = "?" + hash
+
 		else:
 			hash = ""
 
