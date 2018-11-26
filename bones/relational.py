@@ -332,10 +332,13 @@ class RelationalSingleSelectionBone(html5.Div):
 					if self.ie:
 						self.removeChild(self.ie)
 
-					self.ie = InternalEdit(self.using, val["rel"], {},
-					                        readOnly=self.readOnly, defaultCat=self.usingDescr)
-
-					self.appendChild( self.ie )
+					self.ie = InternalEdit(
+						self.using, val["rel"], {},
+					    readOnly=self.readOnly,
+					    defaultCat=self.usingDescr
+					)
+					self.ie.addClass("relationwrapper")
+					self.appendChild(self.ie)
 			else:
 				self.setSelection(None)
 
@@ -415,8 +418,11 @@ class RelationalSingleSelectionBone(html5.Div):
 			self.selectionTxt["value"] = translate("Loading...")
 
 			if self.using and not self.ie:
-				self.ie = InternalEdit(self.using, getDefaultValues(self.using), {},
-				                        readOnly=self.readOnly, defaultCat=self.usingDescr)
+				self.ie = InternalEdit(
+					self.using, getDefaultValues(self.using), {},
+				    readOnly=self.readOnly,
+					defaultCat=self.usingDescr
+				)
 				self.ie.addClass("relationwrapper")
 
 				self.appendChild(self.ie)
@@ -515,9 +521,11 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.appendChild(wrapperDiv)
 
 		if using:
-			self.ie = InternalEdit(using, data["rel"], errorInfo,
-			                        readOnly = parent.readOnly,
-			                        defaultCat = parent.usingDescr)
+			self.ie = InternalEdit(
+				using, data["rel"], errorInfo,
+			    readOnly = parent.readOnly,
+			    defaultCat = parent.usingDescr
+			)
 			self.ie.addClass("relationwrapper")
 			self.appendChild(self.ie)
 		else:
