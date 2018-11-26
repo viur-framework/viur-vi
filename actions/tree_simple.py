@@ -4,7 +4,6 @@ from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
 from config import conf
 from pane import Pane
-from html5.ext.inputdialog import InputDialog
 from i18n import translate
 
 class AddNodeAction( html5.ext.Button ):
@@ -29,7 +28,13 @@ class AddNodeAction( html5.ext.Button ):
 
 
 	def onClick(self, sender=None):
-		i = InputDialog( translate("Directory Name"), successHandler=self.createDir, title=translate("Create directory"),successLbl=translate("Create") )
+		i = html5.ext.InputDialog(
+			translate("Directory Name"),
+			successHandler=self.createDir,
+			title=translate("Create directory"),
+			successLbl=translate("Create")
+		)
+
 		i["class"].append( "create" )
 		i["class"].append( "directory" )
 
@@ -105,11 +110,17 @@ class EditAction( html5.ext.Button ):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
+
 		for s in selection:
 			if isinstance(s,self.parent().parent().nodeWidget):
-				i = InputDialog( translate("Directory Name"), successHandler=self.editDir, value=s.data["name"] )
+				i = html5.ext.InputDialog(
+					translate("Directory Name"),
+					successHandler=self.editDir,
+					value=s.data["name"]
+				)
 				i.dirKey = s.data["key"]
 				return
+
 			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane, focus=True )
 			skelType = "leaf"

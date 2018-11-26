@@ -101,6 +101,27 @@ class Application(html5.Div):
 	def logout(self):
 		self.login(logout=True)
 
+	def setTitle(self, title = None):
+		document = eval("top.document")
+
+		if title:
+			title = [title]
+		else:
+			title = []
+
+		addendum = conf.get("vi.name")
+		if addendum:
+			title.append(addendum)
+
+		document.title = conf["vi.title.delimiter"].join(title)
+
+	def setPath(self, path = ""):
+		#history = eval("history")
+		#history.pushState(path, )
+		window = eval("window")
+		window.top.location.hash = path
+
+
 if __name__ == '__main__':
 	pyjd.setup("public/main.html")
 

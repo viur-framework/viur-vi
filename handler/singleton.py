@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 from priorityqueue import HandlerClassSelector, displayDelegateSelector, initialHashHandler
 from widgets import EditWidget
 from pane import Pane
+from config import conf
 
 class SingletonHandler( Pane ):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
@@ -19,7 +21,7 @@ class SingletonHandler( Pane ):
 
 		initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
 
-	def canHandleInitialHash(self, pathList, params ):
+	def canHandleInitialHash(self, pathList, params):
 		if len(pathList) > 1:
 			if pathList[0] == self.moduleName and pathList[1] == "edit":
 				return True
@@ -33,10 +35,10 @@ class SingletonHandler( Pane ):
 		self.focus()
 
 	@staticmethod
-	def canHandle( moduleName, moduleInfo ):
+	def canHandle(moduleName, moduleInfo):
 		return moduleInfo["handler"]=="singleton" or moduleInfo["handler"].startswith("singleton.")
 
-	def onClick(self, *args, **kwargs ):
+	def onClick(self, *args, **kwargs):
 		if not self.widgetsDomElm.children():
 			self.addWidget(EditWidget(self.moduleName, EditWidget.appSingleton))
 
