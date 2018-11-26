@@ -198,7 +198,7 @@ class TextInsertImageAction(BasicEditorAction):
 		self["title"] = translate("Insert Image")
 
 	def onClick(self, sender=None):
-		currentSelector = FileWidget( "file", isSelector=True )
+		currentSelector = FileWidget("file", selectMode="multi")
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 

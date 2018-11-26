@@ -783,6 +783,13 @@ class EditWidget(html5.Div):
 			descrLbl = html5.Label(key if conf["showBoneNames"] else bone.get("descr", key))
 			descrLbl["class"].append(key)
 			descrLbl["class"].append(bone["type"].replace(".","_"))
+
+			# Elements
+			if ("params" in bone.keys()
+			    and isinstance(bone["params"], dict)
+			    and "elements.source" in bone["params"].keys()):
+				descrLbl.addClass("elements-%s" % bone["params"]["elements.source"])
+
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
 			#print(key, bone["required"], bone["error"])
