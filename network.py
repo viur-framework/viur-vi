@@ -351,15 +351,19 @@ class NetworkService( object ):
 					s( self )
 			except:
 				if self.modifies:
-					DeferredCall(NetworkService.notifyChange, self.module, _delay=2500)
-					#NetworkService.notifyChange( self.module )
+					DeferredCall(
+						NetworkService.notifyChange, self.module,
+					        key = self.params.get("key") if self.params else None, action = self.url,
+								_delay = 2500)
 				raise
+
+			if self.modifies:
+				DeferredCall(NetworkService.notifyChange, self.module,
+				             key = self.params.get("key") if self.params else None,
+				                action = self.url, _delay = 2500)
 
 			# Remove references to our handlers
 			self.clear()
-
-			if self.modifies:
-				DeferredCall(NetworkService.notifyChange, self.module, _delay=2500)
 
 	def onError(self, text, code):
 		"""

@@ -101,6 +101,31 @@ class Application(html5.Div):
 	def logout(self):
 		self.login(logout=True)
 
+	def setTitle(self, title = None):
+		if title:
+			title = [title]
+		else:
+			title = []
+
+		addendum = conf.get("vi.name")
+		if addendum:
+			title.append(addendum)
+
+		html5.document.title = conf["vi.title.delimiter"].join(title)
+
+	def setPath(self, path = ""):
+		hash = html5.window.top.location.hash
+		if "?" in hash and not "?" in path:
+			hash = hash.split("?", 1)[1]
+			if hash:
+				hash = "?" + hash
+
+		else:
+			hash = ""
+
+		html5.window.top.location.hash = path + hash
+
+
 if __name__ == '__main__':
 	pyjd.setup("public/main.html")
 

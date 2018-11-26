@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import html5, utils
 
-from html5.a import A
-from html5.form import Fieldset
 from html5.ext import YesNoDialog
 
 from network import NetworkService, DeferredCall
@@ -74,16 +72,7 @@ class InternalEdit(html5.Div):
 						self.form = html5.Form()
 						self.appendChild(self.form)
 
-				fs["name"] = cat or "empty"
-				legend = html5.Legend()
-				fshref = fieldset_A()
-				fshref.appendChild(html5.TextNode(cat))
-				legend.appendChild( fshref )
-				fs.appendChild(legend)
-				section = html5.Section()
-				fs.appendChild(section)
-				fs._section = section
-				fieldSets[cat] = fs
+				fieldSets[cat] = EditWidgetFieldset(cat)
 
 			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
 			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
@@ -307,6 +296,59 @@ def parseHashParameters( src, prefix="" ):
 	return res
 
 
+class EditWidgetFieldset(html5.Fieldset):
+
+	def __init__(self, cat, title = None):
+		super(EditWidgetFieldset, self).__init__()
+		self.sinkEvent("onClick")
+
+		self.addClass("inactive")
+		self["name"] = cat
+
+		legend = html5.Legend()
+		self.appendChild(legend)
+
+		self.title = html5.A()
+		self.title.appendChild(html5.TextNode(title or cat))
+		legend.appendChild(self.title)
+
+		section = html5.Section()
+		self.appendChild(section)
+		self._section = section
+
+	def checkVisibility(self):
+		if all([child.isHidden() for child in self._section.children()]):
+			self.hide()
+		else:
+			self.show()
+
+	def activate(self):
+		self.removeClass("inactive")
+		self.addClass("active")
+
+	def deactivate(self):
+		self.removeClass("active")
+		self.addClass("inactive")
+
+	def isActive(self):
+		return "inactive" not in self["class"]
+
+	def toggle(self):
+		if self.isActive():
+			self.deactivate()
+		else:
+			self.activate()
+
+	def onClick(self, event):
+		if not html5.utils.doesEventHitWidgetOrChildren(event, self.title):
+			return
+
+		for child in self.parent().children():
+			if child is self:
+				self.toggle()
+			else:
+				child.deactivate()
+
 class EditWidget(html5.Div):
 	appList = "list"
 	appHierarchy = "hierarchy"
@@ -388,7 +430,7 @@ class EditWidget(html5.Div):
 		self.wasInitialRequest = True #Wherever the last request attempted to save data or just fetched the form
 
 		# Action bar
-		self.actionbar = ActionBar(self.module, self.applicationType, self.mode)
+		self.actionbar = ActionBar(self.module, self.applicationType, (self.mode if not clone else "clone"))
 		self.appendChild(self.actionbar)
 
 		editActions = []
@@ -399,12 +441,18 @@ class EditWidget(html5.Div):
 		if module in conf["modules"] and conf["modules"][module]:
 			editActions.extend(conf["modules"][module].get("editActions", []))
 
-		print("editActions", editActions)
-
 		if applicationType == EditWidget.appSingleton:
 			self.actionbar.setActions(["save.singleton"] + editActions)
 		else:
 			self.actionbar.setActions(["save.close", "save.continue"] + editActions)
+
+		# Set path
+		if applicationType == EditWidget.appSingleton:
+			conf["theApp"].setPath(module + "/" + self.mode)
+		elif self.mode == "edit":
+			conf["theApp"].setPath(module + "/" + (self.mode if not clone else "clone") + "/" + self.key)
+		else:
+			conf["theApp"].setPath(module + "/" + self.mode)
 
 		# Input form
 		self.form = html5.Form()
@@ -567,7 +615,7 @@ class EditWidget(html5.Div):
 			self.form.removeChild( c )
 
 	def closeOrContinue(self, sender=None ):
-		NetworkService.notifyChange(self.module, key=self.key)
+		NetworkService.notifyChange(self.module, key=self.key, action=self.mode)
 
 		if self.closeOnSuccess:
 			if self.module == "_tasks":
@@ -691,6 +739,7 @@ class EditWidget(html5.Div):
 
 		tmpDict = {k: v for k, v in data["structure"]}
 		fieldSets = {}
+		firstCat = None
 		currRow = 0
 		hasMissing = False
 		defaultCat = conf["modules"][self.module].get("visibleName", self.module)
@@ -719,21 +768,7 @@ class EditWidget(html5.Div):
 				cat = bone["params"]["category"]
 
 			if not cat in fieldSets.keys():
-				fs = html5.Fieldset()
-				fs.addClass("active" if not fieldSets else "inactive")
-
-				#fs["class"] = cat
-
-				fs["name"] = cat
-				legend = html5.Legend()
-				fshref = fieldset_A()
-				fshref.appendChild(html5.TextNode(cat) )
-				legend.appendChild( fshref )
-				fs.appendChild(legend)
-				section = html5.Section()
-				fs.appendChild(section)
-				fs._section = section
-				fieldSets[cat] = fs
+				fieldSets[cat] = EditWidgetFieldset(cat)
 
 			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
 			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
@@ -744,10 +779,6 @@ class EditWidget(html5.Div):
 
 			if "changeEvent" in dir(widget):
 				widget.changeEvent.register(self)
-
-			#widget["class"].append(key)
-			#widget["class"].append(bone["type"].replace(".","_"))
-			#self.prepareCol(currRow,1)
 
 			descrLbl = html5.Label(key if conf["showBoneNames"] else bone.get("descr", key))
 			descrLbl["class"].append(key)
@@ -792,10 +823,21 @@ class EditWidget(html5.Div):
 			#Hide invisible bones or logic-flavored bones with their default desire
 			if not bone["visible"] or (bone["params"] and bone["params"].get("logic.visibleIf")):
 				self.containers[key].hide()
+			elif bone["visible"] and not firstCat:
+				firstCat = fieldSets[cat]
 
 			# NO elif!
 			if bone["params"] and bone["params"].get("logic.readonlyIf"):
 				self.containers[key].disable()
+
+		# Hide all fieldSets where all fields are invisible
+		for fs in fieldSets.values():
+			fs.checkVisibility()
+
+		# Show default category
+		if firstCat:
+			firstCat.removeClass("inactive")
+			firstCat.addClass("active")
 
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort(key=lambda x:x[0])
@@ -831,16 +873,7 @@ class EditWidget(html5.Div):
 				if vclass:
 					fs.addClass(*vclass)
 
-				fs["name"] = vmodule
-				legend = html5.Legend()
-				fshref = fieldset_A()
-				fshref.appendChild(html5.TextNode(vtitle or vdescr.get("name", vmodule)))
-				legend.appendChild(fshref)
-				fs.appendChild(legend)
-				section = html5.Section()
-				fs.appendChild(section)
-				fs._section = section
-				fieldSets[vmodule] = fs
+				fieldSets[vmodule] = EditWidgetFieldset(vmodule, vtitle or vdescr.get("name", vmodule))
 
 				if vvariable:
 					context = self.context.copy() if self.context else {}
@@ -923,31 +956,3 @@ class EditWidget(html5.Div):
 
 		self.save(res)
 
-class fieldset_A(A):
-	_baseClass = "a"
-
-	def __init__(self, *args, **kwargs):
-		super(fieldset_A,self).__init__(*args, **kwargs )
-		self.sinkEvent("onClick")
-
-	def onClick(self,event):
-		for element in self.parent().parent().parent()._children:
-			if isinstance(element,Fieldset):
-				if html5.utils.doesEventHitWidgetOrChildren(event, element):
-					if not "active" in element["class"]:
-						element["class"].append("active")
-						element["class"].remove("inactive")
-					else:
-						if not "inactive" in element["class"]:
-							element["class"].append("inactive")
-						element["class"].remove("active")
-				else:
-					if not "inactive" in element["class"] and isinstance(element,fieldset_A):
-						element["class"].append("inactive")
-					element["class"].remove("active")
-					if len(element._children)>0 and isinstance(element,fieldset_A) and hasattr(element._children[1],"_children"): #subelement crawler
-						for sube in element._children[1]._children:
-							if isinstance(sube,fieldset_A):
-								if not "inactive" in sube["class"]:
-									sube.parent["class"].append("inactive")
-								sube["class"].remove("active")

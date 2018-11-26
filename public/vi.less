@@ -665,11 +665,6 @@ background-color:#d6d6d6;
   margin-right: 6px;
 }
 
-.button.download{
-  align-self: center;
-  margin: 15px 15px 0 15px;
-}
-
 .vi_viewer.is_fullscreen .vi_operator .actionbar
 {
   width: 98%;
@@ -2310,7 +2305,7 @@ td span.index
 .breadcrumb .treeitem:last-of-type:after {
   content: '';
 }
-.tree .treeitem:before {
+.tree .treeitem.node:before {
   background-image: url(icons/vi_file_icons_sprite.svg);
   background-repeat: no-repeat;
   width: 24px;
@@ -2321,57 +2316,12 @@ td span.index
   margin-top: 2px;
   margin-right: 4px;
   margin-left: 4px;
-}
-.tree .treeitem.node:before {
+
   background-position: -24px 0px;
   margin-right: 14px;
 }
 .tree .treeitem.node.is_rootnode:before {
   background-position: 0px 0px;
-}
-.tree .treeitem.file:before {
-  background-position: -48px 0px;
-}
-.tree .treeitem.file.type_text:before {
-  background-position: -48px 0px;
-  -webkit-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -moz-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -ms-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -o-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-}
-.tree .treeitem.file.format_pdf:before {
-  background-position: -96px 0px;
-  -webkit-filter: drop-shadow(1px 1px 3px rgba(240, 0, 0, 0.3));
-  -moz-filter: drop-shadow(1px 1px 3px rgba(240, 0, 0, 0.3));
-  -ms-filter: drop-shadow(1px 1px 3px rgba(240, 0, 0, 0.3));
-  -o-filter: drop-shadow(1px 1px 3px rgba(240, 0, 0, 0.3));
-  filter: drop-shadow(1px 1px 3px rgba(240, 0, 0, 0.3));
-}
-.tree .treeitem.file.format_zip:before {
-  background-position: -120px 0px;
-  -webkit-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -moz-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -ms-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -o-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-}
-.tree .treeitem.file.format_msword:before {
-  background-position: -144px 0px;
-  -webkit-filter: drop-shadow(1px 1px 3px rgba(0, 0, 240, 0.3));
-  -moz-filter: drop-shadow(1px 1px 3px rgba(0, 0, 240, 0.3));
-  -ms-filter: drop-shadow(1px 1px 3px rgba(0, 0, 240, 0.3));
-  -o-filter: drop-shadow(1px 1px 3px rgba(0, 0, 240, 0.3));
-  filter: drop-shadow(1px 1px 3px rgba(0, 0, 240, 0.3));
-}
-.tree .treeitem.type_image:before {
-  width: 0;
-  margin: 0;
-}
-
-.type_image{
-  display: flex;
-  align-items: center;
 }
 
 .previewimg{
@@ -2632,6 +2582,7 @@ progress[value]::-webkit-progress-value {
 .alertbox.task
 {
   width: 60%;
+  overflow: auto;
 }
 
 .alertbox.task .task-selector select

@@ -6,7 +6,6 @@ from widgets.search import Search
 from event import EventDispatcher
 from priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
 import utils
-from html5.keycodes import *
 from config import conf
 
 class NodeWidget( html5.Div ):
@@ -230,15 +229,15 @@ class SelectableDiv( html5.Div ):
 		self.selectionReturnEvent.fire( self, selection )
 
 	def onKeyDown(self, event):
-		if isReturn(event.keyCode): # Return
+		if html5.isReturn(event.keyCode): # Return
 			self.activateCurrentSelection()
 			event.preventDefault()
 			return
-		elif isSingleSelectionKey(event.keyCode): #Ctrl
+		elif html5.isSingleSelectionKey(event.keyCode): #Ctrl
 			self._isCtlPressed = True
 
 	def onKeyUp(self, event):
-		if isSingleSelectionKey(event.keyCode):
+		if html5.isSingleSelectionKey(event.keyCode):
 			self._isCtlPressed = False
 
 	def clearSelection(self):

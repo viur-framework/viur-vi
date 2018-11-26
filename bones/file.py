@@ -4,119 +4,12 @@ from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDeleg
 from widgets.file import FileWidget, LeafFileWidget
 from config import conf
 from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry
-from widgets.file import Uploader
+from widgets.file import Uploader, FilePreviewImage
 from i18n import translate
 from network import NetworkService
 from widgets.edit import EditWidget
 from pane import Pane
 from bones.base import BaseBoneExtractor
-
-class FileImagePopup(html5.ext.Popup):
-	def __init__(self, preview, *args, **kwargs):
-		super(FileImagePopup, self).__init__(title=preview.currentFile.get("name", translate("Unnamed Image")), className="image-viewer", *args, **kwargs)
-		self.sinkEvent("onClick")
-		self.preview = preview
-
-		img = html5.Img()
-		img["src"] = utils.getImagePreview(preview.currentFile, size=None)
-		self.appendChild(img)
-
-		div = html5.Div()
-		self.appendChild(div)
-
-		btn = html5.ext.Button(translate("Download"), self.onDownloadBtnClick)
-		btn.addClass("icon", "download")
-		div.appendChild(btn)
-
-		btn = html5.ext.Button(translate("Close"), self.onClick)
-		btn.addClass("btn_no")
-		div.appendChild(btn)
-
-
-	def onClick(self, event):
-		self.close()
-
-	def onDownloadBtnClick(self, sender = None):
-		self.preview.download()
-
-class FilePreviewImage(html5.Div):
-	def __init__(self, file = None, size=150, *args, **kwargs):
-		super(FilePreviewImage, self).__init__(*args, **kwargs)
-		self.addClass("previewimg")
-		self.sinkEvent("onClick")
-
-		self.size = size
-
-		self.downloadA = html5.A()
-		self.downloadA.hide()
-		self.appendChild(self.downloadA)
-
-		self.isImage = False
-		self.downloadOnly = False
-		self.currentFile = None
-
-		self.setFile(file)
-
-	def setFile(self, file):
-		self.currentFile = file
-
-		preview = utils.getImagePreview(file, cropped=True, size = self.size) if file else None
-
-		if preview:
-			self.downloadOnly = self.isImage = True
-
-		else:
-			self.isImage = False
-			self.downloadOnly = True
-
-			if file:
-				preview = "icons/filetypes/file.svg"
-				mime = file.get("mimetype")
-				if mime:
-					for icon in ["bmp", "doc", "gif", "jpg", "pdf", "png", "tiff", "image", "audio", "video", "zip"]:
-						if icon in mime:
-							preview = "icons/filetypes/%s.svg" % icon
-							self.downloadOnly = False
-							break
-
-		if preview:
-			self["style"]["background-image"] = "url('%s')" % preview
-		else:
-			self["style"]["background-image"] = None
-
-		if self.currentFile:
-			self.addClass("is-clickable")
-		else:
-			self.removeClass("is-clickable")
-
-
-	def download(self):
-		if not self.currentFile:
-			return
-
-		self.downloadA["href"] = "/file/download/" + self.currentFile["dlkey"]
-		self.downloadA["download"] = self.currentFile.get("name", self.currentFile["dlkey"])
-		self.downloadA.element.click()
-
-	def onClick(self, event):
-		if not self.currentFile:
-			return
-
-		if self.isImage:
-			FileImagePopup(self)
-		else:
-			w = eval("window")
-
-			if self.downloadOnly:
-				self.download()
-				return
-
-			file = "/file/download/%s" % self.currentFile["dlkey"]
-
-			if self.currentFile.get("name"):
-				file += "?fileName=%s" % self.currentFile["name"]
-
-			w.open(file)
 
 
 class FileBoneExtractor(BaseBoneExtractor):
@@ -127,9 +20,8 @@ class FileBoneExtractor(BaseBoneExtractor):
 			self.format = structure[boneName]["format"]
 
 	def renderFileentry(self, fileentry):
-		origin = eval("window.location.origin")
 		return ("%s %s/file/download/%s?download=1&fileName=%s" %
-		            (fileentry["dest"]["name"], origin,
+		            (fileentry["dest"]["name"], html5.window.location.origin,
 		                str(fileentry["dest"]["dlkey"]), str(fileentry["dest"]["name"])))
 
 	def render(self, data, field ):
@@ -369,7 +261,8 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 				conf["fileSelector"] = fileSelector
 
 			self.currentSelector = fileSelector
-			self.currentSelector.selectionReturnEvent.register(self)
+
+		self.currentSelector.selectionReturnEvent.register(self, reset=True)
 
 		conf["mainWindow"].stackWidget(self.currentSelector)
 		self.parent().addClass("is_active")

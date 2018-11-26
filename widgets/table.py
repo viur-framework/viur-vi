@@ -1,6 +1,5 @@
 import html5, utils
 from event import EventDispatcher
-from html5.keycodes import *
 from network import DeferredCall
 
 class SelectTable( html5.Table ):
@@ -194,7 +193,7 @@ class SelectTable( html5.Table ):
 			event.preventDefault()
 
 	def onKeyDown(self, event):
-		if isArrowDown(event.keyCode): #Arrow down
+		if html5.isArrowDown(event.keyCode): #Arrow down
 
 			if self._currentRow is None:
 				self.setCursorRow(0)
@@ -215,7 +214,7 @@ class SelectTable( html5.Table ):
 					                  removeExistingSelection=(not self._isCtlPressed))
 			event.preventDefault()
 
-		elif isArrowUp(event.keyCode): #Arrow up
+		elif html5.isArrowUp(event.keyCode): #Arrow up
 
 			if self._currentRow is None:
 				self.setCursorRow(0)
@@ -236,7 +235,7 @@ class SelectTable( html5.Table ):
 
 			event.preventDefault()
 
-		elif isReturn(event.keyCode): # Return
+		elif html5.isReturn(event.keyCode): # Return
 
 			if len( self._selectedRows )>0:
 				self.selectionActivatedEvent.fire( self, self._selectedRows )
@@ -248,7 +247,7 @@ class SelectTable( html5.Table ):
 				event.preventDefault()
 				return
 
-		elif isSingleSelectionKey( event.keyCode ): #Ctrl
+		elif html5.isSingleSelectionKey( event.keyCode ): #Ctrl
 			self._isCtlPressed = True
 			self._ctlStartRow = self._currentRow or 0
 
@@ -257,7 +256,7 @@ class SelectTable( html5.Table ):
 				self.setCursorRow( None, removeExistingSelection=False )
 
 	def onKeyUp(self, event):
-		if isSingleSelectionKey( event.keyCode ):
+		if html5.isSingleSelectionKey( event.keyCode ):
 			self._isCtlPressed = False
 			self._ctlStartRow = None
 

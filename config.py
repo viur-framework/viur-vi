@@ -5,7 +5,7 @@ from logics import Interpreter
 
 conf = {
 	# Vi version number
-	"vi.version": (2, 2, 0),
+	"vi.version": (2, 3, 0),
 
 	# Appendix to version
 	"vi.version.appendix": "",
@@ -14,7 +14,10 @@ conf = {
 	"vi.viur": "ViUR",
 
 	# Vi name
-	"vi.name": "Vi",
+	"vi.name": "ViUR Visual Interface",
+
+	# Title delimiter
+	"vi.title.delimiter": " - ",
 
 	# Which access rights are required to open the Vi?
 	"vi.access.rights": ["admin", "root"],
