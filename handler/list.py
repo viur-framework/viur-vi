@@ -149,7 +149,10 @@ class ListHandler(Pane):
 		conf["mainWindow"].unlock()
 
 		if not self.isExpanded:
-			super(ListHandler, self).onClick()
+			if self.mode == "normal":
+				super(ListHandler, self).onClick()
+			elif self.childPanes:
+				self.childPanes[0].onClick()
 
 
 HandlerClassSelector.insert(1, ListHandler.canHandle, ListHandler)
