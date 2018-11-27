@@ -9,7 +9,7 @@ from i18n import translate
 
 
 class ListHandler(Pane):
-	def __init__(self, moduleName, moduleInfo, isView=False, *args, **kwargs):
+	def __init__(self, moduleName, moduleInfo, isView=False, wasRequested = False, *args, **kwargs):
 		icon = "icons/modules/list.svg"
 		if "icon" in moduleInfo.keys():
 			icon = moduleInfo["icon"]
@@ -18,8 +18,11 @@ class ListHandler(Pane):
 
 		self.moduleName = moduleName
 		self.moduleInfo = moduleInfo
+
 		self.mode = moduleInfo.get("mode", "normal")
 		assert self.mode in ["normal", "hidden", "group"]
+
+		self.wasRequested = wasRequested
 		self.requestedViews = None
 
 		if self.mode == "hidden" or moduleInfo.get("hideInMainBar", False):
@@ -32,7 +35,7 @@ class ListHandler(Pane):
 		if not isView:
 			initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
 
-	def _buildViewPanes(self, views, register=False):
+	def _buildViewPanes(self, views, register=False, requested=False):
 		for view in views:
 			# Extend some inherited attributes from moduleInfo, if not overridden
 			for inherit in ["+name", "+columns", "+filter", "+context", "+actions"]:
@@ -68,7 +71,7 @@ class ListHandler(Pane):
 				if inherit not in view and inherit in self.moduleInfo:
 					view[inherit] = self.moduleInfo[inherit]
 
-			pane = ListHandler(self.moduleName, view, isView=True)
+			pane = ListHandler(self.moduleName, view, isView=True, wasRequested=requested)
 
 			if not register:
 				self.addChildPane(pane)
@@ -122,9 +125,10 @@ class ListHandler(Pane):
 		return moduleInfo["handler"] == "list" or moduleInfo["handler"].startswith("list.")
 
 	def onClick(self, *args, **kwargs):
-		conf["theApp"].setPath(self.moduleName + "/list")
-
 		if self.mode == "normal" and not self.widgetsDomElm.children():
+			if not self.wasRequested:
+				conf["theApp"].setPath(self.moduleName + "/list")
+
 			self.addWidget(self._createWidget())
 
 		if self.requestedViews is None and "views.request" in self.moduleInfo:
@@ -140,12 +144,15 @@ class ListHandler(Pane):
 
 	def _onRequestViewsAvailable(self, req):
 		self.requestedViews = NetworkService.decode(req)
-		self._buildViewPanes(self.requestedViews, register=True)
+		self._buildViewPanes(self.requestedViews, register=True, requested=True)
 
 		conf["mainWindow"].unlock()
 
 		if not self.isExpanded:
-			super(ListHandler, self).onClick()
+			if self.mode == "normal":
+				super(ListHandler, self).onClick()
+			elif self.childPanes:
+				self.childPanes[0].onClick()
 
 
 HandlerClassSelector.insert(1, ListHandler.canHandle, ListHandler)

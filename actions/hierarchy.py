@@ -1,10 +1,11 @@
 import html5
+from config import conf
+from i18n import translate
 from network import NetworkService
+from pane import Pane
 from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
-from config import conf
-from pane import Pane
-from i18n import translate
+
 
 class AddAction( html5.ext.Button ):
 	"""
@@ -73,7 +74,7 @@ class EditAction( html5.ext.Button ):
 				self.isDisabled = True
 
 	def onSelectionActivated(self, table, selection):
-		if not self.parent().parent().isSelector and len(selection)>0:
+		if not self.parent().parent().selectMode and len(selection)>0:
 			self.openEditor( selection[0].data["key"] )
 
 	@staticmethod

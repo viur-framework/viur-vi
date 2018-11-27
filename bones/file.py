@@ -180,7 +180,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = FileWidget(self.destModule, isSelector="leaf")
+		currentSelector = FileWidget(self.destModule, selectMode="multi.leaf")
 		currentSelector.selectionReturnEvent.register(self)
 		conf["mainWindow"].stackWidget(currentSelector)
 		self.parent()["class"].append("is_active")
@@ -255,7 +255,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 			fileSelector = conf.get("fileSelector")
 
 			if not fileSelector or conf["mainWindow"].containsWidget(fileSelector):
-				fileSelector = FileWidget(self.destModule, isSelector="leaf")
+				fileSelector = FileWidget(self.destModule, selectMode="single.leaf")
 
 			if not conf.get("fileSelector"):
 				conf["fileSelector"] = fileSelector

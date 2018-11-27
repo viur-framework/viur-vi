@@ -1,11 +1,10 @@
 import html5
-from network import NetworkService, DeferredCall
-from priorityqueue import actionDelegateSelector
-from widgets.edit import EditWidget
 from config import conf
-from pane import Pane
-from widgets.file import Uploader, LeafFileWidget
 from i18n import translate
+from network import DeferredCall
+from priorityqueue import actionDelegateSelector
+from widgets.file import Uploader, LeafFileWidget
+
 
 class FileSelectUploader(html5.Input):
 	"""

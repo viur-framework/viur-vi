@@ -102,8 +102,6 @@ class Application(html5.Div):
 		self.login(logout=True)
 
 	def setTitle(self, title = None):
-		document = eval("top.document")
-
 		if title:
 			title = [title]
 		else:
@@ -113,13 +111,19 @@ class Application(html5.Div):
 		if addendum:
 			title.append(addendum)
 
-		document.title = conf["vi.title.delimiter"].join(title)
+		html5.document.title = conf["vi.title.delimiter"].join(title)
 
 	def setPath(self, path = ""):
-		#history = eval("history")
-		#history.pushState(path, )
-		window = eval("window")
-		window.top.location.hash = path
+		hash = html5.window.top.location.hash
+		if "?" in hash and not "?" in path:
+			hash = hash.split("?", 1)[1]
+			if hash:
+				hash = "?" + hash
+
+		else:
+			hash = ""
+
+		html5.window.top.location.hash = path + hash
 
 
 if __name__ == '__main__':
