@@ -9,7 +9,7 @@ from i18n import translate
 
 class HierarchyHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
-		icon = "icons/modules/hierarchy.svg"
+		icon = "embedsvg/icons-hierarchy.svg"
 		if "icon" in moduleInfo.keys():
 			icon = moduleInfo["icon"]
 

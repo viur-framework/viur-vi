@@ -9,7 +9,7 @@ from i18n import translate
 class SaveContinue( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( SaveContinue, self ).__init__( translate("Save-Continue"), *args, **kwargs )
-		self["class"] = "btn btn-vSmall btn-save-continue"
+		self["class"] = "btn btn--small btn-save-continue"
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -28,7 +28,7 @@ actionDelegateSelector.insert( 1, SaveContinue.isSuitableFor, SaveContinue )
 class SaveSingleton(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(SaveSingleton, self).__init__(translate("Save"), *args, **kwargs)
-		self["class"] = "btn btn-vSmall btn-save-close"
+		self["class"] = "btn btn--small btn--primary btn-save-close"
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
@@ -47,7 +47,7 @@ actionDelegateSelector.insert(1, SaveSingleton.isSuitableFor, SaveSingleton)
 class ExecuteSingleton(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(ExecuteSingleton, self).__init__(translate("Execute"), *args, **kwargs)
-		self["class"] = "btn btn-vSmall btn-vPrimary btn-save-close"
+		self["class"] = "btn btn--small btn--primary btn-save-close"
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
@@ -66,7 +66,7 @@ actionDelegateSelector.insert(1, ExecuteSingleton.isSuitableFor, ExecuteSingleto
 class SaveClose( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( SaveClose, self ).__init__( translate("Save-Close"), *args, **kwargs )
-		self["class"] = "btn btn-vSmall btn-save-close"
+		self["class"] = "btn btn--small btn--primary btn-save-close"
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):

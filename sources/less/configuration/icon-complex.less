@@ -1,0 +1,29 @@
+@charset "UTF-8";
+/* ICON COMPLEX */
+
+// Prefixes and objects:
+// i
+// .i
+
+i {
+  &.i--success {
+    .colorizeI(@color:@successColor);
+  }
+  &.i--warn {
+    .colorizeI(@color:@warnColor);
+  }
+  &.i--fail {
+    .colorizeI(@color:@failColor);
+  }
+  &.i--hint {
+    .colorizeI(@color:@hintColor);
+  }
+  &.i--portal {
+    background-color: @mainColor; // provides fallback.
+    background-color: ~'var(--portal-color)';
+    color: @clearColor;
+  }
+}
+
+
+

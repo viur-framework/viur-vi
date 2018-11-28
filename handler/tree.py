@@ -7,7 +7,7 @@ from i18n import translate
 
 class TreeHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
-		icon = "icons/modules/tree.svg"
+		icon = "embedsvg/icons-tree.svg"
 
 		if "icon" in moduleInfo.keys():
 			icon = moduleInfo["icon"]

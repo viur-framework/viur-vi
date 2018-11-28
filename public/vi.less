@@ -35,10 +35,10 @@ fieldset.active{
 fieldset.active section{
   display: block;
 }
-fieldset.inactive{
+fieldset.is-inactive{
   height: 40px;
 }
-fieldset.inactive section{
+fieldset.is-inactive section{
   display: none;
 }
 
@@ -248,8 +248,8 @@ p { margin-bottom: 10px;}
   /*-moz-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); -webkit-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6);*/
 
 }
-.iconnav li.inactive a,
-.iconnav li.inactive a:link {
+.iconnav li.is-inactive a,
+.iconnav li.is-inactive a:link {
   color: #444;
 }
 .iconnav li.logout a {
@@ -326,8 +326,8 @@ p { margin-bottom: 10px;}
   /*-moz-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); -webkit-box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6); box-shadow:inset 0px 0px 4px rgba(0, 0, 0, .6);*/
 
 }
-.iconnav li.inactive a,
-.iconnav li.inactive a:link {
+.iconnav li.is-inactive a,
+.iconnav li.is-inactive a:link {
   color: #444;
 }
 /* #vi_manager
@@ -523,7 +523,7 @@ p { margin-bottom: 10px;}
 
 }
 
-.vi_viewer.is_fullscreen
+.vi_viewer.is-fullscreen
 {
   margin-left: 0;
   width: 100%;
@@ -665,7 +665,7 @@ background-color:#d6d6d6;
   margin-right: 6px;
 }
 
-.vi_viewer.is_fullscreen .vi_operator .actionbar
+.vi_viewer.is-fullscreen .vi_operator .actionbar
 {
   width: 98%;
 }
@@ -1378,12 +1378,12 @@ form label.is_required {
   border-left-width: 2px;
   background: #fff;
 }
-form label.is_invalid {
+form label.is-invalid {
   background-color: #1495de;
   border-color: #073866;
   color: #fff;
 }
-form label.is_invalid:before {
+form label.is-invalid:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
   background-repeat: no-repeat;
   width: 16px;
@@ -1396,12 +1396,12 @@ form label.is_invalid:before {
   margin-right: 5px;
   background-position: -64px 0px;
 }
-form label.is_valid {
+form label.is-valid {
   background-color: #469b41;
   border-color: #288342;
   color: #fff;
 }
-form label.is_valid:before {
+form label.is-valid:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
   background-repeat: no-repeat;
   width: 16px;

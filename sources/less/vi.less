@@ -5,46 +5,56 @@
 // It imports all less files in their intended order for easy mass-inclusion.
 // Should you need specific files, you can easily customize the imports.
 
-@import "ignite/ignite"; // Resets, basics, tools and generic elements.
+  // IGNITE
+  @import "ignite/ignite"; // Resets, basics, tools and generic elements.
 
-// Fundamental parts: positioning, type and utilities
-@import "foundation/appconf"; // variables and constants.
-@import "foundation/appwrap"; // page wrappers.
+  // The framework:
+  @import "framework/framework"; // page wrappers.
 
-// Initialize generic elements.
-@import "generic/button";
-@import "generic/message";
+  // Initialize and configurate fundamental elements.
+  @import "configuration/appconf"; // variables and constants.
 
-// Menus
-@import "objects/topbar";
-@import "objects/modulelist";
-@import "objects/actionbar";
+  @import "configuration/button";
+  @import "configuration/message";
 
-// Objects
-@import "objects/splash";
-@import "objects/viurform";
-@import "objects/viurtable";
-@import "objects/sidebarwidgets";
+  @import "configuration/icon-complex";
+  @import "configuration/item";
 
-@import "objects/progress";
-@import "objects/alert";
-@import "objects/tooltip";
+  // Load generic elements.
+  @import "elements/icon-complex";
+  @import "elements/item";
+  @import "elements/list";
 
-@import "objects/textedit";
+  // Menus
+  @import "objects/topbar";
+  @import "objects/modulelist";
+  @import "objects/actionbar";
 
-@import "objects/tree";
-@import "objects/hierarchy";
-@import "objects/messenger";
+  // Objects
+  @import "objects/splash";
+  @import "objects/viurform";
+  @import "objects/viurtable";
+  @import "objects/sidebarwidgets";
 
-@import "objects/login";
+  @import "objects/progress";
+  @import "objects/alert";
+  @import "objects/tooltip";
 
-// Bones
-@import "bones/relational";
+  @import "objects/textedit";
 
-@import (optional) "../../../vi_customizing/custom";
+  @import "handler/tree";
+  @import "handler/hierarchy";
+  @import "objects/messenger";
 
-// Old stuff:
-.vi-screen.is-loading:after {
+  @import "objects/login";
+
+  // Bones
+  @import "bones/relational";
+
+  @import (optional) "../../../vi_customizing/custom";
+
+  // Old stuff:
+  .vi-screen.is-loading:after {
     background-image: url(../icons/status/is-loading32.gif);
     background-position: center 35%;
     background-repeat: no-repeat;
@@ -59,21 +69,15 @@
     right:0;
     top:0;
     bottom:0;
-}
+  }
 
-/* #Media Queries
-================================================== */
+  /* #Media Queries
+  ================================================== */
 
   /* Smaller than 1441px (devices and browsers) */
   @media only screen and (max-width: 1440px) {
     .modullist h3 {
       font-size:0.8em;
-    }
-    .has-multiple-children .vi_operator {
-      width:20%;
-    }
-    .has-multiple-children .vi_operator:nth-of-type(even) {
-      width:60%;
     }
     .has-multiple-children .actionbar,
     .has-multiple-children .breadcrumb,
@@ -81,13 +85,8 @@
     .has-multiple-children .linkeditor {
       width: 20%;
     }
-    .has-multiple-children .vi_operator:nth-of-type(even) .actionbar,
-    .has-multiple-children .vi_operator:nth-of-type(even) .breadcrumb,
-    .has-multiple-children .vi_operator:nth-of-type(even) .imageeditor,
-    .has-multiple-children .vi_operator:nth-of-type(even) .linkeditor {
-      width: 60%;
-    }
-    .has-multiple-children form label, .has-multiple-children form label.text {
+    .has-multiple-children form label,
+    .has-multiple-children form label.text {
       border: 1px dotted #ddd;
       text-align: left;
       width: 93%;
@@ -98,7 +97,7 @@
       width: 193px;
     }
     .has-multiple-children form fieldset legend {
-     min-width:0;
+      min-width:0;
     }
     .has-multiple-children form fieldset legend a {
       font-size:0.8em;
@@ -130,34 +129,32 @@
     .has-multiple-children form fieldset .file .fileentry img {
       border-top-width: 0;
     }
-}
+  }
 
-/* Smaller than standard 960 (devices and browsers) */
-@media only screen and (max-width: 959px) {
- .vi_manager {
-   width: 56px;
-   border-right:1px solid #bbb;
-   -webkit-transition: all 0.3s ease;
-   -moz-transition: all 0.3s ease;
-   -o-transition: all 0.3s ease;
-   transition: all 0.3s ease;
- }
- .vi_manager:hover {width:298px; border-right:1px solid #bbb;}
- .modullist {width:298px;}
- .modullist ul {display:none;}
- .vi_manager:hover .modullist ul {display:block;}
- .vi_viewer {max-width:900px;margin-left:56px;}
-  .has-multiple-children .actionbar,
-  .has-multiple-children .breadcrumb,
-  .has-multiple-children .imageeditor,
-  .has-multiple-children .linkeditor,
-  .has-multiple-children .vi_operator {width: 20%; max-width:210px;}
-  .has-multiple-children .vi_operator:nth-of-type(even) .actionbar,
-  .has-multiple-children .vi_operator:nth-of-type(even) .breadcrumb,
-  .has-multiple-children .vi_operator:nth-of-type(even) .imageeditor,
-  .has-multiple-children .vi_operator:nth-of-type(even) .linkeditor,
-  .has-multiple-children .vi_operator:nth-of-type(even) {width: 70%;max-width:750px;}
-  .vi_operator .actionbar h3 {display:none;}
-  .vi_topbar .currentmodul {display:none;}
-}
+  /* Smaller than standard 960 (devices and browsers) */
+  @media only screen and (max-width: 959px) {
+    .vi_manager {
+      width: 56px;
+      border-right:1px solid #bbb;
+      transition: all 0.3s ease;
+    }
+    .vi_manager:hover {width:298px; border-right:1px solid #bbb;}
+    .modullist {width:298px;}
+    .modullist ul {display:none;}
+    .vi_manager:hover .modullist ul {display:block;}
+    .vi_viewer {max-width:900px;margin-left:56px;}
+    .has-multiple-children .actionbar,
+    .has-multiple-children .breadcrumb,
+    .has-multiple-children .imageeditor,
+    .has-multiple-children .linkeditor,
+    .has-multiple-children .vi_operator {width: 20%; max-width:210px;}
+    .has-multiple-children .vi_operator:nth-of-type(even) .actionbar,
+    .has-multiple-children .vi_operator:nth-of-type(even) .breadcrumb,
+    .has-multiple-children .vi_operator:nth-of-type(even) .imageeditor,
+    .has-multiple-children .vi_operator:nth-of-type(even) .linkeditor,
+    .has-multiple-children .vi_operator:nth-of-type(even) {width: 70%;max-width:750px;}
+    .vi_operator .actionbar h3 {display:none;}
+    .vi_topbar .currentmodul {display:none;}
+  }
+
 

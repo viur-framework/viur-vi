@@ -23,6 +23,7 @@ class ActionBar(html5.Div):
 		self.currentAction = currentAction
 		self["class"].append("vi-actionbar bar")
 
+
 	def setActions(self, actions):
 		"""
 			Sets the list of valid actions for this modul.
@@ -49,7 +50,7 @@ class ActionBar(html5.Div):
 		for action in actions:
 			if action=="|":
 				span = html5.Span()
-				span["class"].append( "spacer" )
+				span["class"].append( "vi-ab-spacer" )
 				self.appendChild( span )
 			else:
 				if self.module is not None and self.module in conf["modules"].keys():

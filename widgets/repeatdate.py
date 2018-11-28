@@ -110,7 +110,7 @@ class RepeatDatePopup(html5.Div):
 		cat = "byweek"
 
 		fieldSets[cat] = EditWidgetFieldset(cat)
-		fieldSets[cat].addClass("active")
+		fieldSets[cat].addClass("is-active")
 
 		self.dtstart = data["values"]["startdate"]
 		startdateLabel = html5.Label("Termin")
@@ -163,8 +163,8 @@ class RepeatDatePopup(html5.Div):
 		fieldSets[ cat ]._section.appendChild(containerDiv2)
 		# fieldSets[ cat ]._section.appendChild(containerDiv3)
 		for (k,v) in fieldSets.items():
-			if not "active" in v["class"]:
-				v["class"].append("active")
+			if not "is-active" in v["class"]:
+				v["class"].append("is-active")
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort( key=lambda x:x[0])
 		for k,v in tmpList:

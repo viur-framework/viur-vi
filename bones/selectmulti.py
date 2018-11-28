@@ -259,17 +259,17 @@ class AccessMultiSelectBone( html5.Div ):
 			for toggle in toggles.values():
 				if html5.utils.doesEventHitWidgetOrChildren(event, toggle):
 					if not "disabled" in toggle[ "class" ]:
-						if "active" in toggle[ "class" ]:
-							toggle[ "class" ].remove( "active" )
+						if "is-active" in toggle[ "class" ]:
+							toggle[ "class" ].remove( "is-active" )
 
 							# When disabling "view", disable all other flags also, because
 							# they don't make no sense anymore then.
 							if "view" in toggle[ "class" ]:
 								for rm in [ "add", "delete", "edit" ]:
-									self.modules[ module ][ rm ][ "class" ].remove( "active" )
+									self.modules[ module ][ rm ][ "class" ].remove( "is-active" )
 
 						else:
-							toggle[ "class" ].append( "active" )
+							toggle[ "class" ].append( "is-active" )
 
 					self.checkmodulesbox( module )
 
@@ -282,10 +282,10 @@ class AccessMultiSelectBone( html5.Div ):
 				for toggle in toggles.values():
 					if not "disabled" in toggle[ "class" ]:
 						if self.modulesbox[ module ][ "checked" ]:
-							if not "active" in toggle[ "class" ]:
-								toggle[ "class" ].append( "active" )
+							if not "is-active" in toggle[ "class" ]:
+								toggle[ "class" ].append( "is-active" )
 						else:
-							toggle[ "class" ].remove( "active" )
+							toggle[ "class" ].remove( "is-active" )
 
 				return
 
@@ -297,7 +297,7 @@ class AccessMultiSelectBone( html5.Div ):
 			if not "disabled" in item[ "class" ]:
 				all += 1
 
-			if "active" in item[ "class" ]:
+			if "is-active" in item[ "class" ]:
 				on += 1
 
 		if on == 0 or on == all:
@@ -327,8 +327,8 @@ class AccessMultiSelectBone( html5.Div ):
 			for module in self.modules:
 				for state in self.states:
 					if "%s-%s" % ( module, state ) in values:
-						if not "active" in self.modules[ module ][ state ][ "class" ]:
-							self.modules[ module ][ state ][ "class" ].append( "active" )
+						if not "is-active" in self.modules[ module ][ state ][ "class" ]:
+							self.modules[ module ][ state ][ "class" ].append( "is-active" )
 
 				self.checkmodulesbox( module )
 
@@ -342,7 +342,7 @@ class AccessMultiSelectBone( html5.Div ):
 
 		for module in self.modules:
 			for state in self.states:
-				if "active" in self.modules[ module ][ state ][ "class" ]:
+				if "is-active" in self.modules[ module ][ state ][ "class" ]:
 					ret.append( "%s-%s" % ( module, state ) )
 
 		return {self.boneName: ret}

@@ -32,7 +32,7 @@ class AddLeafAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddLeafAction, self ).__init__( translate("Add"), *args, **kwargs )
-		self["class"] = "btn btn-vSmall btn-upload"
+		self["class"] = "btn btn--small btn-upload"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -64,7 +64,7 @@ class DownloadAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( DownloadAction, self ).__init__( translate("Download"), *args, **kwargs )
-		self["class"] = "btn btn-vSmall btn-download"
+		self["class"] = "btn btn--small btn-download"
 		self["disabled"]= True
 		self.isDisabled=True
 

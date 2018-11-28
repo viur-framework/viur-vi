@@ -7,9 +7,6 @@
 .tree .tree-item {
   padding: 7px;
   line-height: 2em;
-  -webkit-transition: all 0.3s ease;
-  -moz-transition: all 0.3s ease;
-  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 .tree .selectioncontainer {
@@ -38,21 +35,14 @@
   width: 83%;
   font-weight: 600;
   min-width: 500px;
-  border-top: 0;
   position: fixed;
   margin-left: -1%;
   padding: 3px 1% 0;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #bbb;
   border-bottom: 1px solid @highlightcolor;
   background-color: #eee;
   background-color: rgba(180, 180, 180, 0.7);
-  background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(220, 220, 220, 0.7)), to(rgba(255, 255, 255, 0.4)));
-  /* webkit */
-
-  background-image: -moz-linear-gradient(top center, rgba(220, 220, 220, 0.2) 20%, rgba(255, 255, 255, 0.2) 95%);
-  /* mozilla - FF3.6+ */
-
   margin-top: -47px;
   z-index: 10;
 }
@@ -108,34 +98,18 @@
 }
 .tree .tree-item.file.type_text:before {
   background-position: -48px 0px;
-  -webkit-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -moz-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -ms-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -o-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
   filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
 }
 .tree .tree-item.file.format_pdf:before {
   background-position: -96px 0px;
-  -webkit-filter: drop-shadow(1px 1px 3px rgba(240, 0, 0, 0.3));
-  -moz-filter: drop-shadow(1px 1px 3px rgba(240, 0, 0, 0.3));
-  -ms-filter: drop-shadow(1px 1px 3px rgba(240, 0, 0, 0.3));
-  -o-filter: drop-shadow(1px 1px 3px rgba(240, 0, 0, 0.3));
   filter: drop-shadow(1px 1px 3px rgba(240, 0, 0, 0.3));
 }
 .tree .tree-item.file.format_zip:before {
   background-position: -120px 0px;
-  -webkit-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -moz-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -ms-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
-  -o-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
   filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
 }
 .tree .tree-item.file.format_msword:before {
   background-position: -144px 0px;
-  -webkit-filter: drop-shadow(1px 1px 3px rgba(0, 0, 240, 0.3));
-  -moz-filter: drop-shadow(1px 1px 3px rgba(0, 0, 240, 0.3));
-  -ms-filter: drop-shadow(1px 1px 3px rgba(0, 0, 240, 0.3));
-  -o-filter: drop-shadow(1px 1px 3px rgba(0, 0, 240, 0.3));
   filter: drop-shadow(1px 1px 3px rgba(0, 0, 240, 0.3));
 }
 .tree .tree-item.type_image:before {

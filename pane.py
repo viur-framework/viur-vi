@@ -20,6 +20,10 @@ class Pane(html5.Div):
 		self.parentPane = None
 		self.sinkEvent("onClick")
 
+		self.item = html5.Div()
+		self.item["class"].append("item has-hover")
+		self.appendChild(self.item)
+
 		self.descr = descr
 		self.iconURL = iconURL
 		self.iconClasses = iconClasses
@@ -33,15 +37,15 @@ class Pane(html5.Div):
 		self.widgetsDomElm["class"].append("has-no-child")
 		self.childDomElem = None
 
-		self.label = html5.A()
-		self.label["class"].append("button")
-		self.appendChild(self.label)
+		self.label = html5.Div()
+		self.label["class"].append("item-link")
+		self.item.appendChild(self.label)
 
 		self.setText(descr, iconURL)
 
-		self.closeBtn = html5.ext.Button(translate("Close"), self.onBtnCloseReleased)
-		self.closeBtn.addClass("closebtn")
-		self.appendChild(self.closeBtn)
+		self.closeBtn = html5.ext.Button(u"×", self.onBtnCloseReleased)
+		self.closeBtn.addClass("item-action")
+		self.item.appendChild(self.closeBtn)
 
 		if not closeable:
 			self.closeBtn.hide()
@@ -60,25 +64,36 @@ class Pane(html5.Div):
 	def setText(self, descr = None, iconURL = None):
 		self.label.removeAllChildren()
 
+		self.itemImage = html5.Div()
+		self.itemImage["class"].append("item-image")
+		self.label.appendChild(self.itemImage)
+		self.itemIcon = html5.I()
+		self.itemImage.appendChild(self.itemIcon)
+
+		if descr is None:
+			descr = self.descr
+
 		if iconURL is None:
-			iconURL = self.iconURL
+			self.itemIcon.appendChild(descr[:1])
 
 		if iconURL is not None:
 			img = html5.Img()
 			img["src"] = iconURL
-			self.label.appendChild(img)
+			self.itemIcon.appendChild(img)
 
 		if self.iconClasses is not None:
 			for cls in self.iconClasses:
 				self.label.addClass(cls)
 
-		if descr is None:
-			descr = self.descr
+		self.itemContent = html5.Div()
+		self.itemContent["class"].append("item-content")
+		self.label.appendChild(self.itemContent)
 
 		if descr is not None:
 			h = html5.H3()
 			h.appendChild(descr)
-			self.label.appendChild(h)
+			h["class"].append("item-headline")
+			self.itemContent.appendChild(h)
 
 	def onBtnCloseReleased(self, *args, **kwargs):
 		conf["mainWindow"].removePane(self)
@@ -96,7 +111,8 @@ class Pane(html5.Div):
 		pane.parentPane = self
 
 		if not self.childDomElem:
-			self.childDomElem = html5.Ul()
+			self.childDomElem = html5.Div()
+			self.childDomElem["class"].append("list list--sub")
 
 			if self.collapseable and not pane.closeable:
 				self.childDomElem[ "style" ][ "display" ] = "none"

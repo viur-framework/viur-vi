@@ -14,23 +14,32 @@ class TopBarWidget(html5.Header):
 		#DOM.setAttribute( self.element, "class", "vi_topbar")
 		super(TopBarWidget,self ).__init__()
 
-		self["class"] = "vi-topbar"
+		self["class"] = "vi-topbar bar"
 		anav=html5.Nav()
-		anav["class"].append("iconnav")
-		self.iconnav=html5.Ul()
+		anav["class"].append("vi-tb-right bar-group bar-group--right")
 
+		self.iconnav=html5.Div()
+		self.iconnav._setClass("input-group")
 		#self.logoContainer = html5.Div()
 		#self.logoContainer["class"].append("logo")
 		#self.appendChild( self.logoContainer )
 
 		self.sinkEvent("onClick")
 
+		self.topbarLeft = html5.Div()
+		self.topbarLeft._setClass("vi-tb-left bar-group bar-group--left")
+		self.appendChild(self.topbarLeft)
+
+		self.topbarLogo = html5.Div()
+		self.topbarLogo._setClass("vi-tb-logo")
+		self.topbarLeft.appendChild(self.topbarLogo)
+
 		self.modulH1 = html5.H1()
-		self.modulH1._setClass("module")
-		self.appendChild(self.modulH1)
+		self.modulH1._setClass("vi-tb-title")
+		self.topbarLeft.appendChild(self.modulH1)
 
 		self.modulContainer = html5.Div()
-		self.modulContainer["class"].append("currentmodul")
+		self.modulContainer["class"].append("vi-tb-currentmodul")
 		self.appendChild( self.modulContainer )
 
 		self.modulImg = html5.Label()
@@ -83,7 +92,7 @@ class TopBarWidget(html5.Header):
 
 		conf["theApp"].setTitle(descr)
 
-class UserState(html5.Li):
+class UserState(html5.Button):
 	def __init__(self):
 		super(UserState,self).__init__()
 		self.update()
@@ -101,11 +110,9 @@ class UserState(html5.Li):
 			                        cacheable=False )
 			return
 
-		aa = html5.A()
-		aa["title"] = user[ "name" ]
-		aa["class"].append("topicon accountmgnt")
-		aa.appendChild( html5.TextNode( user[ "name" ] ) )
-		self.appendChild(aa)
+		self["title"] = user[ "name" ]
+		self.addClass("btn vi-tb-accountmgnt")
+		self.appendChild( html5.TextNode( user[ "name" ] ) )
 
 	@staticmethod
 	def canHandle( action ):
@@ -114,16 +121,13 @@ class UserState(html5.Li):
 toplevelActionSelector.insert( 0, UserState.canHandle, UserState )
 
 
-class Tasks(html5.Li):
+class Tasks(html5.Button):
 	def __init__(self):
 		super(Tasks, self).__init__()
 		self.sinkEvent("onClick")
 		self.hide()
-
-		a = html5.A()
-		a[ "class" ].append( "topicon tasks" )
-		a.appendChild( html5.TextNode( translate( "Tasks" ) ) )
-		self.appendChild( a )
+		self.addClass("btn vi-tb-tasks")
+		self.appendChild( html5.TextNode( translate( "Tasks" ) ) )
 
 		if not conf[ "tasks" ][ "server" ]:
 			NetworkService.request( None, "/vi/_tasks/list",
@@ -170,13 +174,11 @@ class Tasks(html5.Li):
 toplevelActionSelector.insert( 0, Tasks.canHandle, Tasks )
 
 
-class Logout(html5.Li):
+class Logout(html5.Button):
 	def __init__(self):
 		super(Logout,self).__init__()
-		aa=html5.A()
-		aa["class"].append("topicon logout")
-		aa.appendChild(html5.TextNode(translate("Logout")))
-		self.appendChild(aa)
+		self.addClass("btn vi-tb-logout")
+		self.appendChild(html5.TextNode(translate("Logout")))
 		self.sinkEvent("onClick")
 
 	def onClick(self, event):

@@ -69,12 +69,12 @@ class FilePreviewImage(html5.Div):
 			self.downloadOnly = True
 
 			if file:
-				preview = "icons/filetypes/file.svg"
+				preview = "embedsvg/icons-file.svg"
 				mime = file.get("mimetype")
 				if mime:
 					for icon in ["bmp", "doc", "gif", "jpg", "pdf", "png", "tiff", "image", "audio", "video", "zip"]:
 						if icon in mime:
-							preview = "icons/filetypes/%s.svg" % icon
+							preview = "embedsvg/icons-%s-file.svg" % icon
 							self.downloadOnly = False
 							break
 

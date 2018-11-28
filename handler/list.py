@@ -10,7 +10,7 @@ from i18n import translate
 
 class ListHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, isView=False, wasRequested = False, *args, **kwargs):
-		icon = "icons/modules/list.svg"
+		icon = "embedsvg/icons-list.svg"
 		if "icon" in moduleInfo.keys():
 			icon = moduleInfo["icon"]
 

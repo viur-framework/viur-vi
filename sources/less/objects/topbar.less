@@ -2,105 +2,59 @@
 /* TOPBAR */
 
 // Prefixes and objects:
-// .topbar-
+// .vi-topbar-
+// .vi-tb-
 
 .vi-topbar {
-  grid-area: topbar;
   display: flex;
-  min-height:50px;
+  height: @topbarHeight;
   border-bottom: 2px solid @mainColor;
+  background: #fff;
+  padding-right: 10px;
   .boxShadow(1, #000);
-  .zIndex('nav',50);
+  .zIndex('nav', 50);
+}
 
-  & .item:not(:first-of-type) .item-content {
-    margin-left: 6.5px;
-  }
-
-  &-left {
-    display: flex;
-    justify-content: flex-start;
-  }
-
-  &-right {
-    justify-content: flex-end;
-    margin-left: auto;
-  }
-
+.vi-tb {
+  &-left {}
+  &-right {}
   &-logo {
     background: @mainColor;
     color:#fff;
     width: ~"calc(2.5rem + 3.75px)";
-    height: 100%;
     display:flex;
     align-items: center;
     justify-content: center;
+    align-self: stretch;
+    height: 100%;
     & svg {
       width:75%;
       height: 75%;
       fill:currentcolor;
     }
   }
-
   &-title {
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 1.2em;
     color: @mainColor;
+  }
+  &-currentmodul {
+    position: relative;
+    text-align: center;
+    float: left;
+    width: auto;
+    margin-top:10px;
+    & img {
+      width: 32px;
+      height: 32px;
+      float: left;
+      margin: -5px 15px 0;
+    }
   }
 }
 
-
-
-
 /* #vi-topbar
 ================================================== */
-.vi-topbar {
-  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  z-index: 10;
-  border-bottom:1px solid @mainColor;
-  background-color: #eee;
-  background-color: rgba(238, 238, 238, 0.8);
-  background-image: -webkit-gradient(linear, right top, right bottom, from(rgba(238, 238, 238, 0.8)), to(rgba(255, 255, 255, 0.2)));
-  background-image: -moz-linear-gradient(top center, rgba(238, 238, 238, 0.8) 20%, rgba(255, 255, 255, 0.2) 95%);
-}
-.vi-topbar h1,
-.vi-topbar h2,
-.vi-topbar span {
-  position: relative;
-  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
-  letter-spacing: 1px;
-  font-weight: 600;
-  float: left;
-  width: auto;
-  color: #444;
-  display:block;
-  white-space: nowrap;
-}
-
-.vi-topbar h1 {min-width:15.7%; margin-right: .4%;}
-
-.vi-topbar h1:before {
-  content: ' ';
-  background-image: url('../icons/vi_app_logo.png');
-  background-size: cover;
-  width: 50px;
-  height: 50px;
-  display: block;
-  float: left;
-  margin-right: 15px;
-}
-.vi-topbar .currentmodul {
-  position: relative;
-  text-align: center;
-  float: left;
-  width: auto;
-  margin-top:10px;
-}
-.vi-topbar .currentmodul img {
-  width: 32px;
-  height: 32px;
-  float: left;
-  margin: -5px 15px 0;
-}
 
 .iconnav {
   position: relative;
@@ -136,8 +90,8 @@
   text-decoration: none;
   border-bottom:2px solid @mainColor;
 }
-.iconnav li.inactive a,
-.iconnav li.inactive a:link {
+.iconnav li.is-inactive a,
+.iconnav li.is-inactive a:link {
   color: #444;
 }
 .iconnav li.logout a {
@@ -148,75 +102,8 @@
   box-shadow: inset 3px 1px 3px rgba(0, 0, 0, 0.2);
   border-bottom: 2px solid #777777;
 }
-/* Icon Links */
-.iconnav li a.topicon {
-  color: transparent;
-  letter-spacing: -1em;
-  overflow: hidden;
-  min-width: 46px;
-}
-.iconnav li a.topicon:before {
-  background-image: url(../icons/vi_iconnav_sprite.svg);
-  background-repeat: no-repeat;
-  width: 32px;
-  height: 32px;
-  content: ' ';
-  position: relative;
-  float: left;
-  margin-top: -1px;
-  margin-left: 7px;
-  margin-right: 7px;
-}
-/* Action Icons */
-.iconnav li a.topicon.dashboard:before {
-  background-position: 0px 0px;
-}
-.iconnav li a.topicon.myfiles:before {
-  background-position: -32px 0px;
-}
-.iconnav li a.topicon.accountmgnt:before {
-  background-position: -64px 0px;
-}
-.iconnav li a.topicon.tasks:before {
-  background-position: -96px 0px;
-}
-.iconnav li a.topicon.settings:before {
-  background-position: -96px 0px;
-}
-.iconnav li a.topicon.logout:before {
-  background-position: -128px 0px;
-}
-.iconnav li a.topicon.share:before {
-  background-position: -224px 0px;
-}
-.iconnav li a.topicon.search:before {
-  background-position: -256px 0px;
-}
 
-.iconnav li a.topicon:hover {
-  overflow: visible;
-  min-width: 130px;
-  letter-spacing: normal;
-}
-.iconnav li.logout a:hover {
-  background-color: #eee;
-  -moz-box-shadow: inset 1px 0px 3px rgba(0, 0, 0, 0.2);
-  -webkit-box-shadow: inset 1px 0px 3px rgba(0, 0, 0, 0.2);
-  box-shadow: inset 1px 0px 3px rgba(0, 0, 0, 0.2);
-  border-bottom:2px solid lighten(@mainColor, 10%);
-}
-.iconnav li a:hover,
-.iconnav li a:active {
-  color: #999;
-  background-color: #fff;
-  text-decoration: none;
-  border-bottom:2px solid lighten(@mainColor, 10%);
-}
 
-.iconnav li.inactive a,
-.iconnav li.inactive a:link {
-  color: #444;
-}
 
 
 

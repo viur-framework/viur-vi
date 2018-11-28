@@ -28,17 +28,21 @@ class AdminScreen(Screen):
 		self.topBar = TopBarWidget()
 		self.appendChild(self.topBar)
 
+		self.mainFrame = html5.Div()
+		self.mainFrame["class"] = "vi-main-frame"
+		self.appendChild(self.mainFrame)
+
 		self.moduleMgr = html5.Div()
-		self.moduleMgr["class"] = "vi-manager"
-		self.appendChild(self.moduleMgr)
+		self.moduleMgr["class"] = "vi-manager-frame"
+		self.mainFrame.appendChild(self.moduleMgr)
 
 		self.moduleList = html5.Nav()
 		self.moduleList["class"] = "vi-modulelist"
 		self.moduleMgr.appendChild(self.moduleList)
 
 		self.viewport = html5.Div()
-		self.viewport["class"] = "vi-viewer"
-		self.appendChild(self.viewport)
+		self.viewport["class"] = "vi-viewer-frame"
+		self.mainFrame.appendChild(self.viewport)
 
 		self.logWdg = Log()
 		self.appendChild(self.logWdg)
@@ -254,13 +258,13 @@ class AdminScreen(Screen):
 	def switchFullscreen(self, fullscreen = True):
 		if fullscreen:
 			self.moduleMgr.hide()
-			self.viewport.addClass("is_fullscreen")
+			self.viewport.addClass("is-fullscreen")
 		else:
 			self.moduleMgr.show()
-			self.viewport.removeClass("is_fullscreen")
+			self.viewport.removeClass("is-fullscreen")
 
 	def isFullscreen(self):
-		return "is_fullscreen" in self.viewport["class"]
+		return "is-fullscreen" in self.viewport["class"]
 
 	def onError(self, req, code):
 		print("ONERROR")
@@ -346,7 +350,7 @@ class AdminScreen(Screen):
 
 		# Close current Pane
 		if self.currentPane is not None:
-			self.currentPane.removeClass("is-active")
+			self.currentPane.item.removeClass("is-active")
 			self.currentPane.widgetsDomElm["style"]["display"] = "none"
 
 		# Focus wanted Pane
@@ -357,7 +361,7 @@ class AdminScreen(Screen):
 		if self.currentPane.collapseable and self.currentPane.childDomElem:
 			self.currentPane.childDomElem["style"]["display"] = "block"
 
-		self.currentPane.addClass("is-active")
+		self.currentPane.item.addClass("is-active")
 
 		# Also open parent panes, if not already done
 		pane = self.currentPane.parentPane

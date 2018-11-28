@@ -1,0 +1,58 @@
+@charset "UTF-8";
+/* Vi Lists */
+
+// Prefixes and objects:
+// .list-
+// .sublist-
+
+.list {
+ display:flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color:#fff;
+  & * + .item,
+  * + & {
+    border-top: 1px solid #dadad9;
+  }
+  & .item {
+    &.is-active {
+      border-bottom-color: transparent;
+    }
+  }
+  &-separator {
+    font-weight: 300;
+    background-color: darken(@backgroundColor,10%);
+    font-size:.9em;
+    padding: @defaultPadding @defaultPadding*1.25;
+    display:flex;
+    flex:0 0 auto;
+    border-bottom: 1px solid darken(@backgroundColor,20%);
+    color: @textColor;
+  }
+  &--sub {
+    background-color: @backgroundColor;
+    color: darken(@backgroundColor, 50%);
+    & .item {
+      font-size: .7em;
+      &.has-hover {
+        &:hover {
+          color: contrast(darken(@backgroundColor, 5%));
+          background-color: darken(@backgroundColor, 5%);
+        }
+      }
+      &.is-disabled {
+        color: darken(@backgroundColor, 40%) !important;
+        background-color: darken(@backgroundColor, 15%) !important;
+        & i {
+          background-color: darken(@backgroundColor, 25%) !important;
+        }
+      }
+      &.is-disabled .item-action,
+      &.is-disabled:hover .item-action,
+      &.is-disabled .item-action:hover {
+        color: darken(@backgroundColor, 20%);
+        background: transparent;
+      }
+    }
+  }
+}

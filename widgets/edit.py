@@ -65,7 +65,7 @@ class InternalEdit(html5.Div):
 				fs["class"] = cat
 
 				if firstCat:
-					fs["class"].append("active")
+					fs["class"].append("is-active")
 					firstCat = False
 
 					if self.form is self:
@@ -89,7 +89,7 @@ class InternalEdit(html5.Div):
 			if (bone["required"]
 			    and (bone["error"] is not None
 			            or (self.errorInformation and key in self.errorInformation.keys()))):
-				descrLbl["class"].append("is_invalid")
+				descrLbl["class"].append("is-invalid")
 				if bone["error"]:
 					descrLbl["title"] = bone["error"]
 				else:
@@ -99,7 +99,7 @@ class InternalEdit(html5.Div):
 					fieldSets[cat]["class"].append("is_incomplete")
 
 			if bone["required"] and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
-				descrLbl["class"].append("is_valid")
+				descrLbl["class"].append("is-valid")
 
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
 				tmp = html5.Span()
@@ -130,8 +130,8 @@ class InternalEdit(html5.Div):
 
 		if len(fieldSets)==1:
 			for (k,v) in fieldSets.items():
-				if not "active" in v["class"]:
-					v["class"].append("active")
+				if not "is-active" in v["class"]:
+					v["class"].append("is-active")
 
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort( key=lambda x:x[0])
@@ -150,9 +150,9 @@ class InternalEdit(html5.Div):
 				if validityCheck:
 					# Fixme: Bad hack..
 					lbl = bone.parent()._children[0]
-					if "is_valid" in lbl["class"]:
-						lbl["class"].remove("is_valid")
-					lbl["class"].append("is_invalid")
+					if "is-valid" in lbl["class"]:
+						lbl["class"].remove("is-valid")
+					lbl["class"].append("is-invalid")
 					self.actionbar.resetLoadingState()
 					return None
 
@@ -302,7 +302,7 @@ class EditWidgetFieldset(html5.Fieldset):
 		super(EditWidgetFieldset, self).__init__()
 		self.sinkEvent("onClick")
 
-		self.addClass("inactive")
+		self.addClass("is-inactive")
 		self["name"] = cat
 
 		legend = html5.Legend()
@@ -323,15 +323,15 @@ class EditWidgetFieldset(html5.Fieldset):
 			self.show()
 
 	def activate(self):
-		self.removeClass("inactive")
-		self.addClass("active")
+		self.removeClass("is-inactive")
+		self.addClass("is-active")
 
 	def deactivate(self):
-		self.removeClass("active")
-		self.addClass("inactive")
+		self.removeClass("is-active")
+		self.addClass("is-inactive")
 
 	def isActive(self):
-		return "inactive" not in self["class"]
+		return "is-inactive" not in self["class"]
 
 	def toggle(self):
 		if self.isActive():
@@ -790,12 +790,12 @@ class EditWidget(html5.Div):
 				descrLbl["class"].append("is_required")
 
 				if bone["error"] is not None:
-					descrLbl["class"].append("is_invalid")
+					descrLbl["class"].append("is-invalid")
 					descrLbl["title"] = bone["error"]
 					fieldSets[ cat ]["class"].append("is_incomplete")
 					hasMissing = True
 				elif bone["error"] is None and not self.wasInitialRequest:
-					descrLbl["class"].append("is_valid")
+					descrLbl["class"].append("is-valid")
 
 			if isinstance(bone["error"], dict):
 				widget.setExtendedErrorInformation(bone["error"])
@@ -836,8 +836,8 @@ class EditWidget(html5.Div):
 
 		# Show default category
 		if firstCat:
-			firstCat.removeClass("inactive")
-			firstCat.addClass("active")
+			firstCat.removeClass("is-inactive")
+			firstCat.addClass("is-active")
 
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort(key=lambda x:x[0])
@@ -868,7 +868,7 @@ class EditWidget(html5.Div):
 				vdescr = conf["modules"][vmodule]
 
 				fs = html5.Fieldset()
-				fs.addClass("editview", "inactive")
+				fs.addClass("editview", "is-inactive")
 
 				if vclass:
 					fs.addClass(*vclass)
@@ -925,9 +925,9 @@ class EditWidget(html5.Div):
 				if validityCheck:
 					# Fixme: Bad hack..
 					lbl = bone.parent()._children[0]
-					if "is_valid" in lbl["class"]:
-						lbl["class"].remove("is_valid")
-					lbl["class"].append("is_invalid")
+					if "is-valid" in lbl["class"]:
+						lbl["class"].remove("is-valid")
+					lbl["class"].append("is-invalid")
 					self.actionbar.resetLoadingState()
 					return None
 

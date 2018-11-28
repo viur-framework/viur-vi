@@ -6,7 +6,7 @@ from config import conf
 
 class SingletonHandler( Pane ):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
-		icon = "icons/modules/singleton.svg"
+		#icon = "icons/modules/singleton.svg"
 
 		if "icon" in moduleInfo.keys():
 			icon = moduleInfo["icon"]
