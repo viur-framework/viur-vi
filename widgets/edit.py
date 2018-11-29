@@ -534,6 +534,7 @@ class EditWidget(html5.Div):
 			    and "tooltip" in bone["params"].keys()):
 				containerDiv.appendChild(ToolTip(longText=bone["params"]["tooltip"]))
 
+			segments[cat].addWidget(containerDiv)
 			containerDiv.addClass("vi-bone", "vi-bone--%s" % bone["type"].replace(".","-"), "vi-bone--%s" % key)
 
 			if "." in bone["type"]:
@@ -560,8 +561,7 @@ class EditWidget(html5.Div):
 
 		# Show default category
 		if firstCat:
-			firstCat.removeClass("is-inactive")
-			firstCat.addClass("is-active")
+			firstCat.activate()
 
 		# Views
 		views = conf["modules"][self.module].get("editViews")
@@ -601,7 +601,6 @@ class EditWidget(html5.Div):
 				                                    columns = vcolumns or vdescr.get("columns"),
 				                                    context = context)
 				segments[vmodule].addWidget(self.views[vmodule])
-				self.form.appendChild(fs)
 
 		#print(data["values"])
 		self.unserialize(data["values"])

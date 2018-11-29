@@ -7,7 +7,7 @@ class AccordionSegment(html5.Fieldset):
 		super(AccordionSegment, self).__init__()
 		self.sinkEvent("onClick")
 
-		self.addClass("inactive")
+		self.addClass("is-inactive")
 		self["name"] = ident
 
 		legend = html5.Legend()
@@ -27,15 +27,15 @@ class AccordionSegment(html5.Fieldset):
 			self.show()
 
 	def activate(self):
-		self.removeClass("inactive")
-		self.addClass("active")
+		self.removeClass("is-inactive")
+		self.addClass("is-active")
 
 	def deactivate(self):
-		self.removeClass("active")
-		self.addClass("inactive")
+		self.removeClass("is-active")
+		self.addClass("is-inactive")
 
 	def isActive(self):
-		return "inactive" not in self["class"]
+		return "is-inactive" not in self["class"]
 
 	def toggle(self):
 		if self.isActive():
