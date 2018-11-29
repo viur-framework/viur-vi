@@ -107,6 +107,7 @@ class InternalEdit(html5.Div):
 				for t in bone["type"].split("."):
 					self.containers[key].addClass(t)
 
+
 			if cat is not None:
 				segments[cat].addWidget(self.containers[key])
 			else:

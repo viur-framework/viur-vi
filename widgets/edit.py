@@ -534,7 +534,6 @@ class EditWidget(html5.Div):
 			    and "tooltip" in bone["params"].keys()):
 				containerDiv.appendChild(ToolTip(longText=bone["params"]["tooltip"]))
 
-			fieldSets[cat]._section.appendChild(containerDiv)
 			containerDiv.addClass("vi-bone", "vi-bone--%s" % bone["type"].replace(".","-"), "vi-bone--%s" % key)
 
 			if "." in bone["type"]:
