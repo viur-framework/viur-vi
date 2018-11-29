@@ -12,21 +12,21 @@ class CompoundFilter( html5.Div ):
 	def __init__(self, view, modul, embed=False, *args, **kwargs ):
 		super( CompoundFilter, self ).__init__( *args, **kwargs)
 
-		self["class"].append("sbw-compoundfilter")
+		self.addClass("sbw-compoundfilter")
 		self.view = view
 		self.module = modul
 		self.embed = embed
 
 		if embed:
-			self["class"].append("sbw-compoundfilter-vEmbed")
-			self["class"].append("is-expanded")
+			self.addClass("sbw-compoundfilter-vEmbed")
+			self.addClass("is-expanded")
 		else:
-			self["class"].append("sbw-compoundfilter-vStandalone")
-			self["class"].append("is-collapsed")
+			self.addClass("sbw-compoundfilter-vStandalone")
+			self.addClass("is-collapsed")
 
 		if "name" in view.keys():
 			h2 = html5.H2()
-			h2["class"].append("sbw-compoundfilter-name")
+			h2.addClass("sbw-compoundfilter-name")
 			h2.appendChild( html5.TextNode( view["name"] ) )
 			self.appendChild( h2 )
 
@@ -37,7 +37,7 @@ class CompoundFilter( html5.Div ):
 
 			if wdg is not None:
 				container = html5.Div()
-				container["class"].append("sbw-compoundfilter-extended")
+				container.addClass("sbw-compoundfilter-extended")
 				wdg = wdg( extension, view, modul )
 				container.appendChild( wdg )
 				self.appendChild( container )
@@ -129,7 +129,7 @@ class FilterSelector( html5.Div ):
 
 		if not isSearchDisabled:
 			self.search = Search()
-			self.search["class"].append("is-collapsed")
+			self.search.addClass("is-collapsed")
 			self.appendChild(self.search)
 			self.search.startSearchEvent.register( self )
 

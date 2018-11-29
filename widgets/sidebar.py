@@ -7,12 +7,12 @@ class SideBar( html5.Div ):
 		super( SideBar, self ).__init__( *args, **kwargs )
 		self.isInit = False
 		self.currentWidget = None
-		self["class"].append("sidebarwidgets")
-		self["class"].append("is-empty")
+		self.addClass("sidebarwidgets")
+		self.addClass("is-empty")
 
 	def onAttach(self):
 		super( SideBar, self ).onAttach()
-		self.parent()["class"].append("is-fullview")
+		self.parent().addClass("is-fullview")
 		self.isInit = True
 		if self.currentWidget is not None:
 			cw = self.currentWidget
@@ -34,16 +34,16 @@ class SideBar( html5.Div ):
 		if self.currentWidget:
 			self.removeChild( self.currentWidget )
 			if widget is None:
-				self["class"].remove("has-child")
-				self["class"].append("is-empty")
-				self.parent()["class"].remove("is-splitview")
-				self.parent()["class"].append("is-fullview")
+				self.removeClass("has-child")
+				self.addClass("is-empty")
+				self.parent().removeClass("is-splitview")
+				self.parent().addClass("is-fullview")
 
 		elif widget is not None:
-			self["class"].append("has-child")
-			self["class"].remove("is-empty")
-			self.parent()["class"].append("is-splitview")
-			self.parent()["class"].remove("is-fullview")
+			self.addClass("has-child")
+			self.removeClass("is-empty")
+			self.parent().addClass("is-splitview")
+			self.parent().removeClass("is-fullview")
 
 		self.currentWidget = widget
 

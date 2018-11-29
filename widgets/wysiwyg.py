@@ -22,7 +22,7 @@ class BasicTextAction(BasicEditorAction):
 		assert self.cmd is not None
 		super( BasicTextAction, self ).__init__( self.cmd, *args, **kwargs )
 		self["class"] = "icon text style"
-		self["class"].append( self.cmd )
+		self.addClass( self.cmd )
 		if self.title:
 			self["title"] = self.title
 
@@ -39,10 +39,10 @@ class BasicTextAction(BasicEditorAction):
 	def onCursorMoved(self, nodeStack):
 		if self.isActiveTag in [(x.tagName if "tagName" in dir(x) else "") for x in nodeStack]:
 			if not "isactive" in self["class"]:
-				self["class"].append("isactive")
+				self.addClass("isactive")
 		else:
 			if "isactive" in self["class"]:
-				self["class"].remove("isactive")
+				self.removeClass("isactive")
 
 	def onClick(self, sender=None):
 		self.execCommand(self.cmd)
@@ -262,26 +262,26 @@ class CreateTablePopup( html5.ext.Popup ):
 			targetNode = targetNode.parentNode
 
 		self.targetNode = targetNode
-		self["class"].append("createtable")
+		self.addClass("createtable")
 		self.rowInput = html5.Input()
 		self.rowInput["type"] = "number"
 		self.rowInput["value"] = 3
 		self.appendChild( self.rowInput )
 		l = html5.Label(translate("Rows"), forElem=self.rowInput)
-		l["class"].append("rowlbl")
+		l.addClass("rowlbl")
 		self.appendChild( l )
 		self.colInput = html5.Input()
 		self.colInput["type"] = "number"
 		self.colInput["value"] = 4
 		self.appendChild( self.colInput )
 		l = html5.Label(translate("Cols"), forElem=self.colInput)
-		l["class"].append("collbl")
+		l.addClass("collbl")
 		self.appendChild( l )
 		self.insertHeader = html5.Input()
 		self.insertHeader["type"] = "checkbox"
 		self.appendChild( self.insertHeader )
 		l = html5.Label(translate("Insert Table Header"), forElem=self.insertHeader)
-		l["class"].append("headerlbl")
+		l.addClass("headerlbl")
 		self.appendChild( l )
 		self.appendChild( html5.ext.Button( "Cancel", callback=self.doClose ) )
 		self.appendChild( html5.ext.Button( "Create", callback=self.createTable ) )
@@ -667,19 +667,19 @@ class LinkEditor( html5.Div ):
 	newLinkIdx = 0
 	def __init__(self, *args, **kwargs):
 		super( LinkEditor, self ).__init__( *args, **kwargs )
-		self["class"].append("linkeditor")
+		self.addClass("linkeditor")
 		self["style"]["display"] = "none"
 		self.linkTxt = html5.Input()
 		self.linkTxt["type"] = "text"
 		self.appendChild(self.linkTxt)
 		l = html5.Label(translate("URL"), forElem=self.linkTxt)
-		l["class"].append("urllbl")
+		l.addClass("urllbl")
 		self.appendChild( l )
 		self.newTab = html5.Input()
 		self.newTab["type"] = "checkbox"
 		self.appendChild(self.newTab)
 		l = html5.Label(translate("New window"), forElem=self.newTab)
-		l["class"].append("newwindowlbl")
+		l.addClass("newwindowlbl")
 		self.appendChild( l )
 		self.currentElem = None
 
@@ -744,31 +744,31 @@ class LinkEditor( html5.Div ):
 class ImageEditor( html5.Div ):
 	def __init__(self, *args, **kwargs):
 		super( ImageEditor, self ).__init__( *args, **kwargs )
-		self["class"].append("imageeditor")
+		self.addClass("imageeditor")
 		self["style"]["display"] = "none"
 		self.widthInput = html5.Input()
 		self.widthInput["type"] = "number"
 		self.appendChild(self.widthInput)
 		l = html5.Label(translate("Width"), self.widthInput)
-		l["class"].append("widthlbl")
+		l.addClass("widthlbl")
 		self.appendChild( l )
 		self.keepAspectRatio = html5.Input()
 		self.keepAspectRatio["type"] = "checkbox"
 		self.appendChild( self.keepAspectRatio )
 		l = html5.Label(translate("Keep aspect ratio"), self.keepAspectRatio)
-		l["class"].append("aspectlbl")
+		l.addClass("aspectlbl")
 		self.appendChild( l )
 		self.heightInput = html5.Input()
 		self.heightInput["type"] = "number"
 		self.appendChild(self.heightInput)
 		l = html5.Label(translate("Height"), self.heightInput)
-		l["class"].append("heightlbl")
+		l.addClass("heightlbl")
 		self.appendChild( l )
 		self.titleInput = html5.Input()
 		self.titleInput["type"] = "text"
 		self.appendChild(self.titleInput)
 		l = html5.Label(translate("Title"), self.titleInput)
-		l["class"].append("titlelbl")
+		l.addClass("titlelbl")
 		self.appendChild( l )
 		self.currentElem = None
 		self.sinkEvent("onChange")
@@ -862,20 +862,20 @@ class FlipViewAction( html5.ext.Button ):
 	def onAttach(self):
 		super( FlipViewAction, self ).onAttach()
 		if self.parent().parent().isWysiwygMode:
-			self["class"].append("is_wysiwyg")
+			self.addClass("is-wysiwyg")
 		else:
-			self["class"].append("is_htmlview")
+			self.addClass("is-htmlview")
 
 	def onClick(self, sender=None):
-		if "is_wysiwyg" in self["class"]:
-			self["class"].remove("is_wysiwyg")
-		if "is_htmlview" in self["class"]:
-			self["class"].remove("is_htmlview")
+		if "is-wysiwyg" in self["class"]:
+			self.removeClass("is-wysiwyg")
+		if "is-htmlview" in self["class"]:
+			self.removeClass("is-htmlview")
 
 		if self.parent().parent().flipView():
-			self["class"].append("is_wysiwyg")
+			self.addClass("is-wysiwyg")
 		else:
-			self["class"].append("is_htmlview")
+			self.addClass("is-htmlview")
 
 	def resetLoadingState(self):
 		pass
@@ -989,7 +989,7 @@ class Wysiwyg( html5.Div ):
 		self.discardNextClickEvent = False
 		self.appendChild( self.actionbar )
 		self.tableDiv = html5.Div()
-		self.tableDiv["class"].append("tableeditor")
+		self.tableDiv.addClass("tableeditor")
 		self.appendChild(self.tableDiv)
 		for c in [TableInsertRowBeforeAction,TableInsertRowAfterAction,TableInsertColBeforeAction,TableInsertColAfterAction,TableRemoveRowAction,TableRemoveColAction]:
 			self.tableDiv.appendChild( c() )
@@ -1004,7 +1004,7 @@ class Wysiwyg( html5.Div ):
 		self.appendChild( self.editor )
 		self.actionbar.setActions( self.textActions )
 		#btn = html5.ext.Button("Apply", self.saveText)
-		#btn["class"].append("icon apply")
+		#btn.addClass("icon apply")
 		#self.appendChild( btn )
 		self.currentImage = None
 		self.cursorImage = None

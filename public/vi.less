@@ -29,10 +29,10 @@
 /* #ViUR Styles
 ================================================== */
 
-fieldset.active{
+fieldset.is-active{
   height: inherit;
 }
-fieldset.active section{
+fieldset.is-active section{
   display: block;
 }
 fieldset.is-inactive{
@@ -135,7 +135,7 @@ p { margin-bottom: 10px;}
   background-color: transparent;
 }
 
-.vi-screen.is_loading:after {
+.vi-screen.is-loading:after {
     background-image: url(icons/is_loading32.gif);
     background-position: center 35%;
     background-repeat: no-repeat;
@@ -501,8 +501,8 @@ p { margin-bottom: 10px;}
   letter-spacing: normal;
   color: #eee;
 }
-.modullist li.is_active a {background: @focusoddcolor;}
-.modullist li.is_active h3 {
+.modullist li.is-active a {background: @focusoddcolor;}
+.modullist li.is-active h3 {
   color: #fff;
   text-shadow: none;
 }
@@ -555,11 +555,11 @@ margin-top: -20px;
   overflow-y: auto;
   overflow-x: hidden;
 }
-.vi_operator.is_disabled {
+.vi_operator.is-disabled {
   background-color: #ddd;
   padding: 70px 1% 45px;
 }
-.vi_operator > .is_disabled {
+.vi_operator > .is-disabled {
   opacity: .7;
 }
 .has_multiple_children .vi_operator:nth-of-type(even) {
@@ -721,7 +721,7 @@ background-color:#d6d6d6;
 .actionbar .operations, button.selectfilter, button.text.save[type="button"], button.flipview[type="button"], button.icon.close[type="button"], button.icon.activateselection[type="button"] {
   float: right;
 }
-.actionbar.is_disabled {
+.actionbar.is-disabled {
   visibility: hidden;
 }
 
@@ -1015,7 +1015,7 @@ button.text.link {
 button.flipview:before {
   background-position: -64px -48px;
 }
-button.flipview.is_htmlview:before {
+button.flipview.is-htmlview:before {
   background-position: -96px -16px;
 }
 button.text.table:before {
@@ -1145,11 +1145,11 @@ button.icon.save.close[type="button"]:hover:before {
 }
 
 /* Loading Buttons */
-button.icon.is_loading[type="button"]:before,
-button.is_loading[type="button"]:before,
-button.icon.is_loading[type="button"]:hover:before,
-button.is_loading[type="button"]:hover:before,
-button.icon.save.close.is_loading[type="button"]:hover:before {
+button.icon.is-loading[type="button"]:before,
+button.is-loading[type="button"]:before,
+button.icon.is-loading[type="button"]:hover:before,
+button.is-loading[type="button"]:hover:before,
+button.icon.save.close.is-loading[type="button"]:hover:before {
   background-image: url(icons/is_loading.gif);
   background-position: 0px 0px;
 }
@@ -1159,10 +1159,10 @@ button.icon.close[type="button"],
 button.icon.activateselection[type="button"],
 button.text.save[type="button"],
 button.icon.delete[type="button"],
-button.icon.delete.is_disabled[type="button"]:hover,
+button.icon.delete.is-disabled[type="button"]:hover,
 button.icon.text[type="button"]:hover,
 button.icon.flipview[type="button"]:hover,
-button.icon.is_disabled[type="button"]:hover {
+button.icon.is-disabled[type="button"]:hover {
   color: transparent;
   letter-spacing: -1em;
   overflow: hidden;
@@ -1190,23 +1190,23 @@ button.icon.save.close[type="button"]:hover {
 }
 
 /* Disabled Buttons */
-button.icon.delete.is_disabled[type="button"] {
+button.icon.delete.is-disabled[type="button"] {
   background: #e0e0e0;
 }
 
-button.icon.delete.is_disabled[type="button"]:hover,
-button.icon.is_disabled[type="button"]:hover {
+button.icon.delete.is-disabled[type="button"]:hover,
+button.icon.is-disabled[type="button"]:hover {
   border-color: #999;
   background: #e0e0e0;
 }
-button.icon.delete.is_disabled[type="button"]:before,
-button.icon.is_disabled:before {
+button.icon.delete.is-disabled[type="button"]:before,
+button.icon.is-disabled:before {
   opacity: 0.3;
   background-image: url(icons/vi_actions_sprite.svg)!important;
 }
 
-button.icon.delete.is_disabled[type="button"],
-button.icon.is_disabled {
+button.icon.delete.is-disabled[type="button"],
+button.icon.is-disabled {
   cursor: default;
   color: transparent;
   border: 1px solid #ccc;
@@ -1265,14 +1265,14 @@ legend a:hover {
   cursor: pointer;
 }
 
-form fieldset.is_incomplete:target legend a,
-form fieldset.is_incomplete legend a {
+form fieldset.is-incomplete:target legend a,
+form fieldset.is-incomplete legend a {
   background-color: #1495de;
   border-color: #073866;
   color: #fff;
 }
 
-form fieldset.is_incomplete legend a:before {
+form fieldset.is-incomplete legend a:before {
   background-image: url(icons/vi_actions_sprite_white.svg);
   background-repeat: no-repeat;
   width: 16px;
@@ -1312,7 +1312,7 @@ form fieldset:target legend a:before {
   background-position: -16px -64px;
 }
 
-form fieldset.is_incomplete section,
+form fieldset.is-incomplete section,
 form fieldset:target section
 /*form fieldset.default section*/ {
   display: block;
@@ -1336,7 +1336,7 @@ form fieldset {
   transition: all 0.2s ease-out;
 }
 /*Set height of the slide*/
-form fieldset.is_incomplete,
+form fieldset.is-incomplete,
 form fieldset:target,
 /*form fieldset.default*/ {
   /*min-height: 150px;*/
@@ -1372,7 +1372,7 @@ form label.text {
 form label.selectone {
   border-right-width: 1px;
 }
-form label.is_required {
+form label.is-required {
   border-style: solid;
   border-left-color: @maincolor;
   border-left-width: 2px;
@@ -1481,14 +1481,14 @@ input[type="password"],
     float:left;
 }
 
-.languagebuttons button.is_active, .languagebuttons button.is_filled.is_active {
+.languagebuttons button.is-active, .languagebuttons button.is-filled.is-active {
     background: linear-gradient(to bottom, #666 0%, #aaa 100%);
     box-shadow:inset 1px 1px 2px rgba(0,0,0,0.2);
     border-color:#666;
     color:#fff !important;
 }
 
-.languagebuttons button.is_filled {
+.languagebuttons button.is-filled {
     color: #fff;
     background: transparent linear-gradient(to bottom, #298342 0%, #479C42 100%) repeat scroll 0% 0%;
 }
@@ -1939,7 +1939,7 @@ form .relational:focus button:after {
   float: left;
   padding: 0 1%;
 }
-.tooltip.is_open span {
+.tooltip.is-open span {
   min-height: 60px;
   background: #eee;
   font-size: 1em;
@@ -1950,7 +1950,7 @@ form .relational:focus button:after {
   margin-top: 40px;
   padding: 15px 1% 18px;
 }
-.tooltip.is_open span:before {
+.tooltip.is-open span:before {
   content: '';
   position: absolute;
   top: -48px;
@@ -1959,7 +1959,7 @@ form .relational:focus button:after {
   border-width: 0px;
   border-color: rgba(255, 255, 255, 0) rgba(255, 255, 255, 0) #009de1 rgba(255, 255, 255, 0);
 }
-.tooltip.is_open span:before {
+.tooltip.is-open span:before {
   border-width: 24px 14px;
 }
 /* #vi_tables
@@ -1985,7 +1985,7 @@ table {
   border-top-left-radius: 3px;
 }
 
-table.is_loading:after {
+table.is-loading:after {
   background-image: url(icons/is_loading.gif);
   background-position: center;
   background-repeat: no-repeat;
@@ -2088,19 +2088,19 @@ tr:first-child td:last-child{
   border-width:0px 0px 1px 1px;
 }
 */
-tr.is_focused td {color: #fff; padding:14px 7px;}
-tr.is_selected td, tr.is_focused.is_selected td{color:#fff;}
-tr.is_selected td:first-child, tr.is_focused.is_selected td:first-child {border-left: 3px solid @maincolor;margin-left: -3px;}
-tr.is_selected td:last-child, tr.is_focused.is_selected td:last-child {border-right: 3px solid @maincolor;margin-right: -3px;}
+tr.is-focused td {color: #fff; padding:14px 7px;}
+tr.is-selected td, tr.is-focused.is-selected td{color:#fff;}
+tr.is-selected td:first-child, tr.is-focused.is-selected td:first-child {border-left: 3px solid @maincolor;margin-left: -3px;}
+tr.is-selected td:last-child, tr.is-focused.is-selected td:last-child {border-right: 3px solid @maincolor;margin-right: -3px;}
 
-tr.is_selected:nth-child(odd) {background:@selectionoddcolor;}
-tr.is_selected:nth-child(even) {background:@selectionevencolor;}
+tr.is-selected:nth-child(odd) {background:@selectionoddcolor;}
+tr.is-selected:nth-child(even) {background:@selectionevencolor;}
 
-tr.is_focused:nth-child(odd) {background: @focusoddcolor;}
-tr.is_focused:nth-child(even) {background: @focusevencolor;}
+tr.is-focused:nth-child(odd) {background: @focusoddcolor;}
+tr.is-focused:nth-child(even) {background: @focusevencolor;}
 
-tr.is_focused.is_selected:nth-child(odd) {background: @focusselectionoddcolor;}
-tr.is_focused.is_selected:nth-child(even) {background: @focusselectionevencolor;}
+tr.is-focused.is-selected:nth-child(odd) {background: @focusselectionoddcolor;}
+tr.is-focused.is-selected:nth-child(even) {background: @focusselectionevencolor;}
 
 td span.date {
   margin-right: 10px;
@@ -2237,7 +2237,7 @@ td span.index
   width: 100%;
   margin-bottom: 15px;
 }
-.tree.supports_upload .selectioncontainer {
+.tree.supports-upload .selectioncontainer {
   border: 3px dashed #ddd;
   background: #eee;
 }
@@ -2320,7 +2320,7 @@ td span.index
   background-position: -24px 0px;
   margin-right: 14px;
 }
-.tree .treeitem.node.is_rootnode:before {
+.tree .treeitem.node.is-rootnode:before {
   background-position: 0px 0px;
 }
 
@@ -2357,7 +2357,7 @@ td span.index
   cursor: pointer;
 }
 
-.supports_upload{
+.supports-upload{
   .previewimg{
     width: 26px;
     height: 26px;
@@ -2391,10 +2391,10 @@ td span.index
   max-width: 32px;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
 }
-.tree .selectioncontainer .treeitem.selected {background: @selectionoddcolor; color: #fff; border-right: 3px solid @maincolor; border-left: 3px solid @maincolor; margin-right: -13px; margin-left:-3px;}
+.tree .selectioncontainer .treeitem.is-selected {background: @selectionoddcolor; color: #fff; border-right: 3px solid @maincolor; border-left: 3px solid @maincolor; margin-right: -13px; margin-left:-3px;}
 .tree .selectioncontainer .treeitem.cursor {background: @focusoddcolor; color: #fff; padding:14px 7px;}
-.tree.supports_upload .selectioncontainer:before,
-.tree.supports_upload .selectioncontainer:after {
+.tree.supports-upload .selectioncontainer:before,
+.tree.supports-upload .selectioncontainer:after {
   content: 'Drag your files here.';
   background-image: url(icons/status/supports_upload.svg);
   background-repeat: no-repeat;
@@ -2519,7 +2519,7 @@ progress[value]::-webkit-progress-value {
 .has_no_childs > a:before {
   background-position: -32px -64px;
 }
-.hierarchyitem.is_focused, .hierarchyitem ol .hierarchyitem.is_focused:nth-of-type(odd), .hierarchyitem ol .hierarchyitem.is_focused:nth-of-type(even) {background: @focusoddcolor; color: #fff; padding-top:14px; padding-bottom:14px;}
+.hierarchyitem.is-focused, .hierarchyitem ol .hierarchyitem.is-focused:nth-of-type(odd), .hierarchyitem ol .hierarchyitem.is-focused:nth-of-type(even) {background: @focusoddcolor; color: #fff; padding-top:14px; padding-bottom:14px;}
 
 [draggable] {
   -moz-user-select: none;
@@ -2717,7 +2717,7 @@ progress[value]::-webkit-progress-value {
 .vi_messenger:hover {
   margin-top: -82px;
 }
-.vi_messenger.is_open {
+.vi_messenger.is-open {
   margin-top: -300px;
   overflow-y: scroll;
 }
@@ -2745,7 +2745,7 @@ progress[value]::-webkit-progress-value {
   display: block;
   float: left;
 }
-.vi_messenger.is_open button[type="button"] {
+.vi_messenger.is-open button[type="button"] {
   position: fixed;
   padding-bottom: 7px;
 }
@@ -2772,7 +2772,7 @@ progress[value]::-webkit-progress-value {
   margin-left: 7px;
   background-position: -160px 0px;
 }
-.vi_messenger.is_uploading button[type="button"] {
+.vi_messenger.is-uploading button[type="button"] {
   background: rgba(255, 0, 0, 0.2);
   animation: uploading 5s linear 2s infinite alternate;
   -webkit-animation: uploading 5s linear 2s infinite alternate;
@@ -2801,16 +2801,16 @@ progress[value]::-webkit-progress-value {
     background: rgba(255, 0, 0, 0.1);
   }
 }
-.vi_messenger.is_uploading button[type="button"]:hover,
-.vi_messenger.is_uploading:hover button[type="button"] {
+.vi_messenger.is-uploading button[type="button"]:hover,
+.vi_messenger.is-uploading:hover button[type="button"] {
   color: #fff;
   text-shadow: none;
 }
-.vi_messenger.is_uploading button[type="button"]:before {
+.vi_messenger.is-uploading button[type="button"]:before {
   background-image: url(icons/is_uploading.gif);
   background-position: 0px 0px;
 }
-.vi_messenger.is_open button[type="button"]:before {
+.vi_messenger.is-open button[type="button"]:before {
   background-position: -192px 0px;
 }
 .statuslist {
@@ -2853,7 +2853,7 @@ progress[value]::-webkit-progress-value {
 .statuslist li.log_progress {
   padding-bottom: 6px;
 }
-.statuslist li.log_progress.is_new {
+.statuslist li.log_progress.is-new {
   padding-bottom: 12px;
 }
 .statuslist li span {
@@ -2921,7 +2921,7 @@ display: block;
   background-color: #009ee2;
   background-position: -135px center;
 }
-.statuslist li.is_new {
+.statuslist li.is-new {
   position: fixed;
   padding: 20px;
   width: 500px;
@@ -2933,14 +2933,14 @@ display: block;
   color: #444;
   box-shadow: 5px 5px 7px rgba(0, 0, 0, 0.5);
 }
-.statuslist li.is_new:before {
+.statuslist li.is-new:before {
   padding-top: 15px;
   padding-bottom: 15px;
   margin-left: -21px;
   margin-top: -21px;
   margin-bottom: -21px;
 }
-.vi_messenger.is_open .statuslist li.is_new {
+.vi_messenger.is-open .statuslist li.is-new {
   position: relative;
   padding: 20px;
   width: 500px;
@@ -3093,7 +3093,7 @@ textarea:disabled {
     .has_multiple_children form fieldset section > div {
       padding-bottom:0;
     }
-    .has_multiple_children form fieldset input:disabled, .has_multiple_children form fieldset .preview.is_disabled, .has_multiple_children form fieldset input[type="submit"]:disabled, .has_multiple_children form fieldset button:disabled, .has_multiple_children form fieldset input[type="text"]:disabled, .has_multiple_children form fieldset select:disabled, .has_multiple_children form fieldset textarea:disabled {
+    .has_multiple_children form fieldset input:disabled, .has_multiple_children form fieldset .preview.is-disabled, .has_multiple_children form fieldset input[type="submit"]:disabled, .has_multiple_children form fieldset button:disabled, .has_multiple_children form fieldset input[type="text"]:disabled, .has_multiple_children form fieldset select:disabled, .has_multiple_children form fieldset textarea:disabled {
       display:none;
     }
     .has_multiple_children form fieldset .file .fileentry label {

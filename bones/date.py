@@ -69,12 +69,12 @@ class DateViewBoneDelegate( object ):
 					return html5.TextNode(translate("Error parsing Date"))
 
 				span = html5.Span()
-				span["class"].append("datetime")
+				span.addClass("datetime")
 				dateSpan = html5.Span()
-				dateSpan["class"].append("date")
+				dateSpan.addClass("date")
 				dateSpan.appendChild( html5.TextNode( dt.strftime("%d.%m.%Y") ))
 				timeSpan = html5.Span()
-				timeSpan["class"].append("time")
+				timeSpan.addClass("time")
 				timeSpan.appendChild( html5.TextNode( dt.strftime("%H:%M:%S") ))
 				span.appendChild(dateSpan)
 				span.appendChild(timeSpan)
@@ -88,7 +88,7 @@ class DateViewBoneDelegate( object ):
 					return html5.TextNode(translate("Error parsing Date"))
 
 				dateSpan = html5.Span()
-				dateSpan["class"].append("date")
+				dateSpan.addClass("date")
 				dateSpan.appendChild(html5.TextNode(dt.strftime("%d.%m.%Y")))
 
 				return dateSpan
@@ -100,7 +100,7 @@ class DateViewBoneDelegate( object ):
 					return html5.TextNode(translate("Error parsing Date"))
 
 				timeSpan = html5.Span()
-				timeSpan["class"].append("time")
+				timeSpan.addClass("time")
 				timeSpan.appendChild( html5.TextNode(dt.strftime("%H:%M:%S")))
 				return timeSpan
 

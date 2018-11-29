@@ -275,7 +275,7 @@ class SelectTable( html5.Table ):
 		self._selectedRows.append( row )
 
 		tr = self.getTrByIndex( row )
-		tr["class"].append("is_selected")
+		tr.addClass("is-selected")
 
 		if self.checkboxes:
 			self._checkboxes[ row ][ "checked" ] = True
@@ -296,7 +296,7 @@ class SelectTable( html5.Table ):
 		self._selectedRows.remove( row )
 
 		tr = self.getTrByIndex( row )
-		tr["class"].remove("is_selected")
+		tr.removeClass("is-selected")
 
 		if self.checkboxes:
 			self._checkboxes[ row ][ "checked" ] = False
@@ -319,7 +319,7 @@ class SelectTable( html5.Table ):
 		if not newRow in self._selectedRows:
 			self._selectedRows.append( newRow )
 			tr = self.getTrByIndex( newRow )
-			tr["class"].append("is_selected")
+			tr.addClass("is-selected")
 
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 
@@ -329,11 +329,11 @@ class SelectTable( html5.Table ):
 			If removeExistingSelection is True, the current selection (if any) is invalidated.
 		"""
 		if self._currentRow is not None:
-			self.getTrByIndex(self._currentRow)["class"].remove("is_focused")
+			self.getTrByIndex(self._currentRow).removeClass("is-focused")
 
 		self._currentRow = row
 		if self._currentRow is not None:
-			self.getTrByIndex(self._currentRow)["class"].append("is_focused")
+			self.getTrByIndex(self._currentRow).addClass("is-focused")
 			self.cursorMovedEvent.fire( self, row )
 
 		if removeExistingSelection:
@@ -427,8 +427,8 @@ class SelectTable( html5.Table ):
 		for row in self._selectedRows:
 			tr = self.getTrByIndex( row )
 
-			if not "is_selected" in tr["class"]:
-				tr["class"].append("is_selected")
+			if not "is-selected" in tr["class"]:
+				tr.addClass("is-selected")
 
 			if self.checkboxes:
 				self._checkboxes[ row ][ "checked" ] = True
@@ -444,7 +444,7 @@ class SelectTable( html5.Table ):
 
 		for row in self._selectedRows:
 			tr = self.getTrByIndex( row )
-			tr["class"].remove("is_selected")
+			tr.removeClass("is-selected")
 
 			if self.checkboxes:
 				self._checkboxes[ row ][ "checked" ] = False
@@ -464,10 +464,10 @@ class SelectTable( html5.Table ):
 			tr = self.getTrByIndex( row )
 
 			if row in current:
-				tr["class"].remove("is_selected")
+				tr.removeClass("is-selected")
 			else:
 				self._selectedRows.append(row)
-				tr["class"].append("is_selected")
+				tr.addClass("is-selected")
 
 			if self.checkboxes:
 				self._checkboxes[ row ][ "checked" ] = row in self._selectedRows
@@ -534,7 +534,7 @@ class DataTable( html5.Div ):
 		self._isAjaxLoading = False
 
 		if "is-loading" in self.table["class"]:
-			self.table["class"].remove("is-loading")
+			self.table.removeClass("is-loading")
 
 	def onCursorMoved(self, table, row):
 		"""
@@ -569,7 +569,7 @@ class DataTable( html5.Div ):
 		self._renderObject( obj )
 		self._isAjaxLoading = False
 		if "is-loading" in self.table["class"]:
-			self.table["class"].remove("is-loading")
+			self.table.removeClass("is-loading")
 		self.testIfNextBatchNeededImmediately()
 
 	def extend(self, objList):
@@ -585,7 +585,7 @@ class DataTable( html5.Div ):
 			self._renderObject( obj, tableIsPrepared=True )
 			self._isAjaxLoading = False
 			if "is-loading" in self.table["class"]:
-				self.table["class"].remove("is-loading")
+				self.table.removeClass("is-loading")
 		self.testIfNextBatchNeededImmediately()
 
 	def testIfNextBatchNeededImmediately(self):
@@ -613,7 +613,7 @@ class DataTable( html5.Div ):
 			if self._dataProvider:
 				self._isAjaxLoading = True
 				if not "is-loading" in self.table["class"]:
-					self.table["class"].append("is-loading")
+					self.table.addClass("is-loading")
 				self._dataProvider.onNextBatchNeeded()
 
 	def remove(self, objOrIndex):
@@ -705,7 +705,7 @@ class DataTable( html5.Div ):
 
 				self._isAjaxLoading = True
 				if not "is-loading" in self.table["class"]:
-					self.table["class"].append("is-loading")
+					self.table.addClass("is-loading")
 
 				self._dataProvider.onNextBatchNeeded()
 

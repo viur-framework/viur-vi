@@ -12,7 +12,7 @@ class AddLeafAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddLeafAction, self ).__init__( translate("Add"), *args, **kwargs )
-		self["class"] = "btn btn--small btn-add-leaf btn--primary"
+		self["class"] = "bar-item btn btn--small btn--add-leaf btn--primary"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -45,7 +45,7 @@ class AddNodeAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddNodeAction, self ).__init__(  translate("Add"), *args, **kwargs )
-		self["class"] = "btn btn--small btn-add-node"
+		self["class"] = "bar-item btn btn--small btn--add-node"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -79,7 +79,7 @@ class EditAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__(  translate("Edit"), *args, **kwargs )
-		self["class"] = "btn btn--small btn-edit"
+		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -158,7 +158,7 @@ class DeleteAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( DeleteAction, self ).__init__(  translate("Delete"), *args, **kwargs )
-		self["class"] = "btn btn--small btn-delete"
+		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -200,7 +200,7 @@ class DeleteAction( html5.ext.Button ):
 			return
 		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = selection
-		d["class"].append( "delete" )
+		d.addClass( "delete" )
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
@@ -221,19 +221,19 @@ class ReloadAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
-		self["class"] = "btn btn--small btn-reload"
+		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
 		return actionName=="reload" and (handler == "tree" or handler.startswith("tree."))
 
 	def onClick(self, sender=None):
-		self["class"].append("is-loading")
+		self.addClass("is-loading")
 		NetworkService.notifyChange( self.parent().parent().module )
 
 	def resetLoadingState(self):
 		if "is-loading" in self["class"]:
-			self["class"].remove("is-loading")
+			self.removeClass("is-loading")
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
@@ -304,7 +304,7 @@ class ReturnSelectionAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs ):
 		super( ReturnSelectionAction, self ).__init__( translate("Select"), *args, **kwargs )
-		self["class"] = "btn btn--small btn-activateselection"
+		self["class"] = "bar-item btn btn--small btn--activateselection"
 
 	def onClick(self, sender=None):
 		self.parent().parent().returnCurrentSelection()

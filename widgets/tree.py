@@ -54,7 +54,7 @@ class NodeWidget( html5.Div ):
 			Check if we can handle the drag-data
 		"""
 		if not "insert-here" in self["class"]:
-			self["class"].append("insert-here")
+			self.addClass("insert-here")
 		try:
 			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
 		except:
@@ -64,7 +64,7 @@ class NodeWidget( html5.Div ):
 
 	def onDragLeave(self, event):
 		if "insert-here" in self["class"]:
-			self["class"].remove("insert-here")
+			self.removeClass("insert-here")
 		return( super(NodeWidget, self).onDragLeave(event))
 
 	def onDragStart(self, event):
@@ -148,7 +148,7 @@ class SelectableDiv( html5.Div ):
 
 	def __init__(self, nodeWidget, leafWidget, selectionType="both", multiSelection=False, *args, **kwargs ):
 		super( SelectableDiv, self ).__init__(*args, **kwargs)
-		self["class"].append("selectioncontainer")
+		self.addClass("selectioncontainer")
 		self["tabindex"] = 1
 		self.selectionType = selectionType
 		self.multiSelection = multiSelection
@@ -171,10 +171,10 @@ class SelectableDiv( html5.Div ):
 			If there was such an item before, its unselected afterwards.
 		"""
 		if self._currentItem:
-			self._currentItem["class"].remove("cursor")
+			self._currentItem.removeClass("cursor")
 		self._currentItem = item
 		if item:
-			item["class"].append("cursor")
+			item.addClass("cursor")
 
 	def onClick(self, event):
 		self.focus()
@@ -252,13 +252,13 @@ class SelectableDiv( html5.Div ):
 		   self.selectionType=="both":
 			if not item in self._selectedItems:
 				self._selectedItems.append( item )
-				item["class"].append("selected")
+				item.addClass("is-selected")
 
 	def removeSelectedItem(self,item):
 		if not item in self._selectedItems:
 			return
 		self._selectedItems.remove( item )
-		item["class"].remove("selected")
+		item.removeClass("is-selected")
 
 	def clear(self):
 		self.clearSelection()
@@ -289,14 +289,14 @@ class TreeWidget( html5.Div ):
 			@type node: String or None
 		"""
 		super( TreeWidget, self ).__init__( )
-		self["class"].append("tree")
+		self.addClass("tree")
 		self.module = module
 		self.rootNode = rootNode
 		self.node = node or rootNode
 		self.actionBar = ActionBar( module, "tree" )
 		self.appendChild( self.actionBar )
 		self.pathList = html5.Div()
-		self.pathList["class"].append("breadcrumb")
+		self.pathList.addClass("breadcrumb")
 		self.appendChild( self.pathList )
 		self.entryFrame = SelectableDiv( self.nodeWidget, self.leafWidget )
 		self.appendChild( self.entryFrame )
@@ -325,12 +325,12 @@ class TreeWidget( html5.Div ):
 		self.actionBar["style"]["display"] = "none"
 		self.entryFrame["style"]["display"] = "none"
 		errorDiv = html5.Div()
-		errorDiv["class"].append("error_msg")
+		errorDiv.addClass("msg msg--error is-active")
 		if code and (code==401 or code==403):
 			txt = "Access denied!"
 		else:
 			txt = "An unknown error occurred!"
-		errorDiv["class"].append("error_code_%s" % (code or 0))
+		errorDiv.addClass("error_code_%s" % (code or 0))
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
 
@@ -427,7 +427,7 @@ class TreeWidget( html5.Div ):
 		for p in [None]+self.path:
 			if p is None:
 				c = NodeWidget( self.module, {"key":self.rootNode,"name":"root"}, [] )
-				c["class"].append("is_rootnode")
+				c.addClass("is-rootnode")
 			else:
 				c = NodeWidget( self.module, p, [] )
 			self.pathList.appendChild( c )

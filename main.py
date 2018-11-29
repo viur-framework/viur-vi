@@ -14,7 +14,7 @@ except ImportError:
 class Application(html5.Div):
 	def __init__(self):
 		super(Application, self).__init__()
-		self["class"].append("vi-application")
+		self.addClass("vi-application")
 		conf["theApp"] = self
 
 		# Main Screens

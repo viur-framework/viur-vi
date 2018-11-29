@@ -115,10 +115,10 @@
 /* #vi_forms
 ================================================== */
 
-fieldset.active{
+fieldset.is-active{
   height: inherit;
 }
-fieldset.active section{
+fieldset.is-active section{
   display: block;
 }
 fieldset.is-inactive{
@@ -164,14 +164,14 @@ legend a:hover {
   cursor: pointer;
 }
 
-form fieldset.is_incomplete:target legend a,
-form fieldset.is_incomplete legend a {
+form fieldset.is-incomplete:target legend a,
+form fieldset.is-incomplete legend a {
   background-color: #1495de;
   border-color: #073866;
   color: #fff;
 }
 
-form fieldset.is_incomplete legend a:before {
+form fieldset.is-incomplete legend a:before {
   background-image: url(../icons/vi_actions_sprite_white.svg);
   background-repeat: no-repeat;
   width: 16px;
@@ -206,18 +206,18 @@ form fieldset legend a:before {
 }
 
 /*form fieldset.default legend a:before,*/
-form fieldset.active legend a:before,
+form fieldset.is-active legend a:before,
 form fieldset:target legend a:before {
   background-position: -16px -64px;
 }
 
-form fieldset.is_incomplete section,
+form fieldset.is-incomplete section,
 form fieldset:target section
 /*form fieldset.default section*/ {
   display: block;
 }
 /*set style of closed slide*/
-form fieldset section,
+form fieldset section
 /*form fieldset:target ~ .default section*/ {
   display: none;
   border: 1px solid #eee;
@@ -235,8 +235,8 @@ form fieldset {
   transition: all 0.2s ease-out;
 }
 /*Set height of the slide*/
-form fieldset.is_incomplete,
-form fieldset:target,
+form fieldset.is-incomplete,
+form fieldset:target
 /*form fieldset.default*/ {
   /*min-height: 150px;*/
   height: auto;
@@ -245,7 +245,6 @@ form fieldset:target,
 form fieldset section > div {
   padding-bottom: 10px;
   margin-bottom: 10px;
-  /*border-bottom:1px dotted #ccc;*/
   overflow: hidden;
   width: 100%;
   float: right;
@@ -271,7 +270,7 @@ form label.text {
 form label.selectone {
   border-right-width: 1px;
 }
-form label.is_required {
+form label.is-required {
   border-style: solid;
   border-left-color: @mainColor;
   border-left-width: 2px;
@@ -316,7 +315,7 @@ form label.is-valid:before {
 
 .file .fileentry img {
 float: left;
-margin-right: 0px;
+margin-right: 0;
 height: 26px;
 border: 1px solid #ccc;
 border-right-width: 0;
@@ -358,14 +357,14 @@ input[type="password"],
     float:left;
 }
 
-.languagebuttons button.is-active, .languagebuttons button.is_filled.is-active {
+.languagebuttons button.is-active, .languagebuttons button.is-filled.is-active {
     background: linear-gradient(to bottom, #666 0%, #aaa 100%);
     box-shadow:inset 1px 1px 2px rgba(0,0,0,0.2);
     border-color:#666;
     color:#fff !important;
 }
 
-.languagebuttons button.is_filled {
+.languagebuttons button.is-filled {
     color: #fff;
     background: transparent linear-gradient(to bottom, #298342 0%, #479C42 100%) repeat scroll 0% 0%;
 }
@@ -426,10 +425,6 @@ input[type="checkbox"] {
   border: 1px solid @failColor;
   background-color: #ccc;
   display: inline-block;
-  transition: all .3s ease;
-  -webkit-transition: all .3s ease;
-  -moz-transition: all .3s ease;
-  -ms-transition: all .3s ease;
   transition: all .3s ease;
   cursor: pointer;
 }

@@ -11,17 +11,17 @@ class Log( html5.Div ):
 	def __init__(self):
 		super(Log, self).__init__()
 
-		self["class"].append("vi-messenger")
+		self.addClass("vi-messenger")
 		openLink = html5.ext.Button(translate("Open message center"), self.toggleMsgCenter)
 		self.appendChild(openLink)
 
 		self.logUL = html5.Ul()
 		self.logUL["id"] = "statuslist"
-		self.logUL["class"].append( "statuslist" )
+		self.logUL.addClass( "statuslist" )
 		self.appendChild( self.logUL )
 
 		versionDiv = html5.Div()
-		versionDiv["class"].append("versiondiv")
+		versionDiv.addClass("versiondiv")
 
 		# Server name and version number
 		name = conf["vi.viur"]
@@ -29,7 +29,7 @@ class Log( html5.Div ):
 			versionspan = html5.Span()
 			versionspan.appendChild("%s v%s" %
 				(name, ".".join([str(x) for x in conf["server.version"]])))
-			versionspan["class"].append("serverspan")
+			versionspan.addClass("serverspan")
 			versionDiv.appendChild(versionspan)
 
 		# Vi name and version number
@@ -39,7 +39,7 @@ class Log( html5.Div ):
 			versionspan.appendChild("%s v%s%s" % 
 				(name, ".".join([str(x) for x in conf["vi.version"]]),
 					conf["vi.version.appendix"]))
-			versionspan["class"].append("versionspan")
+			versionspan.addClass("versionspan")
 			versionDiv.appendChild(versionspan)
 
 			#Try loading the revision and build date
@@ -48,11 +48,11 @@ class Log( html5.Div ):
 
 				revspan = html5.Span()
 				revspan.appendChild(html5.TextNode("Rev %s" % revision))
-				revspan["class"].append("revisionspan")
+				revspan.addClass("revisionspan")
 
 				datespan = html5.Span()
 				datespan.appendChild(html5.TextNode("Built %s" % builddate))
-				datespan["class"].append("datespan")
+				datespan.addClass("datespan")
 
 				versionDiv.appendChild(revspan)
 				versionDiv.appendChild(datespan)
@@ -64,10 +64,10 @@ class Log( html5.Div ):
 			self.appendChild(versionDiv)
 
 	def toggleMsgCenter(self, *args, **kwargs):
-		if "is_open" in self["class"]:
-			self["class"].remove("is_open")
+		if "is-open" in self["class"]:
+			self.removeClass("is-open")
 		else:
-			self["class"].append("is_open")
+			self.addClass("is-open")
 
 	def log(self, type, msg ):
 		"""
@@ -80,12 +80,12 @@ class Log( html5.Div ):
 		assert type in ["success", "error", "warning", "info", "progress"]
 
 		liwrap = html5.Li()
-		liwrap["class"].append("log-"+type)
-		liwrap["class"].append("is-new")
+		liwrap.addClass("log-"+type)
+		liwrap.addClass("is-new")
 
 		spanDate = html5.Span()
 		spanDate.appendChild( html5.TextNode( datetime.now().strftime("%H:%M:%S") ))
-		spanDate["class"].append("date")
+		spanDate.addClass("date")
 		liwrap.appendChild(spanDate)
 
 		if isinstance( msg, html5.Widget ):
@@ -96,7 +96,7 @@ class Log( html5.Div ):
 			#Create a span element for that message
 			spanMsg = html5.Span()
 			spanMsg.appendChild(html5.TextNode(html5.utils.unescape(msg)))
-			spanMsg["class"].append("msg")
+			spanMsg.addClass("msg")
 			liwrap.appendChild(spanMsg)
 
 		DeferredCall(self.removeNewCls, liwrap,_delay=2500)
@@ -107,7 +107,7 @@ class Log( html5.Div ):
 			self.logUL.element.insertBefore( liwrap.element, self.logUL.element.children.item(0) )
 
 	def removeNewCls(self,span):
-		span["class"].remove("is-new")
+		span.removeClass("is-new")
 
 	def reset(self):
 		self.logUL.removeAllChildren()

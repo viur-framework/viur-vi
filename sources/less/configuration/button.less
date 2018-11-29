@@ -7,10 +7,10 @@
 
 .btn {
   .btn(
-    @btnBackgroundColor:#fff,
+    @btnBackgroundColor:#f8f8f8,
     @btnPadding: @defaultPadding,
     @btnMargin: @defaultMargin,
-    @btnBorderWidth: 0,
+    @btnBorderWidth: 1px,
     @btnBorderRadius: 4px,
     @btnShadow: 0,
     @btnShadowHover: 1,
@@ -20,11 +20,27 @@
 .btn--primary {
   .colorizeBtn(
     @btnBackgroundColor: @successColor,
-    @btnBorderWidth: 0,
+    @btnBorderWidth: 1px,
     @btnShadow: 0,
     @btnShadowHover: 1);
 }
 
+.btn--danger,
+.btn--delete {
+  .invertColorizedBtn(
+    @btnBackgroundColor: @failColor,
+    @btnBorderWidth: 1px,
+    @btnShadow: 0,
+    @btnShadowHover: 1);
+}
+
+.btn--edit {
+  .invertColorizedBtn(
+    @btnBackgroundColor: @hintColor,
+    @btnBorderWidth: 1px,
+    @btnShadow: 0,
+    @btnShadowHover: 1);
+}
 
 /* #vi_buttons
 ================================================== */
@@ -277,7 +293,7 @@ button.text.link {
 button.flipview:before {
   background-position: -64px -48px;
 }
-button.flipview.is_htmlview:before {
+button.flipview.is-htmlview:before {
   background-position: -96px -16px;
 }
 button.text.table:before {

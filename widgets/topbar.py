@@ -11,45 +11,24 @@ class TopBarWidget(html5.Header):
 		Provides the top-bar of VI
 	"""
 	def __init__(self):
-		#DOM.setAttribute( self.element, "class", "vi_topbar")
 		super(TopBarWidget,self ).__init__()
 
 		self["class"] = "vi-topbar bar"
-		anav=html5.Nav()
-		anav["class"].append("vi-tb-right bar-group bar-group--right")
-
-		self.iconnav=html5.Div()
-		self.iconnav._setClass("input-group")
-		#self.logoContainer = html5.Div()
-		#self.logoContainer["class"].append("logo")
-		#self.appendChild( self.logoContainer )
-
 		self.sinkEvent("onClick")
-
-		self.topbarLeft = html5.Div()
-		self.topbarLeft._setClass("vi-tb-left bar-group bar-group--left")
-		self.appendChild(self.topbarLeft)
-
-		self.topbarLogo = html5.Div()
-		self.topbarLogo._setClass("vi-tb-logo")
-		self.topbarLeft.appendChild(self.topbarLogo)
-
-		self.modulH1 = html5.H1()
-		self.modulH1._setClass("vi-tb-title")
-		self.topbarLeft.appendChild(self.modulH1)
-
-		self.modulContainer = html5.Div()
-		self.modulContainer["class"].append("vi-tb-currentmodul")
-		self.appendChild( self.modulContainer )
-
-		self.modulImg = html5.Label()
-		self.modulContainer.appendChild(self.modulImg)
-
-		self.moduleName = html5.Span()
-		self.modulContainer.appendChild( self.moduleName )
-
-		anav.appendChild(self.iconnav)
-		self.appendChild(anav)
+		self.fromHTML("""
+			<div class="vi-tb-left bar-group bar-group--left" [name]="topbarLeft">
+				<div class="vi-tb-logo" [name]="topbarLogo"></div>
+				<h1 class="vi-tb-title" [name]="modulH1"></h1>
+				<div class="vi-tb-currentmodul item" [name]="modulContainer">
+					<div class="item-image" [name]="modulImg"></div>
+					<div class="item-content" [name]="moduleName"></div>
+				</div>
+			</div>
+			<nav class="vi-tb-right bar-group bar-group--right" [name]="topbarRight">
+				<div class="input-group" [name]="iconnav">
+				</div>
+			</nav>
+		""")
 
 		DeferredCall(self.setTitle, _delay=500)
 
@@ -64,7 +43,7 @@ class TopBarWidget(html5.Header):
 	def setTitle(self):
 		title = conf.get("vi.name")
 		if title:
-			self.modulH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
+			self.modulH1.appendChild(html5.utils.unescape(title))
 
 	def onClick(self, event):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulH1):
@@ -76,7 +55,7 @@ class TopBarWidget(html5.Header):
 		for c in self.moduleName._children[:]:
 			self.moduleName.removeChild( c )
 		for c in self.modulImg["class"]:
-			self.modulImg["class"].remove(c)
+			self.modulImg.removeClass(c)
 
 		descr = html5.utils.unescape(descr)
 		self.moduleName.appendChild(html5.TextNode(descr))
@@ -88,7 +67,7 @@ class TopBarWidget(html5.Header):
 
 		if iconClasses is not None:
 			for cls in iconClasses:
-				self.modulImg["class"].append( cls )
+				self.modulImg.addClass( cls )
 
 		conf["theApp"].setTitle(descr)
 
@@ -191,3 +170,5 @@ class Logout(html5.Button):
 		return action == "logout"
 
 toplevelActionSelector.insert( 0, Logout.canHandle, Logout )
+
+#FIXME: Put Message Center in Iconnav. The message center will be a popout in the topbar.

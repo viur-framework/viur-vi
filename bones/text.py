@@ -74,7 +74,7 @@ class TextEditBone( html5.Div ):
 				self.selectedLang=self.languages[0]
 
 			self.langButContainer=html5.Div()
-			self.langButContainer["class"].append("languagebuttons")
+			self.langButContainer.addClass("languagebuttons")
 
 			for lang in self.languages:
 				abut=html5.ext.Button(lang,self.changeLang)
@@ -87,7 +87,7 @@ class TextEditBone( html5.Div ):
 		self.input=html5.Textarea()
 		self.appendChild(self.input)
 		self.previewDiv = html5.Div()
-		self.previewDiv["class"].append("preview")
+		self.previewDiv.addClass("preview")
 		self.appendChild(self.previewDiv)
 
 		if self.isPlainText:
@@ -100,8 +100,7 @@ class TextEditBone( html5.Div ):
 
 		elif not readOnly and not self.isPlainText:
 			openEditorBtn = html5.ext.Button(translate("Edit Text"), self.openTxt )
-			openEditorBtn["class"].append("textedit")
-			openEditorBtn["class"].append("icon")
+			openEditorBtn.addClass("btn--textedit")
 			self.appendChild( openEditorBtn )
 
 		self.sinkEvent("onClick")
@@ -112,7 +111,7 @@ class TextEditBone( html5.Div ):
 		"""
 		super(TextEditBone, self)._setDisabled( disable )
 		if not disable and not self._disabledState and "is-active" in self.parent()["class"]:
-			self.parent()["class"].remove("is-active")
+			self.parent().removeClass("is-active")
 
 	def openTxt(self, *args, **kwargs):
 		assert self.currentEditor is None
@@ -123,7 +122,7 @@ class TextEditBone( html5.Div ):
 		self.currentEditor.saveTextEvent.register( self )
 		self.currentEditor.abortTextEvent.register(self)
 		conf["mainWindow"].stackWidget( self.currentEditor )
-		self.parent()["class"].append("is-active")
+		self.parent().addClass("is-active")
 
 	def closeEditor(self):
 		if not self.currentEditor:
@@ -161,17 +160,17 @@ class TextEditBone( html5.Div ):
 		for abut in self.langButContainer._children:
 
 			if abut["value"] in self.valuesdict and self.valuesdict[abut["value"]]:
-				if not "is_filled" in abut["class"]:
-					abut["class"].append("is_filled")
+				if not "is-filled" in abut["class"]:
+					abut.addClass("is-filled")
 			else:
-				if not "is_unfilled" in abut["class"]:
-					abut["class"].append("is_unfilled")
+				if not "is-unfilled" in abut["class"]:
+					abut.addClass("is-unfilled")
 
 			if abut["value"]==self.selectedLang:
 				if not "is-active" in abut["class"]:
-					abut["class"].append("is-active")
+					abut.addClass("is-active")
 			else:
-				abut["class"].remove("is-active")
+				abut.removeClass("is-active")
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):

@@ -8,14 +8,14 @@ class Preview( html5.Div ):
 		self.entry = entry
 		self.module = modul
 		containerDiv = html5.Div()
-		containerDiv["class"].append("actionbar")
+		containerDiv.addClass("actionbar")
 		self.appendChild(containerDiv)
 		self.urlCb = html5.Select()
 		containerDiv.appendChild(self.urlCb)
 		self.previewFrame = html5.Iframe()
 		self.appendChild(self.previewFrame)
 		btnClose = html5.ext.Button("Close", callback=self.doClose)
-		btnClose["class"].append("icon close")
+		btnClose.addClass("icon close")
 		containerDiv.appendChild(btnClose)
 		currentUrl = None
 		for name,url in urls.items():
@@ -27,7 +27,7 @@ class Preview( html5.Div ):
 				currentUrl = url
 		self.setUrl( currentUrl )
 		self.sinkEvent("onChange")
-		self["class"].append("preview")
+		self.addClass("preview")
 
 	def onChange(self, event):
 		event.stopPropagation()

@@ -12,7 +12,7 @@ class AddNodeAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddNodeAction, self ).__init__( translate("Add Node"), *args, **kwargs )
-		self["class"] = "btn btn--small btn-mkdir btn--primary"
+		self["class"] = "bar-item btn btn--small btn--mkdir btn--primary"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -35,8 +35,7 @@ class AddNodeAction( html5.ext.Button ):
 			successLbl=translate("Create")
 		)
 
-		i["class"].append( "create" )
-		i["class"].append( "directory" )
+		i.addClass( "create directory" )
 
 	def createDir(self, dialog, dirName ):
 		if len(dirName)==0:
@@ -62,7 +61,7 @@ class EditAction( html5.ext.Button ):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
-		self["class"] = "btn btn--small btn-edit"
+		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
 

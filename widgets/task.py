@@ -8,15 +8,16 @@ from widgets.edit import EditWidget
 class TaskWidget( html5.ext.Popup ):
 	def __init__( self, title ):
 		super( TaskWidget, self ).__init__( title = title )
-		self[ "class" ].append( "task" )
+		self[ "class" ].append( "popup--task" )
 		self.title = title
 
 class ServerTaskWidget( TaskWidget ):
 	def __init__( self, title, key ):
 		super( ServerTaskWidget, self ).__init__( title = title )
 		self.widget = EditWidget( "_tasks", EditWidget.appSingleton, key, logaction = "Task started!" )
-		self.appendChild( self.widget )
-		self.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
+		self.popupBody.appendChild( self.widget )
+		self.popupBody.removeClass("box--content")
+		self.popupFoot.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
 
 class TaskSelectWidget( TaskWidget ):
 	def __init__( self ):
@@ -25,7 +26,7 @@ class TaskSelectWidget( TaskWidget ):
 
 		div = html5.Div()
 		div[ "class" ] = [ "task-selector" ]
-		self.appendChild( div )
+		self.popupBody.appendChild( div )
 
 		self.select = html5.Select()
 		div.appendChild( self.select )
@@ -50,10 +51,10 @@ class TaskSelectWidget( TaskWidget ):
 
 		self.descr = html5.Div()
 		self.descr[ "class" ] = [ "task-description" ]
-		self.appendChild( self.descr )
+		self.popupBody.appendChild( self.descr )
 
-		self.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
-		self.appendChild( html5.ext.Button( translate( "Run" ), self.invokeTask ) )
+		self.popupFoot.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
+		self.popupFoot.appendChild( html5.ext.Button( translate( "Run" ), self.invokeTask ) )
 
 		# Init
 		self.setActiveTask()

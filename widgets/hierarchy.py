@@ -27,7 +27,7 @@ class HierarchyItem( html5.Li ):
 		self.data = data
 		self.structure = structure
 		self.expandLink = html5.A()
-		self.expandLink["class"].append("expandlink")
+		self.expandLink.addClass("expandlink")
 		self.expandLink.appendChild(html5.TextNode(translate("Expand/Collapse")))
 		self.appendChild(self.expandLink)
 		#self.element.innerHTML = "%s %s" % (data["name"], data["sortindex"])
@@ -35,14 +35,14 @@ class HierarchyItem( html5.Li ):
 		self.isExpanded = False
 		self.buildDescription()
 		self.ol = html5.Ol()
-		self.ol["class"].append("subhierarchy")
+		self.ol.addClass("subhierarchy")
 		self.appendChild(self.ol)
 		self.currentMargin = None
 		self.ol["style"]["display"] = "none"
-		self["class"].append("hierarchy-item")
-		self["class"].append("is-collapsed")
-		self["class"].append("is-draggable")
-		self["class"].append("is-drop-target")
+		self.addClass("hierarchy-item")
+		self.addClass("is-collapsed")
+		self.addClass("is-draggable")
+		self.addClass("is-drop-target")
 		self["draggable"] = True
 		self.sinkEvent("onDragStart", "onDrop", "onDragOver","onDragLeave")
 
@@ -73,21 +73,21 @@ class HierarchyItem( html5.Li ):
 		# Before
 		if self.currentMargin is None and offset < height * 0.20:
 			self.currentMargin = "top"
-			self["class"].remove("insert-here")
-			self["class"].remove("insert-after")
-			self["class"].append("insert-before")
+			self.removeClass("insert-here")
+			self.removeClass("insert-after")
+			self.addClass("insert-before")
 		# After
 		elif self.currentMargin is None and offset > height * 0.80:
 			self.currentMargin = "bottom"
-			self["class"].remove("insert-here")
-			self["class"].remove("insert-before")
-			self["class"].append("insert-after")
+			self.removeClass("insert-here")
+			self.removeClass("insert-before")
+			self.addClass("insert-after")
 		# Within
 		elif self.currentMargin and offset >= height * 0.20 and offset <= height * 0.80:
 			self.currentMargin = None
-			self["class"].remove("insert-before")
-			self["class"].remove("insert-after")
-			self["class"].append("insert-here")
+			self.removeClass("insert-before")
+			self.removeClass("insert-after")
+			self.addClass("insert-here")
 
 		event.preventDefault()
 		event.stopPropagation()
@@ -96,9 +96,9 @@ class HierarchyItem( html5.Li ):
 		"""
 			Remove all drop indicating classes.
 		"""
-		self["class"].remove("insert-before")
-		self["class"].remove("insert-after")
-		self["class"].remove("insert-here")
+		self.removeClass("insert-before")
+		self.removeClass("insert-after")
+		self.removeClass("insert-here")
 		self.currentMargin = None
 		super(HierarchyItem,self).onDragLeave( event )
 
@@ -181,12 +181,12 @@ class HierarchyItem( html5.Li ):
 		"""
 		if self.isExpanded:
 			self.ol["style"]["display"] = "none"
-			self["class"].remove("is-expanded")
-			self["class"].append("is-collapsed")
+			self.removeClass("is-expanded")
+			self.addClass("is-collapsed")
 		else:
 			self.ol["style"]["display"] = "block"
-			self["class"].append("is-expanded")
-			self["class"].remove("is-collapsed")
+			self.addClass("is-expanded")
+			self.removeClass("is-collapsed")
 
 		self.isExpanded = not self.isExpanded
 
@@ -210,7 +210,7 @@ class HierarchyWidget(html5.Div):
 		self.actionBar = ActionBar(module, "hierarchy")
 		self.appendChild( self.actionBar )
 		self.entryFrame = html5.Ol()
-		self.entryFrame["class"].append("hierarchy")
+		self.entryFrame.addClass("hierarchy")
 		self.appendChild( self.entryFrame )
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
@@ -247,12 +247,12 @@ class HierarchyWidget(html5.Div):
 		self.actionBar["style"]["display"] = "none"
 		self.entryFrame["style"]["display"] = "none"
 		errorDiv = html5.Div()
-		errorDiv["class"].append("error_msg")
+		errorDiv.addClass("error_msg")
 		if code and (code==401 or code==403):
 			txt = translate("Access denied!")
 		else:
 			txt = translate("An unknown error occurred!")
-		errorDiv["class"].append("error_code_%s" % (code or 0))
+		errorDiv.addClass("error_code_%s" % (code or 0))
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
 
@@ -354,8 +354,8 @@ class HierarchyWidget(html5.Div):
 
 	def setCurrentItem(self, item):
 		if self._currentCursor:
-			self._currentCursor["class"].remove("is_focused")
-		item["class"].append("is_focused")
+			self._currentCursor.removeClass("is-focused")
+		item.addClass("is-focused")
 		self._currentCursor = item
 
 	def onSetDefaultRootNode(self, req):
@@ -452,7 +452,7 @@ class HierarchyWidget(html5.Div):
 					self.loadNode(hi.data["key"])
 
 		if not ol._children and ol != self.entryFrame:
-			ol.parent()["class"].append("has-no-child")
+			ol.parent().addClass("has-no-child")
 
 		if data["skellist"] and data["cursor"]:
 			self.loadNode(req.node, data["cursor"])

@@ -13,14 +13,14 @@ from pane import Pane
 class TreeDirMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 	def __init__(self, *args, **kwargs):
 		super(TreeDirMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
-		self["class"].append("fileentry")
+		self.addClass("fileentry")
 
 		src = utils.getImagePreview(self.data)
 
 		if src is not None:
 			img = html5.Img()
 			img["src"] = src
-			img["class"].append("previewimg")
+			img.addClass("previewimg")
 			self.appendChild(img)
 
 			# Move the img in front of the lbl
@@ -63,7 +63,7 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 		currentSelector = FileWidget( self.destModule, isSelector="node" )
 		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is-active")
+		self.parent().addClass("is-active")
 
 	def onSelectionReturn(self, table, selection ):
 		"""
@@ -103,7 +103,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		super(TreeDirSingleSelectionBone, self).__init__( *args, **kwargs )
 
 		self.previewImg = html5.Img()
-		self.previewImg["class"].append("previewimg")
+		self.previewImg.addClass("previewimg")
 		self.appendChild( self.previewImg )
 
 
@@ -114,7 +114,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		currentSelector = TreeWidget( self.destModule, isSelector="node" )
 		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is-active")
+		self.parent().addClass("is-active")
 
 	def onSelectionReturn(self, table, selection ):
 		"""

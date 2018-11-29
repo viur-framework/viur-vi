@@ -100,14 +100,14 @@ class ListWidget(html5.Div):
 
 		self.emptyNotificationDiv = html5.Div()
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
-		self.emptyNotificationDiv["class"].append("emptynotification")
-		self.emptyNotificationDiv["class"].append("msg")
+		self.emptyNotificationDiv.addClass("emptynotification")
+		self.emptyNotificationDiv.addClass("msg")
 		self.appendChild(self.emptyNotificationDiv)
-		self.emptyNotificationDiv["class"].remove("is-active")
+		self.emptyNotificationDiv.removeClass("is-active")
 		self.table["style"]["display"] = "none"
 		self.filterDescriptionSpan = html5.Span()
 		self.appendChild( self.filterDescriptionSpan )
-		self.filterDescriptionSpan["class"].append("filterdescription")
+		self.filterDescriptionSpan.addClass("filterdescription")
 		self.updateFilterDescription()
 
 		if autoload:
@@ -156,12 +156,12 @@ class ListWidget(html5.Div):
 		self.actionBar["style"]["display"] = "none"
 		self.table["style"]["display"] = "none"
 		errorDiv = html5.Div()
-		errorDiv["class"].append("error_msg")
+		errorDiv.addClass("error_msg")
 		if code and (code==401 or code==403):
 			txt = translate("Access denied!")
 		else:
 			txt = translate("An unknown error occurred!")
-		errorDiv["class"].append("error_code_%s" % (code or 0))
+		errorDiv.addClass("error_code_%s" % (code or 0))
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
 
@@ -265,12 +265,12 @@ class ListWidget(html5.Div):
 				self.table.setDataProvider(None) #We cant load any more results
 			else:
 				self.table["style"]["display"] = "none"
-				self.emptyNotificationDiv["class"].append("is-active")
+				self.emptyNotificationDiv.addClass("is-active")
 			#self.element.innerHTML = "<center><strong>Keine Ergebnisse</strong></center>"
 			return
 
 		self.table["style"]["display"] = ""
-		self.emptyNotificationDiv["class"].remove("is-active")
+		self.emptyNotificationDiv.removeClass("is-active")
 		self._structure = data["structure"]
 
 		if not self._tableHeaderIsValid:

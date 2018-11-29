@@ -131,12 +131,12 @@ class LeafFileWidget(LeafWidget):
 
 	def onDragOver(self, event):
 		if not "insert-before" in self["class"]:
-			self["class"].append("insert-before")
+			self.addClass("insert-before")
 		super(LeafFileWidget, self).onDragOver(event)
 
 	def onDragLeave(self, event):
 		if "insert-before" in self["class"]:
-			self["class"].remove("insert-before")
+			self.removeClass("insert-before")
 		super(LeafFileWidget,self).onDragLeave( event )
 
 
@@ -161,7 +161,7 @@ class Uploader(html5.Progress):
 		r.file = file
 		r.node = node
 		conf["mainWindow"].log("progress", self)
-		self.parent()["class"].append( "is-uploading" )
+		self.parent().addClass( "is-uploading" )
 
 	def onUploadUrlAvaiable(self, req):
 		"""
@@ -226,12 +226,12 @@ class Uploader(html5.Progress):
 		self.replaceWithMessage("Upload failed with status code %s" % errorCode, isSuccess=False)
 
 	def replaceWithMessage(self, message, isSuccess):
-		self.parent()["class"].remove("is-uploading")
-		self.parent()["class"].remove("log-progress")
+		self.parent().removeClass("is-uploading")
+		self.parent().removeClass("log-progress")
 		if isSuccess:
-			self.parent()["class"].append("log-success")
+			self.parent().addClass("log-success")
 		else:
-			self.parent()["class"].append("log-failed")
+			self.parent().addClass("log-failed")
 		msg = html5.Span()
 		msg.appendChild(html5.TextNode(message))
 		self.parent().appendChild(msg)
@@ -248,7 +248,7 @@ class FileWidget(TreeWidget):
 	def __init__(self, *args, **kwargs):
 		super(FileWidget, self).__init__(*args, **kwargs)
 		self.sinkEvent("onDragOver", "onDrop")
-		self["class"].append("supports_upload")
+		self.addClass("supports-upload")
 		self.search = Search()
 		self.appendChild(self.search)
 		self.search.startSearchEvent.register(self)

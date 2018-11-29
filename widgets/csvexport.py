@@ -28,8 +28,8 @@ class ExportCsv(html5.Progress):
 		self.lang = language
 
 		conf["mainWindow"].log("progress", self)
-		self.parent()["class"].append("is-new")
-		self.parent()["class"].append("log-progress")
+		self.parent().addClass("is-new")
+		self.parent().addClass("log-progress")
 		self.appendChild(html5.TextNode(translate("CSV-Export")))
 
 		DeferredCall(self.nextChunk)
@@ -149,7 +149,7 @@ class ExportCsv(html5.Progress):
 
 	def replaceWithMessage(self, message, logClass="success"):
 		self.parent()["class"] = []
-		self.parent()["class"].append("log-%s" % logClass)
+		self.parent().addClass("log-%s" % logClass)
 
 		msg = html5.Span()
 		html5.utils.textToHtml(msg, message)

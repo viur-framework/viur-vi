@@ -42,7 +42,7 @@ class SelectMultiViewBoneDelegate( object ):
 					ali.appendChild(
 						html5.TextNode(translate("and {count} more",
 						                            count=len(data[field]) - conf["maxMultiBoneEntries"])))
-					ali["class"].append("selectmulti_more_li")
+					ali.addClass("selectmulti_more_li")
 
 					result.appendChild(ali)
 					break
@@ -277,7 +277,7 @@ class AccessMultiSelectBone( html5.Div ):
 					return
 
 			if html5.utils.doesEventHitWidgetOrChildren(event, self.modulesbox[module]):
-				self.modulesbox[ module ].parent()["class"].remove("partly")
+				self.modulesbox[ module ].parent().removeClass("partly")
 
 				for toggle in toggles.values():
 					if not "disabled" in toggle[ "class" ]:

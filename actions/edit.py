@@ -9,7 +9,7 @@ from i18n import translate
 class SaveContinue( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( SaveContinue, self ).__init__( translate("Save-Continue"), *args, **kwargs )
-		self["class"] = "btn btn--small btn-save-continue"
+		self["class"] = "bar-item btn btn--small btn--save-continue"
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
@@ -28,7 +28,7 @@ actionDelegateSelector.insert( 1, SaveContinue.isSuitableFor, SaveContinue )
 class SaveSingleton(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(SaveSingleton, self).__init__(translate("Save"), *args, **kwargs)
-		self["class"] = "btn btn--small btn--primary btn-save-close"
+		self["class"] = "bar-item btn btn--small btn--primary btn--save-close"
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
@@ -47,7 +47,7 @@ actionDelegateSelector.insert(1, SaveSingleton.isSuitableFor, SaveSingleton)
 class ExecuteSingleton(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(ExecuteSingleton, self).__init__(translate("Execute"), *args, **kwargs)
-		self["class"] = "btn btn--small btn--primary btn-save-close"
+		self["class"] = "bar-item btn btn--small btn--primary btn--save-close"
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
@@ -66,19 +66,19 @@ actionDelegateSelector.insert(1, ExecuteSingleton.isSuitableFor, ExecuteSingleto
 class SaveClose( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):
 		super( SaveClose, self ).__init__( translate("Save-Close"), *args, **kwargs )
-		self["class"] = "btn btn--small btn--primary btn-save-close"
+		self["class"] = "bar-item btn btn--small btn--primary btn--save-close"
 
 	@staticmethod
 	def isSuitableFor( modul, handler, actionName ):
 		return( actionName=="save.close" )
 
 	def onClick(self, sender=None):
-		self["class"].append("is-loading")
+		self.addClass("is-loading")
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):
 		if "is-loading" in self["class"]:
-			self["class"].remove("is-loading")
+			self.removeClass("is-loading")
 		pass
 
 actionDelegateSelector.insert( 1, SaveClose.isSuitableFor, SaveClose )
@@ -87,7 +87,7 @@ actionDelegateSelector.insert( 1, SaveClose.isSuitableFor, SaveClose )
 class Refresh(html5.ext.Button):
 	def __init__(self, *args, **kwargs):
 		super(Refresh, self).__init__(translate("Reload"), *args, **kwargs)
-		self["class"] = "icon reload"
+		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
 	def isSuitableFor(modul, handler, actionName):
@@ -102,11 +102,11 @@ class Refresh(html5.ext.Button):
 			self.performReload()
 
 	def performReload(self, sender=None):
-		self.addClass("is_loading")
+		self.addClass("is-loading")
 		self.parent().parent().reloadData()
 
 	def resetLoadingState(self):
-		self.removeClass("is_loading")
+		self.removeClass("is-loading")
 
 
 actionDelegateSelector.insert(1, Refresh.isSuitableFor, Refresh)

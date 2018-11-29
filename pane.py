@@ -7,7 +7,7 @@ class Pane(html5.Div):
 	"""
 		Base class for Panes.
 
-		A pane represents a entry in the left menu as well
+		A pane represents a entry in the module list as well
 		as a list of widgets associated with this pane.
 
 		It is possible to stack panes on-top of each other.
@@ -17,11 +17,13 @@ class Pane(html5.Div):
 	def __init__(self, descr=None, iconURL=None, iconClasses=None, closeable=False, collapseable=True, focusable=True):
 		super(Pane, self).__init__()
 
+		self.addClass("vi-pane")
+
 		self.parentPane = None
 		self.sinkEvent("onClick")
 
 		self.item = html5.Div()
-		self.item["class"].append("item has-hover")
+		self.item.addClass("item has-hover")
 		self.appendChild(self.item)
 
 		self.descr = descr
@@ -33,18 +35,17 @@ class Pane(html5.Div):
 		self.childPanes = []
 
 		self.widgetsDomElm = html5.Div()
-		self.widgetsDomElm["class"].append("vi-viewer-pane")
-		self.widgetsDomElm["class"].append("has-no-child")
+		self.widgetsDomElm.addClass("vi-viewer-pane has-no-child")
 		self.childDomElem = None
 
 		self.label = html5.Div()
-		self.label["class"].append("item-link")
+		self.label.addClass("item-link")
 		self.item.appendChild(self.label)
 
 		self.setText(descr, iconURL)
 
 		self.closeBtn = html5.ext.Button(u"×", self.onBtnCloseReleased)
-		self.closeBtn.addClass("item-action")
+		self.closeBtn["class"] = "item-action"
 		self.item.appendChild(self.closeBtn)
 
 		if not closeable:
@@ -65,7 +66,7 @@ class Pane(html5.Div):
 		self.label.removeAllChildren()
 
 		self.itemImage = html5.Div()
-		self.itemImage["class"].append("item-image")
+		self.itemImage.addClass("item-image")
 		self.label.appendChild(self.itemImage)
 		self.itemIcon = html5.I()
 		self.itemImage.appendChild(self.itemIcon)
@@ -86,13 +87,13 @@ class Pane(html5.Div):
 				self.label.addClass(cls)
 
 		self.itemContent = html5.Div()
-		self.itemContent["class"].append("item-content")
+		self.itemContent.addClass("item-content")
 		self.label.appendChild(self.itemContent)
 
 		if descr is not None:
 			h = html5.H3()
 			h.appendChild(descr)
-			h["class"].append("item-headline")
+			h.addClass("item-headline")
 			self.itemContent.appendChild(h)
 
 	def onBtnCloseReleased(self, *args, **kwargs):
@@ -112,12 +113,12 @@ class Pane(html5.Div):
 
 		if not self.childDomElem:
 			self.childDomElem = html5.Div()
-			self.childDomElem["class"].append("list list--sub")
+			self.childDomElem.addClass("list list--sub")
 
 			if self.collapseable and not pane.closeable:
-				self.childDomElem[ "style" ][ "display" ] = "none"
+				self.childDomElem.removeClass("is-active")
 			else:
-				self.childDomElem[ "style" ][ "display" ] = "initial"
+				self.childDomElem.addClass("is-active")
 
 			self.appendChild( self.childDomElem )
 
@@ -125,9 +126,8 @@ class Pane(html5.Div):
 				self.closeBtn.hide()
 
 		if ( pane.closeable
-			 and "display" in self.childDomElem[ "style" ]
-			 and self.childDomElem[ "style" ][ "display" ] == "none" ):
-			self.childDomElem[ "style" ][ "display" ] = "initial"
+			 and "is-active" not in self.childDomElem[ "class" ] ):
+			self.childDomElem.addClass("is-active")
 
 		self.childDomElem.appendChild( pane )
 
@@ -173,7 +173,7 @@ class Pane(html5.Div):
 
 		"""
 		div = html5.Div()
-		div["class"].append("vi-operator")
+		div.addClass("vi-operator")
 		div.appendChild(widget)
 
 		for w in self.widgetsDomElm._children[:]:
@@ -235,13 +235,11 @@ class Pane(html5.Div):
 
 	def expand(self):
 		if self.childDomElem and self.collapseable and not self.isExpanded:
-			self.childDomElem["style"]["display"] = "initial"
 			self.addClass("is-active")
 			self.isExpanded = True
 
 	def collapse(self):
 		if self.childDomElem and self.collapseable and self.isExpanded:
-			self.childDomElem["style"]["display"] = "none"
 			self.removeClass("is-active")
 			self.isExpanded = False
 

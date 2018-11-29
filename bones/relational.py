@@ -188,8 +188,7 @@ class RelationalSingleSelectionBone(html5.Div):
 			and ("root" in conf["currentUser"]["access"] or destModule + "-view" in conf["currentUser"]["access"])):
 
 			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
-			self.selectBtn["class"].append("icon")
-			self.selectBtn["class"].append("select")
+			self.selectBtn.addClass("btn--select")
 			self.appendChild( self.selectBtn )
 		else:
 			self.selectBtn = None
@@ -198,8 +197,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		if (destModule in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"] or destModule + "-edit" in conf["currentUser"]["access"])):
 			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit )
-			self.editBtn["class"].append("icon")
-			self.editBtn["class"].append("edit")
+			self.editBtn.addClass("btn--edit")
 			self.appendChild( self.editBtn )
 		else:
 			self.editBtn = None
@@ -212,8 +210,7 @@ class RelationalSingleSelectionBone(html5.Div):
 			# is only useful when viewing the destination module is still allowed.
 
 			self.remBtn = html5.ext.Button(translate("Remove"), self.onRemove )
-			self.remBtn["class"].append("icon")
-			self.remBtn["class"].append("cancel")
+			self.remBtn.addClass("btn--cancel")
 			self.appendChild( self.remBtn )
 		else:
 			self.remBtn = None
@@ -227,7 +224,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		"""
 		super(RelationalSingleSelectionBone, self)._setDisabled( disable )
 		if not disable and not self._disabledState and "is-active" in self.parent()["class"]:
-			self.parent()["class"].remove("is-active")
+			self.parent().removeClass("is-active")
 
 	@classmethod
 	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
@@ -382,7 +379,7 @@ class RelationalSingleSelectionBone(html5.Div):
 
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is-active")
+		self.parent().addClass("is-active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""
@@ -510,12 +507,11 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild(self.txtLbl)
-		wrapperDiv["class"].append("labelwrapper")
+		wrapperDiv.addClass("labelwrapper")
 
 		if not parent.readOnly:
 			remBtn = html5.ext.Button(translate("Remove"), self.onRemove)
-			remBtn["class"].append("icon")
-			remBtn["class"].append("cancel")
+			remBtn.addClass("btn--cancel btn--danger")
 			wrapperDiv.appendChild(remBtn)
 
 		self.appendChild(wrapperDiv)
@@ -537,8 +533,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 					or self.parent.destModule + "-edit" in conf["currentUser"]["access"])):
 
 			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit)
-			self.editBtn["class"].append("icon")
-			self.editBtn["class"].append("edit")
+			self.editBtn.addClass("btn--edit")
 			wrapperDiv.appendChild(self.editBtn)
 
 		else:
@@ -734,8 +729,7 @@ class RelationalMultiSelectionBone(html5.Div):
 			and ("root" in conf["currentUser"]["access"] or destModule + "-view" in conf["currentUser"]["access"])):
 
 			self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
-			self.selectBtn["class"].append("icon")
-			self.selectBtn["class"].append("select")
+			self.selectBtn.addClass("btn--select")
 			self.appendChild( self.selectBtn )
 		else:
 			self.selectBtn = None
@@ -751,7 +745,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 		super(RelationalMultiSelectionBone, self)._setDisabled( disable )
 		if not disable and not self._disabledState and "is-active" in self.parent()["class"]:
-			self.parent()["class"].remove("is-active")
+			self.parent().removeClass("is-active")
 
 	@classmethod
 	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
@@ -847,7 +841,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		currentSelector = ListWidget(self.destModule, isSelector=True, context=self.context)
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is-active")
+		self.parent().addClass("is-active")
 
 	def onSelectionActivated(self, table, selection):
 		"""

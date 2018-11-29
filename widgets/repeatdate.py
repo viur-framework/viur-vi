@@ -24,8 +24,8 @@ class RepeatDatePopup(html5.Div):
 		self.closeOnSuccess = False
 
 		h3 = html5.H3()
-		h3["class"].append("modul_%s" % self.module)
-		h3["class"].append("apptype_list")
+		h3.addClass("modul_%s" % self.module)
+		h3.addClass("apptype_list")
 
 		h3.appendChild(html5.TextNode(translate("create recurrent dates")))
 
@@ -78,20 +78,20 @@ class RepeatDatePopup(html5.Div):
 		if "action" in data and (data["action"] in ["addSuccess", "editSuccess"]):
 			NetworkService.notifyChange(self.module)
 			logDiv = html5.Div()
-			logDiv["class"].append("msg")
+			logDiv.addClass("msg")
 			spanMsg = html5.Span()
 			spanMsg.appendChild( html5.TextNode( translate("Entry saved!") ))
-			spanMsg["class"].append("msgspan")
+			spanMsg.addClass("msgspan")
 			logDiv.appendChild(spanMsg)
 			if self.module in conf["modules"].keys():
 				spanMsg = html5.Span()
 				spanMsg.appendChild( html5.TextNode( conf["modules"][self.module]["name"] ))
-				spanMsg["class"].append("modulspan")
+				spanMsg.addClass("modulspan")
 				logDiv.appendChild(spanMsg)
 			if "values" in data.keys() and "name" in data["values"].keys():
 				spanMsg = html5.Span()
 				spanMsg.appendChild( html5.TextNode( str(data["values"]["name"]) ))
-				spanMsg["class"].append("namespan")
+				spanMsg.addClass("namespan")
 				logDiv.appendChild(spanMsg)
 			conf["mainWindow"].log("success",logDiv)
 			if self.closeOnSuccess:
@@ -114,8 +114,8 @@ class RepeatDatePopup(html5.Div):
 
 		self.dtstart = data["values"]["startdate"]
 		startdateLabel = html5.Label("Termin")
-		startdateLabel["class"].append("termin")
-		startdateLabel["class"].append("date")
+		startdateLabel.addClass("termin")
+		startdateLabel.addClass("date")
 		startdate_id = "vi_%s_%s_edit_bn_%s" % ( self.editIdx, self.module, "repeatdate")
 		startdateLabel["for"] = startdate_id
 		startdate = date.DateViewBoneDelegate("termin", "startdate", skelStructure).render(data["values"], "startdate")
@@ -123,23 +123,23 @@ class RepeatDatePopup(html5.Div):
 		containerDiv = html5.Div()
 		containerDiv.appendChild(startdateLabel)
 		containerDiv.appendChild(startdate)
-		containerDiv["class"].append("bone")
-		containerDiv["class"].append("bone_startdate")
-		containerDiv["class"].append("date")
+		containerDiv.addClass("bone")
+		containerDiv.addClass("bone_startdate")
+		containerDiv.addClass("date")
 		fieldSets[ cat ]._section.appendChild( containerDiv )
 
 		countLabel = html5.Label("Wiederholungen")
-		countLabel["class"].append("count")
-		countLabel["class"].append("numeric")
+		countLabel.addClass("count")
+		countLabel.addClass("numeric")
 		count_id = "vi_%s_%s_edit_bn_%s" % ( self.editIdx, self.module, "count")
 		countLabel["for"] = count_id
 
 		self.count = html5.Input()
 		self.count["id"] = count_id
 		containerDiv2 = html5.Div()
-		containerDiv2["class"].append("bone")
-		containerDiv2["class"].append("bone_count")
-		containerDiv2["class"].append("date")
+		containerDiv2.addClass("bone")
+		containerDiv2.addClass("bone_count")
+		containerDiv2.addClass("date")
 		containerDiv2.appendChild(countLabel)
 		containerDiv2.appendChild(self.count)
 
@@ -155,16 +155,16 @@ class RepeatDatePopup(html5.Div):
 		# 	aspan.element.innerHTML=value
 		# 	alabel.appendChild(aspan)
 		# 	containerDiv3.appendChild(alabel)
-		# 	containerDiv2["class"].append("bone")
-		# 	containerDiv2["class"].append("bone_count")
-		# 	containerDiv2["class"].append("byweekday")
+		# 	containerDiv2.addClass("bone")
+		# 	containerDiv2.addClass("bone_count")
+		# 	containerDiv2.addClass("byweekday")
 		# 	self.byweekday.append(acheckbox)
 
 		fieldSets[ cat ]._section.appendChild(containerDiv2)
 		# fieldSets[ cat ]._section.appendChild(containerDiv3)
 		for (k,v) in fieldSets.items():
 			if not "is-active" in v["class"]:
-				v["class"].append("is-active")
+				v.addClass("is-active")
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort( key=lambda x:x[0])
 		for k,v in tmpList:
@@ -186,12 +186,12 @@ class RepeatDatePopup(html5.Div):
 		self.actionbar["style"]["display"] = "none"
 		self.form["style"]["display"] = "none"
 		errorDiv = html5.Div()
-		errorDiv["class"].append("error_msg")
+		errorDiv.addClass("error_msg")
 		if code and (code==401 or code==403):
 			txt = translate("Access denied!")
 		else:
 			txt = translate("An unknown error occurred!")
-		errorDiv["class"].append("error_code_%s" % (code or 0))
+		errorDiv.addClass("error_code_%s" % (code or 0))
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
 

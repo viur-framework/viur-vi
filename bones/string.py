@@ -74,7 +74,7 @@ class StringViewBoneDelegate( object ):
 class Tag(html5.Span):
 	def __init__(self, parentBone, tag, isEditMode, readonly=False, multiLine=False, *args, **kwargs ):
 		super(Tag, self).__init__(*args, **kwargs)
-		self["class"].append("tag")
+		self.addClass("tag")
 
 		self.parentBone = parentBone
 
@@ -94,7 +94,7 @@ class Tag(html5.Span):
 			self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd")
 
 			delBtn = html5.ext.Button(translate("Delete"), self.onDelBtnClick)
-			delBtn["class"].append("icon delete tag")
+			delBtn.addClass("icon delete tag")
 			self.appendChild(delBtn)
 
 	def onDelBtnClick(self, *args, **kwargs):
@@ -147,8 +147,8 @@ class StringEditBone(html5.Div):
 		self.currentLanguage = None
 
 		if self.languages and self.multiple:
-			self["class"].append("is_translated")
-			self["class"].append("is_multiple")
+			self.addClass("is-translated")
+			self.addClass("is-multiple")
 			self.languagesContainer = html5.Div()
 			self.appendChild( self.languagesContainer )
 			self.buttonContainer = html5.Div()
@@ -159,8 +159,8 @@ class StringEditBone(html5.Div):
 
 			for lang in self.languages:
 				tagContainer = html5.Div()
-				tagContainer["class"].append("lang_%s" % lang )
-				tagContainer["class"].append("tagcontainer")
+				tagContainer.addClass("lang_%s" % lang )
+				tagContainer.addClass("tagcontainer")
 				tagContainer["style"]["display"] = "none"
 
 				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
@@ -169,7 +169,7 @@ class StringEditBone(html5.Div):
 
 				if not self.readOnly:
 					addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
-					addBtn["class"].append("icon new tag")
+					addBtn.addClass("icon new tag")
 					addBtn.lang = lang
 					tagContainer.appendChild(addBtn)
 
@@ -180,7 +180,7 @@ class StringEditBone(html5.Div):
 			self.setLang(self.languages[0])
 
 		elif self.languages and not self.multiple:
-			self["class"].append("is_translated")
+			self.addClass("is-translated")
 			self.languagesContainer = html5.Div()
 			self.appendChild( self.languagesContainer )
 			self.buttonContainer = html5.Div()
@@ -201,7 +201,7 @@ class StringEditBone(html5.Div):
 					inputField["type"] = "text"
 
 				inputField["style"]["display"] = "none"
-				inputField["class"].append("lang_%s" % lang)
+				inputField.addClass("lang_%s" % lang)
 
 				if self.readOnly:
 					inputField["readonly"] = True
@@ -213,15 +213,15 @@ class StringEditBone(html5.Div):
 			self.setLang(self.languages[0])
 
 		elif not self.languages and self.multiple:
-			self["class"].append("is_multiple")
+			self.addClass("is-multiple")
 			self.tagContainer = html5.Div()
-			self.tagContainer["class"].append("tagcontainer")
+			self.tagContainer.addClass("tagcontainer")
 			self.appendChild(self.tagContainer)
 
 			if not self.readOnly:
 				addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
 				addBtn.lang = None
-				addBtn["class"].append("icon new tag")
+				addBtn.addClass("icon new tag")
 
 				self.tagContainer.appendChild(addBtn)
 
@@ -281,22 +281,22 @@ class StringEditBone(html5.Div):
 
 		for lang in self.languages:
 			if self.isFilled(lang):
-				self.langBtns[lang]["class"].remove("is_unfilled")
-				if not "is_filled" in self.langBtns[lang]["class"]:
-					self.langBtns[lang]["class"].append("is_filled")
+				self.langBtns[lang].removeClass("is-unfilled")
+				if not "is-filled" in self.langBtns[lang]["class"]:
+					self.langBtns[lang].addClass("is-filled")
 			else:
-				self.langBtns[lang]["class"].remove("is_filled")
-				if not "is_unfilled" in self.langBtns[lang]["class"]:
-					self.langBtns[lang]["class"].append("is_unfilled")
+				self.langBtns[lang].removeClass("is-filled")
+				if not "is-unfilled" in self.langBtns[lang]["class"]:
+					self.langBtns[lang].addClass("is-unfilled")
 
 			if lang == self.currentLanguage:
-				#self.langBtns[lang]["class"].remove("is_filled")
-				#self.langBtns[lang]["class"].remove("is_unfilled")
+				#self.langBtns[lang].removeClass("is-filled")
+				#self.langBtns[lang].removeClass("is-unfilled")
 
 				if not "is-active" in self.langBtns[lang]["class"]:
-					self.langBtns[lang]["class"].append("is-active")
+					self.langBtns[lang].addClass("is-active")
 			else:
-				self.langBtns[lang]["class"].remove("is-active")
+				self.langBtns[lang].removeClass("is-active")
 
 	def setLang(self, lang):
 		if self.currentLanguage:

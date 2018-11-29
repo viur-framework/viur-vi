@@ -65,7 +65,7 @@ class InternalEdit(html5.Div):
 				fs["class"] = cat
 
 				if firstCat:
-					fs["class"].append("is-active")
+					fs.addClass("is-active")
 					firstCat = False
 
 					if self.form is self:
@@ -79,27 +79,27 @@ class InternalEdit(html5.Div):
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 
 			descrLbl = html5.Label(bone["descr"])
-			descrLbl["class"].append(key)
-			descrLbl["class"].append(bone["type"].replace(".","_"))
+			descrLbl.addClass(key)
+			descrLbl.addClass(bone["type"].replace(".","_"))
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, None, "internal", cat or "empty", key)
 
 			if bone["required"]:
-				descrLbl["class"].append("is_required")
+				descrLbl.addClass("is-required")
 
 			if (bone["required"]
 			    and (bone["error"] is not None
 			            or (self.errorInformation and key in self.errorInformation.keys()))):
-				descrLbl["class"].append("is-invalid")
+				descrLbl.addClass("is-invalid")
 				if bone["error"]:
 					descrLbl["title"] = bone["error"]
 				else:
 					descrLbl["title"] = self.errorInformation[ key ]
 
 				if fieldSets and cat in fieldSets:
-					fieldSets[cat]["class"].append("is_incomplete")
+					fieldSets[cat].addClass("is-incomplete")
 
 			if bone["required"] and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
-				descrLbl["class"].append("is-valid")
+				descrLbl.addClass("is-valid")
 
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
 				tmp = html5.Span()
@@ -110,11 +110,11 @@ class InternalEdit(html5.Div):
 			self.containers[key] = html5.Div()
 			self.containers[key].appendChild(descrLbl)
 			self.containers[key].appendChild(widget)
-			self.containers[key].addClass("bone", "bone_%s" % key, bone["type"].replace(".","_"))
+			self.containers[key].addClass("vi-bone", "vi-bone--%s" % bone["type"].replace(".","-"), "vi-bone--%s" % key)
 
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
-					self.containers[key].addClass(t)
+					self.containers[key].addClass("vi-bone--%s" % t)
 
 			if cat is not None:
 				fieldSets[cat]._section.appendChild(self.containers[key])
@@ -131,7 +131,7 @@ class InternalEdit(html5.Div):
 		if len(fieldSets)==1:
 			for (k,v) in fieldSets.items():
 				if not "is-active" in v["class"]:
-					v["class"].append("is-active")
+					v.addClass("is-active")
 
 		tmpList = [(k,v) for (k,v) in fieldSets.items()]
 		tmpList.sort( key=lambda x:x[0])
@@ -151,8 +151,8 @@ class InternalEdit(html5.Div):
 					# Fixme: Bad hack..
 					lbl = bone.parent()._children[0]
 					if "is-valid" in lbl["class"]:
-						lbl["class"].remove("is-valid")
-					lbl["class"].append("is-invalid")
+						lbl.removeClass("is-valid")
+					lbl.addClass("is-invalid")
 					self.actionbar.resetLoadingState()
 					return None
 
@@ -302,6 +302,7 @@ class EditWidgetFieldset(html5.Fieldset):
 		super(EditWidgetFieldset, self).__init__()
 		self.sinkEvent("onClick")
 
+		self.addClass("vi-edit-fieldset")
 		self.addClass("is-inactive")
 		self["name"] = cat
 
@@ -313,6 +314,7 @@ class EditWidgetFieldset(html5.Fieldset):
 		legend.appendChild(self.title)
 
 		section = html5.Section()
+		section.addClass("vi-edit-section")
 		self.appendChild(section)
 		self._section = section
 
@@ -646,10 +648,10 @@ class EditWidget(html5.Div):
 
 	def cloneComplete(self, request):
 		logDiv = html5.Div()
-		logDiv["class"].append("msg")
+		logDiv.addClass("msg")
 		spanMsg = html5.Span()
 		spanMsg.appendChild( html5.TextNode( translate( u"The hierarchy will be cloned in the background." ) ) )
-		spanMsg["class"].append("msgspan")
+		spanMsg.addClass("msgspan")
 		logDiv.appendChild(spanMsg)
 
 		conf["mainWindow"].log("success",logDiv)
@@ -673,11 +675,11 @@ class EditWidget(html5.Div):
 			self.modified = False
 
 			logDiv = html5.Div()
-			logDiv["class"].append("msg")
+			logDiv.addClass("msg")
 			spanMsg = html5.Span()
 
 			spanMsg.appendChild( html5.TextNode( translate( self.logaction ) ) )
-			spanMsg["class"].append("msgspan")
+			spanMsg.addClass("msgspan")
 			logDiv.appendChild(spanMsg)
 
 			if self.module in conf["modules"].keys():
@@ -686,7 +688,7 @@ class EditWidget(html5.Div):
 					spanMsg.appendChild( html5.TextNode( self.key ) )
 				else:
 					spanMsg.appendChild( html5.TextNode( conf["modules"][self.module]["name"] ))
-				spanMsg["class"].append("modulespan")
+				spanMsg.addClass("modulespan")
 				logDiv.appendChild(spanMsg)
 
 			if "values" in data.keys() and "name" in data["values"].keys():
@@ -703,7 +705,7 @@ class EditWidget(html5.Div):
 					name = ", ".join(name)
 
 				spanMsg.appendChild(html5.TextNode(str(html5.utils.unescape(name))))
-				spanMsg["class"].append("namespan")
+				spanMsg.addClass("namespan")
 				logDiv.appendChild(spanMsg)
 
 			try:
@@ -781,21 +783,20 @@ class EditWidget(html5.Div):
 				widget.changeEvent.register(self)
 
 			descrLbl = html5.Label(key if conf["showBoneNames"] else bone.get("descr", key))
-			descrLbl["class"].append(key)
-			descrLbl["class"].append(bone["type"].replace(".","_"))
+			descrLbl.addClass("label", "vi-label", "vi-label--%s" % bone["type"].replace(".","-"), "vi-label--%s" % key)
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
 			#print(key, bone["required"], bone["error"])
 			if bone["required"] or (bone.get("unique") and bone["error"]):
-				descrLbl["class"].append("is_required")
+				descrLbl.addClass("is-required")
 
 				if bone["error"] is not None:
-					descrLbl["class"].append("is-invalid")
+					descrLbl.addClass("is-invalid")
 					descrLbl["title"] = bone["error"]
-					fieldSets[ cat ]["class"].append("is_incomplete")
+					fieldSets[ cat ].addClass("is-incomplete")
 					hasMissing = True
 				elif bone["error"] is None and not self.wasInitialRequest:
-					descrLbl["class"].append("is-valid")
+					descrLbl.addClass("is-valid")
 
 			if isinstance(bone["error"], dict):
 				widget.setExtendedErrorInformation(bone["error"])
@@ -810,11 +811,11 @@ class EditWidget(html5.Div):
 				containerDiv.appendChild(ToolTip(longText=bone["params"]["tooltip"]))
 
 			fieldSets[cat]._section.appendChild(containerDiv)
-			containerDiv.addClass("bone", "bone_%s" % key, bone["type"].replace(".","_"))
+			containerDiv.addClass("vi-bone", "vi-bone--%s" % bone["type"].replace(".","-"), "vi-bone--%s" % key)
 
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
-					containerDiv["class"].append(t)
+					containerDiv.addClass("vi-bone--%s" % t)
 
 			currRow += 1
 			self.bones[key] = widget
@@ -926,8 +927,8 @@ class EditWidget(html5.Div):
 					# Fixme: Bad hack..
 					lbl = bone.parent()._children[0]
 					if "is-valid" in lbl["class"]:
-						lbl["class"].remove("is-valid")
-					lbl["class"].append("is-invalid")
+						lbl.removeClass("is-valid")
+					lbl.addClass("is-invalid")
 					self.actionbar.resetLoadingState()
 					return None
 

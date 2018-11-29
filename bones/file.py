@@ -61,8 +61,8 @@ class FileViewBoneDelegate(object):
 		if "mimetype" in fileEntry.keys():
 			try:
 				ftype, fformat = fileEntry["mimetype"].split("/")
-				adiv["class"].append("type_%s" % ftype )
-				adiv["class"].append("format_%s" % fformat )
+				adiv.addClass("type_%s" % ftype )
+				adiv.addClass("format_%s" % fformat )
 			except:
 				pass
 
@@ -72,7 +72,7 @@ class FileViewBoneDelegate(object):
 		aspan.appendChild(html5.TextNode(str(fileEntry.get("name", ""))))#fixme: formatstring!
 		adiv.appendChild(aspan)
 
-		adiv["class"].append("fileBoneViewCell")
+		adiv.addClass("fileBoneViewCell")
 		#adiv["draggable"]=True
 		#metamime="application/octet-stream"
 
@@ -157,7 +157,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 	def __init__(self, *args, **kwargs):
 		super(FileMultiSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
-		self["class"].append("supports_upload")
+		self.addClass("supports-upload")
 
 	def onDragOver(self, event):
 		super(FileMultiSelectionBone,self).onDragOver(event)
@@ -183,7 +183,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		currentSelector = FileWidget(self.destModule, isSelector="leaf")
 		currentSelector.selectionReturnEvent.register(self)
 		conf["mainWindow"].stackWidget(currentSelector)
-		self.parent()["class"].append("is-active")
+		self.parent().addClass("is-active")
 
 	def onSelectionReturn(self, table, selection ):
 		"""
@@ -217,7 +217,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 	def __init__(self, *args, **kwargs):
 		super(FileSingleSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
-		self["class"].append("supports_upload")
+		self.addClass("supports-upload")
 
 		self.previewImg = FilePreviewImage()
 		self.prependChild(self.previewImg)
@@ -265,7 +265,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		self.currentSelector.selectionReturnEvent.register(self, reset=True)
 
 		conf["mainWindow"].stackWidget(self.currentSelector)
-		self.parent().addClass("is_active")
+		self.parent().addClass("is-active")
 
 	def onSelectionReturn(self, table, selection):
 		"""

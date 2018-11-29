@@ -6,7 +6,7 @@ class Search( html5.Div ):
 	def __init__(self, *args, **kwargs):
 		super( Search, self ).__init__( *args, **kwargs )
 		self.startSearchEvent = EventDispatcher("startSearch")
-		self["class"].append("search")
+		self.addClass("search")
 		lblSearch = html5.H2()
 		lblSearch.appendChild( html5.TextNode(translate("Fulltext search")))
 		self.appendChild( lblSearch )
@@ -38,7 +38,7 @@ class Search( html5.Div ):
 
 	def resetLoadingState(self):
 		if "is-loading" in self.btn["class"]:
-			self.btn["class"].remove("is-loading")
+			self.btn.removeClass("is-loading")
 
 	def reevaluate(self):
 		self.doSearch()
