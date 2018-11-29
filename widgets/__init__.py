@@ -1,6 +1,8 @@
+from accordion import Accordion
 from topbar import TopBarWidget
 from list import ListWidget
-from edit import EditWidget, InternalEdit
+from edit import EditWidget
+from internaledit import InternalEdit
 from table import DataTable
 from actionbar import ActionBar
 from tree import TreeWidget

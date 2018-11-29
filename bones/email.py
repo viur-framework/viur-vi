@@ -2,7 +2,7 @@
 import html5
 from priorityqueue import editBoneSelector, viewDelegateSelector
 import bones.string as strBone
-from widgets.edit import InvalidBoneValueException
+from exception import InvalidBoneValueException
 import re
 
 class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
