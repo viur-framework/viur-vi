@@ -17,7 +17,7 @@ class TextInsertImageAction(html5.ext.Button):
 		self.summernote = summernote
 
 	def onClick(self, sender=None):
-		currentSelector = FileWidget("file", isSelector=True)
+		currentSelector = FileWidget("file", selectMode="multi")
 		currentSelector.selectionActivatedEvent.register(self)
 		conf["mainWindow"].stackWidget(currentSelector)
 
