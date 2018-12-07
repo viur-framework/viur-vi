@@ -33,7 +33,7 @@ class BaseLoginHandler(html5.Li):
 		if not "cssname" in dir(self):
 			self.cssname = self.__class__.__name__.lower()
 
-		self.addClass("vi-login-handler")
+		self.addClass("vi-login-handler btn btn--small ")
 		self.addClass("vi-login-handler-%s" % self.cssname)
 		self.sinkEvent("onClick")
 
@@ -41,21 +41,48 @@ class BaseLoginHandler(html5.Li):
 
 		self.appendChild(html5.TextNode(translate("vi.login.handler.%s" % self.cssname)))
 
+		# --- Surrounding Dialog ---
+		self.loginDialog = html5.Div()
+		self.loginDialog.addClass("vi-login-dialog popup popup--center is-active")
+		self.loginDialog.addClass("vi-login-dialog-%s" % self.cssname)
+		self.loginScreen.appendChild(self.loginDialog)
+
+		# --- Dialog ---
+		self.loginBox = html5.Div()
+		self.loginBox.addClass("box box--content-wide")
+		self.loginDialog.appendChild(self.loginBox)
+
+		# --- Header ---
+		self.loginHeader = html5.Div()
+		self.loginHeader.addClass("vi-login-header")
+		self.loginBox.appendChild(self.loginHeader)
+
 		self.mask = html5.Div()
 		self.mask.addClass("vi-login-mask")
 		self.mask.addClass("vi-login-mask-%s" % self.cssname)
-		loginScreen.loginBox.appendChild(self.mask)
+		self.loginBox.appendChild(self.mask)
+
+		# Login
+		# h1 = html5.H1()
+		# h1.addClass("vi-login-headline")
+		# h1.appendChild(html5.TextNode(translate("vi.login.title")))
+		# header.appendChild(h1)
+
+		# Logo
+		img = html5.Img()
+		img.addClass("vi-login-logo")
+		img["src"] = "images/vi-login-logo.svg"
+		self.loginHeader.appendChild(img)
+
 
 	def onClick(self, event):
 		self.loginScreen.selectHandler(self)
 
 	def enable(self):
-		self.addClass("is-active")
-		self.mask.show()
+		self.loginDialog.addClass("is-active")
 
 	def disable(self):
-		self.removeClass("is-active")
-		self.mask.hide()
+		self.loginDialog.removeClass("is-active")
 
 	def lock(self):
 		self.loginScreen.lock()
@@ -299,34 +326,6 @@ class LoginScreen(Screen):
 	def __init__(self, *args, **kwargs):
 		super(LoginScreen, self).__init__(*args, **kwargs)
 		self.addClass("vi-login-screen")
-
-		# --- Surrounding Dialog ---
-		self.loginDialog = html5.Div()
-		self.loginDialog.addClass("vi-login-dialog popup popup--center is-active")
-		self.appendChild(self.loginDialog)
-
-		self.loginBox = html5.Div()
-		self.loginBox.addClass("box box--content-wide")
-		self.loginDialog.appendChild(self.loginBox)
-
-		# --- Header ---
-		self.loginHeader = html5.Div()
-		self.loginHeader.addClass("vi-login-header")
-		self.loginBox.appendChild(self.loginHeader)
-
-		# Login
-		# h1 = html5.H1()
-		# h1.addClass("vi-login-headline")
-		# h1.appendChild(html5.TextNode(translate("vi.login.title")))
-		# header.appendChild(h1)
-
-		# Logo
-		img = html5.Img()
-		img.addClass("vi-login-logo")
-		img["src"] = "images/vi-login-logo.svg"
-		self.loginHeader.appendChild(img)
-
-		# --- Dialog ---
 
 		self.loginMethodSelector = html5.Ul()
 		self.loginMethodSelector.addClass("vi-login-method input-group bar-group--center")
