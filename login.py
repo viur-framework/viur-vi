@@ -13,7 +13,7 @@ class LoginInputField(html5.Input):
 
 	def __init__(self, notifier, *args, **kwargs):
 		super(LoginInputField, self).__init__(*args, **kwargs)
-		self.addClass("vi-login-input")
+		self.addClass("vi-login-input input")
 		self.sinkEvent("onKeyPress")
 
 		self.onKeyPressEvent = EventDispatcher("keyPress")
@@ -43,7 +43,7 @@ class BaseLoginHandler(html5.Li):
 
 		# --- Surrounding Dialog ---
 		self.loginDialog = html5.Div()
-		self.loginDialog.addClass("vi-login-dialog popup popup--center is-active")
+		self.loginDialog.addClass("vi-login-dialog popup popup--center")
 		self.loginDialog.addClass("vi-login-dialog-%s" % self.cssname)
 		self.loginScreen.appendChild(self.loginDialog)
 
@@ -79,9 +79,11 @@ class BaseLoginHandler(html5.Li):
 		self.loginScreen.selectHandler(self)
 
 	def enable(self):
+		self.addClass("is-active")
 		self.loginDialog.addClass("is-active")
 
 	def disable(self):
+		self.removeClass("is-active")
 		self.loginDialog.removeClass("is-active")
 
 	def lock(self):
@@ -119,6 +121,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.mask.appendChild(self.pwform)
 
 		self.username = LoginInputField(self)
+		self.username["type"] = "text"
 		self.username["name"] = "username"
 		self.username["placeholder"] = translate("Username")
 		self.pwform.appendChild(self.username)
