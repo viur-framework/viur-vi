@@ -15,23 +15,32 @@ var destpaths = {
 // Variables and requirements
 
 const gulp = require('gulp');
+
+const path = require('path');
+const del = require('del');
 const rename = require('gulp-rename');
 
 const less = require('gulp-less');
-const path = require('path');
-
+const autoprefixer = require('gulp-autoprefixer');
 const postcss = require('gulp-postcss');
 const zindex = require('postcss-zindex');
-const autoprefixer = require('gulp-autoprefixer');
 const focus = require('postcss-focus');
 const nocomments = require('postcss-discard-comments');
 const nano = require('gulp-cssnano');
 const jmq = require('gulp-join-media-queries');
+const stylefmt = require('gulp-stylefmt');
 
-const svgmin = require('gulp-svgmin');
 const imagemin = require('gulp-imagemin');
-const pngquant = require('imagemin-pngquant');
 const cheerio = require('gulp-cheerio');
+
+// clean destination folder
+gulp.task('clean', function () {
+	return del([
+		destpaths.css + '/**/*',
+		destpaths.images+ '/**/*',
+		destpaths.embedsvg + '/**/*',
+	], {force: true});
+});
 
 // compilation and postproduction of LESS to CSS
 gulp.task('css', function () {
@@ -53,6 +62,7 @@ gulp.task('css', function () {
     .pipe(jmq({
       log: true
     }))
+    .pipe(stylefmt()) // syntax formatting
     .pipe(rename('style.css'))
     .pipe(gulp.dest(destpaths.css)) // save cleaned version
     .pipe(nano()) // minify css
@@ -63,21 +73,31 @@ gulp.task('css', function () {
 // reduce images for web
 gulp.task('images', function () {
   return gulp.src(srcpaths.images)
-    .pipe(imagemin({
-      progressive: true,
-      svgoPlugins: [{removeViewBox: false}],
-      use: [pngquant()]
-    }))
+    .pipe(imagemin([
+      imagemin.jpegtran({progressive: true}),
+      imagemin.optipng({optimizationLevel: 5}),
+      imagemin.svgo({
+        plugins: [
+          {removeViewBox: false},
+          {removeDimensions: true}
+        ]
+      })
+    ]))
     .pipe(gulp.dest(destpaths.images));
 });
 
 gulp.task('embedsvg', function () {
   return gulp.src(srcpaths.embedsvg)
-    .pipe(imagemin({
-      progressive: true,
-      svgoPlugins: [{removeViewBox: false}],
-      use: [pngquant()]
-    }))
+    .pipe(imagemin([
+      imagemin.jpegtran({progressive: true}),
+      imagemin.optipng({optimizationLevel: 5}),
+      imagemin.svgo({
+        plugins: [
+          {removeViewBox: false},
+          {removeDimensions: true}
+        ]
+      })
+    ]))
     .pipe(cheerio({
       run: function ($, file) {
         $('style').remove()
@@ -106,4 +126,4 @@ gulp.task('watch', function () {
   gulp.watch(srcpaths.images, ['images']);
 });
 
-gulp.task('default', gulp.series(['css', 'embedsvg', 'images']));
+gulp.task('default', gulp.series(['clean', 'css', 'embedsvg', 'images']));
