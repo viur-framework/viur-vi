@@ -7,7 +7,7 @@ from event import EventDispatcher
 from config import conf
 from priorityqueue import loginHandlerSelector
 from screen import Screen
-from widgets import InternalEdit
+#from widgets import InternalEdit
 
 class LoginInputField(html5.Input):
 
@@ -44,7 +44,7 @@ class BaseLoginHandler(html5.Li):
 		self.mask = html5.Div()
 		self.mask.addClass("vi-login-mask")
 		self.mask.addClass("vi-login-mask-%s" % self.cssname)
-		loginScreen.dialog.appendChild(self.mask)
+		loginScreen.loginBox.appendChild(self.mask)
 
 	def onClick(self, event):
 		self.loginScreen.selectHandler(self)
@@ -103,7 +103,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.pwform.appendChild(self.password)
 
 		self.loginBtn = html5.ext.Button(translate("Login"), callback=self.onLoginClick)
-		self.loginBtn.addClass("vi-login-btn")
+		self.loginBtn.addClass("vi-login-btn btn--viur")
 		self.pwform.appendChild(self.loginBtn)
 
 		# One Time Password
@@ -280,7 +280,7 @@ class GoogleAccountLoginHandler(BaseLoginHandler):
 		super(GoogleAccountLoginHandler, self).__init__(loginScreen, *args, **kwargs)
 
 		self.loginBtn = html5.ext.Button(translate("Login with Google"), callback=self.onLoginClick)
-		self.loginBtn.addClass("vi-login-btn")
+		self.loginBtn.addClass("vi-login-btn btn--viur")
 		self.mask.appendChild(self.loginBtn)
 
 	def onLoginClick(self, sender = None):
@@ -301,32 +301,36 @@ class LoginScreen(Screen):
 		self.addClass("vi-login-screen")
 
 		# --- Surrounding Dialog ---
-		self.dialog = html5.Div()
-		self.dialog.addClass("vi-login-dialog")
-		self.appendChild(self.dialog)
+		self.loginDialog = html5.Div()
+		self.loginDialog.addClass("vi-login-dialog popup popup--center is-active")
+		self.appendChild(self.loginDialog)
+
+		self.loginBox = html5.Div()
+		self.loginBox.addClass("box box--content-wide")
+		self.loginDialog.appendChild(self.loginBox)
 
 		# --- Header ---
-		header = html5.Div()
-		header.addClass("vi-login-header")
-		self.dialog.appendChild(header)
+		self.loginHeader = html5.Div()
+		self.loginHeader.addClass("vi-login-header")
+		self.loginBox.appendChild(self.loginHeader)
 
 		# Login
-		h1 = html5.H1()
-		h1.addClass("vi-login-headline")
-		h1.appendChild(html5.TextNode(translate("vi.login.title")))
-		header.appendChild(h1)
+		# h1 = html5.H1()
+		# h1.addClass("vi-login-headline")
+		# h1.appendChild(html5.TextNode(translate("vi.login.title")))
+		# header.appendChild(h1)
 
 		# Logo
 		img = html5.Img()
 		img.addClass("vi-login-logo")
 		img["src"] = "images/vi-login-logo.svg"
-		header.appendChild(img)
+		self.loginHeader.appendChild(img)
 
 		# --- Dialog ---
 
 		self.loginMethodSelector = html5.Ul()
-		self.loginMethodSelector.addClass("vi-login-method")
-		self.dialog.appendChild(self.loginMethodSelector)
+		self.loginMethodSelector.addClass("vi-login-method input-group bar-group--center")
+		self.appendChild(self.loginMethodSelector)
 
 		self.haveLoginHandlers = False
 
