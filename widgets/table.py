@@ -485,6 +485,7 @@ class DataTable( html5.Div ):
 	def __init__( self, _loadOnDisplay = False, *args, **kwargs ):
 		super( DataTable, self ).__init__( )
 		self.table = SelectTable( *args, **kwargs )
+		self.addClass("vi-datatable")
 		self.appendChild(self.table)
 
 		self._loadOnDisplay = _loadOnDisplay # Load all data content continuously when displaying
@@ -510,7 +511,6 @@ class DataTable( html5.Div ):
 			setattr( self, f, getattr(self.table,f))
 
 		self.cursorMovedEvent.register( self )
-		self["style"]["overflow"] = "scroll"
 		self.recalcHeight()
 		self.sinkEvent("onScroll")
 

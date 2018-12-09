@@ -5,38 +5,35 @@
     font-size:0.8em;
     color:#aaa;
 }
-.is-splitview > div {
-  width: 65%;
-  float: left;
-}
 
 .is-splitview .emptynotification {
     width: 20%;
     margin: 0 18% 55px;
 }
 
-.is-splitview .sidebarwidgets {
-  margin-left: 2%;
-  width: 30%;
-  float: right;
-  padding: 10px 1%;
+.is-splitview .vi-sidebar {
+  flex-basis: 20%;
+  order: 2;
+  max-width: 370px;
+  min-width: 250px;
+  padding: @innerSpace;
   border-radius: 5px;
   background: #eee;
   border: 1px solid #ddd;
 }
-.is-splitview .sidebarwidgets > div > button {
+.is-splitview .vi-sidebar > div > button {
   width: 98%;
   margin: 0 1% 5px;
 }
-.is-splitview .sidebarwidgets > div > button img {
+.is-splitview .vi-sidebar > div > button img {
   width: 16px;
   float: left;
   margin-top: -2px;
 }
-.is-splitview .sidebarwidgets .sbw-compoundfilter-extended button {
+.is-splitview .vi-sidebar .sbw-compoundfilter-extended button {
   float: right;
 }
-.is-splitview .sidebarwidgets .sbw-compoundfilter-extended span {
+.is-splitview .vi-sidebar .sbw-compoundfilter-extended span {
   margin-top: 5px;
   margin-left: 15px;
   display: inline-block;

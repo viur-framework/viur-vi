@@ -1967,7 +1967,7 @@ form .relational:focus button:after {
 table {
   margin: 0px;
   padding: 0px;
-  width: 100%;
+  min-width: 100%;
   height: 100%;
   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
   border: 1px solid #cccccc;
@@ -2039,6 +2039,7 @@ td {
   padding: 7px;
   font-weight: normal;
   color: #000000;
+  min-width: 200px;
 }
 td img {
   max-height: 80px;
@@ -2143,7 +2144,7 @@ td span.index
     margin: 0 18% 55px;
 }
 
-.issplitview .sidebarwidgets {
+.issplitview .vi-sidebar {
   margin-left: 2%;
   width: 30%;
   float: right;
@@ -2152,45 +2153,45 @@ td span.index
   background: #eee;
   border: 1px solid #ddd;
 }
-.issplitview .sidebarwidgets > div > button {
+.issplitview .vi-sidebar > div > button {
   width: 98%;
   margin: 0 1% 5px;
 }
-.issplitview .sidebarwidgets > div > button img {
+.issplitview .vi-sidebar > div > button img {
   width: 16px;
   float: left;
   margin-top: -2px;
 }
-.issplitview .sidebarwidgets .extendedfilter button {
+.issplitview .vi-sidebar .extendedfilter button {
   float: right;
 }
-.issplitview .sidebarwidgets .extendedfilter span {
+.issplitview .vi-sidebar .extendedfilter span {
   margin-top: 5px;
   margin-left: 15px;
   display: inline-block;
 }
-.sidebarwidgets > ul > li {
+.vi-sidebar > ul > li {
   padding: 3px;
   border-bottom: 1px solid #ddd;
   font-size: 0.9em;
   color: #444;
 }
-.sidebarwidgets > ul > li dd img {
+.vi-sidebar > ul > li dd img {
   width: 16px;
   margin-right: 10px;
 }
-.sidebarwidgets > ul > li dd ul {
+.vi-sidebar > ul > li dd ul {
   overflow: hidden;
   height: 25px;
 }
-.sidebarwidgets > ul > li dd ul li {
+.vi-sidebar > ul > li dd ul li {
   float: right;
   margin-left: 10px;
 }
-.sidebarwidgets > ul > li dl {
+.vi-sidebar > ul > li dl {
   height: 23px;
 }
-.sidebarwidgets > ul > li dt {
+.vi-sidebar > ul > li dt {
   display: inline-block;
   max-width: 30%;
   overflow: hidden;
@@ -2199,7 +2200,7 @@ td span.index
   color: @maincolor;
   font-weight: 600;
 }
-.sidebarwidgets > ul > li dd {
+.vi-sidebar > ul > li dd {
   display: inline-block;
   float: right;
   max-width: 60%;
@@ -2208,12 +2209,12 @@ td span.index
   white-space: nowrap;
 }
 
-.sidebarwidgets dd span.date {
+.vi-sidebar dd span.date {
   margin-right: 10px;
   font-weight: 600;
 }
 
-.sidebarwidgets dd span.time {
+.vi-sidebar dd span.time {
   font-weight: 100;
 }
 

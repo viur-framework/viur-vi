@@ -107,6 +107,9 @@ class EditWidget(html5.Div):
 		super(EditWidget, self ).__init__(*args, **kwargs)
 		self.module = module
 
+		self.addClass("vi-widget vi-widget--edit")
+
+
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
 		assert applicationType in [ EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree, EditWidget.appSingleton ] #Invalid Application-Type?
 

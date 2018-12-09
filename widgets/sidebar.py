@@ -7,7 +7,7 @@ class SideBar( html5.Div ):
 		super( SideBar, self ).__init__( *args, **kwargs )
 		self.isInit = False
 		self.currentWidget = None
-		self.addClass("sidebarwidgets")
+		self.addClass("vi-sidebar")
 		self.addClass("is-empty")
 
 	def onAttach(self):

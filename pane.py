@@ -172,14 +172,11 @@ class Pane(html5.Div):
 			@type widget: Widget
 
 		"""
-		div = html5.Div()
-		div.addClass("vi-operator")
-		div.appendChild(widget)
 
 		for w in self.widgetsDomElm._children[:]:
 			w["disabled"] = True
 
-		self.widgetsDomElm.appendChild( div )
+		self.widgetsDomElm.appendChild( widget )
 		self.rebuildChildrenClassInfo()
 
 	def rebuildChildrenClassInfo(self):

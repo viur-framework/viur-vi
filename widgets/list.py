@@ -29,6 +29,7 @@ class ListWidget(html5.Div):
 			assert module in conf["modules"].keys()
 
 		super(ListWidget, self).__init__()
+		self.addClass("vi-widget vi-widget--list")
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
 		self.module = module
@@ -37,8 +38,13 @@ class ListWidget(html5.Div):
 		self.actionBar = ActionBar(module, "list", currentAction="list")
 		self.appendChild( self.actionBar )
 
+		self.widgetContent = html5.Div()
+		self.widgetContent.addClass("vi-widget-content")
+		self.appendChild(self.widgetContent)
+
 		self.sideBar = SideBar()
 		self.appendChild( self.sideBar )
+
 
 		myView = None
 
@@ -62,7 +68,7 @@ class ListWidget(html5.Div):
 		           and conf["modules"][module]["indexes"])
 
 		self.table = DataTable( checkboxes=checkboxes, indexes=indexes, *args, **kwargs )
-		self.appendChild( self.table )
+		self.widgetContent.appendChild( self.table )
 		self._currentCursor = None
 		self._structure = None
 		self._currentRequests = []
@@ -100,15 +106,10 @@ class ListWidget(html5.Div):
 
 		self.emptyNotificationDiv = html5.Div()
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
-		self.emptyNotificationDiv.addClass("emptynotification")
-		self.emptyNotificationDiv.addClass("msg")
-		self.appendChild(self.emptyNotificationDiv)
+		self.emptyNotificationDiv.addClass("msg emptynotification")
+		self.widgetContent.appendChild(self.emptyNotificationDiv)
 		self.emptyNotificationDiv.removeClass("is-active")
 		self.table["style"]["display"] = "none"
-		self.filterDescriptionSpan = html5.Span()
-		self.appendChild( self.filterDescriptionSpan )
-		self.filterDescriptionSpan.addClass("filterdescription")
-		self.updateFilterDescription()
 
 		if autoload:
 			self.reloadData()

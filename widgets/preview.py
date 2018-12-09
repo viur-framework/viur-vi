@@ -4,6 +4,7 @@ from config import conf
 class Preview( html5.Div ):
 	def __init__(self, urls, entry, modul, *args, **kwargs ):
 		super( Preview, self ).__init__( *args, **kwargs )
+		self.addClass("vi-widget vi-widget--preview")
 		self.urls = urls
 		self.entry = entry
 		self.module = modul

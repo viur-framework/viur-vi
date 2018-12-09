@@ -207,6 +207,7 @@ class HierarchyWidget(html5.Div):
 		super( HierarchyWidget, self ).__init__( )
 		self.module = module
 		self.rootNode = rootNode
+		self.addClass("vi-widget vi-widget--hierarchy")
 		self.actionBar = ActionBar(module, "hierarchy")
 		self.appendChild( self.actionBar )
 		self.entryFrame = html5.Ol()

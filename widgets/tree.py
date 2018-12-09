@@ -289,7 +289,7 @@ class TreeWidget( html5.Div ):
 			@type node: String or None
 		"""
 		super( TreeWidget, self ).__init__( )
-		self.addClass("tree")
+		self.addClass("vi-widget vi-widget--tree tree")
 		self.module = module
 		self.rootNode = rootNode
 		self.node = node or rootNode
