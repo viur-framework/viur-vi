@@ -110,14 +110,15 @@ function summernoteEditor(input) {
 		disableDragAndDrop: true,
 		airMode: false,
 		height: 400,
-		styleWithSpan: false
+		styleWithSpan: false,
+		disableResizeImage: true
 	});
 
 	$('.note-editor').on("focusout", function () {
 		setTimeout(function () {
 			$(".note-popover").hide();
 			$(".note-image-popover").hide();
-		}, 100)
+		}, 200)
 	});
 
 	$("*").on("scroll", function () {

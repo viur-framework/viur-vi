@@ -30,14 +30,15 @@ class TextInsertImageAction(html5.ext.Button):
 		print(selection)
 
 		for item in selection:
+			encodeURI = eval("encodeURI")
+
 			if "mimetype" in item.data.keys() and item.data["mimetype"].startswith("image/"):
-				dataUrl = getImagePreview(item.data)
+				dataUrl = "/file/download/%s/%s" % (item.data["dlkey"], encodeURI(item.data["name"]))
 
 				self.summernote.summernote("editor.insertImage", dataUrl, item.data["name"].replace("\"", ""))
 				print("insert img %s" % dataUrl)
 			else:
-				dataUrl = "/file/download/%s/%s" % (
-					item.data["dlkey"], item.data["name"].replace("\"", ""))
+				dataUrl = "/file/download/%s/%s" % (item.data["dlkey"], encodeURI(item.data["name"]))
 				text = item.data["name"].replace("\"", "")
 
 				self.summernote.summernote("editor.createLink",
