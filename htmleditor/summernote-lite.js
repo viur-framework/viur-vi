@@ -5,7 +5,7 @@
  * Copyright 2013- Alan Hong. and other contributors
  * summernote may be freely distributed under the MIT license.
  *
- * Date: 2018-12-03T11:43Z
+ * Date: 2018-12-10T17:40Z
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery')) :
@@ -2453,7 +2453,7 @@
       isLi: isLi,
       isBR: makePredByNodeName('BR'),
       isSpan: makePredByNodeName('SPAN'),
-      isB: makePredByNodeName('B'),
+      isB: makePredByNodeName('STRONG'),
       isU: makePredByNodeName('U'),
       isS: makePredByNodeName('S'),
       isI: makePredByNodeName('I'),
@@ -4653,10 +4653,20 @@
            * resize overlay element
            * @param {String} value
            */
-          this.resize = this.wrapCommand(function (value) {
+          this.resize = this.wrapCommand(function (className) {
               var $target = $$1(_this.restoreTarget());
+              var classNames = $target.attr('class');
+              if (classNames !== undefined) {
+                  var classNames_1 = $target.attr('class').split(' ');
+                  classNames_1.forEach(function (val) {
+                      if (val.startsWith('viur-img')) {
+                          $target.removeClass(val);
+                      }
+                  });
+              }
+              $target.addClass(className);
               $target.css({
-                  width: value * 100 + '%',
+                  width: '',
                   height: ''
               });
           });
@@ -6291,21 +6301,21 @@
               return _this.button({
                   contents: '<span class="note-fontsize-10">100%</span>',
                   tooltip: _this.lang.image.resizeFull,
-                  click: _this.context.createInvokeHandler('editor.resize', '1')
+                  click: _this.context.createInvokeHandler('editor.resize', 'viur-img-full')
               }).render();
           });
           this.context.memo('button.imageSize50', function () {
               return _this.button({
                   contents: '<span class="note-fontsize-10">50%</span>',
                   tooltip: _this.lang.image.resizeHalf,
-                  click: _this.context.createInvokeHandler('editor.resize', '0.5')
+                  click: _this.context.createInvokeHandler('editor.resize', 'viur-img-half')
               }).render();
           });
           this.context.memo('button.imageSize25', function () {
               return _this.button({
                   contents: '<span class="note-fontsize-10">25%</span>',
                   tooltip: _this.lang.image.resizeQuarter,
-                  click: _this.context.createInvokeHandler('editor.resize', '0.25')
+                  click: _this.context.createInvokeHandler('editor.resize', 'viur-img-quarter')
               }).render();
           });
           // Float Buttons
