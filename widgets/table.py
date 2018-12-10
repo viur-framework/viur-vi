@@ -37,6 +37,7 @@ class SelectTable( html5.Table ):
 		self._currentRow = None # Rowindex of the cursor row
 		self._isMouseDown = False # Tracks status of the left mouse button
 		self._isCtlPressed = False # Tracks status of the ctrl key
+		self._isShiftPressed = False # Tracks status of the shift key
 		self._ctlStartRow = None # Stores the row where a multi-selection (using the ctrl key) started
 		self._selectionChangedListener = [] # All objects getting informed when the selection changes
 		self._selectionActivatedListeners = [] # All objects getting informed when items are selected
@@ -158,6 +159,11 @@ class SelectTable( html5.Table ):
 			else:
 				self.addSelectedRow( row )
 
+		elif self._isShiftPressed:
+			self.unSelectAll()
+			for i in ( range(self._ctlStartRow, row+1) if self._ctlStartRow <= row else range(row, self._ctlStartRow+1) ):
+				self.addSelectedRow( i )
+
 		elif self.checkboxes and html5.utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
 			if row in self._selectedRows:
 				self.removeSelectedRow( row )
@@ -255,9 +261,17 @@ class SelectTable( html5.Table ):
 				self.addSelectedRow( self._currentRow )
 				self.setCursorRow( None, removeExistingSelection=False )
 
+		elif html5.isShift( event.keyCode ): #Shift
+			self._isShiftPressed = True
+			self._ctlStartRow = self._currentRow or self._selectedRows[0] or 0
+
 	def onKeyUp(self, event):
 		if html5.isSingleSelectionKey( event.keyCode ):
 			self._isCtlPressed = False
+			self._ctlStartRow = None
+
+		elif html5.isShift( event.keyCode ):
+			self._isShiftPressed = False
 			self._ctlStartRow = None
 
 	def onDblClick(self, event):
