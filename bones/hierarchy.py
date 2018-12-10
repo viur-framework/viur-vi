@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
-from config import conf
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from widgets.hierarchy import HierarchyWidget
-
 from bones.relational import \
 	RelationalMultiSelectionBone, \
 	RelationalSingleSelectionBone, \
 	RelationalViewBoneDelegate, \
 	RelationalBoneExtractor
+from config import conf
+from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
+from widgets.hierarchy import HierarchyWidget
+
 
 class HierarchyMultiSelectionBone(RelationalMultiSelectionBone):
 	def onShowSelector(self, *args, **kwargs):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = HierarchyWidget(self.destModule, isSelector=True)
+		currentSelector = HierarchyWidget(self.destModule, selectMode="multi")
 		currentSelector.selectionActivatedEvent.register(self)
 		conf["mainWindow"].stackWidget(currentSelector)
 
@@ -29,7 +29,7 @@ class HierarchySingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = HierarchyWidget(self.destModule, isSelector=True)
+		currentSelector = HierarchyWidget(self.destModule, selectMode="single")
 		currentSelector.selectionActivatedEvent.register(self)
 		conf["mainWindow"].stackWidget(currentSelector)
 

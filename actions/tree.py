@@ -1,10 +1,11 @@
 import html5
+from config import conf
+from i18n import translate
 from network import NetworkService
+from pane import Pane
 from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
-from config import conf
-from pane import Pane
-from i18n import translate
+
 
 class AddLeafAction( html5.ext.Button ):
 	"""
@@ -94,7 +95,7 @@ class EditAction( html5.ext.Button ):
 		super(EditAction,self).onDetach()
 
 	def onSelectionActivated(self, table, selection ):
-		if not self.parent().parent().isSelector and len(selection)==1:
+		if not self.parent().parent().selectMode and len(selection)==1:
 			pane = Pane( translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			if isinstance( selection[0], self.parent().parent().nodeWidget):

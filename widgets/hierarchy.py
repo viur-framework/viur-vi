@@ -197,7 +197,7 @@ class HierarchyWidget(html5.Div):
 		differentiate between nodes/leafs use a TreeApplication instead)
 	"""
 
-	def __init__(self, module, rootNode=None, isSelector=False, context=None, *args, **kwargs):
+	def __init__(self, module, rootNode=None, selectMode=None, context=None, *args, **kwargs):
 		"""
 			@param module: Name of the modul we shall handle. Must be a hierarchy application!
 			@type module: string
@@ -219,7 +219,10 @@ class HierarchyWidget(html5.Div):
 		self._currentCursor = None
 		self._currentRequests = []
 		self.addClass("is-drop-target")
-		self.isSelector = isSelector
+
+		assert selectMode in [None, "single", "multi"]
+		self.selectMode = selectMode
+
 		self._expandedNodes = []
 		self.context = context
 
@@ -237,7 +240,7 @@ class HierarchyWidget(html5.Div):
 		##Proxy some events and functions of the original table
 		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
 		#	setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["selectrootnode","add","edit","clone","delete"]+(["select","close"] if isSelector else [])+["reload"])
+		self.actionBar.setActions(["selectrootnode","add","edit","clone","delete"]+(["select","close"] if self.selectMode else [])+["reload"])
 		self.sinkEvent("onDrop","onDragOver")
 
 
@@ -350,7 +353,7 @@ class HierarchyWidget(html5.Div):
 			return
 		self.setCurrentItem( item )
 		self.selectionActivatedEvent.fire( self, [item] )
-		if self.isSelector:
+		if self.selectMode:
 			conf["mainWindow"].removeWidget(self)
 
 	def setCurrentItem(self, item):

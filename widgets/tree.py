@@ -1,11 +1,8 @@
 import html5
-import pyjd # this is dummy in pyjs.
 from network import NetworkService
 from widgets.actionbar import ActionBar
-from widgets.search import Search
 from event import EventDispatcher
 from priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
-import utils
 from config import conf
 
 class NodeWidget( html5.Div ):
@@ -233,7 +230,7 @@ class SelectableDiv( html5.Div ):
 			self.activateCurrentSelection()
 			event.preventDefault()
 			return
-		elif html5.isSingleSelectionKey(event.keyCode): #Ctrl
+		elif html5.isSingleSelectionKey(event.keyCode): # and "multi" in (self.selectMode or ""): #Ctrl
 			self._isCtlPressed = True
 
 	def onKeyUp(self, event):
@@ -279,7 +276,7 @@ class TreeWidget( html5.Div ):
 	leafWidget = LeafWidget
 	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload"]
 
-	def __init__( self, module, rootNode=None, node=None, isSelector=False, *args, **kwargs ):
+	def __init__( self, module, rootNode=None, node=None, selectMode=None, *args, **kwargs ):
 		"""
 			@param modul: Name of the modul we shall handle. Must be a list application!
 			@type modul: string
@@ -306,7 +303,10 @@ class TreeWidget( html5.Div ):
 		self._currentRequests = []
 		self.rootNodeChangedEvent = EventDispatcher("rootNodeChanged")
 		self.nodeChangedEvent = EventDispatcher("nodeChanged")
-		self.isSelector = isSelector
+
+		assert selectMode in [None, "single", "multi", "single.leaf", "single.node", "multi.leaf", "multi.node"]
+		self.selectMode = selectMode
+
 		if self.rootNode:
 			self.reloadData()
 		else:
@@ -316,7 +316,7 @@ class TreeWidget( html5.Div ):
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection", "selectionReturnEvent"]:
 			setattr( self, f, getattr(self.entryFrame,f))
-		self.actionBar.setActions( self.defaultActions+(["select","close"] if isSelector else []) )
+		self.actionBar.setActions(self.defaultActions+(["select","close"] if self.selectMode else []))
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -364,13 +364,6 @@ class TreeWidget( html5.Div ):
 		self.reloadData()
 
 	def onSelectionActivated(self, div, selection ):
-		"""
-		FIXME: Does this make sense anymore?
-		if len(selection)!=1:
-			if self.isSelector:
-				conf["mainWindow"].removeWidget(self)
-			return
-		"""
 		if not selection:
 			return
 
@@ -381,7 +374,7 @@ class TreeWidget( html5.Div ):
 			self.rebuildPath()
 			self.setNode( item.data["key"] )
 
-		elif isinstance(item, self.leafWidget) and self.isSelector == "leaf":
+		elif isinstance(item, self.leafWidget) and "leaf" in (self.selectMode or ""):
 			self.returnCurrentSelection()
 
 	def activateCurrentSelection(self):

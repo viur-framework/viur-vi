@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
-import html5, json, utils
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
-from event import EventDispatcher
-from widgets import ListWidget, EditWidget
-#from widgets.internaledit import InternalEdit
+import html5
+import json
+import utils
 from config import conf
+from event import EventDispatcher
 from i18n import translate
 from network import NetworkService
 from pane import Pane
-from bones.base import BaseBoneExtractor
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, \
+	extractorDelegateSelector
+from widgets.edit import EditWidget
+from widgets.internaledit import InternalEdit
+from widgets.list import ListWidget
+
 
 def getDefaultValues(structure):
 	defaultValues = {}
@@ -373,7 +377,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		"""
 
 		try:
-			currentSelector = ListWidget(self.destModule, isSelector=True, context=self.context)
+			currentSelector = ListWidget(self.destModule, selectMode="single", context=self.context)
 		except AssertionError:
 			return
 
@@ -838,7 +842,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		"""
 			Opens a ListWidget so that the user can select new values
 		"""
-		currentSelector = ListWidget(self.destModule, isSelector=True, context=self.context)
+		currentSelector = ListWidget(self.destModule, selectMode="multi", context=self.context)
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent().addClass("is-active")
@@ -949,7 +953,7 @@ class RelationalSearch( html5.Div ):
 		self.filterChangedEvent.fire()
 
 	def openSelector(self, *args, **kwargs):
-		currentSelector = ListWidget(self.extension["module"], isSelector=True)
+		currentSelector = ListWidget(self.extension["module"], selectMode="multi")
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 
