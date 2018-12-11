@@ -624,7 +624,11 @@ ol.is-list {
 }
 /* Sidebars */
 .content ~ .sidebar {
+<<<<<<< Updated upstream
   font-size: .9em;
+=======
+  font-size: 0.9em;
+>>>>>>> Stashed changes
   order: 204;
   padding: 10px 0 20px;
   flex: auto;
@@ -654,7 +658,11 @@ ol.is-list {
   }
 }
 .content ~ .sidebar--marginal {
+<<<<<<< Updated upstream
   font-size: .8em;
+=======
+  font-size: 0.8em;
+>>>>>>> Stashed changes
   flex: 0 0 15%;
   min-width: 200px;
 }
@@ -689,7 +697,11 @@ ol.is-list {
 }
 @media (min-width: 37.5em) {
   .bar {
+<<<<<<< Updated upstream
     font-size: .9rem;
+=======
+    font-size: 0.9rem;
+>>>>>>> Stashed changes
     align-items: stretch;
     display: flex;
     flex-wrap: wrap;
@@ -774,7 +786,11 @@ ol.is-list {
   min-width: 0;
   flex: 1;
   max-width: 100%;
+<<<<<<< Updated upstream
   transition: all .3s ease;
+=======
+  transition: all 0.3s ease;
+>>>>>>> Stashed changes
   background-position: 150% center;
   background-size: 15px;
   background-repeat: no-repeat;
@@ -1039,7 +1055,11 @@ ol.is-list {
   background-size: 20px;
   background-repeat: no-repeat;
   background-position: right center;
+<<<<<<< Updated upstream
   transition: all .3s ease;
+=======
+  transition: all 0.3s ease;
+>>>>>>> Stashed changes
 }
 @media print {
   .select {
@@ -1130,7 +1150,11 @@ ol.is-list {
   background-color: #fff;
   border: 1px solid #e6e6e6;
   color: #222222;
+<<<<<<< Updated upstream
   transition: all .3s ease;
+=======
+  transition: all 0.3s ease;
+>>>>>>> Stashed changes
   background-position: 150% center;
   background-size: 15px;
   background-repeat: no-repeat;
@@ -1176,7 +1200,11 @@ ol.is-list {
   background: #e6e6e6;
   border-radius: 8px;
   padding: 2px;
+<<<<<<< Updated upstream
   transition: all .4s ease;
+=======
+  transition: all 0.4s ease;
+>>>>>>> Stashed changes
   outline: 0;
   display: block;
   width: 3em;
@@ -1193,7 +1221,11 @@ ol.is-list {
   width: 50%;
   height: 100%;
   background: #fff;
+<<<<<<< Updated upstream
   transition: all .2s ease;
+=======
+  transition: all 0.2s ease;
+>>>>>>> Stashed changes
   box-shadow: none;
 }
 /* Radio button */
@@ -1240,7 +1272,11 @@ ol.is-list {
   height: 1em;
   margin-top: -2px;
   text-align: center;
+<<<<<<< Updated upstream
   transition: all .4s ease;
+=======
+  transition: all 0.4s ease;
+>>>>>>> Stashed changes
   box-shadow: inset 0 0 0 2px #fff;
 }
 .radio-label:not(:empty) {
@@ -1303,7 +1339,11 @@ ol.is-list {
   height: 1em;
   margin-top: -2px;
   text-align: center;
+<<<<<<< Updated upstream
   transition: all .4s ease;
+=======
+  transition: all 0.4s ease;
+>>>>>>> Stashed changes
   box-shadow: inset 0 0 0 2px #fff;
 }
 .check-label:not(:empty) {
@@ -1697,6 +1737,7 @@ html {
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
+<<<<<<< Updated upstream
   transition: all .3s ease;
 }
 @media print {
@@ -1704,6 +1745,15 @@ html {
     border-width: 0;
   }
 }
+=======
+  transition: all 0.3s ease;
+}
+@media print {
+  .btn {
+    border-width: 0;
+  }
+}
+>>>>>>> Stashed changes
 .btn:link,
 .btn:visited {
   color: #222222;
@@ -2387,7 +2437,11 @@ button.icon.is-disabled {
   border-radius: 4px;
   display: none;
   opacity: 0;
+<<<<<<< Updated upstream
   transition: opacity .5s ease;
+=======
+  transition: opacity 0.5s ease;
+>>>>>>> Stashed changes
 }
 .msg p:last-child {
   margin-bottom: 0;
@@ -2644,7 +2698,11 @@ a.item:hover,
   background-color: #a3dcf3;
 }
 .item--hint.has-hover.is-active:hover {
+<<<<<<< Updated upstream
   color: #000000;
+=======
+  color: #ffffff;
+>>>>>>> Stashed changes
   background-color: #1a96c9;
 }
 .item--hint.is-disabled {
@@ -2674,7 +2732,11 @@ a.item:hover,
 }
 .item--hint.is-active:hover .item-action,
 .item--hint.is-active .item-action:hover {
+<<<<<<< Updated upstream
   background-color: #000000;
+=======
+  background-color: #ffffff;
+>>>>>>> Stashed changes
   color: #1da7e0;
 }
 .item--success {
@@ -2698,7 +2760,11 @@ a.item:hover,
   background-color: #afdeaa;
 }
 .item--success.has-hover.is-active:hover {
+<<<<<<< Updated upstream
   color: #000000;
+=======
+  color: #ffffff;
+>>>>>>> Stashed changes
   background-color: #449b3b;
 }
 .item--success.is-disabled {
@@ -2728,7 +2794,11 @@ a.item:hover,
 }
 .item--success.is-active:hover .item-action,
 .item--success.is-active .item-action:hover {
+<<<<<<< Updated upstream
   background-color: #000000;
+=======
+  background-color: #ffffff;
+>>>>>>> Stashed changes
   color: #4cad42;
 }
 /* BUTTONS */
@@ -2824,6 +2894,7 @@ i.is-loading rect {
   animation: spin-square-ani 1s infinite ease-in-out both;
 }
 i.is-loading rect:nth-of-type(1n) {
+<<<<<<< Updated upstream
   animation-delay: .2s;
 }
 i.is-loading rect:nth-of-type(3n),
@@ -2835,6 +2906,19 @@ i.is-loading rect:nth-of-type(2n) {
 }
 i.is-loading rect:nth-of-type(4n) {
   animation-delay: .8s;
+=======
+  animation-delay: 0.2s;
+}
+i.is-loading rect:nth-of-type(3n),
+i.is-loading rect:nth-of-type(7n) {
+  animation-delay: 0.6s;
+}
+i.is-loading rect:nth-of-type(2n) {
+  animation-delay: 0.4s;
+}
+i.is-loading rect:nth-of-type(4n) {
+  animation-delay: 0.8s;
+>>>>>>> Stashed changes
 }
 i.i--small {
   font-size: .7em;
@@ -3166,6 +3250,7 @@ i.i--small img {
   flex: 1;
   flex-direction: column;
 }
+<<<<<<< Updated upstream
 
 .vi-relation {
   display: flex;
@@ -3178,6 +3263,20 @@ i.i--small img {
   flex: 1;
 }
 
+=======
+
+.vi-relation {
+  display: flex;
+  flex: 1;
+}
+
+.vi-file {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+}
+
+>>>>>>> Stashed changes
 .vi-textarea {
   flex: 1
 }
@@ -3341,7 +3440,11 @@ input[type="checkbox"] {
   border: 1px solid #f44336;
   background-color: #ccc;
   display: inline-block;
+<<<<<<< Updated upstream
   transition: all .3s ease;
+=======
+  transition: all 0.3s ease;
+>>>>>>> Stashed changes
   cursor: pointer;
 }
 .bone.selectmulti.access .access-state.view {
@@ -3616,12 +3719,17 @@ textarea:disabled {
   .vi-table .vi-table-head-cell,
   .vi-table .vi-table-body-cell,
   .vi-table .vi-table-foot-cell {
+<<<<<<< Updated upstream
     padding: .75em .5em;
+=======
+    padding: 0.75em 0.5em;
+>>>>>>> Stashed changes
   }
   .vi-table .vi-table-body-cell,
   .vi-table .vi-table-foot-cell {
     border-bottom: 1px solid #d8d8d8;
   }
+<<<<<<< Updated upstream
 }
 @media (min-width: 56.25em) {
   .vi-table .vi-table-head {
@@ -3720,6 +3828,106 @@ textarea:disabled {
   width: 100%;
   height: 100%;
 }
+=======
+}
+@media (min-width: 56.25em) {
+  .vi-table .vi-table-head {
+    position: relative;
+    clip: auto;
+    height: auto;
+    width: auto;
+    overflow: auto;
+  }
+  .vi-table .vi-table-body,
+  .vi-table .vi-table-foot {
+    display: table-row-group;
+  }
+  .vi-table .vi-table-head-row,
+  .vi-table .vi-table-body-row,
+  .vi-table .vi-table-foot-row {
+    display: table-row;
+  }
+  .vi-table .vi-table-body-row,
+  .vi-table .vi-table-foot-row {
+    border-width: 1px;
+  }
+  .vi-table .vi-table-body-row:nth-of-type(even),
+  .vi-table .vi-table-foot-row:nth-of-type(even) {
+    background-color: #f9f9f9;
+  }
+  .vi-table .vi-table-body-row:nth-of-type(odd),
+  .vi-table .vi-table-foot-row:nth-of-type(odd) {
+    background-color: #f4f4f4;
+  }
+  .vi-table .vi-table-body-row:nth-of-type(even):hover,
+  .vi-table .vi-table-foot-row:nth-of-type(even):hover {
+    background-color: #ffffff;
+  }
+  .vi-table .vi-table-body-row:nth-of-type(odd):hover,
+  .vi-table .vi-table-foot-row:nth-of-type(odd):hover {
+    background-color: #ffffff;
+  }
+  .vi-table .vi-table-body-row:nth-of-type(even).is-active,
+  .vi-table .vi-table-foot-row:nth-of-type(even).is-active {
+    background-color: #c60e1b;
+  }
+  .vi-table .vi-table-body-row:nth-of-type(odd).is-active,
+  .vi-table .vi-table-foot-row:nth-of-type(odd).is-active {
+    background-color: #bd0e19;
+  }
+  .vi-table .vi-table-body-row:nth-of-type(even).is-active:hover,
+  .vi-table .vi-table-foot-row:nth-of-type(even).is-active:hover {
+    background-color: #ed1120;
+  }
+  .vi-table .vi-table-body-row:nth-of-type(odd).is-active:hover,
+  .vi-table .vi-table-foot-row:nth-of-type(odd).is-active:hover {
+    background-color: #ed1120;
+  }
+  .vi-table .vi-table-head-cell,
+  .vi-table .vi-table-body-cell,
+  .vi-table .vi-table-foot-cell {
+    display: table-cell;
+    padding: 0.5em;
+    color: #000000;
+  }
+  .vi-table .vi-table-body-cell,
+  .vi-table .vi-table-foot-cell {
+    text-align: center;
+  }
+  .vi-table .vi-table-body-cell[data-title]:before,
+  .vi-table .vi-table-foot-cell[data-title]:before {
+    content: none;
+  }
+  .vi-table .vi-table-body-cell[scope="row"],
+  .vi-table .vi-table-foot-cell[scope="row"] {
+    background-color: transparent;
+    color: #000000;
+    text-align: center;
+  }
+}
+@media (min-width: 75em) {
+  .vi-table .vi-table-head-cell,
+  .vi-table .vi-table-body-cell,
+  .vi-table .vi-table-foot-cell {
+    padding: 0.75em 0.5em;
+  }
+}
+@media (min-width: 112.5em) {
+  .vi-table {
+    font-size: 0.8rem;
+  }
+  .vi-table .vi-table-head-cell,
+  .vi-table .vi-table-body-cell,
+  .vi-table .vi-table-foot-cell {
+    padding: 0.75em;
+  }
+}
+.vi-datatable {
+  overflow: scroll;
+  width: 100%;
+  height: 100%;
+}
+>>>>>>> Stashed changes
 table {
   margin: 0px;
   padding: 0px;
@@ -3982,7 +4190,11 @@ td span.index {
   border-radius: 2px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   border: 1px solid #d2d2d2;
+<<<<<<< Updated upstream
   transition: all .3s ease;
+=======
+  transition: all 0.3s ease;
+>>>>>>> Stashed changes
   overflow: hidden;
 }
 .sbw-compoundfilter h2,
@@ -4083,7 +4295,11 @@ td span.index {
   content: '❯';
   position: relative;
   display: inline-flex;
+<<<<<<< Updated upstream
   transition: all .3s ease;
+=======
+  transition: all 0.3s ease;
+>>>>>>> Stashed changes
   margin-right: 10px;
 }
 .vi-accordion-segment.is-active .vi-accordion-title:before,
@@ -4118,6 +4334,18 @@ td span.index {
 /* PROGRESS */
 /*
 #FIXME: Implement new progress bars!
+<<<<<<< Updated upstream
+
+// Colors:
+@progressBackground: lighten(@complementColor,60%);
+@progressDefault: @complementColor;
+@progressPrimary: @successColor;
+@progressInfo: @hintColor;
+@progressWarning: @warnColor;
+@progressDanger: @failColor;
+
+.progress {
+=======
 
 // Colors:
 @progressBackground: lighten(@complementColor,60%);
@@ -4141,6 +4369,87 @@ td span.index {
     margin-bottom: 1em;
   }
 }
+
+.progress::-webkit-progress-bar {
+  background-color: @progressBackground;
+}
+
+.progress::-webkit-progress-value {
+  background-color: @progressDefault;
+  transition: 1s ease-in-out all;
+}
+
+.progress::-moz-progress-bar {
+  background-color: @progressDefault;
+}
+
+
+.progress-vPrimary::-webkit-progress-value {
+  background-color: @progressPrimary;
+}
+
+.progress-vPrimary::-moz-progress-bar {
+  background-color: @progressPrimary;
+}
+
+
+.progress-vInfo::-webkit-progress-value {
+  background-color: @progressInfo;
+}
+
+.progress-vInfo::-moz-progress-bar {
+  background-color: @progressInfo;
+}
+
+.progress-vWarning::-webkit-progress-value {
+  background-color: @progressWarning;
+}
+
+.progress-vWarning::-moz-progress-bar {
+  background-color: @progressWarning;
+}
+
+
+.progress-vDanger::-webkit-progress-value {
+  background-color: @progressDanger;
+}
+
+.progress-vDanger::-moz-progress-bar {
+  background-color: @progressDanger;
+}
+
+
+.progress-vSmall {
+  height: .6rem;
+}
+
+.progress-vMedium {
+  height: 1.4rem;
+}
+
+.progress-vLarge {
+  height: 1.8rem;
+}*/
+progress[value] {
+  /* Reset the default appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+>>>>>>> Stashed changes
+  appearance: none;
+  /* Get rid of default border in Firefox. */
+  border: none;
+  border-radius: .2em;
+  display: block;
+  height: 1rem;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+
+  &:not(:last-child) {
+    margin-bottom: 1em;
+  }
+}
+<<<<<<< Updated upstream
 
 .progress::-webkit-progress-bar {
   background-color: @progressBackground;
@@ -4233,6 +4542,23 @@ progress[value]::-webkit-progress-value {
   background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
+=======
+progress[value]::-moz-progress-bar,
+progress[value]::-webkit-progress-bar {
+  background-color: #eee;
+}
+progress[value]::-webkit-progress-value {
+  position: relative;
+  background-color: #298342;
+  background: -moz-linear-gradient(top, #298342 0%, #479c42 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #298342), color-stop(100%, #479c42));
+  background: -webkit-linear-gradient(top, #298342 0%, #479c42 100%);
+  background: -o-linear-gradient(top, #298342 0%, #479c42 100%);
+  background: -ms-linear-gradient(top, #298342 0%, #479c42 100%);
+  background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
+  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
+}
+>>>>>>> Stashed changes
 /**
  * POPUP and OVERLAY
  */
@@ -4246,7 +4572,11 @@ progress[value]::-webkit-progress-value {
   user-select: none;
   opacity: 0;
   background: rgba(255, 255, 255, 0);
+<<<<<<< Updated upstream
   transition: all .3s ease;
+=======
+  transition: all 0.3s ease;
+>>>>>>> Stashed changes
   z-index: 99;
 }
 .popup-overlay.is-active,
@@ -4259,7 +4589,11 @@ progress[value]::-webkit-progress-value {
 .popup {
   opacity: 0;
   position: fixed;
+<<<<<<< Updated upstream
   transition: all .3s ease;
+=======
+  transition: all 0.3s ease;
+>>>>>>> Stashed changes
   z-index: 99;
   pointer-events: none;
   width: 90%;
@@ -4708,6 +5042,7 @@ progress[value]::-webkit-progress-value {
       border-bottom-color: fadeout(@backgroundColor,10%);
     }
   }
+<<<<<<< Updated upstream
 
   &.tip-n,
   &.tip-ne,
@@ -4721,6 +5056,21 @@ progress[value]::-webkit-progress-value {
     border-right-color: fadeout(@backgroundColor,10%);
   }
 
+=======
+
+  &.tip-n,
+  &.tip-ne,
+  &.tip-nw {
+    &:before {
+      border-top-color: fadeout(@backgroundColor,10%);
+    }
+  }
+
+  &.tip-e:before {
+    border-right-color: fadeout(@backgroundColor,10%);
+  }
+
+>>>>>>> Stashed changes
   &.tip-w:before {
     border-left-color: fadeout(@backgroundColor,10%);
   }
@@ -5041,7 +5391,11 @@ progress[value]::-webkit-progress-value {
 }
 .previewimg + .labelwrapper {
   float: left;
+<<<<<<< Updated upstream
   width: calc(73%) !important;
+=======
+  width: calc(100% - 27px) !important;
+>>>>>>> Stashed changes
   display: flex;
 }
 .previewimg + .labelwrapper label {
@@ -5110,7 +5464,11 @@ progress[value]::-webkit-progress-value {
   /* height:100px; */
   /* margin-top: 15px; */
   /* margin-bottom: 15px; */
+<<<<<<< Updated upstream
   font-size: .8em;
+=======
+  font-size: 0.8em;
+>>>>>>> Stashed changes
   line-height: 7em;
   font-weight: 800;
   color: #777;
@@ -5519,7 +5877,11 @@ a.vi-login-btn:hover {
 @-webkit-keyframes fadein {
   0% {
     width: 25%;
+<<<<<<< Updated upstream
     opacity: .5;
+=======
+    opacity: 0.5;
+>>>>>>> Stashed changes
   }
   100% {
     width: 90%;
@@ -5529,7 +5891,11 @@ a.vi-login-btn:hover {
 @-moz-keyframes fadein {
   0% {
     width: 25%;
+<<<<<<< Updated upstream
     opacity: .5;
+=======
+    opacity: 0.5;
+>>>>>>> Stashed changes
   }
   100% {
     width: 90%;
@@ -5746,6 +6112,7 @@ button.vi-login-btn {
 @media only screen and (max-width: 1440px) {
   .modullist h3 {
     font-size: 0.8em;
+<<<<<<< Updated upstream
   }
   .has-multiple-children .actionbar,
   .has-multiple-children .breadcrumb,
@@ -5785,6 +6152,47 @@ button.vi-login-btn {
   .has-multiple-children form fieldset textarea:disabled {
     display: none;
   }
+=======
+  }
+  .has-multiple-children .actionbar,
+  .has-multiple-children .breadcrumb,
+  .has-multiple-children .imageeditor,
+  .has-multiple-children .linkeditor {
+    width: 20%;
+  }
+  .has-multiple-children form label,
+  .has-multiple-children form label.text {
+    border: 1px dotted #ddd;
+    text-align: left;
+    width: 93%;
+    padding: 4px 3% 6px;
+  }
+  .selectioncontainer label {
+    border: 1px solid #ccc;
+    width: 193px;
+  }
+  .has-multiple-children form fieldset legend {
+    min-width: 0;
+  }
+  .has-multiple-children form fieldset legend a {
+    font-size: 0.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .has-multiple-children form fieldset section > div {
+    padding-bottom: 0;
+  }
+  .has-multiple-children form fieldset input:disabled,
+  .has-multiple-children form fieldset .preview.is-disabled,
+  .has-multiple-children form fieldset input[type="submit"]:disabled,
+  .has-multiple-children form fieldset button:disabled,
+  .has-multiple-children form fieldset input[type="text"]:disabled,
+  .has-multiple-children form fieldset select:disabled,
+  .has-multiple-children form fieldset textarea:disabled {
+    display: none;
+  }
+>>>>>>> Stashed changes
   .has-multiple-children form fieldset .file .fileentry label {
     width: 154px;
     overflow: hidden;

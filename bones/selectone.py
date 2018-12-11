@@ -42,6 +42,7 @@ class SelectOneEditBone( html5.Select ):
 		super(SelectOneEditBone,  self).__init__(*args, **kwargs)
 		self["name"] = self.boneName = boneName
 		self.readOnly = readOnly
+		self.addClass("select")
 
 		# Compatibility mode
 		if isinstance(values, dict):

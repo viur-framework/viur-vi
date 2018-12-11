@@ -124,6 +124,7 @@ class ExtendedSelectMultiSearch( html5.Div ):
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
+		self.addClass("select")
 		self.appendChild( self.selectionCb )
 		o = html5.Option()
 		o["value"] = ""
