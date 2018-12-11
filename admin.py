@@ -273,7 +273,7 @@ class AdminScreen(Screen):
 		for childPane in pane.childPanes:
 			self.panes.append(childPane)
 			self.viewport.appendChild(childPane.widgetsDomElm)
-			childPane.widgetsDomElm["style"]["display"] = "none"
+			childPane.widgetsDomElm.removeClass("is-active")
 			self._registerChildPanes(childPane)
 
 	def addPane(self, pane, parentPane=None):
@@ -290,7 +290,7 @@ class AdminScreen(Screen):
 			self.moduleList.appendChild(pane)
 
 		self.viewport.appendChild(pane.widgetsDomElm)
-		pane.widgetsDomElm["style"]["display"] = "none"
+		pane.widgetsDomElm.removeClass("is-active")
 
 	def insertPane(self, pane, insertAt):
 		if len(pane.childPanes)>0:
@@ -302,7 +302,7 @@ class AdminScreen(Screen):
 		self.moduleList.insertBefore(pane, insertAt)
 
 		self.viewport.appendChild(pane.widgetsDomElm)
-		pane.widgetsDomElm["style"]["display"] = "none"
+		pane.widgetsDomElm.removeClass("is-active")
 
 	def stackPane(self, pane, focus=False):
 		assert self.currentPane is not None, "Cannot stack a pane. There's no current one."
@@ -351,15 +351,16 @@ class AdminScreen(Screen):
 		# Close current Pane
 		if self.currentPane is not None:
 			self.currentPane.item.removeClass("is-active")
-			self.currentPane.widgetsDomElm["style"]["display"] = "none"
+			self.currentPane.widgetsDomElm.removeClass("is-active")
 
 		# Focus wanted Pane
 		self.topBar.setCurrentModulDescr( pane.descr, pane.iconURL, pane.iconClasses )
 		self.currentPane = pane
-		self.currentPane.widgetsDomElm["style"]["display"] = "block"
+		self.currentPane.widgetsDomElm.addClass("is-active")
 
 		if self.currentPane.collapseable and self.currentPane.childDomElem:
 			self.currentPane.childDomElem["style"]["display"] = "block"
+			self.currentPane.childDomElem.addClass("is-active")
 
 		self.currentPane.item.addClass("is-active")
 

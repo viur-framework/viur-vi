@@ -145,6 +145,7 @@ class StringEditBone(html5.Div):
 		self.boneName = boneName
 		self.currentTagToDrag = None
 		self.currentLanguage = None
+		self.addClass("vi-bone-container")
 
 		if self.languages and self.multiple:
 			self.addClass("is-translated")

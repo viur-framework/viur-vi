@@ -372,7 +372,7 @@ class EditWidget(html5.Div):
 
 	def cloneComplete(self, request):
 		logDiv = html5.Div()
-		logDiv.addClass("msg")
+		logDiv.addClass("msg is-active")
 		spanMsg = html5.Span()
 		spanMsg.appendChild( html5.TextNode( translate( u"The hierarchy will be cloned in the background." ) ) )
 		spanMsg.addClass("msgspan")
@@ -399,7 +399,7 @@ class EditWidget(html5.Div):
 			self.modified = False
 
 			logDiv = html5.Div()
-			logDiv.addClass("msg")
+			logDiv.addClass("msg is-active")
 			spanMsg = html5.Span()
 
 			spanMsg.appendChild( html5.TextNode( translate( self.logaction ) ) )

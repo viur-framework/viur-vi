@@ -495,7 +495,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		"""
 		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 		self.sinkEvent("onDrop", "onDragOver", "onDragLeave", "onDragStart", "onDragEnd", "onChange")
-
+		self.addClass("vi-bone-container")
 		self.parent = parent
 		self.module = module
 		self.data = data

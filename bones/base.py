@@ -55,6 +55,7 @@ class BaseEditBone(html5.Input):
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.setParams()
+		self.addClass("input")
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
