@@ -1,0 +1,105 @@
+@charset "UTF-8";
+/* ACCORDION */
+
+// Prefixes and objects:
+// .vi-accordion
+
+.vi-accordion {
+  overflow: hidden;
+  overflow-y: auto;
+  width: 100%;
+  flex-grow: 1;
+  flex-basis: 100%;
+
+  /* Segment */
+  &-segment {
+    width: 100%;
+    display: flex;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    transition: all 0.2s ease-out;
+    flex-direction: column;
+  }
+
+  /* Legend */
+  &-legend {
+    min-width: 580px;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Title */
+  &-title {
+    padding: 8px 15px;
+    display: block;
+    color: #333;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #bbb;
+    .boxShadow(1, #000);
+    &:hover {
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      cursor: pointer;
+    }
+  }
+  &-segment.is-incomplete:target &-title,
+  &-segment.is-incomplete &-title {
+    background-color: @hintColor;
+    border-color: darken(@hintColor, 10%);
+    color: #fff;
+    &:hover {
+      background-color: lighten(@hintColor, 10%);
+      border-color: @hintColor;
+      cursor: pointer;
+    }
+  }
+  &-segment:target &-title,
+  &-segment.is-active &-title {
+    background-color: #f0f0f0;
+  }
+
+  /* Arrow before Title */
+  &-segment &-title:before {
+    content: '❯';
+    position: relative;
+    display: inline-flex;
+    transition: all .3s ease;
+    margin-right: @innerSpace;
+  }
+  &-segment.is-active &-title:before,
+  &-segment:target &-title:before,
+  &-segment.is-incomplete &-title:before {
+    transform: rotate(90deg);
+  }
+
+  /* Section */
+  &-section {
+    display: none;
+    border-bottom: 1px solid #eee;
+    padding: @outerSpace*2;
+    background: #fff;
+    overflow: hidden;
+    & > div {
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      width: 100%;
+      float: right;
+    }
+  }
+  &-segment.is-active &-section,
+  &-segment:target &-section {
+    display: block;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .vi-accordion > div > .vi-accordion-segment > div {
+    width: 100%;
+    float: none;
+  }
+}
+
+

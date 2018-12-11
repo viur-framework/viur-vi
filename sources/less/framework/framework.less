@@ -27,10 +27,13 @@ html {
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 80%;
-  display: block;
-  overflow-x:hidden;
-  overflow-y: auto;
+  display: flex;
+  overflow: hidden;
   .zIndex('content',2);
+}
+
+.vi-viewer-pane {
+  width:100%;
 }
 
 .vi-manager-frame {
@@ -43,6 +46,12 @@ html {
   .zIndex('nav',40);
   .boxShadow(1, #000);
   overflow-y: auto;
+}
+
+.vi-widget {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .vi-widget-content {

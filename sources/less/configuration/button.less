@@ -17,6 +17,7 @@
     @btnShadowColor: @defaultShadowColor);
 }
 
+/* Red button, white font */
 .btn--viur {
   .colorizeBtn(
     @btnBackgroundColor: @mainColor,
@@ -25,7 +26,9 @@
     @btnShadowHover: 1);
 }
 
-.btn--primary {
+/* Green button, white font */
+.btn--primary,
+.btn.is-filled {
   .colorizeBtn(
     @btnBackgroundColor: @successColor,
     @btnBorderWidth: 1px,
@@ -33,6 +36,7 @@
     @btnShadowHover: 1);
 }
 
+/* Grey button, red font, red hover */
 .btn--danger,
 .btn--delete {
   .invertColorizedBtn(
@@ -42,6 +46,8 @@
     @btnShadowHover: 1);
 }
 
+/* Grey button, blue font, blue hover */
+.btn--download,
 .btn--edit {
   .invertColorizedBtn(
     @btnBackgroundColor: @hintColor,

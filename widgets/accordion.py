@@ -7,17 +7,21 @@ class AccordionSegment(html5.Fieldset):
 		super(AccordionSegment, self).__init__()
 		self.sinkEvent("onClick")
 
-		self.addClass("is-inactive")
+		self.addClass("vi-accordion-segment")
 		self["name"] = ident
 
 		legend = html5.Legend()
+		legend.addClass("vi-accordion-legend")
 		self.appendChild(legend)
 
-		self.title = html5.A()
+		self.title = html5.Span()
 		self.title.appendChild(html5.TextNode(title or ident))
+		self.title.addClass("vi-accordion-title")
+		self.title["role"] = "button"
 		legend.appendChild(self.title)
 
 		self._section = html5.Section()
+		self._section.addClass("vi-accordion-section")
 		self.appendChild(self._section)
 
 	def checkVisibility(self):
@@ -27,15 +31,13 @@ class AccordionSegment(html5.Fieldset):
 			self.show()
 
 	def activate(self):
-		self.removeClass("is-inactive")
 		self.addClass("is-active")
 
 	def deactivate(self):
 		self.removeClass("is-active")
-		self.addClass("is-inactive")
 
 	def isActive(self):
-		return "is-inactive" not in self["class"]
+		return "is-active" in self["class"]
 
 	def toggle(self):
 		if self.isActive():
@@ -61,6 +63,7 @@ class Accordion(html5.Form):
 	def addSegment(self, ident, title = None, *args):
 		seg = AccordionSegment(ident, title)
 		self.appendChild(seg)
+		self.addClass("vi-accordion")
 
 		for widget in args:
 			seg.addWidget(widget)

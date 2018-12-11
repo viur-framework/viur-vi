@@ -115,140 +115,8 @@
 /* #vi_forms
 ================================================== */
 
-fieldset.is-active{
-  height: inherit;
-}
-fieldset.is-active section{
-  display: block;
-}
-fieldset.is-inactive{
-  height: 40px;
-}
-fieldset.is-inactive section{
-  display: none;
-}
 
-/*Define Accordion box*/
-form {
-  color: #474747;
-  overflow: hidden;
-  width: 100%;
-}
-form fieldset {
-  width: 100%;
-  float: left;
-  overflow: hidden;
-  color: #333;
-  border: 0;
-  padding: 0;
-}
-form fieldset legend {
-  min-width: 580px;
-  width: 100%;
-  position: relative;
-}
-form fieldset legend a,
-legend a:visited {
-  padding: 8px 15px;
-  display: block;
-  font-weight: normal;
-  color: #555;
-  text-decoration: none;
-  background: #ddd;
-  border: 1px solid #bbb;
-}
-legend a:hover {
-  color: #666;
-  background: #ccc;
-  text-decoration: none;
-  cursor: pointer;
-}
 
-form fieldset.is-incomplete:target legend a,
-form fieldset.is-incomplete legend a {
-  background-color: #1495de;
-  border-color: #073866;
-  color: #fff;
-}
-
-form fieldset.is-incomplete legend a:before {
-  background-image: url(../icons/vi_actions_sprite_white.svg);
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  position: relative;
-  float: left;
-  margin-top: 1px;
-  margin-left: -4px;
-  margin-right: 5px;
-  background-position: -64px 0px;
-}
-
-/*General Accordion****************************************************************************/
-/*Set style of open slide*/
-form fieldset:target legend a {
-  color: #333;
-  background: #ffffff;
-}
-form fieldset legend a:before {
-  background-image: url(../icons/vi_actions_sprite.svg);
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  position: relative;
-  float: left;
-  margin-top: 3px;
-  margin-left: 4px;
-  margin-right: 7px;
-  background-position: 0px -64px;
-}
-
-/*form fieldset.default legend a:before,*/
-form fieldset.is-active legend a:before,
-form fieldset:target legend a:before {
-  background-position: -16px -64px;
-}
-
-form fieldset.is-incomplete section,
-form fieldset:target section
-/*form fieldset.default section*/ {
-  display: block;
-}
-/*set style of closed slide*/
-form fieldset section
-/*form fieldset:target ~ .default section*/ {
-  display: none;
-  border: 1px solid #eee;
-  padding: 3% 3% 5%;
-  background: #fcfcfc;
-  overflow: hidden;
-}
-/*Vertical Accordion *************************************************************************/
-form fieldset {
-  height: 40px;
-  -webkit-transition: all 0.2s ease-out;
-  -moz-transition: all 0.2s ease-out;
-  -o-transition: all 0.2s ease-out;
-  -ms-transition: all 0.2s ease-out;
-  transition: all 0.2s ease-out;
-}
-/*Set height of the slide*/
-form fieldset.is-incomplete,
-form fieldset:target
-/*form fieldset.default*/ {
-  /*min-height: 150px;*/
-  height: auto;
-  width: 100%;
-}
-form fieldset section > div {
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-  overflow: hidden;
-  width: 100%;
-  float: right;
-}
 .selectioncontainer .entrydescription,
 form label {
   width: 220px;
@@ -353,7 +221,7 @@ input[type="password"],
 
 }
 
-.bone.text .languagebuttons {
+/*.bone.text .languagebuttons {
     float:left;
 }
 
@@ -367,7 +235,7 @@ input[type="password"],
 .languagebuttons button.is-filled {
     color: #fff;
     background: transparent linear-gradient(to bottom, #298342 0%, #479C42 100%) repeat scroll 0% 0%;
-}
+}*/
 
 /* #vi_input_bones
 ================================================== */
@@ -600,8 +468,7 @@ form .relational:focus button:after {
     float: none;
     margin: 0 0 5px 0;
   }
-  form > div > div,
-  form > div > fieldset > div {
+  form > div > div {
     width: 100%;
     float: none;
   }

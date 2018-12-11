@@ -9,14 +9,14 @@ class Preview( html5.Div ):
 		self.entry = entry
 		self.module = modul
 		containerDiv = html5.Div()
-		containerDiv.addClass("actionbar")
+		containerDiv.addClass("vi-actionbar")
 		self.appendChild(containerDiv)
 		self.urlCb = html5.Select()
 		containerDiv.appendChild(self.urlCb)
 		self.previewFrame = html5.Iframe()
 		self.appendChild(self.previewFrame)
 		btnClose = html5.ext.Button("Close", callback=self.doClose)
-		btnClose.addClass("icon close")
+		btnClose.addClass("btn--close")
 		containerDiv.appendChild(btnClose)
 		currentUrl = None
 		for name,url in urls.items():

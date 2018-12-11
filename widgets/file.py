@@ -18,18 +18,15 @@ class FileImagePopup(html5.ext.Popup):
 
 		img = html5.Img()
 		img["src"] = utils.getImagePreview(preview.currentFile, size=None)
-		self.appendChild(img)
-
-		div = html5.Div()
-		self.appendChild(div)
+		self.popupBody.appendChild(img)
 
 		btn = html5.ext.Button(translate("Download"), self.onDownloadBtnClick)
-		btn.addClass("icon", "download")
-		div.appendChild(btn)
+		btn.addClass("btn--download")
+		self.popupFoot.appendChild(btn)
 
 		btn = html5.ext.Button(translate("Close"), self.onClick)
-		btn.addClass("btn_no")
-		div.appendChild(btn)
+		btn.addClass("btn--close")
+		self.popupFoot.appendChild(btn)
 
 
 	def onClick(self, event):

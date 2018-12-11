@@ -437,18 +437,23 @@ class SelectFieldsPopup( html5.ext.Popup ):
 
 		super( SelectFieldsPopup, self ).__init__( title=translate("Select fields"), *args, **kwargs )
 
-		self.addClass("popup popup--selectfields")
+		self.removeClass("popup--center")
+		self.addClass("popup--n popup--selectfields")
 		self.listWdg = listWdg
 		self.checkboxes = []
 
 		ul = html5.Ul()
-		self.appendChild( ul )
+		ul.addClass("option-group")
+		self.popupBody.appendChild( ul )
 
 		for key, bone in self.listWdg._structure:
 			li = html5.Li()
+			li.addClass("check")
+
 			ul.appendChild( li )
 
 			chkBox = html5.Input()
+			chkBox.addClass("check-input")
 			chkBox["type"] = "checkbox"
 			chkBox["value"] = key
 
@@ -458,23 +463,21 @@ class SelectFieldsPopup( html5.ext.Popup ):
 			if key in self.listWdg.getFields():
 				chkBox["checked"] = True
 			lbl = html5.Label(bone["descr"],forElem=chkBox)
+			lbl.addClass("check-label")
 			li.appendChild(lbl)
 
 		# Functions for Selection
 		div = html5.Div()
-		div[ "class" ].append( "selectiontools" )
+		div[ "class" ].append( "selectiontools input-group" )
 
-		self.appendChild( div )
+		self.popupBody.appendChild( div )
 
 		self.selectAllBtn =  html5.ext.Button( translate( "Select all" ), callback=self.doSelectAll )
-		self.selectAllBtn[ "class" ].append( "icon" )
-		self.selectAllBtn[ "class" ].append( "selectall" )
+		self.selectAllBtn[ "class" ].append( "btn--selectall" )
 		self.unselectAllBtn =  html5.ext.Button( translate( "Unselect all" ), callback=self.doUnselectAll )
-		self.unselectAllBtn[ "class" ].append( "icon" )
-		self.unselectAllBtn[ "class" ].append( "unselectall" )
+		self.unselectAllBtn[ "class" ].append( "btn--unselectall" )
 		self.invertSelectionBtn =  html5.ext.Button( translate( "Invert selection" ), callback=self.doInvertSelection )
-		self.invertSelectionBtn[ "class" ].append( "icon" )
-		self.invertSelectionBtn[ "class" ].append( "selectinvert" )
+		self.invertSelectionBtn[ "class" ].append( "btn--selectinvert" )
 
 		div.appendChild(self.selectAllBtn)
 		div.appendChild(self.unselectAllBtn)
@@ -487,8 +490,8 @@ class SelectFieldsPopup( html5.ext.Popup ):
 		self.applyBtn = html5.ext.Button( translate( "Apply" ), callback=self.doApply)
 		self.applyBtn.addClass("btn btn--primary")
 
-		self.appendChild(self.applyBtn)
-		self.appendChild(self.cancelBtn)
+		self.popupFoot.appendChild(self.cancelBtn)
+		self.popupFoot.appendChild(self.applyBtn)
 
 	def doApply(self, *args, **kwargs):
 		self.applyBtn.addClass("is-loading")

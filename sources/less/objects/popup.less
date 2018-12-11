@@ -39,7 +39,10 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  .boxShadow(2, #000);
+  &--low {
+    .boxShadow(1, #000);
+  }
   &.is-active {
     .zIndex('overlay', 1);
     opacity: 1;

@@ -94,7 +94,7 @@ class Tag(html5.Span):
 			self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd")
 
 			delBtn = html5.ext.Button(translate("Delete"), self.onDelBtnClick)
-			delBtn.addClass("icon delete tag")
+			delBtn.addClass("btn--delete")
 			self.appendChild(delBtn)
 
 	def onDelBtnClick(self, *args, **kwargs):
@@ -152,7 +152,7 @@ class StringEditBone(html5.Div):
 			self.languagesContainer = html5.Div()
 			self.appendChild( self.languagesContainer )
 			self.buttonContainer = html5.Div()
-			self.buttonContainer["class"] = "languagebuttons"
+			self.buttonContainer["class"] = "languagebuttons input-group"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
 			self.langBtns = {}
@@ -169,7 +169,7 @@ class StringEditBone(html5.Div):
 
 				if not self.readOnly:
 					addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
-					addBtn.addClass("icon new tag")
+					addBtn.addClass("new--btn")
 					addBtn.lang = lang
 					tagContainer.appendChild(addBtn)
 
@@ -184,7 +184,7 @@ class StringEditBone(html5.Div):
 			self.languagesContainer = html5.Div()
 			self.appendChild( self.languagesContainer )
 			self.buttonContainer = html5.Div()
-			self.buttonContainer["class"] = "languagebuttons"
+			self.buttonContainer["class"] = "languagebuttons input-group"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
 			self.langBtns = {}
@@ -221,7 +221,7 @@ class StringEditBone(html5.Div):
 			if not self.readOnly:
 				addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
 				addBtn.lang = None
-				addBtn.addClass("icon new tag")
+				addBtn.addClass("new--btn")
 
 				self.tagContainer.appendChild(addBtn)
 
