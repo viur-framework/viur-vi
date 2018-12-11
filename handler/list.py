@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from network import NetworkService
+from network import NetworkService, DeferredCall
 from priorityqueue import HandlerClassSelector, initialHashHandler
 from widgets import ListWidget
 from config import conf
@@ -30,7 +30,7 @@ class ListHandler(Pane):
 
 		else:
 			if "views" in moduleInfo:
-				self._buildViewPanes(moduleInfo["views"])
+				DeferredCall(self._buildViewPanes, moduleInfo["views"])
 
 		if not isView:
 			initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
@@ -149,7 +149,10 @@ class ListHandler(Pane):
 		conf["mainWindow"].unlock()
 
 		if not self.isExpanded:
-			super(ListHandler, self).onClick()
+			if self.mode == "normal":
+				super(ListHandler, self).onClick()
+			elif self.childPanes:
+				self.childPanes[0].onClick()
 
 
 HandlerClassSelector.insert(1, ListHandler.canHandle, ListHandler)

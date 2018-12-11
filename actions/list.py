@@ -81,7 +81,7 @@ class EditAction( html5.ext.Button ):
 				self.isDisabled = True
 
 	def onSelectionActivated(self, table, selection ):
-		if not self.parent().parent().isSelector and len(selection)==1:
+		if not self.parent().parent().selectMode and len(selection)==1:
 			self.openEditor( selection[0]["key"] )
 
 	@staticmethod
@@ -364,7 +364,7 @@ class ListPreviewInlineAction( html5.ext.Button ):
 		super( ListPreviewInlineAction, self ).onDetach()
 
 	def onSelectionChanged(self, table, selection):
-		if self.parent().parent().isSelector:
+		if self.parent().parent().selectMode:
 			return
 
 		# Disable internal Preview by config

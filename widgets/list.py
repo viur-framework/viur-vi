@@ -1,15 +1,13 @@
 #-*- coding: utf-8 -*-
-import pyjd # this is dummy in pyjs.
-import json
+import html5
 from config import conf
+from i18n import translate
 from network import NetworkService
 from priorityqueue import viewDelegateSelector, moduleHandlerSelector
-from widgets.table import DataTable
+from sidebarwidgets.filterselector import CompoundFilter
 from widgets.actionbar import ActionBar
 from widgets.sidebar import SideBar
-import html5
-from sidebarwidgets.filterselector import CompoundFilter
-from i18n import translate
+from widgets.table import DataTable
 
 
 class ListWidget(html5.Div):
@@ -18,7 +16,7 @@ class ListWidget(html5.Div):
 		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
 	"""
-	def __init__(self, module, filter=None, columns=None, isSelector=False, filterID=None, filterDescr=None,
+	def __init__(self, module, filter=None, columns=None, selectMode = None, filterID=None, filterDescr=None,
 	             batchSize = None, context = None, autoload = True, *args, **kwargs):
 		"""
 			@param module: Name of the modul we shall handle. Must be a list application!
@@ -74,7 +72,10 @@ class ListWidget(html5.Div):
 		self._currentRequests = []
 		self.columns = []
 
-		if isSelector and filter is None and columns is None:
+		self.selectMode = selectMode
+		assert selectMode in [None, "single", "multi"]
+
+		if self.selectMode and filter is None and columns is None:
 			#Try to select a reasonable set of cols / filter
 			if conf["modules"] and module in conf["modules"].keys():
 				tmpData = conf["modules"][module]
@@ -89,7 +90,6 @@ class ListWidget(html5.Div):
 		self.filterID = filterID #Hint for the sidebarwidgets which predefined filter is currently active
 		self.filterDescr = filterDescr #Human-readable description of the current filter
 		self._tableHeaderIsValid = False
-		self.isSelector = isSelector
 
 		#Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent",
@@ -101,8 +101,8 @@ class ListWidget(html5.Div):
 
 		self.actionBar.setActions( self.getDefaultActions( myView ) )
 
-		if isSelector:
-			self.selectionActivatedEvent.register( self )
+		if self.selectMode:
+			self.selectionActivatedEvent.register(self)
 
 		self.emptyNotificationDiv = html5.Div()
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
@@ -124,11 +124,17 @@ class ListWidget(html5.Div):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
-		defaultActions = ["add", "edit", "clone", "delete",
-		                  "|", "preview", "selectfields"]\
-		                 + (["|", "select","close"] if self.isSelector else [])+["|", "reload","selectfilter"]
+		defaultActions = ["add", "edit", "clone", "delete", "|", "preview", "selectfields"]
 
-		#if not self.isSelector:
+		if self.selectMode == "multi":
+			defaultActions += ["|", "selectall", "unselectall", "selectinvert"]
+
+		if self.selectMode:
+			defaultActions += ["|", "select","close"]
+
+		defaultActions += ["|", "reload","selectfilter"]
+
+		#if not self.selectMode:
 		#	defaultActions += ["|", "exportcsv"]
 
 		# Extended actions from view?

@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
-import html5, utils
+import html5
+import utils
+from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, \
+	RelationalMultiSelectionBoneEntry
 from config import conf
-from priorityqueue import editBoneSelector, viewDelegateSelector
-from widgets.tree import TreeWidget, NodeWidget
-from widgets.file import FileWidget, LeafFileWidget
-from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry
 from i18n import translate
 from network import NetworkService
-from widgets.edit import EditWidget
 from pane import Pane
+from priorityqueue import editBoneSelector
+from widgets.edit import EditWidget
+from widgets.file import FileWidget
+from widgets.tree import TreeWidget, NodeWidget
+
 
 class TreeDirMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 	def __init__(self, *args, **kwargs):
@@ -60,7 +63,7 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = FileWidget( self.destModule, isSelector="node" )
+		currentSelector = FileWidget(self.destModule, selectMode="single.node")
 		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent().addClass("is-active")
@@ -111,7 +114,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = TreeWidget( self.destModule, isSelector="node" )
+		currentSelector = TreeWidget(self.destModule, selectMode="single.node")
 		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
 		self.parent().addClass("is-active")

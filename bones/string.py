@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 import html5
-
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
+from bones.base import BaseBoneExtractor
 from config import conf
 from event import EventDispatcher
 from i18n import translate
-from bones.base import BaseBoneExtractor
+from priorityqueue import \
+	editBoneSelector,\
+	viewDelegateSelector,\
+	extendedSearchWidgetSelector, \
+	extractorDelegateSelector
+
 
 class StringBoneExtractor(BaseBoneExtractor):
 
@@ -16,49 +20,52 @@ class StringBoneExtractor(BaseBoneExtractor):
 				resstr = ""
 				if "currentlanguage" in conf.keys():
 					if conf["currentlanguage"] in data[field].keys():
-						resstr = data[field][conf["currentlanguage"]].replace("&quot;", "'").replace(";", " ").replace('"', "'")
+						resstr = data[field][conf["currentlanguage"]].replace("&quot;", "'").replace(";", " ").replace(
+							'"', "'")
 					else:
 						if len(data[field].keys()) > 0:
-							resstr = data[field][data[field].keys()[0]].replace("&quot;", "'").replace(";", " ").replace('"', "'")
+							resstr = data[field][data[field].keys()[0]].replace("&quot;", "'").replace(";",
+							                                                                           " ").replace('"',
+							                                                                                        "'")
 				return '"%s"' % resstr
 			elif isinstance(data[field], list):
-				return ", ".join([item.replace("&quot;", "").replace(";", " ").replace('"', "'") for item in data[field]])
+				return ", ".join(
+					[item.replace("&quot;", "").replace(";", " ").replace('"', "'") for item in data[field]])
 			elif data[field] is not None:
 				return str('"%s"' % str(data[field]).replace("&quot;", "").replace(";", " ").replace('"', "'"))
 
 		return conf["empty_value"]
 
-class StringViewBoneDelegate( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( StringViewBoneDelegate, self ).__init__()
+
+class StringViewBoneDelegate(object):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
+		super(StringViewBoneDelegate, self).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
-		self.moduleName=moduleName
+		self.moduleName = moduleName
 
-	def render( self, data, field ):
-		if field in data.keys():
-			##multilangs
-			if isinstance(data[field],dict):
-				resstr=""
-				if "currentlanguage" in conf.keys():
-					if conf["currentlanguage"] in data[field].keys():
-						resstr=data[field][conf["currentlanguage"]]
-					else:
-						if len(data[field].keys())>0:
-							resstr=data[field][data[field].keys()[0]]
-				return (self.getViewElement(resstr,data[field]))
+	def render(self, data, field):
+		if field not in data:
+			return self.getViewElement(conf["empty_value"], False)
 
+		value = data[field]
 
+		##multilangs
+		if isinstance(value, dict):
+			if "currentlanguage" in conf and conf["currentlanguage"] in value:
+				value = value[conf["currentlanguage"]]
+			elif len(data[field].keys()) > 0:
+				value = value[value.keys()[0]]
 			else:
-				#no langobject
-				if isinstance( data[field], list ):
-					output = ", ".join( data[field] )
-				else:
-					output=str( data[field] )
+				value = ""
 
-				return self.getViewElement( output,False )
+		# no langobject
+		if isinstance(value, list):
+			output = ", ".join(value)
+		else:
+			output = str(value)
 
-		return self.getViewElement( conf[ "empty_value" ], False )
+		return self.getViewElement(output, False)
 
 	def getViewElement(self, labelstr, datafield):
 		labelstr = html5.utils.unescape(labelstr)
@@ -66,13 +73,14 @@ class StringViewBoneDelegate( object ):
 		if not datafield:
 			return html5.Label(labelstr)
 		else:
-			aspan=html5.Span()
+			aspan = html5.Span()
 			aspan.appendChild(html5.TextNode(labelstr))
 			aspan["title"] = str(datafield)
 			return aspan
 
+
 class Tag(html5.Span):
-	def __init__(self, parentBone, tag, isEditMode, readonly=False, multiLine=False, *args, **kwargs ):
+	def __init__(self, parentBone, tag, isEditMode, readonly=False, multiLine=False, *args, **kwargs):
 		super(Tag, self).__init__(*args, **kwargs)
 		self.addClass("tag")
 
@@ -134,9 +142,11 @@ class Tag(html5.Span):
 
 		self.parentBone.currentTagToDrag = None
 
+
 class StringEditBone(html5.Div):
-	def __init__(self, moduleName, boneName, readOnly, multiple=False, languages=None, multiLine=False, *args, **kwargs ):
-		super( StringEditBone,  self ).__init__( *args, **kwargs )
+	def __init__(self, moduleName, boneName, readOnly, multiple=False, languages=None, multiLine=False, *args,
+	             **kwargs):
+		super(StringEditBone, self).__init__(*args, **kwargs)
 		self.moduleName = moduleName
 		self.boneName = boneName
 		self.readOnly = readOnly
@@ -151,7 +161,7 @@ class StringEditBone(html5.Div):
 			self.addClass("is-translated")
 			self.addClass("is-multiple")
 			self.languagesContainer = html5.Div()
-			self.appendChild( self.languagesContainer )
+			self.appendChild(self.languagesContainer)
 			self.buttonContainer = html5.Div()
 			self.buttonContainer["class"] = "languagebuttons input-group"
 			self.appendChild( self.buttonContainer )
@@ -160,9 +170,10 @@ class StringEditBone(html5.Div):
 
 			for lang in self.languages:
 				tagContainer = html5.Div()
+
 				tagContainer.addClass("lang_%s" % lang )
 				tagContainer.addClass("tagcontainer")
-				tagContainer["style"]["display"] = "none"
+				tagContainer.hide()
 
 				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
 				langBtn.lang = lang
@@ -183,7 +194,7 @@ class StringEditBone(html5.Div):
 		elif self.languages and not self.multiple:
 			self.addClass("is-translated")
 			self.languagesContainer = html5.Div()
-			self.appendChild( self.languagesContainer )
+			self.appendChild(self.languagesContainer)
 			self.buttonContainer = html5.Div()
 			self.buttonContainer["class"] = "languagebuttons input-group"
 			self.appendChild( self.buttonContainer )
@@ -201,7 +212,7 @@ class StringEditBone(html5.Div):
 					inputField = html5.Input()
 					inputField["type"] = "text"
 
-				inputField["style"]["display"] = "none"
+				inputField.hide()
 				inputField.addClass("lang_%s" % lang)
 
 				if self.readOnly:
@@ -226,7 +237,7 @@ class StringEditBone(html5.Div):
 
 				self.tagContainer.appendChild(addBtn)
 
-		else: #not languages and not multiple:
+		else:  # not languages and not multiple:
 
 			if multiLine:
 				self.input = html5.Textarea()
@@ -241,17 +252,18 @@ class StringEditBone(html5.Div):
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
+		readOnly = "readonly" in skelStructure[boneName].keys() and skelStructure[boneName]["readonly"]
 
 		if boneName in skelStructure.keys():
 			multiple = skelStructure[boneName].get("multiple", False)
 			languages = skelStructure[boneName].get("languages")
 			multiLine = skelStructure[boneName].get("type") == "str.markdown"
 
-		return StringEditBone(moduleName, boneName, readOnly, multiple=multiple, languages=languages, multiLine=multiLine)
+		return StringEditBone(moduleName, boneName, readOnly, multiple=multiple, languages=languages,
+		                      multiLine=multiLine)
 
 	def onLangBtnClicked(self, btn):
-		self.setLang( btn.lang )
+		self.setLang(btn.lang)
 
 	def isFilled(self, lang=None):
 		if self.languages:
@@ -291,9 +303,6 @@ class StringEditBone(html5.Div):
 					self.langBtns[lang].addClass("is-unfilled")
 
 			if lang == self.currentLanguage:
-				#self.langBtns[lang].removeClass("is-filled")
-				#self.langBtns[lang].removeClass("is-unfilled")
-
 				if not "is-active" in self.langBtns[lang]["class"]:
 					self.langBtns[lang].addClass("is-active")
 			else:
@@ -301,18 +310,17 @@ class StringEditBone(html5.Div):
 
 	def setLang(self, lang):
 		if self.currentLanguage:
-			self.langEdits[ self.currentLanguage ]["style"]["display"] = "none"
+			self.langEdits[self.currentLanguage].hide()
 
 		self.currentLanguage = lang
-		self.langEdits[ self.currentLanguage ]["style"]["display"] = ""
+		self.langEdits[self.currentLanguage].show()
 		self._updateLanguageButtons()
 
 		for btn in self.buttonContainer._children:
 			if btn.lang == lang:
-				if "is-active" not in btn[ "class" ]:
-					btn[ "class" ].append( "is-active" )
+				btn.addClass("is-active")
 			else:
-				btn[ "class" ].remove( "is-active" )
+				btn.removeClass("is-active")
 
 	def onBtnGenTag(self, btn):
 		tag = self.genTag("", lang=btn.lang)
@@ -341,7 +349,7 @@ class StringEditBone(html5.Div):
 							self.genTag(html5.utils.unescape(v), lang=lang)
 
 		elif self.languages and not self.multiple:
-			assert isinstance(data,dict)
+			assert isinstance(data, dict)
 
 			for lang in self.languages:
 				if lang in data.keys() and data[lang]:
@@ -351,7 +359,7 @@ class StringEditBone(html5.Div):
 
 		elif not self.languages and self.multiple:
 
-			if isinstance( data,list ):
+			if isinstance(data, list):
 				for tagStr in data:
 					self.genTag(html5.utils.unescape(tagStr))
 			else:
@@ -367,25 +375,25 @@ class StringEditBone(html5.Div):
 
 		if self.languages and self.multiple:
 			for lang in self.languages:
-				res[ "%s.%s" % (self.boneName, lang ) ] = []
-				for child in self.langEdits[ lang ]._children:
-					if isinstance( child, Tag ):
-						res[ "%s.%s" % (self.boneName, lang ) ].append( child.input["value"] )
+				res["%s.%s" % (self.boneName, lang)] = []
+				for child in self.langEdits[lang]._children:
+					if isinstance(child, Tag):
+						res["%s.%s" % (self.boneName, lang)].append(child.input["value"])
 
 		elif self.languages and not self.multiple:
 			for lang in self.languages:
-				txt = self.langEdits[ lang ]["value"]
+				txt = self.langEdits[lang]["value"]
 				if txt:
-					res[ "%s.%s" % (self.boneName, lang) ] = txt
+					res["%s.%s" % (self.boneName, lang)] = txt
 
 		elif not self.languages and self.multiple:
-			res[ self.boneName ] = []
+			res[self.boneName] = []
 			for child in self.tagContainer._children:
-				if isinstance( child, Tag ):
-					res[ self.boneName ].append( child.input["value"] )
+				if isinstance(child, Tag):
+					res[self.boneName].append(child.input["value"])
 
 		elif not self.languages and not self.multiple:
-			res[ self.boneName ] = self.input["value"]
+			res[self.boneName] = self.input["value"]
 
 		return res
 
@@ -422,7 +430,7 @@ class StringEditBone(html5.Div):
 		return {self.boneName: res}
 
 	def genTag(self, tag, editMode=False, lang=None):
-		tag = Tag(self, tag, editMode, readonly = self.readOnly)
+		tag = Tag(self, tag, editMode, readonly=self.readOnly)
 
 		if lang is not None:
 			self.langEdits[lang].appendChild(tag)
@@ -432,59 +440,60 @@ class StringEditBone(html5.Div):
 		return tag
 
 
-def CheckForStringBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
+def CheckForStringBone(moduleName, boneName, skelStucture, *args, **kwargs):
 	return str(skelStucture[boneName]["type"]).startswith("str")
 
 
-class ExtendedStringSearch( html5.Div ):
-	def __init__(self, extension, view, modul, *args, **kwargs ):
-		super( ExtendedStringSearch, self ).__init__( *args, **kwargs )
+class ExtendedStringSearch(html5.Div):
+	def __init__(self, extension, view, modul, *args, **kwargs):
+		super(ExtendedStringSearch, self).__init__(*args, **kwargs)
 		self.view = view
 		self.extension = extension
 		self.module = modul
 		self.opMode = extension["mode"]
 		self.filterChangedEvent = EventDispatcher("filterChanged")
-		assert self.opMode in ["equals","from", "to", "prefix","range"]
-		self.appendChild( html5.TextNode(extension["name"]))
+		assert self.opMode in ["equals", "from", "to", "prefix", "range"]
+		self.appendChild(html5.TextNode(extension["name"]))
 		self.sinkEvent("onKeyDown")
-		if self.opMode in ["equals","from", "to", "prefix"]:
+		if self.opMode in ["equals", "from", "to", "prefix"]:
 			self.input = html5.Input()
 			self.input["type"] = "text"
-			self.appendChild( self.input )
+			self.appendChild(self.input)
 		elif self.opMode == "range":
 			self.input1 = html5.Input()
 			self.input1["type"] = "text"
-			self.appendChild( self.input1 )
-			self.appendChild( html5.TextNode("to") )
+			self.appendChild(self.input1)
+			self.appendChild(html5.TextNode("to"))
 			self.input2 = html5.Input()
 			self.input2["type"] = "text"
-			self.appendChild( self.input2 )
+			self.appendChild(self.input2)
 
 	def onKeyDown(self, event):
 		if html5.isReturn(event.keyCode):
 			self.filterChangedEvent.fire()
 
 	def updateFilter(self, filter):
-		if self.opMode=="equals":
-			filter[ self.extension["target"] ] = self.input["value"]
-		elif self.opMode=="from":
-			filter[ self.extension["target"]+"$gt" ] = self.input["value"]
-		elif self.opMode=="to":
-			filter[ self.extension["target"]+"$lt" ] = self.input["value"]
-		elif self.opMode=="prefix":
-			filter[ self.extension["target"]+"$lk" ] = self.input["value"]
-		elif self.opMode=="range":
-			filter[ self.extension["target"]+"$gt" ] = self.input1["value"]
-			filter[ self.extension["target"]+"$lt" ] = self.input2["value"]
-		return( filter )
+		if self.opMode == "equals":
+			filter[self.extension["target"]] = self.input["value"]
+		elif self.opMode == "from":
+			filter[self.extension["target"] + "$gt"] = self.input["value"]
+		elif self.opMode == "to":
+			filter[self.extension["target"] + "$lt"] = self.input["value"]
+		elif self.opMode == "prefix":
+			filter[self.extension["target"] + "$lk"] = self.input["value"]
+		elif self.opMode == "range":
+			filter[self.extension["target"] + "$gt"] = self.input1["value"]
+			filter[self.extension["target"] + "$lt"] = self.input2["value"]
+		return (filter)
 
 	@staticmethod
-	def canHandleExtension( extension, view, modul ):
-		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="string" or extension["type"].startswith("string.") ) )
+	def canHandleExtension(extension, view, modul):
+		return (isinstance(extension, dict) and "type" in extension.keys() and (
+					extension["type"] == "string" or extension["type"].startswith("string.")))
 
 
-#Register this Bone in the global queue
-editBoneSelector.insert( 3, CheckForStringBone, StringEditBone)
-viewDelegateSelector.insert( 3, CheckForStringBone, StringViewBoneDelegate)
-extendedSearchWidgetSelector.insert( 1, ExtendedStringSearch.canHandleExtension, ExtendedStringSearch )
+# Register this Bone in the global queue
+editBoneSelector.insert(3, CheckForStringBone, StringEditBone)
+viewDelegateSelector.insert(3, CheckForStringBone, StringViewBoneDelegate)
+extendedSearchWidgetSelector.insert(1, ExtendedStringSearch.canHandleExtension, ExtendedStringSearch)
 extractorDelegateSelector.insert(3, CheckForStringBone, StringBoneExtractor)
