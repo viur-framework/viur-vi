@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
 import html5
-print(1)
 from network import DeferredCall
-print(2)
 from config import conf
-print(3)
 from priorityqueue import editBoneSelector
-print(4)
 from exception import InvalidBoneValueException
-print(5)
 from widgets.tooltip import ToolTip
-print(6)
 from widgets.accordion import Accordion
-print(7)
 
 class InternalEdit(html5.Div):
 

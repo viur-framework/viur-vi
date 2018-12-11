@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-import html5
-import json
-import utils
+import html5, json, utils
+
 from config import conf
 from event import EventDispatcher
 from i18n import translate
 from network import NetworkService
 from pane import Pane
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, \
-	extractorDelegateSelector
+from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
+
+from bones.base import BaseBoneExtractor
 from widgets.edit import EditWidget
 from widgets.internaledit import InternalEdit
 from widgets.list import ListWidget
-
 
 def getDefaultValues(structure):
 	defaultValues = {}
