@@ -9,6 +9,7 @@ This is the current development version.
 - Several modifications required to use new, minimized html5 library
 - Allow for file preview popup also in file widget.
 - Bugfix: `StringViewBoneDelegate` does not fail on `stringBone(multiple=True, language=["de", "en"])` anymore.
+- Bugfix: Improved image popup viewer not falling apart when image dimensions are not quadratic.
 
 ## [2.3] Kilauea
 
