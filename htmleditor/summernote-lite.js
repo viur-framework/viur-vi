@@ -5,7 +5,7 @@
  * Copyright 2013- Alan Hong. and other contributors
  * summernote may be freely distributed under the MIT license.
  *
- * Date: 2018-12-12T13:50Z
+ * Date: 2018-12-12T16:25Z
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery')) :
@@ -876,8 +876,13 @@
               unlink: 'Unlink',
               edit: 'Edit',
               textToDisplay: 'Text to display',
+              title: 'Title (on mouseover)',
               url: 'To what URL should this link go?',
-              openInNewWindow: 'Open in new window'
+              openInNewWindow: 'Open in new window',
+              type: 'Type',
+              inputurl: 'Link',
+              inputmail: 'mail',
+              inputtel: 'phone'
           },
           table: {
               table: 'Table',
@@ -4574,6 +4579,7 @@
            */
           this.createLink = this.wrapCommand(function (linkInfo) {
               var linkUrl = linkInfo.url;
+              var linkTitle = linkInfo.title;
               var linkText = linkInfo.text;
               var isNewWindow = linkInfo.isNewWindow;
               var rng = linkInfo.range || _this.createRange();
@@ -4612,6 +4618,7 @@
               }
               $$1.each(anchors, function (idx, anchor) {
                   $$1(anchor).attr('href', linkUrl);
+                  $$1(anchor).attr('title', linkTitle.trim());
                   if (isNewWindow) {
                       $$1(anchor).attr('target', '_blank');
                   }
@@ -5081,6 +5088,7 @@
           var linkInfo = {
               range: rng,
               text: rng.toString(),
+              title: $anchor.length ? $anchor.attr('title') : '',
               url: $anchor.length ? $anchor.attr('href') : ''
           };
           // When anchor exists,
@@ -6713,7 +6721,19 @@
               '<input class="note-link-text form-control note-form-control note-input" type="text" />',
               '</div>',
               '<div class="form-group note-form-group">',
-              "<label class=\"note-form-label\">" + this.lang.link.url + "</label>",
+              "<label class=\"note-form-label\">" + this.lang.link.title + "</label>",
+              '<input class="note-link-title form-control note-form-control note-input" type="text" />',
+              '</div>',
+              '<div class="form-group note-form-group">',
+              "<label class=\"note-form-label\">" + this.lang.link.type + "</label>",
+              '<select class="note-link-type form-control note-form-control note-input">',
+              "<option value=\"url\">" + this.lang.link.inputurl + "</option>",
+              "<option value=\"mail\">" + this.lang.link.inputmail + "</option>",
+              "<option value=\"tel\">" + this.lang.link.inputtel + "</option>",
+              '</select>',
+              '</div>',
+              '<div class="form-group note-form-group">',
+              "<label class=\"note-form-label note-form-label-url\">" + this.lang.link.url + "</label>",
               '<input class="note-link-url form-control note-form-control note-input" type="text" value="http://" />',
               '</div>',
               !this.options.disableLinkTarget
@@ -6753,6 +6773,24 @@
           this.ui.toggleBtn($linkBtn, $linkText.val() && $linkUrl.val());
       };
       /**
+       * return the type of the given url
+       *
+       * @param {String} linkURL
+       * @return {String} type
+       */
+      LinkDialog.prototype.getTypeByURL = function (linkURL) {
+          linkURL = linkURL.trim();
+          if (linkURL.startsWith('mailto:')) {
+              return 'mail';
+          }
+          else if (linkURL.startsWith('tel:')) {
+              return 'tel';
+          }
+          else {
+              return 'url';
+          }
+      };
+      /**
        * Show link dialog and set event handlers on dialog controls.
        *
        * @param {Object} linkInfo
@@ -6762,7 +6800,10 @@
           var _this = this;
           return $$1.Deferred(function (deferred) {
               var $linkText = _this.$dialog.find('.note-link-text');
+              var $linkTitle = _this.$dialog.find('.note-link-title');
+              var $linkType = _this.$dialog.find('.note-link-type');
               var $linkUrl = _this.$dialog.find('.note-link-url');
+              var $linkUrlLabel = _this.$dialog.find('.note-form-label-url');
               var $linkBtn = _this.$dialog.find('.note-link-btn');
               var $openInNewWindow = _this.$dialog
                   .find('.sn-checkbox-open-in-new-window input[type=checkbox]');
@@ -6772,7 +6813,22 @@
                   if (!linkInfo.url) {
                       linkInfo.url = linkInfo.text;
                   }
+                  else {
+                      // only when a specific url was given, we can have a specific type
+                      linkInfo.type = _this.getTypeByURL(linkInfo.url);
+                      linkInfo.url = linkInfo.url.replace('mailto:', '').replace('tel:', '');
+                  }
                   $linkText.val(linkInfo.text);
+                  $linkTitle.val(linkInfo.title);
+                  $linkType.val(linkInfo.type);
+                  $linkUrlLabel.text(_this.lang.link['input' + linkInfo.type]);
+                  var handleLinkTypeUpdate = function () {
+                      linkInfo.type = $linkType.val();
+                      $linkUrlLabel.text(_this.lang.link['input' + linkInfo.type]);
+                  };
+                  $linkType.on('input', handleLinkTypeUpdate).on('paste', function () {
+                      setTimeout(handleLinkTypeUpdate, 0);
+                  });
                   var handleLinkTextUpdate = function () {
                       _this.toggleLinkBtn($linkBtn, $linkText, $linkUrl);
                       // if linktext was modified by keyup,
@@ -6799,15 +6855,24 @@
                   _this.toggleLinkBtn($linkBtn, $linkText, $linkUrl);
                   _this.bindEnterKey($linkUrl, $linkBtn);
                   _this.bindEnterKey($linkText, $linkBtn);
+                  _this.bindEnterKey($linkTitle, $linkBtn);
                   var isNewWindowChecked = linkInfo.isNewWindow !== undefined
                       ? linkInfo.isNewWindow : _this.context.options.linkTargetBlank;
                   $openInNewWindow.prop('checked', isNewWindowChecked);
                   $linkBtn.one('click', function (event) {
                       event.preventDefault();
+                      var url = $linkUrl.val();
+                      if ($linkType.val() === 'mail') {
+                          url = 'mailto:' + url;
+                      }
+                      else if ($linkType.val() === 'tel') {
+                          url = 'tel:' + url;
+                      }
                       deferred.resolve({
                           range: linkInfo.range,
-                          url: $linkUrl.val(),
+                          url: url,
                           text: $linkText.val(),
+                          title: $linkTitle.val(),
                           isNewWindow: $openInNewWindow.is(':checked')
                       });
                       _this.ui.hideDialog(_this.$dialog);
@@ -6816,6 +6881,7 @@
               _this.ui.onDialogHidden(_this.$dialog, function () {
                   // detach events
                   $linkText.off('input paste keypress');
+                  $linkTitle.off('input paste keypress');
                   $linkUrl.off('input paste keypress');
                   $linkBtn.off('click');
                   if (deferred.state() === 'pending') {
@@ -6884,7 +6950,8 @@
           if (rng.isCollapsed() && rng.isOnAnchor()) {
               var anchor = dom.ancestor(rng.sc, dom.isAnchor);
               var href = $$1(anchor).attr('href');
-              this.$popover.find('a').attr('href', href).html(href);
+              var title = $$1(anchor).attr('title');
+              this.$popover.find('a').attr('href', href).attr('title', title).html(href);
               var pos = dom.posFromPlaceholder(anchor);
               this.$popover.css({
                   display: 'block',
