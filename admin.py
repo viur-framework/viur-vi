@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import html5
 
 from config import conf
@@ -17,9 +17,10 @@ import bones
 import actions
 import i18n
 
+
 class AdminScreen(Screen):
 
-	def __init__(self, *args, **kwargs ):
+	def __init__(self, *args, **kwargs):
 		super(AdminScreen, self).__init__(*args, **kwargs)
 
 		self["id"] = "CoreWindow"
@@ -48,8 +49,8 @@ class AdminScreen(Screen):
 		self.appendChild(self.logWdg)
 
 		self.currentPane = None
-		self.nextPane = None #Which pane gains focus once the deferred call fires
-		self.panes = [] # List of known panes. The ordering represents the order in which the user visited them.
+		self.nextPane = None  # Which pane gains focus once the deferred call fires
+		self.panes = []  # List of known panes. The ordering represents the order in which the user visited them.
 
 		self.userLoggedOutMsg = None
 
@@ -85,11 +86,11 @@ class AdminScreen(Screen):
 
 	def getCurrentUser(self):
 		NetworkService.request("user", "view/self",
-		                        successHandler=self.getCurrentUserSuccess,
-		                        failureHandler=self.getCurrentUserFailure)
+							   successHandler=self.getCurrentUserSuccess,
+							   failureHandler=self.getCurrentUserFailure)
 
 	def getCurrentUserSuccess(self, req):
-		answ =  NetworkService.decode(req)
+		answ = NetworkService.decode(req)
 		conf["currentUser"] = answ["values"]
 		self.startup()
 
@@ -116,20 +117,18 @@ class AdminScreen(Screen):
 
 		# Save module groups
 		if ("configuration" in config.keys()
-		    and isinstance(config["configuration"], dict)):
+			and isinstance(config["configuration"], dict)):
 
 			if ("modulGroups" in config["configuration"].keys()
-			    and isinstance(config["configuration"]["modulGroups"], list)):
-
+				and isinstance(config["configuration"]["modulGroups"], list)):
 				alert("Hello! Your project is still using 'admin.modulGroups' for its module grouping information.\n"
-				        "Please rename it to 'admin.moduleGroups' (yes, with 'e') to avoid this alert message.\n\n"
-						"Thank you!")
+					  "Please rename it to 'admin.moduleGroups' (yes, with 'e') to avoid this alert message.\n\n"
+					  "Thank you!")
 
 				moduleGroups = config["configuration"]["modulGroups"]
 
 			if ("moduleGroups" in config["configuration"].keys()
-		        and isinstance(config["configuration"]["moduleGroups"], list)):
-
+				and isinstance(config["configuration"]["moduleGroups"], list)):
 				moduleGroups = config["configuration"]["moduleGroups"]
 
 		# Modules
@@ -145,18 +144,19 @@ class AdminScreen(Screen):
 
 		# Sort all modules first
 		sortedModules = [(x, y) for x, y in config["modules"].items()]
-		sortedModules.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1].get("sortIndex") is None else 0, entry[1].get("sortIndex", 0), entry[1].get("name")))
+		sortedModules.sort(key=lambda entry: "%d-%010d-%s" % (
+		1 if entry[1].get("sortIndex") is None else 0, entry[1].get("sortIndex", 0), entry[1].get("name")))
 
 		# When create module panes
 		for module, info in sortedModules:
 			if not "root" in userAccess and not any([x.startswith(module) for x in userAccess]):
-				#Skip this module, as the user couldn't interact with it anyway
+				# Skip this module, as the user couldn't interact with it anyway
 				continue
 
 			conf["modules"][module] = info
 
 			if "views" in conf["modules"][module].keys() and conf["modules"][module]["views"]:
-				for v in conf["modules"][module]["views"]: #Work-a-round for PyJS not supporting id()
+				for v in conf["modules"][module]["views"]:  # Work-a-round for PyJS not supporting id()
 					v["__id"] = predefinedFilterCounter
 					predefinedFilterCounter += 1
 
@@ -184,12 +184,12 @@ class AdminScreen(Screen):
 
 		# Push the panes, ignore group panes with no children (due to right restrictions)
 		for name, idx, pane in panes:
-			#print("idx", name, idx)
+			# print("idx", name, idx)
 
 			# Don't display GroupPanes without children.
 			if (isinstance(pane, GroupPane)
 				and (not pane.childPanes
-				        or all(c["style"].get("display") == "none" for c in pane.childPanes))):
+					 or all(c["style"].get("display") == "none" for c in pane.childPanes))):
 				continue
 
 			self.addPane(pane)
@@ -199,8 +199,8 @@ class AdminScreen(Screen):
 		DeferredCall(self.checkInitialHash)
 		self.unlock()
 
-	def log(self, type, msg ):
-		self.logWdg.log( type, msg )
+	def log(self, type, msg):
+		self.logWdg.log(type, msg)
 
 	def checkInitialHash(self, *args, **kwargs):
 		urlHash = conf["startupHash"]
@@ -209,14 +209,14 @@ class AdminScreen(Screen):
 
 		if "?" in urlHash:
 			hashStr = urlHash[1:urlHash.find("?")]
-			paramsStr = urlHash[urlHash.find("?")+1:]
+			paramsStr = urlHash[urlHash.find("?") + 1:]
 		else:
 			hashStr = urlHash[1:]
 			paramsStr = ""
 
 		self.execCall(hashStr, paramsStr)
 
-	def execCall(self, path, params = None):
+	def execCall(self, path, params=None):
 		"""
 		Performs an execution call.
 
@@ -255,7 +255,7 @@ class AdminScreen(Screen):
 		if gen:
 			gen(path, param)
 
-	def switchFullscreen(self, fullscreen = True):
+	def switchFullscreen(self, fullscreen=True):
 		if fullscreen:
 			self.moduleMgr.hide()
 			self.viewport.addClass("is-fullscreen")
@@ -269,7 +269,7 @@ class AdminScreen(Screen):
 	def onError(self, req, code):
 		print("ONERROR")
 
-	def _registerChildPanes(self, pane ):
+	def _registerChildPanes(self, pane):
 		for childPane in pane.childPanes:
 			self.panes.append(childPane)
 			self.viewport.appendChild(childPane.widgetsDomElm)
@@ -277,12 +277,12 @@ class AdminScreen(Screen):
 			self._registerChildPanes(childPane)
 
 	def addPane(self, pane, parentPane=None):
-		#paneHandle = "pane_%s" % self.paneIdx
-		#self.paneIdx += 1
-		if len(pane.childPanes)>0:
-			self._registerChildPanes( pane )
+		# paneHandle = "pane_%s" % self.paneIdx
+		# self.paneIdx += 1
+		if len(pane.childPanes) > 0:
+			self._registerChildPanes(pane)
 
-		self.panes.append( pane )
+		self.panes.append(pane)
 
 		if parentPane:
 			parentPane.addChildPane(pane)
@@ -293,7 +293,7 @@ class AdminScreen(Screen):
 		pane.widgetsDomElm.removeClass("is-active")
 
 	def insertPane(self, pane, insertAt):
-		if len(pane.childPanes)>0:
+		if len(pane.childPanes) > 0:
 			self._registerChildPanes(pane)
 
 		assert insertAt in self.panes
@@ -306,13 +306,13 @@ class AdminScreen(Screen):
 
 	def stackPane(self, pane, focus=False):
 		assert self.currentPane is not None, "Cannot stack a pane. There's no current one."
-		self.addPane( pane, parentPane=self.currentPane )
+		self.addPane(pane, parentPane=self.currentPane)
 		if focus and not self.nextPane:
-			#We defer the call to focus, as some widgets stack more than one pane at once.
-			#If we focus directly, they will stack on each other, instead of the pane that
-			#currently has focus
+			# We defer the call to focus, as some widgets stack more than one pane at once.
+			# If we focus directly, they will stack on each other, instead of the pane that
+			# currently has focus
 			self.nextPane = pane
-			DeferredCall( self.focusNextPane )
+			DeferredCall(self.focusNextPane)
 
 	def focusNextPane(self, *args, **kwargs):
 		"""
@@ -324,7 +324,7 @@ class AdminScreen(Screen):
 		nextPane = self.nextPane
 		self.nextPane = None
 
-		self.focusPane( nextPane )
+		self.focusPane(nextPane)
 
 	def focusPane(self, pane):
 		assert pane in self.panes, "Cannot focus unknown pane!"
@@ -333,7 +333,7 @@ class AdminScreen(Screen):
 			self.topBar.setCurrentModulDescr()
 			return
 
-		#print( pane.descr, self.currentPane.descr if self.currentPane else "(null)" )
+		# print( pane.descr, self.currentPane.descr if self.currentPane else "(null)" )
 
 		# Click on the same pane?
 		if pane == self.currentPane:
@@ -345,8 +345,8 @@ class AdminScreen(Screen):
 
 			return
 
-		self.panes.remove( pane ) # Move the pane to the end of the list
-		self.panes.append( pane )
+		self.panes.remove(pane)  # Move the pane to the end of the list
+		self.panes.append(pane)
 
 		# Close current Pane
 		if self.currentPane is not None:
@@ -354,7 +354,7 @@ class AdminScreen(Screen):
 			self.currentPane.widgetsDomElm.removeClass("is-active")
 
 		# Focus wanted Pane
-		self.topBar.setCurrentModulDescr( pane.descr, pane.iconURL, pane.iconClasses )
+		self.topBar.setCurrentModulDescr(pane.descr, pane.iconURL, pane.iconClasses)
 		self.currentPane = pane
 		self.currentPane.widgetsDomElm.addClass("is-active")
 
@@ -375,10 +375,10 @@ class AdminScreen(Screen):
 	def removePane(self, pane):
 		assert pane in self.panes, "Cannot remove unknown pane!"
 
-		self.panes.remove( pane )
+		self.panes.remove(pane)
 		if pane == self.currentPane:
 			if self.panes:
-				self.focusPane( self.panes[-1])
+				self.focusPane(self.panes[-1])
 			else:
 				self.currentPane = None
 
@@ -393,7 +393,7 @@ class AdminScreen(Screen):
 		else:
 			pane.parentPane.removeChildPane(pane)
 
-		self.viewport.removeChild( pane.widgetsDomElm )
+		self.viewport.removeChild(pane.widgetsDomElm)
 
 	def addWidget(self, widget, pane):
 		pane.addWidget(widget)
@@ -408,7 +408,7 @@ class AdminScreen(Screen):
 				pane.removeWidget(widget)
 				return
 
-		raise AssertionError("Tried to remove unknown widget %s" % str( widget ))
+		raise AssertionError("Tried to remove unknown widget %s" % str(widget))
 
 	def containsWidget(self, widget):
 		for pane in self.panes:

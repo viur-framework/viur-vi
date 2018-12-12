@@ -13,7 +13,6 @@ public/vi_custom.less
 pynetree/.hg
 pynetree/.hgignore
 
-
 \.DS_Store
 
-sources/node_modules/
+node_modules
