@@ -5,7 +5,7 @@
  * Copyright 2013- Alan Hong. and other contributors
  * summernote may be freely distributed under the MIT license.
  *
- * Date: 2018-12-10T17:40Z
+ * Date: 2018-12-12T13:50Z
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery')) :
@@ -2453,7 +2453,7 @@
       isLi: isLi,
       isBR: makePredByNodeName('BR'),
       isSpan: makePredByNodeName('SPAN'),
-      isB: makePredByNodeName('STRONG'),
+      isB: makePredByNodeName('B'),
       isU: makePredByNodeName('U'),
       isS: makePredByNodeName('S'),
       isI: makePredByNodeName('I'),
@@ -3524,9 +3524,18 @@
               }
               else {
                   $$1.each(paras, function (idx, para) {
-                      $$1(para).css('marginLeft', function (idx, val) {
-                          return (parseInt(val, 10) || 0) + 25;
-                      });
+                      var $para = $$1(para);
+                      var classNames = $para.attr('class');
+                      var newIndent = 1;
+                      if (classNames !== undefined) {
+                          var regex = /viur-txt-indent--([0-9]{1,2})\b/;
+                          var match = classNames.match(regex);
+                          if (match !== null && match !== undefined) {
+                              newIndent = parseInt(match[1]) < 10 ? parseInt(match[1]) + 1 : parseInt(match[1]);
+                              $$1(para).removeClass(match[0]);
+                          }
+                      }
+                      $$1(para).addClass('viur-txt-indent--' + newIndent);
                   });
               }
           });
@@ -3547,10 +3556,20 @@
               }
               else {
                   $$1.each(paras, function (idx, para) {
-                      $$1(para).css('marginLeft', function (idx, val) {
-                          val = (parseInt(val, 10) || 0);
-                          return val > 25 ? val - 25 : '';
-                      });
+                      var $para = $$1(para);
+                      var classNames = $para.attr('class');
+                      var newIndent = 0;
+                      if (classNames !== undefined) {
+                          var regex = /viur-txt-indent--([0-9]{1,2})\b/;
+                          var match = classNames.match(regex);
+                          if (match !== null && match !== undefined) {
+                              newIndent = parseInt(match[1]) - 1;
+                              $$1(para).removeClass(match[0]);
+                          }
+                      }
+                      if (newIndent > 0) {
+                          $$1(para).addClass('viur-txt-indent--' + newIndent);
+                      }
                   });
               }
           });
@@ -4421,7 +4440,7 @@
           // native commands(with execCommand), generate function for execCommand
           var commands = [
               'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript',
-              'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull',
+              // 'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull',
               'formatBlock', 'removeFormat', 'backColor'
           ];
           for (var idx = 0, len = commands.length; idx < len; idx++) {
@@ -4437,6 +4456,23 @@
           this.fontName = this.wrapCommand(function (value) {
               return _this.fontStyling('font-family', "\'" + value + "\'");
           });
+          this.justify = this.wrapCommand(function (value) {
+              var currentRange = _this.createRange();
+              var $parent = $$1([currentRange.sc, currentRange.ec]).parent();
+              $parent.toggleClass('viur-txt-align--left', value === 'left');
+              $parent.toggleClass('viur-txt-align--center', value === 'center');
+              $parent.toggleClass('viur-txt-align--right', value === 'right');
+              $parent.toggleClass('viur-txt-align--justify', value === 'full');
+          });
+          var justifyArr = ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'];
+          for (var idx = 0, len = justifyArr.length; idx < len; idx++) {
+              this[justifyArr[idx]] = (function (sCmd) {
+                  return function () {
+                      _this.context.invoke('justify', sCmd.toLowerCase().replace('justify', ''));
+                  };
+              })(justifyArr[idx]);
+              this.context.memo('help.' + justifyArr[idx], this.lang.help[justifyArr[idx]]);
+          }
           this.fontSize = this.wrapCommand(function (value) {
               return _this.fontStyling('font-size', value + 'px');
           });
@@ -4645,30 +4681,17 @@
            */
           this.floatMe = this.wrapCommand(function (value) {
               var $target = $$1(_this.restoreTarget());
-              $target.toggleClass('note-float-left', value === 'left');
-              $target.toggleClass('note-float-right', value === 'right');
-              $target.css('float', value);
+              $target.toggleClass('viur-txt-float--left', value === 'left');
+              $target.toggleClass('viur-txt-float--right', value === 'right');
           });
           /**
            * resize overlay element
            * @param {String} value
            */
-          this.resize = this.wrapCommand(function (className) {
+          this.resize = this.wrapCommand(function (size) {
               var $target = $$1(_this.restoreTarget());
-              var classNames = $target.attr('class');
-              if (classNames !== undefined) {
-                  var classNames_1 = $target.attr('class').split(' ');
-                  classNames_1.forEach(function (val) {
-                      if (val.startsWith('viur-img')) {
-                          $target.removeClass(val);
-                      }
-                  });
-              }
-              $target.addClass(className);
-              $target.css({
-                  width: '',
-                  height: ''
-              });
+              $target.toggleClass('viur-txt-img--half', size === 'half');
+              $target.toggleClass('viur-txt-img--quarter', size === 'quarter');
           });
       }
       Editor.prototype.initialize = function () {
@@ -4950,7 +4973,7 @@
                   if (typeof param === 'string') {
                       $image.attr('data-filename', param);
                   }
-                  $image.css('width', Math.min(_this.$editable.width(), $image.width()));
+                  $image.addClass('viur-txt-img');
               }
               $image.show();
               range.create(_this.editable).insertNode($image[0]);
@@ -6114,22 +6137,22 @@
           var justifyLeft = this.button({
               contents: this.ui.icon(this.options.icons.alignLeft),
               tooltip: this.lang.paragraph.left + this.representShortcut('justifyLeft'),
-              click: this.context.createInvokeHandler('editor.justifyLeft')
+              click: this.context.createInvokeHandler('editor.justify', 'left')
           });
           var justifyCenter = this.button({
               contents: this.ui.icon(this.options.icons.alignCenter),
               tooltip: this.lang.paragraph.center + this.representShortcut('justifyCenter'),
-              click: this.context.createInvokeHandler('editor.justifyCenter')
+              click: this.context.createInvokeHandler('editor.justify', 'center')
           });
           var justifyRight = this.button({
               contents: this.ui.icon(this.options.icons.alignRight),
               tooltip: this.lang.paragraph.right + this.representShortcut('justifyRight'),
-              click: this.context.createInvokeHandler('editor.justifyRight')
+              click: this.context.createInvokeHandler('editor.justify', 'rigtht')
           });
           var justifyFull = this.button({
               contents: this.ui.icon(this.options.icons.alignJustify),
               tooltip: this.lang.paragraph.justify + this.representShortcut('justifyFull'),
-              click: this.context.createInvokeHandler('editor.justifyFull')
+              click: this.context.createInvokeHandler('editor.justify', 'full')
           });
           var outdent = this.button({
               contents: this.ui.icon(this.options.icons.outdent),
@@ -6301,21 +6324,21 @@
               return _this.button({
                   contents: '<span class="note-fontsize-10">100%</span>',
                   tooltip: _this.lang.image.resizeFull,
-                  click: _this.context.createInvokeHandler('editor.resize', 'viur-img-full')
+                  click: _this.context.createInvokeHandler('editor.resize', 'full')
               }).render();
           });
           this.context.memo('button.imageSize50', function () {
               return _this.button({
                   contents: '<span class="note-fontsize-10">50%</span>',
                   tooltip: _this.lang.image.resizeHalf,
-                  click: _this.context.createInvokeHandler('editor.resize', 'viur-img-half')
+                  click: _this.context.createInvokeHandler('editor.resize', 'half')
               }).render();
           });
           this.context.memo('button.imageSize25', function () {
               return _this.button({
                   contents: '<span class="note-fontsize-10">25%</span>',
                   tooltip: _this.lang.image.resizeQuarter,
-                  click: _this.context.createInvokeHandler('editor.resize', 'viur-img-quarter')
+                  click: _this.context.createInvokeHandler('editor.resize', 'quarter')
               }).render();
           });
           // Float Buttons

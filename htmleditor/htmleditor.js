@@ -30,10 +30,10 @@ function summernoteEditor(input) {
 		],
 		prettifyHtml: true,
 		buttons: {
-			alignLeft: customButton('note-icon-align-left', 'Linksbündig (CTRL+SHIFT+L)', 'justifyLeft'),
-			alignCenter: customButton('note-icon-align-center', 'Zentrieren (CTRL+SHIFT+E)', 'justifyCenter'),
-			alignRight: customButton('note-icon-align-right', 'Rechtsbündig (CTRL+SHIFT+R)', 'justifyRight'),
-			alignJustify: customButton('note-icon-align-justify', 'Blocksatz CTRL+SHIFT+J', 'justifyFull'),
+			alignLeft: customButton('note-icon-align-left', 'Linksbündig (CTRL+SHIFT+L)', 'justify', 'left'),
+			alignCenter: customButton('note-icon-align-center', 'Zentrieren (CTRL+SHIFT+E)', 'editor.justify', 'center'),
+			alignRight: customButton('note-icon-align-right', 'Rechtsbündig (CTRL+SHIFT+R)', 'justify', 'right'),
+			alignJustify: customButton('note-icon-align-justify', 'Blocksatz CTRL+SHIFT+J', 'justify', 'full'),
 			indentIn: customButton('note-icon-align-indent', 'Einrückung + (CTRL+RIGHTBRACKET)', 'indent'),
 			indentOut: customButton('note-icon-align-outdent', 'Einrückung - (CTRL+LEFTBRACKET)', 'outdent'),
 			viurPicture: viurPictureBtn,
@@ -139,7 +139,7 @@ function summernoteEditor(input) {
 
 window.top.summernoteEditor = summernoteEditor;
 
-function customButton(className, tooltip, invokeCmd) {
+function customButton(className, tooltip, invokeCmd, value) {
 	return function (context) {
 		var ui = $.summernote.ui;
 
@@ -149,7 +149,7 @@ function customButton(className, tooltip, invokeCmd) {
 			tooltip: tooltip,
 			container: 'body',
 			click: function () {
-				context.invoke(invokeCmd);
+				context.invoke(invokeCmd, value);
 			}
 		});
 
