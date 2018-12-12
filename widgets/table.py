@@ -263,7 +263,10 @@ class SelectTable( html5.Table ):
 
 		elif html5.isShift( event.keyCode ): #Shift
 			self._isShiftPressed = True
-			self._ctlStartRow = self._currentRow or self._selectedRows[0] or 0
+			try:
+				self._ctlStartRow = self._currentRow or self._selectedRows[0] or 0
+			except:
+				self._ctlStartRow = 0
 
 	def onKeyUp(self, event):
 		if html5.isSingleSelectionKey( event.keyCode ):
