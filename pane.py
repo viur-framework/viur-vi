@@ -35,7 +35,7 @@ class Pane(html5.Div):
 		self.childPanes = []
 
 		self.widgetsDomElm = html5.Div()
-		self.widgetsDomElm.addClass("vi-viewer-pane has-no-child")
+		self.widgetsDomElm.addClass("vi-viewer-pane", "has-no-child")
 		self.childDomElem = None
 
 		self.label = html5.Div()
@@ -173,8 +173,8 @@ class Pane(html5.Div):
 
 		"""
 
-		for w in self.widgetsDomElm._children[:]:
-			w["disabled"] = True
+		for w in self.widgetsDomElm.children():
+			w.disable()
 
 		self.widgetsDomElm.appendChild( widget )
 		self.rebuildChildrenClassInfo()
@@ -199,30 +199,26 @@ class Pane(html5.Div):
 			@param widget: The widget to remove. Must be a direct child of this pane.
 			@type widget: Widget
 		"""
-		for c in self.widgetsDomElm._children:
-			if widget in c._children:
-				self.widgetsDomElm.removeChild( c )
+		if widget in self.widgetsDomElm.children():
+			self.widgetsDomElm.removeChild(widget)
 
-				if self.closeable and len(self.widgetsDomElm._children)==0:
-					conf["mainWindow"].removePane( self )
+			if self.closeable and len(self.widgetsDomElm._children)==0:
+				conf["mainWindow"].removePane( self )
 
-				for w in self.widgetsDomElm._children[:]:
-					w["disabled"] = False
+			for w in self.widgetsDomElm._children[:]:
+				w["disabled"] = False
 
-				self.rebuildChildrenClassInfo()
-				return
+			self.rebuildChildrenClassInfo()
+			return
 
 		raise ValueError("Cannot remove unknown widget %s" % str(widget))
 
-	def containsWidget(self, widget ):
+	def containsWidget(self, widget):
 		"""
 			Tests wherever widget is a direct child of this pane.
 			@returns: Bool
 		"""
-		for c in self.widgetsDomElm._children:
-			if widget in c._children:
-				return( True )
-		return( False )
+		return widget in self.widgetsDomElm.children()
 
 	def onClick(self, event = None, *args, **kwargs ):
 		self.focus()
