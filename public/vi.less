@@ -2557,9 +2557,25 @@ progress[value]::-webkit-progress-value {
   margin: 5% auto;
   box-sizing: border-box;
 
-  &.image-viewer{
+  &.image-viewer {
     display: flex;
     flex-direction: column;
+    align-items: center;
+  }
+
+  &.image-viewer span {
+    margin-left: 0 !important;
+  }
+
+  &.image-viewer img {
+    max-height: 360px;
+    width: auto;
+    margin-bottom: 20px;
+    border: 1px solid #555;
+  }
+
+  &.image-viewer div {
+    text-align: right;
   }
 
   &.userloggedoutmsg {
@@ -2571,13 +2587,9 @@ progress[value]::-webkit-progress-value {
   }
 }
 
-.image-viewer img {
-  max-height: 460px;
-}
 
-.image-viewer div {
-  text-align: right;
-}
+
+
 
 .alertbox.task
 {
