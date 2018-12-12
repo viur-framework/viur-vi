@@ -65,6 +65,23 @@ class TextEditBone( html5.Div ):
 		self.descrHint = descrHint
 		self.currentEditor = None
 		self.valuesdict = dict()
+		self.addClass("vi-bone-container")
+
+
+		self.previewDiv = html5.Div()
+		self.previewDiv.addClass("vi-bone-txtpreview textarea")
+		self.appendChild(self.previewDiv)
+
+		self.input=html5.ignite.Textarea()
+		self.appendChild(self.input)
+
+		if readOnly:
+			self.input["readonly"] = True
+
+		elif not readOnly and not self.isPlainText:
+			openEditorBtn = html5.ext.Button(translate("Edit Text"), self.openTxt )
+			openEditorBtn.addClass("btn--textedit")
+			self.appendChild( openEditorBtn )
 
 		##multilangbone
 		if self.languages:
@@ -74,34 +91,21 @@ class TextEditBone( html5.Div ):
 				self.selectedLang=self.languages[0]
 
 			self.langButContainer=html5.Div()
-			self.langButContainer.addClass("languagebuttons input-group")
+			self.langButContainer.addClass("vi-bone-container-langbtns input-group")
 
 			for lang in self.languages:
 				abut=html5.ext.Button(lang,self.changeLang)
+				abut.addClass("btn--lang")
 				abut["value"]=lang
 				self.langButContainer.appendChild(abut)
 
 			self.appendChild(self.langButContainer)
 			self.refreshLangButContainer()
 
-		self.input=html5.Textarea()
-		self.appendChild(self.input)
-		self.previewDiv = html5.Div()
-		self.previewDiv.addClass("preview")
-		self.appendChild(self.previewDiv)
-
 		if self.isPlainText:
 			self.previewDiv["style"]["display"] = "none"
 		else:
 			self.input["style"]["display"] = "none"
-
-		if readOnly:
-			self.input["readonly"] = True
-
-		elif not readOnly and not self.isPlainText:
-			openEditorBtn = html5.ext.Button(translate("Edit Text"), self.openTxt )
-			openEditorBtn.addClass("btn--textedit")
-			self.appendChild( openEditorBtn )
 
 		self.sinkEvent("onClick")
 

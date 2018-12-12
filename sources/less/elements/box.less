@@ -22,6 +22,7 @@
   &-head {
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     background-color: lighten(@color, 15%);
     .border(@borderWidth, solid, @color);
     margin: -@borderWidth -@borderWidth 0 -@borderWidth;
@@ -40,6 +41,7 @@
     .zIndex('content', 1);
     margin-top: -@borderWidth;
     border-top: @borderWidth solid @color;
+    flex-shrink: 0;
   }
   &--content {
     padding: @innerSpace;

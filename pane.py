@@ -250,7 +250,7 @@ class GroupPane(Pane):
 
 	def __init__(self, *args, **kwargs):
 		super(GroupPane, self ).__init__(*args, **kwargs)
-		self.addClass("vi-viewer-grouppane")
+		self.addClass("vi-pane-group")
 
 		self.childDomElem = html5.Ul()
 		self.childDomElem["style"]["display"] = "none"

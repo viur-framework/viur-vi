@@ -1,0 +1,36 @@
+@charset "UTF-8";
+/* General Bones Styling */
+
+.vi-bone {
+  width: 100%;
+  display: flex;
+  * + & {
+    margin-top: @outerSpace;
+  }
+  &-container {
+    display: flex;
+    flex-basis: 100%;
+    flex-grow: 0;
+    align-items: flex-start;
+    margin-left: -1px;
+    & > * + * {
+      margin-left: 10px;
+    }
+    &-langcontent {
+      display: flex;
+      flex-basis: 100%;
+    }
+    &-langbtns { }
+  }
+  &.is-hidden {
+    display: none;
+  }
+}
+
+/* Bone imports */
+@import "file";
+@import "numeric";
+@import "relational";
+@import "select";
+@import "string";
+@import "text";

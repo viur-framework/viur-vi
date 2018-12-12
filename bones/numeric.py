@@ -53,7 +53,7 @@ class NumericEditBone(html5.Span):
 		self.boneName = boneName
 		self.readOnly = readOnly
 
-		self.input = html5.Input()
+		self.input = html5.ignite.Input()
 		self.appendChild(self.input)
 
 		if currency:

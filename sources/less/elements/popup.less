@@ -33,7 +33,7 @@
   .zIndex('background',-1);
   pointer-events: none;
   width: 90%;
-  max-height: ~"calc(100vh - 40px)";
+  max-height: ~"calc(100vh - "2 * @outerSpace~")";
   transform: translateX(-50%);
   left:50%;
   overflow: hidden;
@@ -101,7 +101,7 @@
 .popup--n {
   transform: translate(-50%, ~"calc(-100% - "@outerSpace + 5px~")");
   &.is-active {
-    transform: translate(-50%, @topbarHeight);
+    transform: translate(-50%, 0);
   }
 }
 .popup--ne {

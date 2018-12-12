@@ -17,5 +17,11 @@ lngEn = {
 
 	"vi.action.edit.refresh.question": u"This will reload the currently shown dataset.\nUnsafed changes will be lost.\n"
 										u"Do you really want to continue?",
-	"vi.action.edit.refresh.title": u"Refresh dataset from server"
+	"vi.action.edit.refresh.title": u"Refresh dataset from server",
+
+	# Tasks
+	"vi.tasks":u"Tasks",
+	"vi.tasks.headline":u"Select a task",
+	"vi.tasks.no-description":u"No description provided.",
+	"vi.tasks.started":u"Task started!",
 }

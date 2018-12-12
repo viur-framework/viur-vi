@@ -81,7 +81,7 @@ class EditWidget(html5.Div):
 	__editIdx_ = 0 #Internal counter to ensure unique ids
 
 	def __init__(self, module, applicationType, key=0, node=None, skelType=None, clone=False,
-	                hashArgs=None, context=None, logaction = "Entry saved!", *args, **kwargs):
+	                hashArgs=None, context=None, logAction = "Entry saved!", *args, **kwargs):
 		"""
 			Initialize a new Edit or Add-Widget for the given module.
 			@param module: Name of the module
@@ -140,7 +140,7 @@ class EditWidget(html5.Div):
 		self.clone = clone
 		self.bones = {}
 		self.closeOnSuccess = False
-		self.logaction = logaction
+		self.logAction = logAction
 		self.sinkEvent("onChange")
 
 		self.context = context
@@ -371,14 +371,7 @@ class EditWidget(html5.Div):
 		                                secure=True, successHandler=self.cloneComplete )
 
 	def cloneComplete(self, request):
-		logDiv = html5.Div()
-		logDiv.addClass("msg is-active")
-		spanMsg = html5.Span()
-		spanMsg.appendChild( html5.TextNode( translate( u"The hierarchy will be cloned in the background." ) ) )
-		spanMsg.addClass("msgspan")
-		logDiv.appendChild(spanMsg)
-
-		conf["mainWindow"].log("success",logDiv)
+		conf["mainWindow"].log("success", translate( u"The hierarchy will be cloned in the background." ))
 		self.closeOrContinue()
 
 	def setData(self, request=None, data=None, ignoreMissing=False, askHierarchyCloning=True):
@@ -399,10 +392,10 @@ class EditWidget(html5.Div):
 			self.modified = False
 
 			logDiv = html5.Div()
-			logDiv.addClass("msg is-active")
+			logDiv.addClass("msg-content")
 			spanMsg = html5.Span()
 
-			spanMsg.appendChild( html5.TextNode( translate( self.logaction ) ) )
+			spanMsg.appendChild( html5.TextNode( translate( self.logAction ) ) )
 			spanMsg.addClass("msgspan")
 			logDiv.appendChild(spanMsg)
 

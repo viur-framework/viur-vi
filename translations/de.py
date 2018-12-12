@@ -168,5 +168,11 @@ lngDe = {
 
 	"vi.action.edit.refresh.question": u"Dies wird den aktuellen Datensatz neu laden.\nÄnderungen gehen verloren.\n"
 	                                   u"Möchten Sie wirklich fortfahren?",
-	"vi.action.edit.refresh.title": u"Datensatz neu laden"
+	"vi.action.edit.refresh.title": u"Datensatz neu laden",
+
+	#Tasks
+	"vi.tasks":u"Aufträge",
+	"vi.tasks.headline":u"Wähle einen Auftrag",
+	"vi.tasks.no-description":u"Ohne Beschreibung.",
+	"vi.tasks.started": u"Auftrag gestartet!",
 }

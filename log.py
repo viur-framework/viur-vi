@@ -15,6 +15,7 @@ class Log( html5.Div ):
 		openLink = html5.ext.Button(translate("Open message center"), self.toggleMsgCenter)
 		self.appendChild(openLink)
 
+
 		self.logUL = html5.Ul()
 		self.logUL["id"] = "statuslist"
 		self.logUL.addClass( "statuslist" )
@@ -80,11 +81,11 @@ class Log( html5.Div ):
 		assert type in ["success", "error", "warning", "info", "progress"]
 
 		liwrap = html5.Li()
-		liwrap.addClass("log-"+type)
-		liwrap.addClass("is-new")
+		liwrap.addClass("msg--"+type, "msg", "is-active")
+		liwrap.addClass("is-new popup popup--s")
 
 		spanDate = html5.Span()
-		spanDate.appendChild( html5.TextNode( datetime.now().strftime("%H:%M:%S") ))
+		spanDate.appendChild( html5.TextNode( datetime.now().strftime("%d. %b. %Y, %H:%M:%S") ))
 		spanDate.addClass("date")
 		liwrap.appendChild(spanDate)
 
@@ -96,7 +97,7 @@ class Log( html5.Div ):
 			#Create a span element for that message
 			spanMsg = html5.Span()
 			spanMsg.appendChild(html5.TextNode(html5.utils.unescape(msg)))
-			spanMsg.addClass("msg")
+			spanMsg.addClass("msg-content")
 			liwrap.appendChild(spanMsg)
 
 		DeferredCall(self.removeNewCls, liwrap,_delay=2500)
@@ -107,7 +108,7 @@ class Log( html5.Div ):
 			self.logUL.element.insertBefore( liwrap.element, self.logUL.element.children.item(0) )
 
 	def removeNewCls(self,span):
-		span.removeClass("is-new")
+		span.removeClass("is-new popup popup--s")
 
 	def reset(self):
 		self.logUL.removeAllChildren()

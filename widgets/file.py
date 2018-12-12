@@ -38,7 +38,7 @@ class FileImagePopup(html5.ext.Popup):
 class FilePreviewImage(html5.Div):
 	def __init__(self, file = None, size=150, *args, **kwargs):
 		super(FilePreviewImage, self).__init__(*args, **kwargs)
-		self.addClass("previewimg")
+		self.addClass("vi-bone-filepreview")
 		self.sinkEvent("onClick")
 
 		self.size = size
@@ -75,10 +75,15 @@ class FilePreviewImage(html5.Div):
 							self.downloadOnly = False
 							break
 
+		self.previewImg = html5.Img()
+		self.appendChild(self.previewImg)
+
 		if preview:
-			self["style"]["background-image"] = "url('%s')" % preview
+			self.previewImg["src"] = preview
 		else:
-			self["style"]["background-image"] = None
+			self.previewImg["src"] = None
+			self.addClass("no-preview")
+
 
 		if self.currentFile:
 			self.addClass("is-clickable")

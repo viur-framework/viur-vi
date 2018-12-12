@@ -12,6 +12,15 @@
 @message: true;
 @table: true;
 
+// Initialize and configurate fundamental elements.
+
+@import "button";
+@import "message";
+
+@import "icon-complex";
+@import "item";
+@import "box";
+
 // Color and Shadow Sets
 @mainColor: #d00f1c; // The corporate color - defining most of the looks.
 @complementColor: #333; // A color used to sit next to the maincolor.
@@ -31,12 +40,10 @@
 @focusselectionoddcolor: rgba(250,0,0,0.5);
 @focusselectionevencolor: rgba(250,130,130,0.5);
 
-
 @successColor: #4cad42; // Green
 @warnColor: #f5b639; // Orange
 @failColor: #f44336; // Red
 @hintColor: #1da7e0; // Blue
-
 
 // Font Stacks
 @bodyFonts: 'Source Sans Pro', 'Open Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; // Default font stack.
@@ -55,8 +62,8 @@
 @defaultMargin: 5px;
 @defaultShadow: 0;
 @defaultShadowColor: #000;
-@defaultBorderWidth: 0;
-@defaultBorderRadius: 8px;
+@defaultBorderWidth: 1px;
+@defaultBorderRadius: 0;
 
 // Items
 @itemBackgroundColor:#fff;

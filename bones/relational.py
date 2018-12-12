@@ -175,11 +175,15 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.usingDescr = usingDescr
 
 		self.selection = None
-		self.selectionTxt = html5.Input()
+		self.selectionTxt = html5.ignite.Input()
 		self.selectionTxt["readonly"] = True
 		self.selectionTxt["type"] = "text"
 		self.appendChild(self.selectionTxt)
 		self.ie = None
+
+		self.boneControls = html5.Div()
+		self.boneControls.addClass("vi-bone-controls input-group")
+		self.appendChild(self.boneControls)
 
 		self.baseContext = context
 		self.context = self.baseContext.copy() if self.baseContext else None
@@ -192,18 +196,18 @@ class RelationalSingleSelectionBone(html5.Div):
 
 			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 			self.selectBtn.addClass("btn--select")
-			self.appendChild( self.selectBtn )
+			self.boneControls.appendChild( self.selectBtn )
 		else:
-			self.selectBtn = None
+			self.boneControls.selectBtn = None
 
 		# Edit button
 		if (destModule in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"] or destModule + "-edit" in conf["currentUser"]["access"])):
 			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit )
 			self.editBtn.addClass("btn--edit")
-			self.appendChild( self.editBtn )
+			self.boneControls.appendChild( self.editBtn )
 		else:
-			self.editBtn = None
+			self.boneControls.editBtn = None
 
 		# Remove button
 		if (not required and not readOnly
@@ -214,9 +218,9 @@ class RelationalSingleSelectionBone(html5.Div):
 
 			self.remBtn = html5.ext.Button(translate("Remove"), self.onRemove )
 			self.remBtn.addClass("btn--cancel")
-			self.appendChild( self.remBtn )
+			self.boneControls.appendChild( self.remBtn )
 		else:
-			self.remBtn = None
+			self.boneControls.remBtn = None
 
 		if self.readOnly:
 			self["disabled"] = True

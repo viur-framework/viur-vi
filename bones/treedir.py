@@ -23,7 +23,7 @@ class TreeDirMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		if src is not None:
 			img = html5.Img()
 			img["src"] = src
-			img.addClass("previewimg")
+			img.addClass("vi-bone-filepreview")
 			self.appendChild(img)
 
 			# Move the img in front of the lbl
@@ -106,7 +106,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		super(TreeDirSingleSelectionBone, self).__init__( *args, **kwargs )
 
 		self.previewImg = html5.Img()
-		self.previewImg.addClass("previewimg")
+		self.previewImg.addClass("vi-bone-filepreview")
 		self.appendChild( self.previewImg )
 
 

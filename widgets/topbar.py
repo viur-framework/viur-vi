@@ -106,7 +106,7 @@ class Tasks(html5.Button):
 		self.sinkEvent("onClick")
 		self.hide()
 		self.addClass("btn vi-tb-tasks")
-		self.appendChild( html5.TextNode( translate( "Tasks" ) ) )
+		self.appendChild( html5.TextNode( translate( "vi.tasks" ) ) )
 
 		if not conf[ "tasks" ][ "server" ]:
 			NetworkService.request( None, "/vi/_tasks/list",
@@ -152,6 +152,8 @@ class Tasks(html5.Button):
 
 toplevelActionSelector.insert( 0, Tasks.canHandle, Tasks )
 
+
+#FIXME: Do not logout directly: Implement a logout yes/no dialog.
 
 class Logout(html5.Button):
 	def __init__(self):

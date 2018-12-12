@@ -5,34 +5,21 @@
 // It imports all less files in their intended order for easy mass-inclusion.
 // Should you need specific files, you can easily customize the imports.
 
-  // IGNITE
+// IGNITE
   @import "ignite/ignite"; // Resets, basics, tools and generic elements.
 
-  // The framework:
-  @import "framework/framework"; // page wrappers.
+// The framework:
+  @import "framework/_framework"; // page wrappers.
 
-  // Initialize and configurate fundamental elements.
-  @import "configuration/appconf"; // variables and constants.
+// Initialize and configurate fundamental elements.
+  @import "configuration/_appconf"; // variables and constants.
 
-  @import "configuration/button";
-  @import "configuration/message";
-
-  @import "configuration/icon-complex";
-  @import "configuration/item";
-  @import "configuration/box";
-
-  // Load generic elements.
-  @import "elements/icon-complex";
-  @import "elements/item";
-  @import "elements/box";
-  @import "elements/list";
-
-  // Menus
+// Menus
   @import "objects/topbar";
   @import "objects/modulelist";
   @import "objects/actionbar";
 
-  // Objects
+// Objects
   @import "objects/splash";
   @import "objects/viurform";
   @import "objects/viurtable";
@@ -40,7 +27,6 @@
   @import "objects/accordion";
 
   @import "objects/progress";
-  @import "objects/popup";
   @import "objects/alert";
   @import "objects/tooltip";
 
@@ -53,7 +39,10 @@
   @import "objects/login";
 
   // Bones
-  @import "bones/relational";
+  @import "bones/_bones";
+
+  // Status
+  @import "status/loading";
 
   @import (optional) "../../../vi_customizing/custom";
 

@@ -14,21 +14,21 @@ class TaskWidget( html5.ext.Popup ):
 class ServerTaskWidget( TaskWidget ):
 	def __init__( self, title, key ):
 		super( ServerTaskWidget, self ).__init__( title = title )
-		self.widget = EditWidget( "_tasks", EditWidget.appSingleton, key, logaction = "Task started!" )
+		self.widget = EditWidget( "_tasks", EditWidget.appSingleton, key, logAction = "vi.tasks.started" )
 		self.popupBody.appendChild( self.widget )
 		self.popupBody.removeClass("box--content")
 		self.popupFoot.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
 
 class TaskSelectWidget( TaskWidget ):
 	def __init__( self ):
-		super( TaskSelectWidget, self ).__init__( title = translate( "Select a task" ) )
+		super( TaskSelectWidget, self ).__init__( title = translate( "vi.tasks.headline" ) )
 		self.sinkEvent( "onChange" )
 
 		div = html5.Div()
-		div[ "class" ] = [ "task-selector" ]
+		div[ "class" ] = [ "vi-tasks-selector" ]
 		self.popupBody.appendChild( div )
 
-		self.select = html5.Select()
+		self.select = html5.ignite.Select()
 		div.appendChild( self.select )
 
 		for type in [ "server", "client" ]:
@@ -50,7 +50,7 @@ class TaskSelectWidget( TaskWidget ):
 				self.select.appendChild( opt )
 
 		self.descr = html5.Div()
-		self.descr[ "class" ] = [ "task-description" ]
+		self.descr[ "class" ] = [ "vi-tasks-description" ]
 		self.popupBody.appendChild( self.descr )
 
 		self.popupFoot.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
@@ -67,7 +67,7 @@ class TaskSelectWidget( TaskWidget ):
 		self.descr.removeAllChildren()
 		self.descr.appendChild(
 			html5.TextNode(
-				task.get( "descr" ) or translate( "No description provided." ) ) )
+				task.get( "descr" ) or translate( "vi.tasks.no-description" ) ) )
 
 	def onChange(self, event):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.select):

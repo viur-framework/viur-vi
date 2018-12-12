@@ -174,7 +174,7 @@ q:after {
 }
 sub,
 sup {
-  font-size: .65em;
+  font-size: 0.65em;
   line-height: 0;
   position: relative;
   vertical-align: baseline;
@@ -489,7 +489,7 @@ blockquote {
   border-left: 7px solid #333;
 }
 blockquote cite {
-  font-size: .8em;
+  font-size: 0.8em;
   vertical-align: baseline;
 }
 blockquote cite * {
@@ -503,7 +503,7 @@ blockquote cite:before {
 }
 blockquote:after {
   content: attr(cite);
-  font-size: .6em;
+  font-size: 0.6em;
   margin-top: 2em;
 }
 code,
@@ -539,10 +539,10 @@ kbd {
   box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
   color: #000000;
   display: inline-block;
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-family: 'Source Code Pro', Courier, monospace;
   margin: 0 0.1em;
-  padding: .2em .6em;
+  padding: 0.2em 0.6em;
   text-shadow: 0 1px 0 #fff;
   white-space: nowrap;
 }
@@ -624,11 +624,7 @@ ol.is-list {
 }
 /* Sidebars */
 .content ~ .sidebar {
-<<<<<<< Updated upstream
-  font-size: .9em;
-=======
   font-size: 0.9em;
->>>>>>> Stashed changes
   order: 204;
   padding: 10px 0 20px;
   flex: auto;
@@ -658,11 +654,7 @@ ol.is-list {
   }
 }
 .content ~ .sidebar--marginal {
-<<<<<<< Updated upstream
-  font-size: .8em;
-=======
   font-size: 0.8em;
->>>>>>> Stashed changes
   flex: 0 0 15%;
   min-width: 200px;
 }
@@ -697,11 +689,7 @@ ol.is-list {
 }
 @media (min-width: 37.5em) {
   .bar {
-<<<<<<< Updated upstream
-    font-size: .9rem;
-=======
     font-size: 0.9rem;
->>>>>>> Stashed changes
     align-items: stretch;
     display: flex;
     flex-wrap: wrap;
@@ -771,7 +759,8 @@ ol.is-list {
   display: inline-flex;
   position: relative;
   border-width: 0;
-  border-radius: 8px;
+  border-radius: 0;
+  border: 1px solid #e6e6e6;
   padding: 3px 11.25px;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -786,11 +775,7 @@ ol.is-list {
   min-width: 0;
   flex: 1;
   max-width: 100%;
-<<<<<<< Updated upstream
-  transition: all .3s ease;
-=======
   transition: all 0.3s ease;
->>>>>>> Stashed changes
   background-position: 150% center;
   background-size: 15px;
   background-repeat: no-repeat;
@@ -918,11 +903,11 @@ ol.is-list {
 }
 .input--contrast {
   background-color: #f2f2f2;
-  border: 0 solid #d9d9d9;
+  border: 1px solid #d9d9d9;
   color: #000000;
 }
 .input--small {
-  font-size: .8em;
+  font-size: 0.8em;
   font-weight: 400;
 }
 .input--large {
@@ -951,7 +936,8 @@ ol.is-list {
   display: inline-flex;
   position: relative;
   border-width: 0;
-  border-radius: 8px;
+  border-radius: 0;
+  border: 1px solid #e0e0e0;
   padding: 3px 11.25px;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -972,7 +958,7 @@ ol.is-list {
 }
 .input-group.is-required .label,
 .label.is-required {
-  border-left: 1px solid #d00f1c;
+  border-left: 2px solid #d00f1c;
   color: #d00f1c;
   font-weight: 700;
 }
@@ -1015,14 +1001,14 @@ ol.is-list {
   color: #777777;
   cursor: not-allowed;
   box-shadow: none;
-  border: 0 dashed #cccccc;
+  border: 1px dashed #cccccc;
   background-color: #f2f2f2;
 }
 .label .icon {
   margin: 0 0.25em 0 -0.1em;
 }
 .label--small {
-  font-size: .8em;
+  font-size: 0.8em;
   font-weight: 400;
   min-width: 90px;
 }
@@ -1037,7 +1023,8 @@ ol.is-list {
   display: inline-flex;
   position: relative;
   border-width: 0;
-  border-radius: 8px;
+  border-radius: 0;
+  border: 1px solid #e0e0e0;
   padding: 3px 11.25px;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -1055,11 +1042,7 @@ ol.is-list {
   background-size: 20px;
   background-repeat: no-repeat;
   background-position: right center;
-<<<<<<< Updated upstream
-  transition: all .3s ease;
-=======
   transition: all 0.3s ease;
->>>>>>> Stashed changes
 }
 @media print {
   .select {
@@ -1074,7 +1057,7 @@ ol.is-list {
   color: #777777;
   cursor: not-allowed;
   box-shadow: none;
-  border: 0 dashed #cccccc;
+  border: 1px dashed #cccccc;
   background-color: #f2f2f2;
 }
 .input-group.is-invalid .form-group--validation .select,
@@ -1136,7 +1119,7 @@ ol.is-list {
   background-color: #fff;
 }
 .select--small {
-  font-size: .8em;
+  font-size: 0.8em;
   font-weight: 400;
   background-size: 10px;
 }
@@ -1150,11 +1133,7 @@ ol.is-list {
   background-color: #fff;
   border: 1px solid #e6e6e6;
   color: #222222;
-<<<<<<< Updated upstream
-  transition: all .3s ease;
-=======
   transition: all 0.3s ease;
->>>>>>> Stashed changes
   background-position: 150% center;
   background-size: 15px;
   background-repeat: no-repeat;
@@ -1171,7 +1150,8 @@ ol.is-list {
   display: inline-flex;
   position: relative;
   border-width: 0;
-  border-radius: 8px;
+  border-radius: 0;
+  border: 1px solid #e0e0e0;
   padding: 3px 11.25px;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -1198,13 +1178,8 @@ ol.is-list {
 }
 .switch-label {
   background: #e6e6e6;
-  border-radius: 8px;
   padding: 2px;
-<<<<<<< Updated upstream
-  transition: all .4s ease;
-=======
   transition: all 0.4s ease;
->>>>>>> Stashed changes
   outline: 0;
   display: block;
   width: 3em;
@@ -1221,11 +1196,7 @@ ol.is-list {
   width: 50%;
   height: 100%;
   background: #fff;
-<<<<<<< Updated upstream
-  transition: all .2s ease;
-=======
   transition: all 0.2s ease;
->>>>>>> Stashed changes
   box-shadow: none;
 }
 /* Radio button */
@@ -1235,7 +1206,8 @@ ol.is-list {
   display: inline-flex;
   position: relative;
   border-width: 0;
-  border-radius: 8px;
+  border-radius: 0;
+  border: 1px solid #e6e6e6;
   padding: 3px 11.25px;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -1272,11 +1244,7 @@ ol.is-list {
   height: 1em;
   margin-top: -2px;
   text-align: center;
-<<<<<<< Updated upstream
-  transition: all .4s ease;
-=======
   transition: all 0.4s ease;
->>>>>>> Stashed changes
   box-shadow: inset 0 0 0 2px #fff;
 }
 .radio-label:not(:empty) {
@@ -1302,7 +1270,8 @@ ol.is-list {
   display: inline-flex;
   position: relative;
   border-width: 0;
-  border-radius: 8px;
+  border-radius: 0;
+  border: 1px solid #e6e6e6;
   padding: 3px 11.25px;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -1339,11 +1308,7 @@ ol.is-list {
   height: 1em;
   margin-top: -2px;
   text-align: center;
-<<<<<<< Updated upstream
-  transition: all .4s ease;
-=======
   transition: all 0.4s ease;
->>>>>>> Stashed changes
   box-shadow: inset 0 0 0 2px #fff;
 }
 .check-label:not(:empty) {
@@ -1369,18 +1334,18 @@ ol.is-list {
   width: 100%;
   margin: 0;
   position: relative;
-  border-width: 0 0;
+  border-width: 0 1px;
   font-weight: 300;
-  font-size: .75em;
+  font-size: 0.75em;
 }
 .option-group .radio:first-child,
 .option-group .check:first-child {
-  border-width: 0;
+  border-width: 1px;
   border-bottom-width: 0;
 }
 .option-group .radio:last-child,
 .option-group .check:last-child {
-  border-width: 0;
+  border-width: 1px;
   border-top-width: 0;
 }
 @media (min-width: 37.5em) {
@@ -1412,7 +1377,7 @@ ol.is-list {
 }
 .option-group--selection-list .radio:not(:last-child) .radio-label,
 .option-group--selection-list .check:not(:last-child) .check-label {
-  border-bottom: 0 solid #cccccc;
+  border-bottom: 1px solid #cccccc;
 }
 .option-group--selection-list .radio-label:before,
 .option-group--selection-list .check-label:before {
@@ -1421,7 +1386,7 @@ ol.is-list {
 .option-group--selection-list .radio-input:checked + .radio-label,
 .option-group--selection-list .check-input:checked + .check-label {
   background: #8cd085;
-  border-bottom: 0 solid #69c260;
+  border-bottom: 1px solid #69c260;
   color: #fff;
 }
 .option-group--selection-list .radio-input:checked + .radio-label:hover,
@@ -1529,16 +1494,16 @@ ol.is-list {
   z-index: 200 !important;
 }
 .input-group .label {
-  border-width: 0 0;
+  border-width: 0 1px;
   width: 100%;
   margin: 0;
 }
 .input-group .label:first-child {
-  border-width: 0;
+  border-width: 1px;
   border-bottom-width: 0;
 }
 .input-group .label:last-child {
-  border-width: 0;
+  border-width: 1px;
   border-top-width: 0;
 }
 @media (max-width: 37.45em) {
@@ -1556,7 +1521,7 @@ ol.is-list {
     flex-flow: row;
   }
   .input-group:not(.input-group--block) .label {
-    border-width: 0;
+    border-width: 1px;
   }
   .input-group:not(.input-group--block) .label:first-child {
     border-right-width: 0;
@@ -1721,6 +1686,7 @@ html {
   display: inline-flex;
   position: relative;
   border-width: 0;
+  border-radius: 0;
   border-radius: 4px;
   border: 1px solid #dfdfdf;
   padding: 3px 11.25px;
@@ -1737,15 +1703,6 @@ html {
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
-<<<<<<< Updated upstream
-  transition: all .3s ease;
-}
-@media print {
-  .btn {
-    border-width: 0;
-  }
-}
-=======
   transition: all 0.3s ease;
 }
 @media print {
@@ -1753,7 +1710,6 @@ html {
     border-width: 0;
   }
 }
->>>>>>> Stashed changes
 .btn:link,
 .btn:visited {
   color: #222222;
@@ -1795,13 +1751,13 @@ html {
 }
 .btn > .icon:first-child {
   margin-left: -0.1em;
-  margin-right: .25em;
+  margin-right: 0.25em;
 }
 .btn--small {
-  font-size: .8em;
+  font-size: 0.8em;
 }
 .btn--small > .icon:first-child {
-  margin-right: .15em;
+  margin-right: 0.15em;
 }
 .btn--large {
   font-size: 1.2em;
@@ -1995,6 +1951,9 @@ html {
 .input-group .btn--download,
 .input-group .btn--edit {
   z-index: 201;
+}
+.btn--lang.is-active {
+  border-bottom: 2px solid rgba(34, 34, 34, 0.4) !important;
 }
 /* #vi_buttons
 ================================================== */
@@ -2430,18 +2389,14 @@ button.icon.is-disabled {
   position: relative;
   padding: 15px;
   margin-bottom: 20px;
-  font-size: .9rem;
+  font-size: 0.9rem;
   color: #0e536f;
   background-color: #d0edf9;
   border: 1px solid #14759c;
   border-radius: 4px;
   display: none;
   opacity: 0;
-<<<<<<< Updated upstream
-  transition: opacity .5s ease;
-=======
   transition: opacity 0.5s ease;
->>>>>>> Stashed changes
 }
 .msg p:last-child {
   margin-bottom: 0;
@@ -2464,7 +2419,7 @@ button.icon.is-disabled {
   border-bottom: 1px solid rgba(9, 49, 66, 0.5);
 }
 .msg-headline {
-  font-size: .9rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: inherit;
 }
@@ -2487,7 +2442,7 @@ button.icon.is-disabled {
 }
 .msg--full {
   margin-top: -1px;
-  border-width: 0 0;
+  border-width: 1px 0;
   border-radius: 0;
 }
 .msg-group {
@@ -2504,7 +2459,7 @@ button.icon.is-disabled {
 }
 .msg--success a {
   color: #132c11;
-  border-bottom: 0 solid rgba(19, 44, 17, 0.5);
+  border-bottom: 1px solid rgba(19, 44, 17, 0.5);
 }
 .msg--error {
   color: #a21309;
@@ -2513,12 +2468,39 @@ button.icon.is-disabled {
 }
 .msg--error a {
   color: #710e06;
-  border-bottom: 0 solid rgba(113, 14, 6, 0.5);
+  border-bottom: 1px solid rgba(113, 14, 6, 0.5);
+}
+.msg--warning {
+  color: #a67108;
+  background-color: #fef5e3;
+  border-color: #d7920b;
+}
+.msg--warning a {
+  color: #765006;
+  border-bottom: 1px solid rgba(118, 80, 6, 0.5);
+}
+.msg--info {
+  color: #0e536f;
+  background-color: #b9e4f6;
+  border-color: #14759c;
+}
+.msg--info a {
+  color: #093142;
+  border-bottom: 1px solid rgba(9, 49, 66, 0.5);
+}
+.msg--progress {
+  color: #0e536f;
+  background-color: #b9e4f6;
+  border-color: #14759c;
+}
+.msg--progress a {
+  color: #093142;
+  border-bottom: 1px solid rgba(9, 49, 66, 0.5);
 }
 /* ICON COMPLEX */
 i.i--success {
   background-color: #4cad42;
-  color: #000000;
+  color: #ffffff;
 }
 i.i--warn {
   background-color: #f5b639;
@@ -2526,11 +2508,11 @@ i.i--warn {
 }
 i.i--fail {
   background-color: #f44336;
-  color: #000000;
+  color: #ffffff;
 }
 i.i--hint {
   background-color: #1da7e0;
-  color: #000000;
+  color: #ffffff;
 }
 i.i--portal {
   background-color: #d00f1c;
@@ -2592,16 +2574,16 @@ a.item:hover,
   margin-left: 0;
 }
 .item-content--small {
-  font-size: .9em;
+  font-size: 0.9em;
 }
 .item-subline {
-  font-size: .75em;
+  font-size: 0.75em;
 }
 .item-subline + .item-headline {
-  font-size: .9em;
+  font-size: 0.9em;
 }
 .item-descr {
-  font-size: .9em;
+  font-size: 0.9em;
   font-weight: 300;
 }
 .item-controls {
@@ -2625,7 +2607,7 @@ a.item:hover,
   cursor: pointer;
 }
 .item-action--small {
-  font-size: .7em;
+  font-size: 0.7em;
   border-radius: 4px;
 }
 .item:hover .item-action,
@@ -2682,7 +2664,7 @@ a.item:hover,
   color: #14759c;
 }
 .item--hint i {
-  color: #000000;
+  color: #ffffff;
   background-color: #1da7e0;
 }
 .item--hint .item-action {
@@ -2691,18 +2673,14 @@ a.item:hover,
 .item--hint:hover .item-action,
 .item--hint .item-action:hover {
   background-color: #1da7e0;
-  color: #000000;
+  color: #ffffff;
 }
 .item--hint.has-hover:hover {
   color: #000000;
   background-color: #a3dcf3;
 }
 .item--hint.has-hover.is-active:hover {
-<<<<<<< Updated upstream
-  color: #000000;
-=======
   color: #ffffff;
->>>>>>> Stashed changes
   background-color: #1a96c9;
 }
 .item--hint.is-disabled {
@@ -2720,23 +2698,19 @@ a.item:hover,
 }
 .item--hint.is-active {
   background-color: #1da7e0;
-  color: #000000;
+  color: #ffffff;
 }
 .item--hint.is-active i {
-  background-color: #000000;
+  background-color: #ffffff;
   color: #1da7e0;
 }
 .item--hint.is-active .item-action {
   background-color: #1da7e0;
-  color: #000000;
+  color: #ffffff;
 }
 .item--hint.is-active:hover .item-action,
 .item--hint.is-active .item-action:hover {
-<<<<<<< Updated upstream
-  background-color: #000000;
-=======
   background-color: #ffffff;
->>>>>>> Stashed changes
   color: #1da7e0;
 }
 .item--success {
@@ -2744,7 +2718,7 @@ a.item:hover,
   color: #34762d;
 }
 .item--success i {
-  color: #000000;
+  color: #ffffff;
   background-color: #4cad42;
 }
 .item--success .item-action {
@@ -2753,18 +2727,14 @@ a.item:hover,
 .item--success:hover .item-action,
 .item--success .item-action:hover {
   background-color: #4cad42;
-  color: #000000;
+  color: #ffffff;
 }
 .item--success.has-hover:hover {
   color: #000000;
   background-color: #afdeaa;
 }
 .item--success.has-hover.is-active:hover {
-<<<<<<< Updated upstream
-  color: #000000;
-=======
   color: #ffffff;
->>>>>>> Stashed changes
   background-color: #449b3b;
 }
 .item--success.is-disabled {
@@ -2782,23 +2752,19 @@ a.item:hover,
 }
 .item--success.is-active {
   background-color: #4cad42;
-  color: #000000;
+  color: #ffffff;
 }
 .item--success.is-active i {
-  background-color: #000000;
+  background-color: #ffffff;
   color: #4cad42;
 }
 .item--success.is-active .item-action {
   background-color: #4cad42;
-  color: #000000;
+  color: #ffffff;
 }
 .item--success.is-active:hover .item-action,
 .item--success.is-active .item-action:hover {
-<<<<<<< Updated upstream
-  background-color: #000000;
-=======
   background-color: #ffffff;
->>>>>>> Stashed changes
   color: #4cad42;
 }
 /* BUTTONS */
@@ -2813,6 +2779,7 @@ a.item:hover,
 .box-head {
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   background-color: #f2f2f2;
   border: 1px solid #ccc;
   margin: -1px -1px 0 -1px;
@@ -2831,6 +2798,7 @@ a.item:hover,
   z-index: 201;
   margin-top: -1px;
   border-top: 1px solid #ccc;
+  flex-shrink: 0;
 }
 .box--content {
   padding: 10px;
@@ -2869,7 +2837,7 @@ i {
   line-height: 2;
   background-color: #333;
   color: #ffffff;
-  border-radius: .4em;
+  border-radius: 0.4em;
   text-align: center;
   font-style: unset;
   font-weight: 700;
@@ -2884,7 +2852,7 @@ i img,
 i .icon {
   width: 75%;
   height: 75%;
-  border-radius: 8px;
+  border-radius: 0;
 }
 i.is-loading .icon {
   width: 1em;
@@ -2894,19 +2862,6 @@ i.is-loading rect {
   animation: spin-square-ani 1s infinite ease-in-out both;
 }
 i.is-loading rect:nth-of-type(1n) {
-<<<<<<< Updated upstream
-  animation-delay: .2s;
-}
-i.is-loading rect:nth-of-type(3n),
-i.is-loading rect:nth-of-type(7n) {
-  animation-delay: .6s;
-}
-i.is-loading rect:nth-of-type(2n) {
-  animation-delay: .4s;
-}
-i.is-loading rect:nth-of-type(4n) {
-  animation-delay: .8s;
-=======
   animation-delay: 0.2s;
 }
 i.is-loading rect:nth-of-type(3n),
@@ -2918,10 +2873,9 @@ i.is-loading rect:nth-of-type(2n) {
 }
 i.is-loading rect:nth-of-type(4n) {
   animation-delay: 0.8s;
->>>>>>> Stashed changes
 }
 i.i--small {
-  font-size: .7em;
+  font-size: 0.7em;
 }
 i.i--small svg,
 i.i--small img {
@@ -2957,7 +2911,7 @@ i.i--small img {
 .list-separator {
   font-weight: 300;
   background-color: #dcdcdc;
-  font-size: .9em;
+  font-size: 0.9em;
   padding: 3px 3.75px;
   display: flex;
   flex: 0 0 auto;
@@ -2969,7 +2923,7 @@ i.i--small img {
   color: #767676;
 }
 .list--sub .item {
-  font-size: .7em;
+  font-size: 0.7em;
 }
 .list--sub .item.has-hover:hover {
   color: #000000;
@@ -3035,7 +2989,7 @@ i.i--small img {
 ================================================== */
 .iconnav {
   position: relative;
-  font-size: .8em;
+  font-size: 0.8em;
   line-height: 2.4em;
   margin-left: auto;
 }
@@ -3080,6 +3034,9 @@ i.i--small img {
   border-bottom: 2px solid #777777;
 }
 /* Modullist */
+.vi-modulelist > * + * {
+  border-top: 1px solid #ebebea;
+}
 /* ACTIONBAR */
 .vi-actionbar {
   background-color: #f0f0f0;
@@ -3110,16 +3067,6 @@ i.i--small img {
   height: 20px;
   float: left;
   margin-right: 6px;
-}
-.button.download {
-  align-self: center;
-  margin: 15px 15px 0 15px;
-}
-.vi-actionbar select {
-  height: 28px;
-  padding-top: 4px;
-  padding-bottom: 1px;
-  margin-right: 20px;
 }
 .vi-ab-spacer {
   margin-left: auto!important;
@@ -3250,7 +3197,6 @@ i.i--small img {
   flex: 1;
   flex-direction: column;
 }
-<<<<<<< Updated upstream
 
 .vi-relation {
   display: flex;
@@ -3263,28 +3209,13 @@ i.i--small img {
   flex: 1;
 }
 
-=======
-
-.vi-relation {
-  display: flex;
-  flex: 1;
-}
-
-.vi-file {
-  display: flex;
-  min-width: 0;
-  flex: 1;
-}
-
->>>>>>> Stashed changes
 .vi-textarea {
   flex: 1
 }
 */
 /* #vi_forms
 ================================================== */
-.selectioncontainer .entrydescription,
-form label {
+.selectioncontainer .entrydescription {
   width: 220px;
   float: left;
   text-align: right;
@@ -3297,55 +3228,6 @@ form label {
   line-height: 1.4em;
   font-size: 0.8em;
 }
-form label.text {
-  border-bottom: 0;
-  border-right-width: 1px;
-}
-form label.selectone {
-  border-right-width: 1px;
-}
-form label.is-required {
-  border-style: solid;
-  border-left-color: #d00f1c;
-  border-left-width: 2px;
-  background: #fff;
-}
-form label.is-invalid {
-  background-color: #1495de;
-  border-color: #073866;
-  color: #fff;
-}
-form label.is-invalid:before {
-  background-image: url(../icons/vi_actions_sprite_white.svg);
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  position: relative;
-  float: left;
-  margin-top: 1px;
-  margin-left: -4px;
-  margin-right: 5px;
-  background-position: -64px 0px;
-}
-form label.is-valid {
-  background-color: #469b41;
-  border-color: #288342;
-  color: #fff;
-}
-form label.is-valid:before {
-  background-image: url(../icons/vi_actions_sprite_white.svg);
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  position: relative;
-  float: left;
-  margin-top: 1px;
-  margin-left: -4px;
-  margin-right: 5px;
-  background-position: 0px -16px;
-}
 .file .fileentry img {
   float: left;
   margin-right: 0;
@@ -3354,57 +3236,11 @@ form label.is-valid:before {
   border-right-width: 0;
   box-shadow: none;
 }
-input,
-textarea,
-select,
-input[type="text"],
-input[type="email"],
-input[type="date"],
-input[type="url"],
-input[type="password"],
-.text .preview,
-[contenteditable] {
-  display: inline-block;
-  font-size: 0.9em;
-  width: 50%;
-  margin-right: 15px;
-  padding: 4px 1.3% 6px;
-  border: 1px solid #ccc;
-  border-bottom: 1px solid #d00f1c;
-  box-shadow: inset 0px 0px 3px #eee;
-  font-weight: 300;
-  border-radius: 0px;
-  background: #eaeaea;
-  background: linear-gradient(to bottom, #eaeaea 0%, #fafafa 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eaeaea', endColorstr='#fafafa', GradientType=0);
-}
 .sbw-compoundfilter select {
   min-width: auto;
 }
-/*.bone.text .languagebuttons {
-    float:left;
-}
-
-.languagebuttons button.is-active, .languagebuttons button.is-filled.is-active {
-    background: linear-gradient(to bottom, #666 0%, #aaa 100%);
-    box-shadow:inset 1px 1px 2px rgba(0,0,0,0.2);
-    border-color:#666;
-    color:#fff !important;
-}
-
-.languagebuttons button.is-filled {
-    color: #fff;
-    background: transparent linear-gradient(to bottom, #298342 0%, #479C42 100%) repeat scroll 0% 0%;
-}*/
 /* #vi_input_bones
 ================================================== */
-input[type="date"] {
-  width: 162px;
-}
-input[type="radio"],
-input[type="checkbox"] {
-  margin-right: 15px;
-}
 .bone.selectmulti div label,
 .bone.accessselectmulti div label {
   border: 1px solid #ccc;
@@ -3440,11 +3276,7 @@ input[type="checkbox"] {
   border: 1px solid #f44336;
   background-color: #ccc;
   display: inline-block;
-<<<<<<< Updated upstream
-  transition: all .3s ease;
-=======
   transition: all 0.3s ease;
->>>>>>> Stashed changes
   cursor: pointer;
 }
 .bone.selectmulti.access .access-state.view {
@@ -3490,13 +3322,6 @@ input[type="checkbox"] {
   background-color: #ccc;
   pointer: not-allowed;
 }
-input[type="password"]:nth-of-type(even) {
-  margin-top: 12px;
-}
-.password div label {
-  margin-top: 40px;
-  margin-left: -240px;
-}
 textarea,
 .text .preview {
   width: 97.2%;
@@ -3506,28 +3331,20 @@ textarea,
 .text .preview {
   overflow: hidden;
   overflow-y: scroll;
-  border-bottom: 1px solid #777;
-  background: #f1f1f1;
   text-overflow: ellipsis;
-  max-width: 1300px;
-}
-select {
-  width: auto;
-  min-width: 325px;
-  height: 28px;
-  /* margin-left: 15px; */
-  border-radius: 0;
+  display: flex;
+  flex-basis: 100%;
   border: 1px solid #ccc;
-  font-size: .75em;
-  font-weight: 100;
-  color: #444;
+  margin-top: 5px;
+  margin-right: 10px;
+  padding: 10px;
 }
 .selectioncontainer,
 .tagcontainer {
   display: inline-block;
 }
 .selectioncontainer {
-  width: calc(51%);
+  width: calc(53% - 2px);
 }
 .tagcontainer {
   min-width: 50%;
@@ -3563,9 +3380,6 @@ input[type=password]:focus,
 textarea:focus {
   outline: 0;
   border-color: #d00f1c;
-}
-span.tag {
-  display: block;
 }
 .tag input[type=text] {
   margin-right: 0;
@@ -3614,18 +3428,6 @@ form .relational:focus button:after {
     width: 100%;
   }
 }
-/* #States
-================================================== */
-input:disabled,
-input[type="submit"]:disabled,
-button:disabled,
-input[type="text"]:disabled,
-select:disabled,
-textarea:disabled {
-  color: #222;
-  background: #e0e0e0;
-  border: 1px solid #ccc;
-}
 /* TABLES */
 .vi-table {
   table-layout: fixed;
@@ -3651,7 +3453,7 @@ textarea:disabled {
 .vi-table .vi-table-head-cell,
 .vi-table .vi-table-body-cell,
 .vi-table .vi-table-foot-cell {
-  padding: .5em;
+  padding: 0.5em;
   vertical-align: middle;
   text-align: right;
 }
@@ -3706,129 +3508,25 @@ textarea:disabled {
 .vi-table .vi-table-body-cell[scope="row"],
 .vi-table .vi-table-foot-cell[scope="row"] {
   background-color: #4cad42;
-  color: #000000;
+  color: #ffffff;
 }
 .vi-table .vi-table-body-cell[data-title]:before,
 .vi-table .vi-table-foot-cell[data-title]:before {
   content: attr(data-title);
   float: left;
-  font-size: .8em;
+  font-size: 0.8em;
   color: rgba(34, 34, 34, 0.75);
 }
 @media (min-width: 37.5em) {
   .vi-table .vi-table-head-cell,
   .vi-table .vi-table-body-cell,
   .vi-table .vi-table-foot-cell {
-<<<<<<< Updated upstream
-    padding: .75em .5em;
-=======
     padding: 0.75em 0.5em;
->>>>>>> Stashed changes
   }
   .vi-table .vi-table-body-cell,
   .vi-table .vi-table-foot-cell {
     border-bottom: 1px solid #d8d8d8;
   }
-<<<<<<< Updated upstream
-}
-@media (min-width: 56.25em) {
-  .vi-table .vi-table-head {
-    position: relative;
-    clip: auto;
-    height: auto;
-    width: auto;
-    overflow: auto;
-  }
-  .vi-table .vi-table-body,
-  .vi-table .vi-table-foot {
-    display: table-row-group;
-  }
-  .vi-table .vi-table-head-row,
-  .vi-table .vi-table-body-row,
-  .vi-table .vi-table-foot-row {
-    display: table-row;
-  }
-  .vi-table .vi-table-body-row,
-  .vi-table .vi-table-foot-row {
-    border-width: 1px;
-  }
-  .vi-table .vi-table-body-row:nth-of-type(even),
-  .vi-table .vi-table-foot-row:nth-of-type(even) {
-    background-color: #f9f9f9;
-  }
-  .vi-table .vi-table-body-row:nth-of-type(odd),
-  .vi-table .vi-table-foot-row:nth-of-type(odd) {
-    background-color: #f4f4f4;
-  }
-  .vi-table .vi-table-body-row:nth-of-type(even):hover,
-  .vi-table .vi-table-foot-row:nth-of-type(even):hover {
-    background-color: #ffffff;
-  }
-  .vi-table .vi-table-body-row:nth-of-type(odd):hover,
-  .vi-table .vi-table-foot-row:nth-of-type(odd):hover {
-    background-color: #ffffff;
-  }
-  .vi-table .vi-table-body-row:nth-of-type(even).is-active,
-  .vi-table .vi-table-foot-row:nth-of-type(even).is-active {
-    background-color: #c60e1b;
-  }
-  .vi-table .vi-table-body-row:nth-of-type(odd).is-active,
-  .vi-table .vi-table-foot-row:nth-of-type(odd).is-active {
-    background-color: #bd0e19;
-  }
-  .vi-table .vi-table-body-row:nth-of-type(even).is-active:hover,
-  .vi-table .vi-table-foot-row:nth-of-type(even).is-active:hover {
-    background-color: #ed1120;
-  }
-  .vi-table .vi-table-body-row:nth-of-type(odd).is-active:hover,
-  .vi-table .vi-table-foot-row:nth-of-type(odd).is-active:hover {
-    background-color: #ed1120;
-  }
-  .vi-table .vi-table-head-cell,
-  .vi-table .vi-table-body-cell,
-  .vi-table .vi-table-foot-cell {
-    display: table-cell;
-    padding: .5em;
-    color: #000000;
-  }
-  .vi-table .vi-table-body-cell,
-  .vi-table .vi-table-foot-cell {
-    text-align: center;
-  }
-  .vi-table .vi-table-body-cell[data-title]:before,
-  .vi-table .vi-table-foot-cell[data-title]:before {
-    content: none;
-  }
-  .vi-table .vi-table-body-cell[scope="row"],
-  .vi-table .vi-table-foot-cell[scope="row"] {
-    background-color: transparent;
-    color: #000000;
-    text-align: center;
-  }
-}
-@media (min-width: 75em) {
-  .vi-table .vi-table-head-cell,
-  .vi-table .vi-table-body-cell,
-  .vi-table .vi-table-foot-cell {
-    padding: .75em .5em;
-  }
-}
-@media (min-width: 112.5em) {
-  .vi-table {
-    font-size: .8rem;
-  }
-  .vi-table .vi-table-head-cell,
-  .vi-table .vi-table-body-cell,
-  .vi-table .vi-table-foot-cell {
-    padding: .75em;
-  }
-}
-.vi-datatable {
-  overflow: scroll;
-  width: 100%;
-  height: 100%;
-}
-=======
 }
 @media (min-width: 56.25em) {
   .vi-table .vi-table-head {
@@ -3927,12 +3625,10 @@ textarea:disabled {
   width: 100%;
   height: 100%;
 }
->>>>>>> Stashed changes
 table {
   margin: 0px;
   padding: 0px;
   min-width: 100%;
-  height: 100%;
   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
   border: 1px solid #cccccc;
   -moz-border-radius-bottomleft: 3px;
@@ -4034,7 +3730,7 @@ thead tr th {
   font-weight: 300;
   color: #ffffff;
   padding: 5px 5px;
-  font-size: .9em;
+  font-size: 0.9em;
 }
 thead tr:hover th {
   background: -o-linear-gradient(bottom, #ef2331 5%, #d00f1c 100%);
@@ -4190,11 +3886,7 @@ td span.index {
   border-radius: 2px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   border: 1px solid #d2d2d2;
-<<<<<<< Updated upstream
-  transition: all .3s ease;
-=======
   transition: all 0.3s ease;
->>>>>>> Stashed changes
   overflow: hidden;
 }
 .sbw-compoundfilter h2,
@@ -4295,11 +3987,7 @@ td span.index {
   content: '❯';
   position: relative;
   display: inline-flex;
-<<<<<<< Updated upstream
-  transition: all .3s ease;
-=======
   transition: all 0.3s ease;
->>>>>>> Stashed changes
   margin-right: 10px;
 }
 .vi-accordion-segment.is-active .vi-accordion-title:before,
@@ -4314,13 +4002,6 @@ td span.index {
   background: #fff;
   overflow: hidden;
 }
-.vi-accordion-section > div {
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-  overflow: hidden;
-  width: 100%;
-  float: right;
-}
 .vi-accordion-segment.is-active .vi-accordion-section,
 .vi-accordion-segment:target .vi-accordion-section {
   display: block;
@@ -4334,18 +4015,6 @@ td span.index {
 /* PROGRESS */
 /*
 #FIXME: Implement new progress bars!
-<<<<<<< Updated upstream
-
-// Colors:
-@progressBackground: lighten(@complementColor,60%);
-@progressDefault: @complementColor;
-@progressPrimary: @successColor;
-@progressInfo: @hintColor;
-@progressWarning: @warnColor;
-@progressDanger: @failColor;
-
-.progress {
-=======
 
 // Colors:
 @progressBackground: lighten(@complementColor,60%);
@@ -4369,87 +4038,6 @@ td span.index {
     margin-bottom: 1em;
   }
 }
-
-.progress::-webkit-progress-bar {
-  background-color: @progressBackground;
-}
-
-.progress::-webkit-progress-value {
-  background-color: @progressDefault;
-  transition: 1s ease-in-out all;
-}
-
-.progress::-moz-progress-bar {
-  background-color: @progressDefault;
-}
-
-
-.progress-vPrimary::-webkit-progress-value {
-  background-color: @progressPrimary;
-}
-
-.progress-vPrimary::-moz-progress-bar {
-  background-color: @progressPrimary;
-}
-
-
-.progress-vInfo::-webkit-progress-value {
-  background-color: @progressInfo;
-}
-
-.progress-vInfo::-moz-progress-bar {
-  background-color: @progressInfo;
-}
-
-.progress-vWarning::-webkit-progress-value {
-  background-color: @progressWarning;
-}
-
-.progress-vWarning::-moz-progress-bar {
-  background-color: @progressWarning;
-}
-
-
-.progress-vDanger::-webkit-progress-value {
-  background-color: @progressDanger;
-}
-
-.progress-vDanger::-moz-progress-bar {
-  background-color: @progressDanger;
-}
-
-
-.progress-vSmall {
-  height: .6rem;
-}
-
-.progress-vMedium {
-  height: 1.4rem;
-}
-
-.progress-vLarge {
-  height: 1.8rem;
-}*/
-progress[value] {
-  /* Reset the default appearance */
-  -webkit-appearance: none;
-  -moz-appearance: none;
->>>>>>> Stashed changes
-  appearance: none;
-  /* Get rid of default border in Firefox. */
-  border: none;
-  border-radius: .2em;
-  display: block;
-  height: 1rem;
-  overflow: hidden;
-  padding: 0;
-  width: 100%;
-
-  &:not(:last-child) {
-    margin-bottom: 1em;
-  }
-}
-<<<<<<< Updated upstream
 
 .progress::-webkit-progress-bar {
   background-color: @progressBackground;
@@ -4542,23 +4130,6 @@ progress[value]::-webkit-progress-value {
   background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
   filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }
-=======
-progress[value]::-moz-progress-bar,
-progress[value]::-webkit-progress-bar {
-  background-color: #eee;
-}
-progress[value]::-webkit-progress-value {
-  position: relative;
-  background-color: #298342;
-  background: -moz-linear-gradient(top, #298342 0%, #479c42 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #298342), color-stop(100%, #479c42));
-  background: -webkit-linear-gradient(top, #298342 0%, #479c42 100%);
-  background: -o-linear-gradient(top, #298342 0%, #479c42 100%);
-  background: -ms-linear-gradient(top, #298342 0%, #479c42 100%);
-  background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
-}
->>>>>>> Stashed changes
 /**
  * POPUP and OVERLAY
  */
@@ -4572,11 +4143,7 @@ progress[value]::-webkit-progress-value {
   user-select: none;
   opacity: 0;
   background: rgba(255, 255, 255, 0);
-<<<<<<< Updated upstream
-  transition: all .3s ease;
-=======
   transition: all 0.3s ease;
->>>>>>> Stashed changes
   z-index: 99;
 }
 .popup-overlay.is-active,
@@ -4589,15 +4156,11 @@ progress[value]::-webkit-progress-value {
 .popup {
   opacity: 0;
   position: fixed;
-<<<<<<< Updated upstream
-  transition: all .3s ease;
-=======
   transition: all 0.3s ease;
->>>>>>> Stashed changes
   z-index: 99;
   pointer-events: none;
   width: 90%;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100vh -  40px );
   transform: translateX(-50%);
   left: 50%;
   overflow: hidden;
@@ -4664,7 +4227,7 @@ progress[value]::-webkit-progress-value {
   transform: translate(-50%, calc(-100% -  25px ));
 }
 .popup--n.is-active {
-  transform: translate(-50%, 60px);
+  transform: translate(-50%, 0);
 }
 .popup--ne {
   right: 20px;
@@ -4753,8 +4316,8 @@ progress[value]::-webkit-progress-value {
   margin-left: -25px;
   margin-top: -25px;
   padding: 7px 43px 8px 7px;
-  font-size: .8em;
-  line-height: .8em;
+  font-size: 0.8em;
+  line-height: 0.8em;
   background: #ddd;
   color: #777;
 }
@@ -5042,7 +4605,6 @@ progress[value]::-webkit-progress-value {
       border-bottom-color: fadeout(@backgroundColor,10%);
     }
   }
-<<<<<<< Updated upstream
 
   &.tip-n,
   &.tip-ne,
@@ -5056,21 +4618,6 @@ progress[value]::-webkit-progress-value {
     border-right-color: fadeout(@backgroundColor,10%);
   }
 
-=======
-
-  &.tip-n,
-  &.tip-ne,
-  &.tip-nw {
-    &:before {
-      border-top-color: fadeout(@backgroundColor,10%);
-    }
-  }
-
-  &.tip-e:before {
-    border-right-color: fadeout(@backgroundColor,10%);
-  }
-
->>>>>>> Stashed changes
   &.tip-w:before {
     border-left-color: fadeout(@backgroundColor,10%);
   }
@@ -5081,7 +4628,7 @@ progress[value]::-webkit-progress-value {
   border-radius: 15px;
   padding: 7px 1px 1px 2px;
   line-height: 0;
-  font-size: .7em;
+  font-size: 0.7em;
   border: 1px solid #00406d;
   background-color: #00406d;
   background: -moz-linear-gradient(top, #009de1, #00406d);
@@ -5391,11 +4938,7 @@ progress[value]::-webkit-progress-value {
 }
 .previewimg + .labelwrapper {
   float: left;
-<<<<<<< Updated upstream
-  width: calc(73%) !important;
-=======
   width: calc(100% - 27px) !important;
->>>>>>> Stashed changes
   display: flex;
 }
 .previewimg + .labelwrapper label {
@@ -5425,7 +4968,7 @@ progress[value]::-webkit-progress-value {
 }
 .supports-upload .previewimg + input {
   float: left;
-  width: calc(23%);
+  width: calc(50% - 27px);
 }
 .supports-upload .previewimg + .labelwrapper {
   margin-bottom: 5px;
@@ -5464,11 +5007,7 @@ progress[value]::-webkit-progress-value {
   /* height:100px; */
   /* margin-top: 15px; */
   /* margin-bottom: 15px; */
-<<<<<<< Updated upstream
-  font-size: .8em;
-=======
   font-size: 0.8em;
->>>>>>> Stashed changes
   line-height: 7em;
   font-weight: 800;
   color: #777;
@@ -5578,7 +5117,6 @@ progress[value]::-webkit-progress-value {
 }
 /* MESSENGER */
 .vi-messenger {
-  grid-area: messenger;
   box-shadow: 0px -3px 3px rgba(0, 0, 0, 0.2);
   width: 100%;
   border-top: 2px solid #d00f1c;
@@ -5588,10 +5126,10 @@ progress[value]::-webkit-progress-value {
   background-image: -webkit-gradient(linear, right bottom, right top, from(rgba(238, 238, 238, 0.9)), to(rgba(255, 255, 255, 0.2)));
   background-image: -moz-linear-gradient(center bottom, rgba(238, 238, 238, 0.9) 20%, rgba(255, 255, 255, 0.2) 95%);
   padding: 15px 0;
-  z-index: 10;
   height: 30px;
   transition: all 0.6s ease;
   overflow: hidden;
+  z-index: 700;
 }
 .vi-messenger:hover {
   height: 80px;
@@ -5604,7 +5142,7 @@ progress[value]::-webkit-progress-value {
   height: 34px;
   margin-top: -17px;
   background: transparent;
-  font-size: .8em;
+  font-size: 0.8em;
   text-decoration: none;
   text-shadow: none;
   border: 0;
@@ -5692,16 +5230,6 @@ progress[value]::-webkit-progress-value {
   margin: 0 auto;
   padding: 0 0 30px;
 }
-.statuslist li {
-  padding: 14px;
-  border-width: 1px;
-  border-style: solid;
-  transition: all 0.6s ease;
-  width: 472px;
-  margin: 0 auto 15px;
-  background: #f9f9f9;
-  color: #777;
-}
 .statuslist li.log-success {
   border-color: #22612b;
 }
@@ -5740,86 +5268,11 @@ progress[value]::-webkit-progress-value {
 }
 .statuslist li .date {
   display: block;
-  float: right;
-  font-size: .7em;
+  font-size: 0.7em;
   font-weight: 100;
-  color: #888;
-}
-.statuslist li:before {
-  content: '';
-  padding: 9px;
-  width: 32px;
-  height: 32px;
-  display: block;
-  margin-left: -15px;
-  margin-top: -15px;
-  margin-right: 15px;
-  border-width: 1px;
-  border-style: solid;
-  float: left;
-  transition: all 0.6s ease;
-  background-image: url(icons/vi_message_icons_sprite_white.svg);
-  background-repeat: no-repeat;
-  background-position: -7px center;
-}
-.statuslist li.log-success:before {
-  border-color: #22612b;
-  background-color: #469b41;
-  background-position: -7px center;
-}
-.statuslist li.log-error:before {
-  border-color: #6f6f6f;
-  background-color: #333;
-  background-position: -263px center;
-}
-.statuslist li.log-warning:before {
-  border-color: #890f01;
-  background-color: #e20613;
-  background-position: -199px center;
-}
-.statuslist li.log-info:before {
-  border-color: #00416e;
-  background-color: #009ee2;
-  background-position: -71px center;
-}
-.statuslist li.log-progress:before {
-  border-color: #00416e;
-  background-color: #009ee2;
-  background-position: -135px center;
-}
-.statuslist li.is-new {
-  position: fixed;
-  padding: 20px;
-  width: 500px;
-  margin-top: -110px;
-  bottom: 55px;
-  margin-left: -15px;
-  margin-right: -15px;
-  background: #fff;
-  color: #444;
-  box-shadow: 5px 5px 7px rgba(0, 0, 0, 0.5);
-}
-.statuslist li.is-new:before {
-  padding-top: 15px;
-  padding-bottom: 15px;
-  margin-left: -21px;
-  margin-top: -21px;
-  margin-bottom: -21px;
-}
-.vi-messenger.is-open .statuslist li.is-new {
-  position: relative;
-  padding: 20px;
-  width: 500px;
-  margin-top: 10px;
-  bottom: 10px;
-  margin-left: -15px;
-  margin-right: -15px;
-  background: #fff;
-  color: #444;
-  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
 }
 .vi-messenger .versiondiv {
-  font-size: .7em;
+  font-size: 0.7em;
   color: #777;
   float: right;
   padding: 2px 1%;
@@ -5853,15 +5306,16 @@ progress[value]::-webkit-progress-value {
 }
 .vi-login-input {
   width: 100%;
-  padding: 0 10px;
-  height: 40px;
-  line-height: 40px;
   border: 1px solid #ccc;
   background-color: #f7f7f7;
   margin-bottom: 10px;
-  -webkit-border-radius: 8px;
-  border-radius: 8px;
-  -moz-border-radius: 8px;
+  border-radius: 4px;
+}
+.vi-login-handler:active,
+.vi-login-handler.is-active {
+  color: #ffffff;
+  background-color: #ef2331;
+  border-color: #e8111f;
 }
 .vi-login-btn.google,
 a.vi-login-btn.google {
@@ -5877,11 +5331,7 @@ a.vi-login-btn:hover {
 @-webkit-keyframes fadein {
   0% {
     width: 25%;
-<<<<<<< Updated upstream
-    opacity: .5;
-=======
     opacity: 0.5;
->>>>>>> Stashed changes
   }
   100% {
     width: 90%;
@@ -5891,116 +5341,39 @@ a.vi-login-btn:hover {
 @-moz-keyframes fadein {
   0% {
     width: 25%;
-<<<<<<< Updated upstream
-    opacity: .5;
-=======
     opacity: 0.5;
->>>>>>> Stashed changes
   }
   100% {
     width: 90%;
     opacity: 1;
   }
 }
-/*
-.vi-login {
-  margin: 0 auto;
-  z-index: 5;
-  background: #f3f3f3;
-  border: 1px solid #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-  -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-  width: 600px;
-  height: 320px;
-  position: absolute;
-  left: 50%;
-  top: 40%;
-  margin-left: -300px;
-  margin-top: -175px;
-}
-
-.vi-login-header {
-  padding: 30px 30px;
-  &:after {
-    content: '';
-    display: block;
-    clear: both; !* Clearfix for the header. *!
-    height: 0;
-  }
-}
-
-.vi-login-headline {
-  font-family: 'Source Sans Pro', sans-serif;
-  font-weight: 300;
-  font-size: 36px;
-  line-height: 34px;
-  color: #414848;
-  text-shadow: 1px 1px 0 rgba(256,256,256,1.0);
-  margin-bottom: 10px;
-}
-
-.vi-login-logo {
-  float: right;
-  width: 100px;
-  position: absolute;
-  top: -20px;
-  right: 0px;
-  margin-right: 30px;
-  box-shadow: 0px 0px 3px #333;
-}
-
-.vi-login-method {
-  margin-left: 30px;
-  margin-bottom: -1px;
-}
-
-.vi-login-handler {
-  border: 1px solid #ddd;
-  border-bottom: 1px solid #ccc;
-  display: inline-block;
-  padding: 1px 10px 0;
-  margin-right: 5px;
-  color: #bbb;
-  background: #eee;
-  cursor: pointer;
-}
-
-.vi-login-handler.is-active {
-  border: 1px solid #ccc;
-  border-bottom: 1px solid #fff;
-  background: #fff;
-  color: #333;
-}
-
-.vi-login-mask {
-  background: #fff;
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin: 0 20px;
-}
-
-input.vi-login-input {
+/* General Bones Styling */
+.vi-bone {
   width: 100%;
+  display: flex;
 }
-
-button.vi-login-btn {
-  width: 100%;
-  padding: 20px 0px;
-  font-family: 'Source Sans Pro', sans-serif;
-  font-weight: 300;
-  font-size: 18px;
-  color: #fff;
-  text-shadow: 0px 1px 0 rgba(0,0,0,0.25);
-  background: #cc0000;
-  border: 1px solid #555;
-  cursor: pointer;
-  box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
-  -moz-box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
-  -webkit-box-shadow: inset 0 0 2px rgba(256,256,256,0.75);
-  height: auto;
-  margin-top:30px;
-}*/
+* + .vi-bone {
+  margin-top: 20px;
+}
+.vi-bone-container {
+  display: flex;
+  flex-basis: 100%;
+  flex-grow: 0;
+  align-items: flex-start;
+  margin-left: -1px;
+}
+.vi-bone-container > * + * {
+  margin-left: 10px;
+}
+.vi-bone-container-langcontent {
+  display: flex;
+  flex-basis: 100%;
+}
+.vi-bone.is-hidden {
+  display: none;
+}
+/* Bone imports */
 /* RELATIONAL */
 .extendedrelational .selectioncontainer {
   width: 52.7%;
@@ -6043,7 +5416,7 @@ button.vi-login-btn {
 .extendedrelational form fieldset legend a {
   padding: 4px 7px;
   color: #333;
-  font-size: .8em;
+  font-size: 0.8em;
   border: 1px solid #ddd;
   background: #f9f9f9;
   border-top: 0px;
@@ -6070,12 +5443,12 @@ button.vi-login-btn {
 }
 .selectioncontainer-entry.is-dragging {
   border: 3px solid #ccc;
-  opacity: .7;
+  opacity: 0.7;
   height: 40px;
 }
 .selectioncontainer-entry.is-dragging-over {
   border: 3px solid #cc0000;
-  opacity: .7;
+  opacity: 0.7;
 }
 .selectioncontainer-entry .relationwrapper {
   overflow: hidden;
@@ -6089,6 +5462,41 @@ button.vi-login-btn {
 }
 .selectioncontainer-entry .relationwrapper .bone {
   overflow: hidden;
+}
+/* STRING BONE */
+/* TEXT */
+.vi-bone-txtpreview {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  text-overflow: ellipsis;
+  display: flex;
+  flex-basis: 100%;
+}
+/* SELECT */
+/* NUMERIC */
+.vi-bone--numeric .input {
+  max-width: 190px;
+}
+/* LOADING */
+.is-loading:not(i):not(.icon),
+[aria-busy=true]:not(i):not(.icon) {
+  animation: loader-opacity 1.5s infinite ease-in-out both;
+  cursor: progress!important;
+}
+.is-loading:not(i):not(.icon) *,
+[aria-busy=true]:not(i):not(.icon) * {
+  user-select: none!important;
+  pointer-events: none!important;
+}
+@keyframes loader-opacity {
+  0%,
+  80%,
+  100% {
+    opacity: 0.4;
+  }
+  40% {
+    opacity: 1;
+  }
 }
 .vi-screen.is-loading:after {
   background-image: url(../icons/status/is-loading32.gif);
@@ -6112,7 +5520,6 @@ button.vi-login-btn {
 @media only screen and (max-width: 1440px) {
   .modullist h3 {
     font-size: 0.8em;
-<<<<<<< Updated upstream
   }
   .has-multiple-children .actionbar,
   .has-multiple-children .breadcrumb,
@@ -6152,47 +5559,6 @@ button.vi-login-btn {
   .has-multiple-children form fieldset textarea:disabled {
     display: none;
   }
-=======
-  }
-  .has-multiple-children .actionbar,
-  .has-multiple-children .breadcrumb,
-  .has-multiple-children .imageeditor,
-  .has-multiple-children .linkeditor {
-    width: 20%;
-  }
-  .has-multiple-children form label,
-  .has-multiple-children form label.text {
-    border: 1px dotted #ddd;
-    text-align: left;
-    width: 93%;
-    padding: 4px 3% 6px;
-  }
-  .selectioncontainer label {
-    border: 1px solid #ccc;
-    width: 193px;
-  }
-  .has-multiple-children form fieldset legend {
-    min-width: 0;
-  }
-  .has-multiple-children form fieldset legend a {
-    font-size: 0.8em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .has-multiple-children form fieldset section > div {
-    padding-bottom: 0;
-  }
-  .has-multiple-children form fieldset input:disabled,
-  .has-multiple-children form fieldset .preview.is-disabled,
-  .has-multiple-children form fieldset input[type="submit"]:disabled,
-  .has-multiple-children form fieldset button:disabled,
-  .has-multiple-children form fieldset input[type="text"]:disabled,
-  .has-multiple-children form fieldset select:disabled,
-  .has-multiple-children form fieldset textarea:disabled {
-    display: none;
-  }
->>>>>>> Stashed changes
   .has-multiple-children form fieldset .file .fileentry label {
     width: 154px;
     overflow: hidden;

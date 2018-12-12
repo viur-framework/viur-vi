@@ -18,10 +18,10 @@ class CompoundFilter( html5.Div ):
 		self.embed = embed
 
 		if embed:
-			self.addClass("sbw-compoundfilter-vEmbed")
+			self.addClass("sbw-compoundfilter--embed")
 			self.addClass("is-expanded")
 		else:
-			self.addClass("sbw-compoundfilter-vStandalone")
+			self.addClass("sbw-compoundfilter--standalone")
 			self.addClass("is-collapsed")
 
 		if "name" in view.keys():

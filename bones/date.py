@@ -116,7 +116,7 @@ class DateEditBone( html5.Div ):
 		self.hastime = time
 
 		if date:
-			self.dateinput = html5.Input()
+			self.dateinput = html5.ignite.Input()
 
 			#IE11
 			try:
@@ -131,7 +131,7 @@ class DateEditBone( html5.Div ):
 				self.dateinput["readonly"] = True
 
 		if time:
-			self.timeinput=html5.Input()
+			self.timeinput=html5.ignite.Input()
 
 			#IE11
 			try:
@@ -139,8 +139,6 @@ class DateEditBone( html5.Div ):
 			except:
 				pass
 
-			self.timeinput["style"]["float"] = "left"   #fixme: Do this with css?
-			self.timeinput["style"]["width"] = "70px"   #fixme: Do this with css?
 			self.appendChild(self.timeinput)
 
 			if self.readOnly:

@@ -87,9 +87,9 @@ class Tag(html5.Span):
 		self.parentBone = parentBone
 
 		if multiLine:
-			self.input = html5.Textarea()
+			self.input = html5.ignite.Textarea()
 		else:
-			self.input = html5.Input()
+			self.input = html5.ignite.Input()
 			self.input["type"] = "text"
 
 		self.input["value"] = tag
@@ -161,9 +161,10 @@ class StringEditBone(html5.Div):
 			self.addClass("is-translated")
 			self.addClass("is-multiple")
 			self.languagesContainer = html5.Div()
+			self.languagesContainer.addClass("vi-bone-container-langcontent")
 			self.appendChild(self.languagesContainer)
 			self.buttonContainer = html5.Div()
-			self.buttonContainer["class"] = "languagebuttons input-group"
+			self.buttonContainer["class"] = "vi-bone-container-langbtns input-group"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
 			self.langBtns = {}
@@ -176,6 +177,7 @@ class StringEditBone(html5.Div):
 				tagContainer.hide()
 
 				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
+				langBtn.addClass("btn--lang")
 				langBtn.lang = lang
 				self.buttonContainer.appendChild(langBtn)
 
@@ -194,22 +196,24 @@ class StringEditBone(html5.Div):
 		elif self.languages and not self.multiple:
 			self.addClass("is-translated")
 			self.languagesContainer = html5.Div()
+			self.languagesContainer.addClass("vi-bone-container-langcontent")
 			self.appendChild(self.languagesContainer)
 			self.buttonContainer = html5.Div()
-			self.buttonContainer["class"] = "languagebuttons input-group"
+			self.buttonContainer["class"] = "vi-bone-container-langbtns input-group"
 			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
 			self.langBtns = {}
 
 			for lang in self.languages:
 				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
+				langBtn.addClass("btn--lang")
 				langBtn.lang = lang
 				self.buttonContainer.appendChild(langBtn)
 
 				if multiLine:
-					inputField = html5.Textarea()
+					inputField = html5.ignite.Textarea()
 				else:
-					inputField = html5.Input()
+					inputField = html5.ignite.Input()
 					inputField["type"] = "text"
 
 				inputField.hide()
@@ -240,9 +244,10 @@ class StringEditBone(html5.Div):
 		else:  # not languages and not multiple:
 
 			if multiLine:
-				self.input = html5.Textarea()
+				self.input = html5.ignite.Textarea()
+				self.addClass("textarea")
 			else:
-				self.input = html5.Input()
+				self.input = html5.ignite.Input()
 				self.input["type"] = "text"
 
 			self.appendChild(self.input)
@@ -456,15 +461,15 @@ class ExtendedStringSearch(html5.Div):
 		self.appendChild(html5.TextNode(extension["name"]))
 		self.sinkEvent("onKeyDown")
 		if self.opMode in ["equals", "from", "to", "prefix"]:
-			self.input = html5.Input()
+			self.input = html5.ignite.Input()
 			self.input["type"] = "text"
 			self.appendChild(self.input)
 		elif self.opMode == "range":
-			self.input1 = html5.Input()
+			self.input1 = html5.ignite.Input()
 			self.input1["type"] = "text"
 			self.appendChild(self.input1)
 			self.appendChild(html5.TextNode("to"))
-			self.input2 = html5.Input()
+			self.input2 = html5.ignite.Input()
 			self.input2["type"] = "text"
 			self.appendChild(self.input2)
 

@@ -46,7 +46,7 @@ class BaseViewBoneDelegate( object ):
 		return html5.Label(conf[ "empty_value" ])
 
 
-class BaseEditBone(html5.Input):
+class BaseEditBone(html5.ignite.Input):
 	"""
 		Base edit widget for everything not handled separately.
 	"""
@@ -55,7 +55,6 @@ class BaseEditBone(html5.Input):
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.setParams()
-		self.addClass("input")
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):

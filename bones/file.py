@@ -157,7 +157,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 	def __init__(self, *args, **kwargs):
 		super(FileMultiSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
-		self.addClass("supports-upload")
+		self.addClass("vi-bone-container supports-upload")
 
 	def onDragOver(self, event):
 		super(FileMultiSelectionBone,self).onDragOver(event)
@@ -217,7 +217,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 	def __init__(self, *args, **kwargs):
 		super(FileSingleSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
-		self.addClass("supports-upload")
+		self.addClass("vi-bone-container supports-upload")
 
 		self.previewImg = FilePreviewImage()
 		self.prependChild(self.previewImg)

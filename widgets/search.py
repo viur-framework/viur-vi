@@ -10,7 +10,7 @@ class Search( html5.Div ):
 		lblSearch = html5.H2()
 		lblSearch.appendChild( html5.TextNode(translate("Fulltext search")))
 		self.appendChild( lblSearch )
-		self.searchInput = html5.Input()
+		self.searchInput = html5.ignite.Input()
 		self.searchInput["type"] = "text"
 		self.appendChild(self.searchInput)
 		self.btn = html5.ext.Button(translate("Search"), callback=self.doSearch)

@@ -2,7 +2,6 @@
 /* MESSENGER */
 
 .vi-messenger {
-  grid-area: messenger;
   box-shadow: 0px -3px 3px rgba(0, 0, 0, 0.2);
   width: 100%;
   border-top:2px solid @mainColor;
@@ -12,10 +11,10 @@
   background-image: -webkit-gradient(linear, right bottom, right top, from(rgba(238, 238, 238, 0.9)), to(rgba(255, 255, 255, 0.2)));
   background-image: -moz-linear-gradient(center bottom, rgba(238, 238, 238, 0.9) 20%, rgba(255, 255, 255, 0.2) 95%);
   padding: 15px 0;
-  z-index: 10;
   height: 30px;
   transition: all 0.6s ease;
   overflow: hidden;
+  .zIndex('alert');
 }
 .vi-messenger:hover {
   height: 80px;
@@ -116,16 +115,7 @@
   margin: 0 auto;
   padding: 0 0 30px;
 }
-.statuslist li {
-  padding: 14px;
-  border-width: 1px;
-  border-style: solid;
-  transition: all 0.6s ease;
-  width: 472px;
-  margin: 0 auto 15px;
-  background: #f9f9f9;
-  color: #777;
-}
+
 .statuslist li.log-success {
   border-color: #22612b;
 }
@@ -166,83 +156,8 @@ display: block;
 }
 .statuslist li .date {
   display: block;
-  float: right;
   font-size: .7em;
   font-weight: 100;
-  color: #888;
-}
-.statuslist li:before {
-  content: '';
-  padding: 9px;
-  width: 32px;
-  height: 32px;
-  display: block;
-  margin-left: -15px;
-  margin-top: -15px;
-  margin-right: 15px;
-  border-width: 1px;
-  border-style: solid;
-  float: left;
-  transition: all 0.6s ease;
-  background-image: url(icons/vi_message_icons_sprite_white.svg);
-  background-repeat: no-repeat;
-  background-position: -7px center;
-}
-.statuslist li.log-success:before {
-  border-color: #22612b;
-  background-color: #469b41;
-  background-position: -7px center;
-}
-.statuslist li.log-error:before {
-  border-color: #6f6f6f;
-  background-color: #333;
-  background-position: -263px center;
-}
-.statuslist li.log-warning:before {
-  border-color: #890f01;
-  background-color: #e20613;
-  background-position: -199px center;
-}
-.statuslist li.log-info:before {
-  border-color: #00416e;
-  background-color: #009ee2;
-  background-position: -71px center;
-}
-.statuslist li.log-progress:before {
-  border-color: #00416e;
-  background-color: #009ee2;
-  background-position: -135px center;
-}
-.statuslist li.is-new {
-  position: fixed;
-  padding: 20px;
-  width: 500px;
-  margin-top: -110px;
-  bottom: 55px;
-  margin-left: -15px;
-  margin-right: -15px;
-  background: #fff;
-  color: #444;
-  box-shadow: 5px 5px 7px rgba(0, 0, 0, 0.5);
-}
-.statuslist li.is-new:before {
-  padding-top: 15px;
-  padding-bottom: 15px;
-  margin-left: -21px;
-  margin-top: -21px;
-  margin-bottom: -21px;
-}
-.vi-messenger.is-open .statuslist li.is-new {
-  position: relative;
-  padding: 20px;
-  width: 500px;
-  margin-top: 10px;
-  bottom: 10px;
-  margin-left: -15px;
-  margin-right: -15px;
-  background: #fff;
-  color: #444;
-  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
 }
 
 .vi-messenger .versiondiv {
