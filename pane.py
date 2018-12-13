@@ -17,7 +17,7 @@ class Pane(html5.Div):
 	def __init__(self, descr=None, iconURL=None, iconClasses=None, closeable=False, collapseable=True, focusable=True):
 		super(Pane, self).__init__()
 
-		self.addClass("vi-pane")
+		self.addClass("vi-pane","is-active")
 
 		self.parentPane = None
 		self.sinkEvent("onClick")

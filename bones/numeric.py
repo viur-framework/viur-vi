@@ -46,12 +46,13 @@ class NumericViewBoneDelegate(object):
 
 		return html5.Label(s)
 
-class NumericEditBone(html5.Span):
+class NumericEditBone(html5.Div):
 	def __init__(self, moduleName, boneName, readOnly, _min=False, _max=False, precision=False, currency=None,
 	                *args, **kwargs ):
 		super( NumericEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
+		self.addClass("vi-bone-container")
 
 		self.input = html5.ignite.Input()
 		self.appendChild(self.input)

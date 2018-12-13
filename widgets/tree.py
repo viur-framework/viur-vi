@@ -293,7 +293,7 @@ class TreeWidget( html5.Div ):
 		self.actionBar = ActionBar( module, "tree" )
 		self.appendChild( self.actionBar )
 		self.pathList = html5.Div()
-		self.pathList.addClass("breadcrumb")
+		self.pathList.addClass("vi-tree-breadcrumb")
 		self.appendChild( self.pathList )
 		self.entryFrame = SelectableDiv( self.nodeWidget, self.leafWidget )
 		self.appendChild( self.entryFrame )

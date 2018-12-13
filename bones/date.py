@@ -114,6 +114,7 @@ class DateEditBone( html5.Div ):
 		self.readOnly = readOnly
 		self.hasdate = date
 		self.hastime = time
+		self.addClass("vi-bone-container")
 
 		if date:
 			self.dateinput = html5.ignite.Input()

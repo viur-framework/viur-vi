@@ -217,7 +217,7 @@ class RelationalSingleSelectionBone(html5.Div):
 			# is only useful when viewing the destination module is still allowed.
 
 			self.remBtn = html5.ext.Button(translate("Remove"), self.onRemove )
-			self.remBtn.addClass("btn--cancel")
+			self.remBtn.addClass("btn--remove", "btn--danger")
 			self.boneControls.appendChild( self.remBtn )
 		else:
 			self.boneControls.remBtn = None
@@ -518,7 +518,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 		if not parent.readOnly:
 			remBtn = html5.ext.Button(translate("Remove"), self.onRemove)
-			remBtn.addClass("btn--cancel btn--danger")
+			remBtn.addClass("btn--remove", "btn--danger")
 			wrapperDiv.appendChild(remBtn)
 
 		self.appendChild(wrapperDiv)

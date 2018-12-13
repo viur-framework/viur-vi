@@ -47,6 +47,9 @@ class FilePreviewImage(html5.Div):
 		self.downloadA.hide()
 		self.appendChild(self.downloadA)
 
+		self.previewImg = html5.Img()
+		self.appendChild(self.previewImg)
+
 		self.isImage = False
 		self.downloadOnly = False
 		self.currentFile = None
@@ -75,13 +78,10 @@ class FilePreviewImage(html5.Div):
 							self.downloadOnly = False
 							break
 
-		self.previewImg = html5.Img()
-		self.appendChild(self.previewImg)
-
 		if preview:
 			self.previewImg["src"] = preview
+			self.removeClass("no-preview")
 		else:
-			self.previewImg["src"] = None
 			self.addClass("no-preview")
 
 
