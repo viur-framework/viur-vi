@@ -21,9 +21,11 @@
       flex-basis: 100%;
     }
     &-langbtns { }
-  }
-  &.is-hidden {
-    display: none;
+    &.supports-upload {
+      border: 2px dashed #ccc;
+      padding: @innerSpace;
+      margin: @defaultMargin -2px;
+    }
   }
 }
 

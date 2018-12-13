@@ -6,148 +6,63 @@
 // Should you need specific files, you can easily customize the imports.
 
 // IGNITE
-  @import "ignite/ignite"; // Resets, basics, tools and generic elements.
+@import "ignite/ignite"; // Resets, basics, tools and generic elements.
 
 // The framework:
-  @import "framework/_framework"; // page wrappers.
+@import "framework/_framework"; // page wrappers.
 
 // Initialize and configurate fundamental elements.
-  @import "configuration/_appconf"; // variables and constants.
+@import "configuration/_appconf"; // variables and constants.
 
-// Menus
-  @import "objects/topbar";
-  @import "objects/modulelist";
-  @import "objects/actionbar";
+// Load generic elements.
+@import "elements/_elements";
+
+@import "widgets/topbar";
+@import "widgets/actionbar";
+@import "widgets/table";
 
 // Objects
-  @import "objects/splash";
-  @import "objects/viurform";
-  @import "objects/viurtable";
-  @import "objects/sidebarwidgets";
-  @import "objects/accordion";
+@import "objects/modulelist";
+@import "objects/splash";
+@import "objects/form";
+@import "widgets/sidebar";
+@import "widgets/accordion";
 
-  @import "objects/progress";
-  @import "objects/alert";
-  @import "objects/tooltip";
+@import "objects/progress";
+@import "objects/alert";
+@import "objects/tooltip";
 
-  @import "objects/textedit";
+@import "objects/textedit";
 
-  @import "handler/tree";
-  @import "handler/hierarchy";
-  @import "objects/messenger";
+@import "widgets/tree";
+@import "widgets/hierarchy";
 
-  @import "objects/login";
+@import "objects/messenger";
+@import "objects/login";
 
-  // Bones
-  @import "bones/_bones";
+// Bones
+@import "bones/_bones";
 
-  // Status
-  @import "status/loading";
+// Status
+@import "status/_status";
 
-  @import (optional) "../../../vi_customizing/custom";
+@import (optional) "../../../vi_customizing/custom";
 
-  // Old stuff:
-  .vi-screen.is-loading:after {
-    background-image: url(../icons/status/is-loading32.gif);
-    background-position: center 35%;
-    background-repeat: no-repeat;
-    background-color:rgba(255,255,255,0.6);
-    position: absolute;
-    z-index:1000;
-    content:' ';
-    width:100%;
-    height:100%;
-    display:block;
-    left:0;
-    right:0;
-    top:0;
-    bottom:0;
-  }
-
-  /* #Media Queries
-  ================================================== */
-
-  /* Smaller than 1441px (devices and browsers) */
-  @media only screen and (max-width: 1440px) {
-    .modullist h3 {
-      font-size:0.8em;
-    }
-    .has-multiple-children .actionbar,
-    .has-multiple-children .breadcrumb,
-    .has-multiple-children .imageeditor,
-    .has-multiple-children .linkeditor {
-      width: 20%;
-    }
-    .has-multiple-children form label,
-    .has-multiple-children form label.text {
-      border: 1px dotted #ddd;
-      text-align: left;
-      width: 93%;
-      padding: 4px 3% 6px;
-    }
-    .selectioncontainer label {
-      border: 1px solid #ccc;
-      width: 193px;
-    }
-    .has-multiple-children form fieldset legend {
-      min-width:0;
-    }
-    .has-multiple-children form fieldset legend a {
-      font-size:0.8em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .has-multiple-children form fieldset section > div {
-      padding-bottom:0;
-    }
-    .has-multiple-children form fieldset input:disabled,
-    .has-multiple-children form fieldset .preview.is-disabled,
-    .has-multiple-children form fieldset input[type="submit"]:disabled,
-    .has-multiple-children form fieldset button:disabled,
-    .has-multiple-children form fieldset input[type="text"]:disabled,
-    .has-multiple-children form fieldset select:disabled,
-    .has-multiple-children form fieldset textarea:disabled {
-      display:none;
-    }
-    .has-multiple-children form fieldset .file .fileentry label {
-      width: 154px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      display: block;
-      border-top-width: 0;
-      margin-bottom: 0;
-    }
-    .has-multiple-children form fieldset .file .fileentry img {
-      border-top-width: 0;
-    }
-  }
-
-  /* Smaller than standard 960 (devices and browsers) */
-  @media only screen and (max-width: 959px) {
-    .vi_manager {
-      width: 56px;
-      border-right:1px solid #bbb;
-      transition: all 0.3s ease;
-    }
-    .vi_manager:hover {width:298px; border-right:1px solid #bbb;}
-    .modullist {width:298px;}
-    .modullist ul {display:none;}
-    .vi_manager:hover .modullist ul {display:block;}
-    .vi_viewer {max-width:900px;margin-left:56px;}
-    .has-multiple-children .actionbar,
-    .has-multiple-children .breadcrumb,
-    .has-multiple-children .imageeditor,
-    .has-multiple-children .linkeditor,
-    .has-multiple-children .vi_operator {width: 20%; max-width:210px;}
-    .has-multiple-children .vi_operator:nth-of-type(even) .actionbar,
-    .has-multiple-children .vi_operator:nth-of-type(even) .breadcrumb,
-    .has-multiple-children .vi_operator:nth-of-type(even) .imageeditor,
-    .has-multiple-children .vi_operator:nth-of-type(even) .linkeditor,
-    .has-multiple-children .vi_operator:nth-of-type(even) {width: 70%;max-width:750px;}
-    .vi_operator .actionbar h3 {display:none;}
-    .vi_topbar .currentmodul {display:none;}
-  }
-
+// Old stuff:
+.vi-screen.is-loading:after {
+  background-image: url(../icons/status/is-loading32.gif);
+  background-position: center 35%;
+  background-repeat: no-repeat;
+  background-color:rgba(255,255,255,0.6);
+  position: absolute;
+  z-index:1000;
+  content:' ';
+  width:100%;
+  height:100%;
+  display:block;
+  left:0;
+  right:0;
+  top:0;
+  bottom:0;
+}
 

@@ -7,11 +7,15 @@
 
 .vi-actionbar {
   background-color: #f0f0f0;
-  padding: 6px 15px;
+  padding: @defaultPadding @defaultPadding*3;
   .boxShadow(1, #000);
   min-height: 50px;
   width: 100%;
   .zIndex('nav',10);
+}
+
+.vi-ab-spacer {
+  margin-left: auto!important;
 }
 
 /*
@@ -30,7 +34,6 @@
 }
 */
 
-
 /* #actionbar
 ================================================== */
 .vi-operator .vi-actionbar .button img {
@@ -39,10 +42,7 @@
   margin-right: 6px;
 }
 
-.vi-ab-spacer {
-  margin-left: auto!important;
 
-}
 
 
 

@@ -31,47 +31,33 @@
 .tree .selectioncontainer .tree-item:nth-of-type(even) {
   background-color: rgba(250, 250, 250, 0.7);
 }
-.breadcrumb, .imageeditor, .linkeditor {
-  width: 83%;
-  font-weight: 600;
+.vi-tree-breadcrumb, .imageeditor, .linkeditor {
   min-width: 500px;
-  position: fixed;
-  margin-left: -1%;
-  padding: 3px 1% 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  border: 1px solid #bbb;
-  border-bottom: 1px solid @highlightcolor;
-  background-color: #eee;
-  background-color: rgba(180, 180, 180, 0.7);
-  margin-top: -47px;
-  z-index: 10;
-}
-
-.has-multiple-children .breadcrumb,
-.has-multiple-children .imageeditor,
-.has-multiple-children .linkeditor {
-  width:41%;
+  padding: @defaultPadding @defaultPadding*3;
+  .boxShadow(1,#000);
+  background-color: #f0f0f0;
+  .zIndex('nav', 9);
 }
 
 .imageeditor, .linkeditor {
-  padding:10px 1% 10px;
-  z-index: 1000;
+  padding: @defaultPadding @defaultPadding*3;
+  .zIndex('nav', 11);
 }
 
-.breadcrumb .tree-item {
+.vi-breadcrumb .tree-item {
   float: left;
   cursor: pointer;
 }
-.breadcrumb .tree-item:first-of-type {
+.vi-breadcrumb .tree-item:first-of-type {
   padding-left: 0;
 }
-.breadcrumb .tree-item:hover {
+.vi-breadcrumb .tree-item:hover {
   text-decoration: underline;
 }
-.breadcrumb .tree-item:after {
+.vi-breadcrumb .tree-item:after {
   content: ' ›';
 }
-.breadcrumb .tree-item:last-of-type:after {
+.vi-breadcrumb .tree-item:last-of-type:after {
   content: '';
 }
 .tree .tree-item:before {
@@ -151,12 +137,10 @@
   margin-bottom: 5px;
 }
 
-.is-clickable {
-  cursor: pointer;
-}
+
 
 .supports-upload{
-  .previewimg{
+  .previewimg {
     width: 26px;
     height: 26px;
     background-size: cover;
@@ -165,12 +149,12 @@
     margin-right: 0;
     float: left;
 
-    & + input{
+    & + input {
       float: left;
       width: calc(50% - 27px);
     }
 
-    & + .labelwrapper{
+    & + .labelwrapper {
       margin-bottom: 5px;
     }
 
@@ -198,18 +182,10 @@
   background-repeat: no-repeat;
   background-position: center;
   display: block;
-  /* height:100px; */
-
-  /* margin-top: 15px; */
-
-  /* margin-bottom: 15px; */
-
   font-size: .8em;
   line-height: 7em;
   font-weight: 800;
   color: #777;
-  /* text-shadow:0px -1px 1px rgba(0,0,0,0.5); */
-
   width: 97%;
   text-align: left;
   padding-left: 3%;
