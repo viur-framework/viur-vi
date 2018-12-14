@@ -4375,22 +4375,6 @@ td span.index {
 .tagcontainer button {
   margin-bottom: 5px;
 }
-.vi-selectioncontainer .entrydescription,
-.vi-selectioncontainer label {
-  border: 1px solid #ccc;
-  border-right-width: 0;
-  width: auto;
-  min-width: 220px;
-  max-width: 80%;
-  height: 16px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.vi-selectioncontainer .entrydescription,
-.vi-selectioncontainer label,
-.vi-selectioncontainer button {
-  margin-bottom: 5px;
-}
 input:focus,
 input[type=text]:focus,
 input[type=email]:focus,

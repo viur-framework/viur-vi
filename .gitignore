@@ -2,6 +2,8 @@ vi
 vi_plugins
 version.py
 
+embedsvg.py
+
 # Mausbrand specific
 output
 .idea
