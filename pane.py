@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
-import html5, os.path
+import html5
 from config import conf
-from i18n import translate
+from embedsvg import embedsvg
 
 class Pane(html5.Div):
 	"""
@@ -76,9 +76,14 @@ class Pane(html5.Div):
 			descr = self.descr
 
 		if iconURL is not None:
-			img = html5.Img()
-			img["src"] = iconURL
-			self.itemIcon.appendChild(img)
+			embedSvg = embedsvg.get(iconURL)
+			if embedSvg:
+				self.itemIcon.element.innerHTML = embedSvg
+			else:
+				img = html5.Img()
+				img["src"] = iconURL
+				self.itemIcon.appendChild(img)
+
 		else:
 			self.itemIcon.appendChild(descr[:1])
 
@@ -228,12 +233,14 @@ class Pane(html5.Div):
 
 	def expand(self):
 		if self.childDomElem and self.collapseable and not self.isExpanded:
-			self.addClass("is-active")
+			self.item.addClass("is-active")
+			self.childDomElem.addClass("is-active")
 			self.isExpanded = True
 
 	def collapse(self):
 		if self.childDomElem and self.collapseable and self.isExpanded:
-			self.removeClass("is-active")
+			self.item.removeClass("is-active")
+			self.childDomElem.removeClass("is-active")
 			self.isExpanded = False
 
 	def focus(self):
@@ -249,7 +256,7 @@ class GroupPane(Pane):
 		self.addClass("vi-pane-group")
 
 		self.childDomElem = html5.Ul()
-		self.childDomElem["style"]["display"] = "none"
+		self.childDomElem.hide()
 		self.appendChild(self.childDomElem)
 
 	def onClick(self, event = None, *args, **kwargs):

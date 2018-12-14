@@ -44,10 +44,13 @@ copyfiles:
 version:
 	./version.sh
 
+embedsvg.py: public/embedsvg/*.svg
+	python gen-embedsvg.py >$@
+
 $(OUTPUT):
 	mkdir -p $@
 
-watch: $(OUTPUT) $(MAIN_CSS) version copyfiles
+watch: $(OUTPUT) $(MAIN_CSS) embedsvg.py version copyfiles
 	$(PYJSBUILD) -o $(OUTPUT) \
         $(DEBUGOPTS) \
         --bootloader=bootstrap_progress.js \
@@ -55,7 +58,7 @@ watch: $(OUTPUT) $(MAIN_CSS) version copyfiles
 		--enable-rebuilds \
 	        main.py
 
-debug: $(OUTPUT) $(MAIN_CSS) version copyfiles
+debug: $(OUTPUT) $(MAIN_CSS) embedsvg.py version copyfiles
 	@echo "--- STARTING DEBUG BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEBUGOPTS) \
@@ -64,7 +67,7 @@ debug: $(OUTPUT) $(MAIN_CSS) version copyfiles
 				main.py
 	@echo "--- FINISHED DEBUG BUILD ---"
 
-deploy: $(MAIN_CSS) version copyfiles
+deploy: $(MAIN_CSS) embedsvg.py version copyfiles
 	@echo "--- STARTING DEPLOY BUILD ---"
 	$(PYJSBUILD) -o $(OUTPUT) \
 		$(DEPLOYOPTS) \
