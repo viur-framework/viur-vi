@@ -179,6 +179,10 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 
 	def onLoginClick(self, sender = None):
 		if not (self.username["value"] and self.password["value"]):
+			self.loginIncompleteMsg = html5.Div()
+			self.loginIncompleteMsg.addClass("msg msg--error is-active")
+			self.loginIncompleteMsg
+			self.loginHeader.appendChild(self.loginIncompleteMsg)
 			return # fixme
 
 		self.loginBtn["disabled"] = True
@@ -410,6 +414,8 @@ class LoginScreen(Screen):
 			if not any([c.__class__.__name__ == handler.__name__ for c in self.loginMethodSelector._children]):
 				handler(self)
 
+		if len(answ)>1:
+			self.loginMethodSelector.addClass("is-active")
 		self.haveLoginHandlers = True
 		self.invoke()
 

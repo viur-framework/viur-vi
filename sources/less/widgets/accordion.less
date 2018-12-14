@@ -48,7 +48,8 @@
     background-color: @hintColor;
     border-color: darken(@hintColor, 10%);
     color: #fff;
-    &:hover {
+    &:hover,
+    &.is-active {
       background-color: lighten(@hintColor, 10%);
       border-color: @hintColor;
       cursor: pointer;

@@ -44,7 +44,7 @@ lngDe = {
 	"Settings":u"Einstellungen",
 	"Logout":u"Abmelden",
 	"Currently no entries":u"Es wurden keine Einträge gefunden",
-	"Add Node":u"Knoten hinzufügen",
+	"Add Node":u"Neues Verzeichnis erstellen",
 	"You cannot drop more than one file here!":u"Es können nicht mehr als eine Datei hinzugefügt werden!",
     "Do you want to clone the entire hierarchy?":u"Soll die gesamte Hierarchie geklont werden?",
     "Do you want to clone all subentries of this item?":u"Möchten Sie alle Unterelemente dieses Elements ebenfalls klonen?",
@@ -175,4 +175,8 @@ lngDe = {
 	"vi.tasks.headline":u"Wähle einen Auftrag",
 	"vi.tasks.no-description":u"Ohne Beschreibung.",
 	"vi.tasks.started": u"Auftrag gestartet!",
+
+	#Drag and Drop
+	"vi.data-insert":u"Hier einfügen",
+	"vi.tree.drag-here":u"Ziehe Deine Dateien hier her."
 }

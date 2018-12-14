@@ -107,7 +107,7 @@ class EditWidget(html5.Div):
 		super(EditWidget, self ).__init__(*args, **kwargs)
 		self.module = module
 
-		self.addClass("vi-widget vi-widget--edit")
+		self.addClass("vi-widget vi-widget--edit form-group--validation")
 
 
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
@@ -520,7 +520,7 @@ class EditWidget(html5.Div):
 				if bone["error"] is not None:
 					descrLbl.addClass("is-invalid")
 					descrLbl["title"] = bone["error"]
-					fieldSets[ cat ].addClass("is-incomplete is-active")
+					segments[cat].addClass("is-incomplete is-active")
 					hasMissing = True
 
 				elif bone["error"] is None and not self.wasInitialRequest:

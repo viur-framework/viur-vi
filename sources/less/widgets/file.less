@@ -1,0 +1,24 @@
+@charset "UTF-8";
+/* FILE WIDGET */
+
+.vi-file {
+  &-imagepreview {
+    background-color: #fafafa;
+    align-self: stretch;
+    & img {
+      object-fit: contain;
+      height: 100%;
+    }
+    &.no-preview {
+      display: none!important;
+    }
+    &.is-disabled {
+      border-style: dashed;
+      cursor: not-allowed;
+      user-select: none;
+      & img {
+        opacity: 0.5;
+      }
+    }
+  }
+}

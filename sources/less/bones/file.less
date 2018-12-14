@@ -1,29 +1,16 @@
 @charset "UTF-8";
 /* FILE BONE */
 
-.vi-bone-filepreview {
-  .basicInput(@padding:0, @margin:@defaultMargin, @borderRadius:@defaultBorderRadius, @borderWidth:@defaultBorderWidth, @borderColor:darken(@defaultInputColor,10%));
-  background-color: #fafafa;
-  align-self: stretch;
-  margin-right: 0;
-  margin-left: 10px;
-  width: 200px;
-  height: 200px;
-  & img {
-    object-fit: contain;
-  }
-  &.no-preview {
-    visibility: hidden;
-    width: 0;
-    height: 0;
-    margin-left: 0;
-  }
-  &.is-disabled {
-    border-style: dashed;
-    cursor: not-allowed;
-    user-select: none;
-    & img {
-      opacity: 0.5;
+.vi-bone {
+  & .vi-file {
+    &-imagepreview {
+      .basicInput(@padding:0, @margin:@defaultMargin, @borderRadius:@defaultBorderRadius, @borderWidth:@defaultBorderWidth, @borderColor:darken(@defaultInputColor,10%));
+      margin-right: 0;
+      margin-left: 10px;
+      width: 200px;
+      height: 200px;
     }
   }
 }
+
+// See widget/file.less for more.

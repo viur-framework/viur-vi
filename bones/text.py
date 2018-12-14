@@ -84,6 +84,15 @@ class TextEditBone(html5.Div):
 		# 	openEditorBtn.addClass("btn--textedit")
 		# 	self.appendChild( openEditorBtn )
 
+		if not readOnly and not self.isPlainText:
+			self.input = HtmlEditor()
+			self.input.boneName = self.boneName
+		else:
+			self.input = html5.ignite.Textarea()
+			if readOnly:
+				self.input["readonly"] = True
+		self.appendChild(self.input)
+
 		# multilangbone
 		if self.languages:
 			self.value = {lng: "" for lng in self.languages}
@@ -106,15 +115,6 @@ class TextEditBone(html5.Div):
 		else:
 			self.value = ""
 
-		if not readOnly and not self.isPlainText:
-			self.input = HtmlEditor()
-			self.input.boneName = self.boneName
-		else:
-			self.input = html5.ignite.Textarea()
-			if readOnly:
-				self.input["readonly"] = True
-
-		self.appendChild(self.input)
 
 	def _setDisabled(self, disable):
 		"""

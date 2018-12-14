@@ -4,9 +4,6 @@
 // Prefixes and objects:
 // .progress-
 
-/*
-#FIXME: Implement new progress bars!
-
 // Colors:
 @progressBackground: lighten(@complementColor,60%);
 @progressDefault: @complementColor;
@@ -44,83 +41,49 @@
 }
 
 
-.progress-vPrimary::-webkit-progress-value {
+.progress--primary::-webkit-progress-value {
   background-color: @progressPrimary;
 }
 
-.progress-vPrimary::-moz-progress-bar {
+.progress--primary::-moz-progress-bar {
   background-color: @progressPrimary;
 }
 
 
-.progress-vInfo::-webkit-progress-value {
+.progress--info::-webkit-progress-value {
   background-color: @progressInfo;
 }
 
-.progress-vInfo::-moz-progress-bar {
+.progress--info::-moz-progress-bar {
   background-color: @progressInfo;
 }
 
-.progress-vWarning::-webkit-progress-value {
+.progress--warning::-webkit-progress-value {
   background-color: @progressWarning;
 }
 
-.progress-vWarning::-moz-progress-bar {
+.progress--warning::-moz-progress-bar {
   background-color: @progressWarning;
 }
 
 
-.progress-vDanger::-webkit-progress-value {
+.progress--danger::-webkit-progress-value {
   background-color: @progressDanger;
 }
 
-.progress-vDanger::-moz-progress-bar {
+.progress--danger::-moz-progress-bar {
   background-color: @progressDanger;
 }
 
 
-.progress-vSmall {
+.progress--small {
   height: .6rem;
 }
 
-.progress-vMedium {
+.progress--medium {
   height: 1.4rem;
 }
 
-.progress-vLarge {
+.progress--large {
   height: 1.8rem;
-}*/
-
-progress[value] {
-  /* Reset the default appearance */
-
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  /* Get rid of default border in Firefox. */
-
-  border: none;
-  width: 100%;
-  padding: 6px 7px 7px;
-  height: 32px;
-  border: 1px solid #ccc;
-  border-radius: 0px;
-  background: #eee;
-  font-size: 10px;
-  text-align: center;
-}
-progress[value]::-moz-progress-bar,
-progress[value]::-webkit-progress-bar {
-  background-color: #eee;
-}
-progress[value]::-webkit-progress-value {
-  position: relative;
-  background-color: #298342;
-  background: -moz-linear-gradient(top, #298342 0%, #479c42 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #298342), color-stop(100%, #479c42));
-  background: -webkit-linear-gradient(top, #298342 0%, #479c42 100%);
-  background: -o-linear-gradient(top, #298342 0%, #479c42 100%);
-  background: -ms-linear-gradient(top, #298342 0%, #479c42 100%);
-  background: linear-gradient(to bottom, #298342 0%, #479c42 100%);
-  filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#298342', EndColorStr='#479c42', GradientType=0);
 }

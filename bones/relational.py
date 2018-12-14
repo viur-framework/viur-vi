@@ -510,7 +510,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.txtLbl = html5.Label()
 		self.txtLbl["draggable"] = not parent.readOnly
 
-		self.addClass("selectioncontainer-entry")
+		self.addClass("tree-selectioncontainer-entry")
 
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild(self.txtLbl)
@@ -729,13 +729,13 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.context = self.baseContext.copy() if self.baseContext else None
 
 		self.selectionDiv = html5.Div()
-		self.selectionDiv.addClass("selectioncontainer")
+		self.selectionDiv.addClass("vi-relation-selectioncontainer", "vi-selectioncontainer", "list")
 		self.appendChild(self.selectionDiv)
 
 		if (destModule in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"] or destModule + "-view" in conf["currentUser"]["access"])):
 
-			self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
+			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 			self.selectBtn.addClass("btn--select")
 			self.appendChild( self.selectBtn )
 		else:

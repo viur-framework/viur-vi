@@ -38,7 +38,7 @@ class FileImagePopup(html5.ext.Popup):
 class FilePreviewImage(html5.Div):
 	def __init__(self, file = None, size=150, *args, **kwargs):
 		super(FilePreviewImage, self).__init__(*args, **kwargs)
-		self.addClass("vi-bone-filepreview")
+		self.addClass("vi-file-imagepreview")
 		self.sinkEvent("onClick")
 
 		self.size = size
@@ -127,22 +127,25 @@ class LeafFileWidget(LeafWidget):
 		super(LeafFileWidget, self).__init__(modul, data, structure, *args, **kwargs)
 
 		self.previewImg = FilePreviewImage(data)
-		self.prependChild(self.previewImg)
+		self.leafImage.appendChild(self.previewImg)
 
 		self.sinkEvent("onDragOver", "onDragLeave")
 
 	def onDragOver(self, event):
 		if not "insert-before" in self["class"]:
 			self.addClass("insert-before")
+			self["title"] = translate("vi.data-insert")
+
 		super(LeafFileWidget, self).onDragOver(event)
 
 	def onDragLeave(self, event):
 		if "insert-before" in self["class"]:
 			self.removeClass("insert-before")
+			self["title"] = None
 		super(LeafFileWidget,self).onDragLeave( event )
 
 
-class Uploader(html5.Progress):
+class Uploader(html5.ignite.Progress):
 	"""
 		Uploads a file to the server while providing visual feedback of the progress.
 	"""

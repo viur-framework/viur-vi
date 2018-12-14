@@ -158,6 +158,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		super(FileMultiSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
 		self.addClass("vi-bone-container supports-upload")
+		self["title"] = translate("vi.tree.drag-here")
 
 	def onDragOver(self, event):
 		super(FileMultiSelectionBone,self).onDragOver(event)
@@ -218,6 +219,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		super(FileSingleSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
 		self.addClass("vi-bone-container supports-upload")
+		self["title"] = translate("vi.tree.drag-here")
 
 		self.previewImg = FilePreviewImage()
 		self.prependChild(self.previewImg)

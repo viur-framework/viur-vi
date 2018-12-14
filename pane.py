@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-import html5
+import html5, os.path
 from config import conf
 from i18n import translate
 
@@ -69,18 +69,18 @@ class Pane(html5.Div):
 		self.itemImage.addClass("item-image")
 		self.label.appendChild(self.itemImage)
 		self.itemIcon = html5.I()
+		self.itemIcon.addClass("i")
 		self.itemImage.appendChild(self.itemIcon)
 
 		if descr is None:
 			descr = self.descr
 
-		if iconURL is None:
-			self.itemIcon.appendChild(descr[:1])
-
 		if iconURL is not None:
 			img = html5.Img()
 			img["src"] = iconURL
 			self.itemIcon.appendChild(img)
+		else:
+			self.itemIcon.appendChild(descr[:1])
 
 		if self.iconClasses is not None:
 			for cls in self.iconClasses:

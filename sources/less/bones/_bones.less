@@ -22,9 +22,20 @@
     }
     &-langbtns { }
     &.supports-upload {
+      position: relative;
       border: 2px dashed #ccc;
-      padding: @innerSpace;
+      padding: @innerSpace @innerSpace @bottomSpace + 5px;
       margin: @defaultMargin -2px;
+      &:after {
+        content: attr(title);
+        font-size: .75em;
+        line-height: .75em;
+        font-weight: @fontWeightBold;
+        color: #bbb;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+      }
     }
   }
 }

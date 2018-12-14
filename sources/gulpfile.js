@@ -103,7 +103,7 @@ gulp.task('embedsvg', function () {
         $('style').remove()
         $('[id]').removeAttr('id')
         //$('[class]').removeAttr('class')
-        $('[fill]').removeAttr('fill')
+        //$('[fill]').removeAttr('fill')
         $('svg').addClass('icon')
       },
       parserOptions: {xmlMode: true}

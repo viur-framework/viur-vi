@@ -4,6 +4,7 @@ from widgets.actionbar import ActionBar
 from event import EventDispatcher
 from priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
 from config import conf
+from i18n import translate
 
 class NodeWidget( html5.Div ):
 	"""
@@ -22,10 +23,25 @@ class NodeWidget( html5.Div ):
 		self.module = modul
 		self.data = data
 		self.structure = structure
+
+		self["class"] = "vi-tree-item vi-tree-node item is-drop-target is-draggable"
+
+		self.fromHTML("""
+			<div class="item-image" [name]="nodeImage"></div>
+			<div class="item-content" [name]="nodeContent">
+				<div class="item-headline" [name]="nodeHeadline"></div>
+				<div class="item-subline" [name]="nodeSubline"></div>
+			</div>
+			<div class="item-controls" [name]="nodeControls"></div>
+		""")
+
 		self.buildDescription()
-		self["class"] = "tree-item node is-drop-target is-draggable"
+
 		self["draggable"] = True
 		self.sinkEvent("onDragOver","onDrop","onDragStart", "onDragLeave")
+
+
+
 
 	def buildDescription(self):
 		"""
@@ -41,10 +57,10 @@ class NodeWidget( html5.Div ):
 					wdg = viewDelegateSelector.select(self.module, boneName, structure)
 
 					if wdg is not None:
-						self.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
+						self.nodeHeadline.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
 						hasDescr = True
 		if not hasDescr:
-			self.appendChild( html5.TextNode( self.data["name"]))
+			self.nodeHeadline.appendChild( html5.TextNode( self.data["name"]))
 
 	def onDragOver(self, event):
 		"""
@@ -52,6 +68,7 @@ class NodeWidget( html5.Div ):
 		"""
 		if not "insert-here" in self["class"]:
 			self.addClass("insert-here")
+			self["data-insert"] = translate("vi-data-insert")
 		try:
 			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
 		except:
@@ -62,6 +79,7 @@ class NodeWidget( html5.Div ):
 	def onDragLeave(self, event):
 		if "insert-here" in self["class"]:
 			self.removeClass("insert-here")
+			self["data-insert"] = None
 		return( super(NodeWidget, self).onDragLeave(event))
 
 	def onDragStart(self, event):
@@ -102,10 +120,22 @@ class LeafWidget( html5.Div ):
 		self.module = module
 		self.data = data
 		self.structure = structure
+
+		self.fromHTML("""
+			<div class="item-image" [name]="leafImage"></div>
+			<div class="item-content" [name]="leafContent">
+				<div class="item-headline" [name]="leafHeadline"></div>
+				<div class="item-subline" [name]="leafSubline"></div>
+			</div>
+			<div class="item-controls" [name]="leafControls"></div>
+		""")
+
 		self.buildDescription()
-		self["class"] = "tree-item leaf is-draggable"
+		self["class"] = "vi-tree-item vi-tree-leaf item is-draggable"
 		self["draggable"] = True
 		self.sinkEvent("onDragStart")
+
+
 
 	def buildDescription(self):
 		"""
@@ -121,11 +151,11 @@ class LeafWidget( html5.Div ):
 					wdg = viewDelegateSelector.select(self.module, boneName, structure)
 
 					if wdg is not None:
-						self.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
+						self.leafHeadline.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
 						hasDescr = True
 
 		if not hasDescr:
-			self.appendChild( html5.TextNode( self.data["name"]))
+			self.leafHeadline.appendChild( html5.TextNode( self.data["name"]))
 
 	def onDragStart(self, event):
 		"""
@@ -145,7 +175,8 @@ class SelectableDiv( html5.Div ):
 
 	def __init__(self, nodeWidget, leafWidget, selectionType="both", multiSelection=False, *args, **kwargs ):
 		super( SelectableDiv, self ).__init__(*args, **kwargs)
-		self.addClass("selectioncontainer")
+		self.addClass("vi-tree-selectioncontainer", "vi-selectioncontainer", "list")
+		self["title"] = translate("vi.tree.drag-here")
 		self["tabindex"] = 1
 		self.selectionType = selectionType
 		self.multiSelection = multiSelection
@@ -168,10 +199,10 @@ class SelectableDiv( html5.Div ):
 			If there was such an item before, its unselected afterwards.
 		"""
 		if self._currentItem:
-			self._currentItem.removeClass("cursor")
+			self._currentItem.removeClass("is-focused")
 		self._currentItem = item
 		if item:
-			item.addClass("cursor")
+			item.addClass("is-focused")
 
 	def onClick(self, event):
 		self.focus()
@@ -286,7 +317,7 @@ class TreeWidget( html5.Div ):
 			@type node: String or None
 		"""
 		super( TreeWidget, self ).__init__( )
-		self.addClass("vi-widget vi-widget--tree tree")
+		self.addClass("vi-widget vi-widget--tree vi-tree")
 		self.module = module
 		self.rootNode = rootNode
 		self.node = node or rootNode
@@ -325,7 +356,7 @@ class TreeWidget( html5.Div ):
 		self.actionBar["style"]["display"] = "none"
 		self.entryFrame["style"]["display"] = "none"
 		errorDiv = html5.Div()
-		errorDiv.addClass("msg msg--error is-active")
+		errorDiv.addClass("popup popup--center msg msg--error is-active")
 		if code and (code==401 or code==403):
 			txt = "Access denied!"
 		else:

@@ -85,7 +85,7 @@ td {
   border-width: 0px 1px 1px 0px;
   text-align: left;
   padding: 7px;
-  font-weight: normal;
+  font-weight: @fontWeightNormal;
   color: #000000;
   min-width: 150px;
 }
@@ -117,7 +117,7 @@ thead tr th {
   border: 0px solid #cccccc;
   text-align: center;
   border-width: 0px 0px 1px 1px;
-  font-weight: 300;
+  font-weight: @fontWeightLight;
   color: #ffffff;
   padding: 5px 5px;
   font-size: .9em;
@@ -153,11 +153,11 @@ tr.is-focused.is-selected:nth-child(even) {background: @focusselectionevencolor;
 
 td span.date {
   margin-right: 10px;
-  font-weight: 600;
+  font-weight: @fontWeightBold;
 }
 
 td span.time {
-  font-weight: 100;
+  font-weight: @fontWeightLight;
 }
 
 td span.index

@@ -41,7 +41,6 @@
 }
 .hierarchy-item.is-expanded ol {
   margin-top: 7px;
-  /*border:1px solid #ddd;*/
   background:#e5e5e5;
 }
 .hierarchy-item.is-expanded ol li {
@@ -86,7 +85,7 @@
   position: relative;
   margin-top: 30px;
   &:before {
-    content: attr(data-insert);
+    content: attr(title);
     padding: 5px 15px;
     width: 100%;
     height: 30px;
@@ -112,7 +111,7 @@
   position: relative;
   margin-bottom: 30px;
   &:after {
-    content: attr(data-insert);
+    content: attr(title);
     padding: 5px 15px;
     width: 100%;
     height: 30px;

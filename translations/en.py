@@ -24,4 +24,9 @@ lngEn = {
 	"vi.tasks.headline":u"Select a task",
 	"vi.tasks.no-description":u"No description provided.",
 	"vi.tasks.started":u"Task started!",
+
+	# Drag and Drop
+	"vi.data-insert": u"Insert here.",
+	"vi.tree.drag-here": u"Drag your files here."
+
 }

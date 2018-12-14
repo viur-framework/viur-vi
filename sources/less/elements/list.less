@@ -20,7 +20,7 @@
     }
   }
   &-separator {
-    font-weight: 300;
+    font-weight: @fontWeightLight;
     background-color: darken(@backgroundColor,10%);
     font-size:.9em;
     padding: @defaultPadding @defaultPadding*1.25;
@@ -43,7 +43,7 @@
       &.is-disabled {
         color: darken(@backgroundColor, 40%) !important;
         background-color: darken(@backgroundColor, 15%) !important;
-        & i {
+        & .i {
           background-color: darken(@backgroundColor, 25%) !important;
         }
       }

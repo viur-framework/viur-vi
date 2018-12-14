@@ -69,7 +69,7 @@ class HierarchyItem( html5.Li ):
 		"""
 		height = self.element.offsetHeight
 		offset = event.pageY - self.element.offsetTop
-
+		self["title"] = translate("vi.data-insert")
 		# Before
 		if self.currentMargin is None and offset < height * 0.20:
 			self.currentMargin = "top"
@@ -96,6 +96,8 @@ class HierarchyItem( html5.Li ):
 		"""
 			Remove all drop indicating classes.
 		"""
+		# FIXME: change "title" to "data-insert"
+		self["title"] = None
 		self.removeClass("insert-before")
 		self.removeClass("insert-after")
 		self.removeClass("insert-here")
