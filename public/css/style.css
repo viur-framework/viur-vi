@@ -4869,10 +4869,7 @@ td span.index {
 .tagcontainer button {
   margin-bottom: 5px;
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> redesign
 input:focus,
 input[type=text]:focus,
 input[type=email]:focus,
@@ -5773,6 +5770,15 @@ a.vi-login-btn:focus {
   display: flex;
   -ms-flex-preferred-size: 100%;
   flex-basis: 100%;
+}
+
+div.note-modal-backdrop {
+  z-index: 600;
+}
+
+div.note-popover,
+div.note-modal {
+  z-index: 700;
 }
 
 .is-clickable {
