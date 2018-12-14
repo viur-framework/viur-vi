@@ -5,7 +5,7 @@
  * Copyright 2013- Alan Hong. and other contributors
  * summernote may be freely distributed under the MIT license.
  *
- * Date: 2018-12-12T18:08Z
+ * Date: 2018-12-14T17:37Z
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery')) :
@@ -7133,8 +7133,8 @@
               var posEditor = dom.posFromPlaceholder(this.editable);
               this.$popover.css({
                   display: 'block',
-                  left: this.options.popatmouse ? event.pageX - 20 : pos.left,
-                  top: this.options.popatmouse ? event.pageY : Math.min(pos.top, posEditor.top)
+                  left: this.options.popatmouse && typeof event !== 'undefined' ? event.pageX - 20 : pos.left,
+                  top: this.options.popatmouse && typeof event !== 'undefined' ? event.pageY : Math.min(pos.top, posEditor.top)
               });
           }
           else {
