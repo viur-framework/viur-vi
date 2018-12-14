@@ -1,4 +1,5 @@
 from accordion import Accordion
+from button import Button
 from topbar import TopBarWidget
 from list import ListWidget
 from edit import EditWidget
