@@ -4,13 +4,14 @@
 .vi-bone {
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   * + & {
     margin-top: @outerSpace;
   }
   &-container {
     display: flex;
-    flex-basis: 100%;
-    flex-grow: 0;
+    flex-grow: 1;
+    flex-shrink: 0;
     align-items: flex-start;
     margin-left: -1px;
     & > * + * {

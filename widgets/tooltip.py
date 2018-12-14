@@ -7,16 +7,22 @@ class ToolTip(html5.Div):
 
 	def __init__(self, shortText="Tooltip", longText="", *args, **kwargs):
 		super( ToolTip, self ).__init__( *args, **kwargs )
-		self["class"] = "tooltip"
-		a = html5.ext.Button(shortText, self.toggleMsgCenter )
-		a.appendChild(html5.TextNode())
-		#a["href"] = "#tooltip_contents_%s" % self.toolTipIdx
-		self.appendChild(a)
-		span = html5.Span()
-		span.element.innerHTML = longText.replace( "\n", "<br />" )
-		self.appendChild( span )
+		self["class"] = "vi-tooltip msg is-active"
 
-	def toggleMsgCenter(self, *args, **kwargs):
+		tooltipToggleBtn = html5.ext.Button(shortText, self.toggleTooltip )
+		self.appendChild(tooltipToggleBtn)
+
+		tooltipHeadline = html5.H2()
+		tooltipHeadline.addClass("msg-headline")
+		tooltipHeadline.element.innerHTML = shortText
+		self.appendChild(tooltipHeadline)
+
+		tooltipMsg = html5.Div()
+		tooltipMsg.addClass("msg-content")
+		tooltipMsg.element.innerHTML = longText.replace( "\n", "<br />" )
+		self.appendChild(tooltipMsg)
+
+	def toggleTooltip(self, *args, **kwargs):
 		self.toggleClass("is-open")
 
 	def _setDisabled(self, disabled):

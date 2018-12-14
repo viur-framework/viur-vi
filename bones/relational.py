@@ -196,18 +196,18 @@ class RelationalSingleSelectionBone(html5.Div):
 
 			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
 			self.selectBtn.addClass("btn--select")
-			self.boneControls.appendChild( self.selectBtn )
+			self.boneControls.appendChild(self.selectBtn)
 		else:
-			self.boneControls.selectBtn = None
+			self.selectBtn = None
 
 		# Edit button
 		if (destModule in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"] or destModule + "-edit" in conf["currentUser"]["access"])):
 			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit )
 			self.editBtn.addClass("btn--edit")
-			self.boneControls.appendChild( self.editBtn )
+			self.boneControls.appendChild(self.editBtn)
 		else:
-			self.boneControls.editBtn = None
+			self.editBtn = None
 
 		# Remove button
 		if (not required and not readOnly
@@ -218,9 +218,9 @@ class RelationalSingleSelectionBone(html5.Div):
 
 			self.remBtn = html5.ext.Button(translate("Remove"), self.onRemove )
 			self.remBtn.addClass("btn--remove", "btn--danger")
-			self.boneControls.appendChild( self.remBtn )
+			self.boneControls.appendChild(self.remBtn)
 		else:
-			self.boneControls.remBtn = None
+			self.remBtn = None
 
 		if self.readOnly:
 			self["disabled"] = True
@@ -441,14 +441,14 @@ class RelationalSingleSelectionBone(html5.Div):
 		"""
 		if self.selection:
 			if self.editBtn:
-				self.editBtn[ "disabled" ] = False
+				self.editBtn.enable()
 			if self.remBtn:
-				self.remBtn[ "disabled"] = False
+				self.remBtn.enable()
 		else:
 			if self.editBtn:
-				self.editBtn[ "disabled" ] = True
+				self.editBtn.disable()
 			if self.remBtn:
-				self.remBtn[ "disabled"] = True
+				self.remBtn.disable()
 
 	def onAttach(self):
 		super(RelationalSingleSelectionBone, self).onAttach()
@@ -510,11 +510,11 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.txtLbl = html5.Label()
 		self.txtLbl["draggable"] = not parent.readOnly
 
-		self.addClass("tree-selectioncontainer-entry")
+		self.addClass("vi-tree-selectioncontainer-entry")
 
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild(self.txtLbl)
-		wrapperDiv.addClass("labelwrapper")
+		wrapperDiv.addClass("vi-tree-labelwrapper")
 
 		if not parent.readOnly:
 			remBtn = html5.ext.Button(translate("Remove"), self.onRemove)

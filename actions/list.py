@@ -242,7 +242,9 @@ class ListPreviewAction(html5.Span):
 	def __init__(self, module, handler, actionName, *args, **kwargs ):
 		super(ListPreviewAction, self ).__init__(*args, **kwargs)
 
-		self.urlCb = html5.Select()
+		self.addClass("input-group")
+
+		self.urlCb = html5.ignite.Select()
 		self.appendChild(self.urlCb)
 
 		btn = html5.ext.Button(translate("Preview"), callback=self.onClick)
@@ -265,7 +267,7 @@ class ListPreviewAction(html5.Span):
 			self.urls = {x: x for x in self.urls}
 
 		if not isinstance(self.urls, dict) or len(self.urls.keys()) == 1:
-			self.urlCb["style"]["display"] = "none"
+			self.urlCb.addClass("is-hidden")
 			return
 
 		for name, url in self.urls.items():
@@ -274,7 +276,7 @@ class ListPreviewAction(html5.Span):
 			o.appendChild(html5.TextNode(name))
 			self.urlCb.appendChild(o)
 
-		self.urlCb["style"]["display"] = ""
+		self.urlCb.removeClass("is-hidden")
 
 	def onAttach(self):
 		super(ListPreviewAction,self).onAttach()
