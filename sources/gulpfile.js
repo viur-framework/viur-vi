@@ -121,9 +121,9 @@ gulp.task('embedsvg', function () {
 });
 
 gulp.task('watch', function () {
-  gulp.watch(srcpaths.less, ['css']);
-  gulp.watch(srcpaths.embedsvg, ['embedsvg']);
-  gulp.watch(srcpaths.images, ['images']);
+  gulp.watch(srcpaths.less, gulp.series(['css']));
+  gulp.watch(srcpaths.embedsvg, gulp.series(['embedsvg']));
+  gulp.watch(srcpaths.images, gulp.series(['images']));
 });
 
 gulp.task('default', gulp.series(['clean', 'css', 'embedsvg', 'images']));

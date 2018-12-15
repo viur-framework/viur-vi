@@ -173,3 +173,6 @@ var viurPictureBtn = function (context) {
 
 	return button.render(); // return button as jquery object
 };
+
+document.designMode = 'on';
+document.execCommand('enableObjectResizing', false, 'false');
