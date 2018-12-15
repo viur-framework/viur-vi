@@ -17,13 +17,17 @@ class BooleanViewBoneDelegate( object ):
 			return html5.Label(translate(str(data[field])))
 		return html5.Label(conf["empty_value"])
 
-class BooleanEditBone( html5.Input ):
+class BooleanEditBone( html5.Div ):
 
 	def __init__(self, moduleName, boneName,readOnly, *args, **kwargs ):
 		super( BooleanEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self["type"]="checkbox"
+		self.addClass("vi-bone-container")
+
+		self.switch = html5.ignite.Switch()
+		self.appendChild(self.switch)
+
 		if readOnly:
 			self["disabled"]=True
 
@@ -35,13 +39,13 @@ class BooleanEditBone( html5.Input ):
 
 	def unserialize(self, data, extendedErrorInformation=None):
 		if self.boneName in data.keys():
-			self._setChecked(data[self.boneName])
+			self.switch._setChecked(data[self.boneName])
 
 	def serializeForPost(self):
-		return {self.boneName: str(self._getChecked())}
+		return {self.boneName: str(self.switch._getChecked())}
 
 	def serializeForDocument(self):
-		return {self.boneName: self._getChecked()}
+		return {self.boneName: self.switch._getChecked()}
 
 
 class ExtendedBooleanSearch( html5.Div ):

@@ -4,15 +4,16 @@ from i18n import translate
 from network import NetworkService
 from pane import Pane
 from priorityqueue import actionDelegateSelector
+from widgets.button import Button
 from widgets.edit import EditWidget
 
 
-class AddNodeAction( html5.ext.Button ):
+class AddNodeAction(Button):
 	"""
 		Adds a new directory to a tree.simple application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddNodeAction, self ).__init__( translate("Add Node"), *args, **kwargs )
+		super( AddNodeAction, self ).__init__( translate("Add Node"), icon="icons-add-folder", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--mkdir btn--primary"
 
 	@staticmethod
@@ -54,14 +55,14 @@ class AddNodeAction( html5.ext.Button ):
 actionDelegateSelector.insert( 3, AddNodeAction.isSuitableFor, AddNodeAction )
 
 
-class EditAction( html5.ext.Button ):
+class EditAction(Button):
 	"""
 		Provides editing in a tree.simple application.
 		If a directory is selected, it opens a dialog for renaming that directory,
 		otherwise the full editWidget is used.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), icon="icons-edit", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True

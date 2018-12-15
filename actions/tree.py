@@ -5,14 +5,15 @@ from network import NetworkService
 from pane import Pane
 from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
+from widgets.button import Button
 
 
-class AddLeafAction( html5.ext.Button ):
+class AddLeafAction(Button):
 	"""
 		Creates a new leaf (ie. a file) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddLeafAction, self ).__init__( translate("Add"), *args, **kwargs )
+		super( AddLeafAction, self ).__init__( translate("Add"), icon="icons-add-file", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--add-leaf btn--primary"
 
 	@staticmethod
@@ -40,12 +41,12 @@ class AddLeafAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, AddLeafAction.isSuitableFor, AddLeafAction )
 
 
-class AddNodeAction( html5.ext.Button ):
+class AddNodeAction(Button):
 	"""
 		Creates a new node (ie. a directory) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddNodeAction, self ).__init__(  translate("Add"), *args, **kwargs )
+		super( AddNodeAction, self ).__init__(  translate("Add"), icons="icons-add-folder", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--add-node"
 
 	@staticmethod
@@ -73,13 +74,13 @@ class AddNodeAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, AddNodeAction.isSuitableFor, AddNodeAction )
 
 
-class EditAction( html5.ext.Button ):
+class EditAction(Button):
 	"""
 		Edits an entry inside a tree application.
 		The type (node or leaf) of the entry is determined dynamically
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__(  translate("Edit"), *args, **kwargs )
+		super( EditAction, self ).__init__(  translate("Edit"), icons="icons-edit", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -152,13 +153,13 @@ class EditAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
 
-class DeleteAction( html5.ext.Button ):
+class DeleteAction(Button):
 	"""
 		Allows deleting an entry in a tree-modul.
 		The type (node or leaf) of the entry is determined dynamically.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__(  translate("Delete"), *args, **kwargs )
+		super( DeleteAction, self ).__init__(translate("Delete"), icons="icons-delete", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -216,12 +217,12 @@ class DeleteAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
-class ReloadAction( html5.ext.Button ):
+class ReloadAction(Button):
 	"""
 		Allows adding an entry in a list-modul.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), icons="icons-reload", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
@@ -298,13 +299,13 @@ class SelectRootNode( html5.Select ):
 actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
 
 
-class ReturnSelectionAction( html5.ext.Button ):
+class ReturnSelectionAction(Button):
 	"""
 		This is the new "activateSelectionAction" for Trees - we need a different event
 		to avoid conflicts with "open that folder" action.
 	"""
 	def __init__(self, *args, **kwargs ):
-		super( ReturnSelectionAction, self ).__init__( translate("Select"), *args, **kwargs )
+		super( ReturnSelectionAction, self ).__init__( translate("Select"), icons="icons-select", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--activateselection"
 
 	def onClick(self, sender=None):

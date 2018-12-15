@@ -4,6 +4,7 @@ from i18n import translate
 from network import DeferredCall
 from priorityqueue import actionDelegateSelector
 from widgets.file import Uploader, LeafFileWidget
+from widgets.button import Button
 
 
 class FileSelectUploader(html5.Input):
@@ -25,12 +26,12 @@ class FileSelectUploader(html5.Input):
 
 		self.parent().removeChild( self )
 
-class AddLeafAction( html5.ext.Button ):
+class AddLeafAction(Button):
 	"""
 		Allows uploading of files using the file dialog.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddLeafAction, self ).__init__( translate("Add"), *args, **kwargs )
+		super( AddLeafAction, self ).__init__( translate("Add"), icon="icons-upload-file", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--upload"
 
 	@staticmethod
@@ -57,12 +58,12 @@ class AddLeafAction( html5.ext.Button ):
 actionDelegateSelector.insert( 3, AddLeafAction.isSuitableFor, AddLeafAction )
 
 
-class DownloadAction( html5.ext.Button ):
+class DownloadAction(Button):
 	"""
 		Allows downloading files from the server.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DownloadAction, self ).__init__( translate("Download"), *args, **kwargs )
+		super( DownloadAction, self ).__init__( translate("Download"), icon="icons-download-file", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--download"
 		self["disabled"]= True
 		self.isDisabled=True

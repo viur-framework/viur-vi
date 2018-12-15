@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import html5
+import html5, embedsvg
 from network import NetworkService, DeferredCall
 from i18n import translate
 from config import conf
 from widgets.task import TaskSelectWidget
+from widgets.button import Button
 from priorityqueue import toplevelActionSelector
 
 class TopBarWidget(html5.Header):
@@ -29,6 +30,10 @@ class TopBarWidget(html5.Header):
 				</div>
 			</nav>
 		""")
+
+		svg = embedsvg.embedsvg.get("logos-vi")
+		if svg:
+			self.topbarLogo.element.innerHTML = svg + self.topbarLogo.element.innerHTML
 
 		DeferredCall(self.setTitle, _delay=500)
 
@@ -71,9 +76,10 @@ class TopBarWidget(html5.Header):
 
 		conf["theApp"].setTitle(descr)
 
-class UserState(html5.Button):
-	def __init__(self):
-		super(UserState,self).__init__()
+class UserState(Button):
+	def __init__(self, *args, **kwargs):
+		super( UserState, self ).__init__(*args, **kwargs)
+
 		self.update()
 
 	def onCurrentUserAvailable(self, req):
@@ -89,9 +95,9 @@ class UserState(html5.Button):
 			                        cacheable=False )
 			return
 
-		self["title"] = user[ "name" ]
-		self.addClass("btn vi-tb-accountmgnt")
-		self.appendChild( html5.TextNode( user[ "name" ] ) )
+		self["title"] = user["name"]
+		self.addClass("vi-tb-accountmgnt")
+		self.appendChild(html5.TextNode(user["name"]))
 
 	@staticmethod
 	def canHandle( action ):
@@ -100,13 +106,13 @@ class UserState(html5.Button):
 toplevelActionSelector.insert( 0, UserState.canHandle, UserState )
 
 
-class Tasks(html5.Button):
-	def __init__(self):
-		super(Tasks, self).__init__()
+class Tasks(Button):
+	def __init__(self, *args, **kwargs):
+		super(Tasks, self).__init__(icon="icons-settings", *args, **kwargs)
 		self.sinkEvent("onClick")
 		self.hide()
 		self.addClass("btn vi-tb-tasks")
-		self.appendChild( html5.TextNode( translate( "vi.tasks" ) ) )
+		self.appendChild(html5.TextNode(translate("vi.tasks")))
 
 		if not conf[ "tasks" ][ "server" ]:
 			NetworkService.request( None, "/vi/_tasks/list",
@@ -155,9 +161,9 @@ toplevelActionSelector.insert( 0, Tasks.canHandle, Tasks )
 
 #FIXME: Do not logout directly: Implement a logout yes/no dialog.
 
-class Logout(html5.Button):
-	def __init__(self):
-		super(Logout,self).__init__()
+class Logout(Button):
+	def __init__(self, *args, **kwargs):
+		super(Logout,self).__init__(icon="icons-logout", *args, **kwargs)
 		self.addClass("btn vi-tb-logout")
 		self.appendChild(html5.TextNode(translate("Logout")))
 		self.sinkEvent("onClick")

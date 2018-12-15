@@ -1,7 +1,8 @@
 import html5, utils
 from network import NetworkService
 from priorityqueue import actionDelegateSelector
-from widgets import EditWidget, Button
+from widgets.edit import EditWidget
+from widgets.button import Button
 from config import conf
 from pane import Pane
 from widgets.csvexport import ExportCsvStarter
@@ -350,9 +351,9 @@ class ListPreviewAction(html5.Span):
 actionDelegateSelector.insert( 2, ListPreviewAction.isSuitableFor, ListPreviewAction )
 
 
-class ListPreviewInlineAction( Button ):
+class ListPreviewInlineAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( ListPreviewInlineAction, self ).__init__( translate("Preview"), *args, **kwargs )
+		super( ListPreviewInlineAction, self ).__init__( translate("Preview"), icon="icons-preview", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--preview"
 		self["disabled"] = True
 		self.urls = None
@@ -403,9 +404,9 @@ class ListPreviewInlineAction( Button ):
 actionDelegateSelector.insert( 1, ListPreviewInlineAction.isSuitableFor, ListPreviewInlineAction )
 
 
-class CloseAction( Button ):
+class CloseAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( CloseAction, self ).__init__( translate("Close"), *args, **kwargs )
+		super( CloseAction, self ).__init__( translate("Close"), icon="icons-cancel", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--close"
 
 	def onClick(self, sender=None):
@@ -417,9 +418,9 @@ class CloseAction( Button ):
 
 actionDelegateSelector.insert( 1, CloseAction.isSuitableFor, CloseAction )
 
-class ActivateSelectionAction( Button ):
+class ActivateSelectionAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( ActivateSelectionAction, self ).__init__( translate("Select"), *args, **kwargs )
+		super( ActivateSelectionAction, self ).__init__( translate("Select"), icon="icons-select", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--activateselection"
 
 	def onClick(self, sender=None):
@@ -527,9 +528,9 @@ class SelectFieldsPopup( html5.ext.Popup ):
 			else:
 				cb[ "checked" ] = False
 
-class SelectFieldsAction( Button ):
+class SelectFieldsAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( SelectFieldsAction, self ).__init__( translate("Select fields"), *args, **kwargs )
+		super( SelectFieldsAction, self ).__init__( translate("Select fields"), icon="icons-save-file", icon="icons-list", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--selectfields"
 		self["disabled"] = self.isDisabled = True
 
@@ -556,12 +557,12 @@ class SelectFieldsAction( Button ):
 
 actionDelegateSelector.insert( 1, SelectFieldsAction.isSuitableFor, SelectFieldsAction )
 
-class ReloadAction( Button ):
+class ReloadAction(Button):
 	"""
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), icon="icons-reload", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
@@ -582,7 +583,7 @@ class ReloadAction( Button ):
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
 
-class ListSelectFilterAction( Button ):
+class ListSelectFilterAction(Button):
 	def __init__(self, *args, **kwargs ):
 		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--selectfilter"
@@ -625,9 +626,9 @@ class ListSelectFilterAction( Button ):
 
 actionDelegateSelector.insert( 1, ListSelectFilterAction.isSuitableFor, ListSelectFilterAction )
 
-class CreateRecurrentAction( Button ):
+class CreateRecurrentAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(CreateRecurrentAction, self ).__init__( translate("Save-Close"), *args, **kwargs )
+		super(CreateRecurrentAction, self ).__init__( translate("Save-Close"), icon="icons-save-file", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--primary btn--save-close"
 
 	@staticmethod
@@ -642,7 +643,7 @@ actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRec
 
 class ExportCsvAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(ExportCsvAction, self).__init__(translate("CSV Export"), *args, **kwargs)
+		super(ExportCsvAction, self).__init__(translate("CSV Export"), icon="icons-download-file", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--download"
 
 	def onClick(self, sender = None):
@@ -656,7 +657,7 @@ actionDelegateSelector.insert(1, ExportCsvAction.isSuitableFor, ExportCsvAction)
 
 class SelectAllAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectAllAction, self ).__init__(translate("Select all"), *args, **kwargs)
+		super(SelectAllAction, self ).__init__(translate("Select all"), icon="icons-select", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--selectall"
 		self["disabled"] = self.isDisabled = True
 
@@ -687,7 +688,7 @@ actionDelegateSelector.insert(1, SelectAllAction.isSuitableFor, SelectAllAction)
 
 class UnSelectAllAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), *args, **kwargs)
+		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), icon="icons-unselect", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--unselectall"
 		self["disabled"] = self.isDisabled = True
 
@@ -717,7 +718,7 @@ actionDelegateSelector.insert(1, UnSelectAllAction.isSuitableFor, UnSelectAllAct
 
 class SelectInvertAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectInvertAction, self ).__init__(translate("Invert selection"), *args, **kwargs)
+		super(SelectInvertAction, self ).__init__(translate("Invert selection"), icon="icons-reload", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--selectinvert"
 		self["disabled"] = self.isDisabled = True
 

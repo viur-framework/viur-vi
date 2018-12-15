@@ -9,18 +9,19 @@ class PasswordEditBone( html5.Div ):
 		super( PasswordEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
+		self.addClass("vi-bone-container input-group")
 
-		self.primeinput = html5.Input()
+		self.primeinput = html5.ignite.Input()
 		self.primeinput["type"] = "password"
 		self.appendChild(self.primeinput)
 
 		if verify and not readOnly:
 
-			lbl = html5.Label(translate("reenter password"))
+			lbl = html5.ignite.Label(translate("reenter password"))
 			lbl["for"] = (moduleName or "") + "_" + boneName + "_reenterpwd"
 			self.appendChild(lbl)
 
-			self.secondinput = html5.Input()
+			self.secondinput = html5.ignite.Input()
 			self.secondinput["type"] = "password"
 			self.secondinput["name"] = lbl["for"]
 			self.appendChild(self.secondinput)

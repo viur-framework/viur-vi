@@ -43,6 +43,7 @@
       cursor: pointer;
     }
   }
+
   &-segment.is-incomplete:target &-title,
   &-segment.is-incomplete &-title {
     background-color: @hintColor;
@@ -61,16 +62,16 @@
   }
 
   /* Arrow before Title */
-  &-segment &-title:before {
-    content: '❯';
+  &-segment &-title .icon {
     position: relative;
     display: inline-flex;
-    transition: all .3s ease;
-    margin-right: @innerSpace;
+    transition: all 0.3s ease;
+    margin-right: 5px;
+    font-size: 1.5em;
   }
-  &-segment.is-active &-title:before,
-  &-segment:target &-title:before,
-  &-segment.is-incomplete &-title:before {
+  &-segment.is-active &-title .icon,
+  &-segment:target &-title .icon,
+  &-segment.is-incomplete &-title .icon {
     transform: rotate(90deg);
   }
 

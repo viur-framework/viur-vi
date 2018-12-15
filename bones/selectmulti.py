@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import html5, utils
+import html5, utils, embedsvg
 from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
 from event import EventDispatcher
 from i18n import translate
@@ -63,6 +63,7 @@ class SelectMultiEditBone(html5.Div):
 		super(SelectMultiEditBone,  self ).__init__(*args, **kwargs)
 		self.boneName = boneName
 		self.readOnly = readOnly
+		self.addClass("vi-bone-container option-group")
 
 		# Compatibility mode
 		if isinstance(values, dict):
@@ -73,12 +74,15 @@ class SelectMultiEditBone(html5.Div):
 		# Perform valuesOrder list
 		for key, value in self.values:
 			alabel = html5.Label()
+			alabel.addClass("check")
 			acheckbox = html5.Input()
 			acheckbox["type"] = "checkbox"
 			acheckbox["name"] = key
+			acheckbox.addClass("check-input")
 			alabel.appendChild(acheckbox)
 
 			aspan = html5.Span()
+			aspan.addClass("check-label")
 			aspan.element.innerHTML = value
 			alabel.appendChild(aspan)
 
@@ -181,6 +185,7 @@ class AccessMultiSelectBone( html5.Div ):
 		self.readOnly = readOnly
 		print(values)
 		self.values = {k: v for k, v in values}
+		self.addClass("vi-bone-container option-group")
 
 		self.modules = {}
 		self.modulesbox = {}
@@ -199,15 +204,18 @@ class AccessMultiSelectBone( html5.Div ):
 		# Render static / singleton flags first
 		for flag in sorted( self.flags.keys() ):
 			label = html5.Label()
+			label.addClass("check")
 
 			checkbox = html5.Input()
 			checkbox["type"] = "checkbox"
 			checkbox["name"] = flag
+			checkbox.addClass("check-input")
 			label.appendChild( checkbox )
 
 			self.flags[ flag ] = checkbox
 
 			span = html5.Span()
+			span.addClass("check-label")
 			span.appendChild( html5.TextNode( flag ) )
 			label.appendChild( span )
 
@@ -216,37 +224,42 @@ class AccessMultiSelectBone( html5.Div ):
 		# Render module access flags then
 		for module in sorted( self.modules.keys() ):
 			label = html5.Label()
-
-			span = html5.Span()
-			span.appendChild( html5.TextNode( module ) )
-			label.appendChild( span )
-
-			ul = html5.Ul()
+			label.addClass("check")
+			self.appendChild( label )
 
 			checkbox = html5.Input()
 			checkbox["type"] = "checkbox"
 			checkbox["name"] = module
+			checkbox.addClass("check-input")
 			self.modulesbox[ module ] = checkbox
+			label.appendChild( checkbox )
 
-			li = html5.Li()
-			li.appendChild( checkbox )
-			ul.appendChild( li )
+			span = html5.Span()
+			span.addClass("check-label")
+			span.appendChild( html5.TextNode( module ) )
+			label.appendChild( span )
 
+			ul = html5.Ul()
+			ul.addClass("input-group")
 			for state in self.states:
 				li = html5.Li()
-				li[ "class" ] = [ "access-state", state ]
+				li[ "class" ] = [ "btn btn--access-state", state ]
+				svg = embedsvg.embedsvg.get("icons-%s" % state)
+				if state == "view":
+					svg = embedsvg.embedsvg.get("icons-preview")
+				if svg:
+					li.element.innerHTML = svg + li.element.innerHTML
+				li.appendChild( html5.TextNode( translate(state) ) )
 
 				# Some modules may not support all states
 				if ( "%s-%s" % (module, state) ) not in self.values:
-					li[ "class" ].append( "disabled" )
+					li[ "class" ].append( "is-disabled" )
 
 				ul.appendChild( li )
 
 				self.modules[ module ][ state ] = li
-
 			label.appendChild( ul )
 
-			self.appendChild( label )
 
 	def parseskelaccess( self, value ):
 		for state in self.states:
@@ -259,7 +272,7 @@ class AccessMultiSelectBone( html5.Div ):
 		for module, toggles in self.modules.items():
 			for toggle in toggles.values():
 				if html5.utils.doesEventHitWidgetOrChildren(event, toggle):
-					if not "disabled" in toggle[ "class" ]:
+					if not "is-disabled" in toggle[ "class" ]:
 						if "is-active" in toggle[ "class" ]:
 							toggle[ "class" ].remove( "is-active" )
 

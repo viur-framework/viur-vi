@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import html5
+from embedsvg import embedsvg
 
 class AccordionSegment(html5.Fieldset):
 
@@ -15,10 +16,17 @@ class AccordionSegment(html5.Fieldset):
 		self.appendChild(legend)
 
 		self.title = html5.Span()
+		embedSvg = embedsvg.get("icons-arrow-right")
+		if embedSvg:
+			self.title.element.innerHTML = embedSvg
 		self.title.appendChild(html5.TextNode(title or ident))
 		self.title.addClass("vi-accordion-title")
 		self.title["role"] = "button"
 		legend.appendChild(self.title)
+
+		# icon = html5.Div()
+		# icon.addClass("vi-accordion-icon")
+		# self.title.appendChild()
 
 		self._section = html5.Section()
 		self._section.addClass("vi-accordion-section")
