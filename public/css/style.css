@@ -4483,7 +4483,8 @@ a.vi-login-btn:hover {
 .badge,
 .has-badge:after {
   content: attr(data-badge);
-  display: inline-block;
+  display: inline-flex;
+  align-self: center;
   pointer-events: none;
   font-size: 0.7em;
   font-weight: 700;
@@ -4512,7 +4513,8 @@ a.vi-login-btn:hover {
 .marker,
 .has-marker:after {
   content: attr(aria-label);
-  display: inline-block;
+  display: inline-flex;
+  align-self: center;
   pointer-events: none;
   font-size: 0.7em;
   font-weight: 700;
@@ -4760,6 +4762,7 @@ form .relational:focus button:after {
 }
 .vi-bone-container .note-editor {
   margin-top: 5px;
+  margin-left: 0px;
 }
 .note-modal-backdrop {
   z-index: 600;
