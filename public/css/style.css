@@ -1629,6 +1629,7 @@ html {
   -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   overflow-y: auto;
+  position: relative;
 }
 
 .vi-widget {
@@ -4386,6 +4387,37 @@ a.vi-login-btn:focus {
 
 .vi-modulelist > * + * {
   border-top: 1px solid #ebebea;
+}
+
+.vi-modulepipe {
+  height: 100%;
+  position: absolute;
+  right: 0;
+  width: 10px;
+  background: transparent;
+  border-right: 1px solid #ebebea;
+  top: 0;
+  cursor: ew-resize;
+  -webkit-transition: 0.3s ease all;
+  transition: 0.3s ease all;
+}
+
+.vi-modulepipe:hover,
+.vi-modulepipe:focus {
+  border-right: 2px solid #d00f1c;
+}
+
+.vi-manager-frame.is-collapsed {
+  min-width: unset;
+  -ms-flex-preferred-size: auto;
+  flex-basis: auto;
+  -webkit-box-flex: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+}
+
+.vi-manager-frame.is-collapsed .item-content {
+  display: none;
 }
 
 .vi-messenger {

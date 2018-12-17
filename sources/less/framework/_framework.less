@@ -14,7 +14,7 @@ html {
   flex-direction: column;
   width: 100%;
   height: 100vh;
-  .zIndex('background',0);
+  .zIndex('background', 0);
 }
 
 .vi-main-frame {
@@ -29,7 +29,7 @@ html {
   flex-basis: 80%;
   display: flex;
   overflow: hidden;
-  .zIndex('content',2);
+  .zIndex('content', 2);
 }
 
 .vi-manager-frame {
@@ -39,9 +39,10 @@ html {
   max-width: 370px;
   min-width: 250px;
   background-color: @clearColor;
-  .zIndex('nav',40);
+  .zIndex('nav', 40);
   .boxShadow(1, #000);
   overflow-y: auto;
+  position: relative;
 }
 
 .vi-widget {

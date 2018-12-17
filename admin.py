@@ -23,6 +23,7 @@ class AdminScreen(Screen):
 	def __init__(self, *args, **kwargs):
 		super(AdminScreen, self).__init__(*args, **kwargs)
 
+		self.sinkEvent("onClick")
 		self["id"] = "CoreWindow"
 		conf["mainWindow"] = self
 
@@ -33,6 +34,7 @@ class AdminScreen(Screen):
 		self.mainFrame["class"] = "vi-main-frame"
 		self.appendChild(self.mainFrame)
 
+
 		self.moduleMgr = html5.Div()
 		self.moduleMgr["class"] = "vi-manager-frame"
 		self.mainFrame.appendChild(self.moduleMgr)
@@ -40,6 +42,10 @@ class AdminScreen(Screen):
 		self.moduleList = html5.Nav()
 		self.moduleList["class"] = "vi-modulelist"
 		self.moduleMgr.appendChild(self.moduleList)
+
+		self.modulePipe = html5.Div()
+		self.modulePipe.addClass("vi-modulepipe")
+		self.moduleMgr.appendChild(self.modulePipe)
 
 		self.viewport = html5.Div()
 		self.viewport["class"] = "vi-viewer-frame"
@@ -60,6 +66,10 @@ class AdminScreen(Screen):
 		w.onerror = le
 		w = eval("window.top")
 		w.onerror = le
+
+	def onClick(self, event):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulePipe):
+			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
 	def reset(self):
 		self.moduleList.removeAllChildren()
@@ -257,10 +267,10 @@ class AdminScreen(Screen):
 
 	def switchFullscreen(self, fullscreen=True):
 		if fullscreen:
-			self.moduleMgr.hide()
+			self.moduleMgr.addClass("is-collapsed")
 			self.viewport.addClass("is-fullscreen")
 		else:
-			self.moduleMgr.show()
+			self.moduleMgr.removeClass("is-collapsed")
 			self.viewport.removeClass("is-fullscreen")
 
 	def isFullscreen(self):

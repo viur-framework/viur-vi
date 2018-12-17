@@ -5,11 +5,33 @@
 // .vi-modulelist-
 // .vi-ml-
 
+@borderColorModullist: #ebebea;
+
 .vi-modulelist {
   & > * + * {
-    border-top: 1px solid #ebebea;
+    border-top: 1px solid @borderColorModullist;
   }
 }
 
+.vi-modulepipe {
+  height: 100%;
+  position: absolute;
+  right: 0;
+  width: 10px;
+  background: transparent;
+  border-right: 1px solid @borderColorModullist;
+  top: 0;
+  cursor: ew-resize;
+  transition: .3s ease all;
 
+  &:hover {
+    border-right: 2px solid @mainColor;
+  }
+}
 
+.vi-manager-frame.is-collapsed {
+  min-width: unset;
+  flex-basis: auto;
+  flex-grow: 0;
+  .item-content {display: none;}
+}
