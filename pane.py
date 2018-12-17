@@ -83,7 +83,6 @@ class Pane(html5.Div):
 				img = html5.Img()
 				img["src"] = iconURL
 				self.itemIcon.appendChild(img)
-
 		else:
 			self.itemIcon.appendChild(descr[:1])
 

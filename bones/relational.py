@@ -635,7 +635,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.parent.changeEvent.fire(self.parent)
 
 	def onEdit(self, sender = None):
-		pane = Pane(translate("Edit"), closeable=True,
+		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
 					iconClasses=["module_%s" % self.parent.destModule, "apptype_list", "action_edit"])
 		conf["mainWindow"].stackPane(pane, focus=True)
 

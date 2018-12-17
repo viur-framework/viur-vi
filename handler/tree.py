@@ -41,7 +41,7 @@ class TreeHandler(Pane):
 			self.focus()
 
 		elif pathList[1] in ["edit", "clone"] and len(pathList) > 3:
-			pane = Pane(translate("Edit"), closeable=True,
+			pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
 			            iconClasses=["module_%s" % self.moduleName, "apptype_tree", "action_edit"])
 			edwg = EditWidget(self.moduleName, EditWidget.appTree, key=pathList[3], skelType=pathList[2],
 			                  hashArgs=(params or None), clone=pathList[1] == "clone")

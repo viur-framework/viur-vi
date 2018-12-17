@@ -43,7 +43,7 @@ class TreeDirMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		"""
 			Edit the image entry.
 		"""
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModule,
+		pane = Pane( translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=[ "modul_%s" % self.parent.destModule,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
 		edwg = EditWidget( self.parent.destModule, EditWidget.appTree, key=self.data[ "key" ], skelType="leaf"  )
@@ -139,7 +139,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		if not self.selection:
 			return
 
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModule,
+		pane = Pane( translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=[ "modul_%s" % self.destModule,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
 		edwg = EditWidget( self.destModule, EditWidget.appTree, key=self.selection[ "key" ], skelType="leaf"  )

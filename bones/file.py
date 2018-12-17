@@ -137,7 +137,7 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		"""
 			Edit the image entry.
 		"""
-		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModule,
+		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=[ "modul_%s" % self.parent.destModule,
 		                                                                "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane(pane, focus=True)
 
@@ -301,7 +301,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		if not self.selection:
 			return
 
-		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModule,
+		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=[ "modul_%s" % self.destModule,
 		                                                                "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane(pane, focus=True)
 

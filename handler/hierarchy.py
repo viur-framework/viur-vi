@@ -35,7 +35,7 @@ class HierarchyHandler(Pane):
 			self.addWidget(HierarchyWidget(self.moduleName))
 			self.focus()
 		elif pathList[1] in ["edit", "clone"] and len(pathList) > 2:
-			pane = Pane(translate("Edit"), closeable=True,
+			pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
 			            iconClasses=["module_%s" % self.moduleName, "apptype_hierarchy", "action_edit"])
 			edwg = EditWidget(self.moduleName, EditWidget.appHierarchy, key=pathList[2], hashArgs=(params or None), clone=pathList[1] == "clone")
 			pane.addWidget(edwg)

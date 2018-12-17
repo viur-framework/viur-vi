@@ -37,7 +37,7 @@ class AddAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = EditPane(translate("Add"), closeable=True,
+		pane = EditPane(translate("Add"), closeable=True, iconURL="icons-add",
 		                iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, context=self.parent().parent().context)
@@ -105,7 +105,7 @@ class EditAction(Button):
 			self.openEditor( s["key"] )
 
 	def openEditor(self, key):
-		pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
+		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane, focus=True )
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key,
 		                    context=self.parent().parent().context)
@@ -166,7 +166,7 @@ class CloneAction(Button):
 			self.openEditor( s["key"] )
 
 	def openEditor(self, key):
-		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
+		pane = Pane(translate("Clone"), closeable=True, iconURL="icons-clone", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key, clone=True,
 		                    context=self.parent().parent().context)

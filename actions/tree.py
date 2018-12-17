@@ -29,7 +29,7 @@ class AddLeafAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane("Add", closeable=True)
+		pane = Pane("Add", iconURL="icons-add", closeable=True)
 		conf["mainWindow"].stackPane( pane, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_add_leaf" ] )
 		edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
 		pane.addWidget( edwg )
@@ -62,7 +62,7 @@ class AddNodeAction(Button):
 		return  correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane( translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_add_node" ])
+		pane = Pane( translate("Add"), closeable=True, iconURL="icons-add", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_add_node" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="node" )
 		pane.addWidget( edwg )
@@ -97,7 +97,7 @@ class EditAction(Button):
 
 	def onSelectionActivated(self, table, selection ):
 		if not self.parent().parent().selectMode and len(selection)==1:
-			pane = Pane( translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
+			pane = Pane( translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			if isinstance( selection[0], self.parent().parent().nodeWidget):
 				skelType = "node"
