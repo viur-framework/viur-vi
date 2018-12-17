@@ -1,4 +1,4 @@
-import html5
+import html5, embedsvg
 from network import DeferredCall
 from datetime import datetime
 from i18n import translate
@@ -80,32 +80,44 @@ class Log( html5.Div ):
 		"""
 		assert type in ["success", "error", "warning", "info", "progress"]
 
-		liwrap = html5.Li()
-		liwrap.addClass("msg--"+type, "msg", "is-active")
-		liwrap.addClass("is-new popup popup--s")
+		msgWrap = html5.Li()
+		msgWrap.addClass("msg--"+type, "msg", "is-active")
+		msgWrap.addClass("is-new popup popup--s")
 
-		spanDate = html5.Span()
-		spanDate.appendChild( html5.TextNode( datetime.now().strftime("%d. %b. %Y, %H:%M:%S") ))
-		spanDate.addClass("date")
-		liwrap.appendChild(spanDate)
+		svg = embedsvg.embedsvg.get("icons-%s" % type)
+		if not svg:
+			svg = embedsvg.embedsvg.get("icons-message-news")
+		if svg:
+			msgWrap.element.innerHTML = svg + msgWrap.element.innerHTML
+
+		msgContent = html5.Div()
+		msgContent.addClass("msg-content")
+		msgWrap.appendChild(msgContent)
+
+		msgDate = html5.Span()
+		msgDate.appendChild( html5.TextNode( datetime.now().strftime("%d. %b. %Y, %H:%M:%S") ))
+		msgDate.addClass("msg-date")
+		msgContent.appendChild(msgDate)
+
+
 
 		if isinstance( msg, html5.Widget ):
 			#Append that widget directly
-			liwrap.appendChild( msg )
+			msgContent.appendChild( msg )
 
 		else:
 			#Create a span element for that message
-			spanMsg = html5.Span()
-			spanMsg.appendChild(html5.TextNode(html5.utils.unescape(msg)))
-			spanMsg.addClass("msg-content")
-			liwrap.appendChild(spanMsg)
+			msgDescr = html5.Span()
+			msgDescr.appendChild(html5.TextNode(html5.utils.unescape(msg)))
+			msgDescr.addClass("msg-descr")
+			msgContent.appendChild(msgDescr)
 
-		DeferredCall(self.removeNewCls, liwrap,_delay=2500)
-		self.logUL.appendChild( liwrap )
+		DeferredCall(self.removeNewCls, msgWrap,_delay=2500)
+		self.logUL.appendChild( msgWrap )
 
 		if len(self.logUL._children)>1:
-			self.logUL.element.removeChild( liwrap.element )
-			self.logUL.element.insertBefore( liwrap.element, self.logUL.element.children.item(0) )
+			self.logUL.element.removeChild( msgWrap.element )
+			self.logUL.element.insertBefore( msgWrap.element, self.logUL.element.children.item(0) )
 
 	def removeNewCls(self,span):
 		span.removeClass("is-new popup popup--s")

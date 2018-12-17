@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-import html5
+import html5, embedsvg
 from config import conf
 from i18n import translate
 from network import NetworkService
@@ -105,6 +105,9 @@ class ListWidget(html5.Div):
 			self.selectionActivatedEvent.register(self)
 
 		self.emptyNotificationDiv = html5.Div()
+		svg = embedsvg.embedsvg.get("icons-error-file")
+		if svg:
+			self.emptyNotificationDiv.element.innerHTML = svg + self.emptyNotificationDiv.element.innerHTML
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
 		self.emptyNotificationDiv.addClass("popup popup--center popup--low msg emptynotification")
 		self.widgetContent.appendChild(self.emptyNotificationDiv)

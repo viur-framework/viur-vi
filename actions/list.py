@@ -123,7 +123,7 @@ class CloneAction(Button):
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( CloneAction, self ).__init__( translate("Clone"), *args, **kwargs )
+		super( CloneAction, self ).__init__( translate("Clone"), icon="icons-clone", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--clone"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -248,7 +248,7 @@ class ListPreviewAction(html5.Span):
 		self.urlCb = html5.ignite.Select()
 		self.appendChild(self.urlCb)
 
-		btn = Button(translate("Preview"), callback=self.onClick)
+		btn = Button(translate("Preview"), callback=self.onClick, icon="icons-preview")
 		btn["class"] = "bar-item btn btn--small btn--preview"
 		self.appendChild(btn)
 		self.urls = None
@@ -530,7 +530,7 @@ class SelectFieldsPopup( html5.ext.Popup ):
 
 class SelectFieldsAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( SelectFieldsAction, self ).__init__( translate("Select fields"), icon="icons-save-file", icon="icons-list", *args, **kwargs )
+		super( SelectFieldsAction, self ).__init__( translate("Select fields"), icon="icons-list", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--selectfields"
 		self["disabled"] = self.isDisabled = True
 

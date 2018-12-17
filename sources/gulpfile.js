@@ -101,6 +101,7 @@ gulp.task('embedsvg', function () {
     .pipe(cheerio({
       run: function ($, file) {
         $('style').remove()
+        $('title').remove()
         $('[id]').removeAttr('id')
         //$('[class]').removeAttr('class')
         //$('[fill]').removeAttr('fill')

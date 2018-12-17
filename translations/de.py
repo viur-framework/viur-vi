@@ -178,5 +178,8 @@ lngDe = {
 
 	#Drag and Drop
 	"vi.data-insert":u"Hier einfügen",
-	"vi.tree.drag-here":u"Ziehe Deine Dateien hier her."
+	"vi.tree.drag-here":u"Ziehe Deine Dateien hier her.",
+
+	#Tooltip
+	"vi.tooltip.headline":u"Hinweis für ",
 }

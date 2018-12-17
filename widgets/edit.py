@@ -536,7 +536,7 @@ class EditWidget(html5.Div):
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)
 			    and "tooltip" in bone["params"].keys()):
-				containerDiv.appendChild(ToolTip(longText=bone["params"]["tooltip"]))
+				containerDiv.appendChild(ToolTip(shortText=key if conf["showBoneNames"] else bone.get("descr", key), longText=bone["params"]["tooltip"]))
 
 			segments[cat].addWidget(containerDiv)
 			containerDiv.addClass("vi-bone", "vi-bone--%s" % bone["type"].replace(".","-"), "vi-bone--%s" % key)

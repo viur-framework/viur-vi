@@ -283,6 +283,7 @@ class FileWidget(TreeWidget):
 		return (moduleInfo["handler"].startswith("tree.simple.file"))
 
 	def onDragOver(self, event):
+		self.addClass("insert-here")
 		event.preventDefault()
 		event.stopPropagation()
 
@@ -291,6 +292,7 @@ class FileWidget(TreeWidget):
 	def onDrop(self, event):
 		event.preventDefault()
 		event.stopPropagation()
+		self.removeClass("insert-here")
 		files = event.dataTransfer.files
 		for x in range(0, files.length):
 			Uploader(files.item(x), self.node)

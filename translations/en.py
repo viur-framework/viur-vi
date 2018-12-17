@@ -27,6 +27,8 @@ lngEn = {
 
 	# Drag and Drop
 	"vi.data-insert": u"Insert here.",
-	"vi.tree.drag-here": u"Drag your files here."
+	"vi.tree.drag-here": u"Drag your files here.",
 
+	# Tooltip
+	"vi.tooltip.headline":u"Tooltip: ",
 }

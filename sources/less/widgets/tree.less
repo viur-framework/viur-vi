@@ -1,29 +1,32 @@
 @charset "UTF-8";
 /* TREE */
 
-.vi-tree-breadcrumb,
-.imageeditor,
-.linkeditor {
-  min-width: 500px;
-  padding: @defaultPadding @defaultPadding*3;
-  .boxShadow(1,#000);
-  background-color: #f0f0f0;
-  .zIndex('nav', 9);
-}
-
 .vi-tree-selectioncontainer {
   width: 100%;
   margin-bottom: 15px;
+  overflow-x: hidden;
+  overflow-y: scroll;
   .supports-upload & {
     border: 3px dashed #ddd;
     &:before,
     &:after {
       content: attr(title);
       font-size: 1em;
-      line-height: 7em;
       font-weight: @fontWeightBold;
       color: #bbb;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      overflow: hidden;
+    }
+    &.insert-here {
+      border-color: @successColor;
+      background-color: lighten(@successColor, 90%);
+      &:before,
+      &:after {
+        color: @successColor;
+      }
     }
   }
   & .vi-tree-item {
@@ -40,13 +43,21 @@
       margin-left:-3px;
     }
     &.is-focused {
-      background-color: @focusoddcolor !important;
-      color: #fff;
       padding:@defaultPadding*3 @defaultPadding;
     }
   }
 }
 
+.vi-tree-breadcrumb,
+.imageeditor,
+.linkeditor {
+  min-width: 500px;
+  padding: @defaultPadding @defaultPadding*3;
+  .boxShadow(1,#000);
+  background-color: #f0f0f0;
+  .zIndex('nav', 9);
+  font-size: .8em;
+}
 
 .imageeditor,
 .linkeditor {
@@ -56,6 +67,7 @@
 
 .vi-tree-breadcrumb {
   display: flex;
+  min-height: 50px;
   & .vi-tree-item {
     cursor: pointer;
     &:first-of-type {
@@ -76,29 +88,6 @@
 .type_image {
   display: flex;
   align-items: center;
-}
-
-.previewimg {
-  width: 30px;
-  height: 30px;
-  background-size: cover;
-  margin-right: 15px;
-
-  & + .labelwrapper{
-    float: left;
-    width: calc(100% - 27px) !important;
-    display: flex;
-
-    label{
-      height: 17px;
-      width: 100%;
-      flex: 1 1 auto;
-    }
-
-    button:last-child{
-      margin-right: 10px;
-    }
-  }
 }
 
 .fileBoneViewCell{

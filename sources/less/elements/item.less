@@ -133,20 +133,24 @@
     background: transparent;
     cursor: not-allowed;
   }
-  &.is-active {
-    background-color: @activeBackgroundColor;
-    color: contrast(@activeBackgroundColor);
+  &.is-active,
+  &.is-focused {
+    background-color: @activeBackgroundColor!important;
+    color: contrast(@activeBackgroundColor)!important;
     & .i {
       background-color: contrast(@activeBackgroundColor);
       color: @activeBackgroundColor;
     }
   }
-  &.is-active &-action {
+  &.is-active &-action,
+  &.is-focused &-action {
     background-color: @activeBackgroundColor;
     color: contrast(@activeBackgroundColor);
   }
   &.is-active:hover &-action,
-  &.is-active &-action:hover {
+  &.is-active &-action:hover,
+  &.is-focused:hover &-action,
+  &.is-focused &-action:hover {
     background-color: contrast(@activeBackgroundColor);
     color: @activeBackgroundColor;
   }

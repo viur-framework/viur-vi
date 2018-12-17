@@ -5,14 +5,15 @@ from network import NetworkService
 from pane import Pane
 from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
+from widgets.button import Button
 
 
-class AddAction( html5.ext.Button ):
+class AddAction(Button):
 	"""
 		Adds a new node in a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddAction, self ).__init__( translate("Add"), *args, **kwargs )
+		super( AddAction, self ).__init__( translate("Add"), icon="icons-add", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--add btn--primary"
 
 	@staticmethod
@@ -43,12 +44,12 @@ class AddAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, AddAction.isSuitableFor, AddAction )
 
 
-class EditAction( html5.ext.Button ):
+class EditAction(Button):
 	"""
 		Edits a node in a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), icon="icons-edit", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -109,13 +110,13 @@ class EditAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
-class CloneAction( html5.ext.Button ):
+class CloneAction(Button):
 	"""
 		Allows cloning an entry (including its subentries) in a hierarchy application.
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( CloneAction, self ).__init__( translate("Clone"), *args, **kwargs )
+		super( CloneAction, self ).__init__( translate("Clone"), icon="icons-clone", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--clone"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -172,12 +173,12 @@ class CloneAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, CloneAction.isSuitableFor, CloneAction )
 
 
-class DeleteAction( html5.ext.Button ):
+class DeleteAction(Button):
 	"""
 		Deletes a node from a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__( translate("Delete"), *args, **kwargs )
+		super( DeleteAction, self ).__init__( translate("Delete"), icon="icons-delete", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled = True
@@ -232,12 +233,12 @@ class DeleteAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
-class ReloadAction( html5.ext.Button ):
+class ReloadAction(Button):
 	"""
 		Allows adding an entry in a list-modul.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), icon="icons-reload", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod

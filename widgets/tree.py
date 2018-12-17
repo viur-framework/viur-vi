@@ -1,4 +1,4 @@
-import html5
+import html5, embedsvg
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
@@ -24,7 +24,7 @@ class NodeWidget( html5.Div ):
 		self.data = data
 		self.structure = structure
 
-		self["class"] = "vi-tree-item vi-tree-node item is-drop-target is-draggable"
+		self["class"] = "vi-tree-item vi-tree-node item has-hover is-drop-target is-draggable"
 
 		self.fromHTML("""
 			<div class="item-image" [name]="nodeImage"></div>
@@ -36,6 +36,13 @@ class NodeWidget( html5.Div ):
 		""")
 
 		self.buildDescription()
+
+		svg = embedsvg.embedsvg.get("icons-folder")
+		if svg:
+			nodeIcon = html5.I()
+			nodeIcon.addClass("i")
+			nodeIcon.element.innerHTML = svg + nodeIcon.element.innerHTML
+			self.nodeImage.appendChild(nodeIcon)
 
 		self["draggable"] = True
 		self.sinkEvent("onDragOver","onDrop","onDragStart", "onDragLeave")
@@ -131,7 +138,7 @@ class LeafWidget( html5.Div ):
 		""")
 
 		self.buildDescription()
-		self["class"] = "vi-tree-item vi-tree-leaf item is-draggable"
+		self["class"] = "vi-tree-item vi-tree-leaf item has-hover is-draggable"
 		self["draggable"] = True
 		self.sinkEvent("onDragStart")
 

@@ -162,12 +162,14 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 
 	def onDragOver(self, event):
 		super(FileMultiSelectionBone,self).onDragOver(event)
+		self.addClass("insert-here")
 		event.preventDefault()
 		event.stopPropagation()
 
 	def onDrop(self, event):
 		event.preventDefault()
 		event.stopPropagation()
+		self.removeClass("insert-here")
 		files = event.dataTransfer.files
 		for x in range(0,files.length):
 			ul = Uploader(files.item(x), None, context=self.context)
@@ -229,6 +231,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 	def onDragOver(self, event):
 		super(FileSingleSelectionBone,self).onDragOver(event)
+		self.addClass("insert-here")
 		event.preventDefault()
 		event.stopPropagation()
 
@@ -236,6 +239,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		event.preventDefault()
 		event.stopPropagation()
 		files = event.dataTransfer.files
+		self.removeClass("insert-here")
 
 		if files.length > 1:
 			conf["mainWindow"].log("error",translate("You cannot drop more than one file here!"))

@@ -1,28 +1,30 @@
-import html5
+import html5, embedsvg
+from i18n import translate
 
 class ToolTip(html5.Div):
 	"""
 		Small utility class for providing tooltips
 	"""
 
-	def __init__(self, shortText="Tooltip", longText="", *args, **kwargs):
+	def __init__(self, shortText="", longText="", *args, **kwargs):
 		super( ToolTip, self ).__init__( *args, **kwargs )
 		self["class"] = "vi-tooltip msg is-active"
+		self.sinkEvent("onClick")
+		svg = embedsvg.embedsvg.get("icons-arrow-right")
+		if svg:
+			self.element.innerHTML = svg
 
-		tooltipToggleBtn = html5.ext.Button(shortText, self.toggleTooltip )
-		self.appendChild(tooltipToggleBtn)
+		self.fromHTML("""
+			<div class="msg-content" [name]="tooltipMsg">
+				<h2 class="msg-headline" [name]="tooltipHeadline"></h2>
+				<div class="msg-descr" [name]="tooltipDescr"></div>
+			</div>
+		""")
 
-		tooltipHeadline = html5.H2()
-		tooltipHeadline.addClass("msg-headline")
-		tooltipHeadline.element.innerHTML = shortText
-		self.appendChild(tooltipHeadline)
+		self.tooltipHeadline.element.innerHTML = translate("vi.tooltip.headline") + " " + shortText
+		self.tooltipDescr.element.innerHTML = longText.replace( "\n", "<br />" )
 
-		tooltipMsg = html5.Div()
-		tooltipMsg.addClass("msg-content")
-		tooltipMsg.element.innerHTML = longText.replace( "\n", "<br />" )
-		self.appendChild(tooltipMsg)
-
-	def toggleTooltip(self, *args, **kwargs):
+	def onClick(self, event):
 		self.toggleClass("is-open")
 
 	def _setDisabled(self, disabled):

@@ -11,7 +11,8 @@
 .badge,
 .has-badge:after {
   content: attr(data-badge);
-  display: inline-block;
+  display: inline-flex;
+  align-self: center;
   pointer-events: none;
   font-size: .7em;
   font-weight: @fontWeightBold;
@@ -46,7 +47,8 @@
 .marker,
 .has-marker:after {
   content: attr(aria-label);
-  display: inline-block;
+  display: inline-flex;
+  align-self: center;
   pointer-events: none;
   font-size: .7em;
   font-weight: @fontWeightBold;

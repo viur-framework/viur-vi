@@ -12,6 +12,7 @@ from bones.base import BaseBoneExtractor
 from widgets.edit import EditWidget
 from widgets.internaledit import InternalEdit
 from widgets.list import ListWidget
+from widgets.button import Button
 
 def getDefaultValues(structure):
 	defaultValues = {}
@@ -507,17 +508,17 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.module = module
 		self.data = data
 
-		self.txtLbl = html5.Label()
+		self.txtLbl = html5.ignite.Label()
 		self.txtLbl["draggable"] = not parent.readOnly
 
 		self.addClass("vi-tree-selectioncontainer-entry")
 
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild(self.txtLbl)
-		wrapperDiv.addClass("vi-tree-labelwrapper")
+		wrapperDiv.addClass("vi-tree-labelwrapper input-group")
 
 		if not parent.readOnly:
-			remBtn = html5.ext.Button(translate("Remove"), self.onRemove)
+			remBtn = Button(translate("Remove"), self.onRemove, icon="icons-delete")
 			remBtn.addClass("btn--remove", "btn--danger")
 			wrapperDiv.appendChild(remBtn)
 
@@ -539,7 +540,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			and ("root" in conf["currentUser"]["access"]
 					or self.parent.destModule + "-edit" in conf["currentUser"]["access"])):
 
-			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit)
+			self.editBtn = Button(translate("Edit"), self.onEdit, icon="icons-edit")
 			self.editBtn.addClass("btn--edit")
 			wrapperDiv.appendChild(self.editBtn)
 

@@ -18,29 +18,30 @@
 @import "elements/_elements";
 
 // Load widgets.
-@import "widgets/topbar";
-@import "widgets/actionbar";
-@import "widgets/table";
-@import "widgets/sidebar";
 @import "widgets/accordion";
-@import "widgets/tree";
-@import "widgets/hierarchy";
+@import "widgets/actionbar";
 @import "widgets/file";
+@import "widgets/hierarchy";
+@import "widgets/sidebar";
+@import "widgets/table";
+@import "widgets/tooltip";
+@import "widgets/topbar";
+@import "widgets/tree";
 
 // Load objects.
-@import "objects/modulelist";
-@import "objects/splash";
-@import "objects/form";
+@import "objects/login"; // the login screen
+@import "objects/splash"; // the loading splash animation
+@import "objects/modulelist"; // the modulelist
+@import "objects/messenger"; // the vi log
+@import "objects/tasks"; // the tasks menu
 
-@import "objects/progress";
-@import "objects/alert";
-@import "objects/tooltip";
+@import "objects/progress"; // progress bars
+@import "objects/tooltip"; // light weight tool tip bubbles
+@import "objects/badge"; // counter, badges and marker
 
-@import "objects/textedit";
-
-@import "objects/messenger";
-@import "objects/login";
-@import "objects/tasks";
+@import "objects/form"; // DEPRECATED: use bones/_bones instead!
+// @import "objects/textedit"; // DEPRECATED: all new summernote editor is styled in bones/text!
+// @import "objects/alert"; Not in use … ignite/messages work fine.
 
 // Bones
 @import "bones/_bones";
@@ -49,22 +50,4 @@
 @import "status/_status";
 
 @import (optional) "../../../vi_customizing/custom";
-
-// Old stuff:
-.vi-screen.is-loading:after {
-  background-image: url(../icons/status/is-loading32.gif);
-  background-position: center 35%;
-  background-repeat: no-repeat;
-  background-color:rgba(255,255,255,0.6);
-  position: absolute;
-  z-index:1000;
-  content:' ';
-  width:100%;
-  height:100%;
-  display:block;
-  left:0;
-  right:0;
-  top:0;
-  bottom:0;
-}
 

@@ -1,121 +1,66 @@
 @charset "UTF-8";
-/* ALERTS AND POPUPS */
-
-.alertbox {
-  min-width: 400px;
-  max-width: 90vw;
-  max-height: 85vh;
-  padding: 25px 25px 30px;
-  background: #eee;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
-  border: 1px solid #ccc;
-  border-bottom: 1px solid @mainColor;
-  margin: 5% auto;
-  box-sizing: border-box;
-
-  &.image-viewer{
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-.alertbox.task
-{
-  width: 60%;
-}
-
-.alertbox.task .task-selector select
-{
-  font-size: 14pt;
-  padding: 5px;
-  margin: 0;
-  width: 100%;
-  height: auto;
-}
-
-.alertbox.task .task-description
-{
-  margin: 5px 0px;
-  padding: 10px;
-  border: 1px solid black;
-}
-
-.alertbox.task .warning
-{
-  color: red;
-  padding: 10px;
-  border: 3px solid red;
-}
-
-.alertbox.browsersupport a:link {
-  /* font-size:0.9em; */
-  color: @mainColor;
-  text-decoration: underline;
-}
-
-.alertbox.browsersupport small {
-  font-size:0.7em;
-  line-height:0.9em;
-  color:#777;
-}
-
-.alertbox span {
-  width: 100%;
-  display: block;
-  margin-bottom: 15px;
-}
-
-.alertbox span.title {
-  margin-left: -25px;
-  margin-top: -25px;
-  padding: 7px 43px 8px 7px;
-  font-size: .8em;
-  line-height: .8em;
-  background: #ddd;
-  color: #777;
-}
-
-.alertbox input[type="checkbox"] {width:15px}
-.alertbox input[type="number"] {margin-bottom:10px}
-
-.alertbox label {float: right; width: 400px;}
-.alertbox label.headerlbl {float: left; font-size:0.8em; margin-bottom:10px;}
-.alertbox label.rowlbl, .alertbox label.collbl  {
-  float: left;
-  width:120px;
-  font-size:0.8em;
-  padding:2px 7px;
-  border:1px solid #ccc;
-  background:#fdfdfd;
-  border-right-width:0;
+/* Alerts */
+.alert(
+  @alertColor: @hintColor,
+  @alertBorderWidth: @defaultBorderWidth,
+  @alertBorderRadius: 3px) when (@message=true) {
+  user-select: none;
+  position: relative;
+  padding: 8px 10px;
+  font-size: .8rem;
+  color: darken(@alertColor, 25%);
+  background-color: lighten(@alertColor, 40%);
+  .border(@alertBorderWidth, solid, darken(@alertColor, 15%));
+  .border-radius(@alertBorderRadius);
+  min-width: 300px;
+  max-width: 25%;
+  float: right;
+  clear: both;
   margin-bottom: 10px;
-}
+  cursor: default;
+  .zIndex('alert', 1);
+  p:last-child {
+    margin-bottom: 0;
+  }
+  &.has-icon { padding-left: 2em; }
+  & .icon {
+    position: absolute;
+    display: block;
+    height: .8em;
+    width: .8em;
+    margin-left: -1em;
+    margin-top: 5px;
+    transform: translateX(-50%);
+  }
+  a {
+    color: darken(@alertColor, 35%);
+    text-decoration: underline;
+  }
 
-.alertbox > button {float: right;}
+  &-headline {
+    font-size: .8rem;
+    font-weight: @fontWeightBold;
+    color: inherit;
+  }
 
-.alertbox.selectfields label {
-    float: right;
-    width: 350px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.alertbox.selectfields ul { max-height: 400px; overflow-y: auto; margin-bottom:15px; }
-.alertbox.selectfields div.selectiontools { float:left; }
-
-.alertbox span.alert-msg{
-  max-height: 70vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-
-  img{
-    max-width: 100%;
-    max-height: 67vh;
+  // Contain the messages
+  &-group {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 25px;
+    .zIndex('alert', 0);
   }
 }
 
-.alert-btn-ok{
-  align-self: flex-end;
+// Variations
+.colorizeAlert(@color) when (@message=true) {
+  color: darken(@color, 25%);
+  background-color: lighten(@color, 35%);
+  border-color: darken(@color, 15%);
+  a {
+    color: darken(@color, 35%);
+    text-decoration: underline;
+  }
 }
+

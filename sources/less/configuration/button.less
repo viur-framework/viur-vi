@@ -15,6 +15,28 @@
     @btnShadow: 0,
     @btnShadowHover: 1,
     @btnShadowColor: @defaultShadowColor);
+    &.is-busy,
+    &.is-loading,
+    &[aria-busy=true] {
+      & .icon {
+        & rect {
+          animation: spin-square-ani 1s infinite ease-in-out both;
+          &:nth-of-type(1n) {
+            animation-delay: .2s;
+          }
+          &:nth-of-type(3n),
+          &:nth-of-type(7n) {
+            animation-delay: .6s;
+          }
+          &:nth-of-type(2n) {
+            animation-delay: .4s;
+          }
+          &:nth-of-type(4n) {
+            animation-delay: .8s;
+          }
+        }
+      }
+    }
 }
 
 /* Red button, white font */

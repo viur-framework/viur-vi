@@ -29,16 +29,14 @@
 @backgroundColor: #f5f5f5;
 @clearColor: #fff;
 
-@highlightcolor: #f3a1a1;  // highlight red
+@focusoddcolor: fadeout(@mainColor, 30%);
+@focusevencolor: lighten(fadeout(@mainColor, 30%), 10%);
 
-@selectionoddcolor: rgba(250,0,0,0.2);
-@selectionevencolor: rgba(250,130,130,0.2);
+@focusselectionoddcolor: fadeout(@mainColor, 50%);
+@focusselectionevencolor: lighten(fadeout(@mainColor, 50%), 10%);
 
-@focusoddcolor: rgba(230,0,0,.7);
-@focusevencolor: rgba(230,15,15,.7);
-
-@focusselectionoddcolor: rgba(250,0,0,0.5);
-@focusselectionevencolor: rgba(250,130,130,0.5);
+@selectionoddcolor: fadeout(@mainColor, 80%);
+@selectionevencolor: lighten(fadeout(@mainColor, 80%), 10%);
 
 @successColor: #4cad42; // Green
 @warnColor: #f5b639; // Orange

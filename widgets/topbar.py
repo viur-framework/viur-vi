@@ -40,6 +40,21 @@ class TopBarWidget(html5.Header):
 	def invoke(self):
 		self.iconnav.removeAllChildren()
 
+		newBtn = html5.A()
+		newBtn["href"] = "https://www.viur.is"
+		newBtn["target"] = "_blank"
+		newBtn.addClass("btn btn--viur")
+		svg = embedsvg.embedsvg.get("icons-notifications")
+		if svg:
+			newBtn.element.innerHTML = svg + newBtn.element.innerHTML
+		newBtn.appendChild(translate("vi.topbar.newbtn"))
+		self.iconnav.appendChild(newBtn)
+
+		newMarker = html5.Span()
+		newMarker.addClass("marker")
+		newMarker.appendChild(translate("vi.topbar.new"))
+		newBtn.appendChild(newMarker)
+
 		for icon in conf["toplevelactions"]:
 			widget = toplevelActionSelector.select(icon)
 			if widget:
@@ -62,13 +77,22 @@ class TopBarWidget(html5.Header):
 		for c in self.modulImg["class"]:
 			self.modulImg.removeClass(c)
 
+		self.modulImg.addClass("item-image")
+
 		descr = html5.utils.unescape(descr)
 		self.moduleName.appendChild(html5.TextNode(descr))
 
 		if iconURL is not None:
-			img = html5.Img()
-			img["src"] = iconURL
-			self.modulImg.appendChild(img)
+			svg = embedsvg.embedsvg.get(iconURL)
+			if svg:
+				modulIcon = html5.I()
+				modulIcon.addClass("i")
+				modulIcon.element.innerHTML = svg + modulIcon.element.innerHTML
+				self.modulImg.appendChild(modulIcon)
+			else:
+				img = html5.Img()
+				img["src"] = iconURL
+				self.modulImg.appendChild(img)
 
 		if iconClasses is not None:
 			for cls in iconClasses:
