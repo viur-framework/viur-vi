@@ -5029,9 +5029,19 @@ form .relational:focus button:after {
   z-index: 600;
 }
 
-.note-popover,
-.note-modal {
+div.note-popover,
+div.note-modal {
   z-index: 700;
+}
+
+.note-editor:not(.codeview) .note-toolbar {
+  -webkit-transition: 0.3s opacity ease;
+  transition: 0.3s opacity ease;
+  opacity: 1;
+}
+
+.note-editor:not(.codeview) .note-toolbar:not(.is-active) {
+  opacity: 0;
 }
 
 .is-clickable {

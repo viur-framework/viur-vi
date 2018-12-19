@@ -184,7 +184,7 @@ var viurPictureBtn = function (context) {
 document.execCommand('enableObjectResizing', false, 'false');
 
 // use events here, because sommernote's events are only for the editable container
-$('.bone').on('blur', '.note-editor', function () {
+$('.vi-bone-container').on('blur', '.note-editor', function () {
   $editor = $(this);
   $toolbar = $editor.find('.note-toolbar');
   $editable = $editor.find('.note-editable');
@@ -197,7 +197,7 @@ $('.bone').on('blur', '.note-editor', function () {
 
   $codemirror.height($editable.height());
 });
-$('.bone').on('focus', '.note-editor', function () {
+$('.vi-bone-container').on('focus', '.note-editor', function () {
   $editor = $(this);
   $toolbar = $editor.find('.note-toolbar');
   $editable = $editor.find('.note-editable');
