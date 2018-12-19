@@ -3,17 +3,38 @@ function summernoteEditor(input) {
 	$(input).summernote({
 		callbacks: {
 			onChange: function (e) {
-				var $selectionContainer = $(getSelection().getRangeAt(0).commonAncestorContainer);
-				var $editor = $selectionContainer.closest(".note-editable");
+				$editor = $(input).next();
+				$editable = $editor.find('.note-editable');
 
 				// in case we are joining two paragraphs or styling plain text, prevent span and inline style being inserted
-				$editor.find("span[style]").contents().unwrap();
+				$editable.find('span[style]').contents().unwrap();
 			},
 			// clean html/css crud out of copied text before pasting
 			onPaste: function (e) {
 				var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
 				e.preventDefault();
 				$(input).summernote('insertText', bufferText);
+			},
+			onBlur: function() {
+				$editor = $(input).next();
+				$toolbar = $editor.find('.note-toolbar');
+				$editable = $editor.find('.note-editable');
+				$codemirror = $editor.find('.CodeMirror');
+				$toolbar.removeClass('is-active');
+
+				if (!$editor.data('codeview')) {
+					$editable.data('lastHeight', $editable.height()).height(100);
+				}
+
+				$codemirror.height($editable.height());
+			},
+			onFocus: function() {
+				$editor = $(input).next();
+				$toolbar = $editor.find('.note-toolbar');
+				$editable = $editor.find('.note-editable');
+				$toolbar.addClass('is-active');
+				var height = $editable.data('lastHeight') || 400;
+				$editable.height(height);
 			}
 		},
 		lang: 'de-DE',
@@ -105,11 +126,11 @@ function summernoteEditor(input) {
 			}
 		},
 		styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-		focus: true,
+		focus: false,
 		dialogsInBody: true,
 		disableDragAndDrop: true,
 		airMode: false,
-		height: 400,
+		height: 100,
 		styleWithSpan: false,
 		disableResizeImage: true
 	});
@@ -121,18 +142,25 @@ function summernoteEditor(input) {
 		}, 200)
 	});
 
-	$("*").on("scroll", function () {
-		$(".note-popover").hide();
-		$(".note-image-popover").hide();
+	$('*').on('scroll', function () {
+		$('.note-popover').hide();
+		$('.note-image-popover').hide();
 	});
 
 	$.event.addProp('dataTransfer');
 	// catch drag events and replace data with plaintext
-	$("*").on('dragstart', function (e) {
-		var plainStr = e.originalEvent.dataTransfer.getData("text/plain");
+	$('*').on('dragstart', function (e) {
+		var plainStr = e.originalEvent.dataTransfer.getData('text/plain');
 		e.dataTransfer.clearData();
-		e.dataTransfer.setData("text/plain", plainStr);
+		e.dataTransfer.setData('text/plain', plainStr);
 	});
+
+	$(input).next().on('mousedown', '.btn-codeview', function () {
+		$editor = $(this).closest('.note-editor');
+		isCodeView = $editor.data('codeview');
+		$editor = $editor.data('codeview', !isCodeView);
+	});
+
 
 	return $(input);
 }

@@ -1626,6 +1626,16 @@ margin-right: -2px;
   background: #eee;
 }
 
+.note-editor:not(.codeview) {
+  .note-toolbar {
+    transition: .3s opacity ease;
+    opacity: 1;
+  }
+  .note-toolbar:not(.is-active) {
+    opacity: 0;
+  }
+}
+
 /* #vi_input_bones
 ================================================== */
 

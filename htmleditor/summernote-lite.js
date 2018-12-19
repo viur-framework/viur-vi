@@ -5,7 +5,7 @@
  * Copyright 2013- Alan Hong. and other contributors
  * summernote may be freely distributed under the MIT license.
  *
- * Date: 2018-12-14T17:37Z
+ * Date: 2018-12-19T11:59Z
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery')) :
@@ -5454,6 +5454,7 @@
       }
       Statusbar.prototype.initialize = function () {
           var _this = this;
+          this.$statusbar.removeClass('locked');
           if (this.options.airMode || this.options.disableResizeEditor) {
               this.destroy();
               return;
