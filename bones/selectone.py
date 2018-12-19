@@ -36,7 +36,7 @@ class SelectOneViewBoneDelegate( object ):
 
 		return html5.Label(conf["empty_value"])
 
-class SelectOneEditBone( html5.Select ):
+class SelectOneEditBone( html5.ignite.Select ):
 
 	def __init__(self, moduleName, boneName, readOnly, values, *args, **kwargs):
 		super(SelectOneEditBone,  self).__init__(*args, **kwargs)

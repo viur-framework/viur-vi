@@ -70,7 +70,7 @@ class Log( html5.Div ):
 		else:
 			self.addClass("is-open")
 
-	def log(self, type, msg ):
+	def log(self, type, msg, icon=None ):
 		"""
 			Adds a message to the log
 			@param type: The type of the message.
@@ -84,7 +84,11 @@ class Log( html5.Div ):
 		msgWrap.addClass("msg--"+type, "msg", "is-active")
 		msgWrap.addClass("is-new popup popup--s")
 
-		svg = embedsvg.embedsvg.get("icons-%s" % type)
+
+		if icon:
+			svg = embedsvg.embedsvg.get(icon)
+		else:
+			svg = embedsvg.embedsvg.get("icons-%s" % type)
 		if not svg:
 			svg = embedsvg.embedsvg.get("icons-message-news")
 		if svg:

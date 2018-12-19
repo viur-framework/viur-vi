@@ -82,7 +82,7 @@ class StringViewBoneDelegate(object):
 class Tag(html5.Span):
 	def __init__(self, parentBone, tag, isEditMode, readonly=False, multiLine=False, *args, **kwargs):
 		super(Tag, self).__init__(*args, **kwargs)
-		self.addClass("tag")
+		self.addClass("vi-bone-tag input-group")
 
 		self.parentBone = parentBone
 
@@ -90,6 +90,7 @@ class Tag(html5.Span):
 			self.input = html5.ignite.Textarea()
 		else:
 			self.input = html5.ignite.Input()
+			self.input.addClass("input--small")
 			self.input["type"] = "text"
 
 		self.input["value"] = tag
@@ -102,7 +103,7 @@ class Tag(html5.Span):
 			self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd")
 
 			delBtn = html5.ext.Button(translate("Delete"), self.onDelBtnClick)
-			delBtn.addClass("btn--delete")
+			delBtn.addClass("btn--delete btn--small")
 			self.appendChild(delBtn)
 
 	def onDelBtnClick(self, *args, **kwargs):
@@ -173,7 +174,7 @@ class StringEditBone(html5.Div):
 				tagContainer = html5.Div()
 
 				tagContainer.addClass("lang_%s" % lang )
-				tagContainer.addClass("tagcontainer")
+				tagContainer.addClass("vi-bone-tagcontainer")
 				tagContainer.hide()
 
 				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
@@ -215,6 +216,7 @@ class StringEditBone(html5.Div):
 				else:
 					inputField = html5.ignite.Input()
 					inputField["type"] = "text"
+					inputField["placeholder"] = " "
 
 				inputField.hide()
 				inputField.addClass("lang_%s" % lang)
@@ -231,7 +233,7 @@ class StringEditBone(html5.Div):
 		elif not self.languages and self.multiple:
 			self.addClass("is-multiple")
 			self.tagContainer = html5.Div()
-			self.tagContainer.addClass("tagcontainer")
+			self.tagContainer.addClass("vi-bone-tagcontainer")
 			self.appendChild(self.tagContainer)
 
 			if not self.readOnly:
@@ -249,6 +251,7 @@ class StringEditBone(html5.Div):
 			else:
 				self.input = html5.ignite.Input()
 				self.input["type"] = "text"
+				self.input["placeholder"] = " "
 
 			self.appendChild(self.input)
 

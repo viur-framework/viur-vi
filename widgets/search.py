@@ -6,9 +6,10 @@ class Search( html5.Div ):
 	def __init__(self, *args, **kwargs):
 		super( Search, self ).__init__( *args, **kwargs )
 		self.startSearchEvent = EventDispatcher("startSearch")
-		self.addClass("search")
+		self.addClass("search input-group")
 		lblSearch = html5.H2()
 		lblSearch.appendChild( html5.TextNode(translate("Fulltext search")))
+		lblSearch.addClass("label")
 		self.appendChild( lblSearch )
 		self.searchInput = html5.ignite.Input()
 		self.searchInput["type"] = "text"

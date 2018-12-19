@@ -1,4 +1,4 @@
-import html5, utils
+import html5, utils, embedsvg
 from network import NetworkService
 from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
@@ -353,10 +353,11 @@ actionDelegateSelector.insert( 2, ListPreviewAction.isSuitableFor, ListPreviewAc
 
 class ListPreviewInlineAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( ListPreviewInlineAction, self ).__init__( translate("Preview"), icon="icons-preview", *args, **kwargs )
-		self["class"] = "bar-item btn btn--small btn--preview"
-		self["disabled"] = True
+		super( ListPreviewInlineAction, self ).__init__( translate("vi.sidebar.internalpreview"), icon="icons-list-item", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--intpreview"
 		self.urls = None
+		self.intPrevActive = False
+		self.addClass("is-disabled")
 
 	def onAttach(self):
 		super( ListPreviewInlineAction,self ).onAttach()
@@ -370,6 +371,11 @@ class ListPreviewInlineAction(Button):
 		if self.parent().parent().selectMode:
 			return
 
+		if len(selection)>0:
+			self.removeClass("is-disabled")
+		else:
+			self.addClass("is-disabled")
+
 		# Disable internal Preview by config
 		module = self.parent().parent().module
 		if conf["modules"][module].get("disableInternalPreview", not conf["internalPreview"]):
@@ -382,19 +388,38 @@ class ListPreviewInlineAction(Button):
 
 		# Show internal preview when one entry is selected; Else, remove sidebar widget if
 		# it refers to an existing, internal preview.
-		if len(selection) == 1:
+		self.toggleIntPrev()
+
+	def onClick(self, sender=None):
+		intPrevActive = self.intPrevActive
+		if intPrevActive:
+			self.intPrevActive = False
+			self.removeClass("is-active")
+		else:
+			self.intPrevActive = True
+			self.addClass("is-active")
+		self.toggleIntPrev()
+
+	def toggleIntPrev(self):
+		intPrevActive = self.intPrevActive
+		selection = self.parent().parent().getCurrentSelection()
+		if len(selection) == 1 and intPrevActive == True :
 			preview = InternalPreview( self.parent().parent().module, self.parent().parent()._structure, selection[0])
-			self.parent().parent().sideBar.setWidget( preview )
+			self.parent().parent().sideBar.sidebarHeadline.element.innerHTML = translate("vi.sidebar.internalpreview")
+			svg = embedsvg.embedsvg.get("icons-list-item")
+			if svg:
+				self.parent().parent().sideBar.sidebarIcon.element.innerHTML = svg
+			self.parent().parent().sideBar.setWidget(preview)
 		else:
 			if isinstance( self.parent().parent().sideBar.getWidget(), InternalPreview ):
-				self.parent().parent().sideBar.setWidget( None )
+				self.parent().parent().sideBar.setWidget(None)
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
 		if module is None or module not in conf["modules"].keys():
 			return False
 
-		correctAction = actionName == "preview"
+		correctAction = actionName == "intpreview"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
@@ -420,7 +445,7 @@ actionDelegateSelector.insert( 1, CloseAction.isSuitableFor, CloseAction )
 
 class ActivateSelectionAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( ActivateSelectionAction, self ).__init__( translate("Select"), icon="icons-select", *args, **kwargs )
+		super( ActivateSelectionAction, self ).__init__( translate("Select"), icon="icons-select-add", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--activateselection"
 
 	def onClick(self, sender=None):
@@ -585,7 +610,7 @@ actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
 class ListSelectFilterAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), *args, **kwargs )
+		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), icon="icons-search", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--selectfilter"
 		self.urls = None
 		self.filterSelector = None
@@ -610,6 +635,10 @@ class ListSelectFilterAction(Button):
 			self.filterSelector = None
 		else:
 			self.filterSelector = FilterSelector(self.parent().parent().module)
+			self.parent().parent().sideBar.sidebarHeadline.element.innerHTML = translate("vi.sidebar.filterselector")
+			svg = embedsvg.embedsvg.get("icons-search")
+			if svg:
+				self.parent().parent().sideBar.sidebarIcon.element.innerHTML = svg
 			self.parent().parent().sideBar.setWidget(self.filterSelector)
 
 	@staticmethod
@@ -657,7 +686,7 @@ actionDelegateSelector.insert(1, ExportCsvAction.isSuitableFor, ExportCsvAction)
 
 class SelectAllAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectAllAction, self ).__init__(translate("Select all"), icon="icons-select", *args, **kwargs)
+		super(SelectAllAction, self ).__init__(translate("Select all"), icon="icons-select-add", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--selectall"
 		self["disabled"] = self.isDisabled = True
 
@@ -688,7 +717,7 @@ actionDelegateSelector.insert(1, SelectAllAction.isSuitableFor, SelectAllAction)
 
 class UnSelectAllAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), icon="icons-unselect", *args, **kwargs)
+		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), icon="icons-select-remove", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--unselectall"
 		self["disabled"] = self.isDisabled = True
 
@@ -718,7 +747,7 @@ actionDelegateSelector.insert(1, UnSelectAllAction.isSuitableFor, UnSelectAllAct
 
 class SelectInvertAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectInvertAction, self ).__init__(translate("Invert selection"), icon="icons-reload", *args, **kwargs)
+		super(SelectInvertAction, self ).__init__(translate("Invert selection"), icon="icons-select-invert", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--selectinvert"
 		self["disabled"] = self.isDisabled = True
 
@@ -731,11 +760,11 @@ class SelectInvertAction(Button):
 
 		if removed and added:
 			conf["mainWindow"].log("info", translate(u"{added} items selected, {removed} items deselected",
-			                                            added=added, removed=removed))
+			                                            added=added, removed=removed), icon="icons-select-invert")
 		elif removed == 0:
-			conf["mainWindow"].log("info", translate(u"{items} items had been selected", items=added))
+			conf["mainWindow"].log("info", translate(u"{items} items had been selected", items=added), icon="icons-select-add")
 		elif added == 0:
-			conf["mainWindow"].log("info", translate(u"{items} items had been unselected", items=removed))
+			conf["mainWindow"].log("info", translate(u"{items} items had been unselected", items=removed), icon="icons-select-remove")
 
 	def onAttach(self):
 		super(SelectInvertAction,self).onAttach()

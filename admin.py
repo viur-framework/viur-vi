@@ -209,8 +209,8 @@ class AdminScreen(Screen):
 		DeferredCall(self.checkInitialHash)
 		self.unlock()
 
-	def log(self, type, msg):
-		self.logWdg.log(type, msg)
+	def log(self, type, msg, icon):
+		self.logWdg.log(type, msg, icon)
 
 	def checkInitialHash(self, *args, **kwargs):
 		urlHash = conf["startupHash"]

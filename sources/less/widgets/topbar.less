@@ -21,7 +21,7 @@
   &-logo {
     background: @mainColor;
     color:#fff;
-    width: ~"calc(2.5rem + 3.75px)";
+    width: ~"calc(2.5rem + 2 * 1.25 * "@defaultPadding ~")";
     display:flex;
     align-items: center;
     justify-content: center;
@@ -37,6 +37,7 @@
     font-weight: @fontWeightBold;
     font-size: 1.2em;
     color: @mainColor;
+    cursor: pointer;
   }
   &-currentmodul {
     position: relative;

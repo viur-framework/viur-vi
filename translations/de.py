@@ -170,6 +170,10 @@ lngDe = {
 	                                   u"Möchten Sie wirklich fortfahren?",
 	"vi.action.edit.refresh.title": u"Datensatz neu laden",
 
+	# Topbar
+	"vi.topbar.newbtn": u"Was ist neu?",
+	"vi.topbar.new": u"NEW",
+
 	#Tasks
 	"vi.tasks":u"Aufträge",
 	"vi.tasks.headline":u"Wähle einen Auftrag",
@@ -180,6 +184,7 @@ lngDe = {
 	"vi.data-insert":u"Hier einfügen",
 	"vi.tree.drag-here":u"Ziehe Deine Dateien hier her.",
 
-	#Tooltip
-	"vi.tooltip.headline":u"Hinweis für ",
+	#Bones
+	"vi.tooltip.headline": u"Hinweis für ",
+	"vi.select.default-option":u"- Bitte wählen -",
 }

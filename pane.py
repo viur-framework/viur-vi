@@ -129,8 +129,7 @@ class Pane(html5.Div):
 			if self.closeable:
 				self.closeBtn.hide()
 
-		if ( pane.closeable
-			 and "is-active" not in self.childDomElem[ "class" ] ):
+		if (pane.closeable and "is-active" not in self.childDomElem[ "class" ]):
 			self.childDomElem.addClass("is-active")
 
 		self.childDomElem.appendChild( pane )
@@ -255,6 +254,7 @@ class GroupPane(Pane):
 		self.addClass("vi-pane-group")
 
 		self.childDomElem = html5.Ul()
+		self.childDomElem.addClass("list list--sub")
 		self.childDomElem.hide()
 		self.appendChild(self.childDomElem)
 

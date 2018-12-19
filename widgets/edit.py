@@ -616,7 +616,7 @@ class EditWidget(html5.Div):
 		self._lastData = data
 
 		if hasMissing and not self.wasInitialRequest:
-			conf["mainWindow"].log("warning",translate("Could not save entry!"))
+			conf["mainWindow"].log("warning",translate("Could not save entry!"),icon="icons-cancel")
 
 		DeferredCall(self.performLogics)
 

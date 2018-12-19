@@ -27,7 +27,7 @@ class ExportCsv(html5.Progress):
 		self.encoding = encoding
 		self.lang = language
 
-		conf["mainWindow"].log("progress", self)
+		conf["mainWindow"].log("progress", self, icon="icons-download-file")
 		self.parent().addClass("is-new")
 		self.parent().addClass("log-progress")
 		self.appendChild(html5.TextNode(translate("CSV-Export")))

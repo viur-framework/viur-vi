@@ -174,6 +174,7 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.format = format
 		self.using = using
 		self.usingDescr = usingDescr
+		self.addClass("vi-bone-container")
 
 		self.selection = None
 		self.selectionTxt = html5.ignite.Input()
@@ -718,6 +719,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.using = using
 		self.usingDescr = usingDescr
 		self.relskel = relskel
+		self.addClass("vi-bone-container")
 
 		self.changeEvent = EventDispatcher("boneChange")
 

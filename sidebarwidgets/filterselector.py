@@ -83,6 +83,7 @@ class FilterSelector( html5.Div ):
 		self.currentTarget = None
 		self.defaultFilter = True
 		self.sinkEvent("onClick")
+		self.addClass("vi-sb-filterselector")
 
 	def onClick(self, event):
 		"""

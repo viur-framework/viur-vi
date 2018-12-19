@@ -7,12 +7,27 @@ class SideBar( html5.Div ):
 		super( SideBar, self ).__init__( *args, **kwargs )
 		self.isInit = False
 		self.currentWidget = None
-		self.addClass("vi-sidebar")
-		self.addClass("is-empty")
+		self.addClass("vi-sidebar popup popup--e popup--local box")
+
+		self.fromHTML("""
+			<div class="box-head" [name]="sidebarHead">
+				<div class="item" [name]="sidebarHeadItem">
+					<div class="item-image">
+						<i class="i i--small" [name]="sidebarIcon"></i>
+					</div>
+					<div class="item-content">
+						<div class="item-headline" [name]="sidebarHeadline"></div>
+					</div>
+				</div>
+			</div>
+		""")
+
+		closeBtn = html5.ext.Button("&times;", self.close, className="item-action")
+		closeBtn.removeClass("btn")
+		self.sidebarHeadItem.appendChild(closeBtn)
 
 	def onAttach(self):
 		super( SideBar, self ).onAttach()
-		self.parent().addClass("is-fullview")
 		self.isInit = True
 		if self.currentWidget is not None:
 			cw = self.currentWidget
@@ -23,6 +38,7 @@ class SideBar( html5.Div ):
 		if self.currentWidget:
 			self.removeChild( self.currentWidget )
 			self.currentWidget = None
+			self.removeClass("is-active")
 		super( SideBar, self ).onDetach()
 		self.isInit = False
 
@@ -34,16 +50,10 @@ class SideBar( html5.Div ):
 		if self.currentWidget:
 			self.removeChild( self.currentWidget )
 			if widget is None:
-				self.removeClass("has-child")
-				self.addClass("is-empty")
-				self.parent().removeClass("is-splitview")
-				self.parent().addClass("is-fullview")
+				self.removeClass("is-active")
 
 		elif widget is not None:
-			self.addClass("has-child")
-			self.removeClass("is-empty")
-			self.parent().addClass("is-splitview")
-			self.parent().removeClass("is-fullview")
+			self.addClass( "is-active")
 
 		self.currentWidget = widget
 
@@ -53,3 +63,9 @@ class SideBar( html5.Div ):
 
 	def getWidget(self):
 		return( self.currentWidget )
+
+	def close(self, *args, **kwargs):
+		if self.currentWidget:
+			self.removeChild( self.currentWidget )
+			self.currentWidget = None
+			self.removeClass("is-active")

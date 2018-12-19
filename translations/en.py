@@ -19,6 +19,10 @@ lngEn = {
 										u"Do you really want to continue?",
 	"vi.action.edit.refresh.title": u"Refresh dataset from server",
 
+	# Topbar
+	"vi.topbar.newbtn":u"What's new?",
+	"vi.topbar.new": u"NEW",
+
 	# Tasks
 	"vi.tasks":u"Tasks",
 	"vi.tasks.headline":u"Select a task",
@@ -29,6 +33,9 @@ lngEn = {
 	"vi.data-insert": u"Insert here.",
 	"vi.tree.drag-here": u"Drag your files here.",
 
-	# Tooltip
-	"vi.tooltip.headline":u"Tooltip: ",
+	# Bones
+	"vi.tooltip.headline": u"Tooltip: ",
+	"vi.select.default-option": u"- Select please -",
 }
+
+

@@ -61,7 +61,6 @@
 .popout--se,
 .popout--sw {
   .popout {
-    transform: translate(-50%, ~'calc(100% + 12px)');
     bottom:0;
   }
   &:before {
@@ -74,13 +73,16 @@
   }
 }
 .popout--s .popout {
+  transform: translate(-50%, ~'calc(100% + 12px)');
   left: 50%;
 }
 .popout--se .popout {
-  left: 100%;
+  transform: translate(0, ~'calc(100% + 12px)');
+  left: 0;
 }
 .popout--sw .popout {
-  left: 0;
+  transform: translate(0, ~'calc(100% + 12px)');
+  right: 0;
 }
 
 

@@ -36,13 +36,12 @@ class ListWidget(html5.Div):
 		self.actionBar = ActionBar(module, "list", currentAction="list")
 		self.appendChild( self.actionBar )
 
-		self.widgetContent = html5.Div()
-		self.widgetContent.addClass("vi-widget-content")
-		self.appendChild(self.widgetContent)
-
 		self.sideBar = SideBar()
 		self.appendChild( self.sideBar )
 
+		self.widgetContent = html5.Div()
+		self.widgetContent.addClass("vi-widget-content")
+		self.appendChild(self.widgetContent)
 
 		myView = None
 
@@ -109,7 +108,7 @@ class ListWidget(html5.Div):
 		if svg:
 			self.emptyNotificationDiv.element.innerHTML = svg + self.emptyNotificationDiv.element.innerHTML
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
-		self.emptyNotificationDiv.addClass("popup popup--center popup--low msg emptynotification")
+		self.emptyNotificationDiv.addClass("popup popup--center popup--local msg emptynotification")
 		self.widgetContent.appendChild(self.emptyNotificationDiv)
 		self.emptyNotificationDiv.removeClass("is-active")
 		self.table["style"]["display"] = "none"
@@ -135,7 +134,7 @@ class ListWidget(html5.Div):
 		if self.selectMode:
 			defaultActions += ["|", "select","close"]
 
-		defaultActions += ["|", "reload","selectfilter"]
+		defaultActions += ["|", "reload", "intpreview", "selectfilter"]
 
 		#if not self.selectMode:
 		#	defaultActions += ["|", "exportcsv"]
@@ -166,7 +165,7 @@ class ListWidget(html5.Div):
 		self.actionBar["style"]["display"] = "none"
 		self.table["style"]["display"] = "none"
 		errorDiv = html5.Div()
-		errorDiv.addClass("popup popup--center popup--low msg msg--error is-active error_msg")
+		errorDiv.addClass("popup popup--center popup--local msg msg--error is-active error_msg")
 		if code and (code==401 or code==403):
 			txt = translate("Access denied!")
 		else:

@@ -40,7 +40,9 @@
   display: flex;
   flex-direction: column;
   .boxShadow(2, #000);
-  &--low {
+  // A local popup that positions absolute to the surrounding container.
+  &--local {
+    position: absolute;
     .boxShadow(1, #000);
   }
   &.is-active {

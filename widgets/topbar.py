@@ -43,8 +43,8 @@ class TopBarWidget(html5.Header):
 		newBtn = html5.A()
 		newBtn["href"] = "https://www.viur.is"
 		newBtn["target"] = "_blank"
-		newBtn.addClass("btn btn--viur")
-		svg = embedsvg.embedsvg.get("icons-notifications")
+		newBtn.addClass("btn")
+		svg = embedsvg.embedsvg.get("icons-ribbon")
 		if svg:
 			newBtn.element.innerHTML = svg + newBtn.element.innerHTML
 		newBtn.appendChild(translate("vi.topbar.newbtn"))
@@ -99,6 +99,8 @@ class TopBarWidget(html5.Header):
 				self.modulImg.addClass( cls )
 
 		conf["theApp"].setTitle(descr)
+
+#FIXME: UserState(Button) should open "user" "edit/self" on click (userself plugin by AK)
 
 class UserState(Button):
 	def __init__(self, *args, **kwargs):

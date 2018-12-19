@@ -9,9 +9,14 @@
   flex-basis: 100%;
 }
 
-.vi-bone-container .note-editor {
-  margin-top: @defaultMargin;
-  margin-left: 0px;
+.vi-bone--text {
+  & .vi-bone-container {
+    flex-basis: 0;
+    & .note-editor {
+      margin-top: @defaultMargin;
+      margin-left: 0;
+    }
+  }
 }
 
 .note-modal-backdrop {

@@ -305,7 +305,7 @@ class ReturnSelectionAction(Button):
 		to avoid conflicts with "open that folder" action.
 	"""
 	def __init__(self, *args, **kwargs ):
-		super( ReturnSelectionAction, self ).__init__( translate("Select"), icons="icons-select", *args, **kwargs )
+		super( ReturnSelectionAction, self ).__init__( translate("Select"), icons="icons-select-add", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--activateselection"
 
 	def onClick(self, sender=None):

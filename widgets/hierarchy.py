@@ -253,7 +253,7 @@ class HierarchyWidget(html5.Div):
 		self.actionBar["style"]["display"] = "none"
 		self.entryFrame["style"]["display"] = "none"
 		errorDiv = html5.Div()
-		errorDiv.addClass("popup popup--center popup--low msg msg--error is-active error_msg")
+		errorDiv.addClass("popup popup--center popup--local msg msg--error is-active error_msg")
 		if code and (code==401 or code==403):
 			txt = translate("Access denied!")
 		else:

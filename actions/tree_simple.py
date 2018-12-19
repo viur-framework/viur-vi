@@ -47,7 +47,7 @@ class AddNodeAction(Button):
 
 	def onMkDir(self, req):
 		dirName = req.dirName
-		conf["mainWindow"].log("success",translate("Directory \"{name}\" created.",name=dirName))
+		conf["mainWindow"].log("success",translate("Directory \"{name}\" created.", icon="icons-add-folder",name=dirName))
 
 	def resetLoadingState(self):
 		pass
