@@ -14,27 +14,6 @@ function summernoteEditor(input) {
 				var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
 				e.preventDefault();
 				$(input).summernote('insertText', bufferText);
-			},
-			onBlur: function() {
-				$editor = $(input).next();
-				$toolbar = $editor.find('.note-toolbar');
-				$editable = $editor.find('.note-editable');
-				$codemirror = $editor.find('.CodeMirror');
-				$toolbar.removeClass('is-active');
-
-				if (!$editor.data('codeview')) {
-					$editable.data('lastHeight', $editable.height()).height(100);
-				}
-
-				$codemirror.height($editable.height());
-			},
-			onFocus: function() {
-				$editor = $(input).next();
-				$toolbar = $editor.find('.note-toolbar');
-				$editable = $editor.find('.note-editable');
-				$toolbar.addClass('is-active');
-				var height = $editable.data('lastHeight') || 400;
-				$editable.height(height);
 			}
 		},
 		lang: 'de-DE',
@@ -155,12 +134,12 @@ function summernoteEditor(input) {
 		e.dataTransfer.setData('text/plain', plainStr);
 	});
 
-	$(input).next().on('mousedown', '.btn-codeview', function () {
-		$editor = $(this).closest('.note-editor');
+	$editor = $(input).next();
+
+	$editor.on('mousedown', '.btn-codeview', function () {
 		isCodeView = $editor.data('codeview');
 		$editor = $editor.data('codeview', !isCodeView);
 	});
-
 
 	return $(input);
 }
@@ -203,3 +182,26 @@ var viurPictureBtn = function (context) {
 };
 
 document.execCommand('enableObjectResizing', false, 'false');
+
+// use events here, because sommernote's events are only for the editable container
+$('.bone').on('blur', '.note-editor', function () {
+  $editor = $(this);
+  $toolbar = $editor.find('.note-toolbar');
+  $editable = $editor.find('.note-editable');
+  $codemirror = $editor.find('.CodeMirror');
+  $toolbar.removeClass('is-active');
+
+  if (!$editor.data('codeview')) {
+    $editable.data('lastHeight', $editable.height()).height(100);
+  }
+
+  $codemirror.height($editable.height());
+});
+$('.bone').on('focus', '.note-editor', function () {
+  $editor = $(this);
+  $toolbar = $editor.find('.note-toolbar');
+  $editable = $editor.find('.note-editable');
+  $toolbar.addClass('is-active');
+  var height = $editable.data('lastHeight') || 400;
+  $editable.height(height);
+});
