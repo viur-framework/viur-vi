@@ -22,3 +22,13 @@
 .note-modal {
   .zIndex('alert');
 }
+
+.note-editor:not(.codeview) {
+  .note-toolbar {
+    transition: .3s opacity ease;
+    opacity: 1;
+  }
+  .note-toolbar:not(.is-active) {
+    opacity: 0;
+  }
+}
