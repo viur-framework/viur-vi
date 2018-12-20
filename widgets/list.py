@@ -116,12 +116,6 @@ class ListWidget(html5.Div):
 		if autoload:
 			self.reloadData()
 
-	def updateFilterDescription(self):
-		self.filterDescriptionSpan.removeAllChildren()
-
-		if self.filterDescr:
-			self.filterDescriptionSpan.appendChild(html5.TextNode(html5.utils.unescape(self.filterDescr)))
-
 	def getDefaultActions(self, view = None ):
 		"""
 			Returns the list of actions available in our actionBar
@@ -241,7 +235,6 @@ class ListWidget(html5.Div):
 		self.filter = filter
 		self.filterID = filterID
 		self.filterDescr = filterDescr
-		self.updateFilterDescription()
 		self.reloadData()
 
 	def setContext(self, context):

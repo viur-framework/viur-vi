@@ -10,13 +10,12 @@
   flex-direction: column;
   justify-content: flex-start;
   background-color:#fff;
-  & * + .item,
-  * + & {
+  & * + .item {
     border-top: 1px solid #dadad9;
   }
   & .item {
     &.is-active {
-      border-bottom-color: transparent;
+      border-top-color: transparent;
     }
   }
   &-separator {

@@ -1,6 +1,6 @@
 import html5
 import json
-import utils
+import utils, embedsvg
 from config import conf
 from event import EventDispatcher
 from i18n import translate
@@ -47,9 +47,6 @@ class FilePreviewImage(html5.Div):
 		self.downloadA.hide()
 		self.appendChild(self.downloadA)
 
-		self.previewImg = html5.Img()
-		self.appendChild(self.previewImg)
-
 		self.isImage = False
 		self.downloadOnly = False
 		self.currentFile = None
@@ -57,6 +54,7 @@ class FilePreviewImage(html5.Div):
 		self.setFile(file)
 
 	def setFile(self, file):
+		svg = None
 		self.currentFile = file
 
 		preview = utils.getImagePreview(file, cropped=True, size = self.size) if file else None
@@ -69,21 +67,33 @@ class FilePreviewImage(html5.Div):
 			self.downloadOnly = True
 
 			if file:
-				preview = "embedsvg/icons-file.svg"
 				mime = file.get("mimetype")
 				if mime:
 					for icon in ["bmp", "doc", "gif", "jpg", "pdf", "png", "tiff", "image", "audio", "video", "zip"]:
 						if icon in mime:
-							preview = "embedsvg/icons-%s-file.svg" % icon
+							svg = embedsvg.embedsvg.get("icons-%s-file" % icon)
+							if not svg:
+								svg = embedsvg.embedsvg.get("icons-%s" % icon)
 							self.downloadOnly = False
 							break
 
+		if not svg:
+			svg = embedsvg.embedsvg.get("icons-file")
+
 		if preview:
-			self.previewImg["src"] = preview
+			self.previewIcon = html5.Img()
+			self.previewIcon["src"] = preview
+			self.removeClass("no-preview")
+		elif svg:
+			self.previewIcon = html5.I()
+			self.previewIcon.addClass("i")
+			self.previewIcon.element.innerHTML = svg + self.previewIcon.element.innerHTML
 			self.removeClass("no-preview")
 		else:
 			self.addClass("no-preview")
 
+		if self.previewIcon:
+			self.appendChild(self.previewIcon)
 
 		if self.currentFile:
 			self.addClass("is-clickable")
@@ -254,8 +264,15 @@ class FileWidget(TreeWidget):
 		super(FileWidget, self).__init__(*args, **kwargs)
 		self.sinkEvent("onDragOver", "onDrop")
 		self.addClass("supports-upload")
+
+		searchBox = html5.Div()
+		searchBox.addClass("vi-search-wrap")
+		self.appendChild(searchBox)
+
 		self.search = Search()
-		self.appendChild(self.search)
+		self.search.addClass("input-group")
+		searchBox.appendChild(self.search)
+		self.search.searchLbl.addClass("label")
 		self.search.startSearchEvent.register(self)
 
 	def onStartSearch(self, searchStr, *args, **kwargs):
