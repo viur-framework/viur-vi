@@ -11,6 +11,31 @@ This is the current development version.
 - Bugfix: `StringViewBoneDelegate` does not fail on `stringBone(multiple=True, language=["de", "en"])` anymore.
 - Bugfix: Improved image popup viewer not falling apart when image dimensions are not quadratic.
 - Feature: selected multiple entities (range) in a list while holding the shift key
+- Restructured the LESS/CSS tool chain
+- Added ViUR Ignite LESS/CSS
+- Added GULP
+- Added .editorconfig
+- Restructured submodules
+- Removed redundant DOM elements
+- Cut vi.less into several element oriented files
+- vi.less serves as a catalogue file now
+- LESS files are structured into different categories, reflecting the PYJS structure
+- Added new ViUR icon set and support for embedded SVG icons
+- Removed icon sprites
+- Removed most of the old Vi CSS styling and reworked it based on classes -- following ViUR Ignite standards
+- Removed most inline styling
+- Added many customisable variables in configuration/_appconf.less
+- Aligned all status changing CSS classes, e.g.: .is-active, .is-collapsed etc.
+- Added a global .is-loading animation
+- Completely reworked buttons styling and buttons customisation
+- Completely reworked widgets styling based on reusable elements such as .item, .popup and .box
+- Added .vi- prefix to Vi exclusive stylings
+- Completely reworked bones and edit view styling based on ViUR Ignite form elements such as .input, .label, .select etc.
+- Completely reworked login styling
+- Completely reworked sidebar and sidebar widgets styling
+- Completely reworked log, alert and messages styling
+- Completely reworked data tables
+- Added and refined many convenience features like better tooltips, larger drop areas, collapsed module list etc.
 
 ## [2.3] Kilauea
 
