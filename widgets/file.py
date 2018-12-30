@@ -56,6 +56,7 @@ class FilePreviewImage(html5.Div):
 	def setFile(self, file):
 		svg = None
 		self.currentFile = file
+		self.previewIcon = None
 
 		preview = utils.getImagePreview(file, cropped=True, size = self.size) if file else None
 
@@ -69,16 +70,19 @@ class FilePreviewImage(html5.Div):
 			if file:
 				mime = file.get("mimetype")
 				if mime:
-					for icon in ["bmp", "doc", "gif", "jpg", "pdf", "png", "tiff", "image", "audio", "video", "zip"]:
-						if icon in mime:
-							svg = embedsvg.embedsvg.get("icons-%s-file" % icon)
-							if not svg:
-								svg = embedsvg.embedsvg.get("icons-%s" % icon)
-							self.downloadOnly = False
-							break
+					for mimesplit in mime.split("/"):
+						for icon in ["text", "pdf", "image", "audio", "video", "zip"]:
+							if icon in mimesplit:
+								svg = embedsvg.embedsvg.get("icons-%s-file" % icon)
+								if not svg:
+									svg = embedsvg.embedsvg.get("icons-%s" % icon)
+								self.downloadOnly = False
+								break
+			else:
+				self.addClass("no-preview")
 
-		if not svg:
-			svg = embedsvg.embedsvg.get("icons-file")
+			if not svg:
+				svg = embedsvg.embedsvg.get("icons-file")
 
 		if preview:
 			self.previewIcon = html5.Img()
@@ -89,8 +93,6 @@ class FilePreviewImage(html5.Div):
 			self.previewIcon.addClass("i")
 			self.previewIcon.element.innerHTML = svg + self.previewIcon.element.innerHTML
 			self.removeClass("no-preview")
-		else:
-			self.addClass("no-preview")
 
 		if self.previewIcon:
 			self.appendChild(self.previewIcon)
@@ -123,8 +125,7 @@ class FilePreviewImage(html5.Div):
 			file = "/file/download/%s" % self.currentFile["dlkey"]
 
 			if self.currentFile.get("name"):
-				file += "?fileName=%s" % self.currentFile["name"]
-
+				file += "/%s" % self.currentFile["name"]
 			html5.window.open(file)
 
 
@@ -257,7 +258,7 @@ class FileWidget(TreeWidget):
 	"""
 		Extends the TreeWidget to allow drag&drop upload of files to the current node.
 	"""
-	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload", "download"]
+	defaultActions = ["add.node", "add.leaf", "selectrootnode", "|", "edit", "delete", "download", "|", "reload"]
 	leafWidget = LeafFileWidget
 
 	def __init__(self, *args, **kwargs):

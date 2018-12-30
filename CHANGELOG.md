@@ -33,7 +33,7 @@ This is the current development version.
 - Completely reworked bones and edit view styling based on ViUR Ignite form elements such as .input, .label, .select etc.
 - Completely reworked login styling
 - Completely reworked sidebar and sidebar widgets styling
-- Completely reworked log, alert and messages styling
+- Completely reworked alert and messages styling
 - Completely reworked data tables
 - Added and refined many convenience features like better tooltips, larger drop areas, collapsed module list etc.
 

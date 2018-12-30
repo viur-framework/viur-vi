@@ -2,7 +2,7 @@ import html5, utils
 from event import EventDispatcher
 from network import DeferredCall
 
-class SelectTable( html5.Table ):
+class SelectTable( html5.ignite.Table ):
 	"""
 		Provides an Html-Table which allows for row selections.
 
@@ -62,22 +62,24 @@ class SelectTable( html5.Table ):
 		"""
 
 		tr = html5.Tr()
+		tr.addClass("vi-table-head-row")
 
 		# Extra column for Index#s
 		if self.indexes:
 			th = html5.Th()
-			th[ "class" ] = "index"
+			th.addClass("vi-table-head-index", "vi-table-head-cell")
 			tr.appendChild( th )
 
 		# Extra column for checkboxes
 		if self.checkboxes:
 			th = html5.Th() # fixme..
-			th[ "class" ] = "check"
+			th.addClass("vi-table-head-check", "vi-table-head-cell")
 			tr.appendChild( th )
 
 		# Now every title column
 		for head in headers:
 			th = html5.Th()
+			th.addClass("vi-table-head-cell")
 			th.appendChild( html5.TextNode( head ) )
 			tr.appendChild( th )
 
@@ -533,7 +535,8 @@ class DataTable( html5.Div ):
 
 
 	def recalcHeight(self, *args, **kwargs):
-		self["style"]["max-height"] = "%spx" % (int(eval("window.top.innerHeight"))-280)
+		return
+		#self["style"]["max-height"] = "%spx" % (int(eval("window.top.innerHeight"))-280)
 
 	def setDataProvider(self,obj):
 		"""

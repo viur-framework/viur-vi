@@ -172,7 +172,7 @@ lngDe = {
 
 	# Topbar
 	"vi.topbar.newbtn": u"Was ist neu?",
-	"vi.topbar.new": u"NEW",
+	"vi.topbar.new": u"NEU",
 
 	#Tasks
 	"vi.tasks":u"Aufträge",

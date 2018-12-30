@@ -43,6 +43,7 @@
   // A local popup that positions absolute to the surrounding container.
   &--local {
     position: absolute;
+    max-height: 95%;
     .boxShadow(1, #000);
   }
   &.is-active {
@@ -60,9 +61,8 @@
   top: 40%;
   transform: translate(-50%, ~"calc(-100% - "@outerSpace + 5px~")");
   bottom: inherit;
-  max-height: 75vh;
   &.is-active {
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -40%);
   }
 }
 
