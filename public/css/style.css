@@ -3492,9 +3492,6 @@ tr:last-child td:last-child {
   border-width: 0px 0px 0px 0px;
 }
 thead tr th {
-  /*background:-o-linear-gradient(bottom, lighten(@mainColor, 10%) 5%, @mainColor 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, lighten(@mainColor, 10%)), color-stop(1, @mainColor) );
-  background:-moz-linear-gradient( center top, lighten(@mainColor, 10%) 5%, @mainColor 100% );
-  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="lighten(@mainColor, 10%)", endColorstr="@mainColor");  background: -o-linear-gradient(top,lighten(@mainColor, 10%),@mainColor);*/
   background-color: #d00f1c;
   border: 0px solid #cccccc;
   text-align: center;
@@ -3512,15 +3509,6 @@ thead tr:hover th {
   background: -o-linear-gradient(top, #ef2331, #d00f1c);
   background-color: #ef2331;
 }
-/*
-tr:first-child td:first-child{
-  border-width:0px 0px 1px 0px;
-}
-
-tr:first-child td:last-child{
-  border-width:0px 0px 1px 1px;
-}
-*/
 tr.is-focused td {
   color: #fff;
   padding: 14px 7px;
