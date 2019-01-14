@@ -5,7 +5,7 @@
  * Copyright 2013- Alan Hong. and other contributors
  * summernote may be freely distributed under the MIT license.
  *
- * Date: 2018-12-19T11:59Z
+ * Date: 2019-01-11T14:13Z
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery')) :
@@ -4463,7 +4463,10 @@
           });
           this.justify = this.wrapCommand(function (value) {
               var currentRange = _this.createRange();
-              var $parent = $$1([currentRange.sc, currentRange.ec]).parent();
+              var $parent = $$1([currentRange.sc, currentRange.ec]).parent().not('.note-editable');
+              while (!dom.isPurePara($parent.get(0))) {
+                  $parent = $parent.parent();
+              }
               $parent.toggleClass('viur-txt-align--left', value === 'left');
               $parent.toggleClass('viur-txt-align--center', value === 'center');
               $parent.toggleClass('viur-txt-align--right', value === 'right');

@@ -601,6 +601,8 @@ ol.is-list {
   -webkit-box-flex: 1;
   -ms-flex: 1 100%;
   flex: 1 100%;
+  position: relative;
+  z-index: 200;
 }
 
 .bind {
@@ -1716,7 +1718,9 @@ html {
 }
 
 .btn:hover,
-.btn:focus {
+.btn[href]:hover,
+.btn:focus,
+.btn[href]:focus {
   color: #000000;
   background-color: #ffffff;
   -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
