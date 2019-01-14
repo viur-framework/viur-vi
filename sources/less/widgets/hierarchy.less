@@ -4,124 +4,80 @@
 .hierarchy {
   min-width: 500px;
   margin-bottom: 250px;
+  display: flex;
+  flex-direction: column;
 }
 
 .hierarchy-item {
   padding: 7px;
-  -webkit-transition: all 0.3s ease;
-  -moz-transition: all 0.3s ease;
-  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
-  margin-top: 4px;
-  background: #fcfcfc;
-  border: 1px solid #ddd;
-}
-.hierarchy-item:first-of-type {
-  margin: 0;
-}
-.hierarchy-item:nth-of-type(odd) {
-  background: #ececec;
-}
-.hierarchy-item:nth-of-type(odd) ol .hierarchy-item:first-child {
-  margin-top: 0;
-}
-.hierarchy-item:nth-of-type(odd) ol .hierarchy-item:nth-of-type(odd),
-.hierarchy-item:nth-of-type(odd) ol .hierarchy-item:nth-of-type(even),
-.hierarchy-item:nth-of-type(even) ol .hierarchy-item:nth-of-type(odd),
-.hierarchy-item:nth-of-type(even) ol .hierarchy-item:nth-of-type(even) {
-  background: transparent;
-  border: 0;
-}
-.hierarchy-item.is-expanded ol ol {
-  border-left: 2px dashed #ccc;
-  border-bottom: 1px dashed #ddd;
-}
-.hierarchy-item.is-expanded.has-no-child ol ol {
-  border-bottom: 0;
-}
-.hierarchy-item.is-expanded ol {
-  margin-top: 7px;
-  background:#e5e5e5;
-}
-.hierarchy-item.is-expanded ol li {
-  padding-left: 35px;
-}
-.hierarchy-item a {
-  color: transparent;
-  letter-spacing: -1em;
-  overflow: hidden;
-}
-.is-expanded > a:before,
-.is-collapsed > a:before {
-  background-image: url(icons/vi_actions_sprite.svg);
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  position: relative;
-  float: left;
-  margin-top: 3px;
-  margin-left: 4px;
-  margin-right: 7px;
-  background-position: 0px -64px;
-}
-.is-expanded > a:before {
-  background-position: -16px -64px;
-}
-.has-no-child > a:before {
-  background-position: -32px -64px;
-}
-.hierarchy-item.is-focused,
-.hierarchy-item ol .hierarchy-item.is-focused:nth-of-type(odd),
-.hierarchy-item ol .hierarchy-item.is-focused:nth-of-type(even) {
-  background: @focusoddcolor;
-  color: #fff;
-  padding-top:14px;
-  padding-bottom:14px;
+  * + & {
+    margin-top: 4px;
+  }
+  .hierarchy > & {
+    border: 1px solid #ddd;
+    background-color: #fcfcfc;
+    &:nth-of-type(odd) {
+      background-color: #ececec;
+    }
+  }
+  &.is-expanded {
+    & .hierarchy-sublist {
+      margin-top: 7px;
+      & .hierarchy-sublist {
+        border-left: 2px dashed #ccc;
+        border-bottom: 1px dashed #ddd;
+      }
+      & .hierarchy-item {
+        padding-left: 35px;
+      }
+    }
+    &.has-no-child .hierarchy-sublist .hierarchy-sublist {
+      border-bottom: 0;
+    }
+  }
+  &.is-focused {
+    background: @focusoddcolor !important;
+    color: #fff !important;
+    padding-top:14px;
+    padding-bottom:14px;
+  }
 }
 
-.tree-item.insert-before,
+.hierarchy-toggle {
+  cursor: pointer;
+  & .icon {
+    position: relative;
+    display: inline-flex;
+    transition: all 0.3s ease;
+    margin-right: 5px;
+    font-size: 1.5em;
+    pointer-events: none;
+    .is-collapsed > & {
+    }
+    .is-expanded > & {
+      transform: rotate(90deg);
+    }
+    .has-no-child > & {
+    }
+  }
+}
+
+[draggable] {
+  user-select: none;
+}
+
+.treeitem.insert-before,
 .hierarchy-item.insert-before {
-  position: relative;
-  margin-top: 30px;
   &:before {
-    content: attr(title);
-    padding: 5px 15px;
-    width: 100%;
+    content:'';
+    display:block;
+    width:100%;
+    border: 1px dashed @mainColor;
     height: 30px;
-    border: 2px dashed @mainColor;
-    position: absolute;
-    left: 0;
-    top: -30px;
-    font-size: .7em;
-    color: @mainColor;
-    display: flex;
-    align-items: center;
   }
 }
-
-.tree-item.insert-here,
-.hierarchy-item.insert-here {
-  border: 2px dashed @mainColor !important;
-  padding:12px 7px !important;
-}
-
-.tree-item.insert-after,
-.hierarchy-item.insert-after {
-  position: relative;
-  margin-bottom: 30px;
-  &:after {
-    content: attr(title);
-    padding: 5px 15px;
-    width: 100%;
-    height: 30px;
-    border: 2px dashed @mainColor;
-    position: absolute;
-    left: 0;
-    bottom: -30px;
-    font-size: .7em;
-    color: @mainColor;
-    display: flex;
-    align-items: center;
-  }
-}
+.treeitem.insert-here,
+.hierarchy-item.insert-here {border:1px solid @mainColor !important; padding:12px 7px !important;}
+.treeitem.insert-after,
+.hierarchy-item.insert-after {border-bottom:2px solid @mainColor !important;}

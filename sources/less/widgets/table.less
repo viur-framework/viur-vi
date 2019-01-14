@@ -1,11 +1,6 @@
 @charset "UTF-8";
 /* TABLES */
 
-.vi-table {
-  .table(@complementColor, #fefefe, @mainColor, 1px)
-}
-
-
 .vi-datatable {
   overflow: scroll;
   width:100%;
@@ -13,12 +8,66 @@
   min-height: 0;
 }
 
-table {
+.ignt-table {
   min-width: 100%;
-  margin-bottom: 50px;
+  .table(#eee, #fff, @mainColor, @defaultPadding, 0, 1px);
+  &-head-cell {
+    padding: @defaultPadding 3*@defaultPadding;
+    font-weight: @fontWeightBold;
+    text-align: left;
+    border-color: #d2d2d2;
+  }
+  &-body-cell {
+    text-align: left;
+    & .vi-file-imagepreview {
+      & img {
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 1px solid #aaa;
+        background: #fff;
+        margin-right: @innerSpace;
+      }
+      & span {
+        font-size: 0.8em;
+        line-height: 1;
+      }
+    }
+  }
+  &-body-row,
+  &-foot-row {
+    &:nth-of-type(even).is-focused { background-color: darken(@mainColor, 2%); }
+    &:nth-of-type(odd).is-focused { background-color: darken(@mainColor, 4%); }
+    &:nth-of-type(even).is-focused:hover { background-color: lighten(@mainColor, 2%); }
+    &:nth-of-type(odd).is-focused:hover { background-color: lighten(@mainColor, 4%); }
+  }
+  &-body-row.is-focused &-body-cell,
+  &-foot-row.is-focused &-foot-cell { color: contrast(darken(@mainColor, 4%)); }
 }
 
-table.is-loading:after {
+
+
+
+
+td img ~ span {
+  display: block;
+
+}
+
+td span.date {
+  margin-right: 10px;
+  font-weight: @fontWeightBold;
+}
+
+td span.time {
+  font-weight: @fontWeightLight;
+}
+
+td span.index {
+  font-style: italic;
+  color: lighten(@mainColor, 10%);
+}
+
+/*table.is-loading:after {
   background-image: url(icons/status/is-loading.gif);
   background-position: center;
   background-repeat: no-repeat;
@@ -74,17 +123,6 @@ td {
   color: #000000;
   min-width: 150px;
 }
-td img {
-  max-height: 80px;
-  width: auto;
-  border: 1px solid #aaa;
-  background: #fff;
-}
-td img ~ span {
-  display: block;
-  font-size: 0.7em;
-  line-height: 1;
-}
 tr:last-child td {
   border-width: 0px 1px 0px 0px;
 }
@@ -124,18 +162,4 @@ tr.is-focused:nth-child(even) {background: @focusevencolor;}
 
 tr.is-focused.is-selected:nth-child(odd) {background: @focusselectionoddcolor;}
 tr.is-focused.is-selected:nth-child(even) {background: @focusselectionevencolor;}
-
-td span.date {
-  margin-right: 10px;
-  font-weight: @fontWeightBold;
-}
-
-td span.time {
-  font-weight: @fontWeightLight;
-}
-
-td span.index
-{
-  font-style: italic;
-  color: lighten(@mainColor, 10%);
-}
+*/

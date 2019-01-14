@@ -67,8 +67,10 @@ class HierarchyItem( html5.Li ):
 			Test wherever the current drag would mean "make it a child of us", "insert before us" or
 			"insert after us" and apply the correct classes.
 		"""
+		actionBarHeight = self.parent().parent().actionBar.element.offsetHeight
 		height = self.element.offsetHeight
-		offset = event.pageY - self.element.offsetTop
+		offset = event.pageY - self.element.offsetTop - actionBarHeight
+
 		self["title"] = translate("vi.data-insert")
 		# Before
 		if self.currentMargin is None and offset < height * 0.20:
@@ -120,8 +122,9 @@ class HierarchyItem( html5.Li ):
 		event.stopPropagation()
 		event.preventDefault()
 
+		actionBarHeight = self.parent().parent().actionBar.element.offsetHeight
 		height = self.element.offsetHeight
-		offset = event.pageY - self.element.offsetTop
+		offset = event.pageY - self.element.offsetTop - actionBarHeight
 
 		srcKey = event.dataTransfer.getData("Text")
 

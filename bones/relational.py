@@ -735,7 +735,8 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.selectionDiv.addClass("vi-relation-selectioncontainer", "vi-selectioncontainer", "list")
 		self.appendChild(self.selectionDiv)
 
-		if (destModule in conf["modules"].keys()
+		print(conf["modules"].keys())
+		if (destModule.lower() in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"] or destModule + "-view" in conf["currentUser"]["access"])):
 
 			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)

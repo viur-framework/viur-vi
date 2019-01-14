@@ -21,6 +21,8 @@ class SelectTable( html5.ignite.Table ):
 	def __init__(self, checkboxes=False, indexes=False, *args, **kwargs):
 		super(SelectTable,self).__init__(*args,**kwargs)
 
+		self.addClass("vi-table", "ignt-table")
+
 		#Events
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
@@ -62,24 +64,24 @@ class SelectTable( html5.ignite.Table ):
 		"""
 
 		tr = html5.Tr()
-		tr.addClass("vi-table-head-row")
+		tr.addClass("vi-table-head-row","ignt-table-head-row")
 
 		# Extra column for Index#s
 		if self.indexes:
 			th = html5.Th()
-			th.addClass("vi-table-head-index", "vi-table-head-cell")
+			th.addClass("vi-table-head-index", "vi-table-head-cell", "ignt-table-head-cell")
 			tr.appendChild( th )
 
 		# Extra column for checkboxes
 		if self.checkboxes:
 			th = html5.Th() # fixme..
-			th.addClass("vi-table-head-check", "vi-table-head-cell")
+			th.addClass("vi-table-head-check", "vi-table-head-cell", "ignt-table-head-cell")
 			tr.appendChild( th )
 
 		# Now every title column
 		for head in headers:
 			th = html5.Th()
-			th.addClass("vi-table-head-cell")
+			th.addClass("vi-table-head-cell", "ignt-table-head-cell")
 			th.appendChild( html5.TextNode( head ) )
 			tr.appendChild( th )
 
@@ -535,8 +537,7 @@ class DataTable( html5.Div ):
 
 
 	def recalcHeight(self, *args, **kwargs):
-		return
-		#self["style"]["max-height"] = "%spx" % (int(eval("window.top.innerHeight"))-280)
+		self["style"]["max-height"] = "%spx" % (int(eval("window.top.innerHeight"))-110)
 
 	def setDataProvider(self,obj):
 		"""
@@ -680,10 +681,10 @@ class DataTable( html5.Div ):
 			if field in self._cellRender.keys():
 				lbl = self._cellRender[ field ].render( obj, field )
 			elif field in obj.keys():
-				lbl = html5.Label(obj[field])
+				lbl = html5.Div(obj[field])
 			else:
-				lbl = html5.Label("...")
-
+				lbl = html5.Div("...")
+			lbl.addClass("ignt-table-content")
 			self.table.setCell( rowIdx, cellIdx, lbl )
 			cellIdx += 1
 

@@ -18,16 +18,7 @@
 @import "elements/_elements";
 
 // Load widgets.
-@import "widgets/accordion";
-@import "widgets/actionbar";
-@import "widgets/file";
-@import "widgets/hierarchy";
-@import "widgets/search";
-@import "widgets/sidebar";
-@import "widgets/table";
-@import "widgets/tooltip";
-@import "widgets/topbar";
-@import "widgets/tree";
+@import "widgets/_widgets";
 
 // Load objects.
 @import "objects/login"; // the login screen
@@ -40,7 +31,7 @@
 @import "objects/tooltip"; // light weight tool tip bubbles
 @import "objects/badge"; // counter, badges and marker
 
-@import "objects/form"; // DEPRECATED: use bones/_bones instead!
+// @import "objects/form"; // DEPRECATED: use bones/_bones instead!
 // @import "objects/textedit"; // DEPRECATED: all new summernote editor is styled in bones/text!
 // @import "objects/alert"; Not in use … ignite/messages work fine.
 
@@ -50,5 +41,5 @@
 // Status
 @import "status/_status";
 
-@import (optional) "../../../vi_customizing/custom";
+@import (optional) "../../../vi_customizing/static/vi_custom";
 

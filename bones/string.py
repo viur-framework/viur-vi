@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import html5
 from bones.base import BaseBoneExtractor
+from widgets.button import Button
 from config import conf
 from event import EventDispatcher
 from i18n import translate
@@ -102,7 +103,7 @@ class Tag(html5.Span):
 			self["draggable"] = True
 			self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd")
 
-			delBtn = html5.ext.Button(translate("Delete"), self.onDelBtnClick)
+			delBtn = Button(translate("Delete"), self.onDelBtnClick, icon="icons-delete")
 			delBtn.addClass("btn--delete btn--small")
 			self.appendChild(delBtn)
 
@@ -183,8 +184,8 @@ class StringEditBone(html5.Div):
 				self.buttonContainer.appendChild(langBtn)
 
 				if not self.readOnly:
-					addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
-					addBtn.addClass("new--btn")
+					addBtn = Button(translate("Add"), callback=self.onBtnGenTag, icon="icons-add")
+					addBtn.addClass("btn--add")
 					addBtn.lang = lang
 					tagContainer.appendChild(addBtn)
 
@@ -237,9 +238,9 @@ class StringEditBone(html5.Div):
 			self.appendChild(self.tagContainer)
 
 			if not self.readOnly:
-				addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
+				addBtn = Button(translate("Add"), callback=self.onBtnGenTag, icon="icons-add")
 				addBtn.lang = None
-				addBtn.addClass("new--btn")
+				addBtn.addClass("btn--add")
 
 				self.tagContainer.appendChild(addBtn)
 

@@ -7,7 +7,7 @@ class SideBar( html5.Div ):
 		super( SideBar, self ).__init__( *args, **kwargs )
 		self.isInit = False
 		self.currentWidget = None
-		self.addClass("vi-sidebar popup popup--e popup--local box")
+		self.addClass("vi-sidebar popup popup--ne popup--local box")
 
 		self.fromHTML("""
 			<div class="box-head" [name]="sidebarHead">

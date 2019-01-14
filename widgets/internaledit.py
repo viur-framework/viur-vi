@@ -13,6 +13,7 @@ class InternalEdit(html5.Div):
 	                        context=None, defaultCat="", module = None):
 		super(InternalEdit, self).__init__()
 
+		self.addClass("vi-internaledit")
 		self.sinkEvent("onChange", "onKeyDown")
 
 		self.editIdx = 1
@@ -67,27 +68,26 @@ class InternalEdit(html5.Div):
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 
 			descrLbl = html5.Label(bone["descr"])
-			descrLbl["class"].append(key)
-			descrLbl["class"].append(bone["type"].replace(".","_"))
+			descrLbl.addClass("label", "vi-label", "vi-label--%s" % bone["type"].replace(".","-"), "vi-label--%s" % key)
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, None, "internal", cat or "empty", key)
 
 			if bone["required"]:
-				descrLbl["class"].append("is_required")
+				descrLbl["class"].append("is-required")
 
 			if (bone["required"]
 			    and (bone["error"] is not None
 			            or (self.errorInformation and key in self.errorInformation.keys()))):
-				descrLbl["class"].append("is_invalid")
+				descrLbl["class"].append("is-invalid")
 				if bone["error"]:
 					descrLbl["title"] = bone["error"]
 				else:
 					descrLbl["title"] = self.errorInformation[ key ]
 
 				if segments and cat in segments:
-					segments[cat]["class"].append("is_incomplete")
+					segments[cat]["class"].append("is-incomplete")
 
 			if bone["required"] and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
-				descrLbl["class"].append("is_valid")
+				descrLbl["class"].append("is-valid")
 
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():
 				tmp = html5.Span()
@@ -98,7 +98,7 @@ class InternalEdit(html5.Div):
 			self.containers[key] = html5.Div()
 			self.containers[key].appendChild(descrLbl)
 			self.containers[key].appendChild(widget)
-			self.containers[key].addClass("bone", "bone_%s" % key, bone["type"].replace(".","_"))
+			self.containers[key].addClass("vi-bone", "vi-bone--%s" % bone["type"].replace(".","-"), "vi-bone--%s" % key)
 
 			if "." in bone["type"]:
 				for t in bone["type"].split("."):
@@ -130,9 +130,9 @@ class InternalEdit(html5.Div):
 				if validityCheck:
 					# Fixme: Bad hack..
 					lbl = bone.parent()._children[0]
-					if "is_valid" in lbl["class"]:
-						lbl["class"].remove("is_valid")
-					lbl["class"].append("is_invalid")
+					if "is-valid" in lbl["class"]:
+						lbl["class"].remove("is-valid")
+					lbl["class"].append("is-invalid")
 					self.actionbar.resetLoadingState()
 					return None
 
