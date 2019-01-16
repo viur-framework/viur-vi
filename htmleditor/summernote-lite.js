@@ -5,7 +5,7 @@
  * Copyright 2013- Alan Hong. and other contributors
  * summernote may be freely distributed under the MIT license.
  *
- * Date: 2019-01-11T14:13Z
+ * Date: 2019-01-16T11:10Z
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery')) :
@@ -4463,14 +4463,28 @@
           });
           this.justify = this.wrapCommand(function (value) {
               var currentRange = _this.createRange();
-              var $parent = $$1([currentRange.sc, currentRange.ec]).parent().not('.note-editable');
-              while (!dom.isPurePara($parent.get(0))) {
-                  $parent = $parent.parent();
+              var $parent = $$1([currentRange.sc, currentRange.ec]).parent();
+              if ($parent.hasClass('note-editable')) {
+                  // selection parent is editor, this case appears if there is no content
+                  // then wrap all content
+                  $parent = $parent.contents().wrap('<p></p>').closest('.note-editable > p');
               }
-              $parent.toggleClass('viur-txt-align--left', value === 'left');
-              $parent.toggleClass('viur-txt-align--center', value === 'center');
-              $parent.toggleClass('viur-txt-align--right', value === 'right');
-              $parent.toggleClass('viur-txt-align--justify', value === 'full');
+              else {
+                  while (!dom.isPurePara($parent.get(0))) {
+                      if ($parent.parent().hasClass('note-editable')) {
+                          $parent = $$1(dom.wrap($parent.get(0), 'p'));
+                          break;
+                      }
+                      $parent = $parent.parent(); // .not('.note-editable');
+                  }
+              }
+              if ($parent.parents().hasClass('note-editable')) {
+                  // make sure that we handle child of .note-editable
+                  $parent.toggleClass('viur-txt-align--left', value === 'left');
+                  $parent.toggleClass('viur-txt-align--center', value === 'center');
+                  $parent.toggleClass('viur-txt-align--right', value === 'right');
+                  $parent.toggleClass('viur-txt-align--justify', value === 'full');
+              }
           });
           var justifyArr = ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'];
           for (var idx = 0, len = justifyArr.length; idx < len; idx++) {
