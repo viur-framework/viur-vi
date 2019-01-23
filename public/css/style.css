@@ -4633,60 +4633,95 @@ div.note-modal {
     opacity: 1;
   }
 }
-/* Vi Custom Styling */
-/* recordBone */
-/* recordBone */
-.recordbone-entries {
-  margin: 5px 0;
-}
-.recordbone-entries:not(:empty) {
-  flex-basis: 100%;
-}
-.recordbone-entries:empty ~ .btn {
-  margin-left: 0;
-}
-.recordbone-entry {
-  padding: 10px;
-  border: 1px solid #e0e0e0;
-}
-* + .recordbone-entry {
-  margin-top: 10px;
-}
-/* sortIndexBone */
-/* SortIndex */
-.vi-sortindex-wrap {
-  padding: 0;
-}
-.vi-sortindex {
-  transition: all ease 0.3s;
-  padding: 7px;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  justify-content: flex-end;
-  cursor: pointer;
-}
-.vi-sortindex:after {
-  background-image: url(icon-draggable.svg);
+button.icon.trans:before,
+.action_trans h3:before {
+  background-image: url(/vi/s/icons/actions/translate.svg);
   background-repeat: no-repeat;
-  background-size: contain;
-  width: 22px;
-  height: 22px;
+  width: 16px;
+  height: 16px;
   content: ' ';
   position: relative;
-  margin-right: 7px;
+  float: left;
+  margin-left: -1px;
+  margin-top: -1px;
 }
-.vi-sortindex-can-drop {
-  background-color: #ddd;
+button.send.userlist:before {
+  background-position: -80px -48px;
 }
-.vi-sortindex-is-dragged {
-  background-color: #BE1622;
-  color: #fff;
+/* Diff */
+ul.difflist {
+  overflow: auto;
+  font-size: 0.7em;
+  max-height: 200px;
 }
-/* Fluid Pages */
+ul.difflist li {
+  display: block;
+  border-bottom: 1px dotted dimgray;
+}
+ul.difflist span {
+  display: inline-block;
+}
+ul.difflist span.bonename {
+  width: 200px;
+}
+ul.difflist span.old-value {
+  color: #f44336;
+}
+ul.difflist span.new-value {
+  color: #4cad42;
+}
+ul.difflist span.empty-value {
+  color: dimgray;
+}
+ul.difflist span.arrow {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+li.has-sub ul {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  margin-top: 45px;
+}
+li.has-sub ul li {
+  float: none;
+  margin: 0;
+}
+li.has-sub:hover > ul {
+  display: block;
+}
+li.has-sub ul li a {
+  background: #fff;
+  border-bottom: 1px solid #BBBBBB;
+  color: #333;
+  filter: none;
+  font-size: 14px;
+  display: block;
+  line-height: 120%;
+  white-space: nowrap;
+  width: 229px;
+}
+li.has-sub a.icon {
+  min-width: auto !important;
+}
+li.has-sub a.icon.lang-fr:before {
+  background-image: url(icons/flag-fr.svg) !important;
+  margin-left: 0px;
+  margin-right: 0px;
+  width: 40px;
+}
+li.has-sub a.icon.lang-de:before {
+  background-image: url(icons/flag-de.svg) !important;
+  margin-left: 0px;
+  margin-right: 0px;
+  width: 40px;
+}
+.extendedrelational .bone.selectmulti div label {
+  width: inherit!important;
+}
+.selectioncontainer {
+  width: inherit!important;
+}
 /* Fluid Pages */
 .fluid-item.is-inactive,
 .is-inactive .fluid-item {
@@ -4699,32 +4734,32 @@ div.note-modal {
   border: 0;
 }
 .fluid-item.fluid-leaf {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(250, 235, 215, 0.9);
 }
-.fluid-item.fluid-node {
+.fluid-item.fluid-note {
   color: #333;
 }
-.fluid-item.fluid-node.fluid-background-main {
+.fluid-item.fluid-note.fluid-background-main {
   color: #ffffff;
 }
-.fluid-item.fluid-node.fluid-background-complement {
+.fluid-item.fluid-note.fluid-background-complement {
   color: #ffffff;
 }
-.fluid-item.fluid-node.fluid-background-side {
+.fluid-item.fluid-note.fluid-background-side {
   color: #333;
 }
-.fluid-item.fluid-node.fluid-background-white {
+.fluid-item.fluid-note.fluid-background-white {
   color: #333;
 }
-.fluid-item.fluid-node.fluid-background-main {
+.fluid-item.fluid-note.fluid-background-main {
   background-color: #d60016;
 }
-.fluid-item.fluid-node.fluid-background-complement {
+.fluid-item.fluid-note.fluid-background-complement {
   background-color: #5c5c5b;
 }
-.fluid-item.fluid-node.fluid-background-side {
+.fluid-item.fluid-note.fluid-background-side {
   background-color: #ccc;
 }
-.fluid-item.fluid-node.fluid-background-white {
+.fluid-item.fluid-note.fluid-background-white {
   background-color: #fff;
 }

@@ -18,3 +18,5 @@ pynetree/.hgignore
 \.DS_Store
 
 node_modules
+
+sources/package-lock\.json
