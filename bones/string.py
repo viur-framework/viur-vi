@@ -70,14 +70,13 @@ class StringViewBoneDelegate(object):
 
 	def getViewElement(self, labelstr, datafield):
 		labelstr = html5.utils.unescape(labelstr)
+		delegato = html5.Div(labelstr)
 
-		if not datafield:
-			return html5.Label(labelstr)
-		else:
-			aspan = html5.Span()
-			aspan.appendChild(html5.TextNode(labelstr))
-			aspan["title"] = str(datafield)
-			return aspan
+		if datafield:
+			delegato["title"] = str(datafield)
+
+		delegato.addClass("vi-delegato", "vi-delegato--string")
+		return delegato
 
 
 class Tag(html5.Span):

@@ -12,21 +12,22 @@ class ColorViewBoneDelegate( object ):
 
 	def render( self, data, field ):
 		if field in data.keys():
-			can = html5.Div()
-			can["style"]["width"]="60px"
-			adiv = html5.Div()
-			adiv["style"]["width"]="10px"
-			adiv["style"]["height"]="10px"
-			adiv["style"]["background-Color"]=str( data[field])
-			adiv["style"]["float"]="left"
-			adiv["style"]["margin-top"]="6px"
-			adiv["style"]["margin-right"]="3px"
+			color = html5.Div()
+			color.addClass("vi-delegato-icon")
+			color["style"]["background-Color"]=str( data[field])
 
-			lbl = html5.Label(str( data[field]))
-			can.appendChild(adiv)
-			can.appendChild(lbl)
-			return(can)
-		return( html5.Label( conf[ "empty_value" ] ) )
+			lbl = html5.Span(str( data[field]))
+			lbl.addClass("vi-delegato-label")
+
+			delegato = html5.Div()
+			delegato.appendChild(color)
+			delegato.appendChild(lbl)
+		else:
+			delegato = html5.Div(conf[ "empty_value" ])
+
+		delegato.addClass("vi-delegato", "vi-delegato--color")
+		return delegato
+
 
 class ColorEditBone( html5.Input ):
 

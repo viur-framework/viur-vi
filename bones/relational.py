@@ -101,11 +101,12 @@ class RelationalViewBoneDelegate(object):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
 		val = data.get(field)
 
-		lbl = html5.Label()
+		delegato = html5.Div()
+		delegato.addClass("vi-delegato", "vi-delegato--relational")
 
 		if val is None:
-			lbl.appendChild(conf["empty_value"])
-			return lbl
+			delegato.appendChild(conf["empty_value"])
+			return delegato
 
 		structure = self.structure[self.boneName]
 
@@ -143,8 +144,8 @@ class RelationalViewBoneDelegate(object):
 
 			res = ""
 
-		html5.utils.textToHtml(lbl, html5.utils.unescape(res))
-		return lbl
+		html5.utils.textToHtml(delegato, html5.utils.unescape(res))
+		return delegato
 
 
 class RelationalSingleSelectionBone(html5.Div):

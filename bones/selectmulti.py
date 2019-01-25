@@ -32,8 +32,9 @@ class SelectMultiViewBoneDelegate( object ):
 		self.moduleName = moduleName
 
 	def render( self, data, field ):
+
 		if field in data.keys():
-			result = html5.Ul()
+			delegato = html5.Ul()
 			options = {k: v for k, v in self.skelStructure[field]["values"]}
 
 			for i, fieldKey in enumerate(data[field]):
@@ -44,18 +45,21 @@ class SelectMultiViewBoneDelegate( object ):
 						                            count=len(data[field]) - conf["maxMultiBoneEntries"])))
 					ali.addClass("selectmulti_more_li")
 
-					result.appendChild(ali)
+					delegato.appendChild(ali)
 					break
 
 				ali = html5.Li()
 				ali.appendChild(html5.TextNode(options.get(fieldKey, fieldKey)))
 				ali["Title"] = fieldKey
 
-				result.appendChild(ali)
+				delegato.appendChild(ali)
 
-			return result
+			return delegato
+		else:
+			delegato = html5.Div(conf["empty_value"])
 
-		return html5.Label(conf["empty_value"])
+		delegato.addClass("vi-delegato", "vi-delegato--select", "vi-delegato--selectmulti")
+		return delegato
 
 class SelectMultiEditBone(html5.Div):
 

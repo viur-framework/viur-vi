@@ -3195,7 +3195,6 @@ a.item:hover,
   table-layout: fixed;
   border-collapse: collapse;
   border-spacing: 0;
-  width: 100%;
   margin-bottom: 1.5em;
   padding: 0;
 }
@@ -3388,6 +3387,7 @@ a.item:hover,
   font-weight: 700;
   text-align: left;
   border-color: #d2d2d2;
+  white-space: nowrap;
 }
 .ignt-table-body-cell {
   text-align: left;
@@ -3422,6 +3422,13 @@ a.item:hover,
 .ignt-table-body-row.is-focused .ignt-table-body-cell,
 .ignt-table-foot-row.is-focused .ignt-table-foot-cell {
   color: #ffffff;
+}
+.ignt-table-content {
+  padding: 3px 9px;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 300px;
+  text-overflow: ellipsis;
 }
 td img ~ span {
   display: block;
@@ -4592,6 +4599,10 @@ div.note-modal {
 }
 .note-editor:not(.codeview) .note-toolbar:not(.is-active) {
   opacity: 0;
+}
+.ignt-table-body-row:hover .vi-delegato--text {
+  white-space: normal;
+  text-overflow: initial;
 }
 /* STATUS CLASSES */
 .is-clickable {

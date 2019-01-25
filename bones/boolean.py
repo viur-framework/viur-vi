@@ -14,10 +14,14 @@ class BooleanViewBoneDelegate(object):
 		self.moduleName = moduleName
 
 	def render(self, data, field):
-		if field in data.keys():
-			return html5.Label(translate(str(data[field])))
-		return html5.Label(conf["empty_value"])
+		value = conf["empty_value"]
 
+		if field in data.keys():
+			value = translate(str(data[field]))
+
+		delegato = html5.Div(value)
+		delegato.addClass("vi-delegato", "vi-delegato--bool")
+		return delegato
 
 class BooleanEditBone(html5.Div):
 

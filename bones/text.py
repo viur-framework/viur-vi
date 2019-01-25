@@ -36,6 +36,7 @@ class TextViewBoneDelegate(object):
 		self.moduleName = moduleName
 
 	def render(self, data, field):
+		value = conf["empty_value"]
 		if field in data.keys():
 			##multilangs
 			if isinstance(data[field], dict):
@@ -46,15 +47,14 @@ class TextViewBoneDelegate(object):
 					else:
 						if data[field].keys().length > 0:
 							resstr = data[field][data[field].keys()[0]]
-				aspan = html5.Span()
-				aspan.appendChild(html5.TextNode(resstr))
-				aspan["Title"] = str(data[field])
-				return (aspan)
+				value = resstr
 			else:
 				# no langobject
-				return html5.Label(str(data[field]))
-		return html5.Label(conf["empty_value"])
+				value = str(data[field])
 
+		delegato = html5.Div(value)
+		delegato.addClass("vi-delegato", "vi-delegato--text")
+		return delegato
 
 class TextEditBone(html5.Div):
 	def __init__(self, moduleName, boneName, readOnly, isPlainText, languages=None, descrHint=None, *args, **kwargs):

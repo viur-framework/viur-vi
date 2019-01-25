@@ -16,6 +16,7 @@
     font-weight: @fontWeightBold;
     text-align: left;
     border-color: #d2d2d2;
+    white-space: nowrap;
   }
   &-body-cell {
     text-align: left;
@@ -42,6 +43,13 @@
   }
   &-body-row.is-focused &-body-cell,
   &-foot-row.is-focused &-foot-cell { color: contrast(darken(@mainColor, 4%)); }
+  &-content {
+    padding: @defaultPadding 3*@defaultPadding;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 300px;
+    text-overflow: ellipsis;
+  }
 }
 
 

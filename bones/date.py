@@ -56,7 +56,7 @@ class DateViewBoneDelegate( object ):
 	def render( self, data, field ):
 
 		if not(self.boneName in self.skelStructure and data and data.get(field)):
-			return html5.Label(conf["empty_value"])
+			return html5.Div(conf["empty_value"])
 
 		structure = self.skelStructure[self.boneName]
 		val = data[field]
@@ -69,7 +69,7 @@ class DateViewBoneDelegate( object ):
 					return html5.TextNode(translate("Error parsing Date"))
 
 				span = html5.Span()
-				span.addClass("datetime")
+				span.addClass("vi-delegato", "vi-delegato--datetime")
 				dateSpan = html5.Span()
 				dateSpan.addClass("date")
 				dateSpan.appendChild( html5.TextNode( dt.strftime("%d.%m.%Y") ))
@@ -88,7 +88,7 @@ class DateViewBoneDelegate( object ):
 					return html5.TextNode(translate("Error parsing Date"))
 
 				dateSpan = html5.Span()
-				dateSpan.addClass("date")
+				dateSpan.addClass("vi-delegato", "vi-delegato--date")
 				dateSpan.appendChild(html5.TextNode(dt.strftime("%d.%m.%Y")))
 
 				return dateSpan
@@ -100,12 +100,12 @@ class DateViewBoneDelegate( object ):
 					return html5.TextNode(translate("Error parsing Date"))
 
 				timeSpan = html5.Span()
-				timeSpan.addClass("time")
+				timeSpan.addClass("vi-delegato", "vi-delegato--time")
 				timeSpan.appendChild( html5.TextNode(dt.strftime("%H:%M:%S")))
 				return timeSpan
 
 		except: #Something got wrong parsing the date
-			return html5.Label(str(val))
+			return html5.Div(str(val))
 
 class DateEditBone( html5.Div ):
 	def __init__(self, moduleName, boneName, readOnly, date=True, time=True, *args, **kwargs ):

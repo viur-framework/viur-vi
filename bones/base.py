@@ -40,12 +40,15 @@ class BaseViewBoneDelegate( object ):
 		self.moduleName=moduleName
 
 	def render(self, data, field):
-		if field in data.keys():
-			delegato = html5.Div(str(data[field]))
-			delegato.addClass("vi-delegato", "vi-delegato--base")
-			return delegato
+		value = conf[ "empty_value" ]
 
-		return html5.Div(conf[ "empty_value" ])
+		if field in data.keys():
+			value = str(data[field])
+
+		delegato = html5.Div(value)
+		delegato.addClass("vi-delegato", "vi-delegato--base")
+		return delegato
+
 
 
 class BaseEditBone(html5.ignite.Input):
