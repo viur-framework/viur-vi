@@ -1,7 +1,8 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import html5
 from config import conf
 from embedsvg import embedsvg
+
 
 class Pane(html5.Div):
 	"""
@@ -14,6 +15,7 @@ class Pane(html5.Div):
 		If a pane is active, _all_ its child widgets are visible
 		(through they might overlap).
 	"""
+
 	def __init__(self, descr=None, iconURL=None, iconClasses=None, closeable=False, collapseable=True, focusable=True):
 		super(Pane, self).__init__()
 
@@ -62,7 +64,7 @@ class Pane(html5.Div):
 			else:
 				self.closeBtn.hide()
 
-	def setText(self, descr = None, iconURL = None):
+	def setText(self, descr=None, iconURL=None):
 		self.label.removeAllChildren()
 
 		self.itemImage = html5.Div()
@@ -112,7 +114,7 @@ class Pane(html5.Div):
 		"""
 		assert pane != self, "A pane cannot be a child of itself"
 
-		self.childPanes.append( pane )
+		self.childPanes.append(pane)
 		pane.parentPane = self
 
 		if not self.childDomElem:
@@ -124,15 +126,15 @@ class Pane(html5.Div):
 			else:
 				self.childDomElem.addClass("is-active")
 
-			self.appendChild( self.childDomElem )
+			self.appendChild(self.childDomElem)
 
 			if self.closeable:
 				self.closeBtn.hide()
 
-		if (pane.closeable and "is-active" not in self.childDomElem[ "class" ]):
+		if (pane.closeable and "is-active" not in self.childDomElem["class"]):
 			self.childDomElem.addClass("is-active")
 
-		self.childDomElem.appendChild( pane )
+		self.childDomElem.appendChild(pane)
 
 	def removeChildPane(self, pane):
 		"""
@@ -140,32 +142,32 @@ class Pane(html5.Div):
 			@param pane: The pane to remove. Must be a direct child of this pane
 			@type pane: Pane
 		"""
-		assert pane in self.childPanes, "Cannot remove unknown child-pane %s from %s" % (str(pane),str(self))
+		assert pane in self.childPanes, "Cannot remove unknown child-pane %s from %s" % (str(pane), str(self))
 
-		self.childPanes.remove( pane )
-		self.childDomElem.removeChild( pane )
+		self.childPanes.remove(pane)
+		self.childDomElem.removeChild(pane)
 
 		pane.parentPane = None
 
-		#DOM.removeChild( self.childDomElem, pane.getElement() )
-		if len(self.childPanes)==0: #No more children, remove the UL element
-			self.removeChild( self.childDomElem )
-			#DOM.removeChild( self.getElement(), self.childDomElem )
+		# DOM.removeChild( self.childDomElem, pane.getElement() )
+		if len(self.childPanes) == 0:  # No more children, remove the UL element
+			self.removeChild(self.childDomElem)
+			# DOM.removeChild( self.getElement(), self.childDomElem )
 			self.childDomElem = None
 
 			if self.closeable:
 				self.closeBtn.show()
 
 	def onDetach(self):
-		#assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
-		#Kill all remaining children
+		# assert len(self.childPanes)==0, "Attempt to detach a pane which still has subpanes!"
+		# Kill all remaining children
 		for widget in self.widgetsDomElm.children():
 			self.widgetsDomElm.removeChild(widget)
 
 		self.closeBtn = None
 		self.label = None
 
-		super(Pane,self).onDetach()
+		super(Pane, self).onDetach()
 
 	def addWidget(self, widget):
 		"""
@@ -179,7 +181,7 @@ class Pane(html5.Div):
 		for w in self.widgetsDomElm.children():
 			w.disable()
 
-		self.widgetsDomElm.appendChild( widget )
+		self.widgetsDomElm.appendChild(widget)
 		self.rebuildChildrenClassInfo()
 
 	def rebuildChildrenClassInfo(self):
@@ -189,9 +191,9 @@ class Pane(html5.Div):
 			self.widgetsDomElm.removeClass("has-single-child")
 		if "has-multiple-children" in self.widgetsDomElm["class"]:
 			self.widgetsDomElm.removeClass("has-multiple-children")
-		if len(self.widgetsDomElm._children)==0:
+		if len(self.widgetsDomElm._children) == 0:
 			self.widgetsDomElm.addClass("has-no-child")
-		elif len(self.widgetsDomElm._children)==1:
+		elif len(self.widgetsDomElm._children) == 1:
 			self.widgetsDomElm.addClass("has-single-child")
 		else:
 			self.widgetsDomElm.addClass("has-multiple-children")
@@ -205,8 +207,8 @@ class Pane(html5.Div):
 		if widget in self.widgetsDomElm.children():
 			self.widgetsDomElm.removeChild(widget)
 
-			if self.closeable and len(self.widgetsDomElm._children)==0:
-				conf["mainWindow"].removePane( self )
+			if self.closeable and len(self.widgetsDomElm._children) == 0:
+				conf["mainWindow"].removePane(self)
 
 			for w in self.widgetsDomElm._children[:]:
 				w["disabled"] = False
@@ -223,7 +225,7 @@ class Pane(html5.Div):
 		"""
 		return widget in self.widgetsDomElm.children()
 
-	def onClick(self, event = None, *args, **kwargs ):
+	def onClick(self, event=None, *args, **kwargs):
 		self.focus()
 
 		if event:
@@ -244,13 +246,14 @@ class Pane(html5.Div):
 	def focus(self):
 		conf["mainWindow"].focusPane(self)
 
+
 class GroupPane(Pane):
 	"""
 		This pane groups subpanes; it cannot have direct childrens
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super(GroupPane, self ).__init__(*args, **kwargs)
+		super(GroupPane, self).__init__(*args, **kwargs)
 		self.addClass("vi-pane-group")
 
 		self.childDomElem = html5.Ul()
@@ -258,7 +261,7 @@ class GroupPane(Pane):
 		self.childDomElem.hide()
 		self.appendChild(self.childDomElem)
 
-	def onClick(self, event = None, *args, **kwargs):
+	def onClick(self, event=None, *args, **kwargs):
 		if self.isExpanded:
 			self.collapse()
 		else:

@@ -73,7 +73,7 @@ class NodeWidget( html5.Div ):
 		"""
 			Check if we can handle the drag-data
 		"""
-		if not "insert-here" in self["class"]:
+		if not self.hasClass("insert-here"):
 			self.addClass("insert-here")
 			self["data-insert"] = translate("vi-data-insert")
 		try:
@@ -84,7 +84,7 @@ class NodeWidget( html5.Div ):
 		event.stopPropagation()
 
 	def onDragLeave(self, event):
-		if "insert-here" in self["class"]:
+		if self.hasClass("insert-here"):
 			self.removeClass("insert-here")
 			self["data-insert"] = None
 		return( super(NodeWidget, self).onDragLeave(event))

@@ -45,7 +45,7 @@ class AccordionSegment(html5.Fieldset):
 		self.removeClass("is-active")
 
 	def isActive(self):
-		return "is-active" in self["class"]
+		return self.hasClass("is-active")
 
 	def toggle(self):
 		if self.isActive():

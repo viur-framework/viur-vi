@@ -37,7 +37,7 @@ class Log( html5.Div ):
 		name = conf["vi.name"]
 		if name:
 			versionspan = html5.Span()
-			versionspan.appendChild("%s v%s%s" % 
+			versionspan.appendChild("%s v%s%s" %
 				(name, ".".join([str(x) for x in conf["vi.version"]]),
 					conf["vi.version.appendix"]))
 			versionspan.addClass("versionspan")
@@ -65,7 +65,7 @@ class Log( html5.Div ):
 			self.appendChild(versionDiv)
 
 	def toggleMsgCenter(self, *args, **kwargs):
-		if "is-open" in self["class"]:
+		if self.hasClass("is-open"):
 			self.removeClass("is-open")
 		else:
 			self.addClass("is-open")
