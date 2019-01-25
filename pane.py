@@ -17,7 +17,7 @@ class Pane(html5.Div):
 	def __init__(self, descr=None, iconURL=None, iconClasses=None, closeable=False, collapseable=True, focusable=True):
 		super(Pane, self).__init__()
 
-		self.addClass("vi-pane","is-active")
+		self.addClass("vi-pane", "is-active")
 
 		self.parentPane = None
 		self.sinkEvent("onClick")
@@ -232,13 +232,13 @@ class Pane(html5.Div):
 	def expand(self):
 		if self.childDomElem and self.collapseable and not self.isExpanded:
 			self.item.addClass("is-active")
-			self.childDomElem.addClass("is-active")
+			self.childDomElem.show()
 			self.isExpanded = True
 
 	def collapse(self):
 		if self.childDomElem and self.collapseable and self.isExpanded:
 			self.item.removeClass("is-active")
-			self.childDomElem.removeClass("is-active")
+			self.childDomElem.hide()
 			self.isExpanded = False
 
 	def focus(self):
@@ -254,7 +254,7 @@ class GroupPane(Pane):
 		self.addClass("vi-pane-group")
 
 		self.childDomElem = html5.Ul()
-		self.childDomElem.addClass("list list--sub")
+		self.childDomElem.addClass("list", "list--sub")
 		self.childDomElem.hide()
 		self.appendChild(self.childDomElem)
 
