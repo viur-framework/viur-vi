@@ -3195,6 +3195,7 @@ a.item:hover,
   table-layout: fixed;
   border-collapse: collapse;
   border-spacing: 0;
+  width: 100%;
   margin-bottom: 1.5em;
   padding: 0;
 }
@@ -4599,10 +4600,6 @@ div.note-modal {
 }
 .note-editor:not(.codeview) .note-toolbar:not(.is-active) {
   opacity: 0;
-}
-.ignt-table-body-row:hover .vi-delegato--text {
-  white-space: normal;
-  text-overflow: initial;
 }
 /* STATUS CLASSES */
 .is-clickable {

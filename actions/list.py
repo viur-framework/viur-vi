@@ -601,7 +601,7 @@ class ReloadAction(Button):
 		NetworkService.notifyChange( self.parent().parent().module )
 
 	def resetLoadingState(self):
-		if "is-loading" in self["class"]:
+		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
 
 

@@ -21,7 +21,7 @@ class SaveContinue(Button):
 		self.parent().parent().doSave(closeOnSuccess=False)
 
 	def resetLoadingState(self):
-		if "is-loading" in self["class"]:
+		if self.hasClass("is-loading"):
 			self["class"].remove("is-loading")
 
 actionDelegateSelector.insert( 1, SaveContinue.isSuitableFor, SaveContinue )
@@ -40,7 +40,7 @@ class SaveSingleton(Button):
 		self.parent().parent().doSave(closeOnSuccess=False)
 
 	def resetLoadingState(self):
-		if "is-loading" in self["class"]:
+		if self.hasClass("is-loading"):
 			self["class"].remove("is-loading")
 
 actionDelegateSelector.insert(1, SaveSingleton.isSuitableFor, SaveSingleton)
@@ -59,7 +59,7 @@ class ExecuteSingleton(Button):
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):
-		if "is-loading" in self["class"]:
+		if self.hasClass("is-loading"):
 			self["class"].remove("is-loading")
 
 actionDelegateSelector.insert(1, ExecuteSingleton.isSuitableFor, ExecuteSingleton)
@@ -78,7 +78,7 @@ class SaveClose(Button):
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):
-		if "is-loading" in self["class"]:
+		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
 		pass
 
