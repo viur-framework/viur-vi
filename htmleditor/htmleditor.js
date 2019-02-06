@@ -1,5 +1,16 @@
-function summernoteEditor(input) {
+function summernoteEditor(input, lang) {
 	// create summernote instance
+
+	var availableLanguages = {
+		de: "de-DE",
+		en: "en-US"
+	};
+	if (lang in availableLanguages) {
+		lang = availableLanguages[lang];
+	} else {
+		lang = availableLanguages["de"];
+	}
+
 	$(input).summernote({
 		callbacks: {
 			onChange: function (e) {
@@ -16,7 +27,7 @@ function summernoteEditor(input) {
 				$(input).summernote('insertText', bufferText);
 			}
 		},
-		lang: 'de-DE',
+		lang: lang,
 		toolbar: [
 			['style'],
 			['Stil', ['bold', 'italic', 'underline']],
@@ -30,12 +41,12 @@ function summernoteEditor(input) {
 		],
 		prettifyHtml: true,
 		buttons: {
-			alignLeft: customButton('note-icon-align-left', 'Linksbündig (CTRL+SHIFT+L)', 'justify', 'left'),
-			alignCenter: customButton('note-icon-align-center', 'Zentrieren (CTRL+SHIFT+E)', 'editor.justify', 'center'),
-			alignRight: customButton('note-icon-align-right', 'Rechtsbündig (CTRL+SHIFT+R)', 'justify', 'right'),
-			alignJustify: customButton('note-icon-align-justify', 'Blocksatz CTRL+SHIFT+J', 'justify', 'full'),
-			indentIn: customButton('note-icon-align-indent', 'Einrückung + (CTRL+RIGHTBRACKET)', 'indent'),
-			indentOut: customButton('note-icon-align-outdent', 'Einrückung - (CTRL+LEFTBRACKET)', 'outdent'),
+			alignLeft: customButton('note-icon-align-left', getTranslations(lang)['paragraph']['left'], 'justify', 'left'),
+			alignCenter: customButton('note-icon-align-center', getTranslations(lang)['paragraph']['center'], 'justify', 'center'),
+			alignRight: customButton('note-icon-align-right', getTranslations(lang)['paragraph']['right'], 'justify', 'right'),
+			alignJustify: customButton('note-icon-align-justify', getTranslations(lang)['paragraph']['justify'], 'justify', 'full'),
+			indentIn: customButton('note-icon-align-indent', getTranslations(lang)['paragraph']['indent'], 'indent'),
+			indentOut: customButton('note-icon-align-outdent', getTranslations(lang)['paragraph']['outdent'], 'outdent'),
 			viurPicture: viurPictureBtn,
 		},
 		codemirror: { // codemirror options
@@ -142,28 +153,27 @@ function summernoteEditor(input) {
 	});
 
 	// use events here, because sommernote's events are only for the editable container
-	$('.bone').on('blur', '.note-editor', function () {
-	  $editor = $(this);
-	  $toolbar = $editor.find('.note-toolbar');
-	  $editable = $editor.find('.note-editable');
-	  $codemirror = $editor.find('.CodeMirror');
-	  $toolbar.removeClass('is-active');
+	$editor.closest('.bone').on('blur', '.note-editor', function (e) {
+		$editor = $(this);
+		$toolbar = $editor.find('.note-toolbar');
+		$editable = $editor.find('.note-editable');
+		$codemirror = $editor.find('.CodeMirror');
+		$toolbar.removeClass('is-active');
 
-	  if (!$editor.data('codeview')) {
-		$editable.data('lastHeight', $editable.height()).height(100);
-	  }
+		if (!$editor.data('codeview')) {
+			$editable.data('lastHeight', $editable.height()).height(100);
+		}
 
-	  $codemirror.height($editable.height());
+		$codemirror.height($editable.height());
 	});
-	$('.bone').on('focus', '.note-editor', function () {
-	  $editor = $(this);
-	  $toolbar = $editor.find('.note-toolbar');
-	  $editable = $editor.find('.note-editable');
-	  $toolbar.addClass('is-active');
-	  var height = $editable.data('lastHeight') || 400;
-	  $editable.height(height);
+	$editor.closest('.bone').on('focus', '.note-editor', function () {
+		$editor = $(this);
+		$toolbar = $editor.find('.note-toolbar');
+		$editable = $editor.find('.note-editable');
+		$toolbar.addClass('is-active');
+		var height = $editable.data('lastHeight') || 400;
+		$editable.height(height);
 	});
-
 
 	return $(input);
 }
@@ -194,7 +204,7 @@ var viurPictureBtn = function (context) {
 	// create button
 	var button = ui.button({
 		contents: '<i class="note-icon-picture"/>',
-		tooltip: 'Bild',
+		tooltip: getTranslations(context.options.lang)['image']['insert'],
 		container: 'body',
 		click: function () {
 			var boneName = $(context.layoutInfo.note[0]).data('bonename');
@@ -204,5 +214,9 @@ var viurPictureBtn = function (context) {
 
 	return button.render(); // return button as jquery object
 };
+
+function getTranslations(lang) {
+	return $.summernote.lang[lang];
+}
 
 document.execCommand('enableObjectResizing', false, 'false');

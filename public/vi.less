@@ -1628,11 +1628,13 @@ margin-right: -2px;
 
 .note-editor:not(.codeview) {
   .note-toolbar {
-    transition: .3s opacity ease;
-    opacity: 1;
+    // show
   }
   .note-toolbar:not(.is-active) {
-    opacity: 0;
+    // hide
+    height: 0;
+    padding: 0;
+    border: 0;
   }
 }
 
