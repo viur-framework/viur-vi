@@ -37,7 +37,14 @@
     background-color: #f5f5f5;
     border-bottom: 1px solid #bbb;
     .boxShadow(1, #000);
-    &:hover {
+    &.is-disabled {
+      color: #777;
+      background-color: #f0f0f0;
+      border-bottom: 1px solid #ddd;
+      cursor: not-allowed;
+      .boxShadow(0);
+    }
+    &:not(.is-disabled):hover {
       background-color: #fff;
       border-bottom: 1px solid #ccc;
       cursor: pointer;
@@ -55,7 +62,7 @@
     border-color: darken(@hintColor, 10%);
     color: #fff;
   }
-  &-segment.is-incomplete:hover &-title,
+  &-segment.is-incomplete:not(.is-disabled):hover &-title,
   &-segment.is-incomplete.is-active &-title {
     background-color: lighten(@hintColor, 10%);
     border-color: @hintColor;

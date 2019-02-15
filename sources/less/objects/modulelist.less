@@ -5,11 +5,14 @@
 // .vi-modulelist-
 // .vi-ml-
 
-@borderColorModullist: #ebebea;
+@borderColorModulelist: #ebebea;
 
 .vi-modulelist {
-  & > * + * {
-    border-top: 1px solid @borderColorModullist;
+  & * + .vi-pane {
+    border-top: 1px solid @borderColorModulelist;
+  }
+  & .vi-pane * + .vi-pane {
+    border-top: 1px solid darken(@borderColorModulelist, 10%);
   }
 }
 
@@ -19,7 +22,7 @@
   right: 0;
   width: 10px;
   background: transparent;
-  border-right: 1px solid @borderColorModullist;
+  border-right: 1px solid @borderColorModulelist;
   top: 0;
   cursor: ew-resize;
   transition: .3s ease all;

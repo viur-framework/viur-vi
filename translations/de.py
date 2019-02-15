@@ -187,4 +187,7 @@ lngDe = {
 	#Bones
 	"vi.tooltip.headline": u"Hinweis für ",
 	"vi.select.default-option":u"- Bitte wählen -",
+
+	#Sidebar
+	"vi.sidebar.internalpreview": u"Informationen",
 }

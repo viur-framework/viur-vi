@@ -20,7 +20,7 @@
   }
   &-separator {
     font-weight: @fontWeightLight;
-    background-color: darken(@backgroundColor,10%);
+    background-color: darken(@backgroundColor,20%);
     font-size:.9em;
     padding: @defaultPadding @defaultPadding*1.25;
     display:flex;
@@ -29,13 +29,18 @@
     color: @textColor;
   }
   &--sub {
-    background-color: @backgroundColor;
-    color: darken(@backgroundColor, 50%);
+    color: darken(@backgroundColor, 55%);
+    background-color: darken(@backgroundColor, 2.5%);
     & .item {
       font-size: .7em;
+      padding: 0 @defaultPadding*1.25;
+      &-image {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
       &.has-hover {
         &:hover {
-          color: contrast(darken(@backgroundColor, 5%));
+          color: darken(@backgroundColor, 55%);
           background-color: darken(@backgroundColor, 5%);
         }
       }
@@ -52,6 +57,13 @@
         color: darken(@backgroundColor, 20%);
         background: transparent;
       }
+    }
+  }
+  &--sub &--sub {
+    color: darken(@backgroundColor, 55%);
+    background-color: darken(@backgroundColor, 7.5%);
+    & .item-image {
+      font-size: .7em;
     }
   }
 }

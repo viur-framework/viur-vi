@@ -4,6 +4,7 @@ from network import NetworkService, DeferredCall
 from config import conf
 from priorityqueue import actionDelegateSelector, extractorDelegateSelector
 from i18n import translate, addTranslation
+from widgets.button import Button
 
 class ExportCsv(html5.Progress):
 	def __init__(self, widget, selection, encoding = None, language = None,
@@ -166,17 +167,19 @@ class ExportCsvStarter(html5.ext.Popup):
 
 		if "viur.defaultlangsvalues" in conf["server"].keys():
 			self.langSelect = html5.Select()
+			self.langSelect.addClass("select")
 			self.langSelect["id"] = "lang-select"
 
 			lbl = html5.Label(translate("Language selection"))
+			lbl.addClass("label")
 			lbl["for"] = "lang-select"
 
 			div = html5.Div()
 			div.appendChild(lbl)
 			div.appendChild(self.langSelect)
-			div.addClass("bone")
+			div.addClass("input-group")
 
-			self.appendChild(div)
+			self.popupBody.appendChild(div)
 
 			for key, value in conf["server"]["viur.defaultlangsvalues"].items():
 				opt = html5.Option()
@@ -192,17 +195,19 @@ class ExportCsvStarter(html5.ext.Popup):
 
 		# Encoding
 		self.encodingSelect = html5.Select()
+		self.encodingSelect.addClass("select")
 		self.encodingSelect["id"] = "encoding-select"
 
 		lbl = html5.Label(translate("Encoding"))
+		lbl.addClass("label")
 		lbl["for"] = "encoding-select"
 
 		div = html5.Div()
 		div.appendChild(lbl)
 		div.appendChild(self.encodingSelect)
-		div.addClass("bone")
+		div.addClass("input-group")
 
-		self.appendChild(div)
+		self.popupBody.appendChild(div)
 
 		for i, (k, v) in enumerate([("iso-8859-15", "ISO-8859-15"), ("utf-8", "UTF-8")]):
 			opt = html5.Option()
@@ -214,15 +219,12 @@ class ExportCsvStarter(html5.ext.Popup):
 			opt.appendChild(html5.TextNode(v))
 			self.encodingSelect.appendChild(opt)
 
-		div = html5.Div()
-		div.addClass("button-container")
-		self.appendChild(div)
+		self.cancelBtn = Button(translate("Cancel"), self.close, icon="icons-cancel")
+		self.popupFoot.appendChild(self.cancelBtn)
 
-		self.cancelBtn = html5.ext.Button(translate("Cancel"), self.close)
-		div.appendChild(self.cancelBtn)
-
-		self.exportBtn = html5.ext.Button(translate("Export"), self.onExportBtnClick)
-		div.appendChild(self.exportBtn)
+		self.exportBtn = Button(translate("Export"), self.onExportBtnClick, icon="icons-download-file")
+		self.exportBtn.addClass("btn--edit")
+		self.popupFoot.appendChild(self.exportBtn)
 
 	def onExportBtnClick(self, *args, **kwargs):
 		encoding = self.encodingSelect["options"].item(self.encodingSelect["selectedIndex"]).value

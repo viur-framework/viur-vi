@@ -8,9 +8,6 @@
 @tipMultilineMaxwidth: 250px;
 @tipColor: @hintColor;
 
-/*
-#FIXME: Implement new tooltips!
-
 .tip {
   position: relative;
   //.zIndex('tooltip', 0);
@@ -62,9 +59,9 @@
   }
 }
 
-.tip-vMultiline:hover,
-.tip-vMultiline:active,
-.tip-vMultiline:focus {
+.tip--multiline:hover,
+.tip--multiline:active,
+.tip--multiline:focus {
   &:after {
     display: table-cell;
   }
@@ -176,10 +173,10 @@
 
 // Multiline tooltips
 //
-// ».tip-vMultiline« Add this class when you have long content.
+// ».tip--multiline« Add this class when you have long content.
 // The downside is you cannot preformat the text with newlines and »[w,e]«
 // are always »@tipMultilineMaxwidth« wide.
-.tip-vMultiline {
+.tip--multiline {
   &:after {
     width: max-content;
     max-width: @tipMultilineMaxwidth;
@@ -205,13 +202,13 @@
 // Sticky tooltips
 //
 // Always show the tooltip.
-.tip-vSticky {
+.tip--sticky {
   &:before,
   &:after {
     display: inline-block;
   }
 
-  &.tip-vMultiline {
+  &.tip--multiline {
     &:after {
       display: table-cell;
     }
@@ -250,91 +247,4 @@
   &.tip-w:before {
     border-left-color: fadeout(@backgroundColor,10%);
   }
-}*/
-
-
-.tooltip button[type="button"] {
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  border-radius: 15px;
-  padding: 7px 1px 1px 2px;
-  line-height: 0;
-  font-size: .7em;
-  border: 1px solid #00406d;
-  background-color: #00406d;
-  background: -moz-linear-gradient(top, #009de1, #00406d);
-  /* Firefox */
-
-  background: -webkit-gradient(linear, left top, left bottom, from(#009de1), to(#00406d));
-  /* Safari, Chrome */
-
-  color: transparent;
-  letter-spacing: -1em;
-  overflow: hidden;
-  -webkit-transition: all 0.3s ease;
-  -moz-transition: all 0.3s ease;
-  -o-transition: all 0.3s ease;
-  transition: all 0.3s ease;
-  display: inline-block;
-  width: 21px;
-  height: 20px;
-  float: right;
-  margin-right: 10px;
-}
-.tooltip button[type="button"]:before {
-  background-image: url(icons/vi_actions_sprite_white.svg);
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  position: relative;
-  float: left;
-  margin-top: -7px;
-  background-position: -16px -64px;
-}
-.tooltip button[type="button"]:hover {
-  overflow: visible;
-  min-width: 90px;
-  letter-spacing: normal;
-  color: #eee;
-}
-.tooltip span {
-  display: block;
-  height: 0px;
-  width: 97%;
-  min-height: 1px;
-  border: 0;
-  background: transparent;
-  font-size: 0;
-  color: rgba(0, 0, 0, 0);
-  -webkit-transition: all 0.3s ease;
-  -moz-transition: all 0.3s ease;
-  -o-transition: all 0.3s ease;
-  -ms-transition: all 0.3s ease;
-  transition: all 0.3s ease;
-  float: left;
-  padding: 0 1%;
-}
-.tooltip.is-open span {
-  min-height: 60px;
-  background: #eee;
-  font-size: 1em;
-  color: #00406d;
-  border: 1px solid #009de1;
-  height: auto;
-  position: relative;
-  margin-top: 40px;
-  padding: 15px 1% 18px;
-}
-.tooltip.is-open span:before {
-  content: '';
-  position: absolute;
-  top: -48px;
-  right: -1px;
-  border-style: solid;
-  border-width: 0px;
-  border-color: rgba(255, 255, 255, 0) rgba(255, 255, 255, 0) #009de1 rgba(255, 255, 255, 0);
-}
-.tooltip.is-open span:before {
-  border-width: 24px 14px;
 }

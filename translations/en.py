@@ -36,6 +36,9 @@ lngEn = {
 	# Bones
 	"vi.tooltip.headline": u"Tooltip: ",
 	"vi.select.default-option": u"- Select please -",
+
+	# Sidebar
+	"vi.sidebar.internalpreview": u"Informations",
 }
 
 

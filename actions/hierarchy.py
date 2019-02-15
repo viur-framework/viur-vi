@@ -264,6 +264,7 @@ class SelectRootNode(html5.Select):
 	"""
 	def __init__(self, module, handler, actionName, *args, **kwargs):
 		super( SelectRootNode, self ).__init__( *args, **kwargs )
+		self.addClass("select", "select--small", "bar-item")
 		self.sinkEvent("onChange")
 		self.hide()
 

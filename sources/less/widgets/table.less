@@ -16,6 +16,7 @@
     font-weight: @fontWeightBold;
     text-align: left;
     border-color: #d2d2d2;
+    border-bottom: 1px solid #aaa;
     white-space: nowrap;
   }
   &-body-cell {
@@ -49,125 +50,24 @@
     overflow: hidden;
     max-width: 300px;
     text-overflow: ellipsis;
+    & .date {
+      margin-right: 10px;
+      font-weight: @fontWeightBold;
+    }
+    & .time {}
+    & .index {
+      font-style: italic;
+      color: lighten(@mainColor, 10%);
+    }
   }
 }
 
-
-
-
-
 td img ~ span {
   display: block;
-
 }
 
-td span.date {
-  margin-right: 10px;
-  font-weight: @fontWeightBold;
-}
 
-td span.time {
-  font-weight: @fontWeightLight;
-}
 
-td span.index {
-  font-style: italic;
-  color: lighten(@mainColor, 10%);
-}
 
-/*table.is-loading:after {
-  background-image: url(icons/status/is-loading.gif);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-color:#fff;
-  position: absolute;
-  z-index:1000;
-  content:' ';
-  width:16px;
-  height:16px;
-  border:1px solid #ccc;
-  padding:2px;
-  display:block;
-  left:50%;
-  margin-left: -8px;
-  margin-top: 32px;
-  box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-}
 
-tbody tr:last-child td:last-child {
-  -moz-border-radius-bottomright: 3px;
-  -webkit-border-bottom-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-thead tr:first-child th:first-child {
-  -moz-border-radius-topleft: 3px;
-  -webkit-border-top-left-radius: 3px;
-  border-top-left-radius: 3px;
-  border-width: 0px 0px 1px 0px;
-}
-thead tr:first-child th:last-child {
-  -moz-border-radius-topright: 3px;
-  -webkit-border-top-right-radius: 3px;
-  border-top-right-radius: 3px;
-}
-tbody tr:last-child td:first-child {
-  -moz-border-radius-bottomleft: 3px;
-  -webkit-border-bottom-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-}
-tr:nth-child(odd) {
-  background-color: #fcfcfc;
-}
-tr:nth-child(even) {
-  background-color: #f5f5f5;
-}
-td {
-  vertical-align: middle;
-  border: 1px solid #cccccc;
-  border-width: 0px 1px 1px 0px;
-  text-align: left;
-  padding: 7px;
-  font-weight: @fontWeightNormal;
-  color: #000000;
-  min-width: 150px;
-}
-tr:last-child td {
-  border-width: 0px 1px 0px 0px;
-}
-tr td:last-child {
-  border-width: 0px 0px 1px 0px;
-}
-tr:last-child td:last-child {
-  border-width: 0px 0px 0px 0px;
-}
-thead tr th {
-  background-color:@mainColor;
-  border: 0px solid #cccccc;
-  text-align: center;
-  border-width: 0px 0px 1px 1px;
-  font-weight: @fontWeightLight;
-  color: #ffffff;
-  padding: 5px 5px;
-  font-size: .9em;
-}
-thead tr:hover th {
-  background:-o-linear-gradient(bottom, lighten(@mainColor, 10%) 5%, @mainColor 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, lighten(@mainColor, 10%)), color-stop(1, @mainColor) );
-  background:-moz-linear-gradient( center top, lighten(@mainColor, 10%) 5%, @mainColor 100% );
-  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="lighten(@mainColor, 10%)", endColorstr="@mainColor");  background: -o-linear-gradient(top,lighten(@mainColor, 10%),@mainColor);
-  background-color:lighten(@mainColor, 10%);
-}
 
-tr.is-focused td {color: #fff; padding:14px 7px;}
-tr.is-selected td, tr.is-focused.is-selected td{color:#fff;}
-tr.is-selected td:first-child, tr.is-focused.is-selected td:first-child {border-left: 3px solid @mainColor;margin-left: -3px;}
-tr.is-selected td:last-child, tr.is-focused.is-selected td:last-child {border-right: 3px solid @mainColor;margin-right: -3px;}
-
-tr.is-selected:nth-child(odd) {background:@selectionoddcolor;}
-tr.is-selected:nth-child(even) {background:@selectionevencolor;}
-
-tr.is-focused:nth-child(odd) {background: @focusoddcolor;}
-tr.is-focused:nth-child(even) {background: @focusevencolor;}
-
-tr.is-focused.is-selected:nth-child(odd) {background: @focusselectionoddcolor;}
-tr.is-focused.is-selected:nth-child(even) {background: @focusselectionevencolor;}
-*/
