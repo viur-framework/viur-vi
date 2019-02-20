@@ -39,7 +39,10 @@ class TextInsertImageAction(html5.ext.Button):
 				print("insert img %s" % dataUrl)
 			else:
 				dataUrl = "/file/download/%s/%s" % (item.data["dlkey"], encodeURI(item.data["name"]))
-				text = item.data["name"].replace("\"", "")
+
+				text = str(self.summernote.summernote("createRange")) # selected text
+				if not text:
+					text = item.data["name"].replace("\"", "")
 
 				self.summernote.summernote("editor.createLink",
 										   JS("{url: @{{dataUrl}}, text: @{{text}}, isNewWindow: true}"))
