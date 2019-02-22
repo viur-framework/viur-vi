@@ -71,5 +71,7 @@ conf = {
 	"maxMultiBoneEntries": 5,
 
 	# Global ViUR Logics interpreter instance
-	"logics": Interpreter()
+	"logics": Interpreter(),
+
+	"updateParams": None
 }
