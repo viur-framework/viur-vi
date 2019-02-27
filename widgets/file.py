@@ -9,7 +9,6 @@ from priorityqueue import displayDelegateSelector, moduleHandlerSelector
 from widgets.search import Search
 from widgets.tree import TreeWidget, LeafWidget
 
-
 class FileImagePopup(html5.ext.Popup):
 	def __init__(self, preview, *args, **kwargs):
 		super(FileImagePopup, self).__init__(title=preview.currentFile.get("name", translate("Unnamed Image")), className="image-viewer", *args, **kwargs)
@@ -30,7 +29,6 @@ class FileImagePopup(html5.ext.Popup):
 		btn = html5.ext.Button(translate("Close"), self.onClick)
 		btn.addClass("btn_no")
 		div.appendChild(btn)
-
 
 	def onClick(self, event):
 		self.close()

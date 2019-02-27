@@ -31,7 +31,7 @@ class Search( html5.Div ):
 		self.startSearchEvent.fire( None )
 
 	def onKeyDown(self, event):
-		if html5.isReturn(event.keyCode):
+		if html5.isReturn(event):
 			self.doSearch()
 			event.preventDefault()
 			event.stopPropagation()
