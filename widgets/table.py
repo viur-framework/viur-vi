@@ -199,7 +199,7 @@ class SelectTable( html5.Table ):
 			event.preventDefault()
 
 	def onKeyDown(self, event):
-		if html5.isArrowDown(event.keyCode): #Arrow down
+		if html5.isArrowDown(event): #Arrow down
 
 			if self._currentRow is None:
 				self.setCursorRow(0)
@@ -220,7 +220,7 @@ class SelectTable( html5.Table ):
 					                  removeExistingSelection=(not self._isCtlPressed))
 			event.preventDefault()
 
-		elif html5.isArrowUp(event.keyCode): #Arrow up
+		elif html5.isArrowUp(event): #Arrow up
 
 			if self._currentRow is None:
 				self.setCursorRow(0)
@@ -241,7 +241,7 @@ class SelectTable( html5.Table ):
 
 			event.preventDefault()
 
-		elif html5.isReturn(event.keyCode): # Return
+		elif html5.isReturn(event): # Return
 
 			if len( self._selectedRows )>0:
 				self.selectionActivatedEvent.fire( self, self._selectedRows )
@@ -253,7 +253,7 @@ class SelectTable( html5.Table ):
 				event.preventDefault()
 				return
 
-		elif html5.isSingleSelectionKey( event.keyCode ): #Ctrl
+		elif html5.isControl(event): #Ctrl
 			self._isCtlPressed = True
 			self._ctlStartRow = self._currentRow or 0
 
@@ -261,7 +261,7 @@ class SelectTable( html5.Table ):
 				self.addSelectedRow( self._currentRow )
 				self.setCursorRow( None, removeExistingSelection=False )
 
-		elif html5.isShift( event.keyCode ): #Shift
+		elif html5.isShift(event): #Shift
 			self._isShiftPressed = True
 			try:
 				self._ctlStartRow = self._currentRow or self._selectedRows[0] or 0
@@ -269,11 +269,11 @@ class SelectTable( html5.Table ):
 				self._ctlStartRow = 0
 
 	def onKeyUp(self, event):
-		if html5.isSingleSelectionKey( event.keyCode ):
+		if html5.isControl(event):
 			self._isCtlPressed = False
 			self._ctlStartRow = None
 
-		elif html5.isShift( event.keyCode ):
+		elif html5.isShift(event):
 			self._isShiftPressed = False
 			self._ctlStartRow = None
 
@@ -299,7 +299,7 @@ class SelectTable( html5.Table ):
 
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 
-		print("Currently selected rows: %s" % str(self._selectedRows))
+		# print("Currently selected rows: %s" % str(self._selectedRows))
 
 	def removeSelectedRow(self, row):
 		"""
