@@ -262,7 +262,7 @@ class SelectRootNode( html5.Select ):
 	def update(self):
 		self.removeAllChildren()
 		NetworkService.request( self.parent().parent().module, "listRootNodes",
-		                            successHandler=self.onRootNodesAvaiable,
+		                            successHandler=self.onRootNodesAvailable,
 		                                cacheable=True )
 
 	def onRootNodeChanged(self, newNode):
@@ -271,7 +271,7 @@ class SelectRootNode( html5.Select ):
 				option["selected"] = True
 				return
 
-	def onRootNodesAvaiable(self, req):
+	def onRootNodesAvailable(self, req):
 		res = NetworkService.decode( req )
 		for node in res:
 			option = html5.Option()
