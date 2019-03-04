@@ -10,7 +10,7 @@ class UserLogoutMsg(html5.ext.Popup):
 	checkIntervall = 1000 * 5  # We test if the system has been suspended every 5 seconds
 
 	def __init__(self, *args, **kwargs):
-		super(UserLogoutMsg, self).__init__(title=translate("Session terminated"), *args, **kwargs)
+		super(UserLogoutMsg, self).__init__(title=translate("Session terminated"), enableShortcuts=False, *args, **kwargs)
 		self.addClass("userloggedoutmsg")
 		self.isCurrentlyFailed = False
 		self.loginWindow = None

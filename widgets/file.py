@@ -9,7 +9,6 @@ from priorityqueue import displayDelegateSelector, moduleHandlerSelector
 from widgets.search import Search
 from widgets.tree import TreeWidget, LeafWidget
 
-
 class FileImagePopup(html5.ext.Popup):
 	def __init__(self, preview, *args, **kwargs):
 		super(FileImagePopup, self).__init__(title=preview.currentFile.get("name", translate("Unnamed Image")), className="image-viewer", *args, **kwargs)
@@ -30,7 +29,6 @@ class FileImagePopup(html5.ext.Popup):
 		btn = html5.ext.Button(translate("Close"), self.onClick)
 		btn.addClass("btn_no")
 		div.appendChild(btn)
-
 
 	def onClick(self, event):
 		self.close()
@@ -157,22 +155,22 @@ class Uploader(html5.Progress):
 		self.responseValue = None
 		self.context = context
 		# self.files = files
-		r = NetworkService.request("file", "getUploadURL", successHandler=self.onUploadUrlAvaiable, secure=True)
+		r = NetworkService.request("file", "getUploadURL", successHandler=self.onUploadUrlAvailable, secure=True)
 		r.file = file
 		r.node = node
 		conf["mainWindow"].log("progress", self)
 		self.parent()["class"].append("is_uploading")
 
-	def onUploadUrlAvaiable(self, req):
+	def onUploadUrlAvailable(self, req):
 		"""
 			Internal callback - the actual upload url (retrieved by calling /file/getUploadURL) is known.
 		"""
-		r = NetworkService.request("", "/admin/skey", successHandler=self.onSkeyAvaiable)
+		r = NetworkService.request("", "/admin/skey", successHandler=self.onSkeyAvailable)
 		r.file = req.file
 		r.node = req.node
 		r.destUrl = req.result
 
-	def onSkeyAvaiable(self, req):
+	def onSkeyAvailable(self, req):
 		"""
 			Internal callback - the Security-Key is known.
 		"""

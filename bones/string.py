@@ -471,7 +471,7 @@ class ExtendedStringSearch(html5.Div):
 			self.appendChild(self.input2)
 
 	def onKeyDown(self, event):
-		if html5.isReturn(event.keyCode):
+		if html5.isReturn(event):
 			self.filterChangedEvent.fire()
 
 	def updateFilter(self, filter):
