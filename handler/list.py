@@ -27,10 +27,9 @@ class ListHandler(Pane):
 
 		if self.mode == "hidden" or moduleInfo.get("hideInMainBar", False):
 			self.hide()
-
-		else:
-			if "views" in moduleInfo:
-				DeferredCall(self._buildViewPanes, moduleInfo["views"])
+		elif "views" in self.moduleInfo:
+			#DeferredCall(self._buildViewPanes, self.moduleInfo["views"])
+			self._buildViewPanes(self.moduleInfo["views"])
 
 		if not isView:
 			initialHashHandler.insert(1, self.canHandleInitialHash, self.handleInitialHash)
@@ -74,8 +73,10 @@ class ListHandler(Pane):
 			pane = ListHandler(self.moduleName, view, isView=True, wasRequested=requested)
 
 			if not register:
+				#print("adding pane %s to %s" % (pane.moduleInfo.get("name"), self.moduleInfo.get("name")))
 				self.addChildPane(pane)
 			else:
+				#print("adding pane %s to mainWindow" % pane.moduleInfo.get("name"))
 				conf["mainWindow"].addPane(pane, self)
 
 	def canHandleInitialHash(self, pathList, params):
@@ -130,6 +131,13 @@ class ListHandler(Pane):
 				conf["theApp"].setPath(self.moduleName + "/list")
 
 			self.addWidget(self._createWidget())
+
+		''' no time right now...
+		if self.childDomElem is None and "views" in self.moduleInfo:
+			conf["mainWindow"].lock()
+			self._buildViewPanes(self.moduleInfo["views"])
+			conf["mainWindow"].unlock()
+		'''
 
 		if self.requestedViews is None and "views.request" in self.moduleInfo:
 			conf["mainWindow"].lock()

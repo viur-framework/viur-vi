@@ -264,15 +264,15 @@ class SelectableDiv( html5.Div ):
 		self.selectionReturnEvent.fire( self, selection )
 
 	def onKeyDown(self, event):
-		if html5.isReturn(event.keyCode): # Return
+		if html5.isReturn(event): # Return
 			self.activateCurrentSelection()
 			event.preventDefault()
 			return
-		elif html5.isSingleSelectionKey(event.keyCode): # and "multi" in (self.selectMode or ""): #Ctrl
+		elif html5.isControl(event): # and "multi" in (self.selectMode or ""): #Ctrl
 			self._isCtlPressed = True
 
 	def onKeyUp(self, event):
-		if html5.isSingleSelectionKey(event.keyCode):
+		if html5.isControl(event):
 			self._isCtlPressed = False
 
 	def clearSelection(self):

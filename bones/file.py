@@ -157,8 +157,10 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 	def __init__(self, *args, **kwargs):
 		super(FileMultiSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
+
 		self.addClass("vi-bone-container supports-upload")
 		self["title"] = translate("vi.tree.drag-here")
+		self.currentSelector = None
 
 	def onDragOver(self, event):
 		super(FileMultiSelectionBone,self).onDragOver(event)
@@ -183,9 +185,22 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 			Opens a TreeWidget sothat the user can select new values
 		"""
-		currentSelector = FileWidget(self.destModule, selectMode="multi.leaf")
-		currentSelector.selectionReturnEvent.register(self)
-		conf["mainWindow"].stackWidget(currentSelector)
+		if not self.currentSelector:
+			fileSelector = conf.get("fileSelector")
+
+			if not fileSelector or conf["mainWindow"].containsWidget(fileSelector):
+				fileSelector = FileWidget(self.destModule, selectMode="multi.leaf")
+			else:
+				fileSelector.selectMode = "multi.leaf"
+
+			if not conf.get("fileSelector"):
+				conf["fileSelector"] = fileSelector
+
+			self.currentSelector = fileSelector
+
+		self.currentSelector.selectionReturnEvent.register(self, reset=True)
+
+		conf["mainWindow"].stackWidget(self.currentSelector)
 		self.parent().addClass("is-active")
 
 	def onSelectionReturn(self, table, selection ):
@@ -201,6 +216,12 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 			return
 		self.setSelection( [{"dest": x.data, "rel": {}} for x in selection if isinstance(x, LeafFileWidget)] )
 		self.changeEvent.fire(self)
+
+	def onDetach(self):
+		super(FileMultiSelectionBone, self).onDetach()
+
+		if self.currentSelector:
+			self.currentSelector.selectionReturnEvent.unregister(self)
 
 	def setSelection(self, selection):
 		"""
@@ -262,6 +283,8 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 			if not fileSelector or conf["mainWindow"].containsWidget(fileSelector):
 				fileSelector = FileWidget(self.destModule, selectMode="single.leaf")
+			else:
+				fileSelector.selectMode = "single.leaf"
 
 			if not conf.get("fileSelector"):
 				conf["fileSelector"] = fileSelector

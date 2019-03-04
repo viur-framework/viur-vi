@@ -30,7 +30,7 @@ class ActionBar(html5.Div):
 			This function tries to resolve a suitable action-widget for each
 			given action-name and adds them on success.
 			All previous actions are removed.
-			@param actions: List of names of actions which should be avaiable.
+			@param actions: List of names of actions which should be available.
 			@type actions: List of String
 		"""
 		for c in self._children[:]:
