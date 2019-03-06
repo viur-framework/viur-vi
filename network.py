@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os, sys, json, string, random, time
+from config import conf
 
 class DeferredCall( object ):
 	"""
@@ -304,6 +305,10 @@ class NetworkService( object ):
 		"""
 			Internal function performing the actual AJAX request.
 		"""
+
+		if "updateParams" in conf and conf["updateParams"] and callable(conf["updateParams"]):
+			params = conf["updateParams"](url,params)
+
 		if params:
 			if skey:
 				params["skey"] = skey

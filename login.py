@@ -163,7 +163,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.editform.appendChild(self.sendBtn)
 
 	def onKeyPress(self, event):
-		if event.keyCode == 13:
+		if html5.isReturn(event):
 			if html5.utils.doesEventHitWidgetOrChildren(event, self.username):
 				if self.username["value"]:
 					self.password.element.focus()
