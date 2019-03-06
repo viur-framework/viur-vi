@@ -8,6 +8,8 @@ from event import EventDispatcher
 from priorityqueue import moduleHandlerSelector
 from config import conf
 from i18n import translate
+from widgets.button import Button
+from embedsvg import embedsvg
 
 class HierarchyItem( html5.Li ):
 	"""
@@ -28,17 +30,23 @@ class HierarchyItem( html5.Li ):
 		self.structure = structure
 		self.expandLink = html5.A()
 		self.expandLink.addClass("expandlink")
-		self.expandLink.appendChild(html5.TextNode(translate("Expand/Collapse")))
-		self.appendChild(self.expandLink)
+		self.expandLink.addClass("hierarchy-toggle")
+		self.expandLink["title"] = translate("Expand/Collapse")
+		embedSvg = embedsvg.get("icons-arrow-right")
+		if embedSvg:
+			self.expandLink.element.innerHTML = embedSvg + self.expandLink.element.innerHTML
+		self.prependChild(self.expandLink)
+
 		#self.element.innerHTML = "%s %s" % (data["name"], data["sortindex"])
 		self.isLoaded = False
 		self.isExpanded = False
 		self.buildDescription()
 		self.ol = html5.Ol()
-		self.ol.addClass("subhierarchy")
+		self.ol.addClass("hierarchy-sublist")
 		self.appendChild(self.ol)
 		self.currentMargin = None
 		self.ol["style"]["display"] = "none"
+
 		self.addClass("hierarchy-item")
 		self.addClass("is-collapsed")
 		self.addClass("is-draggable")
