@@ -6,6 +6,7 @@ from config import conf
 from widgets.wysiwyg import Wysiwyg
 from i18n import translate
 from bones.base import BaseBoneExtractor
+from event import EventDispatcher
 
 class TextBoneExtractor(BaseBoneExtractor):
 
@@ -24,10 +25,12 @@ class TextBoneExtractor(BaseBoneExtractor):
 			else:
 				# no langobject
 				return str('"%s"' % data[field].replace("&quot;", "").replace(";", " ").replace('"', "'"))
+
 		return conf["empty_value"]
 
 
-class TextViewBoneDelegate( object ):
+class TextViewBoneDelegate(object):
+
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
 		super( TextViewBoneDelegate, self ).__init__()
 		self.skelStructure = skelStructure
@@ -52,9 +55,12 @@ class TextViewBoneDelegate( object ):
 			else:
 				#no langobject
 				return( html5.Label(str( data[field])))
+
 		return( html5.Label( conf[ "empty_value" ] ) )
 
-class TextEditBone( html5.Div ):
+
+class TextEditBone(html5.Div):
+
 	def __init__(self, moduleName, boneName,readOnly, isPlainText, languages=None, descrHint=None, *args, **kwargs ):
 		super( TextEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
@@ -105,6 +111,7 @@ class TextEditBone( html5.Div ):
 			self.appendChild( openEditorBtn )
 
 		self.sinkEvent("onClick")
+		self.changeEvent = EventDispatcher("boneChange")
 
 	def _setDisabled(self, disable):
 		"""
@@ -141,6 +148,7 @@ class TextEditBone( html5.Div ):
 			self.previewDiv.element.innerHTML = self.input["value"]
 
 		self.closeEditor()
+		self.changeEvent.fire(self)
 
 	def onAbortText(self, editor):
 		assert self.currentEditor is not None
