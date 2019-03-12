@@ -397,12 +397,14 @@ class TreeWidget( html5.Div ):
 	def onSetDefaultRootNode(self, req):
 		data = NetworkService.decode( req )
 		if len(data)>0:
-			self.setRootNode( data[0]["key"])
+			self.setRootNode(data[0]["key"], self.node)
 
-	def setRootNode(self, rootNode):
+	def setRootNode(self, rootNode, node=None):
 		self.rootNode = rootNode
-		self.node = rootNode
-		self.rootNodeChangedEvent.fire( rootNode )
+		self.node = node if node else rootNode
+		self.rootNodeChangedEvent.fire(rootNode)
+		if node:
+			self.nodeChangedEvent.fire(node)
 		self.rebuildPath()
 		self.reloadData()
 
@@ -453,6 +455,7 @@ class TreeWidget( html5.Div ):
 	def onRequestSucceded(self, req):
 		if not req in self._currentRequests:
 			return
+
 		self._currentRequests.remove( req )
 		data = NetworkService.decode( req )
 		for skel in data["skellist"]:
@@ -475,6 +478,8 @@ class TreeWidget( html5.Div ):
 			self._currentRequests.append( r )
 		else:
 			self._currentCursor[ req.reqType ] = None
+
+		conf["theApp"].setPath(self.module + "/list/" + self.node)
 
 		self.actionBar.resetLoadingState()
 
