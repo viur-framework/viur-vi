@@ -11,7 +11,7 @@ class SelectTable( html5.Table ):
 			- selectionChanged: called if the current _multi_ selection changes. (Ie the user
 				holds ctrl and clicks a row). The selection might contain no, one or multiple rows.
 				Its also called if the cursor moves. Its called if the user simply double
-				clicks a row. So its possible to recive a selectionActivated event without an
+				clicks a row. So its possible to receive a selectionActivated event without an
 				selectionChanged Event.
 			- selectionActivated: called if a selection is activated, ie. a row is double-clicked or Return
 			 	is pressed.
@@ -27,7 +27,7 @@ class SelectTable( html5.Table ):
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
 		self.tableChangedEvent = EventDispatcher("tableChanged")
 
-		self.sinkEvent( "onDblClick", "onMouseMove", "onMouseDown",
+		self.sinkEvent( "onDblClick", "onMouseDown",
 		                "onMouseUp", "onKeyDown", "onKeyUp", "onMouseOut",
 		                "onChange" )
 
@@ -158,11 +158,13 @@ class SelectTable( html5.Table ):
 				self.removeSelectedRow( row )
 			else:
 				self.addSelectedRow( row )
+			event.preventDefault()
 
 		elif self._isShiftPressed:
 			self.unSelectAll()
 			for i in ( range(self._ctlStartRow, row+1) if self._ctlStartRow <= row else range(row, self._ctlStartRow+1) ):
 				self.addSelectedRow( i )
+			event.preventDefault()
 
 		elif self.checkboxes and html5.utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
 			if row in self._selectedRows:
@@ -181,7 +183,6 @@ class SelectTable( html5.Table ):
 
 			self.setCursorRow(self.getIndexByTr(tr), removeExistingSelection=not self.checkboxes)
 
-		event.preventDefault()
 		self.focus()
 
 	def onMouseOut(self, event):
@@ -190,78 +191,67 @@ class SelectTable( html5.Table ):
 	def onMouseUp(self, event):
 		self._isMouseDown = False
 
-	def onMouseMove(self, event):
-		if self._isMouseDown:
-			tr = self._rowForEvent( event )
-			if tr is None:
-				return
-			self.addSelectedRow( self.getIndexByTr(tr) )
-			event.preventDefault()
-
 	def onKeyDown(self, event):
-		if html5.isArrowDown(event): #Arrow down
+		if html5.isArrowDown(event):  # Arrow down
 
 			if self._currentRow is None:
 				self.setCursorRow(0)
-			else:
 
-				if self._isCtlPressed:
+			else:
+				if self._isCtlPressed or self._isShiftPressed:
 
 					if self._ctlStartRow > self._currentRow:
-						self.removeSelectedRow( self._currentRow )
+						self.removeSelectedRow(self._currentRow)
 					else:
-						self.addSelectedRow( self._currentRow )
+						self.addSelectedRow(self._currentRow)
 
-						if self._currentRow+1 < self.getRowCount():
-							self.addSelectedRow( self._currentRow+1 )
+						if self._currentRow + 1 < self.getRowCount():
+							self.addSelectedRow(self._currentRow + 1)
 
-				if self._currentRow+1 < self.getRowCount():
-					self.setCursorRow(self._currentRow+1,
-					                  removeExistingSelection=(not self._isCtlPressed))
+				if self._currentRow + 1 < self.getRowCount():
+					self.setCursorRow(self._currentRow + 1,
+									  removeExistingSelection=(not self._isShiftPressed and not self._isCtlPressed))
+
 			event.preventDefault()
 
-		elif html5.isArrowUp(event): #Arrow up
+		elif html5.isArrowUp(event):  # Arrow up
 
 			if self._currentRow is None:
 				self.setCursorRow(0)
 			else:
 
-				if self._isCtlPressed: #Check if we extend a selection
+				if self._isCtlPressed or self._isShiftPressed:  # Check if we extend a selection
 					if self._ctlStartRow < self._currentRow:
-						self.removeSelectedRow( self._currentRow )
+						self.removeSelectedRow(self._currentRow)
 					else:
-						self.addSelectedRow( self._currentRow )
+						self.addSelectedRow(self._currentRow)
 
-						if self._currentRow>0:
-							self.addSelectedRow( self._currentRow-1 )
+						if self._currentRow > 0:
+							self.addSelectedRow(self._currentRow - 1)
 
-				if self._currentRow>0: #Move the cursor if possible
-					self.setCursorRow(self._currentRow-1,
-					                  removeExistingSelection=(not self._isCtlPressed))
+				if self._currentRow > 0:  # Move the cursor if possible
+					self.setCursorRow(self._currentRow - 1,
+									  removeExistingSelection=(not self._isShiftPressed and not self._isCtlPressed))
 
 			event.preventDefault()
 
-		elif html5.isReturn(event): # Return
+		elif html5.isReturn(event):  # Return
 
-			if len( self._selectedRows )>0:
-				self.selectionActivatedEvent.fire( self, self._selectedRows )
+			if len(self._selectedRows) > 0:
+				self.selectionActivatedEvent.fire(self, self._selectedRows)
 				event.preventDefault()
 				return
 
 			if self._currentRow is not None:
-				self.selectionActivatedEvent.fire( self, [self._currentRow] )
+				self.selectionActivatedEvent.fire(self, [self._currentRow])
 				event.preventDefault()
 				return
 
-		elif html5.isControl(event): #Ctrl
+		elif html5.isControl(event):  # Ctrl
 			self._isCtlPressed = True
 			self._ctlStartRow = self._currentRow or 0
 
-			if self._currentRow is not None and not self._currentRow in self._selectedRows:
-				self.addSelectedRow( self._currentRow )
-				self.setCursorRow( None, removeExistingSelection=False )
-
-		elif html5.isShift(event): #Shift
+		elif html5.isShift(event):  # Shift
 			self._isShiftPressed = True
 			try:
 				self._ctlStartRow = self._currentRow or self._selectedRows[0] or 0
@@ -298,8 +288,6 @@ class SelectTable( html5.Table ):
 			self._checkboxes[ row ][ "checked" ] = True
 
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
-
-		# print("Currently selected rows: %s" % str(self._selectedRows))
 
 	def removeSelectedRow(self, row):
 		"""
