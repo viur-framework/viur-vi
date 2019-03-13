@@ -7,7 +7,6 @@ from pane import Pane
 from widgets.repeatdate import RepeatDatePopup
 from widgets.csvexport import ExportCsvStarter
 from widgets.table import DataTable
-from widgets.preview import Preview
 from sidebarwidgets.internalpreview import InternalPreview
 from sidebarwidgets.filterselector import FilterSelector
 from i18n import translate
