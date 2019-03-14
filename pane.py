@@ -14,7 +14,9 @@ class Pane(html5.Li):
 		If a pane is active, _all_ its child widgets are visible
 		(through they might overlap).
 	"""
-	def __init__(self, descr=None, iconURL=None, iconClasses=None, closeable=False, collapseable=True, focusable=True):
+	def __init__(self, descr=None, iconURL=None, iconClasses=None,
+				 	closeable=False, collapseable=True, focusable=True,
+				 		path=None):
 		super(Pane, self).__init__()
 
 		self.parentPane = None
@@ -25,6 +27,7 @@ class Pane(html5.Li):
 		self.iconClasses = iconClasses
 		self.collapseable = collapseable
 		self.focusable = focusable
+		self.path = path
 
 		self.childPanes = []
 

@@ -10,11 +10,11 @@ from i18n import translate
 
 class ListHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, isView=False, wasRequested = False, *args, **kwargs):
-		icon = "icons/modules/list.svg"
-		if "icon" in moduleInfo.keys():
-			icon = moduleInfo["icon"]
-
-		super(ListHandler, self).__init__(moduleInfo.get("visibleName", moduleInfo["name"]), icon)
+		super(ListHandler, self).__init__(
+			moduleInfo.get("visibleName", moduleInfo["name"]),
+			moduleInfo.get("icon", "icons/modules/list.svg"),
+			path=moduleName + "/list" if not wasRequested else None
+		)
 
 		self.moduleName = moduleName
 		self.moduleInfo = moduleInfo
@@ -127,9 +127,6 @@ class ListHandler(Pane):
 
 	def onClick(self, *args, **kwargs):
 		if self.mode == "normal" and not self.widgetsDomElm.children():
-			if not self.wasRequested:
-				conf["theApp"].setPath(self.moduleName + "/list")
-
 			self.addWidget(self._createWidget())
 
 		''' no time right now...

@@ -2,16 +2,13 @@
 from priorityqueue import HandlerClassSelector, displayDelegateSelector, initialHashHandler
 from widgets import EditWidget
 from pane import Pane
-from config import conf
 
 class SingletonHandler( Pane ):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
-		icon = "icons/modules/singleton.svg"
-
-		if "icon" in moduleInfo.keys():
-			icon = moduleInfo["icon"]
-
-		super(SingletonHandler, self).__init__(moduleInfo["visibleName"], icon)
+		super(SingletonHandler, self).__init__(
+			moduleInfo["visibleName"],
+			moduleInfo.get("icon", "icons/modules/singleton.svg")
+		)
 
 		self.moduleName = moduleName
 		self.moduleInfo = moduleInfo

@@ -11,17 +11,12 @@ class TopBarWidget(html5.Header):
 		Provides the top-bar of VI
 	"""
 	def __init__(self):
-		#DOM.setAttribute( self.element, "class", "vi_topbar")
-		super(TopBarWidget,self ).__init__()
+		super(TopBarWidget, self).__init__()
 
 		self["class"] = "vi_topbar"
 		anav=html5.Nav()
 		anav["class"].append("iconnav")
 		self.iconnav=html5.Ul()
-
-		#self.logoContainer = html5.Div()
-		#self.logoContainer["class"].append("logo")
-		#self.appendChild( self.logoContainer )
 
 		self.sinkEvent("onClick")
 
@@ -61,7 +56,7 @@ class TopBarWidget(html5.Header):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulH1):
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
-	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None):
+	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None, path=None):
 		for c in self.modulImg._children[:]:
 			self.modulImg.removeChild(c)
 		for c in self.moduleName._children[:]:
@@ -82,6 +77,10 @@ class TopBarWidget(html5.Header):
 				self.modulImg["class"].append( cls )
 
 		conf["theApp"].setTitle(descr)
+
+		if path:
+			conf["theApp"].setPath(path)
+
 
 class UserState(html5.Li):
 	def __init__(self):
