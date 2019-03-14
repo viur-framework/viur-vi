@@ -271,10 +271,10 @@ class SelectableDiv(html5.Div):
 
 	def getCurrentSelection(self):
 		if len(self._selectedItems) > 0:
-			return (self._selectedItems[:])
+			return self._selectedItems[:]
 		if self._currentItem:
-			return ([self._currentItem])
-		return (None)
+			return [self._currentItem]
+		return None
 
 
 class TreeWidget(html5.Div):
