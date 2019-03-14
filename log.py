@@ -36,9 +36,10 @@ class Log( html5.Div ):
 		name = conf["vi.name"]
 		if name:
 			versionspan = html5.Span()
-			versionspan.appendChild("%s v%s%s" % 
+			versionspan.appendChild("%s v%s%s" %
 				(name, ".".join([str(x) for x in conf["vi.version"]]),
-					conf["vi.version.appendix"]))
+					("-" + conf["vi.version.appendix"]) if conf["vi.version.appendix"] else ""))
+
 			versionspan["class"].append("versionspan")
 			versionDiv.appendChild(versionspan)
 

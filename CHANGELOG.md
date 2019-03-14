@@ -2,7 +2,7 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
-## [develop]
+## [2.4-alpha]
 
 This is the current development version.
 
@@ -94,7 +94,7 @@ Release date: Dec 22, 2016
 - Styling
 
 
-[develop]: https://github.com/viur-framework/vi/compare/v2.3.0...develop
+[2.4-alpha]: https://github.com/viur-framework/vi/compare/v2.3.0...develop
 [2.3]: https://github.com/viur-framework/vi/compare/v2.2.0...v2.3.0
 [2.2]: https://github.com/viur-framework/vi/compare/v2.1.0...v2.2.0
 [2.1]: https://github.com/viur-framework/vi/compare/v2.0.0...v2.1.0
