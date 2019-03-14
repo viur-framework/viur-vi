@@ -37,7 +37,10 @@ class TreeHandler(Pane):
 		if pathList[1] == "list":
 			wdg = displayDelegateSelector.select(self.moduleName, self.moduleInfo)
 			assert wdg is not None, "Got no handler for %s" % self.moduleName
-			self.addWidget(wdg(self.moduleName))
+			node = None
+			if len(pathList) >= 3 and pathList[2]:
+				node = pathList[2]
+			self.addWidget(wdg(self.moduleName, node=node))
 			self.focus()
 
 		elif pathList[1] in ["edit", "clone"] and len(pathList) > 3:

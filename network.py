@@ -189,7 +189,7 @@ class NetworkService( object ):
 	@staticmethod
 	def decode(req):
 		"""
-			Decodes a response recived from the server (ie parsing the json)
+			Decodes a response received from the server (ie parsing the json)
 			@type req: Instance of NetworkService response
 			@returns: object
 		"""
