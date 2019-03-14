@@ -26,8 +26,9 @@ class NodeWidget(html5.Div):
 		self.data = data
 		self.structure = structure
 		self.buildDescription()
-		self["class"] = "treeitem node supports_drag supports_drop"
+		self.addClass("treeitem", "node", "supports_drag", "supports_drop")
 		self["draggable"] = True
+
 		self.sinkEvent("onDragOver", "onDrop", "onDragStart", "onDragLeave")
 
 	def buildDescription(self):
@@ -54,18 +55,14 @@ class NodeWidget(html5.Div):
 			Check if we can handle the drag-data
 		"""
 		if not "insert_here" in self["class"]:
-			self["class"].append("insert_here")
-		try:
-			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
-		except:
-			return super(NodeWidget, self).onDragOver(event)
+			self.addClass("insert_here")
+
 		event.preventDefault()
 		event.stopPropagation()
 
 	def onDragLeave(self, event):
 		if "insert_here" in self["class"]:
-			self["class"].remove("insert_here")
-		return super(NodeWidget, self).onDragLeave(event)
+			self.removeClass("insert_here")
 
 	def onDragStart(self, event):
 		"""
@@ -82,8 +79,14 @@ class NodeWidget(html5.Div):
 			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
 		except:
 			return
-		NetworkService.request(self.module, "move", {"skelType": nodeType, "key": srcKey, "destNode": self.data["key"]},
-							   modifies=True, secure=True)
+
+		NetworkService.request(
+			self.module, "move", {
+				"skelType": nodeType,
+				"key": srcKey,
+				"destNode": self.data["key"]
+			}, modifies=True, secure=True)
+
 		event.preventDefault()
 		event.stopPropagation()
 
@@ -292,7 +295,8 @@ class TreeWidget(html5.Div):
 			@type node: String or None
 		"""
 		super(TreeWidget, self).__init__()
-		self["class"].append("tree")
+		self.addClass("tree")
+
 		self.module = module
 		self.rootNode = rootNode
 		self.node = node or rootNode
@@ -422,9 +426,11 @@ class TreeWidget(html5.Div):
 		"""
 			Rebuild the displayed path-list.
 		"""
-		NetworkService.request(self.module, "pathToKey/%s" % self.node,
-							   successHandler=self.onPathRequestSucceded,
-							   failureHandler=self.showErrorMsg)
+		NetworkService.request(
+			self.module, "pathToKey/%s" % self.node,
+			successHandler=self.onPathRequestSucceded,
+			#failureHandler=self.showErrorMsg
+		)
 
 	def onPathRequestSucceded(self, req):
 		"""
