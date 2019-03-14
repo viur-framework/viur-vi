@@ -6,11 +6,17 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 This is the current development version.
 
-- Several modifications required to use new, minimized html5 library
-- Allow for file preview popup also in file widget.
 - Bugfix: `StringViewBoneDelegate` does not fail on `stringBone(multiple=True, language=["de", "en"])` anymore.
 - Bugfix: Improved image popup viewer not falling apart when image dimensions are not quadratic.
-- Feature: selected multiple entities (range) in a list while holding the shift key
+- Bugfix: Fixed multiple typos
+- Feature: Allow for file preview popup also in file widget.
+- Feature: Selected multiple entities (range) in a list while holding the shift key
+- Feature: Improved handling of key-events
+- Feature: Several modifications required to use new, minimized html5 library
+- Feature: Added the possibility to manipulate params via a global function
+- Feature: Improved handling of represented URL in address bar
+- Removed: Preview Widget (wasn't used anymore)
+
 
 ## [2.3] Kilauea
 
