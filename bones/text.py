@@ -4,6 +4,7 @@ from bones.base import BaseBoneExtractor
 from config import conf
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from widgets.htmleditor import HtmlEditor
+from event import EventDispatcher
 
 
 class TextBoneExtractor(BaseBoneExtractor):
@@ -29,6 +30,7 @@ class TextBoneExtractor(BaseBoneExtractor):
 
 
 class TextViewBoneDelegate(object):
+
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
 		super(TextViewBoneDelegate, self).__init__()
 		self.skelStructure = skelStructure
@@ -57,6 +59,7 @@ class TextViewBoneDelegate(object):
 
 
 class TextEditBone(html5.Div):
+
 	def __init__(self, moduleName, boneName, readOnly, isPlainText, languages=None, descrHint=None, *args, **kwargs):
 		super(TextEditBone, self).__init__(*args, **kwargs)
 		self.boneName = boneName
@@ -98,6 +101,11 @@ class TextEditBone(html5.Div):
 				self.input["readonly"] = True
 
 		self.appendChild(self.input)
+
+		self.sinkEvent("onKeyUp")
+
+		self.changeEvent = EventDispatcher("boneChange")
+		self._changeTimeout = None
 
 	def _setDisabled(self, disable):
 		"""
@@ -169,12 +177,21 @@ class TextEditBone(html5.Div):
 	def setExtendedErrorInformation(self, errorInfo):
 		pass
 
+	def onKeyUp(self, event):
+		if not self.changeEvent.queue:
+			return
 
-def CheckForTextBone(moduleName, boneName, skelStucture, *args, **kwargs):
-	return (skelStucture[boneName]["type"] == "text")
+		if self._changeTimeout:
+			html5.window.clearTimeout(self._changeTimeout)
+
+		self._changeTimeout = html5.window.setTimeout(lambda: self.changeEvent.fire(self), 2500)
+
+	@staticmethod
+	def checkForTextBone(moduleName, boneName, skelStucture, *args, **kwargs):
+		return skelStucture[boneName]["type"] == "text"
 
 
 # Register this Bone in the global queue
-editBoneSelector.insert(3, CheckForTextBone, TextEditBone)
-viewDelegateSelector.insert(3, CheckForTextBone, TextViewBoneDelegate)
-extractorDelegateSelector.insert(3, CheckForTextBone, TextBoneExtractor)
+editBoneSelector.insert(3, TextEditBone.checkForTextBone, TextEditBone)
+viewDelegateSelector.insert(3, TextEditBone.checkForTextBone, TextViewBoneDelegate)
+extractorDelegateSelector.insert(3, TextEditBone.checkForTextBone, TextBoneExtractor)

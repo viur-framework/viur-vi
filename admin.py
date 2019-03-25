@@ -360,7 +360,7 @@ class AdminScreen(Screen):
 			self.currentPane.widgetsDomElm["style"]["display"] = "none"
 
 		# Focus wanted Pane
-		self.topBar.setCurrentModulDescr(pane.descr, pane.iconURL, pane.iconClasses)
+		self.topBar.setCurrentModulDescr(pane.descr, pane.iconURL, pane.iconClasses, path=pane.path)
 		self.currentPane = pane
 		self.currentPane.widgetsDomElm["style"]["display"] = "block"
 

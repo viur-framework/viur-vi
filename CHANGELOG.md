@@ -2,15 +2,22 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
-## [develop]
+## [2.4-beta]
 
 This is the current development version.
 
-- Several modifications required to use new, minimized html5 library
-- Allow for file preview popup also in file widget.
 - Bugfix: `StringViewBoneDelegate` does not fail on `stringBone(multiple=True, language=["de", "en"])` anymore.
 - Bugfix: Improved image popup viewer not falling apart when image dimensions are not quadratic.
-- Feature: selected multiple entities (range) in a list while holding the shift key
+- Bugfix: Fixed multiple typos
+- Feature: Added the [summernote WYSIWYG editor](https://summernote.org/) as replacement for textBone() editing. 
+- Feature: Allow for file preview popup also in file widget.
+- Feature: Selected multiple entities (range) in a list while holding the shift key
+- Feature: Improved handling of key-events
+- Feature: Several modifications required to use new, minimized html5 library
+- Feature: Added the possibility to manipulate params via a global function
+- Feature: Improved handling of represented URL in address bar
+- Removed: Preview Widget (was not used anymore)
+
 
 ## [2.3] Kilauea
 
@@ -88,7 +95,7 @@ Release date: Dec 22, 2016
 - Styling
 
 
-[develop]: https://github.com/viur-framework/vi/compare/v2.3.0...develop
+[2.4-beta]: https://github.com/viur-framework/vi/compare/v2.3.0...develop
 [2.3]: https://github.com/viur-framework/vi/compare/v2.2.0...v2.3.0
 [2.2]: https://github.com/viur-framework/vi/compare/v2.1.0...v2.2.0
 [2.1]: https://github.com/viur-framework/vi/compare/v2.0.0...v2.1.0
