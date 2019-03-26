@@ -197,7 +197,6 @@ class InternalEdit(html5.Div):
 
 	def performLogics(self):
 		fields = self.serializeForDocument()
-		#print("InternalEdit.performLogics", fields)
 
 		for key, desc in self.skelStructure:
 			if desc.get("params") and desc["params"]:
@@ -217,8 +216,6 @@ class InternalEdit(html5.Div):
 						logic = desc["params"][event]
 
 					res = conf["logics"].execute(logic, fields)
-
-					#print("InternalEdit.performLogics", event, key, res)
 
 					if event == "logic.evaluate":
 						self.bones[key].unserialize({key: res})
@@ -360,21 +357,21 @@ class EditWidget(html5.Div):
 	                hashArgs=None, context=None, logaction = "Entry saved!", *args, **kwargs):
 		"""
 			Initialize a new Edit or Add-Widget for the given module.
-			@param module: Name of the module
-			@type module: String
-			@param applicationType: Defines for what application this Add / Edit should be created. This hides additional complexity introduced by the hierarchy / tree-application
-			@type applicationType: Any of EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree or EditWidget.appSingleton
-			@param id: ID of the entry. If none, it will add a new Entry.
-			@type id: Number
-			@param rootNode: If applicationType==EditWidget.appHierarchy, the new entry will be added under this node, if applicationType==EditWidget,appTree the final node is derived from this and the path-parameter.
+			:param module: Name of the module
+			:type module: str
+			:param applicationType: Defines for what application this Add / Edit should be created. This hides additional complexity introduced by the hierarchy / tree-application
+			:type applicationType: Any of EditWidget.appList, EditWidget.appHierarchy, EditWidget.appTree or EditWidget.appSingleton
+			:param id: ID of the entry. If none, it will add a new Entry.
+			:type id: Number
+			:param rootNode: If applicationType==EditWidget.appHierarchy, the new entry will be added under this node, if applicationType==EditWidget,appTree the final node is derived from this and the path-parameter.
 			Has no effect if applicationType is not appHierarchy or appTree or if an id have been set.
-			@type rootNode: String
-			@param path: Specifies the path from the rootNode for new entries in a treeApplication
-			@type path: String
-			@param clone: If true, it will load the values from the given id, but will save a new entry (i.e. allows "cloning" an existing entry)
-			@type clone: Bool
-			@param hashArgs: Dictionary of parameters (usually supplied by the window.hash property) which should prefill values.
-			@type hashArgs: Dict
+			:type rootNode: str
+			:param path: Specifies the path from the rootNode for new entries in a treeApplication
+			:type path: str
+			:param clone: If true, it will load the values from the given id, but will save a new entry (i.e. allows "cloning" an existing entry)
+			:type clone: bool
+			:param hashArgs: Dictionary of parameters (usually supplied by the window.hash property) which should prefill values.
+			:type hashArgs: dict
 		"""
 		if not module in conf["modules"].keys():
 			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
@@ -471,7 +468,6 @@ class EditWidget(html5.Div):
 
 	def performLogics(self):
 		fields = self.serializeForDocument()
-		#print("EditWidget.performLogics", fields)
 
 		for key, desc in self.dataCache["structure"]:
 			if desc.get("params") and desc["params"]:
@@ -491,8 +487,6 @@ class EditWidget(html5.Div):
 						logic = desc["params"][event]
 
 					res = conf["logics"].execute(logic, fields)
-
-					#print("EditWidget.performLogics", event, key, res)
 
 					if event == "logic.evaluate":
 						self.bones[key].unserialize({key: res})
@@ -546,8 +540,8 @@ class EditWidget(html5.Div):
 			Creates the actual NetworkService request used to transmit our data.
 			If data is None, it fetches a clean add/edit form.
 
-			@param data: The values to transmit or None to fetch a new, clean add/edit form.
-			@type data: Dict or None
+			:param data: The values to transmit or None to fetch a new, clean add/edit form.
+			:type data: dict or None
 		"""
 		self.wasInitialRequest = not len(data) > 0
 
@@ -659,10 +653,10 @@ class EditWidget(html5.Div):
 		"""
 		Rebuilds the UI according to the skeleton received from server
 
-		@param request: A finished NetworkService request
-		@type request: NetworkService
-		@type data: dict
-		@param data: The data received
+		:param request: A finished NetworkService request
+		:type request: NetworkService
+		:type data: dict
+		:param data: The data received
 		"""
 		assert (request or data)
 
@@ -792,7 +786,6 @@ class EditWidget(html5.Div):
 
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
-			#print(key, bone["required"], bone["error"])
 			if bone["required"] or (bone.get("unique") and bone["error"]):
 				descrLbl["class"].append("is_required")
 
@@ -894,7 +887,6 @@ class EditWidget(html5.Div):
 				fs._section.appendChild(self.views[vmodule])
 				self.form.appendChild(fs)
 
-		#print(data["values"])
 		self.unserialize(data["values"])
 
 		if self._hashArgs: #Apply the default values (if any)

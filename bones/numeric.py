@@ -121,11 +121,11 @@ class NumericEditBone(html5.Span):
 		pass
 
 class ExtendedNumericSearch( html5.Div ):
-	def __init__(self, extension, view, modul, *args, **kwargs ):
+	def __init__(self, extension, view, module, *args, **kwargs ):
 		super( ExtendedNumericSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.module = modul
+		self.module = module
 		self.opMode = extension["mode"]
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		assert self.opMode in ["equals","from", "to","range"]

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5
 from network import NetworkService
 from widgets.actionbar import ActionBar
@@ -14,12 +15,12 @@ class NodeWidget(html5.Div):
 
 	def __init__(self, module, data, structure, *args, **kwargs):
 		"""
-			@param module: Name of the module for which we'll display data
-			@type module: String
-			@param data: The data we're going to display
-			@type data: Dict
-			@param structure: The structure of that data as received from server
-			@type structure: List
+			:param module: Name of the module for which we'll display data
+			:type module: str
+			:param data: The data we're going to display
+			:type data: dict
+			:param structure: The structure of that data as received from server
+			:type structure: list
 		"""
 		super(NodeWidget, self).__init__(*args, **kwargs)
 		self.module = module
@@ -98,12 +99,12 @@ class LeafWidget(html5.Div):
 
 	def __init__(self, module, data, structure, *args, **kwargs):
 		"""
-			@param module: Name of the modul for which we'll display data
-			@type module: String
-			@param data: The data we're going to display
-			@type data: Dict
-			@param structure: The structure of that data as received from server
-			@type structure: List
+			:param module: Name of the module for which we'll display data
+			:type module: str
+			:param data: The data we're going to display
+			:type data: dict
+			:param structure: The structure of that data as received from server
+			:type structure: list
 		"""
 		super(LeafWidget, self).__init__(*args, **kwargs)
 		self.module = module
@@ -287,12 +288,12 @@ class TreeWidget(html5.Div):
 
 	def __init__(self, module, rootNode=None, node=None, selectMode=None, *args, **kwargs):
 		"""
-			@param modul: Name of the modul we shall handle. Must be a list application!
-			@type modul: string
-			@param rootNode: The rootNode we shall display. If None, we try to select one.
-			@type rootNode: String or None
-			@param node: The node we shall display at start. Must be a child of rootNode
-			@type node: String or None
+			:param module: Name of the module we shall handle. Must be a list application!
+			:type module: str
+			:param rootNode: The rootNode we shall display. If None, we try to select one.
+			:type rootNode: str or None
+			:param node: The node we shall display at start. Must be a child of rootNode
+			:type node: str or None
 		"""
 		super(TreeWidget, self).__init__()
 		self.addClass("tree")

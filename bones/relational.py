@@ -155,16 +155,16 @@ class RelationalSingleSelectionBone(html5.Div):
 	def __init__(self, srcModule, boneName, readOnly, destModule, format="$(dest.name)", required=False,
 	                using = None, usingDescr = None, context = None, *args, **kwargs ):
 		"""
-			@param srcModule: Name of the module from which is referenced
-			@type srcModule: string
-			@param boneName: Name of the bone thats referencing
-			@type boneName: string
-			@param readOnly: Prevents modifying its value if set to True
-			@type readOnly: bool
-			@param destModule: Name of the module which gets referenced
-			@type destModule: string
-			@param format: Specifies how entries should be displayed.
-			@type format: string
+			:param srcModule: Name of the module from which is referenced
+			:type srcModule: string
+			:param boneName: Name of the bone thats referencing
+			:type boneName: str
+			:param readOnly: Prevents modifying its value if set to True
+			:type readOnly: bool
+			:param destModule: Name of the module which gets referenced
+			:type destModule: str
+			:param format: Specifies how entries should be displayed.
+			:type format: str
 		"""
 		super(RelationalSingleSelectionBone,  self).__init__(*args, **kwargs)
 		self.srcModule = srcModule
@@ -237,12 +237,12 @@ class RelationalSingleSelectionBone(html5.Div):
 	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
 		"""
 			Constructs a new RelationalSingleSelectionBone from the parameters given in skelStructure.
-			@param moduleName: Name of the module which send us the skelStructure
-			@type moduleName: string
-			@param boneName: Name of the bone which we shall handle
-			@type boneName: string
-			@param skelStructure: The parsed skeleton structure send by the server
-			@type skelStructure: dict
+			:param moduleName: Name of the module which send us the skelStructure
+			:type moduleName: str
+			:param boneName: Name of the bone which we shall handle
+			:type boneName: str
+			:param skelStructure: The parsed skeleton structure send by the server
+			:type skelStructure: dict
 		"""
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 
@@ -319,8 +319,8 @@ class RelationalSingleSelectionBone(html5.Div):
 	def unserialize(self, data):
 		"""
 			Parses the values received from the server and update our value accordingly.
-			@param data: The data dictionary received.
-			@type data: dict
+			:param data: The data dictionary received.
+			:type data: dict
 		"""
 		if self.boneName in data.keys():
 			val = data[ self.boneName ]
@@ -349,7 +349,7 @@ class RelationalSingleSelectionBone(html5.Div):
 	def serializeForPost(self):
 		"""
 			Serializes our value into something that can be transferred to the server using POST.
-			@returns: dict
+			:returns: dict
 		"""
 		res = {}
 
@@ -402,8 +402,8 @@ class RelationalSingleSelectionBone(html5.Div):
 	def setSelection(self, selection):
 		"""
 			Set our current value to 'selection'
-			@param selection: The new entry that this bone should reference
-			@type selection: dict
+			:param selection: The new entry that this bone should reference
+			:type selection: dict
 		"""
 		if not selection:
 			selection = {}
@@ -493,12 +493,12 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 	def __init__(self, parent, module, data, using, errorInfo, *args, **kwargs ):
 		"""
-			@param parent: Reference to the RelationalMultiSelectionBone we belong to
-			@type parent: RelationalMultiSelectionBone
-			@param module: Name of the module which references
-			@type module: String
-			@param data: Values of the entry we shall display
-			@type data: dict
+			:param parent: Reference to the RelationalMultiSelectionBone we belong to
+			:type parent: RelationalMultiSelectionBone
+			:param module: Name of the module which references
+			:type module: str
+			:param data: Values of the entry we shall display
+			:type data: dict
 		"""
 		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 		self.sinkEvent("onDrop", "onDragOver", "onDragLeave", "onDragStart", "onDragEnd", "onChange")
@@ -698,16 +698,16 @@ class RelationalMultiSelectionBone(html5.Div):
 	                format="$(dest.name)", using=None, usingDescr=None,
 	                relskel=None, context = None, *args, **kwargs):
 		"""
-			@param srcModule: Name of the module from which is referenced
-			@type srcModule: string
-			@param boneName: Name of the bone thats referencing
-			@type boneName: string
-			@param readOnly: Prevents modifying its value if set to True
-			@type readOnly: bool
-			@param destModule: Name of the module which gets referenced
-			@type destModule: string
-			@param format: Specifies how entries should be displayed.
-			@type format: string
+			:param srcModule: Name of the module from which is referenced
+			:type srcModule: str
+			:param boneName: Name of the bone thats referencing
+			:type boneName: str
+			:param readOnly: Prevents modifying its value if set to True
+			:type readOnly: bool
+			:param destModule: Name of the module which gets referenced
+			:type destModule: str
+			:param format: Specifies how entries should be displayed.
+			:type format: str
 		"""
 		super(RelationalMultiSelectionBone, self).__init__(*args, **kwargs)
 
@@ -761,12 +761,12 @@ class RelationalMultiSelectionBone(html5.Div):
 	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
 		"""
 			Constructs a new RelationalMultiSelectionBone from the parameters given in skelStructure.
-			@param moduleName: Name of the module which send us the skelStructure
-			@type moduleName: string
-			@param boneName: Name of the bone which we shall handle
-			@type boneName: string
-			@param skelStructure: The parsed skeleton structure send by the server
-			@type skelStructure: dict
+			:param moduleName: Name of the module which send us the skelStructure
+			:type moduleName: str
+			:param boneName: Name of the bone which we shall handle
+			:type boneName: str
+			:param skelStructure: The parsed skeleton structure send by the server
+			:type skelStructure: dict
 		"""
 		readOnly = bool(skelStructure[boneName].get("readonly", False))
 
@@ -799,8 +799,8 @@ class RelationalMultiSelectionBone(html5.Div):
 	def unserialize(self, data):
 		"""
 			Parses the values received from the server and update our value accordingly.
-			@param data: The data dictionary received.
-			@type data: dict
+			:param data: The data dictionary received.
+			:type data: dict
 		"""
 		if self.boneName in data.keys():
 			self.selectionDiv.removeAllChildren()
@@ -815,7 +815,7 @@ class RelationalMultiSelectionBone(html5.Div):
 	def serializeForPost(self):
 		"""
 			Serializes our values into something that can be transferred to the server using POST.
-			@returns: dict
+			:returns: dict
 		"""
 		res = {}
 		idx = 0
@@ -864,8 +864,8 @@ class RelationalMultiSelectionBone(html5.Div):
 	def setSelection(self, selection):
 		"""
 			Set our current value to 'selection'
-			@param selection: The new entry that this bone should reference
-			@type selection: dict
+			:param selection: The new entry that this bone should reference
+			:type selection: dict
 		"""
 		if selection is None:
 			return
@@ -892,7 +892,7 @@ class RelationalMultiSelectionBone(html5.Div):
 	def addEntry(self, entry):
 		"""
 			Adds a new RelationalMultiSelectionBoneEntry to this bone.
-			@type entry: RelationalMultiSelectionBoneEntry
+			:type entry: RelationalMultiSelectionBoneEntry
 		"""
 		assert entry not in self.entries, "Entry %s is already in relationalBone" % str(entry)
 		self.entries.append(entry)
@@ -901,7 +901,7 @@ class RelationalMultiSelectionBone(html5.Div):
 	def removeEntry(self, entry ):
 		"""
 			Removes a RelationalMultiSelectionBoneEntry from this bone.
-			@type entry: RelationalMultiSelectionBoneEntry
+			:type entry: RelationalMultiSelectionBoneEntry
 		"""
 		assert entry in self.entries, "Cannot remove unknown entry %s from relationalBone" % str(entry)
 		self.selectionDiv.removeChild( entry )

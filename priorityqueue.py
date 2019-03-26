@@ -33,7 +33,6 @@ class StartupQueue( object ):
 			print("Running startup callback #%s" % str(self.currentElem))
 			cb()
 		elif self.currentElem == len( self.q ): #We should call the final element
-			#print("Running final callback %s" % str(self.finalElem))
 			self.finalElem()
 			self.reset()
 		else:
@@ -45,13 +44,13 @@ class PriorityQueue( object ):
 	def __init__( self ):
 		super( PriorityQueue, self ).__init__()
 		self._q = {}
-	
+
 	def insert( self, priority, validateFunc, generator ):
 		priority = int( priority )
 		if not priority in self._q.keys():
 			self._q[ priority ] = []
 		self._q[ priority ].append( (validateFunc, generator) )
-	
+
 	def select( self, *args, **kwargs ):
 		prios = list( self._q.keys() )
 		prios.sort( reverse=True )
@@ -65,7 +64,7 @@ HandlerClassSelector = PriorityQueue() # Used during startup to select an Wrappe
 moduleHandlerSelector = PriorityQueue() # Used to select an embedded widget to represent a module
 editBoneSelector = PriorityQueue() # Queried by editWidget to locate its bones
 actionDelegateSelector = PriorityQueue() # Locates an action for a given module/action-name
-displayDelegateSelector = PriorityQueue() # Selects a widget used to display data from a certain modul
+displayDelegateSelector = PriorityQueue() # Selects a widget used to display data from a certain module
 initialHashHandler = PriorityQueue() # Provides the handler for the initial hash given in the url
 extendedSearchWidgetSelector = PriorityQueue() # Selects a widget used to perform user-customizable searches
 extractorDelegateSelector = PriorityQueue() # selects a widget used to extract raw data from bones including special features like multilanguage support

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from bones import base
 from bones import relational
 from bones import file

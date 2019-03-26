@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5
 from config import conf
 from widgets.search import Search
@@ -9,12 +10,12 @@ import utils
 
 
 class CompoundFilter( html5.Div ):
-	def __init__(self, view, modul, embed=False, *args, **kwargs ):
+	def __init__(self, view, module, embed=False, *args, **kwargs ):
 		super( CompoundFilter, self ).__init__( *args, **kwargs)
 
 		self["class"].append("compoundfilter")
 		self.view = view
-		self.module = modul
+		self.module = module
 		self.embed = embed
 
 		if embed:
@@ -32,12 +33,12 @@ class CompoundFilter( html5.Div ):
 		self.extendedFilters = []
 
 		for extension in (view["extendedFilters"] if "extendedFilters" in view.keys() else []):
-			wdg = extendedSearchWidgetSelector.select( extension, view, modul)
+			wdg = extendedSearchWidgetSelector.select( extension, view, module)
 
 			if wdg is not None:
 				container = html5.Div()
 				container["class"].append("extendedfilter")
-				wdg = wdg( extension, view, modul )
+				wdg = wdg( extension, view, module )
 				container.appendChild( wdg )
 				self.appendChild( container )
 				self.extendedFilters.append( wdg )
@@ -69,16 +70,15 @@ class CompoundFilter( html5.Div ):
 				extension.focus()
 
 class FilterSelector( html5.Div ):
-	def __init__(self, modul, *args, **kwargs ):
+	def __init__(self, module, *args, **kwargs ):
 		"""
-		:param modul: The name of the module for which this filter is created for
-		:param embedd: If true, we are embedded directly inside a list, if false were displayed in the sidebarwidgets
+		:param module: The name of the module for which this filter is created for
 		:param args:
 		:param kwargs:
 		:return:
 		"""
 		super( FilterSelector, self ).__init__( *args, **kwargs )
-		self.module = modul
+		self.module = module
 		self.currentTarget = None
 		self.defaultFilter = True
 		self.sinkEvent("onClick")

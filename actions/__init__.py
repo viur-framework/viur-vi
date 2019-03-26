@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from actions import list, list_order
 from actions import hierarchy
 from actions import tree

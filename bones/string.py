@@ -447,11 +447,11 @@ def CheckForStringBone(moduleName, boneName, skelStucture, *args, **kwargs):
 
 
 class ExtendedStringSearch(html5.Div):
-	def __init__(self, extension, view, modul, *args, **kwargs):
+	def __init__(self, extension, view, module, *args, **kwargs):
 		super(ExtendedStringSearch, self).__init__(*args, **kwargs)
 		self.view = view
 		self.extension = extension
-		self.module = modul
+		self.module = module
 		self.opMode = extension["mode"]
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		assert self.opMode in ["equals", "from", "to", "prefix", "range"]
@@ -489,7 +489,7 @@ class ExtendedStringSearch(html5.Div):
 		return (filter)
 
 	@staticmethod
-	def canHandleExtension(extension, view, modul):
+	def canHandleExtension(extension, view, module):
 		return (isinstance(extension, dict) and "type" in extension.keys() and (
 					extension["type"] == "string" or extension["type"].startswith("string.")))
 
