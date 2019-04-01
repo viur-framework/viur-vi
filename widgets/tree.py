@@ -426,25 +426,33 @@ class TreeWidget(html5.Div):
 		"""
 			Rebuild the displayed path-list.
 		"""
+		self.pathList.removeAllChildren()
+
 		NetworkService.request(
-			self.module, "pathToKey/%s" % self.node,
-			successHandler=self.onPathRequestSucceded,
-			#failureHandler=self.showErrorMsg
+			self.module, "view/node/%s" % self.node,
+			successHandler=self.onPathRequestSucceded
 		)
 
 	def onPathRequestSucceded(self, req):
 		"""
 			Rebuild the displayed path-list according to request data
 		"""
-		data = NetworkService.decode(req)
-		self.pathList.removeAllChildren()
-		for skel in data["values"]:
-			if skel["parentdir"]:
-				c = NodeWidget(self.module, skel, [])
-			else:
-				c = NodeWidget(self.module, {"key": self.rootNode, "name": "root"}, [])
-				c.addClass("is_rootnode")
-			self.pathList.appendChild(c)
+		answ = NetworkService.decode(req)
+		skel = answ["values"]
+
+		if skel["parentdir"]:
+			c = NodeWidget(self.module, skel, [])
+
+			NetworkService.request(
+				self.module, "view/node/%s" % skel["parentdir"],
+				successHandler=self.onPathRequestSucceded
+			)
+
+		else:
+			c = NodeWidget(self.module, {"key": self.rootNode, "name": "root"}, [])
+			c.addClass("is_rootnode")
+
+		self.pathList.appendChild(c)
 
 	def reloadData(self, paramsOverride=None):
 		assert self.node is not None, "reloadData called while self.node is None"
