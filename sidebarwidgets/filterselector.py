@@ -42,10 +42,10 @@ class CompoundFilter( html5.Div ):
 				container.appendChild( wdg )
 				self.appendChild( container )
 				self.extendedFilters.append( wdg )
-				if hasattr(wdg, "mutualExclusiveGroup"):
+				if hasattr(wdg, "mutualExclusiveGroupTarget"):
 					if not self.mutualExclusiveFilters.has_key("wdg.mutualExclusiveGroupTarget"):
 						self.mutualExclusiveFilters[wdg.mutualExclusiveGroupTarget] = {}
-					self.mutualExclusiveFilters[wdg.mutualExclusiveGroupTarget][wdg.mutialExclusiveGroupKey] = wdg
+					self.mutualExclusiveFilters[wdg.mutualExclusiveGroupTarget][wdg.mutualExclusiveGroupKey] = wdg
 				wdg.filterChangedEvent.register( self )
 		#btn = html5.ext.Button("Apply", self.reevaluate)
 		#self.appendChild( btn )
