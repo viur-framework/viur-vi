@@ -84,11 +84,11 @@ class SelectOneEditBone( html5.Select ):
 		return self.serializeForPost()
 
 class ExtendedSelectOneSearch( html5.Div ):
-	def __init__(self, extension, view, modul, *args, **kwargs ):
+	def __init__(self, extension, view, module, *args, **kwargs ):
 		super( ExtendedSelectOneSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.module = modul
+		self.module = module
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
@@ -119,7 +119,7 @@ class ExtendedSelectOneSearch( html5.Div ):
 		return( filter )
 
 	@staticmethod
-	def canHandleExtension( extension, view, modul ):
+	def canHandleExtension( extension, view, module ):
 		return (isinstance(extension, dict)
 		        and "type" in extension.keys()
 		        and (

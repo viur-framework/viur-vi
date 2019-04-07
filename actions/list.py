@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5, utils
 from network import NetworkService
 from priorityqueue import actionDelegateSelector
@@ -588,12 +589,12 @@ class ListSelectFilterAction( html5.ext.Button ):
 
 	def onAttach(self):
 		super(ListSelectFilterAction,self).onAttach()
-		modul = self.parent().parent().module
+		module = self.parent().parent().module
 		if self.parent().parent().filterID:
 			#Its a predefined search - we wont override this
 			self["disabled"] = True
-		if modul in conf["modules"].keys():
-			modulConfig = conf["modules"][modul]
+		if module in conf["modules"].keys():
+			modulConfig = conf["modules"][module]
 			if "disabledFunctions" in modulConfig.keys() and modulConfig[ "disabledFunctions" ] and "fulltext-search" in modulConfig[ "disabledFunctions" ]:
 				# Fulltext-Search is disabled
 				if not "views" in modulConfig.keys() or not modulConfig["views"]:
@@ -779,7 +780,7 @@ class SelectInvertAction(html5.ext.Button):
 		self["disabled"] = self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor(modul, handler, actionName):
+	def isSuitableFor(module, handler, actionName):
 		return actionName == "selectinvert" and (handler == "list" or handler.startswith("list."))
 
 	def onClick(self, sender=None):

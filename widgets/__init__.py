@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from topbar import TopBarWidget
 from list import ListWidget
 from edit import EditWidget, InternalEdit

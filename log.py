@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5
 from network import DeferredCall
 from datetime import datetime
@@ -73,10 +74,10 @@ class Log( html5.Div ):
 	def log(self, type, msg ):
 		"""
 			Adds a message to the log
-			@param type: The type of the message.
-			@type type: "success", "error", "warning", "info", "progress"
-			@param msg: The message to append
-			@type msg: String
+			:param type: The type of the message.
+			:type type: "success", "error", "warning", "info", "progress"
+			:param msg: The message to append
+			:type msg: str
 		"""
 		assert type in ["success", "error", "warning", "info", "progress"]
 

@@ -11,8 +11,8 @@ class DeferredCall( object ):
 	"""
 	def __init__( self, func, *args, **kwargs ):
 		"""
-			@param func: Callback function
-			@type func: Callable
+			:param func: Callback function
+			:type func: Callable
 		"""
 		super( DeferredCall, self ).__init__()
 		delay = 25
@@ -45,10 +45,10 @@ class HTTPRequest(object):
 	def asyncGet(self, url, cb):
 		"""
 			Performs a GET operation on a remote server
-			@param url: The url to fetch. Either absolute or relative to the server
-			@type url: String
-			@param cb: Target object to call "onCompletion" on success
-			@type cb: object
+			:param url: The url to fetch. Either absolute or relative to the server
+			:type url: str
+			:param cb: Target object to call "onCompletion" on success
+			:type cb: object
 		"""
 		self.cb = cb
 		self.type = "GET"
@@ -59,10 +59,10 @@ class HTTPRequest(object):
 	def asyncPost(self, url, payload, cb, content_type=None ):
 		"""
 			Performs a POST operation on a remote server
-			@param url: The url to fetch. Either absolute or relative to the server
-			@type url: String
-			@param cb: Target object to call "onCompletion" on success
-			@type cb: object
+			:param url: The url to fetch. Either absolute or relative to the server
+			:type url: str
+			:param cb: Target object to call "onCompletion" on success
+			:type cb: object
 		"""
 		self.cb = cb
 		self.type = "POST"
@@ -111,8 +111,8 @@ class NetworkService( object ):
 			Broadcasts a change made to data of module 'module' to all currently
 			registered changeListeners.
 			Also invalidates our _cache
-			@param module: Name of the module where the change occured
-			@type module: string
+			:param module: Name of the module where the change occured
+			:type module: str
 		"""
 		if module in NetworkService._cache.keys():
 			NetworkService._cache[ module ] += 1
@@ -127,8 +127,8 @@ class NetworkService( object ):
 			'listener' must provide an 'onDataChanged' function accepting
 			one parameter: the name of the module. Does nothing if that object
 			has already registered.
-			@param listener: The object to register
-			@type listener: object
+			:param listener: The object to register
+			:type listener: object
 		"""
 		if listener in NetworkService.changeListeners:
 			return
@@ -139,8 +139,8 @@ class NetworkService( object ):
 	def removeChangeListener( listener ):
 		"""
 			Unregisters the object 'listener' from change notifications.
-			@param listener: The object to unregister. It must be currently registered.
-			@type listener: object
+			:param listener: The object to unregister. It must be currently registered.
+			:type listener: object
 		"""
 		assert listener in NetworkService.changeListeners, "Attempt to remove unregistered listener %s" % str( listener )
 		NetworkService.changeListeners.remove( listener )
@@ -150,9 +150,9 @@ class NetworkService( object ):
 		"""
 			Creates a MIME (multipart/mixed) payload for post requests transmitting
 			the values given in params.
-			@param params: Dictionary of key->values to encode
-			@type params: dict
-			@returns: (string payload, string boundary )
+			:param params: Dictionary of key->values to encode
+			:type params: dict
+			:returns: (string payload, string boundary )
 		"""
 		boundary_str = "---"+''.join( [ random.choice(string.ascii_lowercase+string.ascii_uppercase + string.digits) for x in range(13) ] )
 		boundary = boundary_str
@@ -190,8 +190,8 @@ class NetworkService( object ):
 	def decode(req):
 		"""
 			Decodes a response received from the server (ie parsing the json)
-			@type req: Instance of NetworkService response
-			@returns: object
+			:type req: Instance of NetworkService response
+			:returns: object
 		"""
 		return json.loads(req.result)
 
@@ -207,13 +207,13 @@ class NetworkService( object ):
 			If module is given, it prepends "/json" and injects a timestamp
 			to fool the builtin cache of modern browsers.
 			If module is None, path is returned unchanged.
-			@param module: Name of the target module or None
-			@type module: string or None
-			@param path: Path (either relative to 'module' or absolute if 'module' is None
-			@type path: string
-			@param cacheable: If true, allow the browser to cache that request
-			@type cacheable: bool
-			@returns: string
+			:param module: Name of the target module or None
+			:type module: str or None
+			:param path: Path (either relative to 'module' or absolute if 'module' is None
+			:type path: str
+			:param cacheable: If true, allow the browser to cache that request
+			:type cacheable: bool
+			:returns: str
 		"""
 		cacheKey = time.time()
 
@@ -275,22 +275,22 @@ class NetworkService( object ):
 			Calls made to this function are guaranteed to be asynchron, even
 			if the result is already known (cached).
 
-			@param module: Target module on the server. Set to None if you want to call anything else
-			@type module: string or None
-			@param url: The path (relative to module) or a full url if module is None
-			@type url: None
-			@param successHandler: function beeing called if the request succeeds. Must take one argument (the request).
-			@type successHandler: callable
-			@param failureHandler: function beeing called if the request failes. Must take two arguments (the request and an error-code).
-			@type failureHandler: callable
-			@param finishedHandler: function beeing called if the request finished (regardless wherever it succeeded or not). Must take one argument (the request).
-			@type finishedHandler: callable
-			@param modifies: If set to True, it will automatically broadcast an onDataChanged event for that module.
-			@type modifies: bool
-			@param cacheable: Indicates if this request could be cached. Defaults to False.
-			@type cacheable: bool
-			@param secure: If true, include a fresh securitykey in this request. Defaults to False.
-			@type secure: bool
+			:param module: Target module on the server. Set to None if you want to call anything else
+			:type module: str or None
+			:param url: The path (relative to module) or a full url if module is None
+			:type url: None
+			:param successHandler: function beeing called if the request succeeds. Must take one argument (the request).
+			:type successHandler: callable
+			:param failureHandler: function beeing called if the request failes. Must take two arguments (the request and an error-code).
+			:type failureHandler: callable
+			:param finishedHandler: function beeing called if the request finished (regardless wherever it succeeded or not). Must take one argument (the request).
+			:type finishedHandler: callable
+			:param modifies: If set to True, it will automatically broadcast an onDataChanged event for that module.
+			:type modifies: bool
+			:param cacheable: Indicates if this request could be cached. Defaults to False.
+			:type cacheable: bool
+			:param secure: If true, include a fresh securitykey in this request. Defaults to False.
+			:type secure: bool
 
 		"""
 		print("NS REQUEST", module, url, params )
@@ -346,7 +346,6 @@ class NetworkService( object ):
 			self.doFetch(NetworkService.urlForArgs(self.module, self.url, self.cacheable),
 			                self.params, json.loads(text))
 		else:
-			#print("IM COMPLETE", self)
 			self.result = text
 			self.status = "succeeded"
 			try:
@@ -358,14 +357,18 @@ class NetworkService( object ):
 				if self.modifies:
 					DeferredCall(
 						NetworkService.notifyChange, self.module,
-					        key = self.params.get("key") if self.params else None, action = self.url,
-								_delay = 2500)
+						key=self.params.get("key") if self.params else None,
+						action=self.url,
+						_delay=2500
+					)
 				raise
 
 			if self.modifies:
-				DeferredCall(NetworkService.notifyChange, self.module,
-				             key = self.params.get("key") if self.params else None,
-				                action = self.url, _delay = 2500)
+				DeferredCall(
+					NetworkService.notifyChange, self.module,
+					key=self.params.get("key") if self.params else None,
+					action=self.url, _delay=2500
+				)
 
 			# Remove references to our handlers
 			self.clear()

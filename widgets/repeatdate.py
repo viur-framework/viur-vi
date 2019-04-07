@@ -14,9 +14,9 @@ class RepeatDatePopup(html5.Div):
 
 	__editIdx_ = 0
 
-	def __init__(self, modul, key):
+	def __init__(self, module, key):
 		super(RepeatDatePopup, self).__init__()
-		self.module = modul
+		self.module = module
 		self.editIdx = RepeatDatePopup.__editIdx_ #Iternal counter to ensure unique ids
 		RepeatDatePopup.__editIdx_ += 1
 		self.key = key
@@ -55,10 +55,10 @@ class RepeatDatePopup(html5.Div):
 		"""
 		Rebuilds the UI according to the skeleton received from server
 
-		@param request: A finished NetworkService request
-		@type request: NetworkService
-		@type data: dict
-		@param data: The data received
+		:param request: A finished NetworkService request
+		:type request: NetworkService
+		:type data: dict
+		:param data: The data received
 		"""
 		assert (request or data)
 		if request:

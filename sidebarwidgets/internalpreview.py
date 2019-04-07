@@ -4,7 +4,7 @@ from priorityqueue import viewDelegateSelector
 from config import conf
 
 class InternalPreview( html5.Ul ):
-	def __init__(self, modul, structure, item, *args, **kwargs):
+	def __init__(self, module, structure, item, *args, **kwargs):
 		super( InternalPreview, self ).__init__( *args, **kwargs )
 
 		self["class"].append("internalpreview")
@@ -18,14 +18,14 @@ class InternalPreview( html5.Ul ):
 				continue
 
 			self.ali= html5.Li()
-			self.ali["class"]=[ modul,"type_"+bone["type"],"bone_"+key]
+			self.ali["class"]=[ module,"type_"+bone["type"],"bone_"+key]
 			self.adl= html5.Dl()
 
 			self.adt=html5.Dt()
 			self.adt.appendChild(html5.TextNode(key if conf["showBoneNames"] else bone.get("descr", key)))
 
 			self.aadd=html5.Dd()
-			delegateFactory = viewDelegateSelector.select( modul, key, tmpDict )( modul, key, tmpDict )
+			delegateFactory = viewDelegateSelector.select( module, key, tmpDict )( module, key, tmpDict )
 			self.aadd.appendChild(delegateFactory.render( item, key ))
 
 			self.adl.appendChild(self.adt)

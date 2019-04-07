@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5
 from network import NetworkService
 from priorityqueue import actionDelegateSelector
@@ -12,7 +13,7 @@ class SaveContinue( html5.ext.Button ):
 		self["class"] = "icon save continue"
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
+	def isSuitableFor( module, handler, actionName ):
 		return( actionName=="save.continue" )
 
 	def onClick(self, sender=None):
@@ -69,7 +70,7 @@ class SaveClose( html5.ext.Button ):
 		self["class"] = "icon save close"
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
+	def isSuitableFor( module, handler, actionName ):
 		return( actionName=="save.close" )
 
 	def onClick(self, sender=None):
@@ -90,7 +91,7 @@ class Refresh(html5.ext.Button):
 		self["class"] = "icon reload"
 
 	@staticmethod
-	def isSuitableFor(modul, handler, actionName):
+	def isSuitableFor(module, handler, actionName):
 		return actionName == "refresh"
 
 	def onClick(self, sender=None):

@@ -74,8 +74,6 @@ class ExportCsv(html5.Progress):
 		fields = {}
 		titles = []
 
-		print("H1")
-
 		idx = 0
 		for key, bone in self.structure:
 			print(key, bone)
@@ -91,7 +89,6 @@ class ExportCsv(html5.Progress):
 
 				titles.append(bone.get("descr", key) or key)
 
-		print("H2")
 		# Export
 		content = self.separator.join(titles) + self.lineSeparator
 
@@ -167,17 +164,17 @@ class ExportCsvStarter(html5.ext.Popup):
 		if "viur.defaultlangsvalues" in conf["server"].keys():
 			self.langSelect = html5.Select()
 			self.langSelect["id"] = "lang-select"
-		
+
 			lbl = html5.Label(translate("Language selection"))
 			lbl["for"] = "lang-select"
-		
+
 			div = html5.Div()
 			div.appendChild(lbl)
 			div.appendChild(self.langSelect)
 			div.addClass("bone")
-		
+
 			self.appendChild(div)
-		
+
 			for key, value in conf["server"]["viur.defaultlangsvalues"].items():
 				opt = html5.Option()
 				opt["value"] = key
@@ -189,7 +186,7 @@ class ExportCsvStarter(html5.ext.Popup):
 				self.langSelect.appendChild(opt)
 		else:
 			self.langSelect = None
-		
+
 		# Encoding
 		self.encodingSelect = html5.Select()
 		self.encodingSelect["id"] = "encoding-select"

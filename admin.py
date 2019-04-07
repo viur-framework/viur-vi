@@ -188,8 +188,6 @@ class AdminScreen(Screen):
 
 		# Push the panes, ignore group panes with no children (due to right restrictions)
 		for name, idx, pane in panes:
-			#print("idx", name, idx)
-
 			# Don't display GroupPanes without children.
 			if (isinstance(pane, GroupPane)
 				and (not pane.childPanes
@@ -210,7 +208,7 @@ class AdminScreen(Screen):
 		urlHash = conf["startupHash"]
 		if not urlHash:
 			return
-		
+
 		if "?" in urlHash:
 			hashStr = urlHash[1:urlHash.find("?")]
 			paramsStr = urlHash[urlHash.find("?")+1:]
@@ -228,7 +226,7 @@ class AdminScreen(Screen):
 		:param params: Parameters passed to the module
 		"""
 		path = [x for x in path.split("/") if x]
-		
+
 		param = {}
 
 		if params:
@@ -337,8 +335,6 @@ class AdminScreen(Screen):
 		if not pane.focusable:
 			self.topBar.setCurrentModulDescr()
 			return
-
-		#print( pane.descr, self.currentPane.descr if self.currentPane else "(null)" )
 
 		# Click on the same pane?
 		if pane == self.currentPane:
