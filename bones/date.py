@@ -211,11 +211,11 @@ def CheckForDateBone(moduleName, boneName, skelStucture, *args, **kwargs):
 
 
 class DateRangeFilterPlugin(html5.Div):
-	def __init__(self, extension, view, modul, *args, **kwargs):
+	def __init__(self, extension, view, module, *args, **kwargs):
 		super(DateRangeFilterPlugin, self).__init__(*args, **kwargs)
 		self.view = view
 		self.extension = extension
-		self.modul = modul
+		self.module = module
 		self.mutualExclusiveGroupTarget = "daterange-filter"
 		self.mutualExclusiveGroupKey = extension["target"]
 		self.filterChangedEvent = EventDispatcher("filterChanged")
@@ -224,15 +224,15 @@ class DateRangeFilterPlugin(html5.Div):
 		self.appendChild(title)
 
 		# from daterange value
-		self.fromDatepicker = html5.Input()
-		self.fromDatepicker["type"] = "date"
-		self.fromDatepicker["id"] = "from-date-%s" % self.extension["target"]
-		self.fromDatepicker["class"] = "extended-date-range-filter"
-		fromLabel = html5.Label("Startdatum")
-		fromLabel["for"] = "from-date"
+		self.beginDatepicker = html5.Input()
+		self.beginDatepicker["type"] = "date"
+		self.beginDatepicker["id"] = "begin-date-%s" % self.extension["target"]
+		self.beginDatepicker["class"] = "js-extended-date-range-filter"
+		beginLabel = html5.Label(translate("Begin date"))
+		beginLabel["for"] = "begin-date-%s" % self.extension["target"]
 		span = html5.Span()
-		span.appendChild(fromLabel)
-		span.appendChild(self.fromDatepicker)
+		span.appendChild(beginLabel)
+		span.appendChild(self.beginDatepicker)
 		self.appendChild(span)
 
 		# to daterange value
@@ -240,24 +240,23 @@ class DateRangeFilterPlugin(html5.Div):
 		self.toDatepicker["type"] = "date"
 		self.toDatepicker["id"] = "to-date-%s" % self.extension["target"]
 		self.toDatepicker["class"] = "extended-date-range-filter %s" % self.extension["target"]
-		toLabel = html5.Label("Enddatum")
-		toLabel["for"] = "to-date"
+		toLabel = html5.Label(translate("End date"))
+		toLabel["for"] = "to-date-%s" % self.extension["target"]
 		span2 = html5.Span()
 		span2.appendChild(toLabel)
 		span2.appendChild(self.toDatepicker)
 		self.appendChild(span2)
-		self.clearButton = html5.ext.Button("Filter entfernen", self.clearFilter)
+		self.clearButton = html5.ext.Button(translate("Clear filter"), self.clearFilter)
 		self.appendChild(self.clearButton)
 		self.sinkEvent("onChange")
 
 	def clearFilter(self, fire=True):
-		self.fromDatepicker["value"] = None
+		self.beginDatepicker["value"] = None
 		self.toDatepicker["value"] = None
 		if fire:
 			self.filterChangedEvent.fire()
 
 	def updateFilter(self, filter, mutualExclusiveGroupTarget=None, mutualExclusiveGroupKey=None):
-		print("updateFilter", self.extension["target"], filter, mutualExclusiveGroupTarget)
 		if mutualExclusiveGroupTarget == self.mutualExclusiveGroupTarget and mutualExclusiveGroupKey != self.mutualExclusiveGroupKey:
 			del filter["%s$gt" % self.extension["target"]]
 			del filter["%s$lt" % self.extension["target"]]
@@ -270,12 +269,11 @@ class DateRangeFilterPlugin(html5.Div):
 				continue
 			else:
 				clearedFilter[key] = value
-		print("clearedFilter before new values", self.extension["target"], clearedFilter)
-		if self.fromDatepicker["value"] and self.toDatepicker["value"]:
+
+		if self.beginDatepicker["value"] and self.toDatepicker["value"]:
 			clearedFilter["orderby"] = self.extension["target"]
-			clearedFilter["%s$gt" % self.extension["target"]] = self.fromDatepicker["value"]
+			clearedFilter["%s$gt" % self.extension["target"]] = self.beginDatepicker["value"]
 			clearedFilter["%s$lt" % self.extension["target"]] = self.toDatepicker["value"]
-		print("clearedFilter result", self.extension["target"], clearedFilter)
 		return clearedFilter
 
 	def onChange(self, event):
@@ -287,7 +285,6 @@ class DateRangeFilterPlugin(html5.Div):
 
 	@staticmethod
 	def canHandleExtension(extension, view, modul):
-		print("canHandleExtension", extension, view, modul)
 		return isinstance(extension, dict) and "type" in extension.keys() and (extension["type"] == "date" or extension["type"].startswith("date."))
 
 
