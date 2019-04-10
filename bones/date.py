@@ -284,7 +284,7 @@ class DateRangeFilterPlugin(html5.Div):
 		)
 
 	@staticmethod
-	def canHandleExtension(extension, view, modul):
+	def canHandleExtension(extension, view, module):
 		return isinstance(extension, dict) and "type" in extension.keys() and (extension["type"] == "date" or extension["type"].startswith("date."))
 
 
