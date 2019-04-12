@@ -188,8 +188,6 @@ class AdminScreen(Screen):
 
 		# Push the panes, ignore group panes with no children (due to right restrictions)
 		for name, idx, pane in panes:
-			# print("idx", name, idx)
-
 			# Don't display GroupPanes without children.
 			if (isinstance(pane, GroupPane)
 				and (not pane.childPanes
@@ -338,8 +336,6 @@ class AdminScreen(Screen):
 		if not pane.focusable:
 			self.topBar.setCurrentModulDescr()
 			return
-
-		# print( pane.descr, self.currentPane.descr if self.currentPane else "(null)" )
 
 		# Click on the same pane?
 		if pane == self.currentPane:

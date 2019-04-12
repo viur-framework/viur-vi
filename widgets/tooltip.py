@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5
 
 class ToolTip(html5.Div):

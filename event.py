@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 class EventDispatcher(object):
 	"""
@@ -18,8 +19,8 @@ class EventDispatcher(object):
 		"""
 			Append "cb" to the list of objects to inform of the given Event.
 			Does nothing if cb has already subscribed.
-			@param cb: the object to register
-			@type cb: object
+			:param cb: the object to register
+			:type cb: object
 		"""
 		assert self._genTargetFuncName() in dir( cb ), "cb must provide a %s method" % self._genTargetFuncName()
 
@@ -33,8 +34,8 @@ class EventDispatcher(object):
 		"""
 			Remove "cb" from the list of objects to inform of the given Event.
 			Does nothing if cb is not in that list.
-			@param cb: the object to remove
-			@type cb: object
+			:param cb: the object to remove
+			:type cb: object
 		"""
 		if cb in self.queue:
 			self.queue.remove(cb)

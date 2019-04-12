@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5
 import json
 import utils
@@ -119,8 +120,8 @@ class LeafFileWidget(LeafWidget):
 		Displays a file inside a tree application.
 	"""
 
-	def __init__(self, modul, data, structure, *args, **kwargs):
-		super(LeafFileWidget, self).__init__(modul, data, structure, *args, **kwargs)
+	def __init__(self, module, data, structure, *args, **kwargs):
+		super(LeafFileWidget, self).__init__(module, data, structure, *args, **kwargs)
 
 		self.previewImg = FilePreviewImage(data)
 		self.prependChild(self.previewImg)
@@ -145,10 +146,10 @@ class Uploader(html5.Progress):
 
 	def __init__(self, file, node, context=None, *args, **kwargs):
 		"""
-			@param file: The file to upload
-			@type file: A javascript "File" Object
-			@param node: Key of the desired node of our parents tree application or None for an anonymous upload.
-			@type node: String or None
+			:param file: The file to upload
+			:type file: A javascript "File" Object
+			:param node: Key of the desired node of our parents tree application or None for an anonymous upload.
+			:type node: str or None
 		"""
 		super(Uploader, self).__init__(*args, **kwargs)
 		self.uploadSuccess = EventDispatcher("uploadSuccess")
@@ -272,7 +273,7 @@ class FileWidget(TreeWidget):
 		super(FileWidget, self).setNode(node)
 
 	@staticmethod
-	def canHandle(modul, moduleInfo):
+	def canHandle(module, moduleInfo):
 		return (moduleInfo["handler"].startswith("tree.simple.file"))
 
 	def onDragOver(self, event):

@@ -8,7 +8,7 @@ This is the current development version.
 
 - Bugfix: `StringViewBoneDelegate` does not fail on `stringBone(multiple=True, language=["de", "en"])` anymore.
 - Bugfix: Improved image popup viewer not falling apart when image dimensions are not quadratic.
-- Bugfix: Fixed multiple typos
+- Bugfix: Fixed multiple typos, docstring, missing encoding strings
 - Feature: Added the [summernote WYSIWYG editor](https://summernote.org/) as replacement for textBone() editing. 
 - Feature: Allow for file preview popup also in file widget.
 - Feature: Selected multiple entities (range) in a list while holding the shift key

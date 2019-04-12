@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5, utils
 from event import EventDispatcher
 from network import DeferredCall
@@ -57,8 +58,8 @@ class SelectTable( html5.Table ):
 	def setHeader(self, headers):
 		"""
 			Sets the table-headers to 'headers'
-			@param headers: List of strings
-			@type headers: list
+			:param headers: list of strings
+			:type headers: list
 		"""
 
 		tr = html5.Tr()
@@ -86,10 +87,10 @@ class SelectTable( html5.Table ):
 
 	def getTrByIndex(self, idx):
 		"""
-			Retrives the TR element by the given row number
-			@param idx: Rownumber to retrive the tr of
-			@type idx: int
-			@returns HTMLTableRowElement
+			Retrieves the TR element by the given row number
+			:param idx: Rownumber to retrieve the tr of
+			:type idx: int
+			:returns: HTMLTableRowElement
 		"""
 		for c in self.body._children:
 			if idx <= 0:
@@ -102,9 +103,9 @@ class SelectTable( html5.Table ):
 		"""
 			Returns the rowNumber for the given tr element or None if
 			the given tr element is invalid.
-			@param tr: A HTMLTableRowElement of this table
-			@type tr: HTMLTableRowElement
-			@returns int or None
+			:param tr: A HTMLTableRowElement of this table
+			:type tr: HTMLTableRowElement
+			:returns: int or None
 		"""
 		idx = 0
 		for c in self.body._children:
@@ -292,8 +293,8 @@ class SelectTable( html5.Table ):
 	def removeSelectedRow(self, row):
 		"""
 			Removes 'row' from the current selection (if any)
-			@param row: Number of the row to unselect
-			@type row: int
+			:param row: Number of the row to unselect
+			:type row: int
 		"""
 		if not row in self._selectedRows:
 			return
@@ -312,8 +313,8 @@ class SelectTable( html5.Table ):
 		"""
 			Sets the current selection to 'row'.
 			Any previous selection is removed.
-			@param newRow: Number of the row to select
-			@type newRow: int
+			:param newRow: Number of the row to select
+			:type newRow: int
 		"""
 		self.setCursorRow( newRow )
 
@@ -355,7 +356,7 @@ class SelectTable( html5.Table ):
 	def getCurrentSelection(self):
 		"""
 			Returns a list of currently selected row-numbers
-			@returns: List
+			:returns: list
 		"""
 		if self._selectedRows:
 			return self._selectedRows[:]
@@ -557,7 +558,7 @@ class DataTable( html5.Div ):
 	def getRowCount(self):
 		"""
 			Returns the total amount of rows currently known.
-			@returns: int
+			:returns: int
 		"""
 		return( len( self._model ))
 
@@ -565,8 +566,8 @@ class DataTable( html5.Div ):
 	def add(self, obj):
 		"""
 			Adds an row to the model
-			@param obj: Dictionary of values for this row
-			@type obj: dict
+			:param obj: Dictionary of values for this row
+			:type obj: dict
 		"""
 		obj["_uniqeIndex"] = self._modelIdx
 		self._modelIdx += 1
@@ -649,8 +650,8 @@ class DataTable( html5.Div ):
 		"""
 			Renders the object to into the table.
 			Does nothing if the list of _shownFields is empty.
-			@param obj: Dictionary of values for this row
-			@type obj: dict
+			:param obj: Dictionary of values for this row
+			:type obj: dict
 		"""
 		if not self._shownFields:
 			return
@@ -687,8 +688,8 @@ class DataTable( html5.Div ):
 			Sets the list of _shownFields.
 			This causes the whole table to be rebuild.
 			Be careful if calling this function often on a large table!
-			@param fields: List of model-keys which will be displayed.
-			@type fields: list
+			:param fields: List of model-keys which will be displayed.
+			:type fields: list
 		"""
 		self._shownFields = fields
 		self.rebuildTable()

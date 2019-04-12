@@ -6,10 +6,10 @@ from i18n import translate
 class Pane(html5.Li):
 	"""
 		Base class for Panes.
-		
+
 		A pane represents a entry in the left menu as well
 		as a list of widgets associated with this pane.
-		
+
 		It is possible to stack panes on-top of each other.
 		If a pane is active, _all_ its child widgets are visible
 		(through they might overlap).
@@ -89,8 +89,8 @@ class Pane(html5.Li):
 		"""
 			Stack a pane under this one.
 			It gets displayed as a subpane.
-			@param pane: Another pane
-			@type pane: pane
+			:param pane: Another pane
+			:type pane: pane
 		"""
 		assert pane != self, "A pane cannot be a child of itself"
 
@@ -120,8 +120,8 @@ class Pane(html5.Li):
 	def removeChildPane(self, pane):
 		"""
 			Removes a subpane.
-			@param pane: The pane to remove. Must be a direct child of this pane
-			@type pane: Pane
+			:param pane: The pane to remove. Must be a direct child of this pane
+			:type pane: Pane
 		"""
 		assert pane in self.childPanes, "Cannot remove unknown child-pane %s from %s" % (str(pane),str(self))
 
@@ -154,8 +154,8 @@ class Pane(html5.Li):
 		"""
 			Adds a widget to this pane.
 			Note: all widgets of a pane are visible at the same time!
-			@param widget: The widget to add
-			@type widget: Widget
+			:param widget: The widget to add
+			:type widget: Widget
 
 		"""
 		div = html5.Div()
@@ -185,8 +185,8 @@ class Pane(html5.Li):
 	def removeWidget(self, widget):
 		"""
 			Removes a widget.
-			@param widget: The widget to remove. Must be a direct child of this pane.
-			@type widget: Widget
+			:param widget: The widget to remove. Must be a direct child of this pane.
+			:type widget: Widget
 		"""
 		for c in self.widgetsDomElm._children:
 			if widget in c._children:
@@ -206,7 +206,7 @@ class Pane(html5.Li):
 	def containsWidget(self, widget ):
 		"""
 			Tests wherever widget is a direct child of this pane.
-			@returns: Bool
+			:returns: bool
 		"""
 		for c in self.widgetsDomElm._children:
 			if widget in c._children:
