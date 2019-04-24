@@ -10,6 +10,7 @@ This is the current development version.
 - Bugfix: `StringViewBoneDelegate` does not fail on `stringBone(multiple=True, language=["de", "en"])` anymore
 - Bugfix: Improved image popup viewer not falling apart when image dimensions are not quadratic
 - Bugfix: Fixed multiple typos, docstring, missing encoding strings
+- Feature: Errors in EditWidget are dumped to the message center also for better recognition when something went wrong
 - Feature: Allow for file preview popup also in file widget
 - Feature: Selected multiple entities (range) in a list while holding the shift key
 - Feature: Improved handling of key-events
