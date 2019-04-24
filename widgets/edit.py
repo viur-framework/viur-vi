@@ -794,6 +794,7 @@ class EditWidget(html5.Div):
 					descrLbl["title"] = bone["error"]
 					fieldSets[ cat ]["class"].append("is_incomplete")
 					hasMissing = True
+					conf[ "mainWindow" ].log( "info", bone.get( "descr", key ) + ": " + translate( bone[ "error" ] ) )
 				elif bone["error"] is None and not self.wasInitialRequest:
 					descrLbl["class"].append("is_valid")
 
