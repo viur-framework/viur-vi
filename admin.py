@@ -142,13 +142,44 @@ class AdminScreen(Screen):
 		userAccess = conf["currentUser"].get("access", [])
 		predefinedFilterCounter = 1
 
+		groupedModules = {}
+
 		# First create group panes, if configured
 		for group in moduleGroups:
+			groupedModules[group["prefix"]]=[]
 			groupPanes[group["prefix"]] = GroupPane(group["name"], iconURL=group.get("icon"))
+			groupPanes[group["prefix"]].groupPrefix = group["prefix"]
 			panes.append((group["name"], group.get("sortIndex"), groupPanes[group["prefix"]]))
 
 		# Sort all modules first
-		sortedModules = [(x, y) for x, y in config["modules"].items()]
+
+		# read Hash to register startup module
+		currentActiveGroup = None
+		path = None
+		urlHash = conf["startupHash"]
+		if urlHash:
+
+			if "?" in urlHash:
+				hashStr = urlHash[1:urlHash.find("?")]
+			else:
+				hashStr = urlHash[1:]
+			path = [x for x in hashStr.split("/") if x]
+
+		sortedModules = []
+		topLevelModules={}
+
+		for x,y in config["modules"].items():
+			sortedModules.append((x,y))
+
+			if y["name"].split(":")[0]+": " not in groupPanes.keys():
+				topLevelModules.update({x:y})
+			else:
+				if path and  x == path[0]:
+					currentActiveGroup = y["name"].split(":")[0]+": "
+				groupedModules[y["name"].split(":")[0]+": "].append((x,y))
+
+		conf["vi.groupedModules"] = groupedModules
+
 		sortedModules.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1].get("sortIndex") is None else 0, entry[1].get("sortIndex", 0), entry[1].get("name")))
 
 		# When create module panes
@@ -156,6 +187,7 @@ class AdminScreen(Screen):
 			if not "root" in userAccess and not any([x.startswith(module) for x in userAccess]):
 				#Skip this module, as the user couldn't interact with it anyway
 				continue
+			info.update({"_handler":handler})
 
 			conf["modules"][module] = info
 
@@ -164,24 +196,22 @@ class AdminScreen(Screen):
 					v["__id"] = predefinedFilterCounter
 					predefinedFilterCounter += 1
 
-			handlerCls = HandlerClassSelector.select(module, info)
-			assert handlerCls is not None, "No handler available for module '%s'" % module
 
-			conf["modules"][module]["visibleName"] = conf["modules"][module]["name"]
-			handler = None
+			if currentActiveGroup or module in topLevelModules:
+				handlerCls = HandlerClassSelector.select(module, info)
+				assert handlerCls is not None, "No handler available for module '%s'" % module
 
-			for k in groupPanes.keys():
-				if info["name"].startswith(k):
-					conf["modules"][module]["visibleName"] = conf["modules"][module]["name"].replace(k, "")
+				conf["modules"][module]["visibleName"] = conf["modules"][module]["name"]
+				handler = None
+
+				if info["name"] and currentActiveGroup and info["name"].startswith(currentActiveGroup):
+					conf["modules"][module]["visibleName"] = conf["modules"][module]["name"].replace(currentActiveGroup, "")
 					handler = handlerCls(module, info)
-					groupPanes[k].addChildPane(handler)
-					break
+					groupPanes[currentActiveGroup].addChildPane(handler)
 
-			if not handler:
-				handler = handlerCls(module, info)
-				panes.append((info["visibleName"], info.get("sortIndex"), handler))
-
-			conf["modules"][module]["_handler"] = handler
+				if not handler and module in topLevelModules:
+					handler = handlerCls(module, info)
+					panes.append((info["visibleName"], info.get("sortIndex"), handler))
 
 		# Sorting our top level entries
 		panes.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1] is None else 0, entry[1] or 0, entry[0]))
@@ -192,7 +222,7 @@ class AdminScreen(Screen):
 			if (isinstance(pane, GroupPane)
 				and (not pane.childPanes
 				        or all(c["style"].get("display") == "none" for c in pane.childPanes))):
-				continue
+				pass#continue
 
 			self.addPane(pane)
 

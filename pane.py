@@ -2,6 +2,8 @@
 import html5
 from config import conf
 from i18n import translate
+from priorityqueue import HandlerClassSelector
+from network import DeferredCall
 
 class Pane(html5.Li):
 	"""
@@ -21,6 +23,7 @@ class Pane(html5.Li):
 
 		self.parentPane = None
 		self.sinkEvent("onClick")
+		self.groupPrefix = None
 
 		self.descr = descr
 		self.iconURL = iconURL
@@ -39,7 +42,7 @@ class Pane(html5.Li):
 		self.label["class"].append("button")
 		self.appendChild(self.label)
 
-		self.setText(descr, iconURL)
+
 
 		self.closeBtn = html5.ext.Button(translate("Close"), self.onBtnCloseReleased)
 		self.closeBtn.addClass("closebtn")
@@ -50,6 +53,7 @@ class Pane(html5.Li):
 
 		self.closeable = closeable
 		self.isExpanded = False
+		DeferredCall(self.setText,_delay=100)
 
 	def __setattr__(self, key, value):
 		super(Pane, self).__setattr__(key, value)
@@ -66,9 +70,9 @@ class Pane(html5.Li):
 			iconURL = self.iconURL
 
 		if iconURL is not None:
-			img = html5.Img()
-			img["src"] = iconURL
-			self.label.appendChild(img)
+			self.img = html5.Img()
+			self.img["src"] = iconURL
+			self.label.appendChild(self.img)
 
 		if self.iconClasses is not None:
 			for cls in self.iconClasses:
@@ -239,11 +243,37 @@ class GroupPane(Pane):
 
 	def __init__(self, *args, **kwargs):
 		super(GroupPane, self ).__init__(*args, **kwargs)
-		self.childDomElem = html5.Ul()
-		self.childDomElem["style"]["display"] = "none"
-		self.appendChild(self.childDomElem)
+		self.childDomElem=None
+
+	def onLoadChilds(self):
+
+		if not self.childPanes and self.groupPrefix in conf["vi.groupedModules"]:
+
+			childs = conf["vi.groupedModules"][self.groupPrefix]
+			childs.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1].get("sortIndex") is None else 0, entry[1].get("sortIndex", 0), entry[1].get("name")))
+
+			for module, info in childs:
+				conf["modules"][module]["visibleName"] = conf["modules"][module]["name"].replace(self.groupPrefix, "")
+				handlerCls = HandlerClassSelector.select(module, info)
+				assert handlerCls is not None, "No handler available for module '%s'" % module
+				handler = handlerCls(module, info)
+				conf["mainWindow"].addPane(handler,self)
+		self.img["src"] = self.groupImgSrc
+
+	def changeImg(self):
+		self.groupImgSrc = self.img["src"]
+		self.img["src"] = "icons/is_loading32.gif"
+
 
 	def onClick(self, event = None, *args, **kwargs):
+		if not self.childDomElem:
+			self.childDomElem = html5.Ul()
+			self.childDomElem["style"]["display"] = "none"
+			self.appendChild(self.childDomElem)
+
+		self.changeImg()
+		DeferredCall(self.onLoadChilds,_delay=100)
+
 		if self.isExpanded:
 			self.collapse()
 		else:
