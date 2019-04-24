@@ -177,7 +177,7 @@ class DateEditBone( html5.Div ):
 		#[day, month, year, hour, min, sec]
 		adatetime=["00","00","0000","00","00","00"]
 
-		if hasattr(self,"timeinput"):
+		if self.hastime:
 			result = re.match('(\d+):(\d+)(:(\d+))?',self.timeinput["value"])
 			if result:
 				adatetime[3] = result.group(1)
@@ -186,15 +186,18 @@ class DateEditBone( html5.Div ):
 				if result.group(4):
 					adatetime[5] = result.group(4)
 
-		if hasattr(self,"dateinput"):
+		if self.hasdate:
 			result = re.match('(\d+).(\d+).(\d+)',self.dateinput["value"])
 			if result:
 				adatetime[0] = result.group(3)
 				adatetime[1] = result.group(2)
 				adatetime[2] = result.group(1)
 
-		if adatetime[2]=="0000":
-			return {self.boneName: adatetime[3]+":"+adatetime[4]+":00"}
+		if adatetime[2] == "0000": #when year is unset
+			if self.hastime:
+				return {self.boneName: adatetime[3]+":"+adatetime[4]+":00"}
+
+			return {self.boneName: ""}
 
 		returnvalue = adatetime[0]+"."+adatetime[1]+"."+adatetime[2]+" "+adatetime[3]+":"+adatetime[4]+":"+adatetime[5]
 		return {self.boneName: returnvalue}

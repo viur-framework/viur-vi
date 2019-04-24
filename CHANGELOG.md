@@ -2,15 +2,18 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
-## [2.4-beta]
+## [2.4] Agung
 
 This is the current development version.
 
-- Bugfix: `StringViewBoneDelegate` does not fail on `stringBone(multiple=True, language=["de", "en"])` anymore.
-- Bugfix: Improved image popup viewer not falling apart when image dimensions are not quadratic.
+- Bugfix: Setting a dateBone empty serialized into a zero-time value, althought the dateBone was configured with time=False
+- Bugfix: `StringViewBoneDelegate` does not fail on `stringBone(multiple=True, language=["de", "en"])` anymore
+- Bugfix: Improved image popup viewer not falling apart when image dimensions are not quadratic
 - Bugfix: Fixed multiple typos, docstring, missing encoding strings
 - Feature: Added the [summernote WYSIWYG editor](https://summernote.org/) as replacement for textBone() editing. 
 - Feature: Allow for file preview popup also in file widget.
+- Feature: Errors in EditWidget are dumped to the message center also for better recognition when something went wrong
+- Feature: Allow for file preview popup also in file widget
 - Feature: Selected multiple entities (range) in a list while holding the shift key
 - Feature: Improved handling of key-events
 - Feature: Several modifications required to use new, minimized html5 library
@@ -95,7 +98,7 @@ Release date: Dec 22, 2016
 - Styling
 
 
-[2.4-beta]: https://github.com/viur-framework/vi/compare/v2.3.0...develop
+[2.4]: https://github.com/viur-framework/vi/compare/v2.3.0...develop
 [2.3]: https://github.com/viur-framework/vi/compare/v2.2.0...v2.3.0
 [2.2]: https://github.com/viur-framework/vi/compare/v2.1.0...v2.2.0
 [2.1]: https://github.com/viur-framework/vi/compare/v2.0.0...v2.1.0
