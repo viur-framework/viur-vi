@@ -10,6 +10,8 @@ This is the current development version.
 - Bugfix: `StringViewBoneDelegate` does not fail on `stringBone(multiple=True, language=["de", "en"])` anymore
 - Bugfix: Improved image popup viewer not falling apart when image dimensions are not quadratic
 - Bugfix: Fixed multiple typos, docstring, missing encoding strings
+- Feature: Added the [summernote WYSIWYG editor](https://summernote.org/) as replacement for textBone() editing. 
+- Feature: Allow for file preview popup also in file widget.
 - Feature: Errors in EditWidget are dumped to the message center also for better recognition when something went wrong
 - Feature: Allow for file preview popup also in file widget
 - Feature: Selected multiple entities (range) in a list while holding the shift key
@@ -17,7 +19,7 @@ This is the current development version.
 - Feature: Several modifications required to use new, minimized html5 library
 - Feature: Added the possibility to manipulate params via a global function
 - Feature: Improved handling of represented URL in address bar
-- Removed: Preview Widget (wasn't used anymore)
+- Removed: Preview Widget (was not used anymore)
 
 
 ## [2.3] Kilauea
