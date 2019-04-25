@@ -1,16 +1,13 @@
-vi
-vi_plugins
-version.py
-public/vi.css
-
-# Mausbrand specific
-output
 .idea
 *.bak
 *.pyc
 *.iml
-public/vi_custom.less
 
-pynetree/.hg
-pynetree/.hgignore
+node_modules
+output
+public/vi.css
+public/vi_custom.less
+version.py
+vi
+vi_plugins
 

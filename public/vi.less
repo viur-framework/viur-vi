@@ -1433,7 +1433,7 @@ input[type="date"],
 input[type="url"],
 input[type="password"],
 .text .preview,
-[contenteditable] {
+[contenteditable]:not(.note-editable) {
   display: inline-block;
   font-size: 0.9em;
   width: 50%;
@@ -1624,6 +1624,18 @@ margin-right: -2px;
   border: 1px solid #ccc;
   font-weight: 100;
   background: #eee;
+}
+
+.note-editor:not(.codeview) {
+  .note-toolbar {
+    // show
+  }
+  .note-toolbar:not(.is-active) {
+    // hide
+    height: 0;
+    padding: 0;
+    border: 0;
+  }
 }
 
 /* #vi_input_bones
