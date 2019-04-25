@@ -131,13 +131,13 @@ class ListHandler(Pane):
 
 		''' no time right now...
 		if self.childDomElem is None and "views" in self.moduleInfo:
-			conf["mainWindow"].lock()
+			self.lock()
 			self._buildViewPanes(self.moduleInfo["views"])
-			conf["mainWindow"].unlock()
+			self.unlock()
 		'''
 
 		if self.requestedViews is None and "views.request" in self.moduleInfo:
-			conf["mainWindow"].lock()
+			self.lock()
 
 			NetworkService.request(
 				self.moduleName,
@@ -151,7 +151,7 @@ class ListHandler(Pane):
 		self.requestedViews = NetworkService.decode(req)
 		self._buildViewPanes(self.requestedViews, register=True, requested=True)
 
-		conf["mainWindow"].unlock()
+		self.unlock()
 
 		if not self.isExpanded:
 			if self.mode == "normal":

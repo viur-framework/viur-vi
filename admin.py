@@ -166,17 +166,20 @@ class AdminScreen(Screen):
 			path = [x for x in hashStr.split("/") if x]
 
 		sortedModules = []
-		topLevelModules={}
+		topLevelModules = {}
 
-		for x,y in config["modules"].items():
-			sortedModules.append((x,y))
+		for x, y in config["modules"].items():
+			sortedModules.append((x, y))
 
-			if y["name"].split(":")[0]+": " not in groupPanes.keys():
-				topLevelModules.update({x:y})
+			groupName = y["name"].split(":")[0] + ": "
+
+			if groupName not in groupPanes.keys():
+				topLevelModules.update({x: y})
 			else:
-				if path and  x == path[0]:
-					currentActiveGroup = y["name"].split(":")[0]+": "
-				groupedModules[y["name"].split(":")[0]+": "].append((x,y))
+				if path and x == path[0]:
+					currentActiveGroup = groupName
+
+				groupedModules[groupName].append((x, y))
 
 		conf["vi.groupedModules"] = groupedModules
 
