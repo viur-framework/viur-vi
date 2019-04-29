@@ -19,6 +19,7 @@ This is the current development version.
 - Feature: Several modifications required to use new, minimized html5 library
 - Feature: Added the possibility to manipulate params via a global function
 - Feature: Improved handling of represented URL in address bar
+- Feature: Lazy-loading of GroupPanes during user navigation for a faster UI experience
 - Removed: Preview Widget (was not used anymore)
 
 

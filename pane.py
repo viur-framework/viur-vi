@@ -2,6 +2,8 @@
 import html5
 from config import conf
 from i18n import translate
+from priorityqueue import HandlerClassSelector
+from network import DeferredCall
 
 class Pane(html5.Li):
 	"""
@@ -21,6 +23,7 @@ class Pane(html5.Li):
 
 		self.parentPane = None
 		self.sinkEvent("onClick")
+		self.groupPrefix = None
 
 		self.descr = descr
 		self.iconURL = iconURL
@@ -35,11 +38,10 @@ class Pane(html5.Li):
 		self.widgetsDomElm["class"].append("has_no_child")
 		self.childDomElem = None
 
+		self.img = None
 		self.label = html5.A()
 		self.label["class"].append("button")
 		self.appendChild(self.label)
-
-		self.setText(descr, iconURL)
 
 		self.closeBtn = html5.ext.Button(translate("Close"), self.onBtnCloseReleased)
 		self.closeBtn.addClass("closebtn")
@@ -50,6 +52,9 @@ class Pane(html5.Li):
 
 		self.closeable = closeable
 		self.isExpanded = False
+		self.defaultImgSrc = self.iconURL
+
+		DeferredCall(self.setText, _delay=250)
 
 	def __setattr__(self, key, value):
 		super(Pane, self).__setattr__(key, value)
@@ -59,6 +64,19 @@ class Pane(html5.Li):
 			else:
 				self.closeBtn.hide()
 
+	def lock(self):
+		self.disable()
+
+		if self.img:
+			self.defaultImgSrc = self.img["src"]
+			self.img["src"] = "icons/is_loading32.gif"
+
+	def unlock(self):
+		if self.img and self.defaultImgSrc:
+			self.img["src"] = self.defaultImgSrc
+
+		self.enable()
+
 	def setText(self, descr = None, iconURL = None):
 		self.label.removeAllChildren()
 
@@ -66,9 +84,9 @@ class Pane(html5.Li):
 			iconURL = self.iconURL
 
 		if iconURL is not None:
-			img = html5.Img()
-			img["src"] = iconURL
-			self.label.appendChild(img)
+			self.img = html5.Img()
+			self.img["src"] = iconURL
+			self.label.appendChild(self.img)
 
 		if self.iconClasses is not None:
 			for cls in self.iconClasses:
@@ -94,28 +112,26 @@ class Pane(html5.Li):
 		"""
 		assert pane != self, "A pane cannot be a child of itself"
 
-		self.childPanes.append( pane )
+		self.childPanes.append(pane)
 		pane.parentPane = self
 
 		if not self.childDomElem:
 			self.childDomElem = html5.Ul()
 
 			if self.collapseable and not pane.closeable:
-				self.childDomElem[ "style" ][ "display" ] = "none"
+				self.childDomElem.hide()
 			else:
-				self.childDomElem[ "style" ][ "display" ] = "initial"
+				self.childDomElem.show()
 
-			self.appendChild( self.childDomElem )
+			self.appendChild(self.childDomElem)
 
 			if self.closeable:
 				self.closeBtn.hide()
 
-		if ( pane.closeable
-			 and "display" in self.childDomElem[ "style" ]
-			 and self.childDomElem[ "style" ][ "display" ] == "none" ):
-			self.childDomElem[ "style" ][ "display" ] = "initial"
+		if pane.closeable and self.childDomElem.isHidden():
+			self.childDomElem.show()
 
-		self.childDomElem.appendChild( pane )
+		self.childDomElem.appendChild(pane)
 
 	def removeChildPane(self, pane):
 		"""
@@ -125,15 +141,14 @@ class Pane(html5.Li):
 		"""
 		assert pane in self.childPanes, "Cannot remove unknown child-pane %s from %s" % (str(pane),str(self))
 
-		self.childPanes.remove( pane )
-		self.childDomElem.removeChild( pane )
+		self.childPanes.remove(pane)
+		self.childDomElem.removeChild(pane)
 
 		pane.parentPane = None
 
 		#DOM.removeChild( self.childDomElem, pane.getElement() )
-		if len(self.childPanes)==0: #No more children, remove the UL element
-			self.removeChild( self.childDomElem )
-			#DOM.removeChild( self.getElement(), self.childDomElem )
+		if not len(self.childPanes): #No more children, remove the UL element
+			self.removeChild(self.childDomElem)
 			self.childDomElem = None
 
 			if self.closeable:
@@ -145,10 +160,7 @@ class Pane(html5.Li):
 		for widget in self.widgetsDomElm.children():
 			self.widgetsDomElm.removeChild(widget)
 
-		self.closeBtn = None
-		self.label = None
-
-		super(Pane,self).onDetach()
+		super(Pane, self).onDetach()
 
 	def addWidget(self, widget):
 		"""
@@ -238,12 +250,33 @@ class GroupPane(Pane):
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super(GroupPane, self ).__init__(*args, **kwargs)
-		self.childDomElem = html5.Ul()
-		self.childDomElem["style"]["display"] = "none"
-		self.appendChild(self.childDomElem)
+		super(GroupPane, self).__init__(*args, **kwargs)
+		self.childDomElem = None
+
+	def loadChildren(self):
+		if self.groupPrefix in conf["vi.groupedModules"]:
+			childs = conf["vi.groupedModules"][self.groupPrefix]
+			childs.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1].get("sortIndex") is None else 0, entry[1].get("sortIndex", 0), entry[1].get("name")))
+
+			for module, info in childs:
+				conf["modules"][module]["visibleName"] = conf["modules"][module]["name"].replace(self.groupPrefix, "")
+				handlerCls = HandlerClassSelector.select(module, info)
+				assert handlerCls is not None, "No handler available for module '%s'" % module
+				handler = handlerCls(module, info)
+				conf["mainWindow"].addPane(handler, self)
+
+		self.unlock()
 
 	def onClick(self, event = None, *args, **kwargs):
+		if not self.childDomElem:
+			self.childDomElem = html5.Ul()
+			self.childDomElem["style"]["display"] = "none"
+			self.appendChild(self.childDomElem)
+
+		if not self.childPanes:
+			self.lock()
+			DeferredCall(self.loadChildren, _delay=100)
+
 		if self.isExpanded:
 			self.collapse()
 		else:
