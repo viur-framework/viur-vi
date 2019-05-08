@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 import html5
-from config import conf
-from widgets.search import Search
-from priorityqueue import extendedSearchWidgetSelector
-from pane import Pane
-from i18n import translate
-import utils
-
-
+from vi.config import conf
+from vi.widgets.search import Search
+from vi.priorityqueue import extendedSearchWidgetSelector
+from vi.i18n import translate
 
 class CompoundFilter( html5.Div ):
 	def __init__(self, view, module, embed=False, *args, **kwargs ):

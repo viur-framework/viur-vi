@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import html5
-from config import conf
-from i18n import translate
-from network import DeferredCall
-from priorityqueue import actionDelegateSelector
-from widgets.file import Uploader, LeafFileWidget
+
+from vi.config import conf
+from vi.i18n import translate
+from vi.network import DeferredCall
+from vi.priorityqueue import actionDelegateSelector
+from vi.widgets.file import Uploader, LeafFileWidget
 
 
 class FileSelectUploader(html5.Input):

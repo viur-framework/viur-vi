@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from priorityqueue import HandlerClassSelector, initialHashHandler
-from widgets import HierarchyWidget
-from config import conf
-from pane import Pane
-from widgets.edit import EditWidget
-from i18n import translate
+from vi.priorityqueue import HandlerClassSelector, initialHashHandler
+from vi.widgets import HierarchyWidget
+from vi.config import conf
+from vi.pane import Pane
+from vi.widgets.edit import EditWidget
+from vi.i18n import translate
 
 
 class HierarchyHandler(Pane):

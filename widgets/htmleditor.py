@@ -1,14 +1,18 @@
 import html5
-import network
-from __pyjamas__ import JS
-from i18n import translate
-from widgets.file import FileWidget
-from config import conf
-from utils import getImagePreview
+import vi.network as network
+
+#from __pyjamas__ import JS #fixme!!!
+
+from vi.i18n import translate
+from vi.widgets.file import FileWidget
+from vi.config import conf
 
 
 class TextInsertImageAction(html5.ext.Button):
-	def __init__(self, summernote=self, boneName="", *args, **kwargs):
+	def __init__(self, summernote=None, boneName="", *args, **kwargs):
+		if summernote is None:
+			summernote = self
+
 		super(TextInsertImageAction, self).__init__(translate("Insert Image"), *args, **kwargs)
 		self["class"] = "icon text image viur-insert-image-btn"
 		self["title"] = translate("Insert Image")

@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 import html5
-import utils
-from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, \
+import vi.utils as utils
+from vi.bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, \
 	RelationalMultiSelectionBoneEntry
-from config import conf
-from i18n import translate
-from network import NetworkService
-from pane import Pane
-from priorityqueue import editBoneSelector
-from widgets.edit import EditWidget
-from widgets.file import FileWidget
-from widgets.tree import TreeWidget, NodeWidget
+from vi.config import conf
+from vi.i18n import translate
+from vi.network import NetworkService
+from vi.pane import Pane
+from vi.priorityqueue import editBoneSelector
+from vi.widgets.edit import EditWidget
+from vi.widgets.file import FileWidget
+from vi.widgets.tree import TreeWidget, NodeWidget
 
 
 class TreeDirMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):

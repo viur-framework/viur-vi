@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import html5, utils
-from config import conf
-from i18n import translate
-from widgets.edit import EditWidget
+import html5
+from vi.config import conf
+from vi.i18n import translate
+from vi.widgets.edit import EditWidget
 
 class TaskWidget( html5.ext.Popup ):
 	def __init__( self, title ):

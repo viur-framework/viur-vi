@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-import html5
-import json
-import utils
-from config import conf
-from event import EventDispatcher
-from i18n import translate
-from network import NetworkService, DeferredCall
-from priorityqueue import displayDelegateSelector, moduleHandlerSelector
-from widgets.search import Search
-from widgets.tree import TreeWidget, LeafWidget
+import html5, json
+import vi.utils as utils
+
+from vi.config import conf
+from vi.event import EventDispatcher
+from vi.i18n import translate
+from vi.network import NetworkService, DeferredCall
+from vi.priorityqueue import displayDelegateSelector, moduleHandlerSelector
+from vi.widgets.search import Search
+from vi.widgets.tree import TreeWidget, LeafWidget
 
 class FileImagePopup(html5.ext.Popup):
 	def __init__(self, preview, *args, **kwargs):

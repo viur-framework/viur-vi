@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from bones.relational import \
+from vi.bones.relational import \
 	RelationalMultiSelectionBone, \
 	RelationalSingleSelectionBone, \
 	RelationalViewBoneDelegate, \
 	RelationalBoneExtractor
-from config import conf
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from widgets.hierarchy import HierarchyWidget
+from vi.config import conf
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
+from vi.widgets.hierarchy import HierarchyWidget
 
 
 class HierarchyMultiSelectionBone(RelationalMultiSelectionBone):

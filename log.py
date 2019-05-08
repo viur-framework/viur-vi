@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import html5
-from network import DeferredCall
+from .network import DeferredCall
+from .i18n import translate
+from .config import conf
 from datetime import datetime
-from i18n import translate
-from config import conf
 
-class Log( html5.Div ):
+
+class Log(html5.Div):
 	"""
 		Provides the "messaging" center displayed at the bottom of VI
 	"""

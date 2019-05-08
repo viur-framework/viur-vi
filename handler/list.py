@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from network import NetworkService, DeferredCall
-from priorityqueue import HandlerClassSelector, initialHashHandler
-from widgets import ListWidget
-from config import conf
-from pane import Pane
-from widgets.edit import EditWidget
-from i18n import translate
+from vi.network import NetworkService, DeferredCall
+from vi.priorityqueue import HandlerClassSelector, initialHashHandler
+from vi.widgets import ListWidget
+from vi.config import conf
+from vi.pane import Pane
+from vi.widgets.edit import EditWidget
+from vi.i18n import translate
 
 
 class ListHandler(Pane):

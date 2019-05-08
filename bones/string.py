@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import html5
-from bones.base import BaseBoneExtractor
-from config import conf
-from event import EventDispatcher
-from i18n import translate
-from priorityqueue import \
+
+from vi.bones.base import BaseBoneExtractor
+from vi.config import conf
+from vi.event import EventDispatcher
+from vi.i18n import translate
+from vi.priorityqueue import \
 	editBoneSelector,\
 	viewDelegateSelector,\
 	extendedSearchWidgetSelector, \

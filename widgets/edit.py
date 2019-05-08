@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-import html5, utils
+import html5
+
+import vi.utils as utils
 
 from html5.ext import YesNoDialog
 
-from network import NetworkService, DeferredCall
-from config import conf
-from priorityqueue import editBoneSelector
-from widgets.tooltip import ToolTip
-from widgets.actionbar import ActionBar
-from i18n import translate
+from vi.network import NetworkService, DeferredCall
+from vi.config import conf
+from vi.priorityqueue import editBoneSelector
+from vi.widgets.tooltip import ToolTip
+from vi.widgets.actionbar import ActionBar
+from vi.i18n import translate
 
-from widgets.list import ListWidget
+from vi.widgets.list import ListWidget
 
 class InvalidBoneValueException(ValueError):
 	pass

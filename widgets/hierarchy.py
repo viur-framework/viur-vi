@@ -1,13 +1,16 @@
 #-*- coding: utf-8 -*-
 
-import html5, utils
+import html5
+
+import vi.utils as utils
+
 from time import time
-from network import NetworkService
-from widgets.actionbar import ActionBar
-from event import EventDispatcher
-from priorityqueue import moduleHandlerSelector
-from config import conf
-from i18n import translate
+from vi.network import NetworkService
+from vi.widgets.actionbar import ActionBar
+from vi.event import EventDispatcher
+from vi.priorityqueue import moduleHandlerSelector
+from vi.config import conf
+from vi.i18n import translate
 
 class HierarchyItem( html5.Li ):
 	"""

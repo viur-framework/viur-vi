@@ -1,9 +1,8 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-
 import html5
-from i18n import translate
-from priorityqueue import editBoneSelector
+
+from vi.i18n import translate
+from vi.priorityqueue import editBoneSelector
 
 
 class SpatialBone(html5.Div):

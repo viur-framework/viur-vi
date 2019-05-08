@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import html5
-from network import NetworkService
-from priorityqueue import actionDelegateSelector
-from config import conf
-from i18n import translate
+
+from vi.network import NetworkService
+from vi.priorityqueue import actionDelegateSelector
+from vi.config import conf
+from vi.i18n import translate
 
 # ShopMarkAction -------------------------------------------------------------------------------------------------------
 class ShopMarkAction( html5.ext.Button ):

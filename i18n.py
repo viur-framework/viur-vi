@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-import translations
+import html5
+from . import translations
 
-_currentLanguage = eval("navigator.language")
+_currentLanguage = None
 
-if not _currentLanguage:
-	_currentLanguage = eval("navigator.browserLanguage")
+if html5.jseval:
+	_currentLanguage = html5.jseval("navigator.language")
 
 	if not _currentLanguage:
-		_currentLanguage = "en"
+		_currentLanguage = html5.jseval("navigator.browserLanguage")
+
+if not _currentLanguage:
+	_currentLanguage = "en"
 
 if len(_currentLanguage) > 2:
 	_currentLanguage = _currentLanguage[:2]

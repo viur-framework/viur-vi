@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import html5
-from bones.base import BaseBoneExtractor
-from config import conf
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from widgets.htmleditor import HtmlEditor
-from event import EventDispatcher
+from vi.bones.base import BaseBoneExtractor
+from vi.config import conf
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
+from vi.widgets.htmleditor import HtmlEditor
+from vi.event import EventDispatcher
 
 
 class TextBoneExtractor(BaseBoneExtractor):

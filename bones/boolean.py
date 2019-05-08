@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
-from config import conf
-from event import EventDispatcher
-from i18n import translate
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
+from vi.config import conf
+from vi.event import EventDispatcher
+from vi.i18n import translate
 
 class BooleanViewBoneDelegate( object ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):

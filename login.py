@@ -1,13 +1,13 @@
 #-*- coding: utf-8 -*-
 import html5, re, json
 
-from network import NetworkService, DeferredCall
-from i18n import translate
-from event import EventDispatcher
-from config import conf
-from priorityqueue import loginHandlerSelector
-from screen import Screen
-from widgets import InternalEdit
+from .network import NetworkService, DeferredCall
+from .i18n import translate
+from .event import EventDispatcher
+from .config import conf
+from .priorityqueue import loginHandlerSelector
+from .screen import Screen
+from .widgets import InternalEdit
 
 class LoginInputField(html5.Input):
 

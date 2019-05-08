@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import html5, utils
-from event import EventDispatcher
-from network import DeferredCall
+import html5
+from vi.event import EventDispatcher
+from vi.network import DeferredCall
 
 class SelectTable( html5.Table ):
 	"""

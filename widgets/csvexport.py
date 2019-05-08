@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import html5, utils, datetime
-from network import NetworkService, DeferredCall
-from config import conf
-from priorityqueue import actionDelegateSelector, extractorDelegateSelector
-from i18n import translate, addTranslation
+import html5, datetime
+from vi.network import NetworkService, DeferredCall
+from vi.config import conf
+from vi.priorityqueue import extractorDelegateSelector
+from vi.i18n import translate
 
 class ExportCsv(html5.Progress):
 	def __init__(self, widget, selection, encoding = None, language = None,

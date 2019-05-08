@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import html5
-from config import conf
-from i18n import translate
-from network import NetworkService
-from pane import Pane
-from priorityqueue import actionDelegateSelector
-from widgets.edit import EditWidget
+
+from vi.config import conf
+from vi.i18n import translate
+from vi.network import NetworkService
+from vi.pane import Pane
+from vi.priorityqueue import actionDelegateSelector
+from vi.widgets.edit import EditWidget
 
 
 class AddNodeAction( html5.ext.Button ):

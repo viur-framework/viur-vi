@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from priorityqueue import HandlerClassSelector, displayDelegateSelector, initialHashHandler
-from widgets import EditWidget
-from pane import Pane
+from vi.priorityqueue import HandlerClassSelector, displayDelegateSelector, initialHashHandler
+from vi.widgets import EditWidget
+from vi.pane import Pane
 
 class SingletonHandler( Pane ):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):

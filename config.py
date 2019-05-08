@@ -1,7 +1,8 @@
 #-*- coding: utf-8 -*-
-from event import EventDispatcher
-from i18n import translate
-from logics import Interpreter
+import html5
+from .event import EventDispatcher
+from .i18n import translate
+from .logics import Interpreter
 
 conf = {
 	# Vi version number
@@ -35,7 +36,7 @@ conf = {
 	"server.version": None,
 
 	# Startup parameters
-	"startupHash": eval("window.top.location.hash"),
+	"startupHash": html5.window.top.location.hash if html5.window else "",
 
 	# Modules list
 	"modules": {"_tasks": {"handler": "singleton", "name": "Tasks"}},

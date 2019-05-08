@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-import html5
-import json
-import utils
-from bones.base import BaseBoneExtractor
-from config import conf
-from event import EventDispatcher
-from i18n import translate
-from network import NetworkService
-from pane import Pane
-from priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, \
+import html5, json
+import vi.utils as utils
+
+from vi.bones.base import BaseBoneExtractor
+from vi.config import conf
+from vi.event import EventDispatcher
+from vi.i18n import translate
+from vi.network import NetworkService
+from vi.pane import Pane
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, \
 	extractorDelegateSelector
-from widgets.edit import InternalEdit, EditWidget
-from widgets.list import ListWidget
+from vi.widgets.edit import InternalEdit, EditWidget
+from vi.widgets.list import ListWidget
 
 
 def getDefaultValues(structure):

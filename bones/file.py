@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-import html5, utils
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from widgets.file import FileWidget, LeafFileWidget
-from config import conf
-from bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry
-from widgets.file import Uploader, FilePreviewImage
-from i18n import translate
-from network import NetworkService
-from widgets.edit import EditWidget
-from pane import Pane
-from bones.base import BaseBoneExtractor
+import html5
+
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
+from vi.widgets.file import FileWidget, LeafFileWidget
+from vi.config import conf
+from vi.bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry
+from vi.widgets.file import Uploader, FilePreviewImage
+from vi.i18n import translate
+from vi.network import NetworkService
+from vi.widgets.edit import EditWidget
+from vi.pane import Pane
+from vi.bones.base import BaseBoneExtractor
 
 
 class FileBoneExtractor(BaseBoneExtractor):

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import html5
 
-from priorityqueue import actionDelegateSelector
-from config import conf
-from i18n import translate
+from vi.priorityqueue import actionDelegateSelector
+from vi.config import conf
+from vi.i18n import translate
 
 class ActionBar(html5.Div):
 	"""

@@ -1,8 +1,10 @@
 #-*- coding: utf-8 -*-
 import html5
-from network import NetworkService, DeferredCall
-from config import conf
-from i18n import translate
+
+from vi.network import NetworkService, DeferredCall
+from vi.config import conf
+from vi.i18n import translate
+
 from datetime import datetime
 
 class UserLogoutMsg(html5.ext.Popup):

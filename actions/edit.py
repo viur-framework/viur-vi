@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 import html5
-from network import NetworkService
-from priorityqueue import actionDelegateSelector
-from widgets.edit import EditWidget
-from config import conf
-from pane import Pane
-from i18n import translate
+
+from vi.priorityqueue import actionDelegateSelector
+from vi.i18n import translate
 
 class SaveContinue( html5.ext.Button ):
 	def __init__(self, *args, **kwargs):

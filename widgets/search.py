@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import html5
-from event import EventDispatcher
-from i18n import translate
+from vi.event import EventDispatcher
+from vi.i18n import translate
 
 class Search( html5.Div ):
 	def __init__(self, *args, **kwargs):

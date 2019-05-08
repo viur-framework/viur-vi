@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
-import bones.string as strBone
-from widgets.edit import InvalidBoneValueException
-import re
+import html5, re
+
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector
+from vi.widgets.edit import InvalidBoneValueException
+
+import vi.bones.string as strBone
+
 
 class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):

@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 import html5
 
-from config import conf
-from widgets import TopBarWidget
-from widgets.userlogoutmsg import UserLogoutMsg
-from network import NetworkService, DeferredCall
-from event import viInitializedEvent
-from priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
-from log import Log
-from pane import Pane, GroupPane
-from screen import Screen
+from .config import conf
+from .widgets import TopBarWidget
+from .widgets.userlogoutmsg import UserLogoutMsg
+from .network import NetworkService, DeferredCall
+from .event import viInitializedEvent
+from .priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
+from .log import Log
+from .pane import Pane, GroupPane
+from .screen import Screen
 
 # BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
-import handler
-import bones
-import actions
-import i18n
+from . import handler, bones, actions, i18n
 
 
 class AdminScreen(Screen):

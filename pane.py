@@ -1,9 +1,10 @@
 #-*- coding: utf-8 -*-
 import html5
-from config import conf
-from i18n import translate
-from priorityqueue import HandlerClassSelector
-from network import DeferredCall
+from .config import conf
+from .i18n import translate
+from .priorityqueue import HandlerClassSelector
+from .network import DeferredCall
+
 
 class Pane(html5.Li):
 	"""

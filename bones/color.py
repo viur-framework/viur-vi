@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector
-from config import conf
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector
+from vi.config import conf
 
 class ColorViewBoneDelegate( object ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):

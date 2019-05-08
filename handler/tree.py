@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from priorityqueue import HandlerClassSelector, displayDelegateSelector, initialHashHandler
-from config import conf
-from pane import Pane
-from widgets.edit import EditWidget
-from i18n import translate
+from vi.priorityqueue import HandlerClassSelector, displayDelegateSelector, initialHashHandler
+from vi.config import conf
+from vi.pane import Pane
+from vi.widgets.edit import EditWidget
+from vi.i18n import translate
 
 class TreeHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):

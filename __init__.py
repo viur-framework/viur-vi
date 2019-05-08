@@ -1,10 +1,12 @@
 #-*- coding: utf-8 -*-
-import html5, i18n, pyjd, network
+import html5
 
-from login import LoginScreen
-from admin import AdminScreen
-from config import conf
-from i18n import translate
+from . import network
+
+from .login import LoginScreen
+from .admin import AdminScreen
+from .config import conf
+from .i18n import translate
 
 try:
 	import vi_plugins
@@ -126,9 +128,7 @@ class Application(html5.Div):
 		html5.window.top.location.hash = path + hash
 
 
-if __name__ == '__main__':
-	pyjd.setup("public/main.html")
-
+if __name__ == "__main__":
 	# Configure vi as network render prefix
 	network.NetworkService.prefix = "/vi"
 	conf["currentlanguage"] = i18n.getLanguage()
@@ -136,5 +136,3 @@ if __name__ == '__main__':
 	# Application
 	app = Application()
 	html5.Body().appendChild(app)
-
-	pyjd.run()

@@ -1,11 +1,11 @@
 #-*- coding: utf-8 -*-
 import html5
 
-from widgets import ListWidget, EditWidget
-from priorityqueue import actionDelegateSelector, moduleHandlerSelector
-from i18n import translate
-from config import conf
-from pane import Pane
+from vi.widgets import ListWidget, EditWidget
+from vi.priorityqueue import actionDelegateSelector, moduleHandlerSelector
+from vi.i18n import translate
+from vi.config import conf
+from vi.pane import Pane
 
 class ContextAction(html5.ext.Button):
 	def __init__(self, module, handler, actionName, *args, **kwargs):

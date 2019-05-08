@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
-import html5, utils
-from network import NetworkService
-from priorityqueue import actionDelegateSelector
-from widgets.edit import EditWidget
-from config import conf
-from pane import Pane
-from widgets.repeatdate import RepeatDatePopup
-from widgets.csvexport import ExportCsvStarter
-from widgets.table import DataTable
-from sidebarwidgets.internalpreview import InternalPreview
-from sidebarwidgets.filterselector import FilterSelector
-from i18n import translate
+import html5
+
+from vi.network import NetworkService
+from vi.priorityqueue import actionDelegateSelector
+from vi.widgets.edit import EditWidget
+from vi.config import conf
+from vi.pane import Pane
+from vi.widgets.repeatdate import RepeatDatePopup
+from vi.widgets.csvexport import ExportCsvStarter
+from vi.sidebarwidgets.internalpreview import InternalPreview
+from vi.sidebarwidgets.filterselector import FilterSelector
+from vi.i18n import translate
+
 
 class EditPane( Pane ):
 	pass

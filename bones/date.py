@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-import html5
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector, extendedSearchWidgetSelector
+import html5, re
 from datetime import datetime
-import re
-from event import EventDispatcher
-from i18n import translate
-from config import conf
-from bones.base import BaseBoneExtractor
+
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector, extendedSearchWidgetSelector
+from vi.event import EventDispatcher
+from vi.i18n import translate
+from vi.config import conf
+from vi.bones.base import BaseBoneExtractor
 
 
 class DateBoneExtractor(BaseBoneExtractor):

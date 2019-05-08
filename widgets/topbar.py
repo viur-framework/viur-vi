@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import html5
-from network import NetworkService, DeferredCall
-from i18n import translate
-from config import conf
-from widgets.task import TaskSelectWidget
-from priorityqueue import toplevelActionSelector
+from vi.network import NetworkService, DeferredCall
+from vi.i18n import translate
+from vi.config import conf
+from vi.widgets.task import TaskSelectWidget
+from vi.priorityqueue import toplevelActionSelector
 
 class TopBarWidget(html5.Header):
 	"""

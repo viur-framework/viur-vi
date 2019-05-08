@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import html5
 
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from config import conf
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
+from vi.config import conf
 
 class BaseBoneExtractor(object):
 	"""

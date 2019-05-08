@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os, sys, json, string, random, time
-from config import conf
+from vi.config import conf
 
 class DeferredCall( object ):
 	"""

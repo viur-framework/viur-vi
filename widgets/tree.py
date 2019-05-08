@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import html5
-from network import NetworkService
-from widgets.actionbar import ActionBar
-from event import EventDispatcher
-from priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
-from config import conf
-
+from vi.network import NetworkService
+from vi.widgets.actionbar import ActionBar
+from vi.event import EventDispatcher
+from vi.priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
+from vi.config import conf
 
 
 class NodeWidget(html5.Div):

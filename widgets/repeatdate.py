@@ -1,14 +1,12 @@
 import html5
 
-from event import EventDispatcher
-from priorityqueue import editBoneSelector
-from i18n import translate
-from bones import selectmulti, date
-from widgets.actionbar import ActionBar
-from network import NetworkService
-import utils
-from config import conf
-from widgets.edit import EditWidgetFieldset
+from vi.i18n import translate
+from vi.bones import selectmulti, date
+from vi.widgets.actionbar import ActionBar
+from vi.network import NetworkService
+from vi.config import conf
+from vi.widgets.edit import EditWidgetFieldset
+
 
 class RepeatDatePopup(html5.Div):
 

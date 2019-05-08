@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import html5
-from config import conf
+from .config import conf
 
 class Screen(html5.Div):
 	"""

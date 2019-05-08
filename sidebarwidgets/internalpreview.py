@@ -1,7 +1,8 @@
 #-*- coding: utf-8 -*-
 import html5
-from priorityqueue import viewDelegateSelector
-from config import conf
+
+from vi.priorityqueue import viewDelegateSelector
+from vi.config import conf
 
 class InternalPreview( html5.Ul ):
 	def __init__(self, module, structure, item, *args, **kwargs):
