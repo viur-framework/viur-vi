@@ -31,6 +31,7 @@ class CompoundFilter( html5.Div ):
 			self.appendChild( h2 )
 
 		self.extendedFilters = []
+		self.mutualExclusiveFilters = {}
 
 		for extension in (view["extendedFilters"] if "extendedFilters" in view.keys() else []):
 			wdg = extendedSearchWidgetSelector.select( extension, view, module)
@@ -42,21 +43,27 @@ class CompoundFilter( html5.Div ):
 				container.appendChild( wdg )
 				self.appendChild( container )
 				self.extendedFilters.append( wdg )
+				if hasattr(wdg, "mutualExclusiveGroupTarget"):
+					if not self.mutualExclusiveFilters.has_key("wdg.mutualExclusiveGroupTarget"):
+						self.mutualExclusiveFilters[wdg.mutualExclusiveGroupTarget] = {}
+					self.mutualExclusiveFilters[wdg.mutualExclusiveGroupTarget][wdg.mutualExclusiveGroupKey] = wdg
 				wdg.filterChangedEvent.register( self )
 		#btn = html5.ext.Button("Apply", self.reevaluate)
 		#self.appendChild( btn )
 
 	def onFilterChanged(self, *args, **kwargs):
-		self.reevaluate()
+		print("onFilterChanged", args, kwargs)
+		self.reevaluate(*args, **kwargs)
 
 	def reevaluate(self, *args, **kwargs ):
+		print("reevaluate", args, kwargs)
 		if "filter" in self.view.keys():
 			filter = self.view["filter"].copy()
 		else:
 			filter = {}
 
 		for extension in self.extendedFilters:
-			filter = extension.updateFilter( filter )
+			filter = extension.updateFilter(filter, **kwargs)
 
 		if self.embed:
 			self.parent().setFilter( filter, -1, "" )
