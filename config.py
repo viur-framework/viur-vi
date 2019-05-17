@@ -8,7 +8,7 @@ conf = {
 	"vi.version": (2, 4, 0),
 
 	# Appendix to version
-	"vi.version.appendix": "beta",
+	"vi.version.appendix": "",
 
 	# Vi server name
 	"vi.viur": "ViUR",
