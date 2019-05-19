@@ -7,6 +7,9 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 This is the current development version.
 
+- Bugfix: Order of path items in file module, stop path recognition when key is referenced as parentkey
+- Bugfix: Updated icons submodule
+
 ## [2.4.0] Agung
 
 Release date: May 17, 2019

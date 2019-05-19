@@ -441,7 +441,7 @@ class TreeWidget(html5.Div):
 		answ = NetworkService.decode(req)
 		skel = answ["values"]
 
-		if skel["parentdir"]:
+		if skel["parentdir"] and skel["parentdir"] != skel["key"]:
 			c = NodeWidget(self.module, skel, [])
 
 			NetworkService.request(
@@ -453,7 +453,7 @@ class TreeWidget(html5.Div):
 			c = NodeWidget(self.module, {"key": self.rootNode, "name": "root"}, [])
 			c.addClass("is_rootnode")
 
-		self.pathList.appendChild(c)
+		self.pathList.prependChild(c)
 
 	def reloadData(self, paramsOverride=None):
 		assert self.node is not None, "reloadData called while self.node is None"
