@@ -7,6 +7,10 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 This is the current development version.
 
+## [2.4.1] Agung
+
+Release date: May 24, 2019
+
 - Bugfix: Order of path items in file module, stop path recognition when key is referenced as parentkey
 - Bugfix: Updated icons submodule
 
@@ -106,7 +110,8 @@ Release date: Dec 22, 2016
 - Styling
 
 
-[develop]: https://github.com/viur-framework/vi/compare/v2.4.0...develop
+[develop]: https://github.com/viur-framework/vi/compare/v2.4.1...develop
+[2.4.1]: https://github.com/viur-framework/vi/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/viur-framework/vi/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/viur-framework/vi/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/viur-framework/vi/compare/v2.1.0...v2.2.0
