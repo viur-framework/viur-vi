@@ -7,6 +7,8 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 This is the current development version.
 
+- Bugfix: Widget for stringBone(multiple=True) is now cleared on unserialization
+
 ## [2.4.1] Agung
 
 Release date: May 24, 2019

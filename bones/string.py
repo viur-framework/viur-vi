@@ -329,10 +329,7 @@ class StringEditBone(html5.Div):
 		tag.focus()
 
 	def unserialize(self, data, extendedErrorInformation=None):
-		if not self.boneName in data.keys():
-			return
-
-		data = data[self.boneName]
+		data = data.get(self.boneName)
 		if not data:
 			return
 
@@ -340,6 +337,7 @@ class StringEditBone(html5.Div):
 			assert isinstance(data, dict)
 
 			for lang in self.languages:
+				self.langEdits[lang].removeAllChildren()
 
 				if lang in data.keys():
 					val = data[lang]
@@ -360,6 +358,7 @@ class StringEditBone(html5.Div):
 					self.langEdits[lang]["value"] = ""
 
 		elif not self.languages and self.multiple:
+			self.tagContainer.removeAllChildren()
 
 			if isinstance(data, list):
 				for tagStr in data:
