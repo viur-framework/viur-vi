@@ -13,16 +13,18 @@ class SelectMultiBoneExtractor(BaseBoneExtractor):
 			result = list()
 
 			for fieldKey in data[field]:
-				if not fieldKey in self.skelStructure[field]["values"].keys():
+				options = {k: v for k, v in self.skelStructure[field]["values"]}
+
+				if not fieldKey in options.keys():
 					result.append(fieldKey)
 				else:
-					value = self.skelStructure[field]["values"][fieldKey]
+					value = options.get(fieldKey)
 					if value:
 						result.append(value)
 
 			return ",".join(result)
 
-		return conf[ "empty_value" ]
+		return conf["empty_value"]
 
 class SelectMultiViewBoneDelegate( object ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):

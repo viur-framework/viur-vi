@@ -8,10 +8,10 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 This is the current development version.
 
 ## [2.5.0] Vesuv
-This is the current development version.
 
 - Bugfix: Widget for stringBone(multiple=True) is now cleared on unserialization
 - Bugfix: Added missing serializeForDocument to spatialBone
+- Bugfix: SelectMultiBoneExtractor.render() works now correctly for selectBone(multiple=True)
 
 ## [2.4.1] Agung
 
