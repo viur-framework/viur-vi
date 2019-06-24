@@ -10,11 +10,10 @@ class SelectMultiBoneExtractor(BaseBoneExtractor):
 
 	def render(self, data, field):
 		if field in data.keys():
+			options = {k: v for k, v in self.skelStructure[field]["values"]}
 			result = list()
 
 			for fieldKey in data[field]:
-				options = {k: v for k, v in self.skelStructure[field]["values"]}
-
 				if not fieldKey in options.keys():
 					result.append(fieldKey)
 				else:
