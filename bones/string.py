@@ -337,7 +337,9 @@ class StringEditBone(html5.Div):
 			assert isinstance(data, dict)
 
 			for lang in self.languages:
-				self.langEdits[lang].removeAllChildren()
+				for child in self.langEdits[lang].children():
+					if isinstance(child, Tag):
+						self.langEdits[lang].removeChild(child)
 
 				if lang in data.keys():
 					val = data[lang]
@@ -358,7 +360,10 @@ class StringEditBone(html5.Div):
 					self.langEdits[lang]["value"] = ""
 
 		elif not self.languages and self.multiple:
-			self.tagContainer.removeAllChildren()
+
+			for child in self.tagContainer.children():
+				if isinstance(child, Tag):
+					self.tagContainer.removeChild(child)
 
 			if isinstance(data, list):
 				for tagStr in data:
