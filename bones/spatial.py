@@ -41,6 +41,9 @@ class SpatialBone(html5.Div):
 			"{0}.lng".format(self.boneName): self.longitude["value"]
 		}
 
+	def serializeForDocument(self):
+		return self.serializeForPost()
+
 	def setExtendedErrorInformation(self, errorInfo):
 		pass
 
