@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from bones import base
 from bones import relational
+from bones import record
 from bones import file
 from bones import hierarchy
 from bones import selectmulti
