@@ -124,11 +124,11 @@ class SelectMultiEditBone(html5.Div):
 		pass
 
 class ExtendedSelectMultiSearch( html5.Div ):
-	def __init__(self, extension, view, modul, *args, **kwargs ):
+	def __init__(self, extension, view, module, *args, **kwargs ):
 		super( ExtendedSelectMultiSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.module = modul
+		self.module = module
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
@@ -159,7 +159,7 @@ class ExtendedSelectMultiSearch( html5.Div ):
 		return( filter )
 
 	@staticmethod
-	def canHandleExtension( extension, view, modul ):
+	def canHandleExtension( extension, view, module ):
 		return (isinstance(extension, dict)
 		        and "type" in extension.keys()
 		        and (

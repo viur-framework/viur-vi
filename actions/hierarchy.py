@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5
 from config import conf
 from i18n import translate
@@ -235,7 +236,7 @@ actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
 class ReloadAction(Button):
 	"""
-		Allows adding an entry in a list-modul.
+		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
 		super( ReloadAction, self ).__init__( translate("Reload"), icon="icons-reload", *args, **kwargs )

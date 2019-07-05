@@ -3,10 +3,9 @@ import html5
 from priorityqueue import viewDelegateSelector
 from config import conf
 
-
-class InternalPreview(html5.Ul):
-	def __init__(self, modul, structure, item, *args, **kwargs):
-		super(InternalPreview, self).__init__(*args, **kwargs)
+class InternalPreview( html5.Ul ):
+	def __init__(self, module, structure, item, *args, **kwargs):
+		super( InternalPreview, self ).__init__( *args, **kwargs )
 
 		self.addClass("vi-sb-intprev box-body box--content")
 
@@ -19,11 +18,12 @@ class InternalPreview(html5.Ul):
 				continue
 
 			self.ipli = html5.Li()
-			self.ipli["class"] = ["vi-sb-intprev-item", "vi-sb-intprev--" + modul, "vi-sb-intprev--" + bone["type"],
+			self.ipli["class"] = ["vi-sb-intprev-item", "vi-sb-intprev--" + module, "vi-sb-intprev--" + bone["type"],
 								 "vi-sb-intprev--" + key]
 
 			self.ipdl = html5.Dl()
 			self.ipdl.addClass("vi-sb-intprev-content")
+
 
 			self.ipdt = html5.Dt()
 			self.ipdt.addClass("vi-sb-intprev-title")
@@ -31,7 +31,7 @@ class InternalPreview(html5.Ul):
 
 			self.ipdd = html5.Dd()
 			self.ipdd.addClass("vi-sb-intprev-descr")
-			delegateFactory = viewDelegateSelector.select(modul, key, tmpDict)(modul, key, tmpDict)
+			delegateFactory = viewDelegateSelector.select(module, key, tmpDict)(module, key, tmpDict)
 			self.ipdd.appendChild(delegateFactory.render(item, key))
 
 			self.ipdl.appendChild(self.ipdt)

@@ -9,11 +9,12 @@ from i18n import translate
 
 class HierarchyHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
+
 		icon = "embedsvg/icons-hierarchy.svg"
 		if "icon" in moduleInfo.keys():
 			icon = moduleInfo["icon"]
 
-		super(HierarchyHandler, self).__init__(moduleInfo["visibleName"], icon)
+		super(HierarchyHandler, self).__init__(moduleInfo["visibleName"], icon,path=moduleName + "/list")
 
 		if "hideInMainBar" in moduleInfo.keys() and moduleInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
@@ -47,8 +48,6 @@ class HierarchyHandler(Pane):
 		return moduleInfo["handler"] == "hierarchy" or moduleInfo["handler"].startswith("hierarchy.")
 
 	def onClick(self, *args, **kwargs):
-		conf["theApp"].setPath(self.moduleName + "/list")
-
 		if not len(self.widgetsDomElm._children):
 			self.addWidget(HierarchyWidget(self.moduleName))
 		super(HierarchyHandler, self).onClick(*args, **kwargs)

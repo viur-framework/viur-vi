@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import translations
 
 _currentLanguage = eval("navigator.language")
@@ -27,9 +28,9 @@ def translate( key, **kwargs ):
 		Tries to translate the given string in the currently selected language.
 		Supports replacing markers (using {markerName} syntax).
 
-		@param key: The string to translate
-		@type key: String
-		@returns: The translated string
+		:param key: The string to translate
+		:type key: str
+		:returns: The translated string
 	"""
 	def processTr( inStr, **kwargs ):
 		for k,v in kwargs.items():

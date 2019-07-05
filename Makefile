@@ -16,10 +16,10 @@ LESSCOPTS	=	--include-path="$(VI_CUSTOM)/static:public/default"
 
 # Targets
 
-DEFAULT_CSS	=	public/default/vi.css
+DEFAULT_CSS	=	./public/default/vi.css
 
-MAIN_CSS	=	public/css/style.css
-MAIN_LESS	= 	sources/less/vi.less
+MAIN_CSS	=	./public/css/style.css
+MAIN_LESS	= 	./sources/less/vi.less
 
 CUSTOM_LESS	=	$(wildcard $(VI_CUSTOM)/static/vi_custom.less)
 

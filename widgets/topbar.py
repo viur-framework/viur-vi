@@ -15,6 +15,7 @@ class TopBarWidget(html5.Header):
 		super(TopBarWidget,self ).__init__()
 
 		self["class"] = "vi-topbar bar"
+
 		self.sinkEvent("onClick")
 		self.fromHTML("""
 			<div class="vi-tb-left bar-group bar-group--left" [name]="topbarLeft">
@@ -69,7 +70,7 @@ class TopBarWidget(html5.Header):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulH1):
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
-	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None):
+	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None, path=None):
 		for c in self.modulImg._children[:]:
 			self.modulImg.removeChild(c)
 		for c in self.moduleName._children[:]:
@@ -100,12 +101,12 @@ class TopBarWidget(html5.Header):
 
 		conf["theApp"].setTitle(descr)
 
+
 #FIXME: UserState(Button) should open "user" "edit/self" on click (userself plugin by AK)
 
 class UserState(Button):
 	def __init__(self, *args, **kwargs):
 		super( UserState, self ).__init__(*args, **kwargs)
-
 		self.update()
 
 	def onCurrentUserAvailable(self, req):

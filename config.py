@@ -5,7 +5,7 @@ from logics import Interpreter
 
 conf = {
 	# Vi version number
-	"vi.version": (2, 3, 0),
+	"vi.version": (2, 4, 1),
 
 	# Appendix to version
 	"vi.version.appendix": "",
@@ -28,7 +28,7 @@ conf = {
 	# Global holder to main admin window
 	"mainWindow": None,
 
-	# Exposed server configuation
+	# Exposed server configuration
 	"server": {},
 
 	# ViUR server version number

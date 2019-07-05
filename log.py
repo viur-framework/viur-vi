@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5, embedsvg
 from network import DeferredCall
 from datetime import datetime
@@ -41,6 +42,7 @@ class Log( html5.Div ):
 				(name, ".".join([str(x) for x in conf["vi.version"]]),
 					conf["vi.version.appendix"]))
 			versionspan.addClass("versionspan")
+
 			versionDiv.appendChild(versionspan)
 
 			#Try loading the revision and build date
@@ -73,10 +75,10 @@ class Log( html5.Div ):
 	def log(self, type, msg, icon=None ):
 		"""
 			Adds a message to the log
-			@param type: The type of the message.
-			@type type: "success", "error", "warning", "info", "progress"
-			@param msg: The message to append
-			@type msg: String
+			:param type: The type of the message.
+			:type type: "success", "error", "warning", "info", "progress"
+			:param msg: The message to append
+			:type msg: str
 		"""
 		assert type in ["success", "error", "warning", "info", "progress"]
 

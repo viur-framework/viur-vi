@@ -12,7 +12,8 @@ class TreeHandler(Pane):
 		if "icon" in moduleInfo.keys():
 			icon = moduleInfo["icon"]
 
-		super(TreeHandler, self).__init__(moduleInfo["visibleName"], icon)
+		super(TreeHandler, self).__init__(moduleInfo["visibleName"], icon,path=moduleName + "/list")
+
 
 		self.moduleName = moduleName
 		self.moduleInfo = moduleInfo
@@ -37,7 +38,10 @@ class TreeHandler(Pane):
 		if pathList[1] == "list":
 			wdg = displayDelegateSelector.select(self.moduleName, self.moduleInfo)
 			assert wdg is not None, "Got no handler for %s" % self.moduleName
-			self.addWidget(wdg(self.moduleName))
+			node = None
+			if len(pathList) >= 3 and pathList[2]:
+				node = pathList[2]
+			self.addWidget(wdg(self.moduleName, node=node))
 			self.focus()
 
 		elif pathList[1] in ["edit", "clone"] and len(pathList) > 3:
@@ -54,8 +58,6 @@ class TreeHandler(Pane):
 		return moduleInfo["handler"] == "tree" or moduleInfo["handler"].startswith("tree.")
 
 	def onClick(self, *args, **kwargs):
-		conf["theApp"].setPath(self.moduleName + "/list")
-
 		if not len(self.widgetsDomElm._children):
 			wdg = displayDelegateSelector.select(self.moduleName, self.moduleInfo)
 			assert wdg is not None, "Got no handler for %s" % self.moduleName

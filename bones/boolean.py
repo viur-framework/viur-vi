@@ -62,12 +62,12 @@ class BooleanEditBone(html5.Div):
 		return {self.boneName: self.switch._getChecked()}
 
 
-class ExtendedBooleanSearch(html5.Div):
-	def __init__(self, extension, view, modul, *args, **kwargs):
-		super(ExtendedBooleanSearch, self).__init__(*args, **kwargs)
+class ExtendedBooleanSearch( html5.Div ):
+	def __init__(self, extension, view, module, *args, **kwargs ):
+		super( ExtendedBooleanSearch, self ).__init__( *args, **kwargs )
 		self.view = view
 		self.extension = extension
-		self.module = modul
+		self.module = module
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		self.appendChild(html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
@@ -100,9 +100,8 @@ class ExtendedBooleanSearch(html5.Div):
 		return (filter)
 
 	@staticmethod
-	def canHandleExtension(extension, view, modul):
-		return (isinstance(extension, dict) and "type" in extension.keys() and (
-					extension["type"] == "boolean" or extension["type"].startswith("boolean.")))
+	def canHandleExtension( extension, view, module ):
+		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="boolean" or extension["type"].startswith("boolean.") ) )
 
 
 def CheckForBooleanBone(moduleName, boneName, skelStucture, *args, **kwargs):

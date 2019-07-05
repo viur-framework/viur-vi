@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5
 from event import EventDispatcher
 from i18n import translate

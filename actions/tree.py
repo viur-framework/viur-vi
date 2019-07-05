@@ -155,7 +155,7 @@ actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
 class DeleteAction(Button):
 	"""
-		Allows deleting an entry in a tree-modul.
+		Allows deleting an entry in a tree-module.
 		The type (node or leaf) of the entry is determined dynamically.
 	"""
 	def __init__(self, *args, **kwargs):
@@ -219,7 +219,7 @@ actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
 class ReloadAction(Button):
 	"""
-		Allows adding an entry in a list-modul.
+		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
 		super( ReloadAction, self ).__init__( translate("Reload"), icons="icons-reload", *args, **kwargs )
@@ -312,7 +312,7 @@ class ReturnSelectionAction(Button):
 		self.parent().parent().returnCurrentSelection()
 
 	@staticmethod
-	def isSuitableFor( modul, handler, actionName ):
+	def isSuitableFor( module, handler, actionName ):
 		correctHandler = handler == "tree" or handler.startswith("tree.")
 		return( actionName=="select" and  correctHandler)
 

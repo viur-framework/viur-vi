@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5
 from network import NetworkService
 from priorityqueue import actionDelegateSelector

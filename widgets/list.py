@@ -19,8 +19,8 @@ class ListWidget(html5.Div):
 	def __init__(self, module, filter=None, columns=None, selectMode = None, filterID=None, filterDescr=None,
 	             batchSize = None, context = None, autoload = True, *args, **kwargs):
 		"""
-			@param module: Name of the modul we shall handle. Must be a list application!
-			@type module: string
+			:param module: Name of the module we shall handle. Must be a list application!
+			:type module: str
 		"""
 		if not module in conf["modules"].keys():
 			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
@@ -200,7 +200,7 @@ class ListWidget(html5.Div):
 
 	def onDataChanged(self, module, **kwargs):
 		"""
-			Refresh our view if element(s) in this modul have changed
+			Refresh our view if element(s) in this module have changed
 		"""
 		if module and module != self.module:
 			return
@@ -252,7 +252,7 @@ class ListWidget(html5.Div):
 	def onCompletion(self, req):
 		"""
 			Pass the rows received to the datatable.
-			@param req: The network request that succeed.
+			:param req: The network request that succeed.
 		"""
 		if not req in self._currentRequests:
 			return

@@ -17,12 +17,12 @@ class HierarchyItem( html5.Li ):
 	"""
 	def __init__(self, module, data, structure, *args, **kwargs):
 		"""
-			@param module: Name of the modul we shall display data for
-			@type module: String
-			@param data: The data for that entry
-			@type data: Dict
-			@param structure: Skeleton structure for that modul (as received  from the server)
-			@type structure: List
+			:param module: Name of the module we shall display data for
+			:type module: str
+			:param data: The data for that entry
+			:type data: dict
+			:param structure: Skeleton structure for that module (as received  from the server)
+			:type structure: list
 		"""
 		super( HierarchyItem, self ).__init__( *args, **kwargs )
 		self.module = module
@@ -212,10 +212,10 @@ class HierarchyWidget(html5.Div):
 
 	def __init__(self, module, rootNode=None, selectMode=None, context=None, *args, **kwargs):
 		"""
-			@param module: Name of the modul we shall handle. Must be a hierarchy application!
-			@type module: string
-			@param rootNode: The repository we shall display. If none, we try to select one.
-			@type rootNode: String or None
+			:param module: Name of the module we shall handle. Must be a hierarchy application!
+			:type module: str
+			:param rootNode: The repository we shall display. If none, we try to select one.
+			:type rootNode: str or None
 		"""
 		super( HierarchyWidget, self ).__init__( )
 		self.module = module
@@ -329,9 +329,9 @@ class HierarchyWidget(html5.Div):
 	def itemForKey(self, key, elem=None ):
 		"""
 			Returns the HierarchyWidget displaying the entry with the given key.
-			@param key: The key (id) of the item.
-			@type key: string
-			@returns: HierarchyItem
+			:param key: The key (id) of the item.
+			:type key: str
+			:returns: HierarchyItem
 		"""
 		if elem is None:
 			elem = self.entryFrame
@@ -377,7 +377,7 @@ class HierarchyWidget(html5.Div):
 
 	def onSetDefaultRootNode(self, req):
 		"""
-			We requested the list of rootNodes for that modul and that
+			We requested the list of rootNodes for that module and that
 			request just finished. Parse the respone and set our rootNode
 			to the first rootNode received.
 		"""
@@ -388,8 +388,8 @@ class HierarchyWidget(html5.Div):
 	def setRootNode(self, rootNode):
 		"""
 			Set the currently displayed hierarchy to 'rootNode'.
-			@param rootNode: Key of the rootNode which children we shall display
-			@type rootNode: string
+			:param rootNode: Key of the rootNode which children we shall display
+			:type rootNode: str
 		"""
 		self.rootNode = rootNode
 		self._currentCursor = None
@@ -418,8 +418,8 @@ class HierarchyWidget(html5.Div):
 		"""
 			Fetch the (direct) children of the given node.
 			Once the list is received, append them to their parent node.
-			@param node: Key of the node to fetch
-			@type node: string
+			:param node: Key of the node to fetch
+			:type node: str
 		"""
 		params = {
 			"parent": node,
@@ -479,7 +479,7 @@ class HierarchyWidget(html5.Div):
 	def getCurrentSelection(self):
 		"""
 			Returns the list of entries currently selected.
-			@returns: list of dict
+			:returns: list of dict
 		"""
 		if self._currentCursor is not None:
 			return( [ self._currentCursor.data ] )

@@ -86,8 +86,8 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 		"""
 			Set our current value to 'selection'
 
-			@param selection: The new entry that this bone should reference
-			@type selection: dict | list
+			:param selection: The new entry that this bone should reference
+			:type selection: dict | list
 		"""
 		if selection is None:
 			return
@@ -148,8 +148,8 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 	def setSelection(self, selection):
 		"""
 			Set our current value to 'selection'
-			@param selection: The new entry that this bone should reference
-			@type selection: dict
+			:param selection: The new entry that this bone should reference
+			:type selection: dict
 		"""
 		self.selection = selection
 		if selection:

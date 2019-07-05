@@ -4,6 +4,8 @@ from bones.base import BaseBoneExtractor
 from config import conf
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from widgets.htmleditor import HtmlEditor
+from event import EventDispatcher
+
 
 
 class TextBoneExtractor(BaseBoneExtractor):
@@ -37,6 +39,7 @@ class TextViewBoneDelegate(object):
 
 	def render(self, data, field):
 		value = conf["empty_value"]
+
 		if field in data.keys():
 			##multilangs
 			if isinstance(data[field], dict):
@@ -57,6 +60,7 @@ class TextViewBoneDelegate(object):
 		return delegato
 
 class TextEditBone(html5.Div):
+
 	def __init__(self, moduleName, boneName, readOnly, isPlainText, languages=None, descrHint=None, *args, **kwargs):
 		super(TextEditBone, self).__init__(*args, **kwargs)
 		self.boneName = boneName
@@ -67,22 +71,6 @@ class TextEditBone(html5.Div):
 		self.descrHint = descrHint
 		self.valuesdict = dict()
 		self.addClass("vi-bone-container")
-
-		#
-		# self.previewDiv = html5.Div()
-		# self.previewDiv.addClass("vi-bone-txtpreview textarea")
-		# self.appendChild(self.previewDiv)
-		#
-		# self.input=html5.ignite.Textarea()
-		# self.appendChild(self.input)
-		#
-		# if readOnly:
-		# 	self.input["readonly"] = True
-		#
-		# elif not readOnly and not self.isPlainText:
-		# 	openEditorBtn = html5.ext.Button(translate("Edit Text"), self.openTxt )
-		# 	openEditorBtn.addClass("btn--textedit")
-		# 	self.appendChild( openEditorBtn )
 
 		if not readOnly and not self.isPlainText:
 			self.input = HtmlEditor()
@@ -103,17 +91,26 @@ class TextEditBone(html5.Div):
 				self.selectedLang = self.languages[0]
 
 			self.langButContainer = html5.Div()
+
 			self.langButContainer.addClass("vi-bone-container-langbtns input-group")
 
 			for lang in self.languages:
 				abut = html5.ext.Button(lang, self.changeLang)
 				abut.addClass("btn--lang")
+
 				abut["value"] = lang
 				self.langButContainer.appendChild(abut)
 
 			self.appendChild(self.langButContainer)
+
+			self.refreshLangButContainer()
 		else:
 			self.value = ""
+
+		self.sinkEvent("onKeyUp")
+
+		self.changeEvent = EventDispatcher("boneChange")
+		self._changeTimeout = None
 
 
 	def _setDisabled(self, disable):
@@ -121,8 +118,10 @@ class TextEditBone(html5.Div):
 			Reset the is-active flag (if any)
 		"""
 		super(TextEditBone, self)._setDisabled(disable)
+
 		if not disable and not self._disabledState and "is-active" in self.parent()["class"]:
 			self.parent().removeClass("is-active")
+
 
 	def changeLang(self, btn):
 		self.valuesdict[self.selectedLang] = self.input["value"]
@@ -147,7 +146,6 @@ class TextEditBone(html5.Div):
 			if abut["value"] == self.selectedLang:
 				if not "is-active" in abut["class"]:
 					abut.addClass("is-active")
-
 			else:
 				abut.removeClass("is-active")
 
@@ -156,7 +154,7 @@ class TextEditBone(html5.Div):
 		readOnly = "readonly" in skelStructure[boneName].keys() and skelStructure[boneName]["readonly"]
 		isPlainText = "validHtml" in skelStructure[boneName].keys() and not skelStructure[boneName]["validHtml"]
 		langs = skelStructure[boneName]["languages"] if (
-				"languages" in skelStructure[boneName].keys() and skelStructure[boneName]["languages"]) else None
+			"languages" in skelStructure[boneName].keys() and skelStructure[boneName]["languages"]) else None
 		descr = skelStructure[boneName]["descr"] if "descr" in skelStructure[boneName].keys() else None
 		return TextEditBone(moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr)
 
@@ -187,12 +185,20 @@ class TextEditBone(html5.Div):
 	def setExtendedErrorInformation(self, errorInfo):
 		pass
 
+	def onKeyUp(self, event):
+		if not self.changeEvent.queue:
+			return
 
-def CheckForTextBone(moduleName, boneName, skelStucture, *args, **kwargs):
-	return (skelStucture[boneName]["type"] == "text")
+		if self._changeTimeout:
+			html5.window.clearTimeout(self._changeTimeout)
 
+		self._changeTimeout = html5.window.setTimeout(lambda: self.changeEvent.fire(self), 2500)
+
+	@staticmethod
+	def checkForTextBone(moduleName, boneName, skelStucture, *args, **kwargs):
+		return skelStucture[boneName]["type"] == "text"
 
 # Register this Bone in the global queue
-editBoneSelector.insert(3, CheckForTextBone, TextEditBone)
-viewDelegateSelector.insert(3, CheckForTextBone, TextViewBoneDelegate)
-extractorDelegateSelector.insert(3, CheckForTextBone, TextBoneExtractor)
+editBoneSelector.insert(3, TextEditBone.checkForTextBone, TextEditBone)
+viewDelegateSelector.insert(3, TextEditBone.checkForTextBone, TextViewBoneDelegate)
+extractorDelegateSelector.insert(3, TextEditBone.checkForTextBone, TextBoneExtractor)

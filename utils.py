@@ -51,11 +51,7 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 		if isinstance(struct, list):
 			struct = {k: v for k, v in struct}
 
-		#print("%s%s: %s" % (_rec * " ", key, val))
-		#print("%s%s: %s" % (_rec * " ", key, struct))
-
 		if isinstance(val, dict):
-			#print("%s%s: dict" % (_rec * " ", key))
 			if struct and ("$(%s)" % ".".join(prefix + [key])) in res:
 				langs = struct.get("languages")
 				if langs:
@@ -81,7 +77,6 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 				res = formatString(res, val[0], struct, prefix + [key], language, _rec = _rec + 1)
 
 		elif isinstance(val, list):
-			#print("%s%s: list" % (_rec * " ", key))
 			val = ", ".join(val)
 
 		# Check for select-bones
@@ -98,19 +93,12 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 
 		res = res.replace("$(%s)" % (".".join(prefix + [key])), str(val))
 
-	# if _rec == 0:
-	# 	print("format", format)
-	# 	print("data", data)
-	# 	print("structure", structure)
-	# 	print("prefix", prefix)
-	# 	print("language", language)
-	# 	print("===", res)
-
 	return res
 
 def getImagePreview(data, cropped = False, size = 150):
 	if "mimetype" in data.keys() and isinstance(data["mimetype"], str) and data["mimetype"].startswith("image/svg"):
-		return "/file/download/%s/%s" % (data["dlkey"], data["name"].replace("\"", ""))
+		return "/file/download/%s/%s" % (data["dlkey"], data.get("name", "").replace("\"", ""))
+
 	elif "servingurl" in data.keys():
 		if data["servingurl"]:
 			return data["servingurl"] + (("=s%d" % size) if size else "") + ("-c" if cropped else "")

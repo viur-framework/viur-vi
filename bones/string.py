@@ -335,10 +335,7 @@ class StringEditBone(html5.Div):
 		tag.focus()
 
 	def unserialize(self, data, extendedErrorInformation=None):
-		if not self.boneName in data.keys():
-			return
-
-		data = data[self.boneName]
+		data = data.get(self.boneName)
 		if not data:
 			return
 
@@ -346,6 +343,7 @@ class StringEditBone(html5.Div):
 			assert isinstance(data, dict)
 
 			for lang in self.languages:
+				self.langEdits[lang].removeAllChildren()
 
 				if lang in data.keys():
 					val = data[lang]
@@ -366,6 +364,7 @@ class StringEditBone(html5.Div):
 					self.langEdits[lang]["value"] = ""
 
 		elif not self.languages and self.multiple:
+			self.tagContainer.removeAllChildren()
 
 			if isinstance(data, list):
 				for tagStr in data:
@@ -453,11 +452,11 @@ def CheckForStringBone(moduleName, boneName, skelStucture, *args, **kwargs):
 
 
 class ExtendedStringSearch(html5.Div):
-	def __init__(self, extension, view, modul, *args, **kwargs):
+	def __init__(self, extension, view, module, *args, **kwargs):
 		super(ExtendedStringSearch, self).__init__(*args, **kwargs)
 		self.view = view
 		self.extension = extension
-		self.module = modul
+		self.module = module
 		self.opMode = extension["mode"]
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		assert self.opMode in ["equals", "from", "to", "prefix", "range"]
@@ -495,7 +494,7 @@ class ExtendedStringSearch(html5.Div):
 		return (filter)
 
 	@staticmethod
-	def canHandleExtension(extension, view, modul):
+	def canHandleExtension(extension, view, module):
 		return (isinstance(extension, dict) and "type" in extension.keys() and (
 					extension["type"] == "string" or extension["type"].startswith("string.")))
 

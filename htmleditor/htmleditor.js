@@ -243,3 +243,4 @@ $('.vi-bone-container').on('focus', '.note-editor', function () {
   var height = $editable.data('lastHeight') || 400;
   $editable.height(height);
 });
+

@@ -37,14 +37,14 @@ class FileBoneExtractor(BaseBoneExtractor):
 
 class FileViewBoneDelegate(object):
 
-	def __init__(self, modul, boneName, structure):
+	def __init__(self, module, boneName, structure):
 		super(FileViewBoneDelegate, self).__init__()
 		self.format = "$(name)"
 
 		if "format" in structure[boneName].keys():
 			self.format = structure[boneName]["format"]
 
-		self.module = modul
+		self.module = module
 		self.structure = structure
 		self.boneName = boneName
 
@@ -226,8 +226,8 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 	def setSelection(self, selection):
 		"""
 			Set our current value to 'selection'
-			@param selection: The new entry that this bone should reference
-			@type selection: dict | list[dict]
+			:param selection: The new entry that this bone should reference
+			:type selection: dict | list[dict]
 		"""
 		if selection is None:
 			return
@@ -337,8 +337,8 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 	def setSelection(self, selection):
 		"""
 			Set our current value to 'selection'
-			@param selection: The new entry that this bone should reference
-			@type selection: dict
+			:param selection: The new entry that this bone should reference
+			:type selection: dict
 		"""
 		self.selection = selection
 
@@ -365,8 +365,7 @@ def CheckForFileBoneMultiSelection( moduleName, boneName, skelStructure, *args, 
 	return CheckForFileBone( moduleName, boneName, skelStructure ) and isMultiple
 
 def CheckForFileBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	#print("CHECKING FILE BONE", skelStucture[boneName]["type"])
-	return( skelStucture[boneName]["type"].startswith("treeitem.file") )
+	return skelStucture[boneName]["type"].startswith("treeitem.file")
 
 #Register this Bone in the global queue
 editBoneSelector.insert( 5, CheckForFileBoneSingleSelection, FileSingleSelectionBone)

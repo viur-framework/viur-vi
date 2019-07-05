@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5, embedsvg
 from config import conf
 from widgets.search import Search
@@ -8,12 +9,12 @@ import utils
 
 
 class CompoundFilter(html5.Div):
-	def __init__(self, view, modul, embed=False, *args, **kwargs):
+	def __init__(self, view, module, embed=False, *args, **kwargs):
 		super(CompoundFilter, self).__init__(*args, **kwargs)
-
 		self.addClass("vi-sb-compoundfilter item has-hover")
+
 		self.view = view
-		self.module = modul
+		self.module = module
 		self.embed = embed
 
 		if embed:
@@ -49,24 +50,28 @@ class CompoundFilter(html5.Div):
 			self.appendChild(h2)
 
 		self.extendedFilters = []
+		self.mutualExclusiveFilters = {}
 
 		for extension in (view["extendedFilters"] if "extendedFilters" in view.keys() else []):
-			wdg = extendedSearchWidgetSelector.select(extension, view, modul)
+
+			wdg = extendedSearchWidgetSelector.select(extension, view, module)
 
 			if wdg is not None:
 				container = html5.Div()
 				container.addClass("vi-sb-compoundfilter-extended")
-				wdg = wdg(extension, view, modul)
+				wdg = wdg(extension, view, module)
 				container.appendChild(wdg)
 				self.appendChild(container)
 				self.extendedFilters.append(wdg)
-				wdg.filterChangedEvent.register(self)
-
-	# btn = html5.ext.Button("Apply", self.reevaluate)
-	# self.appendChild( btn )
+				if hasattr( wdg, "mutualExclusiveGroupTarget" ):
+					if not self.mutualExclusiveFilters.has_key( "wdg.mutualExclusiveGroupTarget" ):
+						self.mutualExclusiveFilters[ wdg.mutualExclusiveGroupTarget ] = { }
+					self.mutualExclusiveFilters[ wdg.mutualExclusiveGroupTarget ][ wdg.mutualExclusiveGroupKey ] = wdg
+				wdg.filterChangedEvent.register( self )
 
 	def onFilterChanged(self, *args, **kwargs):
-		self.reevaluate()
+		print("onFilterChanged", args, kwargs)
+		self.reevaluate(*args, **kwargs)
 
 	def reevaluate(self, *args, **kwargs):
 		if "filter" in self.view.keys():
@@ -75,7 +80,8 @@ class CompoundFilter(html5.Div):
 			filter = {}
 
 		for extension in self.extendedFilters:
-			filter = extension.updateFilter(filter)
+			filter = extension.updateFilter(filter, **kwargs)
+
 
 		if self.embed:
 			self.parent().setFilter(filter, -1, "")
@@ -88,18 +94,17 @@ class CompoundFilter(html5.Div):
 					and callable(extension.focus)):
 				extension.focus()
 
-
-class FilterSelector(html5.Div):
-	def __init__(self, modul, *args, **kwargs):
+class FilterSelector( html5.Div ):
+	def __init__(self, module, *args, **kwargs ):
 		"""
-		:param modul: The name of the module for which this filter is created for
-		:param embedd: If true, we are embedded directly inside a list, if false were displayed in the sidebarwidgets
+		:param module: The name of the module for which this filter is created for
 		:param args:
 		:param kwargs:
 		:return:
 		"""
-		super(FilterSelector, self).__init__(*args, **kwargs)
-		self.module = modul
+		super( FilterSelector, self ).__init__( *args, **kwargs )
+		self.module = module
+
 		self.currentTarget = None
 		self.defaultFilter = True
 		self.sinkEvent("onClick")

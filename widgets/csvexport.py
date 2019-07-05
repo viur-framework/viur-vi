@@ -75,8 +75,6 @@ class ExportCsv(html5.Progress):
 		fields = {}
 		titles = []
 
-		print("H1")
-
 		idx = 0
 		for key, bone in self.structure:
 			print(key, bone)
@@ -92,7 +90,6 @@ class ExportCsv(html5.Progress):
 
 				titles.append(bone.get("descr", key) or key)
 
-		print("H2")
 		# Export
 		content = self.separator.join(titles) + self.lineSeparator
 

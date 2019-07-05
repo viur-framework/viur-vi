@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 import html5, utils, embedsvg
+
 from network import NetworkService
 from priorityqueue import actionDelegateSelector
 from widgets.edit import EditWidget
@@ -6,6 +8,7 @@ from widgets.button import Button
 from config import conf
 from pane import Pane
 from widgets.csvexport import ExportCsvStarter
+
 from sidebarwidgets.internalpreview import InternalPreview
 from sidebarwidgets.filterselector import FilterSelector
 from i18n import translate
@@ -617,12 +620,12 @@ class ListSelectFilterAction(Button):
 
 	def onAttach(self):
 		super(ListSelectFilterAction,self).onAttach()
-		modul = self.parent().parent().module
+		module = self.parent().parent().module
 		if self.parent().parent().filterID:
 			#Its a predefined search - we wont override this
 			self["disabled"] = True
-		if modul in conf["modules"].keys():
-			modulConfig = conf["modules"][modul]
+		if module in conf["modules"].keys():
+			modulConfig = conf["modules"][module]
 			if "disabledFunctions" in modulConfig.keys() and modulConfig[ "disabledFunctions" ] and "fulltext-search" in modulConfig[ "disabledFunctions" ]:
 				# Fulltext-Search is disabled
 				if not "views" in modulConfig.keys() or not modulConfig["views"]:
@@ -752,7 +755,7 @@ class SelectInvertAction(Button):
 		self["disabled"] = self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor(modul, handler, actionName):
+	def isSuitableFor(module, handler, actionName):
 		return actionName == "selectinvert" and (handler == "list" or handler.startswith("list."))
 
 	def onClick(self, sender=None):

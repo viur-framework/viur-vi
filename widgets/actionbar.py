@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5
 
 from priorityqueue import actionDelegateSelector
@@ -10,10 +11,10 @@ class ActionBar(html5.Div):
 	"""
 	def __init__(self, module = None, appType = None, currentAction = None, *args, **kwargs):
 		"""
-			@param module: Name of the modul were going to handle
-			@type module: String
-			@param appType: Type of the application (list, tree, hierarchy, ..)
-			@type appType: String
+			:param module: Name of the module were going to handle
+			:type module: str
+			:param appType: Type of the application (list, tree, hierarchy, ..)
+			:type appType: str
 		"""
 		super( ActionBar, self ).__init__(  )
 		self.actions = []
@@ -26,12 +27,12 @@ class ActionBar(html5.Div):
 
 	def setActions(self, actions):
 		"""
-			Sets the list of valid actions for this modul.
+			Sets the list of valid actions for this module.
 			This function tries to resolve a suitable action-widget for each
 			given action-name and adds them on success.
 			All previous actions are removed.
-			@param actions: List of names of actions which should be available.
-			@type actions: List of String
+			:param actions: List of names of actions which should be available.
+			:type actions: list of str
 		"""
 		for c in self._children[:]:
 			self.removeChild( c )
@@ -62,10 +63,10 @@ class ActionBar(html5.Div):
 
 	def getActions(self):
 		"""
-			Returns the list of action-names currently active for this modul.
+			Returns the list of action-names currently active for this module.
 			May also contain action-names which couldn't be resolved and therefore
 			not displayed.
-			@returns: List of String
+			:returns: List of str
 		"""
 		return( self.actions )
 

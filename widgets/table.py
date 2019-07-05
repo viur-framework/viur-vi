@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import html5, utils
 from event import EventDispatcher
 from network import DeferredCall
@@ -11,7 +12,7 @@ class SelectTable( html5.ignite.Table ):
 			- selectionChanged: called if the current _multi_ selection changes. (Ie the user
 				holds ctrl and clicks a row). The selection might contain no, one or multiple rows.
 				Its also called if the cursor moves. Its called if the user simply double
-				clicks a row. So its possible to recive a selectionActivated event without an
+				clicks a row. So its possible to receive a selectionActivated event without an
 				selectionChanged Event.
 			- selectionActivated: called if a selection is activated, ie. a row is double-clicked or Return
 			 	is pressed.
@@ -29,7 +30,7 @@ class SelectTable( html5.ignite.Table ):
 		self.cursorMovedEvent = EventDispatcher("cursorMoved")
 		self.tableChangedEvent = EventDispatcher("tableChanged")
 
-		self.sinkEvent( "onDblClick", "onMouseMove", "onMouseDown",
+		self.sinkEvent( "onDblClick", "onMouseDown",
 		                "onMouseUp", "onKeyDown", "onKeyUp", "onMouseOut",
 		                "onChange" )
 
@@ -59,8 +60,8 @@ class SelectTable( html5.ignite.Table ):
 	def setHeader(self, headers):
 		"""
 			Sets the table-headers to 'headers'
-			@param headers: List of strings
-			@type headers: list
+			:param headers: list of strings
+			:type headers: list
 		"""
 
 		tr = html5.Tr()
@@ -90,10 +91,10 @@ class SelectTable( html5.ignite.Table ):
 
 	def getTrByIndex(self, idx):
 		"""
-			Retrives the TR element by the given row number
-			@param idx: Rownumber to retrive the tr of
-			@type idx: int
-			@returns HTMLTableRowElement
+			Retrieves the TR element by the given row number
+			:param idx: Rownumber to retrieve the tr of
+			:type idx: int
+			:returns: HTMLTableRowElement
 		"""
 		for c in self.body._children:
 			if idx <= 0:
@@ -106,9 +107,9 @@ class SelectTable( html5.ignite.Table ):
 		"""
 			Returns the rowNumber for the given tr element or None if
 			the given tr element is invalid.
-			@param tr: A HTMLTableRowElement of this table
-			@type tr: HTMLTableRowElement
-			@returns int or None
+			:param tr: A HTMLTableRowElement of this table
+			:type tr: HTMLTableRowElement
+			:returns: int or None
 		"""
 		idx = 0
 		for c in self.body._children:
@@ -162,11 +163,13 @@ class SelectTable( html5.ignite.Table ):
 				self.removeSelectedRow( row )
 			else:
 				self.addSelectedRow( row )
+			event.preventDefault()
 
 		elif self._isShiftPressed:
 			self.unSelectAll()
 			for i in ( range(self._ctlStartRow, row+1) if self._ctlStartRow <= row else range(row, self._ctlStartRow+1) ):
 				self.addSelectedRow( i )
+			event.preventDefault()
 
 		elif self.checkboxes and html5.utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
 			if row in self._selectedRows:
@@ -185,7 +188,6 @@ class SelectTable( html5.ignite.Table ):
 
 			self.setCursorRow(self.getIndexByTr(tr), removeExistingSelection=not self.checkboxes)
 
-		event.preventDefault()
 		self.focus()
 
 	def onMouseOut(self, event):
@@ -194,78 +196,67 @@ class SelectTable( html5.ignite.Table ):
 	def onMouseUp(self, event):
 		self._isMouseDown = False
 
-	def onMouseMove(self, event):
-		if self._isMouseDown:
-			tr = self._rowForEvent( event )
-			if tr is None:
-				return
-			self.addSelectedRow( self.getIndexByTr(tr) )
-			event.preventDefault()
-
 	def onKeyDown(self, event):
-		if html5.isArrowDown(event): #Arrow down
+		if html5.isArrowDown(event):  # Arrow down
 
 			if self._currentRow is None:
 				self.setCursorRow(0)
-			else:
 
-				if self._isCtlPressed:
+			else:
+				if self._isCtlPressed or self._isShiftPressed:
 
 					if self._ctlStartRow > self._currentRow:
-						self.removeSelectedRow( self._currentRow )
+						self.removeSelectedRow(self._currentRow)
 					else:
-						self.addSelectedRow( self._currentRow )
+						self.addSelectedRow(self._currentRow)
 
-						if self._currentRow+1 < self.getRowCount():
-							self.addSelectedRow( self._currentRow+1 )
+						if self._currentRow + 1 < self.getRowCount():
+							self.addSelectedRow(self._currentRow + 1)
 
-				if self._currentRow+1 < self.getRowCount():
-					self.setCursorRow(self._currentRow+1,
-					                  removeExistingSelection=(not self._isCtlPressed))
+				if self._currentRow + 1 < self.getRowCount():
+					self.setCursorRow(self._currentRow + 1,
+									  removeExistingSelection=(not self._isShiftPressed and not self._isCtlPressed))
+
 			event.preventDefault()
 
-		elif html5.isArrowUp(event): #Arrow up
+		elif html5.isArrowUp(event):  # Arrow up
 
 			if self._currentRow is None:
 				self.setCursorRow(0)
 			else:
 
-				if self._isCtlPressed: #Check if we extend a selection
+				if self._isCtlPressed or self._isShiftPressed:  # Check if we extend a selection
 					if self._ctlStartRow < self._currentRow:
-						self.removeSelectedRow( self._currentRow )
+						self.removeSelectedRow(self._currentRow)
 					else:
-						self.addSelectedRow( self._currentRow )
+						self.addSelectedRow(self._currentRow)
 
-						if self._currentRow>0:
-							self.addSelectedRow( self._currentRow-1 )
+						if self._currentRow > 0:
+							self.addSelectedRow(self._currentRow - 1)
 
-				if self._currentRow>0: #Move the cursor if possible
-					self.setCursorRow(self._currentRow-1,
-					                  removeExistingSelection=(not self._isCtlPressed))
+				if self._currentRow > 0:  # Move the cursor if possible
+					self.setCursorRow(self._currentRow - 1,
+									  removeExistingSelection=(not self._isShiftPressed and not self._isCtlPressed))
 
 			event.preventDefault()
 
-		elif html5.isReturn(event): # Return
+		elif html5.isReturn(event):  # Return
 
-			if len( self._selectedRows )>0:
-				self.selectionActivatedEvent.fire( self, self._selectedRows )
+			if len(self._selectedRows) > 0:
+				self.selectionActivatedEvent.fire(self, self._selectedRows)
 				event.preventDefault()
 				return
 
 			if self._currentRow is not None:
-				self.selectionActivatedEvent.fire( self, [self._currentRow] )
+				self.selectionActivatedEvent.fire(self, [self._currentRow])
 				event.preventDefault()
 				return
 
-		elif html5.isControl(event): #Ctrl
+		elif html5.isControl(event):  # Ctrl
 			self._isCtlPressed = True
 			self._ctlStartRow = self._currentRow or 0
 
-			if self._currentRow is not None and not self._currentRow in self._selectedRows:
-				self.addSelectedRow( self._currentRow )
-				self.setCursorRow( None, removeExistingSelection=False )
-
-		elif html5.isShift(event): #Shift
+		elif html5.isShift(event):  # Shift
 			self._isShiftPressed = True
 			try:
 				self._ctlStartRow = self._currentRow or self._selectedRows[0] or 0
@@ -303,13 +294,11 @@ class SelectTable( html5.ignite.Table ):
 
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 
-		# print("Currently selected rows: %s" % str(self._selectedRows))
-
 	def removeSelectedRow(self, row):
 		"""
 			Removes 'row' from the current selection (if any)
-			@param row: Number of the row to unselect
-			@type row: int
+			:param row: Number of the row to unselect
+			:type row: int
 		"""
 		if not row in self._selectedRows:
 			return
@@ -328,8 +317,8 @@ class SelectTable( html5.ignite.Table ):
 		"""
 			Sets the current selection to 'row'.
 			Any previous selection is removed.
-			@param newRow: Number of the row to select
-			@type newRow: int
+			:param newRow: Number of the row to select
+			:type newRow: int
 		"""
 		self.setCursorRow( newRow )
 
@@ -371,7 +360,7 @@ class SelectTable( html5.ignite.Table ):
 	def getCurrentSelection(self):
 		"""
 			Returns a list of currently selected row-numbers
-			@returns: List
+			:returns: list
 		"""
 		if self._selectedRows:
 			return self._selectedRows[:]
@@ -573,7 +562,7 @@ class DataTable( html5.Div ):
 	def getRowCount(self):
 		"""
 			Returns the total amount of rows currently known.
-			@returns: int
+			:returns: int
 		"""
 		return( len( self._model ))
 
@@ -581,8 +570,8 @@ class DataTable( html5.Div ):
 	def add(self, obj):
 		"""
 			Adds an row to the model
-			@param obj: Dictionary of values for this row
-			@type obj: dict
+			:param obj: Dictionary of values for this row
+			:type obj: dict
 		"""
 		obj["_uniqeIndex"] = self._modelIdx
 		self._modelIdx += 1
@@ -665,8 +654,8 @@ class DataTable( html5.Div ):
 		"""
 			Renders the object to into the table.
 			Does nothing if the list of _shownFields is empty.
-			@param obj: Dictionary of values for this row
-			@type obj: dict
+			:param obj: Dictionary of values for this row
+			:type obj: dict
 		"""
 		if not self._shownFields:
 			return
@@ -703,8 +692,8 @@ class DataTable( html5.Div ):
 			Sets the list of _shownFields.
 			This causes the whole table to be rebuild.
 			Be careful if calling this function often on a large table!
-			@param fields: List of model-keys which will be displayed.
-			@type fields: list
+			:param fields: List of model-keys which will be displayed.
+			:type fields: list
 		"""
 		self._shownFields = fields
 		self.rebuildTable()
