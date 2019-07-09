@@ -5,7 +5,7 @@ from logics import Interpreter
 
 conf = {
 	# Vi version number
-	"vi.version": (2, 4, 1),
+	"vi.version": (2, 5, 0),
 
 	# Appendix to version
 	"vi.version.appendix": "",
