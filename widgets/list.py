@@ -113,6 +113,10 @@ class ListWidget(html5.Div):
 		self.emptyNotificationDiv.removeClass("is-active")
 		self.table["style"]["display"] = "none"
 
+		self.tableinfo = html5.Div()
+		self.tableinfo.appendChild(html5.TextNode("Elemente:0"))
+		self.appendChild(self.tableinfo)
+
 		if autoload:
 			self.reloadData()
 
@@ -128,7 +132,7 @@ class ListWidget(html5.Div):
 		if self.selectMode:
 			defaultActions += ["|", "select","close"]
 
-		defaultActions += ["|", "reload", "intpreview", "selectfilter"]
+		defaultActions += ["|", "pagefind", "reload", "loadall", "intpreview", "selectfilter"]
 
 		#if not self.selectMode:
 		#	defaultActions += ["|", "exportcsv"]
@@ -167,6 +171,8 @@ class ListWidget(html5.Div):
 		errorDiv.addClass("error_code_%s" % (code or 0))
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
+		self.tableinfo.removeAllChildren()
+		self.tableinfo.appendChild( html5.TextNode( "Elemente:-" ) )
 
 	def onNextBatchNeeded(self):
 		"""
@@ -269,6 +275,8 @@ class ListWidget(html5.Div):
 				self.table["style"]["display"] = "none"
 				self.emptyNotificationDiv.addClass("is-active")
 			#self.element.innerHTML = "<center><strong>Keine Ergebnisse</strong></center>"
+			self.tableinfo.removeAllChildren()
+			self.tableinfo.appendChild( html5.TextNode( "Elemente:-" ) )
 			return
 
 		self.table["style"]["display"] = ""
@@ -291,6 +299,8 @@ class ListWidget(html5.Div):
 			self.table.setDataProvider(None)
 
 		self.table.extend( data["skellist"] )
+		self.tableinfo.removeAllChildren()
+		self.tableinfo.appendChild( html5.TextNode( "Elemente:%s"%(self.table.getRowCount()) ) )
 
 	def setFields(self, fields):
 		if not self._structure:

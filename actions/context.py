@@ -26,7 +26,7 @@ class ContextAction(html5.ext.Button):
 
 		icon = adminInfo.get("icon")
 
-		super(ContextAction, self).__init__(txt=title, *args, **kwargs)
+		super(ContextAction, self).__init__(txt=title, icon="icons-add", *args, **kwargs)
 
 		self.widget = None
 		self.adminInfo = adminInfo

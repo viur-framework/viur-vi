@@ -13,6 +13,8 @@ from sidebarwidgets.internalpreview import InternalPreview
 from sidebarwidgets.filterselector import FilterSelector
 from i18n import translate
 
+from __pyjamas__ import JS
+
 class EditPane(Pane):
 	pass
 
@@ -587,7 +589,7 @@ actionDelegateSelector.insert( 1, SelectFieldsAction.isSuitableFor, SelectFields
 
 class ReloadAction(Button):
 	"""
-		Allows adding an entry in a list-module.
+		Allows Reloading
 	"""
 	def __init__(self, *args, **kwargs):
 		super( ReloadAction, self ).__init__( translate("Reload"), icon="icons-reload", *args, **kwargs )
@@ -610,6 +612,120 @@ class ReloadAction(Button):
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
+
+class LoadAllAction(Button):
+	"""
+		Allows Loading all Entries in a list
+	"""
+	def __init__(self, *args, **kwargs):
+		super( LoadAllAction, self ).__init__( translate("Load all"), icon="icons-table", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--loadall"
+
+	@staticmethod
+	def isSuitableFor( module, handler, actionName ):
+		correctAction = actionName=="loadall"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		return correctAction and correctHandler
+
+	def onClick(self, sender=None):
+		self.addClass("is-loading")
+		currentModule = self.parent().parent()
+
+		if currentModule:
+			currentModule.table._loadOnDisplay = True #mark to force load whole Dataset
+			w = eval( "window" )
+			w.setTimeout( self.loadAllRows, 500 )
+
+	def loadAllRows(self):
+		NetworkService.notifyChange( self.parent().parent().module )
+
+	def resetLoadingState(self):
+		if self.hasClass("is-loading"):
+			self.removeClass("is-loading")
+
+
+actionDelegateSelector.insert( 1, LoadAllAction.isSuitableFor, LoadAllAction )
+
+
+class PageFindAction(html5.Div):
+	"""
+		Allows Loading all Entries in a list
+	"""
+	def __init__(self, *args, **kwargs):
+		super( PageFindAction, self ).__init__( )
+		self["class"].append("input-group")
+
+		self.searchInput = html5.Input()
+		self.searchInput["class"].append("input ignt-input input--small")
+		self.appendChild(self.searchInput)
+
+
+		btn = Button( translate( "Find on Page" ), callback = self.onClick, icon = "icons-search" )
+		btn[ "class" ] = "bar-item btn btn--small btn--pagefind"
+		self.appendChild( btn )
+		self.sinkEvent("onKeyPress")
+
+	def onKeyPress( self, event ):
+		if html5.isReturn( event ):
+			self.onClick()
+
+	@staticmethod
+	def isSuitableFor( module, handler, actionName ):
+		correctAction = actionName=="pagefind"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		return correctAction and correctHandler
+
+	def onClick(self, sender=None):
+		text = self.searchInput._getValue()
+		if not text:
+			return 0
+		self.addClass("is-loading")
+		self.startFind()
+
+
+	def startFind( self ):
+		strFound = self.findText()
+
+		if not strFound:
+			jsTop = eval( "top" )
+			jsTop.getSelection().empty()
+			conf[ "mainWindow" ].log( "info", "Nothing found!" )
+
+	def findText( self ):
+		text = self.searchInput._getValue()
+		if not text:
+			return False
+		parent = self.parent().parent().element
+
+		jsTop = eval("top")
+
+		strFound = jsTop.find( text, 0, 0, 1 )
+		jsselection = jsTop.getSelection()
+
+		if strFound and jsselection and not jsselection.anchorNode:
+			strFound = jsTop.find( text, 0, 0, 1 )
+
+		if parent and strFound:
+			selectionElement = jsTop.getSelection().anchorNode.parentElement
+
+			if selectionElement and parent.contains(selectionElement):
+				selectionElement.scrollIntoView()
+				strFound = True
+			else:
+				strFound = False
+
+		self.resetLoadingState()
+		return strFound
+
+
+
+
+	def resetLoadingState(self):
+		if self.hasClass("is-loading"):
+			self.removeClass("is-loading")
+
+
+actionDelegateSelector.insert( 1, PageFindAction.isSuitableFor, PageFindAction )
 
 class ListSelectFilterAction(Button):
 	def __init__(self, *args, **kwargs ):

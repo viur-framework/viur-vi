@@ -39,6 +39,8 @@ lngEn = {
 
 	# Sidebar
 	"vi.sidebar.internalpreview": u"Informations",
+
+	"Load all": u"fetch all"
 }
 
 

@@ -318,3 +318,29 @@ class SelectRootNode(html5.Select):
 		return actionName == "selectrootnode" and (handler == "hierarchy" or handler.startswith("hierarchy."))
 
 actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
+
+
+class ListViewAction(Button):
+	"""
+		Allows adding an entry in a list-module.
+	"""
+	def __init__(self, *args, **kwargs):
+		super( ListViewAction, self ).__init__( translate("ListViewAction"), icon="icons-list", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--list"
+
+	@staticmethod
+	def isSuitableFor( module, handler, actionName ):
+		correctAction = actionName=="listview"
+		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
+		return correctAction and correctHandler
+
+	def onClick(self, sender=None):
+		#self.addClass("is-loading")
+		self.parent().parent().toggleListView()
+
+	def resetLoadingState(self):
+		pass
+		#if self.hasClass("is-loading"):
+		#	self.removeClass("is-loading")
+
+actionDelegateSelector.insert( 1, ListViewAction.isSuitableFor, ListViewAction )

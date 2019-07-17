@@ -52,6 +52,7 @@ class Pane(html5.Div):
 		self.label.addClass("item-link")
 		self.item.appendChild(self.label)
 
+		self.defaultIconURL = self.iconURL
 		self.setText(descr, iconURL)
 
 		self.closeBtn = html5.ext.Button(u"×", self.onBtnCloseReleased)
@@ -63,7 +64,7 @@ class Pane(html5.Div):
 
 		self.closeable = closeable
 		self.isExpanded = False
-		self.defaultImgSrc = self.iconURL
+
 
 		DeferredCall(self.setText, _delay=250)
 
@@ -75,17 +76,33 @@ class Pane(html5.Div):
 			else:
 				self.closeBtn.hide()
 
+	def setImage( self,loading=False ):
+		self.itemIcon.removeAllChildren()
+		if loading:
+			img = html5.Img()
+			img[ "src" ] = "icons/is_loading32.gif"
+			self.itemIcon.appendChild( img )
+			return "0"
+
+		if self.defaultIconURL is not None:
+			embedSvg = embedsvg.get(self.defaultIconURL)
+			if embedSvg:
+				self.itemIcon.element.innerHTML = embedSvg
+			else:
+				img = html5.Img()
+				img["src"] = self.defaultIconURL
+				self.itemIcon.appendChild(img)
+		else:
+			self.itemIcon.appendChild(self.descr[:1])
+
+
+
 	def lock(self):
 		self.disable()
-
-		if self.img:
-			self.defaultImgSrc = self.img["src"]
-			self.img["src"] = "icons/is_loading32.gif"
+		self.setImage(loading = True)
 
 	def unlock(self):
-		if self.img and self.defaultImgSrc:
-			self.img["src"] = self.defaultImgSrc
-
+		self.setImage(loading = False)
 		self.enable()
 
 	def setText(self, descr = None, iconURL = None):
@@ -101,16 +118,7 @@ class Pane(html5.Div):
 		if descr is None:
 			descr = self.descr
 
-		if iconURL is not None:
-			embedSvg = embedsvg.get(iconURL)
-			if embedSvg:
-				self.itemIcon.element.innerHTML = embedSvg
-			else:
-				self.img = html5.Img()
-				self.img["src"] = iconURL
-				self.itemIcon.appendChild(self.img)
-		else:
-			self.itemIcon.appendChild(descr[:1])
+		self.setImage(loading = False)
 
 		if self.iconClasses is not None:
 			for cls in self.iconClasses:
@@ -192,7 +200,7 @@ class Pane(html5.Div):
 		self.label = None
 		super(Pane, self).onDetach()
 
-	def addWidget(self, widget):
+	def addWidget(self, widget,disableOtherWidgets=True):
 		"""
 			Adds a widget to this pane.
 			Note: all widgets of a pane are visible at the same time!
@@ -200,9 +208,9 @@ class Pane(html5.Div):
 			:type widget: Widget
 
 		"""
-
-		for w in self.widgetsDomElm.children():
-			w.disable()
+		if disableOtherWidgets:
+			for w in self.widgetsDomElm.children():
+				w.disable()
 
 		self.widgetsDomElm.appendChild(widget)
 		self.rebuildChildrenClassInfo()

@@ -49,7 +49,7 @@ class TopBarWidget(html5.Header):
 		if svg:
 			newBtn.element.innerHTML = svg + newBtn.element.innerHTML
 		newBtn.appendChild(translate("vi.topbar.newbtn"))
-		self.iconnav.appendChild(newBtn)
+		#self.iconnav.appendChild(newBtn)
 
 		newMarker = html5.Span()
 		newMarker.addClass("marker")
@@ -101,6 +101,8 @@ class TopBarWidget(html5.Header):
 
 		conf["theApp"].setTitle(descr)
 
+		if path:
+			conf[ "theApp" ].setPath( path )
 
 #FIXME: UserState(Button) should open "user" "edit/self" on click (userself plugin by AK)
 

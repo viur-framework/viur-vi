@@ -461,6 +461,10 @@ class EditWidget(html5.Div):
 		currRow = 0
 		hasMissing = False
 		defaultCat = conf["modules"][self.module].get("visibleName", self.module)
+		adminCat = conf["modules"][self.module].get("defaultCategory",None)
+
+
+		print(conf["modules"][self.module])
 
 		contextVariable = conf["modules"][self.module].get("editContext")
 		if self.mode == "edit" and contextVariable:
@@ -510,7 +514,7 @@ class EditWidget(html5.Div):
 
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
-			if bone["required"] or (bone.get("unique") and bone["error"]):
+			if bone["required"] or (bone.get("unique") and bone["error"]) or (bone["error"] and "dependency error:" in bone["error"]):
 				descrLbl.addClass("is-required")
 
 				if bone["error"] is not None:
@@ -550,8 +554,11 @@ class EditWidget(html5.Div):
 			#Hide invisible bones or logic-flavored bones with their default desire
 			if not bone["visible"] or (bone["params"] and bone["params"].get("logic.visibleIf")):
 				self.containers[key].hide()
-			elif bone["visible"] and not firstCat:
+			elif bone["visible"] and not firstCat and not adminCat:
 				firstCat = segments[cat]
+			elif adminCat and cat == adminCat:
+				firstCat = segments[cat]
+
 
 			# NO elif!
 			if bone["params"] and bone["params"].get("logic.readonlyIf"):

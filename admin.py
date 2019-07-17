@@ -427,12 +427,12 @@ class AdminScreen(Screen):
 
 		self.viewport.removeChild(pane.widgetsDomElm)
 
-	def addWidget(self, widget, pane):
-		pane.addWidget(widget)
+	def addWidget(self, widget, pane,disableOtherWidgets=True):
+		pane.addWidget(widget,disableOtherWidgets)
 
-	def stackWidget(self, widget):
+	def stackWidget(self, widget,disableOtherWidgets=True):
 		assert self.currentPane is not None, "Cannot stack a widget while no pane is active"
-		self.addWidget(widget, self.currentPane)
+		self.addWidget(widget, self.currentPane,disableOtherWidgets)
 
 	def removeWidget(self, widget):
 		for pane in self.panes:

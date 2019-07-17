@@ -176,18 +176,25 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.using = using
 		self.usingDescr = usingDescr
 		self.addClass("vi-bone-container")
+		self.addClass("vi-tree-selectioncontainer-entry")
 
 		self.selection = None
 		self.selectionTxt = html5.ignite.Input()
 		self.selectionTxt["readonly"] = True
 		self.selectionTxt["type"] = "text"
-		self.appendChild(self.selectionTxt)
+
 		self.ie = None
 
 		self.boneControls = html5.Div()
 		self.boneControls.addClass("vi-bone-controls input-group")
-		self.appendChild(self.boneControls)
 
+		wrapperDiv = html5.Div()
+		wrapperDiv.addClass( "vi-tree-labelwrapper input-group" )
+
+		wrapperDiv.appendChild( self.selectionTxt )
+		wrapperDiv.appendChild( self.boneControls )
+
+		self.appendChild(wrapperDiv)
 		self.baseContext = context
 		self.context = self.baseContext.copy() if self.baseContext else None
 
@@ -318,6 +325,9 @@ class RelationalSingleSelectionBone(html5.Div):
 	def onRemove(self, *args, **kwargs):
 		self.setSelection(None)
 		self.changeEvent.fire(self)
+		if self.ie:
+			self.removeChild( self.ie )
+
 
 	def unserialize(self, data):
 		"""

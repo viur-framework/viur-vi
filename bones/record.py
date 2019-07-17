@@ -5,7 +5,8 @@ from config import conf
 from event import EventDispatcher
 from i18n import translate
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from widgets.edit import InternalEdit
+from widgets.internaledit import InternalEdit
+from widgets.button import Button
 
 
 class RecordBoneExtractor(BaseBoneExtractor):
@@ -192,6 +193,7 @@ class RecordMultiBoneEntry(html5.Div):
 		self.sinkEvent("onDrop", "onDragOver", "onDragLeave", "onDragStart", "onDragEnd", "onChange")
 
 		self.addClass("recordbone-entry")
+		self.addClass("vi-bone-container")
 
 		self.parent = parent
 		self.module = module
@@ -201,9 +203,8 @@ class RecordMultiBoneEntry(html5.Div):
 		self.appendChild(self.mask)
 
 		if not parent.readOnly:
-			remBtn = html5.ext.Button(translate("Remove"), self.onRemove)
-			remBtn["class"].append("icon")
-			remBtn["class"].append("cancel")
+			remBtn = Button(translate("Remove"), self.onRemove, icon="icons-delete")
+			remBtn.addClass( "btn--remove", "btn--danger" )
 			self.appendChild(remBtn)
 
 	def onDragStart(self, event):
@@ -306,13 +307,17 @@ class RecordMultiBone(html5.Div):
 		self.currentDrag = None
 		self.currentOver = None
 
+		if not self.readOnly:
+			self.addBtn = Button( translate( "Add" ), callback = self.onAddBtnClick, icon = "icons-add" )
+			self.addBtn.lang = None
+			self.addBtn.addClass( "btn--add" )
+			self.appendChild( self.addBtn )
+
 		self.itemsDiv = html5.Div()
 		self.itemsDiv.addClass("recordbone-entries")
 		self.appendChild(self.itemsDiv)
 
-		self.addBtn = html5.ext.Button("Add", self.onAddBtnClick)
-		self.addBtn.addClass("icon", "add")
-		self.appendChild(self.addBtn)
+
 
 		if self.readOnly:
 			self["disabled"] = True

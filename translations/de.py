@@ -193,4 +193,7 @@ lngDe = {
 
 	#Sidebar
 	"vi.sidebar.internalpreview": u"Informationen",
+
+	"Load all": u"Alles laden",
+	"Find on Page": u"finden"
 }

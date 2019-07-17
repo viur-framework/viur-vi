@@ -9,7 +9,7 @@
 }
 
 .hierarchy-item {
-  padding: 7px;
+  padding: 20px;
   transition: all 0.3s ease;
   * + & {
     margin-top: 4px;
@@ -52,6 +52,30 @@
     padding-top:14px;
     padding-bottom:14px;
   }
+
+  .after-element{
+    height: 30px;
+    width: 100%;
+    border: 1px dashed @mainColor;
+    text-align: center;
+    font-style: italic;
+    color: fadeOut(@textColor, 60%);
+  }
+  .before-element{
+    height: 30px;
+    width: 100%;
+    border: 1px dashed @mainColor;
+    text-align: center;
+    font-style: italic;
+    color: fadeOut(@textColor, 60%);
+  }
+  .before-element.is-focused{
+    border: 1px solid @mainColor;
+  }
+  .after-element.is-focused{
+    border: 1px solid @mainColor;
+  }
+
 }
 
 .hierarchy-toggle {
@@ -87,7 +111,7 @@
     height: 30px;
   }
 }
-.treeitem.insert-here,
-.hierarchy-item.insert-here {border:1px solid @mainColor !important; padding:12px 7px !important;}
+.hierarchy-item.insert-here{border:1px solid @mainColor !important;}
+.treeitem.insert-here {border:1px solid @mainColor !important; padding:12px 7px !important;}
 .treeitem.insert-after,
 .hierarchy-item.insert-after {border-bottom:2px solid @mainColor !important;}

@@ -10,12 +10,13 @@ from config import conf
 from i18n import translate
 from widgets.button import Button
 from embedsvg import embedsvg
+from widgets.list import ListWidget
 
 class HierarchyItem( html5.Li ):
 	"""
 		Holds one entry in a hierarchy.
 	"""
-	def __init__(self, module, data, structure, *args, **kwargs):
+	def __init__(self, module, data, structure,widget, *args, **kwargs):
 		"""
 			:param module: Name of the module we shall display data for
 			:type module: str
@@ -23,11 +24,14 @@ class HierarchyItem( html5.Li ):
 			:type data: dict
 			:param structure: Skeleton structure for that module (as received  from the server)
 			:type structure: list
+			:param widget: parent Widget
+			:type structure: HierarchyWidget
 		"""
 		super( HierarchyItem, self ).__init__( *args, **kwargs )
 		self.module = module
 		self.data = data
 		self.structure = structure
+		self.widget = widget
 		self.expandLink = html5.A()
 		self.expandLink.addClass("expandlink")
 		self.expandLink.addClass("hierarchy-toggle")
@@ -54,6 +58,23 @@ class HierarchyItem( html5.Li ):
 		self["draggable"] = True
 		self.sinkEvent("onDragStart", "onDrop", "onDragOver","onDragLeave")
 
+		self.afterDiv = html5.Div()
+		self.afterDiv["class"] = ["after-element"]
+		self.afterDiv.hide()
+		aftertxt = html5.TextNode(translate(u"Nach dem Element einfügen"))
+		self.afterDiv.appendChild(aftertxt)
+		self.appendChild( self.afterDiv )
+
+		self.beforeDiv = html5.Div()
+		self.beforeDiv[ "class" ] = [ "before-element" ]
+		self.beforeDiv.hide()
+		beforetxt = html5.TextNode( translate( u"Vor dem Element einfügen" ) )
+		self.beforeDiv.appendChild( beforetxt )
+		self.prependChild(self.beforeDiv)
+
+		self.currentStatus = None
+
+
 	def buildDescription(self):
 		"""
 			Generates the visual representation of this entry.
@@ -75,43 +96,66 @@ class HierarchyItem( html5.Li ):
 			Test wherever the current drag would mean "make it a child of us", "insert before us" or
 			"insert after us" and apply the correct classes.
 		"""
-		actionBarHeight = self.parent().parent().actionBar.element.offsetHeight
-		height = self.element.offsetHeight
-		offset = event.pageY - self.element.offsetTop - actionBarHeight
+		self.afterDiv.show() #show dropzones
+		self.beforeDiv.show()
 
-		self["title"] = translate("vi.data-insert")
-		# Before
-		if self.currentMargin is None and offset < height * 0.20:
-			self.currentMargin = "top"
-			self.removeClass("insert-here")
-			self.removeClass("insert-after")
-			self.addClass("insert-before")
-		# After
-		elif self.currentMargin is None and offset > height * 0.80:
-			self.currentMargin = "bottom"
-			self.removeClass("insert-here")
-			self.removeClass("insert-before")
-			self.addClass("insert-after")
-		# Within
-		elif self.currentMargin and offset >= height * 0.20 and offset <= height * 0.80:
-			self.currentMargin = None
-			self.removeClass("insert-before")
-			self.removeClass("insert-after")
-			self.addClass("insert-here")
+		self.leaveElement = False #reset leaveMarker
+
+		self[ "title" ] = translate( "vi.data-insert" )
+		if event.target == self.beforeDiv.element:
+			self.currentStatus = "top"
+			self.removeClass( "insert-here" )
+			self.beforeDiv.addClass("is-focused")
+			self.afterDiv.removeClass( "is-focused" )
+		elif event.target == self.afterDiv.element:
+			self.currentStatus = "bottom"
+			self.removeClass( "insert-here" )
+			self.beforeDiv.removeClass("is-focused")
+			self.afterDiv.addClass( "is-focused" )
+
+		elif event.target == self.element:
+			self.currentStatus = "inner"
+			self.addClass( "insert-here" )
+			self.beforeDiv.removeClass( "is-focused" )
+			self.afterDiv.removeClass( "is-focused" )
+			self[ "title" ] = translate( u"In das Element einfügen" )
+
 
 		event.preventDefault()
 		event.stopPropagation()
+
+
+
+	def disableDragMarkers( self ):
+		if self.leaveElement:
+			self[ "title" ] = translate( "vi.data-insert" )
+			self.currentStatus = None
+			self.afterDiv.hide()
+			self.beforeDiv.hide()
+			self.removeClass( "insert-here" )
+		else:
+			self.leaveElement = True
+			w = eval( "window" )
+			w.setTimeout( self.disableDragMarkers, 2000 )
 
 	def onDragLeave(self, event):
 		"""
 			Remove all drop indicating classes.
 		"""
-		# FIXME: change "title" to "data-insert"
-		self["title"] = None
-		self.removeClass("insert-before")
-		self.removeClass("insert-after")
-		self.removeClass("insert-here")
-		self.currentMargin = None
+
+		# Only leave if target not before or after
+		if event.target == self.beforeDiv.element:
+			self.leaveElement =False
+			return
+		elif event.target == self.afterDiv.element:
+			self.leaveElement = False
+			return
+		else:
+			self.leaveElement = True
+
+		w = eval("window")
+		w.setTimeout(self.disableDragMarkers,1) #test later to leave, to avoid flickering...
+
 		super(HierarchyItem,self).onDragLeave( event )
 
 	def onDragStart(self, event):
@@ -129,51 +173,46 @@ class HierarchyItem( html5.Li ):
 
 		event.stopPropagation()
 		event.preventDefault()
+		srcKey = event.dataTransfer.getData( "Text" )
 
-		actionBarHeight = self.parent().parent().actionBar.element.offsetHeight
-		height = self.element.offsetHeight
-		offset = event.pageY - self.element.offsetTop - actionBarHeight
-
-		srcKey = event.dataTransfer.getData("Text")
-
-		if offset >= height * 0.20 and offset <= height * 0.80:
-			print( "insert into" )
-			# Just make the item a child of us
-			NetworkService.request(self.module,"reparent",{"item":srcKey,"dest":self.data["key"]}, secure=True, modifies=True )
-		elif offset < height * 0.20:
-			#Insert this item *before* the current item
-			print( "insert before" )
-			parentID = self.data["parententry"]
+		if self.currentStatus == "inner":
+			NetworkService.request( self.module, "reparent",
+			                        { "item":srcKey, "dest":self.data[ "key" ] },
+			                        secure = True, modifies = True )
+		elif self.currentStatus == "top":
+			parentID = self.data[ "parententry" ]
 			if parentID:
 				lastIdx = 0
 				for c in self.parent()._children:
-					if "data" in dir(c) and "sortindex" in c.data.keys():
+					if "data" in dir( c ) and "sortindex" in c.data.keys():
 						if c == self:
 							break
-						lastIdx = c.data["sortindex"]
-				newIdx = str((lastIdx+self.data["sortindex"])/2.0)
-				req = NetworkService.request(self.module,"reparent",{"item":srcKey,"dest":parentID}, secure=True, successHandler=self.onItemReparented )
+						lastIdx = c.data[ "sortindex" ]
+				newIdx = str( (lastIdx + self.data[ "sortindex" ]) / 2.0 )
+				req = NetworkService.request( self.module, "reparent", { "item":srcKey, "dest":parentID },
+				                              secure = True, successHandler = self.onItemReparented )
 				req.newIdx = newIdx
 				req.item = srcKey
-		elif offset > height * 0.80:
-			#Insert this item *after* the current item
-			print( "insert after" )
-			parentID = self.data["parententry"]
+
+
+
+		elif self.currentStatus == "bottom":
+			parentID = self.data[ "parententry" ]
 
 			if parentID:
 				lastIdx = time()
 				doUseNextChild = False
 				for c in self.parent()._children:
-					if "data" in dir(c) and "sortindex" in c.data.keys():
+					if "data" in dir( c ) and "sortindex" in c.data.keys():
 						if doUseNextChild:
-							lastIdx = c.data["sortindex"]
+							lastIdx = c.data[ "sortindex" ]
 							break
 						if c == self:
 							doUseNextChild = True
 
-				newIdx = str((lastIdx+self.data["sortindex"])/2.0)
-				req = NetworkService.request(self.module,"reparent",{"item":srcKey,"dest":parentID},
-				                                secure=True, successHandler=self.onItemReparented )
+				newIdx = str( (lastIdx + self.data[ "sortindex" ]) / 2.0 )
+				req = NetworkService.request( self.module, "reparent", { "item":srcKey, "dest":parentID },
+				                              secure = True, successHandler = self.onItemReparented )
 				req.newIdx = newIdx
 				req.item = srcKey
 
@@ -223,6 +262,7 @@ class HierarchyWidget(html5.Div):
 		self.addClass("vi-widget vi-widget--hierarchy")
 		self.actionBar = ActionBar(module, "hierarchy")
 		self.appendChild( self.actionBar )
+
 		self.entryFrame = html5.Ol()
 		self.entryFrame.addClass("hierarchy")
 		self.appendChild( self.entryFrame )
@@ -239,6 +279,15 @@ class HierarchyWidget(html5.Div):
 		self._expandedNodes = []
 		self.context = context
 
+		#listview
+		self.currentKey = None
+		self.listview = ListWidget( self.module, context = self.context, autoload = False )
+		self.listview.actionBar.setActions(["preview", "selectfields"] )
+		self.listwidgetadded = False
+		self.listviewActiv = False
+		self.setListView( self.listviewActiv )
+
+
 		if self.rootNode:
 			self.reloadData()
 		else:
@@ -250,12 +299,28 @@ class HierarchyWidget(html5.Div):
 		self.path = []
 		self.sinkEvent("onClick", "onDblClick")
 
-		##Proxy some events and functions of the original table
-		#for f in ["selectionChangedEvent","selectionActivatedEvent","cursorMovedEvent","getCurrentSelection"]:
-		#	setattr( self, f, getattr(self.table,f))
-		self.actionBar.setActions(["selectrootnode","add","edit","clone","delete"]+(["select","close"] if self.selectMode else [])+["|","reload"])
+		self.actionBar.setActions(["selectrootnode","add","edit","clone","delete"]+(["select","close"] if self.selectMode else [])+["|","listview","reload"])
 		self.sinkEvent("onDrop","onDragOver")
 
+	def toggleListView( self ):
+		self.setListView(not self.listviewActive)
+		self.reloadData()
+
+	def setListView( self,visible=False ):
+		if visible:
+			self[ "style" ][ "width" ] = "33%"
+			self.listviewActive = True
+			self.showListView()
+			return
+		self.listviewActive = False
+		self.hideListView()
+		self["style"]["width"]="100%"
+
+	def showListView( self ):
+		self.listview.show()
+
+	def hideListView( self ):
+		self.listview.hide()
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -344,21 +409,36 @@ class HierarchyWidget(html5.Div):
 		return( None )
 
 	def onClick(self, event):
+		if event.target == self.element:
+			#empty click
+			self.currentKey = self.rootNode
+			self.setCurrentItem(None)
+			if self.listviewActive:
+				self.reloadListWidget()
+
 		item = self.itemForEvent(event)
 
 		if item is None:
 			return
+
+		currentKey = item.data["key"]
+		self.currentKey = currentKey
 
 		if html5.utils.doesEventHitWidgetOrChildren(event, item.expandLink):
 			item.toggleExpand()
 
 			if not item.isLoaded:
 				item.isLoaded = True
-				self.loadNode(item.data["key"])
+				self.loadNode(self.currentKey)
 
 		else:
 			self.setCurrentItem( item )
 			self.selectionChangedEvent.fire( self, item )
+
+		if self.listviewActive:
+			self.reloadListWidget()
+
+
 
 	def onDblClick(self, event):
 		item = self.itemForEvent( event )
@@ -372,8 +452,10 @@ class HierarchyWidget(html5.Div):
 	def setCurrentItem(self, item):
 		if self._currentCursor:
 			self._currentCursor.removeClass("is-focused")
-		item.addClass("is-focused")
-		self._currentCursor = item
+
+		if item:
+			item.addClass("is-focused")
+			self._currentCursor = item
 
 	def onSetDefaultRootNode(self, req):
 		"""
@@ -392,6 +474,7 @@ class HierarchyWidget(html5.Div):
 			:type rootNode: str
 		"""
 		self.rootNode = rootNode
+		self.currentKey = self.rootNode
 		self._currentCursor = None
 		self.rootNodeChangedEvent.fire(rootNode)
 		self.reloadData()
@@ -400,6 +483,10 @@ class HierarchyWidget(html5.Div):
 		"""
 			Reload the data were displaying.
 		"""
+		if self.listviewActive and not self.listwidgetadded:
+			self.listwidgetadded= True
+			conf[ "mainWindow" ].stackWidget( self.listview,disableOtherWidgets=False )
+
 		def collectExpandedNodes( currNode ):
 			res = []
 			for c in currNode._children[:]:
@@ -413,6 +500,12 @@ class HierarchyWidget(html5.Div):
 		for c in self.entryFrame._children[:]:
 			self.entryFrame.removeChild(c)
 		self.loadNode( self.rootNode )
+		if self.listviewActive:
+			self.reloadListWidget()
+
+
+	def reloadListWidget( self ):
+		self.listview.setFilter( { "parent":self.currentKey,"orderby":"sortindex" } )
 
 	def loadNode(self, node, cursor = None):
 		"""
@@ -460,7 +553,7 @@ class HierarchyWidget(html5.Div):
 			assert ol is not None
 
 		for skel in data["skellist"]:
-			hi = HierarchyItem( self.module, skel, data["structure"] )
+			hi = HierarchyItem( self.module, skel, data["structure"],self )
 			ol.appendChild( hi )
 			if hi.data["key"] in self._expandedNodes:
 				hi.toggleExpand()

@@ -8,6 +8,8 @@
 .popout-anchor {
   position: relative;
   width: fit-content;
+  align-self: stretch;
+  display: flex;
   &:before {
     position: absolute;
     transition: all .3s ease;
@@ -32,6 +34,7 @@
   transition: all .3s ease;
   pointer-events: none;
   .boxShadow(2, #000);
+  min-width: @sideNavMinWidth;
   max-width:@pageWidth/2.5;
   max-height: 90vh;
   display: flex;
@@ -40,13 +43,13 @@
     content: '';
     display: block;
     z-index: -1;
-    width: ~'calc(100% + 20px)';
-    height: ~'calc(100% + 20px)';
+    width: ~'calc(100% + 40px)';
+    height: ~'calc(100% + 40px)';
     position: absolute;
-    left: -10px;
-    top: -10px;
+    left: -20px;
+    top: -20px;
   }
-  .popout-opener:hover &,
+  .popout-opener:hover > &,
   .is-active > & {
     .zIndex('overlay', 1);
     opacity: 1;
