@@ -10,6 +10,7 @@ This is the current development version.
 ## [2.5.0] Vesuv
 
 - Feature: Support for new recordBone()
+- Bugfix: Improved textBone.unserialize() and change-event behavior 
 - Bugfix: Widget for stringBone(multiple=True) is now cleared on unserialization
 - Bugfix: Added missing serializeForDocument to spatialBone
 - Bugfix: SelectMultiBoneExtractor.render() works now correctly for selectBone(multiple=True)
