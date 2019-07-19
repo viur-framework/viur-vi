@@ -19,16 +19,23 @@
 .vi-modulepipe {
   height: 100%;
   position: absolute;
-  right: 0;
-  width: 10px;
+  right: -@outerSpace;
+  width: @outerSpace;
   background: transparent;
-  border-right: 1px solid @borderColorModulelist;
+  border-left: 1px solid @borderColorModulelist;
   top: 0;
   cursor: ew-resize;
   transition: .3s ease all;
-
+  &:before {
+    content: '';
+    display: block;
+    height: 100%;
+    width: @innerSpace;
+    position: absolute;
+    left: -@innerSpace;
+  }
   &:hover {
-    border-right: 2px solid @mainColor;
+    border-left: 2px solid @mainColor;
   }
 }
 
