@@ -14,6 +14,7 @@ This is the current development version.
 - Bugfix: Widget for stringBone(multiple=True) is now cleared on unserialization
 - Bugfix: Added missing serializeForDocument to spatialBone
 - Bugfix: SelectMultiBoneExtractor.render() works now correctly for selectBone(multiple=True)
+- Bugfix: Disallow applying SelectFieldsPopup with empty selection (#27)
 
 ## [2.4.1] Agung
 

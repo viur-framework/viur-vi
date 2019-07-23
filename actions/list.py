@@ -494,13 +494,19 @@ class SelectFieldsPopup( html5.ext.Popup ):
 		self.appendChild(self.cancelBtn)
 
 	def doApply(self, *args, **kwargs):
-		self.applyBtn["class"].append("is_loading")
-		self.applyBtn["disabled"] = True
-
 		res = []
 		for c in self.checkboxes:
 			if c["checked"]:
 				res.append( c["value"] )
+
+		if not res:
+			html5.ext.Alert(
+				translate("You have to select at least on field to continue!")
+			)
+			return
+
+		self.applyBtn["class"].append("is_loading")
+		self.applyBtn["disabled"] = True
 
 		self.listWdg.setFields( res )
 		self.close()
