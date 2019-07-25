@@ -156,15 +156,19 @@ class SelectTable( html5.Table ):
 
 		if self._isCtlPressed:
 			if row in self._selectedRows:
+				for x in self._selectedRows:
+					self.getTrByIndex(x).removeClass("is_focused") # remove focus
 				self.removeSelectedRow( row )
 			else:
 				self.addSelectedRow( row )
+				self.setCursorRow(row, False) # set focus
 			event.preventDefault()
 
 		elif self._isShiftPressed:
 			self.unSelectAll()
 			for i in ( range(self._ctlStartRow, row+1) if self._ctlStartRow <= row else range(row, self._ctlStartRow+1) ):
 				self.addSelectedRow( i )
+			self.setCursorRow(row, False) # set focus
 			event.preventDefault()
 
 		elif self.checkboxes and html5.utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
@@ -251,6 +255,8 @@ class SelectTable( html5.Table ):
 		elif html5.isControl(event):  # Ctrl
 			self._isCtlPressed = True
 			self._ctlStartRow = self._currentRow or 0
+			if self._currentRow is not None:
+				self.addSelectedRow(self._currentRow) # add already selected row to selection
 
 		elif html5.isShift(event):  # Shift
 			self._isShiftPressed = True
@@ -263,6 +269,11 @@ class SelectTable( html5.Table ):
 		if html5.isControl(event):
 			self._isCtlPressed = False
 			self._ctlStartRow = None
+
+			# leave selection mode if there is only one row selected and return to normal focus
+			if len(self._selectedRows) == 1:
+				for row in self.getCurrentSelection():
+					self.removeSelectedRow(row)
 
 		elif html5.isShift(event):
 			self._isShiftPressed = False
