@@ -15,6 +15,7 @@ This is the current development version.
 - Bugfix: Added missing serializeForDocument to spatialBone
 - Bugfix: SelectMultiBoneExtractor.render() works now correctly for selectBone(multiple=True)
 - Bugfix: Disallow applying SelectFieldsPopup with empty selection (#27)
+- Bugfix: Selection in SelectTable works now correctly.
 
 ## [2.4.1] Agung
 
