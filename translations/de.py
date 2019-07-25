@@ -153,10 +153,11 @@ lngDe = {
 	"login with google": u"Mit Google einloggen",
 
 	"the viur server (v{server.version}) is incompatible to this vi (v{vi.version}).":
-		u"Die Version des verwendeten ViUR servers (v{server.version}) ist inkompatibel mit diesem Vi (v{vi.version}).",
-	"please update either your server or vi!": u"Bitte aktualisieren Sie entweder den Server oder das Vi!",
+		u"Die Version des verwendeten ViUR Servers (v{server.version}) ist inkompatibel mit diesem Vi (v{vi.version}).",
+	"there may be a lack on functionality.": u"Diese Inkompatibilität kann zu technischen Problemen führen.",
+	"please update either your server or vi!": u"Bitte aktualisieren Sie entweder den Server oder das Vi auf eine neuere Version!",
 	"version mismatch": u"Versionen stimmen nicht überein",
-	"retry": u"Nochmal versuchen",
+	"continue anyway": u"Trotzdem fortfahren",
 	"vi.login.insufficient-rights": u"Der aktuelle angemeldete Benutzer hat nicht genügend Rechte um diese "
 	                                u"Funktion zu verwenden.\n\nBitte loggen Sie sich unter einem anderen "
 	                                u"Benutzer mit entsprechenden Zugriffsrechten ein.",

@@ -9,13 +9,16 @@ This is the current development version.
 
 ## [2.5.0] Vesuv
 
+Release date: Jul 26, 2019
+
 - Feature: Support for new recordBone()
-- Bugfix: Improved textBone.unserialize() and change-event behavior 
-- Bugfix: Widget for stringBone(multiple=True) is now cleared on unserialization
-- Bugfix: Added missing serializeForDocument to spatialBone
-- Bugfix: SelectMultiBoneExtractor.render() works now correctly for selectBone(multiple=True)
+- Bugfix: Improved `textBone.unserialize()` and change-event behavior 
+- Bugfix: Widget for `stringBone(multiple=True)` is now cleared on unserialization
+- Bugfix: Added missing `serializeForDocument()` to spatialBone
+- Bugfix: SelectMultiBoneExtractor.render() works now correctly for `selectBone(multiple=True)`
 - Bugfix: Disallow applying SelectFieldsPopup with empty selection (#27)
-- Bugfix: Selection in SelectTable works now correctly.
+- Bugfix: Selection in SelectTable works now correctly
+- Bugfix: On server version mismatch, allow to continue anyway
 
 ## [2.4.1] Agung
 
