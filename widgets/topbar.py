@@ -20,9 +20,9 @@ class TopBarWidget(html5.Header):
 
 		self.sinkEvent("onClick")
 
-		self.modulH1 = html5.H1()
-		self.modulH1._setClass("module")
-		self.appendChild(self.modulH1)
+		self.moduleH1 = html5.H1()
+		self.moduleH1._setClass("module")
+		self.appendChild(self.moduleH1)
 
 		self.modulContainer = html5.Div()
 		self.modulContainer["class"].append("currentmodul")
@@ -47,13 +47,17 @@ class TopBarWidget(html5.Header):
 			if widget:
 				self.iconnav.appendChild(widget())
 
-	def setTitle(self):
-		title = conf.get("vi.name")
+	def setTitle(self, title=None):
+		self.moduleH1.removeAllChildren()
+
+		if title is None:
+			title = conf.get("vi.name")
+
 		if title:
-			self.modulH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
+			self.moduleH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
 
 	def onClick(self, event):
-		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulH1):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.moduleH1):
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
 	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None, path=None):
