@@ -24,6 +24,7 @@ Release date: Jul 26, 2019
 
 Release date: May 24, 2019
 
+- Bugfix: logics 2.4.1 with fixed unary operators
 - Bugfix: Order of path items in file module, stop path recognition when key is referenced as parentkey
 - Bugfix: Updated icons submodule
 
