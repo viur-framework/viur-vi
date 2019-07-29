@@ -9,7 +9,7 @@ from priorityqueue import \
 	viewDelegateSelector,\
 	extendedSearchWidgetSelector, \
 	extractorDelegateSelector
-
+from widgets.edit import InvalidBoneValueException
 
 class StringBoneExtractor(BaseBoneExtractor):
 
@@ -328,6 +328,10 @@ class StringEditBone(html5.Div):
 		tag = self.genTag("", lang=btn.lang)
 		tag.focus()
 
+	@staticmethod
+	def isInvalid(value):
+		return False
+
 	def unserialize(self, data, extendedErrorInformation=None):
 		data = data.get(self.boneName)
 		if not data:
@@ -384,22 +388,34 @@ class StringEditBone(html5.Div):
 				res["%s.%s" % (self.boneName, lang)] = []
 				for child in self.langEdits[lang]._children:
 					if isinstance(child, Tag):
-						res["%s.%s" % (self.boneName, lang)].append(child.input["value"])
+						if not self.isInvalid(child.input["value"]):
+							res["%s.%s" % (self.boneName, lang)].append(child.input["value"])
+						else:
+							raise InvalidBoneValueException()
 
 		elif self.languages and not self.multiple:
 			for lang in self.languages:
 				txt = self.langEdits[lang]["value"]
 				if txt:
-					res["%s.%s" % (self.boneName, lang)] = txt
+					if not self.isInvalid(txt):
+						res["%s.%s" % (self.boneName, lang)] = txt
+					else:
+						raise InvalidBoneValueException()
 
 		elif not self.languages and self.multiple:
 			res[self.boneName] = []
 			for child in self.tagContainer._children:
 				if isinstance(child, Tag):
-					res[self.boneName].append(child.input["value"])
+					if not self.isInvalid(child.input["value"]):
+						res[self.boneName].append(child.input["value"])
+					else:
+						raise InvalidBoneValueException()
 
 		elif not self.languages and not self.multiple:
-			res[self.boneName] = self.input["value"]
+			if not self.isInvalid(self.input["value"]):
+				res[self.boneName] = self.input["value"]
+			else:
+				raise InvalidBoneValueException()
 
 		return res
 
