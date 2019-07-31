@@ -155,8 +155,15 @@ class Uploader(html5.Progress):
 		self.uploadSuccess = EventDispatcher("uploadSuccess")
 		self.responseValue = None
 		self.context = context
-		# self.files = files
-		r = NetworkService.request("file", "getUploadURL", successHandler=self.onUploadUrlAvailable, secure=True)
+		#self.files = files
+
+		r = NetworkService.request("file", "getUploadURL",
+			params={"node": node} if node else {},
+			successHandler=self.onUploadUrlAvailable,
+			failureHandler=self.onUploadUrlFailure,
+			secure=True
+		)
+
 		r.file = file
 		r.node = node
 		conf["mainWindow"].log("progress", self)
@@ -166,10 +173,13 @@ class Uploader(html5.Progress):
 		"""
 			Internal callback - the actual upload url (retrieved by calling /file/getUploadURL) is known.
 		"""
-		r = NetworkService.request("", "/admin/skey", successHandler=self.onSkeyAvailable)
+		r = NetworkService.request("skey", "", successHandler=self.onSkeyAvailable)
 		r.file = req.file
 		r.node = req.node
 		r.destUrl = req.result
+
+	def onUploadUrlFailure(self, req, code):
+		self.onFailed(code)
 
 	def onSkeyAvailable(self, req):
 		"""
