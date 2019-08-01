@@ -286,7 +286,7 @@ class TreeWidget(html5.Div):
 	leafWidget = LeafWidget
 	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload"]
 
-	def __init__(self, module, rootNode=None, node=None, selectMode=None, *args, **kwargs):
+	def __init__(self, module, rootNode=None, node=None, selectMode=None, context=None, *args, **kwargs):
 		"""
 			:param module: Name of the module we shall handle. Must be a list application!
 			:type module: str
@@ -300,6 +300,7 @@ class TreeWidget(html5.Div):
 
 		self.module = module
 		self.rootNode = rootNode
+		self.context = context
 		self.node = node or rootNode
 		self.actionBar = ActionBar(module, "tree")
 		self.appendChild(self.actionBar)
