@@ -1,0 +1,89 @@
+@charset "UTF-8";
+/* PROGRESS */
+
+// Prefixes and objects:
+// .progress-
+
+// Colors:
+@progressBackground: fadeout(@complementColor, 90%);
+@progressDefault: fadeout(@complementColor, 40%);
+@progressPrimary: @successColor;
+@progressInfo: @hintColor;
+@progressWarning: @warnColor;
+@progressDanger: @failColor;
+
+.progress {
+  appearance: none;
+  border: none;
+  border-radius: .2em;
+  display: block;
+  height: 1rem;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+  margin: @defaultMargin 0;
+  &:not(:last-child) {
+    margin-bottom: 1em;
+  }
+}
+
+.progress::-webkit-progress-bar {
+  background-color: @progressBackground;
+}
+
+.progress::-webkit-progress-value {
+  background-color: @progressDefault;
+  transition: 1s ease-in-out all;
+}
+
+.progress::-moz-progress-bar {
+  background-color: @progressDefault;
+}
+
+
+.progress--primary::-webkit-progress-value {
+  background-color: @progressPrimary;
+}
+
+.progress--primary::-moz-progress-bar {
+  background-color: @progressPrimary;
+}
+
+
+.progress--info::-webkit-progress-value {
+  background-color: @progressInfo;
+}
+
+.progress--info::-moz-progress-bar {
+  background-color: @progressInfo;
+}
+
+.progress--warning::-webkit-progress-value {
+  background-color: @progressWarning;
+}
+
+.progress--warning::-moz-progress-bar {
+  background-color: @progressWarning;
+}
+
+
+.progress--danger::-webkit-progress-value {
+  background-color: @progressDanger;
+}
+
+.progress--danger::-moz-progress-bar {
+  background-color: @progressDanger;
+}
+
+
+.progress--small {
+  height: .6rem;
+}
+
+.progress--medium {
+  height: 1.4rem;
+}
+
+.progress--large {
+  height: 1.8rem;
+}

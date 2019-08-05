@@ -9,11 +9,12 @@ from vi.i18n import translate
 
 class HierarchyHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
-		super(HierarchyHandler, self).__init__(
-			moduleInfo["visibleName"],
-			moduleInfo.get("icon", "icons/modules/hierarchy.svg"),
-			path=moduleName + "/list"
-		)
+
+		icon = "icons-hierarchy"
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
+
+		super(HierarchyHandler, self).__init__(moduleInfo["visibleName"], icon,path=moduleName + "/list")
 
 		if "hideInMainBar" in moduleInfo.keys() and moduleInfo["hideInMainBar"]:
 			self["style"]["display"] = "none"
@@ -35,7 +36,7 @@ class HierarchyHandler(Pane):
 			self.addWidget(HierarchyWidget(self.moduleName))
 			self.focus()
 		elif pathList[1] in ["edit", "clone"] and len(pathList) > 2:
-			pane = Pane(translate("Edit"), closeable=True,
+			pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
 			            iconClasses=["module_%s" % self.moduleName, "apptype_hierarchy", "action_edit"])
 			edwg = EditWidget(self.moduleName, EditWidget.appHierarchy, key=pathList[2], hashArgs=(params or None), clone=pathList[1] == "clone")
 			pane.addWidget(edwg)

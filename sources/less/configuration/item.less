@@ -1,0 +1,23 @@
+@charset "UTF-8";
+/* BUTTONS */
+
+// Prefixes and objects:
+// .btn-
+// .btnGroup
+
+.item {
+  .item();
+  &--hint {
+    .colorizeItem(
+    @backgroundColor: lighten(@hintColor,35%),
+    @activeBackgroundColor: @hintColor,
+    @actionBackgroundColor: @hintColor);
+  }
+  &--success {
+    .colorizeItem(
+    @backgroundColor: lighten(@successColor,35%),
+    @activeBackgroundColor: @successColor,
+    @actionBackgroundColor: @successColor);
+  }
+}
+

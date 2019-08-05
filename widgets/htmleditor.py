@@ -128,7 +128,6 @@ class HtmlEditor(html5.Textarea):
 	def onDetach(self):
 		super(HtmlEditor, self).onDetach()
 		self.value = self["value"]
-
 		if self.summernote:
 			self.summernote.summernote("destroy")
 			self.summernote = None

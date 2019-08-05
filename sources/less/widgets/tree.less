@@ -1,0 +1,116 @@
+@charset "UTF-8";
+/* TREE */
+
+.vi-tree-selectioncontainer {
+  width: 100%;
+  margin-bottom: 15px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  .supports-upload & {
+    border: 3px dashed #ddd;
+    &:before,
+    &:after {
+      content: attr(title);
+      font-size: 1em;
+      font-weight: @fontWeightBold;
+      color: #bbb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      min-height: 50px;
+      overflow: hidden;
+    }
+    &.insert-here {
+      border-color: @successColor;
+      background-color: lighten(@successColor, 90%);
+      &:before,
+      &:after {
+        color: @successColor;
+      }
+    }
+  }
+  & .vi-tree-item {
+    transition: all 0.3s ease;
+    &:nth-child(odd) {
+      background-color: #f8f8f8;
+    }
+    &.is-selected {
+      background-color: @selectionoddcolor;
+      color: #fff;
+      border-right: 3px solid @mainColor;
+      border-left: 3px solid @mainColor;
+      margin-right: -3px;
+      margin-left:-3px;
+    }
+    &.is-focused {
+      padding:@defaultPadding*3 @defaultPadding;
+    }
+  }
+}
+
+.vi-tree-breadcrumb,
+.imageeditor,
+.linkeditor {
+  min-width: 500px;
+  padding: @defaultPadding @defaultPadding*3;
+  .boxShadow(1,#000);
+  background-color: #f0f0f0;
+  .zIndex('nav', 9);
+  font-size: .8em;
+}
+
+.imageeditor,
+.linkeditor {
+  padding: @defaultPadding @defaultPadding*3;
+  .zIndex('nav', 11);
+}
+
+.vi-tree-breadcrumb {
+  display: flex;
+  min-height: 35px;
+  flex-shrink: .2;
+  & .vi-tree-item {
+    cursor: pointer;
+    &:first-of-type {
+      padding-left: 0;
+    }
+    &:hover {
+      text-decoration: underline;
+    }
+    &:after {
+      content: ' ›';
+    }
+    &:last-of-type:after {
+      content: '';
+    }
+  }
+}
+
+.type_image {
+  display: flex;
+  align-items: center;
+}
+
+.fileBoneViewCell{
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.selectioncontainer-entry:first-child{
+  padding-top: 10px;
+}
+
+.file img {
+  float: left;
+  margin-right: 10px;
+  height: 32px;
+  width: auto;
+  max-width: 32px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+
+
+

@@ -9,6 +9,8 @@ from vi.network import NetworkService, DeferredCall
 from vi.priorityqueue import displayDelegateSelector, moduleHandlerSelector
 from vi.widgets.search import Search
 from vi.widgets.tree import TreeWidget, LeafWidget
+from vi.embedsvg import embedsvg
+
 
 class FileImagePopup(html5.ext.Popup):
 	def __init__(self, preview, *args, **kwargs):
@@ -18,18 +20,15 @@ class FileImagePopup(html5.ext.Popup):
 
 		img = html5.Img()
 		img["src"] = utils.getImagePreview(preview.currentFile, size=None)
-		self.appendChild(img)
-
-		div = html5.Div()
-		self.appendChild(div)
+		self.popupBody.appendChild(img)
 
 		btn = html5.ext.Button(translate("Download"), self.onDownloadBtnClick)
-		btn.addClass("icon", "download")
-		div.appendChild(btn)
+		btn.addClass("btn--download")
+		self.popupFoot.appendChild(btn)
 
 		btn = html5.ext.Button(translate("Close"), self.onClick)
-		btn.addClass("btn_no")
-		div.appendChild(btn)
+		btn.addClass("btn--close")
+		self.popupFoot.appendChild(btn)
 
 	def onClick(self, event):
 		self.close()
@@ -40,7 +39,7 @@ class FileImagePopup(html5.ext.Popup):
 class FilePreviewImage(html5.Div):
 	def __init__(self, file = None, size=150, *args, **kwargs):
 		super(FilePreviewImage, self).__init__(*args, **kwargs)
-		self.addClass("previewimg")
+		self.addClass("vi-file-imagepreview")
 		self.sinkEvent("onClick")
 
 		self.size = size
@@ -56,7 +55,9 @@ class FilePreviewImage(html5.Div):
 		self.setFile(file)
 
 	def setFile(self, file):
+		svg = None
 		self.currentFile = file
+		self.previewIcon = None
 
 		preview = utils.getImagePreview(file, cropped=True, size = self.size) if file else None
 
@@ -68,19 +69,34 @@ class FilePreviewImage(html5.Div):
 			self.downloadOnly = True
 
 			if file:
-				preview = "icons/filetypes/file.svg"
 				mime = file.get("mimetype")
 				if mime:
-					for icon in ["bmp", "doc", "gif", "jpg", "pdf", "png", "tiff", "image", "audio", "video", "zip"]:
-						if icon in mime:
-							preview = "icons/filetypes/%s.svg" % icon
-							self.downloadOnly = False
-							break
+					for mimesplit in mime.split("/"):
+						for icon in ["text", "pdf", "image", "audio", "video", "zip"]:
+							if icon in mimesplit:
+								svg = embedsvg.get("icons-%s-file" % icon)
+								if not svg:
+									svg = embedsvg.get("icons-%s" % icon)
+								self.downloadOnly = False
+								break
+			else:
+				self.addClass("no-preview")
+
+			if not svg:
+				svg = embedsvg.get("icons-file")
 
 		if preview:
-			self["style"]["background-image"] = "url('%s')" % preview
-		else:
-			self["style"]["background-image"] = None
+			self.previewIcon = html5.Img()
+			self.previewIcon["src"] = preview
+			self.removeClass("no-preview")
+		elif svg:
+			self.previewIcon = html5.I()
+			self.previewIcon.addClass("i")
+			self.previewIcon.element.innerHTML = svg + self.previewIcon.element.innerHTML
+			self.removeClass("no-preview")
+
+		if self.previewIcon:
+			self.appendChild(self.previewIcon)
 
 		if self.currentFile:
 			self.addClass("is-clickable")
@@ -110,8 +126,7 @@ class FilePreviewImage(html5.Div):
 			file = "/file/download/%s" % self.currentFile["dlkey"]
 
 			if self.currentFile.get("name"):
-				file += "?fileName=%s" % self.currentFile["name"]
-
+				file += "/%s" % self.currentFile["name"]
 			html5.window.open(file)
 
 
@@ -124,22 +139,25 @@ class LeafFileWidget(LeafWidget):
 		super(LeafFileWidget, self).__init__(module, data, structure, *args, **kwargs)
 
 		self.previewImg = FilePreviewImage(data)
-		self.prependChild(self.previewImg)
+		self.leafImage.appendChild(self.previewImg)
 
 		self.sinkEvent("onDragOver", "onDragLeave")
 
 	def onDragOver(self, event):
-		if not "insert_before" in self["class"]:
-			self["class"].append("insert_before")
+		if not self.hasClass("insert-before"):
+			self.addClass("insert-before")
+			self["title"] = translate("vi.data-insert")
+
 		super(LeafFileWidget, self).onDragOver(event)
 
 	def onDragLeave(self, event):
-		if "insert_before" in self["class"]:
-			self["class"].remove("insert_before")
-		super(LeafFileWidget, self).onDragLeave(event)
+		if self.hasClass("insert-before"):
+			self.removeClass("insert-before")
+			self["title"] = None
+		super(LeafFileWidget,self).onDragLeave( event )
 
 
-class Uploader(html5.Progress):
+class Uploader(html5.ignite.Progress):
 	"""
 		Uploads a file to the server while providing visual feedback of the progress.
 	"""
@@ -160,7 +178,7 @@ class Uploader(html5.Progress):
 		r.file = file
 		r.node = node
 		conf["mainWindow"].log("progress", self)
-		self.parent()["class"].append("is_uploading")
+		self.parent().addClass( "is-uploading" )
 
 	def onUploadUrlAvailable(self, req):
 		"""
@@ -225,12 +243,12 @@ class Uploader(html5.Progress):
 		self.replaceWithMessage("Upload failed with status code %s" % errorCode, isSuccess=False)
 
 	def replaceWithMessage(self, message, isSuccess):
-		self.parent()["class"].remove("is_uploading")
-		self.parent()["class"].remove("log_progress")
+		self.parent().removeClass("is-uploading")
+		self.parent().removeClass("log-progress")
 		if isSuccess:
-			self.parent()["class"].append("log_success")
+			self.parent().addClass("log-success")
 		else:
-			self.parent()["class"].append("log_failed")
+			self.parent().addClass("log-failed")
 		msg = html5.Span()
 		msg.appendChild(html5.TextNode(message))
 		self.parent().appendChild(msg)
@@ -241,15 +259,22 @@ class FileWidget(TreeWidget):
 	"""
 		Extends the TreeWidget to allow drag&drop upload of files to the current node.
 	"""
-	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload", "download"]
+	defaultActions = ["add.node", "add.leaf", "selectrootnode", "|", "edit", "delete", "download", "|", "reload"]
 	leafWidget = LeafFileWidget
 
 	def __init__(self, *args, **kwargs):
 		super(FileWidget, self).__init__(*args, **kwargs)
 		self.sinkEvent("onDragOver", "onDrop")
-		self["class"].append("supports_upload")
+		self.addClass("supports-upload")
+
+		searchBox = html5.Div()
+		searchBox.addClass("vi-search-wrap")
+		self.appendChild(searchBox)
+
 		self.search = Search()
-		self.appendChild(self.search)
+		self.search.addClass("input-group")
+		searchBox.appendChild(self.search)
+		self.search.searchLbl.addClass("label")
 		self.search.startSearchEvent.register(self)
 
 	def onStartSearch(self, searchStr, *args, **kwargs):
@@ -277,6 +302,7 @@ class FileWidget(TreeWidget):
 		return (moduleInfo["handler"].startswith("tree.simple.file"))
 
 	def onDragOver(self, event):
+		self.addClass("insert-here")
 		event.preventDefault()
 		event.stopPropagation()
 
@@ -285,6 +311,7 @@ class FileWidget(TreeWidget):
 	def onDrop(self, event):
 		event.preventDefault()
 		event.stopPropagation()
+		self.removeClass("insert-here")
 		files = event.dataTransfer.files
 		for x in range(0, files.length):
 			Uploader(files.item(x), self.node)

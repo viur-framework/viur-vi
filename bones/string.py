@@ -6,10 +6,12 @@ from vi.config import conf
 from vi.event import EventDispatcher
 from vi.i18n import translate
 from vi.priorityqueue import \
-	editBoneSelector,\
-	viewDelegateSelector,\
+	editBoneSelector, \
+	viewDelegateSelector, \
 	extendedSearchWidgetSelector, \
 	extractorDelegateSelector
+
+from vi.widgets.button import Button
 
 
 class StringBoneExtractor(BaseBoneExtractor):
@@ -70,27 +72,27 @@ class StringViewBoneDelegate(object):
 
 	def getViewElement(self, labelstr, datafield):
 		labelstr = html5.utils.unescape(labelstr)
+		delegato = html5.Div(labelstr)
 
-		if not datafield:
-			return html5.Label(labelstr)
-		else:
-			aspan = html5.Span()
-			aspan.appendChild(html5.TextNode(labelstr))
-			aspan["title"] = str(datafield)
-			return aspan
+		if datafield:
+			delegato["title"] = str(datafield)
+
+		delegato.addClass("vi-delegato", "vi-delegato--string")
+		return delegato
 
 
 class Tag(html5.Span):
 	def __init__(self, parentBone, tag, isEditMode, readonly=False, multiLine=False, *args, **kwargs):
 		super(Tag, self).__init__(*args, **kwargs)
-		self["class"].append("tag")
+		self.addClass("vi-bone-tag input-group")
 
 		self.parentBone = parentBone
 
 		if multiLine:
-			self.input = html5.Textarea()
+			self.input = html5.ignite.Textarea()
 		else:
-			self.input = html5.Input()
+			self.input = html5.ignite.Input()
+			self.input.addClass("input--small")
 			self.input["type"] = "text"
 
 		self.input["value"] = tag
@@ -102,8 +104,8 @@ class Tag(html5.Span):
 			self["draggable"] = True
 			self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd")
 
-			delBtn = html5.ext.Button(translate("Delete"), self.onDelBtnClick)
-			delBtn["class"].append("icon delete tag")
+			delBtn = Button(translate("Delete"), self.onDelBtnClick, icon="icons-delete")
+			delBtn.addClass("btn--delete btn--small")
 			self.appendChild(delBtn)
 
 	def onDelBtnClick(self, *args, **kwargs):
@@ -156,31 +158,35 @@ class StringEditBone(html5.Div):
 		self.boneName = boneName
 		self.currentTagToDrag = None
 		self.currentLanguage = None
+		self.addClass("vi-bone-container")
 
 		if self.languages and self.multiple:
-			self["class"].append("is_translated")
-			self["class"].append("is_multiple")
+			self.addClass("is-translated")
+			self.addClass("is-multiple")
 			self.languagesContainer = html5.Div()
+			self.languagesContainer.addClass("vi-bone-container-langcontent")
 			self.appendChild(self.languagesContainer)
 			self.buttonContainer = html5.Div()
-			self.buttonContainer["class"] = "languagebuttons"
-			self.appendChild(self.buttonContainer)
+			self.buttonContainer["class"] = "vi-bone-container-langbtns input-group"
+			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
 			self.langBtns = {}
 
 			for lang in self.languages:
 				tagContainer = html5.Div()
-				tagContainer["class"].append("lang_%s" % lang)
-				tagContainer["class"].append("tagcontainer")
-				tagContainer["style"]["display"] = "none"
+
+				tagContainer.addClass("lang_%s" % lang )
+				tagContainer.addClass("vi-bone-tagcontainer")
+				tagContainer.hide()
 
 				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
+				langBtn.addClass("btn--lang")
 				langBtn.lang = lang
 				self.buttonContainer.appendChild(langBtn)
 
 				if not self.readOnly:
-					addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
-					addBtn["class"].append("icon new tag")
+					addBtn = Button(translate("Add"), callback=self.onBtnGenTag, icon="icons-add")
+					addBtn.addClass("btn--add")
 					addBtn.lang = lang
 					tagContainer.appendChild(addBtn)
 
@@ -191,28 +197,31 @@ class StringEditBone(html5.Div):
 			self.setLang(self.languages[0])
 
 		elif self.languages and not self.multiple:
-			self["class"].append("is_translated")
+			self.addClass("is-translated")
 			self.languagesContainer = html5.Div()
+			self.languagesContainer.addClass("vi-bone-container-langcontent")
 			self.appendChild(self.languagesContainer)
 			self.buttonContainer = html5.Div()
-			self.buttonContainer["class"] = "languagebuttons"
-			self.appendChild(self.buttonContainer)
+			self.buttonContainer["class"] = "vi-bone-container-langbtns input-group"
+			self.appendChild( self.buttonContainer )
 			self.langEdits = {}
 			self.langBtns = {}
 
 			for lang in self.languages:
 				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
+				langBtn.addClass("btn--lang")
 				langBtn.lang = lang
 				self.buttonContainer.appendChild(langBtn)
 
 				if multiLine:
-					inputField = html5.Textarea()
+					inputField = html5.ignite.Textarea()
 				else:
-					inputField = html5.Input()
+					inputField = html5.ignite.Input()
 					inputField["type"] = "text"
+					inputField["placeholder"] = " "
 
-				inputField["style"]["display"] = "none"
-				inputField["class"].append("lang_%s" % lang)
+				inputField.hide()
+				inputField.addClass("lang_%s" % lang)
 
 				if self.readOnly:
 					inputField["readonly"] = True
@@ -224,25 +233,27 @@ class StringEditBone(html5.Div):
 			self.setLang(self.languages[0])
 
 		elif not self.languages and self.multiple:
-			self["class"].append("is_multiple")
+			self.addClass("is-multiple")
 			self.tagContainer = html5.Div()
-			self.tagContainer["class"].append("tagcontainer")
+			self.tagContainer.addClass("vi-bone-tagcontainer")
 			self.appendChild(self.tagContainer)
 
 			if not self.readOnly:
-				addBtn = html5.ext.Button(translate("New"), callback=self.onBtnGenTag)
+				addBtn = Button(translate("Add"), callback=self.onBtnGenTag, icon="icons-add")
 				addBtn.lang = None
-				addBtn["class"].append("icon new tag")
+				addBtn.addClass("btn--add")
 
 				self.tagContainer.appendChild(addBtn)
 
 		else:  # not languages and not multiple:
 
 			if multiLine:
-				self.input = html5.Textarea()
+				self.input = html5.ignite.Textarea()
+				self.addClass("textarea")
 			else:
-				self.input = html5.Input()
+				self.input = html5.ignite.Input()
 				self.input["type"] = "text"
+				self.input["placeholder"] = " "
 
 			self.appendChild(self.input)
 
@@ -293,47 +304,40 @@ class StringEditBone(html5.Div):
 
 		for lang in self.languages:
 			if self.isFilled(lang):
-				self.langBtns[lang]["class"].remove("is_unfilled")
-				if not "is_filled" in self.langBtns[lang]["class"]:
-					self.langBtns[lang]["class"].append("is_filled")
+				self.langBtns[lang].removeClass("is-unfilled")
+				if not "is-filled" in self.langBtns[lang]["class"]:
+					self.langBtns[lang].addClass("is-filled")
 			else:
-				self.langBtns[lang]["class"].remove("is_filled")
-				if not "is_unfilled" in self.langBtns[lang]["class"]:
-					self.langBtns[lang]["class"].append("is_unfilled")
+				self.langBtns[lang].removeClass("is-filled")
+				if not "is-unfilled" in self.langBtns[lang]["class"]:
+					self.langBtns[lang].addClass("is-unfilled")
 
 			if lang == self.currentLanguage:
-				# self.langBtns[lang]["class"].remove("is_filled")
-				# self.langBtns[lang]["class"].remove("is_unfilled")
-
-				if not "is_active" in self.langBtns[lang]["class"]:
-					self.langBtns[lang]["class"].append("is_active")
+				if not "is-active" in self.langBtns[lang]["class"]:
+					self.langBtns[lang].addClass("is-active")
 			else:
-				self.langBtns[lang]["class"].remove("is_active")
+				self.langBtns[lang].removeClass("is-active")
 
 	def setLang(self, lang):
 		if self.currentLanguage:
-			self.langEdits[self.currentLanguage]["style"]["display"] = "none"
+			self.langEdits[self.currentLanguage].hide()
 
 		self.currentLanguage = lang
-		self.langEdits[self.currentLanguage]["style"]["display"] = ""
+		self.langEdits[self.currentLanguage].show()
 		self._updateLanguageButtons()
 
 		for btn in self.buttonContainer._children:
 			if btn.lang == lang:
-				if "is_active" not in btn["class"]:
-					btn["class"].append("is_active")
+				btn.addClass("is-active")
 			else:
-				btn["class"].remove("is_active")
+				btn.removeClass("is-active")
 
 	def onBtnGenTag(self, btn):
 		tag = self.genTag("", lang=btn.lang)
 		tag.focus()
 
 	def unserialize(self, data, extendedErrorInformation=None):
-		if not self.boneName in data.keys():
-			return
-
-		data = data[self.boneName]
+		data = data.get(self.boneName)
 		if not data:
 			return
 
@@ -341,6 +345,9 @@ class StringEditBone(html5.Div):
 			assert isinstance(data, dict)
 
 			for lang in self.languages:
+				for child in self.langEdits[lang].children():
+					if isinstance(child, Tag):
+						self.langEdits[lang].removeChild(child)
 
 				if lang in data.keys():
 					val = data[lang]
@@ -361,6 +368,10 @@ class StringEditBone(html5.Div):
 					self.langEdits[lang]["value"] = ""
 
 		elif not self.languages and self.multiple:
+
+			for child in self.tagContainer.children():
+				if isinstance(child, Tag):
+					self.tagContainer.removeChild(child)
 
 			if isinstance(data, list):
 				for tagStr in data:
@@ -459,15 +470,15 @@ class ExtendedStringSearch(html5.Div):
 		self.appendChild(html5.TextNode(extension["name"]))
 		self.sinkEvent("onKeyDown")
 		if self.opMode in ["equals", "from", "to", "prefix"]:
-			self.input = html5.Input()
+			self.input = html5.ignite.Input()
 			self.input["type"] = "text"
 			self.appendChild(self.input)
 		elif self.opMode == "range":
-			self.input1 = html5.Input()
+			self.input1 = html5.ignite.Input()
 			self.input1["type"] = "text"
 			self.appendChild(self.input1)
 			self.appendChild(html5.TextNode("to"))
-			self.input2 = html5.Input()
+			self.input2 = html5.ignite.Input()
 			self.input2["type"] = "text"
 			self.appendChild(self.input2)
 

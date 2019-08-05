@@ -8,13 +8,27 @@ class SideBar( html5.Div ):
 		super( SideBar, self ).__init__( *args, **kwargs )
 		self.isInit = False
 		self.currentWidget = None
-		self["class"].append("sidebarwidgets")
-		self["class"].append("isempty")
-		self["style"]["float"] = "right"
+		self.addClass("vi-sidebar popup popup--ne popup--local box")
+
+		self.fromHTML("""
+			<div class="box-head" [name]="sidebarHead">
+				<div class="item" [name]="sidebarHeadItem">
+					<div class="item-image">
+						<i class="i i--small" [name]="sidebarIcon"></i>
+					</div>
+					<div class="item-content">
+						<div class="item-headline" [name]="sidebarHeadline"></div>
+					</div>
+				</div>
+			</div>
+		""")
+
+		closeBtn = html5.ext.Button("&times;", self.close, className="item-action")
+		closeBtn.removeClass("btn")
+		self.sidebarHeadItem.appendChild(closeBtn)
 
 	def onAttach(self):
 		super( SideBar, self ).onAttach()
-		self.parent()["class"].append("isfullview")
 		self.isInit = True
 		if self.currentWidget is not None:
 			cw = self.currentWidget
@@ -25,6 +39,7 @@ class SideBar( html5.Div ):
 		if self.currentWidget:
 			self.removeChild( self.currentWidget )
 			self.currentWidget = None
+			self.removeClass("is-active")
 		super( SideBar, self ).onDetach()
 		self.isInit = False
 
@@ -36,16 +51,10 @@ class SideBar( html5.Div ):
 		if self.currentWidget:
 			self.removeChild( self.currentWidget )
 			if widget is None:
-				self["class"].remove("haschild")
-				self["class"].append("isempty")
-				self.parent()["class"].remove("issplitview")
-				self.parent()["class"].append("isfullview")
+				self.removeClass("is-active")
 
 		elif widget is not None:
-			self["class"].append("haschild")
-			self["class"].remove("isempty")
-			self.parent()["class"].append("issplitview")
-			self.parent()["class"].remove("isfullview")
+			self.addClass( "is-active")
 
 		self.currentWidget = widget
 
@@ -55,3 +64,9 @@ class SideBar( html5.Div ):
 
 	def getWidget(self):
 		return( self.currentWidget )
+
+	def close(self, *args, **kwargs):
+		if self.currentWidget:
+			self.removeChild( self.currentWidget )
+			self.currentWidget = None
+			self.removeClass("is-active")

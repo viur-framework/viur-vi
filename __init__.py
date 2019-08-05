@@ -16,7 +16,7 @@ except ImportError:
 class Application(html5.Div):
 	def __init__(self):
 		super(Application, self).__init__()
-		self["class"].append("vi-application")
+		self.addClass("vi-application")
 		conf["theApp"] = self
 
 		# Main Screens
@@ -51,14 +51,13 @@ class Application(html5.Div):
 				"vi.version": ".".join(str(x) for x in conf["vi.version"]),
 			}
 
-			conf["server.version"] = None
-
 			html5.ext.Alert(
 				translate("The ViUR server (v{server.version}) is incompatible to this Vi (v{vi.version}).", **params)
+					+ "\n" + translate("There may be a lack on functionality.")
 					+ "\n" + translate("Please update either your server or Vi!"),
 				title=translate("Version mismatch"),
 				okCallback=self.startup,
-				okLabel=translate("Retry")
+				okLabel=translate("Continue anyway")
 			)
 
 			return

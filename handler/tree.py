@@ -7,11 +7,13 @@ from vi.i18n import translate
 
 class TreeHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
-		super(TreeHandler, self).__init__(
-			moduleInfo["visibleName"],
-			moduleInfo.get("icon", "icons/modules/tree.svg"),
-			path=moduleName + "/list"
-		)
+		icon = "icons-tree"
+
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
+
+		super(TreeHandler, self).__init__(moduleInfo["visibleName"], icon,path=moduleName + "/list")
+
 
 		self.moduleName = moduleName
 		self.moduleInfo = moduleInfo
@@ -43,7 +45,7 @@ class TreeHandler(Pane):
 			self.focus()
 
 		elif pathList[1] in ["edit", "clone"] and len(pathList) > 3:
-			pane = Pane(translate("Edit"), closeable=True,
+			pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
 			            iconClasses=["module_%s" % self.moduleName, "apptype_tree", "action_edit"])
 			edwg = EditWidget(self.moduleName, EditWidget.appTree, key=pathList[3], skelType=pathList[2],
 			                  hashArgs=(params or None), clone=pathList[1] == "clone")

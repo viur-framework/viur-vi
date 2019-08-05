@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import html5
+
 from .network import DeferredCall
 from .i18n import translate
 from .config import conf
+from .embedsvg import embedsvg
+
 from datetime import datetime
 
 
@@ -13,17 +16,18 @@ class Log(html5.Div):
 	def __init__(self):
 		super(Log, self).__init__()
 
-		self["class"].append("vi_messenger")
+		self.addClass("vi-messenger")
 		openLink = html5.ext.Button(translate("Open message center"), self.toggleMsgCenter)
 		self.appendChild(openLink)
 
+
 		self.logUL = html5.Ul()
 		self.logUL["id"] = "statuslist"
-		self.logUL["class"].append( "statuslist" )
+		self.logUL.addClass( "statuslist" )
 		self.appendChild( self.logUL )
 
 		versionDiv = html5.Div()
-		versionDiv["class"].append("versiondiv")
+		versionDiv.addClass("versiondiv")
 
 		# Server name and version number
 		name = conf["vi.viur"]
@@ -31,7 +35,7 @@ class Log(html5.Div):
 			versionspan = html5.Span()
 			versionspan.appendChild("%s v%s" %
 				(name, ".".join([str(x) for x in conf["server.version"]])))
-			versionspan["class"].append("serverspan")
+			versionspan.addClass("serverspan")
 			versionDiv.appendChild(versionspan)
 
 		# Vi name and version number
@@ -40,9 +44,9 @@ class Log(html5.Div):
 			versionspan = html5.Span()
 			versionspan.appendChild("%s v%s%s" %
 				(name, ".".join([str(x) for x in conf["vi.version"]]),
-					("-" + conf["vi.version.appendix"]) if conf["vi.version.appendix"] else ""))
+					conf["vi.version.appendix"]))
+			versionspan.addClass("versionspan")
 
-			versionspan["class"].append("versionspan")
 			versionDiv.appendChild(versionspan)
 
 			#Try loading the revision and build date
@@ -51,11 +55,11 @@ class Log(html5.Div):
 
 				revspan = html5.Span()
 				revspan.appendChild(html5.TextNode("Rev %s" % revision))
-				revspan["class"].append("revisionspan")
+				revspan.addClass("revisionspan")
 
 				datespan = html5.Span()
 				datespan.appendChild(html5.TextNode("Built %s" % builddate))
-				datespan["class"].append("datespan")
+				datespan.addClass("datespan")
 
 				versionDiv.appendChild(revspan)
 				versionDiv.appendChild(datespan)
@@ -67,12 +71,12 @@ class Log(html5.Div):
 			self.appendChild(versionDiv)
 
 	def toggleMsgCenter(self, *args, **kwargs):
-		if "is_open" in self["class"]:
-			self["class"].remove("is_open")
+		if self.hasClass("is-open"):
+			self.removeClass("is-open")
 		else:
-			self["class"].append("is_open")
+			self.addClass("is-open")
 
-	def log(self, type, msg ):
+	def log(self, type, msg, icon=None ):
 		"""
 			Adds a message to the log
 			:param type: The type of the message.
@@ -82,35 +86,52 @@ class Log(html5.Div):
 		"""
 		assert type in ["success", "error", "warning", "info", "progress"]
 
-		liwrap = html5.Li()
-		liwrap["class"].append("log_"+type)
-		liwrap["class"].append("is_new")
+		msgWrap = html5.Li()
+		msgWrap.addClass("msg--"+type, "msg", "is-active")
+		msgWrap.addClass("is-new popup popup--s")
 
-		spanDate = html5.Span()
-		spanDate.appendChild( html5.TextNode( datetime.now().strftime("%H:%M:%S") ))
-		spanDate["class"].append("date")
-		liwrap.appendChild(spanDate)
+		if icon:
+			svg = embedsvg.get(icon)
+		else:
+			svg = embedsvg.get("icons-%s" % type)
+
+		if not svg:
+			svg = embedsvg.get("icons-message-news")
+
+		if svg:
+			msgWrap.element.innerHTML = svg + msgWrap.element.innerHTML
+
+		msgContent = html5.Div()
+		msgContent.addClass("msg-content")
+		msgWrap.appendChild(msgContent)
+
+		msgDate = html5.Span()
+		msgDate.appendChild( html5.TextNode( datetime.now().strftime("%d. %b. %Y, %H:%M:%S") ))
+		msgDate.addClass("msg-date")
+		msgContent.appendChild(msgDate)
+
+
 
 		if isinstance( msg, html5.Widget ):
 			#Append that widget directly
-			liwrap.appendChild( msg )
+			msgContent.appendChild( msg )
 
 		else:
 			#Create a span element for that message
-			spanMsg = html5.Span()
-			spanMsg.appendChild(html5.TextNode(html5.utils.unescape(msg)))
-			spanMsg["class"].append("msg")
-			liwrap.appendChild(spanMsg)
+			msgDescr = html5.Span()
+			msgDescr.appendChild(html5.TextNode(html5.utils.unescape(msg)))
+			msgDescr.addClass("msg-descr")
+			msgContent.appendChild(msgDescr)
 
-		DeferredCall(self.removeNewCls, liwrap,_delay=2500)
-		self.logUL.appendChild( liwrap )
+		DeferredCall(self.removeNewCls, msgWrap,_delay=2500)
+		self.logUL.appendChild( msgWrap )
 
 		if len(self.logUL._children)>1:
-			self.logUL.element.removeChild( liwrap.element )
-			self.logUL.element.insertBefore( liwrap.element, self.logUL.element.children.item(0) )
+			self.logUL.element.removeChild( msgWrap.element )
+			self.logUL.element.insertBefore( msgWrap.element, self.logUL.element.children.item(0) )
 
 	def removeNewCls(self,span):
-		span["class"].remove("is_new")
+		span.removeClass("is-new popup popup--s")
 
 	def reset(self):
 		self.logUL.removeAllChildren()

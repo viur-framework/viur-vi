@@ -6,24 +6,26 @@ from vi.event import EventDispatcher
 from vi.i18n import translate
 from vi.config import conf
 from vi.bones.base import BaseBoneExtractor
+from vi.embedsvg import embedsvg
 
 class SelectMultiBoneExtractor(BaseBoneExtractor):
 
 	def render(self, data, field):
 		if field in data.keys():
+			options = {k: v for k, v in self.skelStructure[field]["values"]}
 			result = list()
 
 			for fieldKey in data[field]:
-				if not fieldKey in self.skelStructure[field]["values"].keys():
+				if not fieldKey in options.keys():
 					result.append(fieldKey)
 				else:
-					value = self.skelStructure[field]["values"][fieldKey]
+					value = options.get(fieldKey)
 					if value:
 						result.append(value)
 
 			return ",".join(result)
 
-		return conf[ "empty_value" ]
+		return conf["empty_value"]
 
 class SelectMultiViewBoneDelegate( object ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
@@ -33,8 +35,9 @@ class SelectMultiViewBoneDelegate( object ):
 		self.moduleName = moduleName
 
 	def render( self, data, field ):
+
 		if field in data.keys():
-			result = html5.Ul()
+			delegato = html5.Ul()
 			options = {k: v for k, v in self.skelStructure[field]["values"]}
 
 			for i, fieldKey in enumerate(data[field]):
@@ -43,20 +46,23 @@ class SelectMultiViewBoneDelegate( object ):
 					ali.appendChild(
 						html5.TextNode(translate("and {count} more",
 						                            count=len(data[field]) - conf["maxMultiBoneEntries"])))
-					ali["class"].append("selectmulti_more_li")
+					ali.addClass("selectmulti_more_li")
 
-					result.appendChild(ali)
+					delegato.appendChild(ali)
 					break
 
 				ali = html5.Li()
 				ali.appendChild(html5.TextNode(options.get(fieldKey, fieldKey)))
 				ali["Title"] = fieldKey
 
-				result.appendChild(ali)
+				delegato.appendChild(ali)
 
-			return result
+			return delegato
+		else:
+			delegato = html5.Div(conf["empty_value"])
 
-		return html5.Label(conf["empty_value"])
+		delegato.addClass("vi-delegato", "vi-delegato--select", "vi-delegato--selectmulti")
+		return delegato
 
 class SelectMultiEditBone(html5.Div):
 
@@ -64,6 +70,7 @@ class SelectMultiEditBone(html5.Div):
 		super(SelectMultiEditBone,  self ).__init__(*args, **kwargs)
 		self.boneName = boneName
 		self.readOnly = readOnly
+		self.addClass("vi-bone-container option-group")
 
 		# Compatibility mode
 		if isinstance(values, dict):
@@ -74,12 +81,15 @@ class SelectMultiEditBone(html5.Div):
 		# Perform valuesOrder list
 		for key, value in self.values:
 			alabel = html5.Label()
+			alabel.addClass("check")
 			acheckbox = html5.Input()
 			acheckbox["type"] = "checkbox"
 			acheckbox["name"] = key
+			acheckbox.addClass("check-input")
 			alabel.appendChild(acheckbox)
 
 			aspan = html5.Span()
+			aspan.addClass("check-label")
 			aspan.element.innerHTML = value
 			alabel.appendChild(aspan)
 
@@ -125,6 +135,7 @@ class ExtendedSelectMultiSearch( html5.Div ):
 		self.filterChangedEvent = EventDispatcher("filterChanged")
 		self.appendChild( html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
+		self.addClass("select")
 		self.appendChild( self.selectionCb )
 		o = html5.Option()
 		o["value"] = ""
@@ -181,6 +192,7 @@ class AccessMultiSelectBone( html5.Div ):
 		self.readOnly = readOnly
 		print(values)
 		self.values = {k: v for k, v in values}
+		self.addClass("vi-bone-container option-group")
 
 		self.modules = {}
 		self.modulesbox = {}
@@ -199,15 +211,18 @@ class AccessMultiSelectBone( html5.Div ):
 		# Render static / singleton flags first
 		for flag in sorted( self.flags.keys() ):
 			label = html5.Label()
+			label.addClass("check")
 
 			checkbox = html5.Input()
 			checkbox["type"] = "checkbox"
 			checkbox["name"] = flag
+			checkbox.addClass("check-input")
 			label.appendChild( checkbox )
 
 			self.flags[ flag ] = checkbox
 
 			span = html5.Span()
+			span.addClass("check-label")
 			span.appendChild( html5.TextNode( flag ) )
 			label.appendChild( span )
 
@@ -216,37 +231,42 @@ class AccessMultiSelectBone( html5.Div ):
 		# Render module access flags then
 		for module in sorted( self.modules.keys() ):
 			label = html5.Label()
-
-			span = html5.Span()
-			span.appendChild( html5.TextNode( module ) )
-			label.appendChild( span )
-
-			ul = html5.Ul()
+			label.addClass("check")
+			self.appendChild( label )
 
 			checkbox = html5.Input()
 			checkbox["type"] = "checkbox"
 			checkbox["name"] = module
+			checkbox.addClass("check-input")
 			self.modulesbox[ module ] = checkbox
+			label.appendChild( checkbox )
 
-			li = html5.Li()
-			li.appendChild( checkbox )
-			ul.appendChild( li )
+			span = html5.Span()
+			span.addClass("check-label")
+			span.appendChild( html5.TextNode( module ) )
+			label.appendChild( span )
 
+			ul = html5.Ul()
+			ul.addClass("input-group")
 			for state in self.states:
 				li = html5.Li()
-				li[ "class" ] = [ "access-state", state ]
+				li[ "class" ] = [ "btn btn--access-state", state ]
+				svg = embedsvg.get("icons-%s" % state)
+				if state == "view":
+					svg = embedsvg.get("icons-preview")
+				if svg:
+					li.element.innerHTML = svg + li.element.innerHTML
+				li.appendChild( html5.TextNode( translate(state) ) )
 
 				# Some modules may not support all states
 				if ( "%s-%s" % (module, state) ) not in self.values:
-					li[ "class" ].append( "disabled" )
+					li[ "class" ].append( "is-disabled" )
 
 				ul.appendChild( li )
 
 				self.modules[ module ][ state ] = li
-
 			label.appendChild( ul )
 
-			self.appendChild( label )
 
 	def parseskelaccess( self, value ):
 		for state in self.states:
@@ -259,18 +279,18 @@ class AccessMultiSelectBone( html5.Div ):
 		for module, toggles in self.modules.items():
 			for toggle in toggles.values():
 				if html5.utils.doesEventHitWidgetOrChildren(event, toggle):
-					if not "disabled" in toggle[ "class" ]:
-						if "active" in toggle[ "class" ]:
-							toggle[ "class" ].remove( "active" )
+					if not "is-disabled" in toggle[ "class" ]:
+						if "is-active" in toggle[ "class" ]:
+							toggle[ "class" ].remove( "is-active" )
 
 							# When disabling "view", disable all other flags also, because
 							# they don't make no sense anymore then.
 							if "view" in toggle[ "class" ]:
 								for rm in [ "add", "delete", "edit" ]:
-									self.modules[ module ][ rm ][ "class" ].remove( "active" )
+									self.modules[ module ][ rm ][ "class" ].remove( "is-active" )
 
 						else:
-							toggle[ "class" ].append( "active" )
+							toggle[ "class" ].append( "is-active" )
 
 					self.checkmodulesbox( module )
 
@@ -278,15 +298,15 @@ class AccessMultiSelectBone( html5.Div ):
 					return
 
 			if html5.utils.doesEventHitWidgetOrChildren(event, self.modulesbox[module]):
-				self.modulesbox[ module ].parent()["class"].remove("partly")
+				self.modulesbox[ module ].parent().removeClass("partly")
 
 				for toggle in toggles.values():
 					if not "disabled" in toggle[ "class" ]:
 						if self.modulesbox[ module ][ "checked" ]:
-							if not "active" in toggle[ "class" ]:
-								toggle[ "class" ].append( "active" )
+							if not "is-active" in toggle[ "class" ]:
+								toggle[ "class" ].append( "is-active" )
 						else:
-							toggle[ "class" ].remove( "active" )
+							toggle[ "class" ].remove( "is-active" )
 
 				return
 
@@ -298,7 +318,7 @@ class AccessMultiSelectBone( html5.Div ):
 			if not "disabled" in item[ "class" ]:
 				all += 1
 
-			if "active" in item[ "class" ]:
+			if "is-active" in item[ "class" ]:
 				on += 1
 
 		if on == 0 or on == all:
@@ -328,8 +348,8 @@ class AccessMultiSelectBone( html5.Div ):
 			for module in self.modules:
 				for state in self.states:
 					if "%s-%s" % ( module, state ) in values:
-						if not "active" in self.modules[ module ][ state ][ "class" ]:
-							self.modules[ module ][ state ][ "class" ].append( "active" )
+						if not "is-active" in self.modules[ module ][ state ][ "class" ]:
+							self.modules[ module ][ state ][ "class" ].append( "is-active" )
 
 				self.checkmodulesbox( module )
 
@@ -343,7 +363,7 @@ class AccessMultiSelectBone( html5.Div ):
 
 		for module in self.modules:
 			for state in self.states:
-				if "active" in self.modules[ module ][ state ][ "class" ]:
+				if "is-active" in self.modules[ module ][ state ][ "class" ]:
 					ret.append( "%s-%s" % ( module, state ) )
 
 		return {self.boneName: ret}

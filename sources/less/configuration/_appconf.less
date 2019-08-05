@@ -1,0 +1,97 @@
+@charset "UTF-8";
+// ---------------------------------------------------------------------------------------
+//    Vi 2  APPCONFIGURATION
+// ---------------------------------------------------------------------------------------
+
+// Opt-Ins
+@bar: true;
+@burger: true;
+@button: true;
+@form: true;
+@icon: true;
+@message: true;
+@table: true;
+
+// Initialize and configurate fundamental elements.
+
+@import "button";
+@import "message";
+
+@import "icon-complex";
+@import "item";
+@import "box";
+
+// Color and Shadow Sets
+@mainColor: #8c468c; // The corporate color - defining most of the looks.
+@complementColor: #333; // A color used to sit next to the maincolor.
+@textColor: #222;
+@invTextColor: #f4f4f4;
+@backgroundColor: #f5f5f5;
+@clearColor: #fff;
+
+@focusoddcolor: fadeout(@mainColor, 30%);
+@focusevencolor: lighten(fadeout(@mainColor, 30%), 10%);
+
+@focusselectionoddcolor: fadeout(@mainColor, 50%);
+@focusselectionevencolor: lighten(fadeout(@mainColor, 50%), 10%);
+
+@selectionoddcolor: fadeout(@mainColor, 80%);
+@selectionevencolor: lighten(fadeout(@mainColor, 80%), 10%);
+
+@successColor: #4cad42; // Green
+@warnColor: #f5b639; // Orange
+@failColor: #f44336; // Red
+@hintColor: #1da7e0; // Blue
+
+// Font Stacks
+@bodyFonts: 'Source Sans Pro', 'Open Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; // Default font stack.
+@headFonts: 'Source Sans Pro', 'Open Sans', sans-serif; // Fonts for headlines, blockquotes and alike.
+@monoFonts: 'Source Code Pro', Courier, monospace; // Fonts for code pieces.
+
+// Font Weights
+@fontWeightLight: 300;
+@fontWeightNormal: 400;
+@fontWeightBold: 700;
+
+// Font Sizes
+@defaultLineHeight: 1.3;
+@fontSizeSmall: 15px;
+@fontSizeMedium: 15px;
+@fontSizeLarge: 16px;
+@fontSizeExtraLarge: 16px;
+@fontSizeXxLarge: 17px;
+@fontSize4k: 20px;
+
+// Buttons and Forms
+@defaultPadding: 3px;
+@defaultMargin: 5px;
+@defaultShadow: 0;
+@defaultShadowColor: #000;
+@defaultBorderWidth: 1px;
+@defaultBorderRadius: 0;
+
+// Items
+@itemBackgroundColor:#fff;
+
+@topbarHeight: 60px;
+
+// Spaces
+@outerSpace: 20px; // Space around objects, boxes etc.
+@innerSpace: 10px; // Space within objects: mostly paddings.
+@topSpace: 20px; // The distance between two sections.
+@bottomSpace: 20px; // The distance between two sections.
+@gridSpace: 20px; // Space between grid items.
+
+// Width, Height and Media Queries
+@pageWidth: 1400px; // max-width of the centered container.
+@sideNavMinWidth: 250px;
+@paragraphWidth: 720px; // max-width of text paragraphs.
+
+@breakSmall: 37.5em; // smart phones: 600px / 16px = 37.5em;
+@breakMedium: 56.25em; // tablets: 900px / 16px = 56.25em;
+@breakLarge: 75em; // screens: 1200px / 16px = 75em;
+@breakXlarge: 93.75em; // big screens: 1500px / 16px = 93.75em;
+@breakXxlarge: 112.5em; // huge screens: 1800px / 16px = 112.5em;
+@break4k: 225em; // 4k screens: 3600px / 16px = 225em;
+@break2x: 2; // hiDPI displays
+@breakPrint: print; // make it printable!

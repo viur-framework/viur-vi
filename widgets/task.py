@@ -8,26 +8,27 @@ from vi.widgets.edit import EditWidget
 class TaskWidget( html5.ext.Popup ):
 	def __init__( self, title ):
 		super( TaskWidget, self ).__init__( title = title )
-		self[ "class" ].append( "task" )
+		self[ "class" ].append( "popup--task" )
 		self.title = title
 
 class ServerTaskWidget( TaskWidget ):
 	def __init__( self, title, key ):
 		super( ServerTaskWidget, self ).__init__( title = title )
-		self.widget = EditWidget( "_tasks", EditWidget.appSingleton, key, logaction = "Task started!" )
-		self.appendChild( self.widget )
-		self.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
+		self.widget = EditWidget( "_tasks", EditWidget.appSingleton, key, logAction = "vi.tasks.started" )
+		self.popupBody.appendChild( self.widget )
+		self.popupBody.removeClass("box--content")
+		self.popupFoot.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
 
 class TaskSelectWidget( TaskWidget ):
 	def __init__( self ):
-		super( TaskSelectWidget, self ).__init__( title = translate( "Select a task" ) )
+		super( TaskSelectWidget, self ).__init__( title = translate( "vi.tasks.headline" ) )
 		self.sinkEvent( "onChange" )
 
 		div = html5.Div()
-		div[ "class" ] = [ "task-selector" ]
-		self.appendChild( div )
+		div[ "class" ] = [ "vi-tasks-selector" ]
+		self.popupBody.appendChild( div )
 
-		self.select = html5.Select()
+		self.select = html5.ignite.Select()
 		div.appendChild( self.select )
 
 		for type in [ "server", "client" ]:
@@ -49,11 +50,11 @@ class TaskSelectWidget( TaskWidget ):
 				self.select.appendChild( opt )
 
 		self.descr = html5.Div()
-		self.descr[ "class" ] = [ "task-description" ]
-		self.appendChild( self.descr )
+		self.descr[ "class" ] = [ "vi-tasks-description" ]
+		self.popupBody.appendChild( self.descr )
 
-		self.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
-		self.appendChild( html5.ext.Button( translate( "Run" ), self.invokeTask ) )
+		self.popupFoot.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
+		self.popupFoot.appendChild( html5.ext.Button( translate( "Run" ), self.invokeTask ) )
 
 		# Init
 		self.setActiveTask()
@@ -66,7 +67,7 @@ class TaskSelectWidget( TaskWidget ):
 		self.descr.removeAllChildren()
 		self.descr.appendChild(
 			html5.TextNode(
-				task.get( "descr" ) or translate( "No description provided." ) ) )
+				task.get( "descr" ) or translate( "vi.tasks.no-description" ) ) )
 
 	def onChange(self, event):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.select):

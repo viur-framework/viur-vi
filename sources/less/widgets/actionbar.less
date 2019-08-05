@@ -1,0 +1,53 @@
+@charset "UTF-8";
+/* ACTIONBAR */
+
+// Prefixes and objects:
+// .vi-actionbar
+// .vi-searchbar
+
+.vi-actionbar {
+  flex-shrink: 0;
+  background-color: #f0f0f0;
+  padding: @defaultPadding @defaultPadding*3;
+  .boxShadow(1, #000);
+  min-height: 50px;
+  width: 100%;
+  .zIndex('nav',10);
+  & .input-group {margin-bottom: 0;}
+}
+
+.vi-ab-spacer {
+  margin-left: auto!important;
+}
+
+/*
+.vi-searchbar {
+  padding: 0;
+  max-height: 0px;
+  overflow: hidden;
+  float: right;
+  margin: 0 15px 0 0;
+  transition: all 1s ease;
+  &.is-active {
+    padding: 0;
+    max-height: 300px;
+    overflow: visible;
+  }
+}
+*/
+
+/* #actionbar
+================================================== */
+.vi-operator .vi-actionbar .button img {
+  height: 20px;
+  float: left;
+  margin-right: 6px;
+}
+
+
+
+
+
+
+
+

@@ -9,11 +9,12 @@ from .priorityqueue import loginHandlerSelector
 from .screen import Screen
 from .widgets import InternalEdit
 
+
 class LoginInputField(html5.Input):
 
 	def __init__(self, notifier, *args, **kwargs):
 		super(LoginInputField, self).__init__(*args, **kwargs)
-		self.addClass("vi-login-input")
+		self.addClass("vi-login-input input")
 		self.sinkEvent("onKeyPress")
 
 		self.onKeyPressEvent = EventDispatcher("keyPress")
@@ -33,7 +34,7 @@ class BaseLoginHandler(html5.Li):
 		if not "cssname" in dir(self):
 			self.cssname = self.__class__.__name__.lower()
 
-		self.addClass("vi-login-handler")
+		self.addClass("vi-login-handler btn btn--small ")
 		self.addClass("vi-login-handler-%s" % self.cssname)
 		self.sinkEvent("onClick")
 
@@ -41,21 +42,50 @@ class BaseLoginHandler(html5.Li):
 
 		self.appendChild(html5.TextNode(translate("vi.login.handler.%s" % self.cssname)))
 
+		# --- Surrounding Dialog ---
+		self.loginDialog = html5.Div()
+		self.loginDialog.addClass("vi-login-dialog popup popup--center")
+		self.loginDialog.addClass("vi-login-dialog-%s" % self.cssname)
+		self.loginScreen.appendChild(self.loginDialog)
+
+		# --- Dialog ---
+		self.loginBox = html5.Div()
+		self.loginBox.addClass("box box--content-wide")
+		self.loginDialog.appendChild(self.loginBox)
+
+		# --- Header ---
+		self.loginHeader = html5.Div()
+		self.loginHeader.addClass("vi-login-header")
+		self.loginBox.appendChild(self.loginHeader)
+
 		self.mask = html5.Div()
 		self.mask.addClass("vi-login-mask")
 		self.mask.addClass("vi-login-mask-%s" % self.cssname)
-		loginScreen.dialog.appendChild(self.mask)
+		self.loginBox.appendChild(self.mask)
+
+		# Login
+		# h1 = html5.H1()
+		# h1.addClass("vi-login-headline")
+		# h1.appendChild(html5.TextNode(translate("vi.login.title")))
+		# header.appendChild(h1)
+
+		# Logo
+		img = html5.Img()
+		img.addClass("vi-login-logo")
+		img["src"] = "images/vi-login-logo.svg"
+		self.loginHeader.appendChild(img)
+
 
 	def onClick(self, event):
 		self.loginScreen.selectHandler(self)
 
 	def enable(self):
 		self.addClass("is-active")
-		self.mask.show()
+		self.loginDialog.addClass("is-active")
 
 	def disable(self):
 		self.removeClass("is-active")
-		self.mask.hide()
+		self.loginDialog.removeClass("is-active")
 
 	def lock(self):
 		self.loginScreen.lock()
@@ -92,6 +122,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.mask.appendChild(self.pwform)
 
 		self.username = LoginInputField(self)
+		self.username["type"] = "text"
 		self.username["name"] = "username"
 		self.username["placeholder"] = translate("Username")
 		self.pwform.appendChild(self.username)
@@ -103,7 +134,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.pwform.appendChild(self.password)
 
 		self.loginBtn = html5.ext.Button(translate("Login"), callback=self.onLoginClick)
-		self.loginBtn.addClass("vi-login-btn")
+		self.loginBtn.addClass("vi-login-btn btn--viur")
 		self.pwform.appendChild(self.loginBtn)
 
 		# One Time Password
@@ -149,6 +180,10 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 
 	def onLoginClick(self, sender = None):
 		if not (self.username["value"] and self.password["value"]):
+			self.loginIncompleteMsg = html5.Div()
+			self.loginIncompleteMsg.addClass("msg msg--error is-active")
+			self.loginIncompleteMsg
+			self.loginHeader.appendChild(self.loginIncompleteMsg)
 			return # fixme
 
 		self.loginBtn["disabled"] = True
@@ -280,7 +315,7 @@ class GoogleAccountLoginHandler(BaseLoginHandler):
 		super(GoogleAccountLoginHandler, self).__init__(loginScreen, *args, **kwargs)
 
 		self.loginBtn = html5.ext.Button(translate("Login with Google"), callback=self.onLoginClick)
-		self.loginBtn.addClass("vi-login-btn")
+		self.loginBtn.addClass("vi-login-btn btn--viur")
 		self.mask.appendChild(self.loginBtn)
 
 	def onLoginClick(self, sender = None):
@@ -298,35 +333,11 @@ class LoginScreen(Screen):
 
 	def __init__(self, *args, **kwargs):
 		super(LoginScreen, self).__init__(*args, **kwargs)
-		self.addClass("vi-login")
-
-		# --- Surrounding Dialog ---
-		self.dialog = html5.Div()
-		self.dialog.addClass("vi-login-dialog")
-		self.appendChild(self.dialog)
-
-		# --- Header ---
-		header = html5.Div()
-		header.addClass("vi-login-header")
-		self.dialog.appendChild(header)
-
-		# Login
-		h1 = html5.H1()
-		h1.addClass("vi-login-headline")
-		h1.appendChild(html5.TextNode(translate("vi.login.title")))
-		header.appendChild(h1)
-
-		# Logo
-		img = html5.Img()
-		img.addClass("vi-login-logo")
-		img["src"] = "login-logo.png"
-		header.appendChild(img)
-
-		# --- Dialog ---
+		self.addClass("vi-login-screen")
 
 		self.loginMethodSelector = html5.Ul()
-		self.loginMethodSelector.addClass("vi-login-method")
-		self.dialog.appendChild(self.loginMethodSelector)
+		self.loginMethodSelector.addClass("vi-login-method input-group bar-group--center")
+		self.appendChild(self.loginMethodSelector)
 
 		self.haveLoginHandlers = False
 
@@ -404,6 +415,8 @@ class LoginScreen(Screen):
 			if not any([c.__class__.__name__ == handler.__name__ for c in self.loginMethodSelector._children]):
 				handler(self)
 
+		if len(answ)>1:
+			self.loginMethodSelector.addClass("is-active")
 		self.haveLoginHandlers = True
 		self.invoke()
 

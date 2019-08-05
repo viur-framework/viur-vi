@@ -6,10 +6,10 @@ from .logics import Interpreter
 
 conf = {
 	# Vi version number
-	"vi.version": (2, 4, 0),
+	"vi.version": (2, 5, 0),
 
 	# Appendix to version
-	"vi.version.appendix": "beta",
+	"vi.version.appendix": "",
 
 	# Vi server name
 	"vi.viur": "ViUR",

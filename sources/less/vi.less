@@ -1,0 +1,45 @@
+@charset "UTF-8";
+/* Vi CSS 2018 */
+
+// This is the master file.
+// It imports all less files in their intended order for easy mass-inclusion.
+// Should you need specific files, you can easily customize the imports.
+
+// IGNITE
+@import "ignite/ignite"; // Resets, basics, tools and generic elements.
+
+// The framework:
+@import "framework/_framework"; // page wrappers.
+
+// Initialize and configurate fundamental elements.
+@import "configuration/_appconf"; // variables and constants.
+
+// Load generic elements.
+@import "elements/_elements";
+
+// Load widgets.
+@import "widgets/_widgets";
+
+// Load objects.
+@import "objects/login"; // the login screen
+@import "objects/splash"; // the loading splash animation
+@import "objects/modulelist"; // the modulelist
+@import "objects/messenger"; // the vi log
+@import "objects/tasks"; // the tasks menu
+
+@import "objects/progress"; // progress bars
+@import "objects/tooltip"; // light weight tool tip bubbles
+@import "objects/badge"; // counter, badges and marker
+
+// @import "objects/form"; // DEPRECATED: use bones/_bones instead!
+// @import "objects/textedit"; // DEPRECATED: all new summernote editor is styled in bones/text!
+// @import "objects/alert"; Not in use … ignite/messages work fine.
+
+// Bones
+@import "bones/_bones";
+
+// Status
+@import "status/_status";
+
+@import (optional) "../../../vi_customizing/static/vi_custom";
+

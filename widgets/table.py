@@ -3,7 +3,7 @@ import html5
 from vi.event import EventDispatcher
 from vi.network import DeferredCall
 
-class SelectTable( html5.Table ):
+class SelectTable( html5.ignite.Table ):
 	"""
 		Provides an Html-Table which allows for row selections.
 
@@ -21,6 +21,8 @@ class SelectTable( html5.Table ):
 	"""
 	def __init__(self, checkboxes=False, indexes=False, *args, **kwargs):
 		super(SelectTable,self).__init__(*args,**kwargs)
+
+		self.addClass("vi-table", "ignt-table")
 
 		#Events
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
@@ -63,22 +65,24 @@ class SelectTable( html5.Table ):
 		"""
 
 		tr = html5.Tr()
+		tr.addClass("vi-table-head-row","ignt-table-head-row")
 
 		# Extra column for Index#s
 		if self.indexes:
 			th = html5.Th()
-			th[ "class" ] = "index"
+			th.addClass("vi-table-head-index", "vi-table-head-cell", "ignt-table-head-cell")
 			tr.appendChild( th )
 
 		# Extra column for checkboxes
 		if self.checkboxes:
 			th = html5.Th() # fixme..
-			th[ "class" ] = "check"
+			th.addClass("vi-table-head-check", "vi-table-head-cell", "ignt-table-head-cell")
 			tr.appendChild( th )
 
 		# Now every title column
 		for head in headers:
 			th = html5.Th()
+			th.addClass("vi-table-head-cell", "ignt-table-head-cell")
 			th.appendChild( html5.TextNode( head ) )
 			tr.appendChild( th )
 
@@ -156,15 +160,19 @@ class SelectTable( html5.Table ):
 
 		if self._isCtlPressed:
 			if row in self._selectedRows:
+				for x in self._selectedRows:
+					self.getTrByIndex(x).removeClass("is_focused") # remove focus
 				self.removeSelectedRow( row )
 			else:
 				self.addSelectedRow( row )
+				self.setCursorRow(row, False) # set focus
 			event.preventDefault()
 
 		elif self._isShiftPressed:
 			self.unSelectAll()
 			for i in ( range(self._ctlStartRow, row+1) if self._ctlStartRow <= row else range(row, self._ctlStartRow+1) ):
 				self.addSelectedRow( i )
+			self.setCursorRow(row, False) # set focus
 			event.preventDefault()
 
 		elif self.checkboxes and html5.utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
@@ -251,6 +259,8 @@ class SelectTable( html5.Table ):
 		elif html5.isControl(event):  # Ctrl
 			self._isCtlPressed = True
 			self._ctlStartRow = self._currentRow or 0
+			if self._currentRow is not None:
+				self.addSelectedRow(self._currentRow) # add already selected row to selection
 
 		elif html5.isShift(event):  # Shift
 			self._isShiftPressed = True
@@ -263,6 +273,11 @@ class SelectTable( html5.Table ):
 		if html5.isControl(event):
 			self._isCtlPressed = False
 			self._ctlStartRow = None
+
+			# leave selection mode if there is only one row selected and return to normal focus
+			if len(self._selectedRows) == 1:
+				for row in self.getCurrentSelection():
+					self.removeSelectedRow(row)
 
 		elif html5.isShift(event):
 			self._isShiftPressed = False
@@ -283,7 +298,7 @@ class SelectTable( html5.Table ):
 		self._selectedRows.append( row )
 
 		tr = self.getTrByIndex( row )
-		tr["class"].append("is_selected")
+		tr.addClass("is-selected")
 
 		if self.checkboxes:
 			self._checkboxes[ row ][ "checked" ] = True
@@ -302,7 +317,7 @@ class SelectTable( html5.Table ):
 		self._selectedRows.remove( row )
 
 		tr = self.getTrByIndex( row )
-		tr["class"].remove("is_selected")
+		tr.removeClass("is-selected")
 
 		if self.checkboxes:
 			self._checkboxes[ row ][ "checked" ] = False
@@ -325,7 +340,7 @@ class SelectTable( html5.Table ):
 		if not newRow in self._selectedRows:
 			self._selectedRows.append( newRow )
 			tr = self.getTrByIndex( newRow )
-			tr["class"].append("is_selected")
+			tr.addClass("is-selected")
 
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 
@@ -335,11 +350,11 @@ class SelectTable( html5.Table ):
 			If removeExistingSelection is True, the current selection (if any) is invalidated.
 		"""
 		if self._currentRow is not None:
-			self.getTrByIndex(self._currentRow)["class"].remove("is_focused")
+			self.getTrByIndex(self._currentRow).removeClass("is-focused")
 
 		self._currentRow = row
 		if self._currentRow is not None:
-			self.getTrByIndex(self._currentRow)["class"].append("is_focused")
+			self.getTrByIndex(self._currentRow).addClass("is-focused")
 			self.cursorMovedEvent.fire( self, row )
 
 		if removeExistingSelection:
@@ -433,8 +448,8 @@ class SelectTable( html5.Table ):
 		for row in self._selectedRows:
 			tr = self.getTrByIndex( row )
 
-			if not "is_selected" in tr["class"]:
-				tr["class"].append("is_selected")
+			if not "is-selected" in tr["class"]:
+				tr.addClass("is-selected")
 
 			if self.checkboxes:
 				self._checkboxes[ row ][ "checked" ] = True
@@ -450,7 +465,7 @@ class SelectTable( html5.Table ):
 
 		for row in self._selectedRows:
 			tr = self.getTrByIndex( row )
-			tr["class"].remove("is_selected")
+			tr.removeClass("is-selected")
 
 			if self.checkboxes:
 				self._checkboxes[ row ][ "checked" ] = False
@@ -470,10 +485,10 @@ class SelectTable( html5.Table ):
 			tr = self.getTrByIndex( row )
 
 			if row in current:
-				tr["class"].remove("is_selected")
+				tr.removeClass("is-selected")
 			else:
 				self._selectedRows.append(row)
-				tr["class"].append("is_selected")
+				tr.addClass("is-selected")
 
 			if self.checkboxes:
 				self._checkboxes[ row ][ "checked" ] = row in self._selectedRows
@@ -491,6 +506,7 @@ class DataTable( html5.Div ):
 	def __init__( self, _loadOnDisplay = False, *args, **kwargs ):
 		super( DataTable, self ).__init__( )
 		self.table = SelectTable( *args, **kwargs )
+		self.addClass("vi-datatable")
 		self.appendChild(self.table)
 
 		self._loadOnDisplay = _loadOnDisplay # Load all data content continuously when displaying
@@ -516,13 +532,12 @@ class DataTable( html5.Div ):
 			setattr( self, f, getattr(self.table,f))
 
 		self.cursorMovedEvent.register( self )
-		self["style"]["overflow"] = "scroll"
 		self.recalcHeight()
 		self.sinkEvent("onScroll")
 
 
 	def recalcHeight(self, *args, **kwargs):
-		self["style"]["max-height"] = "%spx" % (int(eval("window.top.innerHeight"))-280)
+		self["style"]["max-height"] = "%spx" % (int(eval("window.top.innerHeight"))-110)
 
 	def setDataProvider(self,obj):
 		"""
@@ -539,8 +554,8 @@ class DataTable( html5.Div ):
 		self._dataProvider = obj
 		self._isAjaxLoading = False
 
-		if "is_loading" in self.table["class"]:
-			self.table["class"].remove("is_loading")
+		if "is-loading" in self.table["class"]:
+			self.table.removeClass("is-loading")
 
 	def onCursorMoved(self, table, row):
 		"""
@@ -574,8 +589,8 @@ class DataTable( html5.Div ):
 		self._model.append( obj )
 		self._renderObject( obj )
 		self._isAjaxLoading = False
-		if "is_loading" in self.table["class"]:
-			self.table["class"].remove("is_loading")
+		if "is-loading" in self.table["class"]:
+			self.table.removeClass("is-loading")
 		self.testIfNextBatchNeededImmediately()
 
 	def extend(self, objList):
@@ -590,8 +605,8 @@ class DataTable( html5.Div ):
 			self._model.append( obj )
 			self._renderObject( obj, tableIsPrepared=True )
 			self._isAjaxLoading = False
-			if "is_loading" in self.table["class"]:
-				self.table["class"].remove("is_loading")
+			if "is-loading" in self.table["class"]:
+				self.table.removeClass("is-loading")
 		self.testIfNextBatchNeededImmediately()
 
 	def testIfNextBatchNeededImmediately(self):
@@ -618,8 +633,8 @@ class DataTable( html5.Div ):
 
 			if self._dataProvider:
 				self._isAjaxLoading = True
-				if not "is_loading" in self.table["class"]:
-					self.table["class"].append("is_loading")
+				if not "is-loading" in self.table["class"]:
+					self.table.addClass("is-loading")
 				self._dataProvider.onNextBatchNeeded()
 
 	def remove(self, objOrIndex):
@@ -666,10 +681,10 @@ class DataTable( html5.Div ):
 			if field in self._cellRender.keys():
 				lbl = self._cellRender[ field ].render( obj, field )
 			elif field in obj.keys():
-				lbl = html5.Label(obj[field])
+				lbl = html5.Div(obj[field])
 			else:
-				lbl = html5.Label("...")
-
+				lbl = html5.Div("...")
+			lbl.addClass("ignt-table-content")
 			self.table.setCell( rowIdx, cellIdx, lbl )
 			cellIdx += 1
 
@@ -710,8 +725,8 @@ class DataTable( html5.Div ):
 			if self._dataProvider:
 
 				self._isAjaxLoading = True
-				if not "is_loading" in self.table["class"]:
-					self.table["class"].append("is_loading")
+				if not "is-loading" in self.table["class"]:
+					self.table.addClass("is-loading")
 
 				self._dataProvider.onNextBatchNeeded()
 

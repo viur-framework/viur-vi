@@ -47,7 +47,7 @@ lngDe = {
 	"Settings":u"Einstellungen",
 	"Logout":u"Abmelden",
 	"Currently no entries":u"Es wurden keine Einträge gefunden",
-	"Add Node":u"Knoten hinzufügen",
+	"Add Node":u"Neues Verzeichnis erstellen",
 	"You cannot drop more than one file here!":u"Es können nicht mehr als eine Datei hinzugefügt werden!",
     "Do you want to clone the entire hierarchy?":u"Soll die gesamte Hierarchie geklont werden?",
     "Do you want to clone all subentries of this item?":u"Möchten Sie alle Unterelemente dieses Elements ebenfalls klonen?",
@@ -153,10 +153,11 @@ lngDe = {
 	"login with google": u"Mit Google einloggen",
 
 	"the viur server (v{server.version}) is incompatible to this vi (v{vi.version}).":
-		u"Die Version des verwendeten ViUR servers (v{server.version}) ist inkompatibel mit diesem Vi (v{vi.version}).",
-	"please update either your server or vi!": u"Bitte aktualisieren Sie entweder den Server oder das Vi!",
+		u"Die Version des verwendeten ViUR Servers (v{server.version}) ist inkompatibel mit diesem Vi (v{vi.version}).",
+	"there may be a lack on functionality.": u"Diese Inkompatibilität kann zu technischen Problemen führen.",
+	"please update either your server or vi!": u"Bitte aktualisieren Sie entweder den Server oder das Vi auf eine neuere Version!",
 	"version mismatch": u"Versionen stimmen nicht überein",
-	"retry": u"Nochmal versuchen",
+	"continue anyway": u"Trotzdem fortfahren",
 	"vi.login.insufficient-rights": u"Der aktuelle angemeldete Benutzer hat nicht genügend Rechte um diese "
 	                                u"Funktion zu verwenden.\n\nBitte loggen Sie sich unter einem anderen "
 	                                u"Benutzer mit entsprechenden Zugriffsrechten ein.",
@@ -171,5 +172,29 @@ lngDe = {
 
 	"vi.action.edit.refresh.question": u"Dies wird den aktuellen Datensatz neu laden.\nÄnderungen gehen verloren.\n"
 	                                   u"Möchten Sie wirklich fortfahren?",
-	"vi.action.edit.refresh.title": u"Datensatz neu laden"
+	"vi.action.edit.refresh.title": u"Datensatz neu laden",
+
+	# Topbar
+	"vi.topbar.newbtn": u"Was ist neu?",
+	"vi.topbar.new": u"NEU",
+
+	#Tasks
+	"vi.tasks":u"Aufträge",
+	"vi.tasks.headline":u"Wähle einen Auftrag",
+	"vi.tasks.no-description":u"Ohne Beschreibung.",
+	"vi.tasks.started": u"Auftrag gestartet!",
+
+	#Drag and Drop
+	"vi.data-insert":u"Hier einfügen",
+	"vi.tree.drag-here":u"Ziehe Deine Dateien hier her.",
+
+	#Bones
+	"vi.tooltip.headline": u"Hinweis für ",
+	"vi.select.default-option":u"- Bitte wählen -",
+
+	#Sidebar
+	"vi.sidebar.internalpreview": u"Informationen",
+
+	"Load all": u"Alles laden",
+	"Find on Page": u"finden"
 }

@@ -16,14 +16,14 @@ from vi.widgets.tree import TreeWidget, NodeWidget
 class TreeDirMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 	def __init__(self, *args, **kwargs):
 		super(TreeDirMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
-		self["class"].append("fileentry")
+		self.addClass("fileentry")
 
 		src = utils.getImagePreview(self.data)
 
 		if src is not None:
 			img = html5.Img()
 			img["src"] = src
-			img["class"].append("previewimg")
+			img.addClass("vi-tree-filepreview")
 			self.appendChild(img)
 
 			# Move the img in front of the lbl
@@ -43,7 +43,7 @@ class TreeDirMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		"""
 			Edit the image entry.
 		"""
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModule,
+		pane = Pane( translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=[ "modul_%s" % self.parent.destModule,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
 		edwg = EditWidget( self.parent.destModule, EditWidget.appTree, key=self.data[ "key" ], skelType="leaf"  )
@@ -66,7 +66,7 @@ class TreeDirMultiSelectionBone( RelationalMultiSelectionBone ):
 		currentSelector = FileWidget(self.destModule, selectMode="single.node")
 		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is_active")
+		self.parent().addClass("is-active")
 
 	def onSelectionReturn(self, table, selection ):
 		"""
@@ -106,7 +106,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		super(TreeDirSingleSelectionBone, self).__init__( *args, **kwargs )
 
 		self.previewImg = html5.Img()
-		self.previewImg["class"].append("previewimg")
+		self.previewImg.addClass("vi-tree-filepreview")
 		self.appendChild( self.previewImg )
 
 
@@ -117,7 +117,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		currentSelector = TreeWidget(self.destModule, selectMode="single.node")
 		currentSelector.selectionReturnEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is_active")
+		self.parent().addClass("is-active")
 
 	def onSelectionReturn(self, table, selection ):
 		"""
@@ -139,7 +139,7 @@ class TreeDirSingleSelectionBone( RelationalSingleSelectionBone ):
 		if not self.selection:
 			return
 
-		pane = Pane( translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModule,
+		pane = Pane( translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=[ "modul_%s" % self.destModule,
 		                                                                    "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane( pane, focus=True )
 		edwg = EditWidget( self.destModule, EditWidget.appTree, key=self.selection[ "key" ], skelType="leaf"  )

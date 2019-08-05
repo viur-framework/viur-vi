@@ -7,15 +7,16 @@ from vi.network import NetworkService
 from vi.pane import Pane
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
+from vi.widgets.button import Button
 
 
-class AddNodeAction( html5.ext.Button ):
+class AddNodeAction(Button):
 	"""
 		Adds a new directory to a tree.simple application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddNodeAction, self ).__init__( translate("Add Node"), *args, **kwargs )
-		self["class"] = "icon mkdir"
+		super( AddNodeAction, self ).__init__( translate("Add Node"), icon="icons-add-folder", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--mkdir btn--primary"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -38,8 +39,7 @@ class AddNodeAction( html5.ext.Button ):
 			successLbl=translate("Create")
 		)
 
-		i["class"].append( "create" )
-		i["class"].append( "directory" )
+		i.addClass( "create directory" )
 
 	def createDir(self, dialog, dirName ):
 		if len(dirName)==0:
@@ -49,7 +49,7 @@ class AddNodeAction( html5.ext.Button ):
 
 	def onMkDir(self, req):
 		dirName = req.dirName
-		conf["mainWindow"].log("success",translate("Directory \"{name}\" created.",name=dirName))
+		conf["mainWindow"].log("success",translate("Directory \"{name}\" created.", icon="icons-add-folder",name=dirName))
 
 	def resetLoadingState(self):
 		pass
@@ -57,15 +57,15 @@ class AddNodeAction( html5.ext.Button ):
 actionDelegateSelector.insert( 3, AddNodeAction.isSuitableFor, AddNodeAction )
 
 
-class EditAction( html5.ext.Button ):
+class EditAction(Button):
 	"""
 		Provides editing in a tree.simple application.
 		If a directory is selected, it opens a dialog for renaming that directory,
 		otherwise the full editWidget is used.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
-		self["class"] = "icon edit"
+		super( EditAction, self ).__init__( translate("Edit"), icon="icons-edit", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
 

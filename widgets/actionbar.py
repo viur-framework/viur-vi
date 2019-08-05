@@ -22,7 +22,8 @@ class ActionBar(html5.Div):
 		self.module = module
 		self.appType = appType
 		self.currentAction = currentAction
-		self["class"].append("actionbar")
+		self.addClass("vi-actionbar bar")
+
 
 	def setActions(self, actions):
 		"""
@@ -35,14 +36,6 @@ class ActionBar(html5.Div):
 		"""
 		for c in self._children[:]:
 			self.removeChild( c )
-		if self.currentAction is not None:
-			h3 = html5.H3()
-			h3["class"].append("modul_%s" % self.module)
-			h3["class"].append("apptype_%s" %self.appType)
-			h3["class"].append("action_%s" %self.currentAction)
-
-			h3.appendChild(html5.TextNode(translate(self.currentAction)))
-			self.appendChild(h3)
 
 		self.widgets = {}
 		self.actions = actions
@@ -50,7 +43,7 @@ class ActionBar(html5.Div):
 		for action in actions:
 			if action=="|":
 				span = html5.Span()
-				span["class"].append( "spacer" )
+				span.addClass( "vi-ab-spacer" )
 				self.appendChild( span )
 			else:
 				if self.module is not None and self.module in conf["modules"].keys():

@@ -20,31 +20,33 @@ class AdminScreen(Screen):
 	def __init__(self, *args, **kwargs):
 		super(AdminScreen, self).__init__(*args, **kwargs)
 
+		self.sinkEvent("onClick")
 		self["id"] = "CoreWindow"
 		conf["mainWindow"] = self
 
 		self.topBar = TopBarWidget()
 		self.appendChild(self.topBar)
 
-		self.workSpace = html5.Div()
-		self.workSpace["class"] = "vi_workspace"
-		self.appendChild(self.workSpace)
+		self.mainFrame = html5.Div()
+		self.mainFrame["class"] = "vi-main-frame"
+		self.appendChild(self.mainFrame)
+
 
 		self.moduleMgr = html5.Div()
-		self.moduleMgr["class"] = "vi_wm"
-		self.appendChild(self.moduleMgr)
+		self.moduleMgr["class"] = "vi-manager-frame"
+		self.mainFrame.appendChild(self.moduleMgr)
 
 		self.moduleList = html5.Nav()
-		self.moduleList["class"] = "vi_manager"
+		self.moduleList["class"] = "vi-modulelist"
 		self.moduleMgr.appendChild(self.moduleList)
 
-		self.moduleListUl = html5.Ul()
-		self.moduleListUl["class"] = "modullist"
-		self.moduleList.appendChild(self.moduleListUl)
+		self.modulePipe = html5.Div()
+		self.modulePipe.addClass("vi-modulepipe")
+		self.moduleMgr.appendChild(self.modulePipe)
 
 		self.viewport = html5.Div()
-		self.viewport["class"] = "vi_viewer"
-		self.workSpace.appendChild(self.viewport)
+		self.viewport["class"] = "vi-viewer-frame"
+		self.mainFrame.appendChild(self.viewport)
 
 		self.logWdg = Log()
 		self.appendChild(self.logWdg)
@@ -62,8 +64,12 @@ class AdminScreen(Screen):
 		w = eval("window.top")
 		w.onerror = le
 
+	def onClick(self, event):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulePipe):
+			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
+
 	def reset(self):
-		self.moduleListUl.removeAllChildren()
+		self.moduleList.removeAllChildren()
 		self.viewport.removeAllChildren()
 		self.logWdg.reset()
 
@@ -147,8 +153,6 @@ class AdminScreen(Screen):
 			groupPanes[group["prefix"]].groupPrefix = group["prefix"]
 			panes.append((group["name"], group.get("sortIndex"), groupPanes[group["prefix"]]))
 
-		# Sort all modules first
-
 		# read Hash to register startup module
 		currentActiveGroup = None
 		path = None
@@ -224,8 +228,8 @@ class AdminScreen(Screen):
 		DeferredCall(self.checkInitialHash)
 		self.unlock()
 
-	def log(self, type, msg):
-		self.logWdg.log(type, msg)
+	def log(self, type, msg, icon):
+		self.logWdg.log(type, msg, icon)
 
 	def checkInitialHash(self, *args, **kwargs):
 		urlHash = conf["startupHash"]
@@ -282,14 +286,14 @@ class AdminScreen(Screen):
 
 	def switchFullscreen(self, fullscreen=True):
 		if fullscreen:
-			self.moduleMgr.hide()
-			self.viewport.addClass("is_fullscreen")
+			self.moduleMgr.addClass("is-collapsed")
+			self.viewport.addClass("is-fullscreen")
 		else:
-			self.moduleMgr.show()
-			self.viewport.removeClass("is_fullscreen")
+			self.moduleMgr.removeClass("is-collapsed")
+			self.viewport.removeClass("is-fullscreen")
 
 	def isFullscreen(self):
-		return "is_fullscreen" in self.viewport["class"]
+		return "is-fullscreen" in self.viewport["class"]
 
 	def onError(self, req, code):
 		print("ONERROR")
@@ -298,7 +302,7 @@ class AdminScreen(Screen):
 		for childPane in pane.childPanes:
 			self.panes.append(childPane)
 			self.viewport.appendChild(childPane.widgetsDomElm)
-			childPane.widgetsDomElm["style"]["display"] = "none"
+			childPane.widgetsDomElm.removeClass("is-active")
 			self._registerChildPanes(childPane)
 
 	def addPane(self, pane, parentPane=None):
@@ -312,12 +316,11 @@ class AdminScreen(Screen):
 		if parentPane:
 			parentPane.addChildPane(pane)
 		else:
-			self.moduleListUl.appendChild(pane)
+			self.moduleList.appendChild(pane)
 
 		self.viewport.appendChild(pane.widgetsDomElm)
-		pane.widgetsDomElm["style"]["display"] = "none"
+		pane.widgetsDomElm.removeClass("is-active")
 
-	# DOM.setStyleAttribute(pane.widgetsDomElm, "display", "none" )
 
 	def insertPane(self, pane, insertAt):
 		if len(pane.childPanes) > 0:
@@ -326,10 +329,10 @@ class AdminScreen(Screen):
 		assert insertAt in self.panes
 
 		self.panes.append(pane)
-		self.moduleListUl.insertBefore(pane, insertAt)
+		self.moduleList.insertBefore(pane, insertAt)
 
 		self.viewport.appendChild(pane.widgetsDomElm)
-		pane.widgetsDomElm["style"]["display"] = "none"
+		pane.widgetsDomElm.removeClass("is-active")
 
 	def stackPane(self, pane, focus=False):
 		assert self.currentPane is not None, "Cannot stack a pane. There's no current one."
@@ -375,18 +378,20 @@ class AdminScreen(Screen):
 
 		# Close current Pane
 		if self.currentPane is not None:
-			self.currentPane.removeClass("is_active")
-			self.currentPane.widgetsDomElm["style"]["display"] = "none"
+			self.currentPane.item.removeClass("is-active")
+			self.currentPane.widgetsDomElm.removeClass("is-active")
 
 		# Focus wanted Pane
 		self.topBar.setCurrentModulDescr(pane.descr, pane.iconURL, pane.iconClasses, path=pane.path)
+
 		self.currentPane = pane
-		self.currentPane.widgetsDomElm["style"]["display"] = "block"
+		self.currentPane.widgetsDomElm.addClass("is-active")
 
 		if self.currentPane.collapseable and self.currentPane.childDomElem:
 			self.currentPane.childDomElem["style"]["display"] = "block"
+			self.currentPane.childDomElem.addClass("is-active")
 
-		self.currentPane.addClass("is_active")
+		self.currentPane.item.addClass("is-active")
 
 		# Also open parent panes, if not already done
 		pane = self.currentPane.parentPane
@@ -413,18 +418,18 @@ class AdminScreen(Screen):
 				self.nextPane = None
 
 		if not pane.parentPane or pane.parentPane is self:
-			self.moduleListUl.removeChild(pane)
+			self.moduleList.removeChild(pane)
 		else:
 			pane.parentPane.removeChildPane(pane)
 
 		self.viewport.removeChild(pane.widgetsDomElm)
 
-	def addWidget(self, widget, pane):
-		pane.addWidget(widget)
+	def addWidget(self, widget, pane,disableOtherWidgets=True):
+		pane.addWidget(widget,disableOtherWidgets)
 
-	def stackWidget(self, widget):
+	def stackWidget(self, widget,disableOtherWidgets=True):
 		assert self.currentPane is not None, "Cannot stack a widget while no pane is active"
-		self.addWidget(widget, self.currentPane)
+		self.addWidget(widget, self.currentPane,disableOtherWidgets)
 
 	def removeWidget(self, widget):
 		for pane in self.panes:

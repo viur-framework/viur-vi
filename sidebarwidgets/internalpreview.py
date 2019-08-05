@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import html5
 
 from vi.priorityqueue import viewDelegateSelector
@@ -8,29 +8,35 @@ class InternalPreview( html5.Ul ):
 	def __init__(self, module, structure, item, *args, **kwargs):
 		super( InternalPreview, self ).__init__( *args, **kwargs )
 
-		self["class"].append("internalpreview")
+		self.addClass("vi-sb-intprev box-body box--content")
 
 		tmpDict = {key: bone for key, bone in structure}
 
 		for key, bone in structure:
-			if "params" in bone.keys() and bone[ "params" ] \
-					and "previewBone" in bone[ "params" ].keys() \
-						and bone[ "params" ][ "previewBone" ] == False:
+			if "params" in bone.keys() and bone["params"] \
+					and "previewBone" in bone["params"].keys() \
+					and bone["params"]["previewBone"] == False:
 				continue
 
-			self.ali= html5.Li()
-			self.ali["class"]=[ module,"type_"+bone["type"],"bone_"+key]
-			self.adl= html5.Dl()
+			self.ipli = html5.Li()
+			self.ipli["class"] = ["vi-sb-intprev-item", "vi-sb-intprev--" + module, "vi-sb-intprev--" + bone["type"],
+								 "vi-sb-intprev--" + key]
 
-			self.adt=html5.Dt()
-			self.adt.appendChild(html5.TextNode(key if conf["showBoneNames"] else bone.get("descr", key)))
+			self.ipdl = html5.Dl()
+			self.ipdl.addClass("vi-sb-intprev-content")
 
-			self.aadd=html5.Dd()
-			delegateFactory = viewDelegateSelector.select( module, key, tmpDict )( module, key, tmpDict )
-			self.aadd.appendChild(delegateFactory.render( item, key ))
 
-			self.adl.appendChild(self.adt)
-			self.adl.appendChild(self.aadd)
-			self.ali.appendChild(self.adl)
+			self.ipdt = html5.Dt()
+			self.ipdt.addClass("vi-sb-intprev-title")
+			self.ipdt.appendChild(html5.TextNode(key if conf["showBoneNames"] else bone.get("descr", key)))
 
-			self.appendChild(self.ali)
+			self.ipdd = html5.Dd()
+			self.ipdd.addClass("vi-sb-intprev-descr")
+			delegateFactory = viewDelegateSelector.select(module, key, tmpDict)(module, key, tmpDict)
+			self.ipdd.appendChild(delegateFactory.render(item, key))
+
+			self.ipdl.appendChild(self.ipdt)
+			self.ipdl.appendChild(self.ipdd)
+			self.ipli.appendChild(self.ipdl)
+
+			self.appendChild(self.ipli)

@@ -58,7 +58,7 @@ class DateViewBoneDelegate( object ):
 	def render( self, data, field ):
 
 		if not(self.boneName in self.skelStructure and data and data.get(field)):
-			return html5.Label(conf["empty_value"])
+			return html5.Div(conf["empty_value"])
 
 		structure = self.skelStructure[self.boneName]
 		val = data[field]
@@ -71,12 +71,12 @@ class DateViewBoneDelegate( object ):
 					return html5.TextNode(translate("Error parsing Date"))
 
 				span = html5.Span()
-				span["class"].append("datetime")
+				span.addClass("vi-delegato", "vi-delegato--datetime")
 				dateSpan = html5.Span()
-				dateSpan["class"].append("date")
+				dateSpan.addClass("date")
 				dateSpan.appendChild( html5.TextNode( dt.strftime("%d.%m.%Y") ))
 				timeSpan = html5.Span()
-				timeSpan["class"].append("time")
+				timeSpan.addClass("time")
 				timeSpan.appendChild( html5.TextNode( dt.strftime("%H:%M:%S") ))
 				span.appendChild(dateSpan)
 				span.appendChild(timeSpan)
@@ -90,7 +90,7 @@ class DateViewBoneDelegate( object ):
 					return html5.TextNode(translate("Error parsing Date"))
 
 				dateSpan = html5.Span()
-				dateSpan["class"].append("date")
+				dateSpan.addClass("vi-delegato", "vi-delegato--date")
 				dateSpan.appendChild(html5.TextNode(dt.strftime("%d.%m.%Y")))
 
 				return dateSpan
@@ -102,12 +102,12 @@ class DateViewBoneDelegate( object ):
 					return html5.TextNode(translate("Error parsing Date"))
 
 				timeSpan = html5.Span()
-				timeSpan["class"].append("time")
+				timeSpan.addClass("vi-delegato", "vi-delegato--time")
 				timeSpan.appendChild( html5.TextNode(dt.strftime("%H:%M:%S")))
 				return timeSpan
 
 		except: #Something got wrong parsing the date
-			return html5.Label(str(val))
+			return html5.Div(str(val))
 
 
 class DateEditBone( html5.Div ):
@@ -117,9 +117,10 @@ class DateEditBone( html5.Div ):
 		self.readOnly = readOnly
 		self.hasdate = date
 		self.hastime = time
+		self.addClass("vi-bone-container")
 
 		if date:
-			self.dateinput = html5.Input()
+			self.dateinput = html5.ignite.Input()
 
 			#IE11
 			try:
@@ -134,7 +135,7 @@ class DateEditBone( html5.Div ):
 				self.dateinput["readonly"] = True
 
 		if time:
-			self.timeinput=html5.Input()
+			self.timeinput=html5.ignite.Input()
 
 			#IE11
 			try:
@@ -142,8 +143,6 @@ class DateEditBone( html5.Div ):
 			except:
 				pass
 
-			self.timeinput["style"]["float"] = "left"   #fixme: Do this with css?
-			self.timeinput["style"]["width"] = "70px"   #fixme: Do this with css?
 			self.appendChild(self.timeinput)
 
 			if self.readOnly:

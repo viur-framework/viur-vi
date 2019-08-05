@@ -1,59 +1,81 @@
 # -*- coding: utf-8 -*-
 import html5
+
 from vi.network import NetworkService, DeferredCall
 from vi.i18n import translate
 from vi.config import conf
 from vi.widgets.task import TaskSelectWidget
 from vi.priorityqueue import toplevelActionSelector
+from vi.widgets.button import Button
+from vi.embedsvg import embedsvg
+
 
 class TopBarWidget(html5.Header):
 	"""
 		Provides the top-bar of VI
 	"""
 	def __init__(self):
-		super(TopBarWidget, self).__init__()
+		super(TopBarWidget,self ).__init__()
 
-		self["class"] = "vi_topbar"
-		anav=html5.Nav()
-		anav["class"].append("iconnav")
-		self.iconnav=html5.Ul()
+		self["class"] = "vi-topbar bar"
 
 		self.sinkEvent("onClick")
 
-		self.modulH1 = html5.H1()
-		self.modulH1._setClass("module")
-		self.appendChild(self.modulH1)
+		self.fromHTML("""
+			<div class="vi-tb-left bar-group bar-group--left" [name]="topbarLeft">
+				<div class="vi-tb-logo" [name]="topbarLogo"></div>
+				<h1 class="vi-tb-title" [name]="moduleH1"></h1>
+				<div class="vi-tb-currentmodul item" [name]="moduleContainer">
+					<div class="item-image" [name]="modulImg"></div>
+					<div class="item-content" [name]="moduleName"></div>
+				</div>
+			</div>
+			<nav class="vi-tb-right bar-group bar-group--right" [name]="topbarRight">
+				<div class="input-group" [name]="iconnav">
+				</div>
+			</nav>
+		""")
 
-		self.modulContainer = html5.Div()
-		self.modulContainer["class"].append("currentmodul")
-		self.appendChild( self.modulContainer )
-
-		self.modulImg = html5.Label()
-		self.modulContainer.appendChild(self.modulImg)
-
-		self.moduleName = html5.Span()
-		self.modulContainer.appendChild( self.moduleName )
-
-		anav.appendChild(self.iconnav)
-		self.appendChild(anav)
+		svg = embedsvg.get("logos-vi")
+		if svg:
+			self.topbarLogo.element.innerHTML = svg + self.topbarLogo.element.innerHTML
 
 		DeferredCall(self.setTitle, _delay=500)
 
 	def invoke(self):
 		self.iconnav.removeAllChildren()
 
+		newBtn = html5.A()
+		newBtn["href"] = "https://www.viur.is"
+		newBtn["target"] = "_blank"
+		newBtn.addClass("btn")
+		svg = embedsvg.get("icons-ribbon")
+		if svg:
+			newBtn.element.innerHTML = svg + newBtn.element.innerHTML
+		newBtn.appendChild(translate("vi.topbar.newbtn"))
+		#self.iconnav.appendChild(newBtn)
+
+		newMarker = html5.Span()
+		newMarker.addClass("marker")
+		newMarker.appendChild(translate("vi.topbar.new"))
+		newBtn.appendChild(newMarker)
+
 		for icon in conf["toplevelactions"]:
 			widget = toplevelActionSelector.select(icon)
 			if widget:
 				self.iconnav.appendChild(widget())
 
-	def setTitle(self):
-		title = conf.get("vi.name")
+	def setTitle(self, title=None):
+		self.moduleH1.removeAllChildren()
+
+		if title is None:
+			title = conf.get("vi.name")
+
 		if title:
-			self.modulH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
+			self.moduleH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
 
 	def onClick(self, event):
-		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulH1):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.moduleH1):
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
 	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None, path=None):
@@ -62,29 +84,39 @@ class TopBarWidget(html5.Header):
 		for c in self.moduleName._children[:]:
 			self.moduleName.removeChild( c )
 		for c in self.modulImg["class"]:
-			self.modulImg["class"].remove(c)
+			self.modulImg.removeClass(c)
+
+		self.modulImg.addClass("item-image")
 
 		descr = html5.utils.unescape(descr)
 		self.moduleName.appendChild(html5.TextNode(descr))
 
 		if iconURL is not None:
-			img = html5.Img()
-			img["src"] = iconURL
-			self.modulImg.appendChild(img)
+			svg = embedsvg.get(iconURL)
+			if svg:
+				modulIcon = html5.I()
+				modulIcon.addClass("i")
+				modulIcon.element.innerHTML = svg + modulIcon.element.innerHTML
+				self.modulImg.appendChild(modulIcon)
+			else:
+				img = html5.Img()
+				img["src"] = iconURL
+				self.modulImg.appendChild(img)
 
 		if iconClasses is not None:
 			for cls in iconClasses:
-				self.modulImg["class"].append( cls )
+				self.modulImg.addClass( cls )
 
 		conf["theApp"].setTitle(descr)
 
 		if path:
-			conf["theApp"].setPath(path)
+			conf[ "theApp" ].setPath( path )
 
+#FIXME: UserState(Button) should open "user" "edit/self" on click (userself plugin by AK)
 
-class UserState(html5.Li):
-	def __init__(self):
-		super(UserState,self).__init__()
+class UserState(Button):
+	def __init__(self, *args, **kwargs):
+		super( UserState, self ).__init__(*args, **kwargs)
 		self.update()
 
 	def onCurrentUserAvailable(self, req):
@@ -100,11 +132,9 @@ class UserState(html5.Li):
 			                        cacheable=False )
 			return
 
-		aa = html5.A()
-		aa["title"] = user[ "name" ]
-		aa["class"].append("icon accountmgnt")
-		aa.appendChild( html5.TextNode( user[ "name" ] ) )
-		self.appendChild(aa)
+		self["title"] = user["name"]
+		self.addClass("vi-tb-accountmgnt")
+		self.appendChild(html5.TextNode(user["name"]))
 
 	@staticmethod
 	def canHandle( action ):
@@ -113,16 +143,13 @@ class UserState(html5.Li):
 toplevelActionSelector.insert( 0, UserState.canHandle, UserState )
 
 
-class Tasks(html5.Li):
-	def __init__(self):
-		super(Tasks, self).__init__()
+class Tasks(Button):
+	def __init__(self, *args, **kwargs):
+		super(Tasks, self).__init__(icon="icons-settings", *args, **kwargs)
 		self.sinkEvent("onClick")
 		self.hide()
-
-		a = html5.A()
-		a[ "class" ].append( "icon tasks" )
-		a.appendChild( html5.TextNode( translate( "Tasks" ) ) )
-		self.appendChild( a )
+		self.addClass("btn vi-tb-tasks")
+		self.appendChild(html5.TextNode(translate("vi.tasks")))
 
 		if not conf[ "tasks" ][ "server" ]:
 			NetworkService.request( None, "/vi/_tasks/list",
@@ -169,13 +196,13 @@ class Tasks(html5.Li):
 toplevelActionSelector.insert( 0, Tasks.canHandle, Tasks )
 
 
-class Logout(html5.Li):
-	def __init__(self):
-		super(Logout,self).__init__()
-		aa=html5.A()
-		aa["class"].append("icon logout")
-		aa.appendChild(html5.TextNode(translate("Logout")))
-		self.appendChild(aa)
+#FIXME: Do not logout directly: Implement a logout yes/no dialog.
+
+class Logout(Button):
+	def __init__(self, *args, **kwargs):
+		super(Logout,self).__init__(icon="icons-logout", *args, **kwargs)
+		self.addClass("btn vi-tb-logout")
+		self.appendChild(html5.TextNode(translate("Logout")))
 		self.sinkEvent("onClick")
 
 	def onClick(self, event):
@@ -188,3 +215,5 @@ class Logout(html5.Li):
 		return action == "logout"
 
 toplevelActionSelector.insert( 0, Logout.canHandle, Logout )
+
+#FIXME: Put Message Center in Iconnav. The message center will be a popout in the topbar.

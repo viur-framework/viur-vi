@@ -7,6 +7,7 @@ from vi.widgets.htmleditor import HtmlEditor
 from vi.event import EventDispatcher
 
 
+
 class TextBoneExtractor(BaseBoneExtractor):
 
 	def render(self, data, field):
@@ -30,7 +31,6 @@ class TextBoneExtractor(BaseBoneExtractor):
 
 
 class TextViewBoneDelegate(object):
-
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
 		super(TextViewBoneDelegate, self).__init__()
 		self.skelStructure = skelStructure
@@ -38,6 +38,8 @@ class TextViewBoneDelegate(object):
 		self.moduleName = moduleName
 
 	def render(self, data, field):
+		value = conf["empty_value"]
+
 		if field in data.keys():
 			##multilangs
 			if isinstance(data[field], dict):
@@ -48,15 +50,14 @@ class TextViewBoneDelegate(object):
 					else:
 						if data[field].keys().length > 0:
 							resstr = data[field][data[field].keys()[0]]
-				aspan = html5.Span()
-				aspan.appendChild(html5.TextNode(resstr))
-				aspan["Title"] = str(data[field])
-				return (aspan)
+				value = resstr
 			else:
 				# no langobject
-				return html5.Label(str(data[field]))
-		return html5.Label(conf["empty_value"])
+				value = str(data[field])
 
+		delegato = html5.Div(value)
+		delegato.addClass("vi-delegato", "vi-delegato--text")
+		return delegato
 
 class TextEditBone(html5.Div):
 
@@ -69,6 +70,16 @@ class TextEditBone(html5.Div):
 		self.languages = languages
 		self.descrHint = descrHint
 		self.valuesdict = dict()
+		self.addClass("vi-bone-container")
+
+		if not readOnly and not self.isPlainText:
+			self.input = HtmlEditor()
+			self.input.boneName = self.boneName
+		else:
+			self.input = html5.ignite.Textarea()
+			if readOnly:
+				self.input["readonly"] = True
+		self.appendChild(self.input)
 
 		# multilangbone
 		if self.languages:
@@ -80,40 +91,37 @@ class TextEditBone(html5.Div):
 				self.selectedLang = self.languages[0]
 
 			self.langButContainer = html5.Div()
-			self.langButContainer["class"].append("languagebuttons")
+
+			self.langButContainer.addClass("vi-bone-container-langbtns input-group")
 
 			for lang in self.languages:
 				abut = html5.ext.Button(lang, self.changeLang)
+				abut.addClass("btn--lang")
+
 				abut["value"] = lang
 				self.langButContainer.appendChild(abut)
 
 			self.appendChild(self.langButContainer)
+
 			self.refreshLangButContainer()
 		else:
 			self.value = ""
-
-		if not readOnly and not self.isPlainText:
-			self.input = HtmlEditor()
-			self.input.boneName = self.boneName
-		else:
-			self.input = html5.Textarea()
-			if readOnly:
-				self.input["readonly"] = True
-
-		self.appendChild(self.input)
 
 		self.sinkEvent("onKeyUp")
 
 		self.changeEvent = EventDispatcher("boneChange")
 		self._changeTimeout = None
 
+
 	def _setDisabled(self, disable):
 		"""
-			Reset the is_active flag (if any)
+			Reset the is-active flag (if any)
 		"""
 		super(TextEditBone, self)._setDisabled(disable)
-		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
-			self.parent()["class"].remove("is_active")
+
+		if not disable and not self._disabledState and "is-active" in self.parent()["class"]:
+			self.parent().removeClass("is-active")
+
 
 	def changeLang(self, btn):
 		self.valuesdict[self.selectedLang] = self.input["value"]
@@ -129,17 +137,17 @@ class TextEditBone(html5.Div):
 		for abut in self.langButContainer._children:
 
 			if abut["value"] in self.valuesdict and self.valuesdict[abut["value"]]:
-				if not "is_filled" in abut["class"]:
-					abut["class"].append("is_filled")
+				if not "is-filled" in abut["class"]:
+					abut.addClass("is-filled")
 			else:
-				if not "is_unfilled" in abut["class"]:
-					abut["class"].append("is_unfilled")
+				if not "is-unfilled" in abut["class"]:
+					abut.addClass("is-unfilled")
 
 			if abut["value"] == self.selectedLang:
-				if not "is_active" in abut["class"]:
-					abut["class"].append("is_active")
+				if not "is-active" in abut["class"]:
+					abut.addClass("is-active")
 			else:
-				abut["class"].remove("is_active")
+				abut.removeClass("is-active")
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
@@ -151,18 +159,22 @@ class TextEditBone(html5.Div):
 		return TextEditBone(moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr)
 
 	def unserialize(self, data):
+		if self.boneName not in data:
+			return
+
 		self.valuesdict.clear()
-		if self.boneName in data.keys():
-			if self.languages:
-				for lang in self.languages:
-					if self.boneName in data.keys() and isinstance(data[self.boneName], dict) and lang in data[
-						self.boneName].keys():
-						self.valuesdict[lang] = data[self.boneName][lang]
-					else:
-						self.valuesdict[lang] = ""
-				self.input["value"] = self.valuesdict[self.selectedLang]
-			else:
-				self.input["value"] = data[self.boneName] if data[self.boneName] else ""
+		data = data[self.boneName] or ""
+
+		if self.languages:
+			for lang in self.languages:
+				if isinstance(data, dict):
+					self.valuesdict[lang] = data.get(lang, "")
+				else:
+					self.valuesdict[lang] = ""
+
+			self.input["value"] = self.valuesdict[self.selectedLang]
+		else:
+			self.input["value"] = data
 
 	def serializeForPost(self):
 		if self.selectedLang:
@@ -184,12 +196,11 @@ class TextEditBone(html5.Div):
 		if self._changeTimeout:
 			html5.window.clearTimeout(self._changeTimeout)
 
-		self._changeTimeout = html5.window.setTimeout(lambda: self.changeEvent.fire(self), 2500)
+		self._changeTimeout = html5.window.setTimeout(lambda: self.changeEvent.fire(self), 500)
 
 	@staticmethod
 	def checkForTextBone(moduleName, boneName, skelStucture, *args, **kwargs):
 		return skelStucture[boneName]["type"] == "text"
-
 
 # Register this Bone in the global queue
 editBoneSelector.insert(3, TextEditBone.checkForTextBone, TextEditBone)

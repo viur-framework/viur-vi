@@ -1,0 +1,20 @@
+@charset "UTF-8";
+/* LOADING */
+
+.is-loading:not(i):not(.icon),
+[aria-busy=true]:not(i):not(.icon) {
+  animation: loader-opacity 1.5s infinite ease-in-out both;
+  cursor: progress!important;
+  & * {
+    user-select: none!important;
+    pointer-events: none!important;
+  }
+}
+
+@keyframes loader-opacity {
+  0%, 80%, 100% {
+    opacity: 0.4;
+  } 40% {
+    opacity: 1;
+  }
+}

@@ -20,9 +20,9 @@ class UserLogoutMsg(html5.ext.Popup):
 		self.lbl = html5.Label(translate("Your session was terminated by our server. "
 		                                 "Perhaps your computer fall asleep and broke connection?\n"
 		                                 "Please relogin to continue your mission."))
-		self.appendChild(self.lbl)
-		self.appendChild(html5.ext.Button(translate("Refresh"), callback=self.startPolling))
-		self.appendChild(html5.ext.Button(translate("Login"), callback=self.showLoginWindow))
+		self.popupBody.appendChild(self.lbl)
+		self.popupFoot.appendChild(html5.ext.Button(translate("Refresh"), callback=self.startPolling))
+		self.popupFoot.appendChild(html5.ext.Button(translate("Login"), callback=self.showLoginWindow))
 		setInterval = eval("window.setInterval")
 		self.interval = setInterval(self.checkForSuspendResume, self.checkIntervall)
 		self.hideMessage()

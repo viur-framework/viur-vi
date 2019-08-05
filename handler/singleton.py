@@ -5,10 +5,10 @@ from vi.pane import Pane
 
 class SingletonHandler( Pane ):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
-		super(SingletonHandler, self).__init__(
-			moduleInfo["visibleName"],
-			moduleInfo.get("icon", "icons/modules/singleton.svg")
-		)
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
+
+		super(SingletonHandler, self).__init__(moduleInfo["visibleName"], icon)
 
 		self.moduleName = moduleName
 		self.moduleInfo = moduleInfo

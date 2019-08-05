@@ -5,43 +5,61 @@ from vi.config import conf
 from vi.event import EventDispatcher
 from vi.i18n import translate
 
-class BooleanViewBoneDelegate( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( BooleanViewBoneDelegate, self ).__init__()
+
+class BooleanViewBoneDelegate(object):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
+		super(BooleanViewBoneDelegate, self).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
 		self.moduleName = moduleName
 
-	def render( self, data, field ):
+	def render(self, data, field):
+		value = conf["empty_value"]
+
 		if field in data.keys():
-			return html5.Label(translate(str(data[field])))
-		return html5.Label(conf["empty_value"])
+			value = translate(str(data[field]))
 
-class BooleanEditBone( html5.Input ):
+		delegato = html5.Div(value)
+		delegato.addClass("vi-delegato", "vi-delegato--bool")
+		return delegato
 
-	def __init__(self, moduleName, boneName,readOnly, *args, **kwargs ):
-		super( BooleanEditBone,  self ).__init__( *args, **kwargs )
+class BooleanEditBone(html5.Div):
+
+	def __init__(self, moduleName, boneName, readOnly, *args, **kwargs):
+		super(BooleanEditBone, self).__init__(*args, **kwargs)
 		self.boneName = boneName
 		self.readOnly = readOnly
-		self["type"]="checkbox"
-		if readOnly:
-			self["disabled"]=True
+		self.addClass("vi-bone-container")
 
+		switchWrap = html5.Div()
+		switchWrap.addClass("switch ignt-switch")
+
+		self.switch = html5.ignite.Switch()
+		switchWrap.appendChild(self.switch)
+
+		switchLabel = html5.Label(forElem=self.switch)
+		switchLabel.addClass("switch-label")
+		switchWrap.appendChild(switchLabel)
+
+		self.appendChild(switchWrap)
+
+		if readOnly:
+			self["disabled"] = True
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
+		readOnly = "readonly" in skelStructure[boneName].keys() and skelStructure[boneName]["readonly"]
 		return BooleanEditBone(moduleName, boneName, readOnly)
 
 	def unserialize(self, data, extendedErrorInformation=None):
 		if self.boneName in data.keys():
-			self._setChecked(data[self.boneName])
+			self.switch._setChecked(data[self.boneName])
 
 	def serializeForPost(self):
-		return {self.boneName: str(self._getChecked())}
+		return {self.boneName: str(self.switch._getChecked())}
 
 	def serializeForDocument(self):
-		return {self.boneName: self._getChecked()}
+		return {self.boneName: self.switch._getChecked()}
 
 
 class ExtendedBooleanSearch( html5.Div ):
@@ -51,9 +69,9 @@ class ExtendedBooleanSearch( html5.Div ):
 		self.extension = extension
 		self.module = module
 		self.filterChangedEvent = EventDispatcher("filterChanged")
-		self.appendChild( html5.TextNode(extension["name"]))
+		self.appendChild(html5.TextNode(extension["name"]))
 		self.selectionCb = html5.Select()
-		self.appendChild( self.selectionCb )
+		self.appendChild(self.selectionCb)
 		o = html5.Option()
 		o["value"] = ""
 		o.appendChild(html5.TextNode(translate("Ignore")))
@@ -72,26 +90,25 @@ class ExtendedBooleanSearch( html5.Div ):
 		event.stopPropagation()
 		self.filterChangedEvent.fire()
 
-
 	def updateFilter(self, filter):
 		val = self.selectionCb["options"].item(self.selectionCb["selectedIndex"]).value
 		if not val:
 			if self.extension["target"] in filter.keys():
-				del filter[ self.extension["target"] ]
+				del filter[self.extension["target"]]
 		else:
-			filter[ self.extension["target"] ] = val
-		return( filter )
+			filter[self.extension["target"]] = val
+		return (filter)
 
 	@staticmethod
 	def canHandleExtension( extension, view, module ):
 		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="boolean" or extension["type"].startswith("boolean.") ) )
 
 
-
 def CheckForBooleanBone(moduleName, boneName, skelStucture, *args, **kwargs):
 	return skelStucture[boneName]["type"] == "bool"
 
-#Register this Bone in the global queue
-editBoneSelector.insert( 3, CheckForBooleanBone, BooleanEditBone)
-viewDelegateSelector.insert( 3, CheckForBooleanBone, BooleanViewBoneDelegate)
-extendedSearchWidgetSelector.insert( 1, ExtendedBooleanSearch.canHandleExtension, ExtendedBooleanSearch )
+
+# Register this Bone in the global queue
+editBoneSelector.insert(3, CheckForBooleanBone, BooleanEditBone)
+viewDelegateSelector.insert(3, CheckForBooleanBone, BooleanViewBoneDelegate)
+extendedSearchWidgetSelector.insert(1, ExtendedBooleanSearch.canHandleExtension, ExtendedBooleanSearch)

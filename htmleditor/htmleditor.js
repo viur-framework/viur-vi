@@ -220,3 +220,27 @@ function getTranslations(lang) {
 }
 
 document.execCommand('enableObjectResizing', false, 'false');
+
+// use events here, because sommernote's events are only for the editable container
+$('.vi-bone-container').on('blur', '.note-editor', function () {
+  $editor = $(this);
+  $toolbar = $editor.find('.note-toolbar');
+  $editable = $editor.find('.note-editable');
+  $codemirror = $editor.find('.CodeMirror');
+  $toolbar.removeClass('is-active');
+
+  if (!$editor.data('codeview')) {
+    $editable.data('lastHeight', $editable.height()).height(100);
+  }
+
+  $codemirror.height($editable.height());
+});
+$('.vi-bone-container').on('focus', '.note-editor', function () {
+  $editor = $(this);
+  $toolbar = $editor.find('.note-toolbar');
+  $editable = $editor.find('.note-editable');
+  $toolbar.addClass('is-active');
+  var height = $editable.data('lastHeight') || 400;
+  $editable.height(height);
+});
+

@@ -10,8 +10,11 @@ from vi.network import NetworkService
 from vi.pane import Pane
 from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, \
 	extractorDelegateSelector
-from vi.widgets.edit import InternalEdit, EditWidget
+
+from vi.widgets.edit import EditWidget
+from vi.widgets.internaledit import InternalEdit
 from vi.widgets.list import ListWidget
+from vi.widgets.button import Button
 
 
 def getDefaultValues(structure):
@@ -101,11 +104,12 @@ class RelationalViewBoneDelegate(object):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field, self.boneName)
 		val = data.get(field)
 
-		lbl = html5.Label()
+		delegato = html5.Div()
+		delegato.addClass("vi-delegato", "vi-delegato--relational")
 
 		if val is None:
-			lbl.appendChild(conf["empty_value"])
-			return lbl
+			delegato.appendChild(conf["empty_value"])
+			return delegato
 
 		structure = self.structure[self.boneName]
 
@@ -143,8 +147,8 @@ class RelationalViewBoneDelegate(object):
 
 			res = ""
 
-		html5.utils.textToHtml(lbl, html5.utils.unescape(res))
-		return lbl
+		html5.utils.textToHtml(delegato, html5.utils.unescape(res))
+		return delegato
 
 
 class RelationalSingleSelectionBone(html5.Div):
@@ -174,14 +178,26 @@ class RelationalSingleSelectionBone(html5.Div):
 		self.format = format
 		self.using = using
 		self.usingDescr = usingDescr
+		self.addClass("vi-bone-container")
+		self.addClass("vi-tree-selectioncontainer-entry")
 
 		self.selection = None
-		self.selectionTxt = html5.Input()
+		self.selectionTxt = html5.ignite.Input()
 		self.selectionTxt["readonly"] = True
 		self.selectionTxt["type"] = "text"
-		self.appendChild(self.selectionTxt)
+
 		self.ie = None
 
+		self.boneControls = html5.Div()
+		self.boneControls.addClass("vi-bone-controls input-group")
+
+		wrapperDiv = html5.Div()
+		wrapperDiv.addClass( "vi-tree-labelwrapper input-group" )
+
+		wrapperDiv.appendChild( self.selectionTxt )
+		wrapperDiv.appendChild( self.boneControls )
+
+		self.appendChild(wrapperDiv)
 		self.baseContext = context
 		self.context = self.baseContext.copy() if self.baseContext else None
 
@@ -192,9 +208,8 @@ class RelationalSingleSelectionBone(html5.Div):
 			and ("root" in conf["currentUser"]["access"] or destModule + "-view" in conf["currentUser"]["access"])):
 
 			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
-			self.selectBtn["class"].append("icon")
-			self.selectBtn["class"].append("select")
-			self.appendChild( self.selectBtn )
+			self.selectBtn.addClass("btn--select")
+			self.boneControls.appendChild(self.selectBtn)
 		else:
 			self.selectBtn = None
 
@@ -202,9 +217,8 @@ class RelationalSingleSelectionBone(html5.Div):
 		if (destModule in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"] or destModule + "-edit" in conf["currentUser"]["access"])):
 			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit )
-			self.editBtn["class"].append("icon")
-			self.editBtn["class"].append("edit")
-			self.appendChild( self.editBtn )
+			self.editBtn.addClass("btn--edit")
+			self.boneControls.appendChild(self.editBtn)
 		else:
 			self.editBtn = None
 
@@ -216,9 +230,8 @@ class RelationalSingleSelectionBone(html5.Div):
 			# is only useful when viewing the destination module is still allowed.
 
 			self.remBtn = html5.ext.Button(translate("Remove"), self.onRemove )
-			self.remBtn["class"].append("icon")
-			self.remBtn["class"].append("cancel")
-			self.appendChild( self.remBtn )
+			self.remBtn.addClass("btn--remove", "btn--danger")
+			self.boneControls.appendChild(self.remBtn)
 		else:
 			self.remBtn = None
 
@@ -227,11 +240,11 @@ class RelationalSingleSelectionBone(html5.Div):
 
 	def _setDisabled(self, disable):
 		"""
-			Reset the is_active flag (if any)
+			Reset the is-active flag (if any)
 		"""
 		super(RelationalSingleSelectionBone, self)._setDisabled( disable )
-		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
-			self.parent()["class"].remove("is_active")
+		if not disable and not self._disabledState and "is-active" in self.parent()["class"]:
+			self.parent().removeClass("is-active")
 
 	@classmethod
 	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
@@ -315,6 +328,9 @@ class RelationalSingleSelectionBone(html5.Div):
 	def onRemove(self, *args, **kwargs):
 		self.setSelection(None)
 		self.changeEvent.fire(self)
+		if self.ie:
+			self.removeChild( self.ie )
+
 
 	def unserialize(self, data):
 		"""
@@ -386,7 +402,7 @@ class RelationalSingleSelectionBone(html5.Div):
 
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is_active")
+		self.parent().addClass("is-active")
 
 	def onSelectionActivated(self, table, selection ):
 		"""
@@ -441,14 +457,14 @@ class RelationalSingleSelectionBone(html5.Div):
 		"""
 		if self.selection:
 			if self.editBtn:
-				self.editBtn[ "disabled" ] = False
+				self.editBtn.enable()
 			if self.remBtn:
-				self.remBtn[ "disabled"] = False
+				self.remBtn.enable()
 		else:
 			if self.editBtn:
-				self.editBtn[ "disabled" ] = True
+				self.editBtn.disable()
 			if self.remBtn:
-				self.remBtn[ "disabled"] = True
+				self.remBtn.disable()
 
 	def onAttach(self):
 		super(RelationalSingleSelectionBone, self).onAttach()
@@ -502,24 +518,23 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		"""
 		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 		self.sinkEvent("onDrop", "onDragOver", "onDragLeave", "onDragStart", "onDragEnd", "onChange")
-
+		self.addClass("vi-bone-container")
 		self.parent = parent
 		self.module = module
 		self.data = data
 
-		self.txtLbl = html5.Label()
+		self.txtLbl = html5.ignite.Label()
 		self.txtLbl["draggable"] = not parent.readOnly
 
-		self.addClass("selectioncontainer-entry")
+		self.addClass("vi-tree-selectioncontainer-entry")
 
 		wrapperDiv = html5.Div()
 		wrapperDiv.appendChild(self.txtLbl)
-		wrapperDiv["class"].append("labelwrapper")
+		wrapperDiv.addClass("vi-tree-labelwrapper input-group")
 
 		if not parent.readOnly:
-			remBtn = html5.ext.Button(translate("Remove"), self.onRemove)
-			remBtn["class"].append("icon")
-			remBtn["class"].append("cancel")
+			remBtn = Button(translate("Remove"), self.onRemove, icon="icons-delete")
+			remBtn.addClass("btn--remove", "btn--danger")
 			wrapperDiv.appendChild(remBtn)
 
 		self.appendChild(wrapperDiv)
@@ -540,9 +555,8 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			and ("root" in conf["currentUser"]["access"]
 					or self.parent.destModule + "-edit" in conf["currentUser"]["access"])):
 
-			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit)
-			self.editBtn["class"].append("icon")
-			self.editBtn["class"].append("edit")
+			self.editBtn = Button(translate("Edit"), self.onEdit, icon="icons-edit")
+			self.editBtn.addClass("btn--edit")
 			wrapperDiv.appendChild(self.editBtn)
 
 		else:
@@ -636,7 +650,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.parent.changeEvent.fire(self.parent)
 
 	def onEdit(self, sender = None):
-		pane = Pane(translate("Edit"), closeable=True,
+		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
 					iconClasses=["module_%s" % self.parent.destModule, "apptype_list", "action_edit"])
 		conf["mainWindow"].stackPane(pane, focus=True)
 
@@ -719,6 +733,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.using = using
 		self.usingDescr = usingDescr
 		self.relskel = relskel
+		self.addClass("vi-bone-container")
 
 		self.changeEvent = EventDispatcher("boneChange")
 
@@ -731,15 +746,15 @@ class RelationalMultiSelectionBone(html5.Div):
 		self.context = self.baseContext.copy() if self.baseContext else None
 
 		self.selectionDiv = html5.Div()
-		self.selectionDiv.addClass("selectioncontainer")
+		self.selectionDiv.addClass("vi-relation-selectioncontainer", "vi-selectioncontainer", "list")
 		self.appendChild(self.selectionDiv)
 
-		if (destModule in conf["modules"].keys()
+		print(conf["modules"].keys())
+		if (destModule.lower() in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"] or destModule + "-view" in conf["currentUser"]["access"])):
 
-			self.selectBtn = html5.ext.Button("Select", self.onShowSelector)
-			self.selectBtn["class"].append("icon")
-			self.selectBtn["class"].append("select")
+			self.selectBtn = html5.ext.Button(translate("Select"), self.onShowSelector)
+			self.selectBtn.addClass("btn--select")
 			self.appendChild( self.selectBtn )
 		else:
 			self.selectBtn = None
@@ -751,11 +766,11 @@ class RelationalMultiSelectionBone(html5.Div):
 
 	def _setDisabled(self, disable):
 		"""
-			Reset the is_active flag (if any)
+			Reset the is-active flag (if any)
 		"""
 		super(RelationalMultiSelectionBone, self)._setDisabled( disable )
-		if not disable and not self._disabledState and "is_active" in self.parent()["class"]:
-			self.parent()["class"].remove("is_active")
+		if not disable and not self._disabledState and "is-active" in self.parent()["class"]:
+			self.parent().removeClass("is-active")
 
 	@classmethod
 	def fromSkelStructure(cls, moduleName, boneName, skelStructure, *args, **kwargs):
@@ -851,7 +866,7 @@ class RelationalMultiSelectionBone(html5.Div):
 		currentSelector = ListWidget(self.destModule, selectMode="multi", context=self.context)
 		currentSelector.selectionActivatedEvent.register( self )
 		conf["mainWindow"].stackWidget( currentSelector )
-		self.parent()["class"].append("is_active")
+		self.parent().addClass("is-active")
 
 	def onSelectionActivated(self, table, selection):
 		"""

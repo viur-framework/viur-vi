@@ -6,15 +6,16 @@ from vi.network import NetworkService
 from vi.pane import Pane
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
+from vi.widgets.button import Button
 
 
-class AddLeafAction( html5.ext.Button ):
+class AddLeafAction(Button):
 	"""
 		Creates a new leaf (ie. a file) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddLeafAction, self ).__init__( translate("Add"), *args, **kwargs )
-		self["class"] = "icon add leaf"
+		super( AddLeafAction, self ).__init__( translate("Add"), icon="icons-add-file", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--add-leaf btn--primary"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -29,7 +30,7 @@ class AddLeafAction( html5.ext.Button ):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane("Add", closeable=True)
+		pane = Pane("Add", iconURL="icons-add", closeable=True)
 		conf["mainWindow"].stackPane( pane, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_add_leaf" ] )
 		edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
 		pane.addWidget( edwg )
@@ -41,13 +42,13 @@ class AddLeafAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, AddLeafAction.isSuitableFor, AddLeafAction )
 
 
-class AddNodeAction( html5.ext.Button ):
+class AddNodeAction(Button):
 	"""
 		Creates a new node (ie. a directory) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddNodeAction, self ).__init__(  translate("Add"), *args, **kwargs )
-		self["class"] = "icon add node"
+		super( AddNodeAction, self ).__init__(  translate("Add"), icons="icons-add-folder", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--add-node"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -62,7 +63,7 @@ class AddNodeAction( html5.ext.Button ):
 		return  correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane( translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_add_node" ])
+		pane = Pane( translate("Add"), closeable=True, iconURL="icons-add", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_add_node" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="node" )
 		pane.addWidget( edwg )
@@ -74,14 +75,14 @@ class AddNodeAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, AddNodeAction.isSuitableFor, AddNodeAction )
 
 
-class EditAction( html5.ext.Button ):
+class EditAction(Button):
 	"""
 		Edits an entry inside a tree application.
 		The type (node or leaf) of the entry is determined dynamically
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__(  translate("Edit"), *args, **kwargs )
-		self["class"] = "icon edit"
+		super( EditAction, self ).__init__(  translate("Edit"), icons="icons-edit", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -97,7 +98,7 @@ class EditAction( html5.ext.Button ):
 
 	def onSelectionActivated(self, table, selection ):
 		if not self.parent().parent().selectMode and len(selection)==1:
-			pane = Pane( translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
+			pane = Pane( translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			if isinstance( selection[0], self.parent().parent().nodeWidget):
 				skelType = "node"
@@ -153,14 +154,14 @@ class EditAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
 
-class DeleteAction( html5.ext.Button ):
+class DeleteAction(Button):
 	"""
 		Allows deleting an entry in a tree-module.
 		The type (node or leaf) of the entry is determined dynamically.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__(  translate("Delete"), *args, **kwargs )
-		self["class"] = "icon delete"
+		super( DeleteAction, self ).__init__(translate("Delete"), icons="icons-delete", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -202,7 +203,7 @@ class DeleteAction( html5.ext.Button ):
 			return
 		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = selection
-		d["class"].append( "delete" )
+		d.addClass( "delete" )
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
@@ -217,25 +218,25 @@ class DeleteAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
-class ReloadAction( html5.ext.Button ):
+class ReloadAction(Button):
 	"""
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
-		self["class"] = "icon reload"
+		super( ReloadAction, self ).__init__( translate("Reload"), icons="icons-reload", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
 		return actionName=="reload" and (handler == "tree" or handler.startswith("tree."))
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
+		self.addClass("is-loading")
 		NetworkService.notifyChange( self.parent().parent().module )
 
 	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
+		if self.hasClass("is-loading"):
+			self.removeClass("is-loading")
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
@@ -246,6 +247,7 @@ class SelectRootNode( html5.Select ):
 	"""
 	def __init__(self, module, handler, actionName, *args, **kwargs):
 		super( SelectRootNode, self ).__init__( *args, **kwargs )
+		self.addClass("select","select--small","bar-item")
 		self.sinkEvent("onChange")
 		self.hide()
 
@@ -298,14 +300,14 @@ class SelectRootNode( html5.Select ):
 actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
 
 
-class ReturnSelectionAction( html5.ext.Button ):
+class ReturnSelectionAction(Button):
 	"""
 		This is the new "activateSelectionAction" for Trees - we need a different event
 		to avoid conflicts with "open that folder" action.
 	"""
 	def __init__(self, *args, **kwargs ):
-		super( ReturnSelectionAction, self ).__init__( translate("Select"), *args, **kwargs )
-		self["class"] = "icon activateselection"
+		super( ReturnSelectionAction, self ).__init__( translate("Select"), icons="icons-select-add", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--activateselection"
 
 	def onClick(self, sender=None):
 		self.parent().parent().returnCurrentSelection()

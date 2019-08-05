@@ -40,13 +40,18 @@ class BaseViewBoneDelegate( object ):
 		self.moduleName=moduleName
 
 	def render(self, data, field):
+		value = conf[ "empty_value" ]
+
 		if field in data.keys():
-			return html5.Label(str(data[field]))
+			value = str(data[field])
 
-		return html5.Label(conf[ "empty_value" ])
+		delegato = html5.Div(value)
+		delegato.addClass("vi-delegato", "vi-delegato--base")
+		return delegato
 
 
-class BaseEditBone(html5.Input):
+
+class BaseEditBone(html5.ignite.Input):
 	"""
 		Base edit widget for everything not handled separately.
 	"""

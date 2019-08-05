@@ -3,15 +3,17 @@ import html5
 from vi.event import EventDispatcher
 from vi.i18n import translate
 
-class Search( html5.Div ):
+
+class Search(html5.Div):
 	def __init__(self, *args, **kwargs):
-		super( Search, self ).__init__( *args, **kwargs )
+		super(Search, self).__init__(*args, **kwargs)
 		self.startSearchEvent = EventDispatcher("startSearch")
-		self["class"].append("search")
-		lblSearch = html5.H2()
-		lblSearch.appendChild( html5.TextNode(translate("Fulltext search")))
-		self.appendChild( lblSearch )
-		self.searchInput = html5.Input()
+		self.addClass("vi-search")
+		self.searchLbl = html5.H2()
+		self.searchLbl.appendChild(html5.TextNode(translate("Fulltext search")))
+		self.searchLbl.addClass("vi-search-label")
+		self.appendChild(self.searchLbl)
+		self.searchInput = html5.ignite.Input()
 		self.searchInput["type"] = "text"
 		self.appendChild(self.searchInput)
 		self.btn = html5.ext.Button(translate("Search"), callback=self.doSearch)
@@ -21,15 +23,15 @@ class Search( html5.Div ):
 
 	def doSearch(self, *args, **kwargs):
 		if self.searchInput["value"] != self.last_search:
-			if len( self.searchInput[ "value" ] ):
-				self.startSearchEvent.fire( self.searchInput["value"] )
+			if len(self.searchInput["value"]):
+				self.startSearchEvent.fire(self.searchInput["value"])
 			else:
 				self.resetSearch()
 
 			self.last_search = self.searchInput["value"]
 
 	def resetSearch(self):
-		self.startSearchEvent.fire( None )
+		self.startSearchEvent.fire(None)
 
 	def onKeyDown(self, event):
 		if html5.isReturn(event):
@@ -38,8 +40,8 @@ class Search( html5.Div ):
 			event.stopPropagation()
 
 	def resetLoadingState(self):
-		if "is_loading" in self.btn["class"]:
-			self.btn["class"].remove("is_loading")
+		if "is-loading" in self.btn["class"]:
+			self.btn.removeClass("is-loading")
 
 	def reevaluate(self):
 		self.doSearch()

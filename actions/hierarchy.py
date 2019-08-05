@@ -7,15 +7,16 @@ from vi.network import NetworkService
 from vi.pane import Pane
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
+from vi.widgets.button import Button
 
 
-class AddAction( html5.ext.Button ):
+class AddAction(Button):
 	"""
 		Adds a new node in a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddAction, self ).__init__( translate("Add"), *args, **kwargs )
-		self["class"] = "icon add"
+		super( AddAction, self ).__init__( translate("Add"), icon="icons-add", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--add btn--primary"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -45,13 +46,13 @@ class AddAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, AddAction.isSuitableFor, AddAction )
 
 
-class EditAction( html5.ext.Button ):
+class EditAction(Button):
 	"""
 		Edits a node in a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), *args, **kwargs )
-		self["class"] = "icon edit"
+		super( EditAction, self ).__init__( translate("Edit"), icon="icons-edit", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -111,14 +112,14 @@ class EditAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
 
-class CloneAction( html5.ext.Button ):
+class CloneAction(Button):
 	"""
 		Allows cloning an entry (including its subentries) in a hierarchy application.
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( CloneAction, self ).__init__( translate("Clone"), *args, **kwargs )
-		self["class"] = "icon clone"
+		super( CloneAction, self ).__init__( translate("Clone"), icon="icons-clone", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--clone"
 		self["disabled"]= True
 		self.isDisabled=True
 
@@ -174,13 +175,13 @@ class CloneAction( html5.ext.Button ):
 actionDelegateSelector.insert( 1, CloneAction.isSuitableFor, CloneAction )
 
 
-class DeleteAction( html5.ext.Button ):
+class DeleteAction(Button):
 	"""
 		Deletes a node from a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__( translate("Delete"), *args, **kwargs )
-		self["class"] = "icon delete"
+		super( DeleteAction, self ).__init__( translate("Delete"), icon="icons-delete", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled = True
 
@@ -222,7 +223,7 @@ class DeleteAction( html5.ext.Button ):
 			return
 		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = [x["key"] for x in selection]
-		d["class"].append( "delete" )
+		d.addClass( "delete" )
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
@@ -234,13 +235,13 @@ class DeleteAction( html5.ext.Button ):
 
 actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
 
-class ReloadAction( html5.ext.Button ):
+class ReloadAction(Button):
 	"""
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), *args, **kwargs )
-		self["class"] = "icon reload"
+		super( ReloadAction, self ).__init__( translate("Reload"), icon="icons-reload", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -249,12 +250,12 @@ class ReloadAction( html5.ext.Button ):
 		return correctAction and correctHandler
 
 	def onClick(self, sender=None):
-		self["class"].append("is_loading")
+		self.addClass("is-loading")
 		NetworkService.notifyChange( self.parent().parent().module )
 
 	def resetLoadingState(self):
-		if "is_loading" in self["class"]:
-			self["class"].remove("is_loading")
+		if self.hasClass("is-loading"):
+			self.removeClass("is-loading")
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
@@ -265,6 +266,7 @@ class SelectRootNode(html5.Select):
 	"""
 	def __init__(self, module, handler, actionName, *args, **kwargs):
 		super( SelectRootNode, self ).__init__( *args, **kwargs )
+		self.addClass("select", "select--small", "bar-item")
 		self.sinkEvent("onChange")
 		self.hide()
 
@@ -317,3 +319,29 @@ class SelectRootNode(html5.Select):
 		return actionName == "selectrootnode" and (handler == "hierarchy" or handler.startswith("hierarchy."))
 
 actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
+
+
+class ListViewAction(Button):
+	"""
+		Allows adding an entry in a list-module.
+	"""
+	def __init__(self, *args, **kwargs):
+		super( ListViewAction, self ).__init__( translate("ListViewAction"), icon="icons-list", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--list"
+
+	@staticmethod
+	def isSuitableFor( module, handler, actionName ):
+		correctAction = actionName=="listview"
+		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
+		return correctAction and correctHandler
+
+	def onClick(self, sender=None):
+		#self.addClass("is-loading")
+		self.parent().parent().toggleListView()
+
+	def resetLoadingState(self):
+		pass
+		#if self.hasClass("is-loading"):
+		#	self.removeClass("is-loading")
+
+actionDelegateSelector.insert( 1, ListViewAction.isSuitableFor, ListViewAction )

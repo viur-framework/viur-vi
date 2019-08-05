@@ -29,9 +29,14 @@ class SpatialBone(html5.Div):
 		return SpatialBone(moduleName, boneName, readOnly)
 
 	def unserialize(self, data):
+		if self.boneName not in data:
+			return
+
 		try:
 			self.latitude["value"], self.longitude["value"] = data[self.boneName]
 		except KeyError:
+			pass
+		except TypeError:
 			pass
 
 	def serializeForPost(self):
@@ -40,13 +45,15 @@ class SpatialBone(html5.Div):
 			"{0}.lng".format(self.boneName): self.longitude["value"]
 		}
 
+	def serializeForDocument(self):
+		return self.serializeForPost()
+
 	def setExtendedErrorInformation(self, errorInfo):
 		pass
 
 
 def CheckForSpatialBone(moduleName, boneName, skelStucture, *args, **kwargs):
-	tmp = str(skelStucture[boneName]["type"]).startswith("spatial")
-	return tmp
+	return skelStucture[boneName]["type"] == "spatial" or skelStucture[boneName]["type"].startswith("spatial.")
 
 
 # Register this Bone in the global queue

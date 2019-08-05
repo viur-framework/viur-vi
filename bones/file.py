@@ -62,8 +62,8 @@ class FileViewBoneDelegate(object):
 		if "mimetype" in fileEntry.keys():
 			try:
 				ftype, fformat = fileEntry["mimetype"].split("/")
-				adiv["class"].append("type_%s" % ftype )
-				adiv["class"].append("format_%s" % fformat )
+				adiv.addClass("type_%s" % ftype )
+				adiv.addClass("format_%s" % fformat )
 			except:
 				pass
 
@@ -73,7 +73,7 @@ class FileViewBoneDelegate(object):
 		aspan.appendChild(html5.TextNode(str(fileEntry.get("name", ""))))#fixme: formatstring!
 		adiv.appendChild(aspan)
 
-		adiv["class"].append("fileBoneViewCell")
+		adiv.addClass("fileBoneViewCell")
 		#adiv["draggable"]=True
 		#metamime="application/octet-stream"
 
@@ -138,7 +138,7 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		"""
 			Edit the image entry.
 		"""
-		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModule,
+		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=[ "modul_%s" % self.parent.destModule,
 		                                                                "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane(pane, focus=True)
 
@@ -158,17 +158,21 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 	def __init__(self, *args, **kwargs):
 		super(FileMultiSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
-		self["class"].append("supports_upload")
+
+		self.addClass("vi-bone-container supports-upload")
+		self["title"] = translate("vi.tree.drag-here")
 		self.currentSelector = None
 
 	def onDragOver(self, event):
 		super(FileMultiSelectionBone,self).onDragOver(event)
+		self.addClass("insert-here")
 		event.preventDefault()
 		event.stopPropagation()
 
 	def onDrop(self, event):
 		event.preventDefault()
 		event.stopPropagation()
+		self.removeClass("insert-here")
 		files = event.dataTransfer.files
 		for x in range(0,files.length):
 			ul = Uploader(files.item(x), None, context=self.context)
@@ -198,7 +202,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		self.currentSelector.selectionReturnEvent.register(self, reset=True)
 
 		conf["mainWindow"].stackWidget(self.currentSelector)
-		self.parent()["class"].append("is_active")
+		self.parent().addClass("is-active")
 
 	def onSelectionReturn(self, table, selection ):
 		"""
@@ -238,7 +242,8 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 	def __init__(self, *args, **kwargs):
 		super(FileSingleSelectionBone, self).__init__( *args, **kwargs )
 		self.sinkEvent("onDragOver","onDrop")
-		self["class"].append("supports_upload")
+		self.addClass("vi-bone-container supports-upload")
+		self["title"] = translate("vi.tree.drag-here")
 
 		self.previewImg = FilePreviewImage()
 		self.prependChild(self.previewImg)
@@ -248,6 +253,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 
 	def onDragOver(self, event):
 		super(FileSingleSelectionBone,self).onDragOver(event)
+		self.addClass("insert-here")
 		event.preventDefault()
 		event.stopPropagation()
 
@@ -255,6 +261,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		event.preventDefault()
 		event.stopPropagation()
 		files = event.dataTransfer.files
+		self.removeClass("insert-here")
 
 		if files.length > 1:
 			conf["mainWindow"].log("error",translate("You cannot drop more than one file here!"))
@@ -288,7 +295,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		self.currentSelector.selectionReturnEvent.register(self, reset=True)
 
 		conf["mainWindow"].stackWidget(self.currentSelector)
-		self.parent().addClass("is_active")
+		self.parent().addClass("is-active")
 
 	def onSelectionReturn(self, table, selection):
 		"""
@@ -318,7 +325,7 @@ class FileSingleSelectionBone( RelationalSingleSelectionBone ):
 		if not self.selection:
 			return
 
-		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.destModule,
+		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=[ "modul_%s" % self.destModule,
 		                                                                "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane(pane, focus=True)
 

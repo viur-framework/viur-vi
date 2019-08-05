@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 import html5
+
 from vi.config import conf
 from vi.i18n import translate
 from vi.network import NetworkService
@@ -8,6 +9,7 @@ from vi.sidebarwidgets.filterselector import CompoundFilter
 from vi.widgets.actionbar import ActionBar
 from vi.widgets.sidebar import SideBar
 from vi.widgets.table import DataTable
+from vi.embedsvg import embedsvg
 
 
 class ListWidget(html5.Div):
@@ -27,6 +29,7 @@ class ListWidget(html5.Div):
 			assert module in conf["modules"].keys()
 
 		super(ListWidget, self).__init__()
+		self.addClass("vi-widget vi-widget--list")
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
 		self.module = module
@@ -37,6 +40,10 @@ class ListWidget(html5.Div):
 
 		self.sideBar = SideBar()
 		self.appendChild( self.sideBar )
+
+		self.widgetContent = html5.Div()
+		self.widgetContent.addClass("vi-widget-content")
+		self.appendChild(self.widgetContent)
 
 		myView = None
 
@@ -60,7 +67,7 @@ class ListWidget(html5.Div):
 		           and conf["modules"][module]["indexes"])
 
 		self.table = DataTable( checkboxes=checkboxes, indexes=indexes, *args, **kwargs )
-		self.appendChild( self.table )
+		self.widgetContent.appendChild( self.table )
 		self._currentCursor = None
 		self._structure = None
 		self._currentRequests = []
@@ -99,24 +106,21 @@ class ListWidget(html5.Div):
 			self.selectionActivatedEvent.register(self)
 
 		self.emptyNotificationDiv = html5.Div()
+		svg = embedsvg.get("icons-error-file")
+		if svg:
+			self.emptyNotificationDiv.element.innerHTML = svg + self.emptyNotificationDiv.element.innerHTML
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
-		self.emptyNotificationDiv["class"].append("emptynotification")
-		self.appendChild(self.emptyNotificationDiv)
-		self.emptyNotificationDiv["style"]["display"] = "none"
+		self.emptyNotificationDiv.addClass("popup popup--center popup--local msg emptynotification")
+		self.widgetContent.appendChild(self.emptyNotificationDiv)
+		self.emptyNotificationDiv.removeClass("is-active")
 		self.table["style"]["display"] = "none"
-		self.filterDescriptionSpan = html5.Span()
-		self.appendChild( self.filterDescriptionSpan )
-		self.filterDescriptionSpan["class"].append("filterdescription")
-		self.updateFilterDescription()
+
+		self.tableinfo = html5.Div()
+		self.tableinfo.appendChild(html5.TextNode("Elemente:0"))
+		self.appendChild(self.tableinfo)
 
 		if autoload:
 			self.reloadData()
-
-	def updateFilterDescription(self):
-		self.filterDescriptionSpan.removeAllChildren()
-
-		if self.filterDescr:
-			self.filterDescriptionSpan.appendChild(html5.TextNode(html5.utils.unescape(self.filterDescr)))
 
 	def getDefaultActions(self, view = None ):
 		"""
@@ -130,7 +134,7 @@ class ListWidget(html5.Div):
 		if self.selectMode:
 			defaultActions += ["|", "select","close"]
 
-		defaultActions += ["|", "reload","selectfilter"]
+		defaultActions += ["|", "pagefind", "reload", "loadall", "intpreview", "selectfilter"]
 
 		#if not self.selectMode:
 		#	defaultActions += ["|", "exportcsv"]
@@ -161,14 +165,16 @@ class ListWidget(html5.Div):
 		self.actionBar["style"]["display"] = "none"
 		self.table["style"]["display"] = "none"
 		errorDiv = html5.Div()
-		errorDiv["class"].append("error_msg")
+		errorDiv.addClass("popup popup--center popup--local msg msg--error is-active error_msg")
 		if code and (code==401 or code==403):
 			txt = translate("Access denied!")
 		else:
 			txt = translate("An unknown error occurred!")
-		errorDiv["class"].append("error_code_%s" % (code or 0))
+		errorDiv.addClass("error_code_%s" % (code or 0))
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
+		self.tableinfo.removeAllChildren()
+		self.tableinfo.appendChild( html5.TextNode( "Elemente:-" ) )
 
 	def onNextBatchNeeded(self):
 		"""
@@ -237,7 +243,6 @@ class ListWidget(html5.Div):
 		self.filter = filter
 		self.filterID = filterID
 		self.filterDescr = filterDescr
-		self.updateFilterDescription()
 		self.reloadData()
 
 	def setContext(self, context):
@@ -270,12 +275,14 @@ class ListWidget(html5.Div):
 				self.table.setDataProvider(None) #We cant load any more results
 			else:
 				self.table["style"]["display"] = "none"
-				self.emptyNotificationDiv["style"]["display"] = ""
-				#self.element.innerHTML = "<center><strong>Keine Ergebnisse</strong></center>"
+				self.emptyNotificationDiv.addClass("is-active")
+			#self.element.innerHTML = "<center><strong>Keine Ergebnisse</strong></center>"
+			self.tableinfo.removeAllChildren()
+			self.tableinfo.appendChild( html5.TextNode( "Elemente:-" ) )
 			return
 
 		self.table["style"]["display"] = ""
-		self.emptyNotificationDiv["style"]["display"] = "none"
+		self.emptyNotificationDiv.removeClass("is-active")
 		self._structure = data["structure"]
 
 		if not self._tableHeaderIsValid:
@@ -294,6 +301,8 @@ class ListWidget(html5.Div):
 			self.table.setDataProvider(None)
 
 		self.table.extend( data["skellist"] )
+		self.tableinfo.removeAllChildren()
+		self.tableinfo.appendChild( html5.TextNode( "Elemente:%s"%(self.table.getRowCount()) ) )
 
 	def setFields(self, fields):
 		if not self._structure:

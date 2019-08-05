@@ -31,29 +31,32 @@ class NumericViewBoneDelegate(object):
 		self.moduleName = moduleName
 
 	def render(self, data, field):
-		s =  conf["empty_value"]
+		value =  conf["empty_value"]
 		if field in data.keys():
 			try:
 				prec = self.skelStructure[field].get("precision")
 
 				if prec and data[field] is not None:
-					s = ( "%." + str( prec ) + "f" ) % data[field]
+					value = ( "%." + str( prec ) + "f" ) % data[field]
 				else:
-					s = str(data[field])
+					value = str(data[field])
 
 			except:
-				s = str(data[field])
+				value = str(data[field])
 
-		return html5.Label(s)
+		delegato = html5.Div(value)
+		delegato.addClass("vi-delegato", "vi-delegato--numeric")
+		return delegato
 
-class NumericEditBone(html5.Span):
+class NumericEditBone(html5.Div):
 	def __init__(self, moduleName, boneName, readOnly, _min=False, _max=False, precision=False, currency=None,
 	                *args, **kwargs ):
 		super( NumericEditBone,  self ).__init__( *args, **kwargs )
 		self.boneName = boneName
 		self.readOnly = readOnly
+		self.addClass("vi-bone-container")
 
-		self.input = html5.Input()
+		self.input = html5.ignite.Input()
 		self.appendChild(self.input)
 
 		if currency:

@@ -1,0 +1,28 @@
+@charset "UTF-8";
+/* TOOLTIP */
+
+// Prefixes and objects:
+// .vi-tooltip-
+
+.vi-tooltip {
+  flex-basis: 100%;
+  margin-top: @innerSpace;
+  cursor: help;
+  padding: 5px;
+  &.msg .icon {
+    height: 1.5em;
+    width: 1.5em;
+    margin-right: 5px;
+  }
+    & .msg-descr {
+      display: none;
+    }
+  &.is-open {
+    &.msg .icon {
+      transform: rotate(90deg);
+    }
+    & .msg-descr {
+      display: block;
+    }
+  }
+}

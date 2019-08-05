@@ -25,23 +25,24 @@ class SelectOneViewBoneDelegate( object ):
 		self.moduleName = moduleName
 
 	def render( self, data, field ):
+		value = conf["empty_value"]
 		if field in data.keys():
 			if data and field and field in self.skelStructure:
 				options = {k: v for k, v in self.skelStructure[field]["values"]}
 
-				aspan = html5.Span()
-				aspan.appendChild(html5.TextNode(options.get(data[field], data[field])))
-				aspan["Title"]=data[field]
-				return aspan
+				value = options.get(data[field], data[field])
 
-		return html5.Label(conf["empty_value"])
+		delegato = html5.Div(value)
+		delegato.addClass("vi-delegato", "vi-delegato--select", "vi-delegato--selectone")
+		return delegato
 
-class SelectOneEditBone( html5.Select ):
+class SelectOneEditBone( html5.ignite.Select ):
 
 	def __init__(self, moduleName, boneName, readOnly, values, *args, **kwargs):
 		super(SelectOneEditBone,  self).__init__(*args, **kwargs)
 		self["name"] = self.boneName = boneName
 		self.readOnly = readOnly
+		self.addClass("select")
 
 		# Compatibility mode
 		if isinstance(values, dict):

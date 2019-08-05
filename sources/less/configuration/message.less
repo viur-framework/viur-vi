@@ -1,0 +1,28 @@
+@charset "UTF-8";
+/* MESSAGES and ALERTS */
+
+.msg {
+  .msg(@msgColor: @hintColor,
+    @msgBorderWidth: 1px,
+    @msgBorderRadius: 4px);
+}
+
+.msg--success {
+  .colorizeMsg(@successColor);
+}
+
+.msg--error {
+  .colorizeMsg(@failColor);
+}
+
+.msg--warning {
+  .colorizeMsg(@warnColor);
+}
+
+.msg--info {
+  .colorizeMsg(@hintColor);
+}
+
+.msg--progress {
+  .colorizeMsg(@hintColor);
+}

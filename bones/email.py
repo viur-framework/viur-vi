@@ -2,7 +2,7 @@
 import html5, re
 
 from vi.priorityqueue import editBoneSelector, viewDelegateSelector
-from vi.widgets.edit import InvalidBoneValueException
+from vi.exception import InvalidBoneValueException
 
 import vi.bones.string as strBone
 
@@ -19,15 +19,10 @@ class EmailViewBoneDelegate( strBone.StringViewBoneDelegate ):
 			and self.skelStructure[self.boneName]["params"].get("renderAsString")):
 			return super(EmailViewBoneDelegate, self).getViewElement(labelstr, datafield)
 
-		aa = html5.A()
-		aa["href"]="mailto:"+labelstr
-		aa["target"]="_Blank"
-		aa.appendChild(html5.TextNode(labelstr))
-		if not datafield:
-			aa["title"]="open mailclient"
-		else:
-			aa["title"]="open mailclient"+str(datafield)
-		return(aa)
+		delegato = html5.Div(labelstr)
+		delegato.addClass("vi-delegato", "vi-delegato--mail")
+
+		return delegato
 
 class EmailEditBone( strBone.StringEditBone ):
 	def __init__(self, moduleName, boneName,readOnly,*args, **kwargs ):

@@ -1,9 +1,12 @@
-[submodule "public/icons"]
-	path = public/icons
-	url = https://github.com/viur-framework/icons.git
 [submodule "logics"]
 	path = logics
 	url = https://github.com/viur-framework/logics.git
 [submodule "html5"]
 	path = html5
 	url = https://github.com/viur-framework/html5.git
+[submodule "sources/less/ignite"]
+	path = sources/less/ignite
+	url = https://github.com/viur-framework/ignite.git
+[submodule "sources/embedsvg/icons"]
+	path = sources/embedsvg/icons
+	url = https://github.com/viur-framework/icons.git

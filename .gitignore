@@ -11,3 +11,8 @@ version.py
 vi
 vi_plugins
 
+\.DS_Store
+
+node_modules
+
+sources/package-lock\.json

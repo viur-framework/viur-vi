@@ -10,11 +10,12 @@ from vi.i18n import translate
 
 class ListHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, isView=False, wasRequested = False, *args, **kwargs):
-		super(ListHandler, self).__init__(
-			moduleInfo.get("visibleName", moduleInfo["name"]),
-			moduleInfo.get("icon", "icons/modules/list.svg"),
-			path=moduleName + "/list" if not wasRequested else None
-		)
+
+		icon = "icons-list"
+		if "icon" in moduleInfo.keys():
+			icon = moduleInfo["icon"]
+
+		super(ListHandler, self).__init__(moduleInfo.get("visibleName", moduleInfo["name"]), icon,path=moduleName + "/list" if not wasRequested else None)
 
 		self.moduleName = moduleName
 		self.moduleInfo = moduleInfo
@@ -106,7 +107,7 @@ class ListHandler(Pane):
 			self.focus()
 
 		elif pathList[1] == "add":
-			pane = Pane(translate("Add"), closeable=True,
+			pane = Pane(translate("Add"), closeable=True, iconURL="icons-add",
 			            iconClasses=["module_%s" % self.moduleName, "apptype_list", "action_add"])
 			edwg = EditWidget(self.moduleName, EditWidget.appList, hashArgs=(params or None))
 			pane.addWidget(edwg)
@@ -114,7 +115,7 @@ class ListHandler(Pane):
 			pane.focus()
 
 		elif pathList[1] in ["edit", "clone"] and len(pathList) > 2:
-			pane = Pane(translate("Edit"), closeable=True,
+			pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
 			            iconClasses=["module_%s" % self.moduleName, "apptype_list", "action_edit"])
 			edwg = EditWidget(self.moduleName, EditWidget.appList, key=pathList[2], hashArgs=(params or None), clone=pathList[1] == "clone")
 			pane.addWidget(edwg)
