@@ -17,11 +17,12 @@ class TopBarWidget(html5.Header):
 		self["class"] = "vi-topbar bar"
 
 		self.sinkEvent("onClick")
+
 		self.fromHTML("""
 			<div class="vi-tb-left bar-group bar-group--left" [name]="topbarLeft">
 				<div class="vi-tb-logo" [name]="topbarLogo"></div>
-				<h1 class="vi-tb-title" [name]="modulH1"></h1>
-				<div class="vi-tb-currentmodul item" [name]="modulContainer">
+				<h1 class="vi-tb-title" [name]="moduleH1"></h1>
+				<div class="vi-tb-currentmodul item" [name]="moduleContainer">
 					<div class="item-image" [name]="modulImg"></div>
 					<div class="item-content" [name]="moduleName"></div>
 				</div>
@@ -61,13 +62,17 @@ class TopBarWidget(html5.Header):
 			if widget:
 				self.iconnav.appendChild(widget())
 
-	def setTitle(self):
-		title = conf.get("vi.name")
+	def setTitle(self, title=None):
+		self.moduleH1.removeAllChildren()
+
+		if title is None:
+			title = conf.get("vi.name")
+
 		if title:
-			self.modulH1.appendChild(html5.utils.unescape(title))
+			self.moduleH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
 
 	def onClick(self, event):
-		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulH1):
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.moduleH1):
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
 	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None, path=None):

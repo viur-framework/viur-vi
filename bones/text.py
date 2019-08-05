@@ -159,18 +159,22 @@ class TextEditBone(html5.Div):
 		return TextEditBone(moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr)
 
 	def unserialize(self, data):
+		if self.boneName not in data:
+			return
+
 		self.valuesdict.clear()
-		if self.boneName in data.keys():
-			if self.languages:
-				for lang in self.languages:
-					if self.boneName in data.keys() and isinstance(data[self.boneName], dict) and lang in data[
-						self.boneName].keys():
-						self.valuesdict[lang] = data[self.boneName][lang]
-					else:
-						self.valuesdict[lang] = ""
-				self.input["value"] = self.valuesdict[self.selectedLang]
-			else:
-				self.input["value"] = data[self.boneName] if data[self.boneName] else ""
+		data = data[self.boneName] or ""
+
+		if self.languages:
+			for lang in self.languages:
+				if isinstance(data, dict):
+					self.valuesdict[lang] = data.get(lang, "")
+				else:
+					self.valuesdict[lang] = ""
+
+			self.input["value"] = self.valuesdict[self.selectedLang]
+		else:
+			self.input["value"] = data
 
 	def serializeForPost(self):
 		if self.selectedLang:
@@ -192,7 +196,7 @@ class TextEditBone(html5.Div):
 		if self._changeTimeout:
 			html5.window.clearTimeout(self._changeTimeout)
 
-		self._changeTimeout = html5.window.setTimeout(lambda: self.changeEvent.fire(self), 2500)
+		self._changeTimeout = html5.window.setTimeout(lambda: self.changeEvent.fire(self), 500)
 
 	@staticmethod
 	def checkForTextBone(moduleName, boneName, skelStucture, *args, **kwargs):

@@ -4,6 +4,9 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 
 ## [develop] 
+
+This is the current development version.
+
 - Feature: selected multiple entities (range) in a list while holding the shift key
 - Restructured the LESS/CSS tool chain
 - Added ViUR Ignite LESS/CSS
@@ -32,19 +35,24 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 - Added and refined many convenience features like better tooltips, larger drop areas, collapsed module list etc.
 
 
-This is the current development version.
-
 ## [2.5.0] Vesuv
 
+Release date: Jul 26, 2019
+
 - Feature: Support for new recordBone()
-- Bugfix: Widget for stringBone(multiple=True) is now cleared on unserialization
-- Bugfix: Added missing serializeForDocument to spatialBone
-- Bugfix: SelectMultiBoneExtractor.render() works now correctly for selectBone(multiple=True)
+- Bugfix: Improved `textBone.unserialize()` and change-event behavior 
+- Bugfix: Widget for `stringBone(multiple=True)` is now cleared on unserialization
+- Bugfix: Added missing `serializeForDocument()` to spatialBone
+- Bugfix: SelectMultiBoneExtractor.render() works now correctly for `selectBone(multiple=True)`
+- Bugfix: Disallow applying SelectFieldsPopup with empty selection (#27)
+- Bugfix: Selection in SelectTable works now correctly
+- Bugfix: On server version mismatch, allow to continue anyway
 
 ## [2.4.1] Agung
 
 Release date: May 24, 2019
 
+- Bugfix: logics 2.4.1 with fixed unary operators
 - Bugfix: Order of path items in file module, stop path recognition when key is referenced as parentkey
 - Bugfix: Updated icons submodule
 

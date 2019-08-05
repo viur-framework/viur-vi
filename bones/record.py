@@ -204,7 +204,7 @@ class RecordMultiBoneEntry(html5.Div):
 
 		if not parent.readOnly:
 			remBtn = Button(translate("Remove"), self.onRemove, icon="icons-delete")
-			remBtn.addClass( "btn--remove", "btn--danger" )
+			remBtn.addClass("btn--remove", "btn--danger")
 			self.appendChild(remBtn)
 
 	def onDragStart(self, event):
@@ -316,8 +316,6 @@ class RecordMultiBone(html5.Div):
 		self.itemsDiv = html5.Div()
 		self.itemsDiv.addClass("recordbone-entries")
 		self.appendChild(self.itemsDiv)
-
-
 
 		if self.readOnly:
 			self["disabled"] = True
