@@ -58,11 +58,11 @@ class AdminScreen(Screen):
 		self.userLoggedOutMsg = None
 
 		# Register the error-handling for this iframe
-		le = eval("window.top.logError")
-		w = eval("window")
-		w.onerror = le
-		w = eval("window.top")
-		w.onerror = le
+		try:
+			html5.window.top.onerror = html5.window.top.logError
+			html5.window.onerror = html5.window.top.logError
+		except:
+			print("logError is disabled")
 
 	def onClick(self, event):
 		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulePipe):
@@ -190,7 +190,6 @@ class AdminScreen(Screen):
 			if not "root" in userAccess and not any([x.startswith(module) for x in userAccess]):
 				# Skip this module, as the user couldn't interact with it anyway
 				continue
-			info.update({"_handler":handler})
 
 			conf["modules"][module] = info
 
@@ -216,6 +215,8 @@ class AdminScreen(Screen):
 					handler = handlerCls(module, info)
 					panes.append((info["visibleName"], info.get("sortIndex"), handler))
 
+				info.update({"_handler":handler})
+
 		# Sorting our top level entries
 		panes.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1] is None else 0, entry[1] or 0, entry[0]))
 
@@ -228,7 +229,7 @@ class AdminScreen(Screen):
 		DeferredCall(self.checkInitialHash)
 		self.unlock()
 
-	def log(self, type, msg, icon):
+	def log(self, type, msg, icon=None):
 		self.logWdg.log(type, msg, icon)
 
 	def checkInitialHash(self, *args, **kwargs):

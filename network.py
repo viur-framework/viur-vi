@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, sys, json, string, random, time
+import html5, os, sys, json, string, random, time
 from vi.config import conf
 
 class DeferredCall( object ):
@@ -22,8 +22,7 @@ class DeferredCall( object ):
 		self._tFunc = func
 		self._tArgs = args
 		self._tKwArgs = kwargs
-		w = eval("window")
-		w.setTimeout(self.run, delay)
+		html5.window.setTimeout(self.run, delay)
 
 	def run(self):
 		"""
@@ -37,7 +36,7 @@ class HTTPRequest(object):
 	"""
 	def __init__(self, *args, **kwargs ):
 		super( HTTPRequest, self ).__init__( *args, **kwargs )
-		self.req = eval("new XMLHttpRequest()")
+		self.req = html5.jseval("new XMLHttpRequest()")
 		self.req.onreadystatechange = self.onReadyStateChange
 		self.cb = None
 		self.hasBeenSent = False
@@ -156,8 +155,8 @@ class NetworkService( object ):
 		"""
 		boundary_str = "---"+''.join( [ random.choice(string.ascii_lowercase+string.ascii_uppercase + string.digits) for x in range(13) ] )
 		boundary = boundary_str
-		res = b'Content-Type: multipart/mixed; boundary="'+boundary+b'"\r\nMIME-Version: 1.0\r\n'
-		res += b'\r\n--'+boundary
+		res = 'Content-Type: multipart/mixed; boundary="' + boundary + '"\r\nMIME-Version: 1.0\r\n'
+		res += '\r\n--'+boundary
 		for(key, value) in list(params.items()):
 			if all( [x in dir( value ) for x in ["name", "read"] ] ): #File
 				try:
@@ -165,24 +164,24 @@ class NetworkService( object ):
 					type = type or "application/octet-stream"
 				except:
 					type = "application/octet-stream"
-				res += b'\r\nContent-Type: '+type+b'\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+b'"; filename="'+os.path.basename(value.name).decode(sys.getfilesystemencoding())+b'"\r\n\r\n'
+				res += '\r\nContent-Type: '+type+'\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+'"; filename="'+os.path.basename(value.name).decode(sys.getfilesystemencoding())+'"\r\n\r\n'
 				res += str(value.read())
-				res += b'\r\n--'+boundary
+				res += '\r\n--'+boundary
 			elif isinstance( value, list ):
 				for val in value:
-					res += b'\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+b'"\r\n\r\n'
+					res += '\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+'"\r\n\r\n'
 					res += str(val)
-					res += b'\r\n--'+boundary
+					res += '\r\n--'+boundary
 			elif isinstance( value, dict ):
 				for k,v in value.items():
-					res += b'\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+b"."+k+b'"\r\n\r\n'
+					res += '\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+b"."+k+'"\r\n\r\n'
 					res += str(v)
-					res += b'\r\n--'+boundary
+					res += '\r\n--'+boundary
 			else:
-				res += b'\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+b'"\r\n\r\n'
+				res += '\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+'"\r\n\r\n'
 				res += str(value)
-				res += b'\r\n--'+boundary
-		res += b'--\r\n'
+				res += '\r\n--'+boundary
+		res += '--\r\n'
 		return( res, boundary )
 
 
@@ -224,10 +223,15 @@ class NetworkService( object ):
 			cacheKey = "c%s" % NetworkService._cache[ module ]
 
 		if module:
-			return "%s%s/%s/%s?_unused_time_stamp=%s" % (NetworkService.host, NetworkService.prefix,
+			href = "%s/%s/%s?_unused_time_stamp=%s" % (NetworkService.prefix,
 			                                                module, path, cacheKey)
+		else:
+			href = "%s%s_unused_time_stamp=%s" % (path, "&" if "?" in path else "?", cacheKey)
 
-		return "%s%s_unused_time_stamp=%s" % (path, "&" if "?" in path else "?", cacheKey)
+		if not href.startswith("/"):
+			href = "/" + href
+
+		return NetworkService.host + href
 
 	def __init__(self, module, url, params, successHandler, failureHandler, finishedHandler,
 	                modifies, cacheable, secure, kickoff):
@@ -317,9 +321,9 @@ class NetworkService( object ):
 
 			if isinstance(params, dict):
 				multipart, boundary = NetworkService.genReqStr(params)
-				contentType = b"multipart/form-data; boundary=" + boundary + b"; charset=utf-8"
+				contentType = "multipart/form-data; boundary=" + boundary + "; charset=utf-8"
 			elif isinstance(params, bytes):
-				contentType =  b"application/x-www-form-urlencoded"
+				contentType = "application/x-www-form-urlencoded"
 				multipart = params
 			else:
 				print(params)
@@ -383,7 +387,7 @@ class NetworkService( object ):
 		print("onError", self.kickoffs, self.retryMax, int(code), self.retryCodes)
 
 		if self.kickoffs < self.retryMax and int(code) in self.retryCodes:
-			logError = eval("window.top.logError")
+			logError = html5.window.top.logError
 			if logError and self.kickoffs == self.retryMax - 1:
 				logError("NetworkService.onError code:%s module:%s url:%s params:%s" % (code, self.module, self.url, self.params))
 

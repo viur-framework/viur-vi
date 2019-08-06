@@ -5,7 +5,7 @@ from vi.config import conf
 from vi.i18n import translate
 from vi.network import NetworkService
 from vi.priorityqueue import viewDelegateSelector, moduleHandlerSelector
-from vi.sidebarwidgets.filterselector import CompoundFilter
+# from vi.sidebarwidgets.filterselector import CompoundFilter #fixme
 from vi.widgets.actionbar import ActionBar
 from vi.widgets.sidebar import SideBar
 from vi.widgets.table import DataTable
@@ -55,7 +55,10 @@ class ListWidget(html5.Div):
 							myView = v
 							break
 			if myView and "extendedFilters" in myView.keys() and myView["extendedFilters"]:
-				self.appendChild(CompoundFilter(myView, module, embed=True))
+
+				#fixme
+				#self.appendChild(CompoundFilter(myView, module, embed=True))
+				print("fixme!")
 
 		checkboxes = (conf["modules"]
 		              and module in conf["modules"].keys()

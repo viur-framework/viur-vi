@@ -25,7 +25,7 @@ CUSTOM_LESS	=	$(wildcard $(VI_CUSTOM)/static/vi_custom.less)
 
 # Rules
 
-all: debug
+all: embedsvg.py
 
 setup:
 	if [ ! -f $(MAIN_CSS) ]; then cp $(DEFAULT_CSS) $(MAIN_CSS); fi

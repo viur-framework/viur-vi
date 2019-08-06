@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
-import html5, json, utils
-from bones.base import BaseBoneExtractor
-from config import conf
-from event import EventDispatcher
-from i18n import translate
-from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
-from widgets.internaledit import InternalEdit
-from widgets.button import Button
+import html5, json
+
+from vi import utils
+
+from vi.bones.base import BaseBoneExtractor
+from vi.config import conf
+from vi.event import EventDispatcher
+from vi.i18n import translate
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
+from vi.widgets.internaledit import InternalEdit
+from vi.widgets.button import Button
 
 
 class RecordBoneExtractor(BaseBoneExtractor):

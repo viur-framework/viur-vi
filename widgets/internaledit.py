@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import html5
-from network import DeferredCall
-from config import conf
-from priorityqueue import editBoneSelector
-from exception import InvalidBoneValueException
-from widgets.tooltip import ToolTip
-from widgets.accordion import Accordion
+from vi.network import DeferredCall
+from vi.config import conf
+from vi.priorityqueue import editBoneSelector
+from vi.exception import InvalidBoneValueException
+from vi.widgets.tooltip import ToolTip
+from vi.widgets.accordion import Accordion
 
 class InternalEdit(html5.Div):
 

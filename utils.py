@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+import html5
 
 def formatString(format, data, structure = None, prefix = None, language = None, _rec = 0):
 	"""
@@ -108,7 +109,10 @@ def getImagePreview(data, cropped = False, size = 150):
 	return None
 
 def setPreventUnloading(mode = True):
-	count = eval("window.top.preventViUnloading")
+	try:
+		count = html5.window.top.preventViUnloading
+	except:
+		return
 
 	print("setPreventUnloading", count, mode)
 
@@ -120,5 +124,3 @@ def setPreventUnloading(mode = True):
 
 	eval("window.top.preventViUnloading = %d;" % count)
 	return count
-
-

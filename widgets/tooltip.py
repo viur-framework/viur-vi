@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-import html5, embedsvg
-from i18n import translate
+import html5
+from vi.i18n import translate
+from vi.embedsvg import embedsvg
+
 
 class ToolTip(html5.Div):
 	"""
@@ -11,7 +13,7 @@ class ToolTip(html5.Div):
 		super( ToolTip, self ).__init__( *args, **kwargs )
 		self["class"] = "vi-tooltip msg is-active"
 		self.sinkEvent("onClick")
-		svg = embedsvg.embedsvg.get("icons-arrow-right")
+		svg = embedsvg.get("icons-arrow-right")
 		if svg:
 			self.element.innerHTML = svg
 

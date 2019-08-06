@@ -1,4 +1,5 @@
-import html5, embedsvg
+import html5
+from vi.embedsvg import embedsvg
 
 
 class Button(html5.ext.Button):
@@ -6,6 +7,6 @@ class Button(html5.ext.Button):
 		super(Button, self).__init__(txt=txt, callback=callback, className=className, *args, **kwargs)
 
 		if icon:
-			svg = embedsvg.embedsvg.get(icon)
+			svg = embedsvg.get(icon)
 			if svg:
 				self.element.innerHTML = svg + self.element.innerHTML

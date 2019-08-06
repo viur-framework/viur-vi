@@ -2,6 +2,9 @@
 import html5
 
 from . import network
+from . import utils
+from . import sidebarwidgets
+from . import exception
 
 from .login import LoginScreen
 from .admin import AdminScreen
@@ -127,9 +130,10 @@ class Application(html5.Div):
 		html5.window.top.location.hash = path + hash
 
 
-if __name__ == "__main__":
+if __name__ == "vi":
 	# Configure vi as network render prefix
 	network.NetworkService.prefix = "/vi"
+	network.NetworkService.host = ""
 	conf["currentlanguage"] = i18n.getLanguage()
 
 	# Application

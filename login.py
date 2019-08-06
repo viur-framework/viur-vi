@@ -221,7 +221,9 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 				self.editaction = "auth_userpassword/%s" % answ["action"]
 				self.editwidget = InternalEdit(answ["structure"], answ["values"], defaultCat = None)
 				self.edit.appendChild(self.editwidget)
-				self.editskey = answ["params"].get("skey")
+
+				if answ["params"]:
+					self.editskey = answ["params"].get("skey")
 
 				self.editform.show()
 		else:
