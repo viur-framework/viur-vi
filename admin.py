@@ -171,18 +171,22 @@ class AdminScreen(Screen):
 		sortedModules = []
 		topLevelModules = {}
 
-		for x, y in config["modules"].items():
-			sortedModules.append((x, y))
+		for module, info in config["modules"].items():
+			if not "root" in userAccess and not any([x.startswith(module) for x in userAccess]):
+				# Skip this module, as the user couldn't interact with it anyway
+				continue
 
-			groupName = y["name"].split(":")[0] + ": "
+			sortedModules.append((module, info))
+
+			groupName = info["name"].split(":")[0] + ": "
 
 			if groupName not in groupPanes.keys():
-				topLevelModules.update({x: y})
+				topLevelModules.update({module: info})
 			else:
-				if path and x == path[0]:
+				if path and module == path[0]:
 					currentActiveGroup = groupName
 
-				groupedModules[groupName].append((x, y))
+				groupedModules[groupName].append((module, info))
 
 		conf["vi.groupedModules"] = groupedModules
 
@@ -190,28 +194,20 @@ class AdminScreen(Screen):
 
 		# When create module panes
 		for module, info in sortedModules:
-			if not "root" in userAccess and not any([x.startswith(module) for x in userAccess]):
-				# Skip this module, as the user couldn't interact with it anyway
-				continue
-			info.update({"_handler":handler})
-
-			conf["modules"][module] = info
-
-			if "views" in conf["modules"][module].keys() and conf["modules"][module]["views"]:
-				for v in conf["modules"][module]["views"]:  # Work-a-round for PyJS not supporting id()
+			if "views" in info.keys() and info["views"]:
+				for v in info["views"]:  # Work-a-round for PyJS not supporting id()
 					v["__id"] = predefinedFilterCounter
 					predefinedFilterCounter += 1
-
 
 			if currentActiveGroup or module in topLevelModules:
 				handlerCls = HandlerClassSelector.select(module, info)
 				assert handlerCls is not None, "No handler available for module '%s'" % module
 
-				conf["modules"][module]["visibleName"] = conf["modules"][module]["name"]
+				info["visibleName"] = info["name"]
 				handler = None
 
 				if info["name"] and currentActiveGroup and info["name"].startswith(currentActiveGroup):
-					conf["modules"][module]["visibleName"] = conf["modules"][module]["name"].replace(currentActiveGroup, "")
+					info["visibleName"] = info["name"].replace(currentActiveGroup, "")
 					handler = handlerCls(module, info)
 					groupPanes[currentActiveGroup].addChildPane(handler)
 
@@ -219,7 +215,11 @@ class AdminScreen(Screen):
 					handler = handlerCls(module, info)
 					panes.append((info["visibleName"], info.get("sortIndex"), handler))
 
-		# Sorting our top level entries
+				info["_handler"] = handler
+
+			conf["modules"][module] = info
+
+	# Sorting our top level entries
 		panes.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1] is None else 0, entry[1] or 0, entry[0]))
 
 		# Add panes in the created order
