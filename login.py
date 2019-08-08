@@ -72,7 +72,7 @@ class BaseLoginHandler(html5.Li):
 		# Logo
 		img = html5.Img()
 		img.addClass("vi-login-logo")
-		img["src"] = "images/vi-login-logo.svg"
+		img["src"] = "vi/public/images/vi-login-logo.svg"
 		self.loginHeader.appendChild(img)
 
 
