@@ -105,7 +105,6 @@ class TextEditBone(html5.Div):
 		self.sinkEvent("onKeyUp")
 
 		self.changeEvent = EventDispatcher("boneChange")
-		self._changeTimeout = None
 
 	def _setDisabled(self, disable):
 		"""
@@ -182,13 +181,7 @@ class TextEditBone(html5.Div):
 		pass
 
 	def onKeyUp(self, event):
-		if not self.changeEvent.queue:
-			return
-
-		if self._changeTimeout:
-			html5.window.clearTimeout(self._changeTimeout)
-
-		self._changeTimeout = html5.window.setTimeout(lambda: self.changeEvent.fire(self), 500)
+		self.changeEvent.fire(self)
 
 	@staticmethod
 	def checkForTextBone(moduleName, boneName, skelStucture, *args, **kwargs):
