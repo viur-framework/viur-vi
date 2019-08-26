@@ -330,10 +330,11 @@ class StringEditBone(html5.Div):
 
 	def unserialize(self, data, extendedErrorInformation=None):
 		data = data.get(self.boneName)
-		if not data:
-			return
 
 		if self.languages and self.multiple:
+			if data is None:
+				data = {}
+
 			assert isinstance(data, dict)
 
 			for lang in self.languages:
@@ -351,6 +352,9 @@ class StringEditBone(html5.Div):
 							self.genTag(html5.utils.unescape(v), lang=lang)
 
 		elif self.languages and not self.multiple:
+			if data is None:
+				data = {}
+
 			assert isinstance(data, dict)
 
 			for lang in self.languages:
@@ -360,6 +364,8 @@ class StringEditBone(html5.Div):
 					self.langEdits[lang]["value"] = ""
 
 		elif not self.languages and self.multiple:
+			if data is None:
+				data = []
 
 			for child in self.tagContainer.children():
 				if isinstance(child, Tag):
@@ -372,6 +378,9 @@ class StringEditBone(html5.Div):
 				self.genTag(html5.utils.unescape(data))
 
 		else:
+			if data is None:
+				data = ""
+
 			self.input["value"] = html5.utils.unescape(str(data))
 
 		self._updateLanguageButtons()
