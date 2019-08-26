@@ -62,18 +62,17 @@ class TextEditBone(html5.Div):
 
 	def __init__(self, moduleName, boneName, readOnly, isPlainText, languages=None, descrHint=None, *args, **kwargs):
 		super(TextEditBone, self).__init__(*args, **kwargs)
+		self.moduleName = moduleName
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.selectedLang = False
 		self.isPlainText = isPlainText
 		self.languages = languages
 		self.descrHint = descrHint
-		self.valuesdict = dict()
+		self.value = {}
 
 		# multilangbone
 		if self.languages:
-			self.value = {lng: "" for lng in self.languages}
-
 			if "currentlanguage" in conf and conf["currentlanguage"] in self.languages:
 				self.selectedLang = conf["currentlanguage"]
 			elif len(self.languages) > 0:
@@ -88,9 +87,7 @@ class TextEditBone(html5.Div):
 				self.langButContainer.appendChild(abut)
 
 			self.appendChild(self.langButContainer)
-			self.refreshLangButContainer()
-		else:
-			self.value = ""
+			self._refreshBtnStates()
 
 		if not readOnly and not self.isPlainText:
 			self.input = HtmlEditor()
@@ -115,30 +112,24 @@ class TextEditBone(html5.Div):
 			self.parent()["class"].remove("is_active")
 
 	def changeLang(self, btn):
-		self.valuesdict[self.selectedLang] = self.input["value"]
+		self.value[self.selectedLang] = self.input["value"]
 		self.selectedLang = btn["value"]
-		if self.selectedLang in self.valuesdict.keys():
-			self.input["value"] = self.valuesdict[self.selectedLang]
-		else:
-			self.input["value"] = ""
+		self.input["value"] = self.value.get(self.selectedLang, "")
+		self._refreshBtnStates()
 
-		self.refreshLangButContainer()
-
-	def refreshLangButContainer(self):
-		for abut in self.langButContainer._children:
-
-			if abut["value"] in self.valuesdict and self.valuesdict[abut["value"]]:
-				if not "is_filled" in abut["class"]:
-					abut["class"].append("is_filled")
+	def _refreshBtnStates(self):
+		for btn in self.langButContainer.children():
+			if self.value.get(btn["value"]):
+				btn.removeClass("is_unfilled")
+				btn.addClass("is_filled")
 			else:
-				if not "is_unfilled" in abut["class"]:
-					abut["class"].append("is_unfilled")
+				btn.removeClass("is_filled")
+				btn.addClass("is_unfilled")
 
-			if abut["value"] == self.selectedLang:
-				if not "is_active" in abut["class"]:
-					abut["class"].append("is_active")
+			if btn["value"] == self.selectedLang:
+				btn.addClass("is_active")
 			else:
-				abut["class"].remove("is_active")
+				btn.removeClass("is_active")
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
@@ -150,29 +141,28 @@ class TextEditBone(html5.Div):
 		return TextEditBone(moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr)
 
 	def unserialize(self, data):
-		if self.boneName not in data:
-			return
-
-		self.valuesdict.clear()
-		data = data[self.boneName] or ""
+		data = data.get(self.boneName) or ""
 
 		if self.languages:
+			self.value.clear()
+
 			for lang in self.languages:
 				if isinstance(data, dict):
-					self.valuesdict[lang] = data.get(lang, "")
+					self.value[lang] = data.get(lang, "")
 				else:
-					self.valuesdict[lang] = ""
+					self.value[lang] = data
 
-			self.input["value"] = self.valuesdict[self.selectedLang]
+			self.input["value"] = self.value[self.selectedLang]
+			self._refreshBtnStates()
 		else:
 			self.input["value"] = data
 
 	def serializeForPost(self):
 		if self.selectedLang:
-			self.valuesdict[self.selectedLang] = self.input["value"]
-			return {self.boneName: self.valuesdict}
-		else:
-			return {self.boneName: self.input["value"]}
+			self.value[self.selectedLang] = self.input["value"]
+			return {self.boneName: self.value.copy()}
+
+		return {self.boneName: self.input["value"]}
 
 	def serializeForDocument(self):
 		return self.serializeForPost()
