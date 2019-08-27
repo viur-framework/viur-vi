@@ -1,32 +1,14 @@
 # -*- coding: utf-8 -*-
 import html5
-from bones.base import BaseBoneExtractor
+from bones.string import StringBoneExtractor
 from config import conf
 from priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from widgets.htmleditor import HtmlEditor
 from event import EventDispatcher
 
 
-class TextBoneExtractor(BaseBoneExtractor):
-
-	def render(self, data, field):
-		if field in data.keys():
-			##multilangs
-			if isinstance(data[field], dict):
-				resstr = ""
-				if "currentlanguage" in conf.keys():
-					if conf["currentlanguage"] in data[field].keys():
-						resstr = data[field][conf["currentlanguage"]].replace("&quot;", "").replace(";", " ").replace(
-							'"', "'")
-					else:
-						if data[field].keys().length > 0:
-							resstr = data[field][data[field].keys()[0]].replace("&quot;", "").replace(";", " ").replace(
-								'"', "'")
-				return '"%s"' % resstr
-			else:
-				# no langobject
-				return str('"%s"' % data[field].replace("&quot;", "").replace(";", " ").replace('"', "'"))
-		return conf["empty_value"]
+class TextBoneExtractor(StringBoneExtractor):
+	pass
 
 
 class TextViewBoneDelegate(object):

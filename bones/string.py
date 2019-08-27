@@ -13,28 +13,40 @@ from priorityqueue import \
 
 class StringBoneExtractor(BaseBoneExtractor):
 
-	def render(self, data, field):
-		if field in data.keys():
-			##multilangs
-			if isinstance(data[field], dict):
-				resstr = ""
-				if "currentlanguage" in conf.keys():
-					if conf["currentlanguage"] in data[field].keys():
-						resstr = data[field][conf["currentlanguage"]].replace("&quot;", "'").replace(";", " ").replace(
-							'"', "'")
-					else:
-						if len(data[field].keys()) > 0:
-							resstr = data[field][data[field].keys()[0]].replace("&quot;", "'").replace(";",
-							                                                                           " ").replace('"',
-							                                                                                        "'")
-				return '"%s"' % resstr
-			elif isinstance(data[field], list):
-				return ", ".join(
-					[item.replace("&quot;", "").replace(";", " ").replace('"', "'") for item in data[field]])
-			elif data[field] is not None:
-				return str('"%s"' % str(data[field]).replace("&quot;", "").replace(";", " ").replace('"', "'"))
+	def _unescape(self, val):
+		val = html5.utils.unescape(str(val))
+		return val.replace(";", " ").replace('"', "'")
 
-		return conf["empty_value"]
+	def render(self, data, field):
+		if not data.get(field):
+			return conf["empty_value"]
+
+		if isinstance(data[field], dict):
+			return '"%s"' % self._unescape(data[field].get(conf["currentlanguage"] or data[field].keys()[0]))
+
+		elif isinstance(data[field], list):
+			return ", ".join([self.unescape(item) for item in data[field]])
+
+		return '"%s"' % self._unescape(data[field])
+
+	def raw(self, data, field):
+		if field not in data:
+			return None
+
+		ret = val = data[field]
+		if isinstance(val, dict):
+			ret = []
+
+			for entry in val.values():
+				if not entry:
+					continue
+
+				if isinstance(entry, list):
+					ret.extend(entry)
+				else:
+					ret.append(entry)
+
+		return ret
 
 
 class StringViewBoneDelegate(object):
