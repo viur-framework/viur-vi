@@ -60,10 +60,14 @@ class TaskSelectWidget( TaskWidget ):
 		self.setActiveTask()
 
 	def getSelectedTask(self):
-		return self.select._children[ self.select[ "selectedIndex" ] ].task
+		if self.select[ "selectedIndex" ]:
+			return self.select._children[ self.select[ "selectedIndex" ] ].task
+		return False
 
 	def setActiveTask(self):
 		task = self.getSelectedTask()
+		if not task:
+			return 0
 		self.descr.removeAllChildren()
 		self.descr.appendChild(
 			html5.TextNode(
@@ -75,6 +79,8 @@ class TaskSelectWidget( TaskWidget ):
 
 	def invokeTask(self, *args, **kwargs):
 		task = self.getSelectedTask()
+		if not task:
+			return 0
 		self.close()
 
 		if task[ "type" ] == "server":
