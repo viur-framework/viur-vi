@@ -7,6 +7,8 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 This is the current development version.
 
+- Feature: Allow for multiple uploads in File.upload action
+
 ## [2.5.0] Vesuv
 
 Release date: Jul 26, 2019

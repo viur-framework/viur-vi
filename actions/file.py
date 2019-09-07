@@ -17,12 +17,14 @@ class FileSelectUploader(html5.Input):
 	def __init__(self, *args, **kwargs):
 		super( FileSelectUploader, self ).__init__( *args, **kwargs )
 		self["type"] = "file"
+		self["multiple"] = True
 		self["style"]["display"] = "none"
 		self.sinkEvent("onChange")
 
 	def onChange(self, event):
 		if event.target.files.length > 0:
-			Uploader(event.target.files.item(0), self.parent().node)
+			for i in range(event.target.files.length):
+				Uploader(event.target.files.item(i), self.parent().node)
 
 		self.parent().removeChild( self )
 
