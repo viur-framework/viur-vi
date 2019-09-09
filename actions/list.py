@@ -337,7 +337,7 @@ class ListPreviewAction(html5.Span):
 			newUrl = newUrl.replace("'", "\\'")
 
 			target = "%s-%s" % (self.parent().parent().module, entry.get("key"))
-			eval("""window.open('""" + newUrl + """', '""" + target + """');""")
+			html5.window.open(newUrl, target)
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -641,8 +641,7 @@ class LoadAllAction(Button):
 
 		if currentModule:
 			currentModule.table._loadOnDisplay = True #mark to force load whole Dataset
-			w = eval( "window" )
-			w.setTimeout( self.loadAllRows, 500 )
+			html5.window.setTimeout( self.loadAllRows, 500 )
 
 	def loadAllRows(self):
 		NetworkService.notifyChange( self.parent().parent().module )
@@ -691,30 +690,27 @@ class PageFindAction(html5.Div):
 		self.startFind()
 
 
-	def startFind( self ):
+	def startFind(self):
 		strFound = self.findText()
 
 		if not strFound:
-			jsTop = eval( "top" )
-			jsTop.getSelection().empty()
-			conf[ "mainWindow" ].log( "info", "Nothing found!" )
+			html5.window.getSelection().empty()
+			conf["mainWindow"].log("info", "Nothing found!")
 
-	def findText( self ):
-		text = self.searchInput._getValue()
-		if not text:
+	def findText(self):
+		subject = self.searchInput["value"]
+		if not subject:
 			return False
+
 		parent = self.parent().parent().element
-
-		jsTop = eval("top")
-
-		strFound = jsTop.find( text, 0, 0, 1 )
-		jsselection = jsTop.getSelection()
+		strFound = html5.window.find(subject, 0, 0, 1)
+		jsselection = html5.window.getSelection()
 
 		if strFound and jsselection and not jsselection.anchorNode:
-			strFound = jsTop.find( text, 0, 0, 1 )
+			strFound = html5.window.find(subject, 0, 0, 1)
 
 		if parent and strFound:
-			selectionElement = jsTop.getSelection().anchorNode.parentElement
+			selectionElement = html5.window.getSelection().anchorNode.parentElement
 
 			if selectionElement and parent.contains(selectionElement):
 				selectionElement.scrollIntoView()
@@ -724,9 +720,6 @@ class PageFindAction(html5.Div):
 
 		self.resetLoadingState()
 		return strFound
-
-
-
 
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):

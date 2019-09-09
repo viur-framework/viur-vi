@@ -49,23 +49,18 @@ class Log(html5.Div):
 
 			versionDiv.appendChild(versionspan)
 
-			#Try loading the revision and build date
-			try:
-				from version import builddate, revision
+			''' fixme ... VI3.0
+			revspan = html5.Span()
+			revspan.appendChild(html5.TextNode("Rev %s" % revision))
+			revspan.addClass("revisionspan")
 
-				revspan = html5.Span()
-				revspan.appendChild(html5.TextNode("Rev %s" % revision))
-				revspan.addClass("revisionspan")
+			datespan = html5.Span()
+			datespan.appendChild(html5.TextNode("Built %s" % builddate))
+			datespan.addClass("datespan")
 
-				datespan = html5.Span()
-				datespan.appendChild(html5.TextNode("Built %s" % builddate))
-				datespan.addClass("datespan")
-
-				versionDiv.appendChild(revspan)
-				versionDiv.appendChild(datespan)
-
-			except:
-				pass
+			versionDiv.appendChild(revspan)
+			versionDiv.appendChild(datespan)
+			'''
 
 		if versionDiv.children():
 			self.appendChild(versionDiv)

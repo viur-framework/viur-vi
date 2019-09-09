@@ -534,7 +534,7 @@ class TreeWidget(html5.Div):
 		r.reqType = "leaf"
 		self._currentRequests.append(r)
 
-		from handler.tree import TreeHandler # import must be here, otherwise it throws an importError
+		from vi.handler.tree import TreeHandler # import must be here, otherwise it throws an importError
 		if isinstance(conf["mainWindow"].currentPane, TreeHandler):
 			conf["theApp"].setPath(self.module + "/list/" + self.node)
 

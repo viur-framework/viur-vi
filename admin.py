@@ -156,9 +156,9 @@ class AdminScreen(Screen):
 		# read Hash to register startup module
 		currentActiveGroup = None
 		path = None
-		urlHash = conf["startupHash"]
-		if urlHash:
+		urlHash = html5.window.location.hash
 
+		if urlHash:
 			if "?" in urlHash:
 				hashStr = urlHash[1:urlHash.find("?")]
 			else:
@@ -232,7 +232,7 @@ class AdminScreen(Screen):
 		self.logWdg.log(type, msg, icon)
 
 	def checkInitialHash(self, *args, **kwargs):
-		urlHash = conf["startupHash"]
+		urlHash = html5.window.location.hash
 		if not urlHash:
 			return
 

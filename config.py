@@ -35,9 +35,6 @@ conf = {
 	# ViUR server version number
 	"server.version": None,
 
-	# Startup parameters
-	"startupHash": html5.window.top.location.hash if html5.window else "",
-
 	# Modules list
 	"modules": {"_tasks": {"handler": "singleton", "name": "Tasks"}},
 
