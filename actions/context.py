@@ -6,8 +6,11 @@ from vi.priorityqueue import actionDelegateSelector, moduleHandlerSelector
 from vi.i18n import translate
 from vi.config import conf
 from vi.pane import Pane
+from vi.widgets.button import Button
+import vi.embedsvg
 
-class ContextAction(html5.ext.Button):
+
+class ContextAction(Button):
 	def __init__(self, module, handler, actionName, *args, **kwargs):
 		dsc = actionName.split(".", 3)
 		assert dsc[0] == "context", u"Invalid definition!"
@@ -26,7 +29,7 @@ class ContextAction(html5.ext.Button):
 
 		icon = adminInfo.get("icon")
 
-		super(ContextAction, self).__init__(txt=title, icon="icons-add", *args, **kwargs)
+		super(ContextAction, self).__init__(txt=title, icon=icon, *args, **kwargs)
 
 		self.widget = None
 		self.adminInfo = adminInfo
@@ -37,14 +40,9 @@ class ContextAction(html5.ext.Button):
 		self.filter = filter
 		self.icon = icon
 
-		#self.addClass("icon")
 		self.addClass("context-%s" % self.contextModule)
 
-		if icon:
-			img = html5.Img()
-			img["src"] = icon
-			self.prependChild(img)
-
+		self["class"].extend(["bar-item","btn--small"])
 		self.disable()
 
 	def onAttach(self):
