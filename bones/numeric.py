@@ -110,7 +110,8 @@ class NumericEditBone(html5.Div):
 		                       currency = currency)
 
 	def unserialize(self, data):
-		self.input["value"] = data.get(self.boneName, "")
+		if self.boneName in data:
+			self.input["value"] = data.get(self.boneName, "")
 
 	def serializeForPost(self):
 		return {
