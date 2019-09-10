@@ -137,7 +137,7 @@ class ListWidget(html5.Div):
 		if self.selectMode:
 			defaultActions += ["|", "select","close"]
 
-		defaultActions += ["|", "pagefind", "reload", "loadall", "intpreview", "selectfilter"]
+		defaultActions += ["|", "pagefind", "reload", "loadnext", "intpreview", "selectfilter"]
 
 		#if not self.selectMode:
 		#	defaultActions += ["|", "exportcsv"]
