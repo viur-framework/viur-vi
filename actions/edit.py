@@ -4,7 +4,7 @@ import html5
 from vi.priorityqueue import actionDelegateSelector
 from vi.i18n import translate
 from vi.widgets.button import Button
-
+from vi.config import conf
 
 class SaveContinue(Button):
 	def __init__(self, *args, **kwargs):
@@ -110,3 +110,25 @@ class Refresh(Button):
 
 
 actionDelegateSelector.insert(1, Refresh.isSuitableFor, Refresh)
+
+class CancelClose(Button):
+	def __init__(self, *args, **kwargs):
+		super( CancelClose, self ).__init__( translate("Cancel"), icon="icons-save-file", *args, **kwargs )
+		self["class"] = "bar-item btn btn--small btn--danger btn--cancel"
+
+	@staticmethod
+	def isSuitableFor( module, handler, actionName ):
+		return( actionName=="cancel.close" )
+
+	def onClick(self, sender=None):
+		self.addClass("is-loading")
+
+		currentPane = conf["mainWindow"].containsWidget(self.parent().parent())
+		conf[ "mainWindow" ].removePane( currentPane )
+
+	def resetLoadingState(self):
+		if self.hasClass("is-loading"):
+			self.removeClass("is-loading")
+		pass
+
+actionDelegateSelector.insert( 1, CancelClose.isSuitableFor, CancelClose )

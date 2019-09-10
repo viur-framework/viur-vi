@@ -8,7 +8,8 @@ from vi.widgets.task import TaskSelectWidget
 from vi.priorityqueue import toplevelActionSelector
 from vi.widgets.button import Button
 from vi.embedsvg import embedsvg
-
+from vi.pane import Pane
+from vi.widgets.edit import EditWidget
 
 class TopBarWidget(html5.Header):
 	"""
@@ -112,11 +113,10 @@ class TopBarWidget(html5.Header):
 		if path:
 			conf[ "theApp" ].setPath( path )
 
-#FIXME: UserState(Button) should open "user" "edit/self" on click (userself plugin by AK)
-
 class UserState(Button):
 	def __init__(self, *args, **kwargs):
 		super( UserState, self ).__init__(*args, **kwargs)
+		self.sinkEvent( "onClick" )
 		self.update()
 
 	def onCurrentUserAvailable(self, req):
@@ -133,12 +133,43 @@ class UserState(Button):
 			return
 
 		self["title"] = user["name"]
+		self.currentUser = user["key"] or None
 		self.addClass("vi-tb-accountmgnt")
 		self.appendChild(html5.TextNode(user["name"]))
 
 	@staticmethod
 	def canHandle( action ):
 		return action == "userstate"
+
+	def onClick( self, sender=None ):
+		#load user module if not already loaded
+		if not "user" in conf["modules"].keys():
+			conf["modules"].update(
+				{"user": {"handler": "list",
+			              "name": "Benutzer"}
+			    })
+
+		self.openEdit( self.currentUser )
+
+	def openEdit(self, key):
+		apane = Pane(
+			translate("Edit"),
+			closeable=True,
+			iconClasses=["module_%s" % "user", "apptype_list", "action_edit"],
+			collapseable=True
+		)
+
+		conf["mainWindow"].addPane(apane)
+		edwg = EditWidget("user", EditWidget.appList, key=key)
+
+		actions = edwg.actionbar.getActions()
+		actions.append("cancel.close")
+		edwg.actionbar.setActions(actions)
+
+		apane.addWidget(edwg)
+
+		conf["mainWindow"].focusPane(apane)
+
 
 toplevelActionSelector.insert( 0, UserState.canHandle, UserState )
 
@@ -196,8 +227,6 @@ class Tasks(Button):
 toplevelActionSelector.insert( 0, Tasks.canHandle, Tasks )
 
 
-#FIXME: Do not logout directly: Implement a logout yes/no dialog.
-
 class Logout(Button):
 	def __init__(self, *args, **kwargs):
 		super(Logout,self).__init__(icon="icons-logout", *args, **kwargs)
@@ -206,9 +235,12 @@ class Logout(Button):
 		self.sinkEvent("onClick")
 
 	def onClick(self, event):
+		html5.ext.YesNoDialog( translate(u"Möchten Sie das Vi wirklich beenden?\n Alle nicht gespeicherten Einträge gehen dabei verloren!"), title = u"Logout", yesCallback = self.logout )
 		event.stopPropagation()
 		event.preventDefault()
-		conf["theApp"].logout()
+
+	def logout( self ):
+		conf[ "theApp" ].logout()
 
 	@staticmethod
 	def canHandle( action ):
