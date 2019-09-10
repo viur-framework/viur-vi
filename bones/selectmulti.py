@@ -190,7 +190,7 @@ class AccessMultiSelectBone( html5.Div ):
 		self.boneName = boneName
 		self.moduleName = moduleName
 		self.readOnly = readOnly
-		print(values)
+
 		self.values = {k: v for k, v in values}
 		self.addClass("vi-bone-container option-group")
 
@@ -199,6 +199,7 @@ class AccessMultiSelectBone( html5.Div ):
 		self.flags = {}
 
 		self.sinkEvent( "onClick" )
+		self.sinkEvent( "onKeyPress" )
 
 		for value in self.values:
 			module = self.parseskelaccess( value )
@@ -208,10 +209,17 @@ class AccessMultiSelectBone( html5.Div ):
 			elif not module[ 0 ] in self.modules.keys():
 				self.modules[ module[ 0 ] ] = {}
 
+		self.searchfield = html5.Input()
+		self.searchfield["style"]["width"] = "400px"
+		self.searchfield["placeholder"] = translate( "Zugriffsrecht finden..." )
+		self.appendChild(self.searchfield)
+
+
 		# Render static / singleton flags first
 		for flag in sorted( self.flags.keys() ):
 			label = html5.Label()
 			label.addClass("check")
+			label["data"]["name"] = flag.lower()
 
 			checkbox = html5.Input()
 			checkbox["type"] = "checkbox"
@@ -243,7 +251,13 @@ class AccessMultiSelectBone( html5.Div ):
 
 			span = html5.Span()
 			span.addClass("check-label")
-			span.appendChild( html5.TextNode( module ) )
+
+			title = conf["modules"][module]["name"]
+			title = title if title else module
+			label._getData()["name"] = title
+			label.element.setAttribute( str("data-name"), title.lower() )
+			span.appendChild( html5.TextNode(title) )
+
 			label.appendChild( span )
 
 			ul = html5.Ul()
@@ -274,6 +288,20 @@ class AccessMultiSelectBone( html5.Div ):
 				return ( value[ 0 :  -( len( state ) + 1 ) ], state )
 
 		return False
+
+	def onKeyPress(self, event):
+		if html5.utils.doesEventHitWidgetOrChildren(event,self.searchfield) and event.keyCode == 13:
+			value = self.searchfield["value"]
+			for el in self._children:
+
+				if isinstance(el,html5.Label):
+					el["class"].remove("is-hidden")
+					if not value:
+						continue
+
+					if value.lower() not in str(el.element.getAttribute("data-name")):
+						el["class"].append("is-hidden")
+
 
 	def onClick( self, event ):
 		for module, toggles in self.modules.items():
