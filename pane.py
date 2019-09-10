@@ -260,8 +260,7 @@ class Pane(html5.Div):
 	def onClick(self, event=None, *args, **kwargs):
 		self.focus()
 
-		if event:
-			event.stopPropagation()
+		event.stopPropagation()
 
 	def expand(self):
 		if self.childDomElem and self.collapseable and not self.isExpanded:
@@ -322,8 +321,17 @@ class GroupPane(Pane):
 		else:
 			self.expand()
 
-		if event:
-			event.stopPropagation()
+		event.stopPropagation()
+
+	def expand(self):
+		if self.childDomElem and self.collapseable and not self.isExpanded:
+			self.childDomElem.show()
+			self.isExpanded = True
+
+	def collapse(self):
+		if self.childDomElem and self.collapseable and self.isExpanded:
+			self.childDomElem.hide()
+			self.isExpanded = False
 
 	def onFocus(self, event):
 		if len(self.childPanes) > 0:
