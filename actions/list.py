@@ -621,6 +621,58 @@ class ReloadAction(Button):
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
 
+
+class LoadNextBatchAction(html5.Div):
+	"""
+		Allows Loading all Entries in a list
+	"""
+	def __init__(self, *args, **kwargs):
+		super( LoadNextBatchAction, self ).__init__( )
+		self["class"].append("input-group")
+
+		self.pages = html5.Select()
+		self.pages["class"].append("input ignt-input input--small")
+		for x in [1,5,10]:
+			opt = html5.Option(x)
+			opt["value"] = x
+			self.pages.appendChild(opt)
+		self.appendChild(self.pages)
+
+		self.btn = Button( translate( "load next pages" ), callback = self.onClick )
+		self.btn[ "class" ] = "bar-item btn btn--small btn--loadnext"
+		self.appendChild( self.btn )
+		self.sinkEvent("onClick")
+		self.currentLoadedPages = 0
+
+	@staticmethod
+	def isSuitableFor(module, handler, actionName):
+		correctAction = actionName == "loadnext"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		return correctAction and correctHandler
+
+	def onClick(self, sender=None):
+		if sender == self.btn:
+
+			self.addClass("is-loading")
+			currentModule = self.parent().parent()
+
+			if currentModule:
+				self.loadedPages = 1 #reset page counter
+				currentModule.table.tableChangedEvent.register( self )
+				currentModule.table._dataProvider.onNextBatchNeeded()
+
+	def onTableChanged(self,table, rowCount):
+		amount = int(self.pages["options"].item(self.pages["selectedIndex"]).value)
+		if self.loadedPages < amount:
+			self.loadedPages+=1
+			table._dataProvider.onNextBatchNeeded()
+
+	def resetLoadingState(self):
+		if self.hasClass("is-loading"):
+			self.removeClass("is-loading")
+
+actionDelegateSelector.insert( 1, LoadNextBatchAction.isSuitableFor, LoadNextBatchAction )
+
 class LoadAllAction(Button):
 	"""
 		Allows Loading all Entries in a list
