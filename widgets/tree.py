@@ -410,7 +410,7 @@ class TreeWidget(html5.Div):
 
 	def setRootNode(self, rootNode, node=None):
 		self.rootNode = rootNode
-		self.node = node if node else rootNode
+		self.node = node or rootNode
 		self.rootNodeChangedEvent.fire(rootNode)
 		if node:
 			self.nodeChangedEvent.fire(node)
@@ -530,7 +530,7 @@ class TreeWidget(html5.Div):
 
 	@staticmethod
 	def render(moduleName, adminInfo, context):
-		rootNode = context.get("rootNode") if context else None
+		rootNode = context.get("@rootNode") if context else None
 		return TreeWidget(module=moduleName, rootNode=rootNode, context=context)
 
 
