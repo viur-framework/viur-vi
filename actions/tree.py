@@ -95,17 +95,33 @@ class EditAction( html5.ext.Button ):
 		super(EditAction,self).onDetach()
 
 	def onSelectionActivated(self, table, selection ):
-		if not self.parent().parent().selectMode and len(selection)==1:
-			pane = Pane( translate("Edit"), closeable=True, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
-			conf["mainWindow"].stackPane( pane )
+		if (not self.parent().parent().selectMode
+			and len(selection) == 1
+			and isinstance(selection[0], self.parent().parent().leafWidget)):
+
+			pane = Pane(
+				translate("Edit"),
+				closeable=True,
+				iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_edit"]
+			)
+			conf["mainWindow"].stackPane(pane)
+
 			if isinstance( selection[0], self.parent().parent().nodeWidget):
 				skelType = "node"
+
 			elif isinstance( selection[0], self.parent().parent().leafWidget):
 				skelType = "leaf"
+
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(selection[0])))
-			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=selection[0].data["key"], skelType=skelType)
-			pane.addWidget( edwg )
+
+			edwg = EditWidget(
+				self.parent().parent().module,
+				EditWidget.appTree,
+				key=selection[0].data["key"],
+				skelType=skelType
+			)
+			pane.addWidget(edwg)
 			pane.focus()
 
 	def onSelectionChanged(self, table, selection ):
