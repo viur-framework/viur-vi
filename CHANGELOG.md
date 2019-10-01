@@ -7,6 +7,7 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 This is the current development version.
 
+- Feature: Allow to parametrize context variable prefixes using `conf["vi.context.prefix"]`
 - Feature: Handle `frontend_default_visible`-parameter for bones also in Hierarchy handler
 - Feature: Improved structuring of `NodeWidget` and `LeafWidget` for trees
 - Feature: Allow for multiple uploads in File.upload action

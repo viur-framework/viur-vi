@@ -528,7 +528,7 @@ class TreeWidget(html5.Div):
 
 	@staticmethod
 	def render(moduleName, adminInfo, context):
-		rootNode = context.get("@rootNode") if context else None
+		rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
 		return TreeWidget(module=moduleName, rootNode=rootNode, context=context)
 
 

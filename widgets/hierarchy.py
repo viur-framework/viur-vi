@@ -512,12 +512,7 @@ class HierarchyWidget(html5.Div):
 
 	@staticmethod
 	def render(moduleName, adminInfo, context):
-		if "@rootNode" in context:
-			rootNode = context["@rootNode"]
-			del context["@rootNode"]
-		else:
-			rootNode = None
-
+		rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
 		return HierarchyWidget(module=moduleName, rootNode=rootNode, context=context)
 
 moduleHandlerSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget.render)
