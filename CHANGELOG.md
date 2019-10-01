@@ -7,7 +7,10 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 This is the current development version.
 
+- Feature: Handle `frontend_default_visible`-parameter for bones also in Hierarchy handler
+- Feature: Improved structuring of `NodeWidget` and `LeafWidget` for trees
 - Feature: Allow for multiple uploads in File.upload action
+- Bugfix: Tree `edit`-action should not both edit and switch parent node
 
 ## [2.5.0] Vesuv
 
