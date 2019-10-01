@@ -1,15 +1,15 @@
 #-*- coding: utf-8 -*-
-
 import html5, utils
+
 from time import time
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
-from priorityqueue import moduleHandlerSelector
+from priorityqueue import moduleHandlerSelector, viewDelegateSelector
 from config import conf
 from i18n import translate
 
-class HierarchyItem( html5.Li ):
+class HierarchyItem(html5.Li):
 	"""
 		Holds one entry in a hierarchy.
 	"""
@@ -48,19 +48,34 @@ class HierarchyItem( html5.Li ):
 
 	def buildDescription(self):
 		"""
-			Generates the visual representation of this entry.
+			Creates the visual representation of our entry
 		"""
-		format = "$(name)"
+		# Find any bones in the structure having "frontend_default_visible" set.
+		hasDescr = False
 
-		if self.module in conf["modules"].keys():
-			moduleInfo = conf["modules"][self.module]
-			if "format" in moduleInfo.keys():
-				format = moduleInfo["format"]
+		for boneName, boneInfo in self.structure:
+			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
+				params = boneInfo["params"]
+				if "frontend_default_visible" in params and params["frontend_default_visible"]:
+					structure = {k: v for k, v in self.structure}
+					wdg = viewDelegateSelector.select(self.module, boneName, structure)
 
-		self.appendChild(
-				html5.TextNode(
-						html5.utils.unescape(utils.formatString(format, self.data, self.structure,
-						                                        language=conf["currentlanguage"]))))
+					if wdg is not None:
+						self.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
+						hasDescr = True
+
+		# In case there is no bone configured for visualization, use a format-string
+		if not hasDescr:
+			format = "$(name)" #default fallback
+
+			if self.module in conf["modules"].keys():
+				moduleInfo = conf["modules"][self.module]
+				if "format" in moduleInfo.keys():
+					format = moduleInfo["format"]
+
+			self.appendChild(html5.utils.unescape(
+				utils.formatString(format, self.data, self.structure,
+				    language=conf["currentlanguage"])))
 
 	def onDragOver(self, event):
 		"""
