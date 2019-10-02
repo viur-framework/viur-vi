@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import html5, datetime
+import datetime
+
+from vi import html5
 
 from vi.network import NetworkService, DeferredCall
 from vi.config import conf

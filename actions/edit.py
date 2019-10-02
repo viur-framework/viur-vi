@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import html5
+from vi import html5
 
 from vi.priorityqueue import actionDelegateSelector
 from vi.i18n import translate

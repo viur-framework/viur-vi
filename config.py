@@ -1,8 +1,8 @@
 #-*- coding: utf-8 -*-
-import html5
+from vi import html5
 from .event import EventDispatcher
 from .i18n import translate
-from logics import Interpreter
+from .logics import Interpreter
 
 conf = {
 	# Vi version number

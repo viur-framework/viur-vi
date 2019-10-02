@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import html5, json
+import json
 
+from vi import html5
 from vi import utils
 
 from vi.bones.base import BaseBoneExtractor

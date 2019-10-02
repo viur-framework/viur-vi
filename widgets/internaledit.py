@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import html5
+from vi import html5
 from vi.network import DeferredCall
 from vi.config import conf
 from vi.priorityqueue import editBoneSelector

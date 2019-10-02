@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import html5, os, sys, json, string, random, time
+import os, sys, json, string, random, time
+
+from vi import html5
 from vi.config import conf
 
 class DeferredCall( object ):

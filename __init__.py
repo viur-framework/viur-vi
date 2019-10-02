@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-import html5
+from . import html5
 
 from . import network
 from . import utils
@@ -11,10 +11,6 @@ from .admin import AdminScreen
 from .config import conf
 from .i18n import translate
 
-try:
-	import vi_plugins
-except ImportError:
-	pass
 
 class Application(html5.Div):
 	def __init__(self):
@@ -130,7 +126,7 @@ class Application(html5.Div):
 		html5.window.top.location.hash = path + hash
 
 
-if __name__ == "vi":
+def start():
 	# Configure vi as network render prefix
 	network.NetworkService.prefix = "/vi"
 	network.NetworkService.host = ""

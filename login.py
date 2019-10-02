@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
-import html5, re, json
+import re, json
+from vi import html5
 
 from .network import NetworkService, DeferredCall
 from .i18n import translate

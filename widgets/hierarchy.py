@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-import html5
+from vi import html5
 import vi.utils as utils
 
 from vi.network import NetworkService

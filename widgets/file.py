@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import html5, json
+import json
+
+from vi import html5
 import vi.utils as utils
 
 from vi.config import conf

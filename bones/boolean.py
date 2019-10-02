@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import html5
+from vi import html5
 from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
 from vi.config import conf
 from vi.event import EventDispatcher

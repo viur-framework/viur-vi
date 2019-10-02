@@ -1,4 +1,4 @@
-import html5
+from vi import html5
 
 from vi.i18n import translate
 from vi.bones import selectmulti, date
