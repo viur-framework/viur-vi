@@ -7,7 +7,6 @@ This file documents any relevant changes done to ViUR Vi since version 2.
 
 This is the current development version.
 
-<<<<<<< HEAD
 - Feature: selected multiple entities (range) in a list while holding the shift key
 - Restructured the LESS/CSS tool chain
 - Added ViUR Ignite LESS/CSS
@@ -34,14 +33,11 @@ This is the current development version.
 - Completely reworked alert and messages styling
 - Completely reworked data tables
 - Added and refined many convenience features like better tooltips, larger drop areas, collapsed module list etc.
-
-=======
 - Feature: Allow to parametrize context variable prefixes using `conf["vi.context.prefix"]`
 - Feature: Handle `frontend_default_visible`-parameter for bones also in Hierarchy handler
 - Feature: Improved structuring of `NodeWidget` and `LeafWidget` for trees
 - Feature: Allow for multiple uploads in File.upload action
 - Bugfix: Tree `edit`-action should not both edit and switch parent node
->>>>>>> origin/develop
 
 ## [2.5.0] Vesuv
 
