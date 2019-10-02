@@ -193,7 +193,7 @@ class Uploader(html5.ignite.Progress):
 		"""
 			Internal callback - the Security-Key is known.
 		"""
-		formData = eval("new FormData();")
+		formData = html5.jseval("new FormData();")
 		formData.append("file", req.file)
 
 		if self.context:
@@ -204,7 +204,7 @@ class Uploader(html5.ignite.Progress):
 			formData.append("node", req.node)
 
 		formData.append("skey", NetworkService.decode(req))
-		self.xhr = eval("new XMLHttpRequest()")
+		self.xhr = html5.jseval("new XMLHttpRequest()")
 		self.xhr.open("POST", req.destUrl)
 		self.xhr.onload = self.onLoad
 		self.xhr.upload.onprogress = self.onProgress
@@ -318,7 +318,7 @@ class FileWidget(TreeWidget):
 
 	@staticmethod
 	def render(moduleName, adminInfo, context):
-		rootNode = context.get("rootNode") if context else None
+		rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
 		return FileWidget(module=moduleName, rootNode=rootNode, context=context)
 
 

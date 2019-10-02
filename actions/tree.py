@@ -30,8 +30,9 @@ class AddLeafAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane("Add", iconURL="icons-add", closeable=True)
-		conf["mainWindow"].stackPane( pane, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_add_leaf" ] )
+		pane = Pane("Add", iconURL="icons-add", closeable=True, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_add_leaf"])
+		conf["mainWindow"].stackPane(pane)
+
 		edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
 		pane.addWidget( edwg )
 		pane.focus()
@@ -63,10 +64,11 @@ class AddNodeAction(Button):
 		return  correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane( translate("Add"), closeable=True, iconURL="icons-add", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_add_node" ])
-		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="node" )
-		pane.addWidget( edwg )
+		pane = Pane( translate("Add"), iconURL="icons-add", closeable=True, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_add_node" ])
+
+		conf["mainWindow"].stackPane(pane)
+		edwg = EditWidget(self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="node")
+		pane.addWidget(edwg)
 		pane.focus()
 
 	def resetLoadingState(self):
@@ -97,17 +99,34 @@ class EditAction(Button):
 		super(EditAction,self).onDetach()
 
 	def onSelectionActivated(self, table, selection ):
-		if not self.parent().parent().selectMode and len(selection)==1:
-			pane = Pane( translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
-			conf["mainWindow"].stackPane( pane )
+		if (not self.parent().parent().selectMode
+			and len(selection) == 1
+			and isinstance(selection[0], self.parent().parent().leafWidget)):
+
+			pane = Pane(
+				translate("Edit"),
+				iconURL="icons-edit",
+				closeable=True,
+				iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_edit"]
+			)
+			conf["mainWindow"].stackPane(pane)
+
 			if isinstance( selection[0], self.parent().parent().nodeWidget):
 				skelType = "node"
+
 			elif isinstance( selection[0], self.parent().parent().leafWidget):
 				skelType = "leaf"
+
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(selection[0])))
-			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=selection[0].data["key"], skelType=skelType)
-			pane.addWidget( edwg )
+
+			edwg = EditWidget(
+				self.parent().parent().module,
+				EditWidget.appTree,
+				key=selection[0].data["key"],
+				skelType=skelType
+			)
+			pane.addWidget(edwg)
 			pane.focus()
 
 	def onSelectionChanged(self, table, selection ):
@@ -145,7 +164,7 @@ class EditAction(Button):
 				skelType = "leaf"
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(s)))
-			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=s.data["key"], skelType=skelType, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
+			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=s.data["key"], skelType=skelType, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
 			pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -160,7 +179,7 @@ class DeleteAction(Button):
 		The type (node or leaf) of the entry is determined dynamically.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__(translate("Delete"), icons="icons-delete", *args, **kwargs )
+		super( DeleteAction, self ).__init__(translate("Delete"), icon="icons-delete", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -223,7 +242,7 @@ class ReloadAction(Button):
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), icons="icons-reload", *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), icon="icons-reload", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod

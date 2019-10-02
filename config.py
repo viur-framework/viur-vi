@@ -23,6 +23,9 @@ conf = {
 	# Which access rights are required to open the Vi?
 	"vi.access.rights": ["admin", "root"],
 
+	# Context access variable prefix
+	"vi.context.prefix": "",
+
 	# Global holder to main configuration taken from the server
 	"mainConfig": None,
 

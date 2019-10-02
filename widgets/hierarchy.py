@@ -1,21 +1,20 @@
 #-*- coding: utf-8 -*-
 import html5
-
 import vi.utils as utils
-
-from time import time
 
 from vi.network import NetworkService
 from vi.widgets.actionbar import ActionBar
 from vi.event import EventDispatcher
-from vi.priorityqueue import moduleHandlerSelector
+from vi.priorityqueue import moduleHandlerSelector, viewDelegateSelector
 from vi.config import conf
 from vi.i18n import translate
 from vi.embedsvg import embedsvg
 from vi.widgets.list import ListWidget
 
+from time import time
 
-class HierarchyItem( html5.Li ):
+
+class HierarchyItem(html5.Li):
 	"""
 		Holds one entry in a hierarchy.
 	"""
@@ -80,19 +79,34 @@ class HierarchyItem( html5.Li ):
 
 	def buildDescription(self):
 		"""
-			Generates the visual representation of this entry.
+			Creates the visual representation of our entry
 		"""
-		format = "$(name)"
+		# Find any bones in the structure having "frontend_default_visible" set.
+		hasDescr = False
 
-		if self.module in conf["modules"].keys():
-			moduleInfo = conf["modules"][self.module]
-			if "format" in moduleInfo.keys():
-				format = moduleInfo["format"]
+		for boneName, boneInfo in self.structure:
+			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
+				params = boneInfo["params"]
+				if "frontend_default_visible" in params and params["frontend_default_visible"]:
+					structure = {k: v for k, v in self.structure}
+					wdg = viewDelegateSelector.select(self.module, boneName, structure)
 
-		self.appendChild(
-				html5.TextNode(
-						html5.utils.unescape(utils.formatString(format, self.data, self.structure,
-						                                        language=conf["currentlanguage"]))))
+					if wdg is not None:
+						self.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
+						hasDescr = True
+
+		# In case there is no bone configured for visualization, use a format-string
+		if not hasDescr:
+			format = "$(name)" #default fallback
+
+			if self.module in conf["modules"].keys():
+				moduleInfo = conf["modules"][self.module]
+				if "format" in moduleInfo.keys():
+					format = moduleInfo["format"]
+
+			self.appendChild(html5.utils.unescape(
+				utils.formatString(format, self.data, self.structure,
+				    language=conf["currentlanguage"])))
 
 	def onDragOver(self, event):
 		"""
@@ -607,12 +621,7 @@ class HierarchyWidget(html5.Div):
 
 	@staticmethod
 	def render(moduleName, adminInfo, context):
-		if "@rootNode" in context:
-			rootNode = context["@rootNode"]
-			del context["@rootNode"]
-		else:
-			rootNode = None
-
+		rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
 		return HierarchyWidget(module=moduleName, rootNode=rootNode, context=context)
 
 moduleHandlerSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget.render)

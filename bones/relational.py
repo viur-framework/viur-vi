@@ -574,7 +574,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		                            prefix=["dest"], language=conf["currentlanguage"])
 
 		if self.ie:
-			txt = utils.formatString(txt, self.ie.doSave(), self.parent.using,
+			txt = utils.formatString(txt, self.ie.serializeForDocument(), self.parent.using,
 			                            prefix=["rel"], language=conf["currentlanguage"])
 
 		html5.utils.textToHtml(self.txtLbl, txt)
@@ -674,7 +674,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		res = {"rel": {}, "dest": {}}
 
 		if self.ie:
-			res["rel"] = self.ie.serializeForPost()
+			res["rel"] = self.ie.serializeForDocument()
 
 		res["dest"]["key"] = self.data["dest"]["key"]
 		return res
