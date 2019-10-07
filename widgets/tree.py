@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import html5
+from vi import html5
+import vi.utils as utils
 
 from vi.network import NetworkService
 from vi.widgets.actionbar import ActionBar
@@ -9,11 +10,7 @@ from vi.config import conf
 from vi.i18n import translate
 from vi.embedsvg import embedsvg
 
-
-class NodeWidget(html5.Div):
-	"""
-		Displays one Node (ie a directory) inside a TreeWidget
-	"""
+class _StructureWidget(html5.Li):
 
 	def __init__(self, module, data, structure, *args, **kwargs):
 		"""
@@ -24,12 +21,11 @@ class NodeWidget(html5.Div):
 			:param structure: The structure of that data as received from server
 			:type structure: list
 		"""
-		super(NodeWidget, self).__init__(*args, **kwargs)
+		super(_StructureWidget, self).__init__()
+
 		self.module = module
 		self.data = data
 		self.structure = structure
-
-		self["class"] = "vi-tree-item vi-tree-node item has-hover is-drop-target is-draggable"
 
 		self.fromHTML("""
 			<div class="item-image" [name]="nodeImage"></div>
@@ -41,40 +37,58 @@ class NodeWidget(html5.Div):
 		""")
 
 		self.buildDescription()
-		svg = embedsvg.embedsvg.get("icons-folder")
+
+		svg = embedsvg.get("icons-folder")
 		if svg:
 			nodeIcon = html5.I()
 			nodeIcon.addClass("i")
 			nodeIcon.element.innerHTML = svg + nodeIcon.element.innerHTML
 			self.nodeImage.appendChild(nodeIcon)
 
-
 		self["draggable"] = True
 
 		self.sinkEvent("onDragOver", "onDrop", "onDragStart", "onDragLeave")
-
-
-
 
 	def buildDescription(self):
 		"""
 			Creates the visual representation of our entry
 		"""
+		# Find any bones in the structure having "frontend_default_visible" set.
 		hasDescr = False
+
 		for boneName, boneInfo in self.structure:
 			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
 				params = boneInfo["params"]
-				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
-
+				if "frontend_default_visible" in params and params["frontend_default_visible"]:
 					structure = {k: v for k, v in self.structure}
 					wdg = viewDelegateSelector.select(self.module, boneName, structure)
 
 					if wdg is not None:
 						self.nodeHeadline.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
 						hasDescr = True
-		if not hasDescr:
-			self.nodeHeadline.appendChild( html5.TextNode( self.data["name"]))
 
+		# In case there is no bone configured for visualization, use a format-string
+		if not hasDescr:
+			format = "$(name)" #default fallback
+
+			if self.module in conf["modules"].keys():
+				moduleInfo = conf["modules"][self.module]
+				if "format" in moduleInfo.keys():
+					format = moduleInfo["format"]
+
+			self.appendChild(html5.utils.unescape(
+				utils.formatString(format, self.data, self.structure,
+				    language=conf["currentlanguage"])))
+
+class NodeWidget(_StructureWidget):
+	"""
+		Displays one Node (ie a directory) inside a TreeWidget
+	"""
+
+	def __init__(self, module, data, structure, *args, **kwargs):
+		super(NodeWidget, self).__init__(module, data, structure, *args, **kwargs)
+		self["class"] = "vi-tree-item vi-tree-node item has-hover is-drop-target is-draggable"
+		self.sinkEvent("onDragOver", "onDrop", "onDragStart", "onDragLeave")
 
 	def onDragOver(self, event):
 		"""
@@ -125,7 +139,7 @@ class NodeWidget(html5.Div):
 		event.stopPropagation()
 
 
-class LeafWidget(html5.Div):
+class LeafWidget(_StructureWidget):
 	"""
 		Displays one Node (ie a file) inside a TreeWidget
 	"""
@@ -139,7 +153,7 @@ class LeafWidget(html5.Div):
 			:param structure: The structure of that data as received from server
 			:type structure: list
 		"""
-		super(LeafWidget, self).__init__(*args, **kwargs)
+		super(LeafWidget, self).__init__(module, data, structure, *args, **kwargs)
 		self.module = module
 		self.data = data
 		self.structure = structure
@@ -158,29 +172,6 @@ class LeafWidget(html5.Div):
 		self["draggable"] = True
 		self.sinkEvent("onDragStart")
 
-
-
-	def buildDescription(self):
-		"""
-			Creates the visual representation of our entry
-		"""
-		hasDescr = False
-		for boneName, boneInfo in self.structure:
-			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
-				params = boneInfo["params"]
-				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
-
-					structure = {k: v for k, v in self.structure}
-					wdg = viewDelegateSelector.select(self.module, boneName, structure)
-
-					if wdg is not None:
-						self.leafHeadline.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
-						hasDescr = True
-
-		if not hasDescr:
-			self.leafHeadline.appendChild( html5.TextNode( self.data["name"]))
-
-
 	def onDragStart(self, event):
 		"""
 			Store our information in the drag's dataTransfer object
@@ -189,7 +180,7 @@ class LeafWidget(html5.Div):
 		event.stopPropagation()
 
 
-class SelectableDiv(html5.Div):
+class SelectionContainer(html5.Ul):
 	"""
 		Provides a Container, which allows selecting its contents.
 		Designed to be used within a tree widget, as it distinguishes between
@@ -197,10 +188,9 @@ class SelectableDiv(html5.Div):
 		be restricted to a certain kind.
 	"""
 	def __init__(self, nodeWidget, leafWidget, selectionType="both", multiSelection=False, *args, **kwargs ):
-		super( SelectableDiv, self ).__init__(*args, **kwargs)
+		super(SelectionContainer, self ).__init__(*args, **kwargs)
 		self.addClass("vi-tree-selectioncontainer", "vi-selectioncontainer", "list")
 		self["title"] = translate("vi.tree.drag-here")
-
 		self["tabindex"] = 1
 		self.selectionType = selectionType
 		self.multiSelection = multiSelection
@@ -247,12 +237,15 @@ class SelectableDiv(html5.Div):
 			self.selectionChangedEvent.fire(self, [])
 
 	def onDblClick(self, event):
-		for child in self._children:
+		for child in self.children():
+
 			if html5.utils.doesEventHitWidgetOrChildren(event, child):
 				if self.selectionType == "node" and isinstance(child, self.nodeWidget) or \
 					self.selectionType == "leaf" and isinstance(child, self.leafWidget) or \
 					self.selectionType == "both":
+
 					self.selectionActivatedEvent.fire(self, [child])
+					break
 
 	def activateCurrentSelection(self):
 		"""
@@ -357,11 +350,11 @@ class TreeWidget(html5.Div):
 		self.pathList = html5.Div()
 
 		self.pathList.addClass("vi-tree-breadcrumb")
-		self.appendChild( self.pathList )
-		self.entryFrame = SelectableDiv( self.nodeWidget, self.leafWidget )
-		self.appendChild( self.entryFrame )
-		self.entryFrame.selectionActivatedEvent.register( self )
+		self.appendChild(self.pathList)
 
+		self.entryFrame = SelectionContainer(self.nodeWidget, self.leafWidget)
+		self.appendChild(self.entryFrame)
+		self.entryFrame.selectionActivatedEvent.register(self)
 		self._batchSize = 99
 		self._currentCursor = {"node": None, "leaf": None}
 		self._currentRequests = []
@@ -465,7 +458,7 @@ class TreeWidget(html5.Div):
 
 	def setRootNode(self, rootNode, node=None):
 		self.rootNode = rootNode
-		self.node = node if node else rootNode
+		self.node = node or rootNode
 		self.rootNodeChangedEvent.fire(rootNode)
 		if node:
 			self.nodeChangedEvent.fire(node)
@@ -544,6 +537,7 @@ class TreeWidget(html5.Div):
 
 		self._currentRequests.remove(req)
 		data = NetworkService.decode(req)
+
 		for skel in data["skellist"]:
 			if req.reqType == "node":
 				n = self.nodeWidget(self.module, skel, data["structure"])
@@ -551,7 +545,8 @@ class TreeWidget(html5.Div):
 				n = self.leafWidget(self.module, skel, data["structure"])
 
 			self.entryFrame.appendChild(n)
-			self.entryFrame.sortChildren(self.getChildKey)
+
+		self.entryFrame.sortChildren(self.getChildKey)
 
 		if "cursor" in data.keys() and len(data["skellist"]) == req.params["amount"]:
 			self._currentCursor[req.reqType] = data["cursor"]
@@ -586,7 +581,7 @@ class TreeWidget(html5.Div):
 
 	@staticmethod
 	def render(moduleName, adminInfo, context):
-		rootNode = context.get("rootNode") if context else None
+		rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
 		return TreeWidget(module=moduleName, rootNode=rootNode, context=context)
 
 

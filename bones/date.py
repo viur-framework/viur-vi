@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import html5, re
-from datetime import datetime
+import re, datetime
+
+from vi import html5
 
 from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector, extendedSearchWidgetSelector
 from vi.event import EventDispatcher
@@ -22,7 +23,7 @@ class DateBoneExtractor(BaseBoneExtractor):
 		try:
 			if structure["date"] and structure["time"]:
 				try:
-					dt = datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
+					dt = datetime.datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
 				except:
 					return "Error parsing Date"
 
@@ -30,7 +31,7 @@ class DateBoneExtractor(BaseBoneExtractor):
 
 			elif structure["date"] and not structure["time"]:
 				try:
-					dt = datetime.strptime( val, "%d.%m.%Y")
+					dt = datetime.datetime.strptime( val, "%d.%m.%Y")
 				except:
 					return "Error parsing Date"
 
@@ -38,7 +39,7 @@ class DateBoneExtractor(BaseBoneExtractor):
 
 			elif not structure["date"] and structure["time"]:
 				try:
-					dt = datetime.strptime( val, "%H:%M:%S")
+					dt = datetime.datetime.strptime( val, "%H:%M:%S")
 				except:
 					return "Error parsing time"
 
@@ -66,7 +67,7 @@ class DateViewBoneDelegate( object ):
 		try:
 			if structure["date"] and structure["time"]:
 				try:
-					dt = datetime.strptime(val, "%d.%m.%Y %H:%M:%S")
+					dt = datetime.datetime.strptime(val, "%d.%m.%Y %H:%M:%S")
 				except:
 					return html5.TextNode(translate("Error parsing Date"))
 
@@ -85,7 +86,7 @@ class DateViewBoneDelegate( object ):
 
 			elif structure["date"] and not structure["time"]:
 				try:
-					dt = datetime.strptime( val, "%d.%m.%Y")
+					dt = datetime.datetime.strptime( val, "%d.%m.%Y")
 				except:
 					return html5.TextNode(translate("Error parsing Date"))
 
@@ -97,7 +98,7 @@ class DateViewBoneDelegate( object ):
 
 			elif not structure["date"] and structure["time"]:
 				try:
-					dt = datetime.strptime(val, "%H:%M:%S")
+					dt = datetime.datetime.strptime(val, "%H:%M:%S")
 				except:
 					return html5.TextNode(translate("Error parsing Date"))
 
@@ -161,13 +162,13 @@ class DateEditBone( html5.Div ):
 				self.timeinput["value"] = data[ self.boneName ]
 
 			if self.hasdate and not self.hastime:
-				dateobj = datetime.strptime(data[ self.boneName ], "%d.%m.%Y")
+				dateobj = datetime.datetime.strptime(data[ self.boneName ], "%d.%m.%Y")
 				self.dateinput["value"] = dateobj.strftime( "%Y-%m-%d" )
 
 			if self.hasdate and self.hastime:
 				# FIXME: temporarily fixing a bug in extended relational bone
 				try:
-					dateobj = datetime.strptime(data[self.boneName], "%d.%m.%Y %H:%M:%S")
+					dateobj = datetime.datetime.strptime(data[self.boneName], "%d.%m.%Y %H:%M:%S")
 					self.dateinput["value"]=dateobj.strftime("%Y-%m-%d")
 					self.timeinput["value"]=dateobj.strftime("%H:%M:%S")
 

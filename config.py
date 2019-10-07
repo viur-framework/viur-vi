@@ -1,8 +1,8 @@
 #-*- coding: utf-8 -*-
-import html5
+from vi import html5
 from .event import EventDispatcher
 from .i18n import translate
-from logics import Interpreter
+from .logics import Interpreter
 
 conf = {
 	# Vi version number
@@ -22,6 +22,9 @@ conf = {
 
 	# Which access rights are required to open the Vi?
 	"vi.access.rights": ["admin", "root"],
+
+	# Context access variable prefix
+	"vi.context.prefix": "",
 
 	# Global holder to main configuration taken from the server
 	"mainConfig": None,

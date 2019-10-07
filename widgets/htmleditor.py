@@ -1,4 +1,4 @@
-import html5
+from vi import html5
 import vi.network as network
 
 #from __pyjamas__ import JS #fixme!!!

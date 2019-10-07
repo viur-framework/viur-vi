@@ -1,4 +1,4 @@
-import html5
+from vi import html5
 from config import conf
 
 class Preview( html5.Div ):
