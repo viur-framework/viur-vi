@@ -7,7 +7,10 @@
 
 .item {
   .item();
-  &--hint {
+  &--hint,
+  &--progress,
+  &--info
+  {
     .colorizeItem(
     @backgroundColor: lighten(@hintColor,35%),
     @activeBackgroundColor: @hintColor,
@@ -19,5 +22,19 @@
     @activeBackgroundColor: @successColor,
     @actionBackgroundColor: @successColor);
   }
-}
 
+   &--error {
+    .colorizeItem(
+    @backgroundColor: lighten(@failColor,35%),
+    @activeBackgroundColor: @failColor,
+    @actionBackgroundColor: @failColor);
+  }
+
+   &--warning {
+    .colorizeItem(
+    @backgroundColor: lighten(@warnColor,35%),
+    @activeBackgroundColor: @warnColor,
+    @actionBackgroundColor: @warnColor);
+  }
+
+}
