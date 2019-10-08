@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from vi import html5
-from vi.event import EventDispatcher
+from vi.framework.event import EventDispatcher
 from vi.i18n import translate
 
 

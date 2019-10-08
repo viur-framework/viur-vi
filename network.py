@@ -2,35 +2,14 @@
 import os, sys, json, string, random, time
 
 from vi import html5
+from vi import framework
 from vi.config import conf
 
-class DeferredCall( object ):
-	"""
-		Calls the given function with a fixed delay.
-		This allows assuming that calls to NetworkService are always
-		asynchronous, so its guaranteed that any initialization code can run
-		before the Network-Call yields results.
-	"""
-	def __init__( self, func, *args, **kwargs ):
-		"""
-			:param func: Callback function
-			:type func: Callable
-		"""
-		super( DeferredCall, self ).__init__()
-		delay = 25
-		if "_delay" in kwargs.keys():
-			delay = kwargs["_delay"]
-			del kwargs["_delay"]
-		self._tFunc = func
-		self._tArgs = args
-		self._tKwArgs = kwargs
-		html5.window.setTimeout(self.run, delay)
-
-	def run(self):
-		"""
-			Internal callback that executes the callback function
-		"""
-		self._tFunc( *self._tArgs, **self._tKwArgs )
+class DeferredCall( framework.utils.DeferredCall ):
+	'''
+		Deprecated. Moved to framework.utils
+	'''
+	pass
 
 class HTTPRequest(object):
 	"""

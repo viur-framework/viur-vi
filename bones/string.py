@@ -3,7 +3,7 @@ from vi import html5
 
 from vi.bones.base import BaseBoneExtractor
 from vi.config import conf
-from vi.event import EventDispatcher
+from vi.framework.event import EventDispatcher
 from vi.i18n import translate
 from vi.priorityqueue import \
 	editBoneSelector, \
@@ -11,7 +11,7 @@ from vi.priorityqueue import \
 	extendedSearchWidgetSelector, \
 	extractorDelegateSelector
 
-from vi.widgets.button import Button
+from vi.framework.components.button import Button
 
 
 class StringBoneExtractor(BaseBoneExtractor):

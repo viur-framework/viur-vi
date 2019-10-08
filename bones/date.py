@@ -4,7 +4,7 @@ import re, datetime
 from vi import html5
 
 from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector, extendedSearchWidgetSelector
-from vi.event import EventDispatcher
+from vi.framework.event import EventDispatcher
 from vi.i18n import translate
 from vi.config import conf
 from vi.bones.base import BaseBoneExtractor

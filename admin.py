@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 from vi import html5
-
+from vi.framework.event import EventDispatcher
 from .config import conf
 from .widgets import TopBarWidget
 from .widgets.userlogoutmsg import UserLogoutMsg
 from .network import NetworkService, DeferredCall
-from .event import viInitializedEvent
+
 from .priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from .log import Log
 from .pane import Pane, GroupPane
 from .screen import Screen
 
 # BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
-from . import handler, bones, actions, i18n
-
+from . import handler, bones, actions
+from . import i18n
 
 class AdminScreen(Screen):
 
@@ -36,9 +36,13 @@ class AdminScreen(Screen):
 		self.moduleMgr["class"] = "vi-manager-frame"
 		self.mainFrame.appendChild(self.moduleMgr)
 
+		self.moduleViMgr = html5.Div()
+		self.moduleViMgr[ "class" ] = "vi-manager"
+		self.moduleMgr.appendChild( self.moduleViMgr )
+
 		self.moduleList = html5.Nav()
 		self.moduleList["class"] = "vi-modulelist"
-		self.moduleMgr.appendChild(self.moduleList)
+		self.moduleViMgr.appendChild(self.moduleList)
 
 		self.modulePipe = html5.Div()
 		self.modulePipe.addClass("vi-modulepipe")
@@ -48,8 +52,8 @@ class AdminScreen(Screen):
 		self.viewport["class"] = "vi-viewer-frame"
 		self.mainFrame.appendChild(self.viewport)
 
-		self.logWdg = Log()
-		self.appendChild(self.logWdg)
+		self.logWdg = None
+
 
 		self.currentPane = None
 		self.nextPane = None  # Which pane gains focus once the deferred call fires
@@ -71,7 +75,8 @@ class AdminScreen(Screen):
 	def reset(self):
 		self.moduleList.removeAllChildren()
 		self.viewport.removeAllChildren()
-		self.logWdg.reset()
+		if self.logWdg:
+			self.logWdg.reset()
 
 		self.currentPane = None
 		self.nextPane = None
@@ -207,6 +212,7 @@ class AdminScreen(Screen):
 					info["visibleName"] = info["name"].replace(currentActiveGroup, "")
 					handler = handlerCls(module, info)
 					groupPanes[currentActiveGroup].addChildPane(handler)
+					groupPanes[currentActiveGroup].expand()
 
 				if not handler and module in topLevelModules:
 					handler = handlerCls(module, info)
@@ -228,8 +234,8 @@ class AdminScreen(Screen):
 		DeferredCall(self.checkInitialHash)
 		self.unlock()
 
-	def log(self, type, msg, icon=None):
-		self.logWdg.log(type, msg, icon)
+	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data=None):
+		self.logWdg.log(type, msg, icon,modul,action,key,data)
 
 	def checkInitialHash(self, *args, **kwargs):
 		urlHash = html5.window.location.hash
@@ -445,3 +451,5 @@ class AdminScreen(Screen):
 				return pane
 
 		return None
+
+viInitializedEvent = EventDispatcher("viInitialized")

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from vi import html5
 
-from .embedsvg import embedsvg
+from .framework.embedsvg import embedsvg
 from .config import conf
 from .priorityqueue import HandlerClassSelector
 from .network import DeferredCall

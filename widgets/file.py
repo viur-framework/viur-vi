@@ -5,13 +5,13 @@ from vi import html5
 import vi.utils as utils
 
 from vi.config import conf
-from vi.event import EventDispatcher
+from vi.framework.event import EventDispatcher
 from vi.i18n import translate
 from vi.network import NetworkService, DeferredCall
 from vi.priorityqueue import displayDelegateSelector, moduleHandlerSelector
 from vi.widgets.search import Search
 from vi.widgets.tree import TreeWidget, LeafWidget
-from vi.embedsvg import embedsvg
+from vi.framework.embedsvg import embedsvg
 
 
 class FileImagePopup(html5.ext.Popup):

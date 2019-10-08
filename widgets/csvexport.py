@@ -7,7 +7,7 @@ from vi.network import NetworkService, DeferredCall
 from vi.config import conf
 from vi.priorityqueue import extractorDelegateSelector
 from vi.i18n import translate
-from vi.widgets.button import Button
+from vi.framework.components.button import Button
 
 
 class ExportCsv(html5.Progress):

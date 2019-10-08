@@ -4,7 +4,7 @@ from vi.bones.string import StringBoneExtractor
 from vi.config import conf
 from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from vi.widgets.htmleditor import HtmlEditor
-from vi.event import EventDispatcher
+from vi.framework.event import EventDispatcher
 
 
 class TextBoneExtractor(StringBoneExtractor):

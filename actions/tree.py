@@ -6,7 +6,7 @@ from vi.network import NetworkService
 from vi.pane import Pane
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
-from vi.widgets.button import Button
+from vi.framework.components.button import Button
 
 
 class AddLeafAction(Button):

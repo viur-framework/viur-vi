@@ -6,8 +6,8 @@ from vi.priorityqueue import actionDelegateSelector, moduleHandlerSelector
 from vi.i18n import translate
 from vi.config import conf
 from vi.pane import Pane
-from vi.widgets.button import Button
-import vi.embedsvg
+from vi.framework.components.button import Button
+import vi.framework.embedsvg
 
 
 class ContextAction(Button):

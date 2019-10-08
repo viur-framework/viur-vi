@@ -6,7 +6,7 @@ import vi.utils as utils
 
 from vi.bones.base import BaseBoneExtractor
 from vi.config import conf
-from vi.event import EventDispatcher
+from vi.framework.event import EventDispatcher
 from vi.i18n import translate
 from vi.network import NetworkService
 from vi.pane import Pane
@@ -16,7 +16,7 @@ from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extendedSea
 from vi.widgets.edit import EditWidget
 from vi.widgets.internaledit import InternalEdit
 from vi.widgets.list import ListWidget
-from vi.widgets.button import Button
+from vi.framework.components.button import Button
 
 
 def getDefaultValues(structure):

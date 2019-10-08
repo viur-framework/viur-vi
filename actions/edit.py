@@ -3,7 +3,7 @@ from vi import html5
 
 from vi.priorityqueue import actionDelegateSelector
 from vi.i18n import translate
-from vi.widgets.button import Button
+from vi.framework.components.button import Button
 from vi.config import conf
 
 class SaveContinue(Button):

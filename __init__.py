@@ -10,7 +10,9 @@ from .login import LoginScreen
 from .admin import AdminScreen
 from .config import conf
 from .i18n import translate
+from . import i18n
 
+#from .utils import indexeddb
 
 class Application(html5.Div):
 	def __init__(self):
@@ -125,8 +127,9 @@ class Application(html5.Div):
 
 		html5.window.top.location.hash = path + hash
 
-
 def start():
+	#indexeddb("vi-cache")
+
 	# Configure vi as network render prefix
 	network.NetworkService.prefix = "/vi"
 	network.NetworkService.host = ""

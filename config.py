@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 from vi import html5
-from .event import EventDispatcher
+from vi.framework.event import EventDispatcher
 from .i18n import translate
 from .logics import Interpreter
 
@@ -74,5 +74,7 @@ conf = {
 	# Global ViUR Logics interpreter instance
 	"logics": Interpreter(),
 
-	"updateParams": None
+	"updateParams": None,
+
+	"cacheObj": {}
 }

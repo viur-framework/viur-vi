@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from vi import html5
 from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
-from vi.event import EventDispatcher
+from vi.framework.event import EventDispatcher
 from vi.config import conf
 from vi.bones.base import BaseBoneExtractor
 

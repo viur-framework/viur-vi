@@ -4,11 +4,11 @@ import vi.utils as utils
 
 from vi.network import NetworkService
 from vi.widgets.actionbar import ActionBar
-from vi.event import EventDispatcher
+from vi.framework.event import EventDispatcher
 from vi.priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
 from vi.config import conf
 from vi.i18n import translate
-from vi.embedsvg import embedsvg
+from vi.framework.embedsvg import embedsvg
 
 class _StructureWidget(html5.Li):
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from vi import html5
-from vi.embedsvg import embedsvg
+from vi.framework.embedsvg import embedsvg
 
 class AccordionSegment(html5.Fieldset):
 

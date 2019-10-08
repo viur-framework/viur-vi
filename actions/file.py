@@ -6,7 +6,7 @@ from vi.i18n import translate
 from vi.network import DeferredCall
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.file import Uploader, LeafFileWidget
-from vi.widgets.button import Button
+from vi.framework.components.button import Button
 
 
 class FileSelectUploader(html5.Input):

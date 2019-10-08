@@ -4,9 +4,217 @@ from vi import html5
 from .network import DeferredCall
 from .i18n import translate
 from .config import conf
-from .embedsvg import embedsvg
+from .framework.embedsvg import embedsvg
 
 from datetime import datetime
+from vi.priorityqueue import toplevelActionSelector
+from vi.framework.components.button import Button
+from vi.pane import Pane
+from vi.widgets import table as tablewdgt
+from vi.widgets.edit import EditWidget
+
+
+class logEntry(html5.Span):
+	'''
+	PopOut Elements
+	'''
+	def __init__(self, logObj=None):
+		super(logEntry, self).__init__()
+		if isinstance( logObj["msg"], html5.Widget ):
+			msg = logObj["msg"]
+		else:
+			msg = html5.TextNode(html5.utils.unescape(logObj["msg"]))
+
+		self.appendChild(msg)
+
+class logA(html5.A):
+	'''
+	click handler for loglist
+	'''
+
+	def __init__(self, logObj=None):
+		super(logA, self).__init__()
+		if "key" in logObj:
+			self.logObj = logObj
+			self.sinkEvent("onClick")
+			self.appendChild(html5.TextNode(logObj["key"]))
+
+
+	def onClick(self,sender=None):
+		self.openEditor(self.logObj["key"])
+
+	def openEditor(self, key):
+		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
+		            iconClasses=["modul_%s" % self.logObj["modul"], "apptype_list", "action_edit"])
+		conf["mainWindow"].stackPane(pane, focus=True)
+		edwg = EditWidget(self.logObj["modul"], EditWidget.appList, key=key)
+		pane.addWidget(edwg)
+
+
+
+
+class logWidget(html5.Div):
+	def __init__(self, logList ):
+		super(logWidget, self).__init__()
+		self["class"] ="vi-widget"
+
+		header = html5.Div()
+		header["class"] = ["vi-actionbar","bar"]
+		self.appendChild(header)
+
+		tablehead = ["Datum","Status","Nachricht","Key"] #,"Daten"
+		tablefields = ["date","type","msg","key"] #,"data"
+		table = tablewdgt.SelectTable(indexes=True)
+		table.setHeader(tablehead)
+
+		for eidx, entry in enumerate(logList):
+			for fidx in range(0,len(tablehead)):
+				table.prepareCol(eidx,fidx+1)
+				currentDatafield = tablefields[fidx]
+				print(currentDatafield)
+				print(entry)
+				if currentDatafield=="msg":
+
+					if isinstance(entry[currentDatafield], html5.Widget):
+						table["cell"][eidx][fidx+1] = entry[currentDatafield]
+					else:
+						table["cell"][eidx][fidx+1] = html5.TextNode(html5.utils.unescape( entry[currentDatafield]))
+				elif currentDatafield == "key":
+					table["cell"][eidx][fidx + 1] = logA(entry)
+				else:
+					table["cell"][eidx][fidx+1] = html5.TextNode( entry[ currentDatafield ] )
+
+		self.appendChild(table)
+
+
+
+class LogButton(html5.Div):
+	def __init__(self):
+		super(LogButton,self).__init__()
+
+		self.logsList = []
+
+		self["class"] = ["popout-opener", "popout-anchor", "popout--sw"]
+
+
+		self.logbtn = Button(icon="icons-diagnosis", className="btn btn--topbar btn--log")
+		self.appendChild(self.logbtn)
+
+		popout = html5.Div()
+		popout["class"] = ["popout"]
+		self.popoutlist = html5.Div()
+		self.popoutlist["class"] = ["list"]
+
+		popout.appendChild(self.popoutlist)
+		self.appendChild(popout)
+		self.sinkEvent("onClick")
+
+		aitem = html5.Div()
+		aitem["class"] = ["item", "has-hover", "item--small item--info"]
+		listentry = logEntry({"msg":translate("Das Log ist Leer")})
+		aitem.appendChild(listentry)
+		self.popoutlist.appendChild(aitem)
+
+
+
+	def renderPopOut(self):
+		self.popoutlist.removeAllChildren()
+
+		for entry in self.logsList[:10]:
+			aitem = html5.Div()
+			aitem["class"] = ["item", "has-hover", "item--small", "item--%s"%(entry["type"])]
+			listentry = logEntry(entry)
+			aitem.appendChild(listentry)
+			self.popoutlist.appendChild(aitem)
+
+
+
+	def onClick(self,sender=None):
+		self.openLog()
+
+	def openLog(self):
+		apane = Pane(
+			translate("Log"),
+			closeable=True,
+			iconClasses=[ "apptype_list"],
+			collapseable=True
+		)
+
+		wg = logWidget(self.logsList )
+
+		apane.addWidget(wg)
+
+
+
+		conf["mainWindow"].addPane(apane)
+		conf["mainWindow"].focusPane(apane)
+
+	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data =None):
+		logObj = {"type":type,
+		          "msg":msg,
+		          "icon":icon,
+		          "modul":modul,
+		          "action":action,
+		          "key":key,
+		          "data":data,
+		          "date":datetime.now().strftime("%d. %b. %Y, %H:%M:%S")
+		          }
+		self.logsList.insert(0,logObj)
+		self.renderPopOut()
+
+		self.msgOverlay(logObj)
+
+
+	def msgOverlay(self,logObj):
+		assert logObj["type"] in ["success", "error", "warning", "info", "progress"]
+
+
+		msgwrap = html5.Div()
+		msgwrap["class"] = ["msg","is-active","popup","popup--se","msg--%s"%logObj["type"]]
+
+		msgcontent = html5.Div()
+		msgcontent["class"] = ["msg-content"]
+		msgwrap.appendChild(msgcontent)
+
+		date = html5.Span()
+		date["class"] = ["msg-date"]
+		date.appendChild(html5.TextNode(logObj["date"]))
+		msgcontent.appendChild(date)
+
+		msgdescr = html5.Div()
+		msgdescr["class"]=["msg-descr"]
+		msgcontent.appendChild(msgdescr)
+
+		if isinstance( logObj["msg"], html5.Widget ):
+			msgdescr.appendChild( logObj["msg"] )
+		else:
+			msgdescr.appendChild(html5.TextNode(html5.utils.unescape(logObj["msg"])))
+
+		if logObj["icon"]:
+			svg = embedsvg.get(logObj["icon"])
+		else:
+			svg = embedsvg.get("icons-%s" % logObj["type"])
+
+		if not svg:
+			svg = embedsvg.get("icons-message-news")
+
+		if svg:
+			msgwrap.element.innerHTML = svg + msgwrap.element.innerHTML
+
+		self.appendChild(msgwrap)
+		DeferredCall(self.removeInfo, msgwrap, _delay=2500)
+
+	def removeInfo(self,wrap):
+		self.removeChild(wrap)
+
+	def reset(self):
+		self.popoutlist.removeAllChildren()
+
+	@staticmethod
+	def canHandle( action ):
+		return action == "log"
+
+toplevelActionSelector.insert( 0, LogButton.canHandle, LogButton )
 
 
 class Log(html5.Div):

@@ -4,11 +4,11 @@ import vi.utils as utils
 
 from vi.network import NetworkService
 from vi.widgets.actionbar import ActionBar
-from vi.event import EventDispatcher
+from vi.framework.event import EventDispatcher
 from vi.priorityqueue import moduleHandlerSelector, viewDelegateSelector
 from vi.config import conf
 from vi.i18n import translate
-from vi.embedsvg import embedsvg
+from vi.framework.embedsvg import embedsvg
 from vi.widgets.list import ListWidget
 
 from time import time
@@ -140,8 +140,6 @@ class HierarchyItem(html5.Li):
 
 		event.preventDefault()
 		event.stopPropagation()
-
-
 
 	def disableDragMarkers( self ):
 		if self.leaveElement:

@@ -1,10 +1,10 @@
 #-*- coding: utf-8 -*-
 import re, json
 from vi import html5
+from vi.framework.event import EventDispatcher
 
 from .network import NetworkService, DeferredCall
 from .i18n import translate
-from .event import EventDispatcher
 from .config import conf
 from .priorityqueue import loginHandlerSelector
 from .screen import Screen
