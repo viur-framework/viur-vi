@@ -102,7 +102,7 @@ class EditWidget(html5.Div):
 			:type hashArgs: dict
 		"""
 		if not module in conf["modules"].keys():
-			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
+			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module),modul=self.module,key=self.key,action=self.mode,data=data)
 			assert module in conf["modules"].keys()
 
 		super(EditWidget, self ).__init__(*args, **kwargs)
@@ -388,47 +388,12 @@ class EditWidget(html5.Div):
 
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
 			self.modified = False
-
-			logDiv = html5.Div()
-			logDiv.addClass("msg-content")
-			spanMsg = html5.Span()
-
-			spanMsg.appendChild( html5.TextNode( translate( self.logAction ) ) )
-			spanMsg.addClass("msgspan")
-			logDiv.appendChild(spanMsg)
-
-			if self.module in conf["modules"].keys():
-				spanMsg = html5.Span()
-				if self.module.startswith( "_" ):
-					spanMsg.appendChild( html5.TextNode( self.key ) )
-				else:
-					spanMsg.appendChild( html5.TextNode( conf["modules"][self.module]["name"] ))
-				spanMsg.addClass("modulespan")
-				logDiv.appendChild(spanMsg)
-
-			if "values" in data.keys() and "name" in data["values"].keys():
-				spanMsg = html5.Span()
-
-				name = data["values"].get("name") or data["values"].get("key", "")
-				if isinstance(name, dict):
-					if conf["currentlanguage"] in name.keys():
-						name = name[conf["currentlanguage"]]
-					else:
-						name = name.values()
-
-				if isinstance(name, list):
-					name = ", ".join(name)
-
-				spanMsg.appendChild(html5.TextNode(str(html5.utils.unescape(name))))
-				spanMsg.addClass("namespan")
-				logDiv.appendChild(spanMsg)
-
 			try:
 				self.key = data["values"]["key"]
 			except:
 				self.key = None
 
-			conf["mainWindow"].log("success",logDiv)
+			conf["mainWindow"].log("success",translate(self.logAction),modul=self.module,key=self.key,action=self.mode,data=data)
 
 			if askHierarchyCloning and self.clone:
 				# for lists, which are rootNode entries of hierarchies, ask to clone entire hierarchy
@@ -621,7 +586,7 @@ class EditWidget(html5.Div):
 		self._lastData = data
 
 		if hasMissing and not self.wasInitialRequest:
-			conf["mainWindow"].log("warning",translate("Could not save entry!"),icon="icons-cancel")
+			conf["mainWindow"].log("warning",translate("Could not save entry!"),icon="icons-cancel",modul=self.module,key=self.key,action=self.mode,data=data)
 
 		DeferredCall(self.performLogics)
 

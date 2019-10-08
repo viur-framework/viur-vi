@@ -6,10 +6,11 @@ from vi.i18n import translate
 from vi.config import conf
 from vi.widgets.task import TaskSelectWidget
 from vi.priorityqueue import toplevelActionSelector
-from vi.widgets.button import Button
-from vi.embedsvg import embedsvg
+from vi.framework.components.button import Button
+from vi.framework.embedsvg import embedsvg
 from vi.pane import Pane
 from vi.widgets.edit import EditWidget
+from vi.log import LogButton
 
 class TopBarWidget(html5.Header):
 	"""
@@ -63,8 +64,14 @@ class TopBarWidget(html5.Header):
 
 		for icon in conf["toplevelactions"]:
 			widget = toplevelActionSelector.select(icon)
-			if widget:
+			# register log Button as Loghandler
+			if widget == LogButton:
+				conf["mainWindow"].logWdg = widget()
+				self.iconnav.appendChild(conf["mainWindow"].logWdg)
+			elif widget:
 				self.iconnav.appendChild(widget())
+
+
 
 	def setTitle(self, title=None):
 		self.moduleH1.removeAllChildren()
@@ -113,10 +120,26 @@ class TopBarWidget(html5.Header):
 		if path:
 			conf[ "theApp" ].setPath( path )
 
-class UserState(Button):
+class UserState(html5.Div):
 	def __init__(self, *args, **kwargs):
 		super( UserState, self ).__init__(*args, **kwargs)
+
+		self[ "class" ] = [ "popout-opener" ]
+
+		self.btn = Button( icon = "icons-user", className = "btn btn--topbar btn--user" )
+		self.appendChild( self.btn )
+
 		self.sinkEvent( "onClick" )
+
+		popout = html5.Div()
+		popout[ "class" ] = [ "popout" ]
+		self.popoutlist = html5.Div()
+		self.popoutlist[ "class" ] = [ "list" ]
+
+		popout.appendChild( self.popoutlist )
+		self.appendChild( popout )
+
+
 		self.update()
 
 	def onCurrentUserAvailable(self, req):
@@ -132,10 +155,22 @@ class UserState(Button):
 			                        cacheable=False )
 			return
 
+		aitem = html5.Div()
+		aitem[ "class" ] = [ "item", "has-hover", "item--small item--info" ]
+		# userinfo
+		usrinfo = html5.Div()
+		usermail = html5.Span()
+		usermail.appendChild( html5.TextNode( user[ "name" ] ) )
+		aitem.appendChild( usermail )
+		self.popoutlist.appendChild( aitem )
+
 		self["title"] = user["name"]
 		self.currentUser = user["key"] or None
 		self.addClass("vi-tb-accountmgnt")
-		self.appendChild(html5.TextNode(user["name"]))
+		try:
+			self.btn.setText( "%s. %s" %(user["firstname"][0],user["lastname"]))
+		except:
+			self.btn.setText(user["name"])
 
 	@staticmethod
 	def canHandle( action ):
@@ -169,10 +204,7 @@ class UserState(Button):
 		apane.addWidget(edwg)
 
 		conf["mainWindow"].focusPane(apane)
-
-
 toplevelActionSelector.insert( 0, UserState.canHandle, UserState )
-
 
 class Tasks(Button):
 	def __init__(self, *args, **kwargs):
@@ -180,7 +212,7 @@ class Tasks(Button):
 		self.sinkEvent("onClick")
 		self.hide()
 		self.addClass("btn vi-tb-tasks")
-		self.appendChild(html5.TextNode(translate("vi.tasks")))
+		self.appendChild(html5.TextNode(translate("System Configuration")))
 
 		if not conf[ "tasks" ][ "server" ]:
 			NetworkService.request( None, "/vi/_tasks/list",
@@ -223,9 +255,7 @@ class Tasks(Button):
 	@staticmethod
 	def canHandle( action ):
 		return action == "tasks"
-
 toplevelActionSelector.insert( 0, Tasks.canHandle, Tasks )
-
 
 class Logout(Button):
 	def __init__(self, *args, **kwargs):
@@ -245,7 +275,6 @@ class Logout(Button):
 	@staticmethod
 	def canHandle( action ):
 		return action == "logout"
-
 toplevelActionSelector.insert( 0, Logout.canHandle, Logout )
 
 #FIXME: Put Message Center in Iconnav. The message center will be a popout in the topbar.
