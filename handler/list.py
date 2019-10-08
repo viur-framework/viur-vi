@@ -6,7 +6,7 @@ from vi.config import conf
 from vi.pane import Pane
 from vi.widgets.edit import EditWidget
 from vi.i18n import translate
-
+from vi.priorityqueue import moduleHandlerSelector
 
 class ListHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, isView=False, wasRequested = False, *args, **kwargs):
@@ -89,15 +89,12 @@ class ListHandler(Pane):
 		return False
 
 	def _createWidget(self):
-		return ListWidget(
+		widgen = moduleHandlerSelector.select(self.moduleName, self.moduleInfo)
+		assert widgen
+
+		return widgen(
 			self.moduleName,
-           filter=self.moduleInfo.get("filter"),
-           columns=self.moduleInfo.get("columns"),
-           context=self.moduleInfo.get("context"),
-           filterID=self.moduleInfo.get("__id"),
-           filterDescr=self.moduleInfo.get("visibleName", ""),
-           autoload=self.moduleInfo.get("autoload", True)
-		)
+			self.moduleInfo)
 
 	def handleInitialHash(self, pathList, params):
 		assert self.canHandleInitialHash(pathList, params)

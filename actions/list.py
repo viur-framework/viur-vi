@@ -10,8 +10,9 @@ from vi.widgets.csvexport import ExportCsvStarter
 from vi.sidebarwidgets.internalpreview import InternalPreview
 from vi.sidebarwidgets.filterselector import FilterSelector
 from vi.i18n import translate
-from vi.embedsvg import embedsvg
-from vi.widgets.button import Button
+from vi.framework.embedsvg import embedsvg
+from vi.framework.components.button import Button
+from vi.framework.utils import DeferredCall
 
 
 class EditPane(Pane):
@@ -236,6 +237,7 @@ class DeleteAction(Button):
 		deleteList = dialog.deleteList
 		for x in deleteList:
 			NetworkService.request( self.parent().parent().module, "delete", {"key": x}, secure=True, modifies=True )
+			conf["mainWindow"].log("success",translate("Eintrag gelöscht"),key=x, modul=self.parent().parent().module,action="delete" )
 
 	def resetLoadingState(self):
 		pass
@@ -621,17 +623,97 @@ class ReloadAction(Button):
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
 
+class TableNextPage(Button):
+
+	def __init__(self, *args, **kwargs):
+		super(TableNextPage, self).__init__(translate("next Page"), icon="icons-table", *args, **kwargs)
+		self["class"] = "bar-item btn btn--small btn--next"
+
+	def postInit(self):
+		self.currentModule = self.parent().parent()
+
+	def onClick(self, sender=None):
+		self.addClass("is-loading")
+		if self.currentModule:
+			self.currentModule.setPage(self.currentModule.currentPage+1)
+
+	@staticmethod
+	def isSuitableFor(module, handler, actionName):
+		correctAction = actionName == "tablenext"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		return correctAction and correctHandler
+
+actionDelegateSelector.insert(1, TableNextPage.isSuitableFor, TableNextPage)
+
+class TablePrevPage(Button):
+
+	def __init__(self, *args, **kwargs):
+		super(TablePrevPage, self).__init__(translate("prev Page"), icon="icons-table", *args, **kwargs)
+		self["class"] = "bar-item btn btn--small btn--prev"
+
+	def postInit(self):
+		self.currentModule = self.parent().parent()
+
+	def onClick(self, sender=None):
+		self.addClass("is-loading")
+		if self.currentModule:
+			self.currentModule.setPage(self.currentModule.currentPage-1)
+
+	@staticmethod
+	def isSuitableFor(module, handler, actionName):
+		correctAction = actionName == "tableprev"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		return correctAction and correctHandler
+
+actionDelegateSelector.insert(1, TablePrevPage.isSuitableFor, TablePrevPage)
+
+
+class TableItems(html5.Div):
+
+	def __init__(self, *args, **kwargs):
+		super( TableItems, self ).__init__( )
+		self["class"] = "item"
+
+	def postInit(self):
+		self.currentModule = self.parent().parent()
+		if self.currentModule:
+			self.currentModule.table.tableChangedEvent.register(self)
+
+	def onTableChanged(self,table, rowCount):
+		if "elementSpan" in dir(self):
+			self.removeChild(self.elementSpan)
+
+		pages = self.currentModule.loadedPages
+		currentpage = self.currentModule.currentPage
+
+		if table._dataProvider:
+			#self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, loaded elements: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage )))
+			self.elementSpan = html5.Span(html5.TextNode(
+				translate("loaded elements: {amt}, pages: {pg}", amt=rowCount, pg=pages)))
+		else:
+			#self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, all elements loaded: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage)))
+			self.elementSpan = html5.Span(html5.TextNode(
+				translate("all elements loaded: {amt}, pages: {pg}", amt=rowCount, pg=pages)))
+		self.appendChild(self.elementSpan)
+
+	@staticmethod
+	def isSuitableFor(module, handler, actionName):
+		correctAction = actionName == "tableitems"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		return correctAction and correctHandler
+
+actionDelegateSelector.insert(1, TableItems.isSuitableFor, TableItems)
 
 class LoadNextBatchAction(html5.Div):
 	"""
-		Allows Loading all Entries in a list
+		Load a bunch of pages
 	"""
 	def __init__(self, *args, **kwargs):
 		super( LoadNextBatchAction, self ).__init__( )
 		self["class"].append("input-group")
 
 		self.pages = html5.Select()
-		self.pages["class"].append("input ignt-input input--small")
+		self.pages["class"].append("select ignt-select select--small")
 		for x in [1,5,10]:
 			opt = html5.Option(x)
 			opt["value"] = x
@@ -656,16 +738,13 @@ class LoadNextBatchAction(html5.Div):
 			self.addClass("is-loading")
 			currentModule = self.parent().parent()
 
-			if currentModule:
-				self.loadedPages = 1 #reset page counter
-				currentModule.table.tableChangedEvent.register( self )
+			if currentModule and currentModule.table._dataProvider:
+				amount = int(self.pages["options"].item(self.pages["selectedIndex"]).value)
+				currentModule.table.amountOfPages=amount-1
 				currentModule.table._dataProvider.onNextBatchNeeded()
+			else:
+				self.removeClass("is-loading")
 
-	def onTableChanged(self,table, rowCount):
-		amount = int(self.pages["options"].item(self.pages["selectedIndex"]).value)
-		if self.loadedPages < amount:
-			self.loadedPages+=1
-			table._dataProvider.onNextBatchNeeded()
 
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):
@@ -776,7 +855,6 @@ class PageFindAction(html5.Div):
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
-
 
 actionDelegateSelector.insert( 1, PageFindAction.isSuitableFor, PageFindAction )
 

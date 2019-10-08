@@ -196,5 +196,11 @@ lngDe = {
 	"vi.sidebar.internalpreview": u"Informationen",
 
 	"Load all": u"Alles laden",
-	"Find on Page": u"finden"
+	"Find on Page": u"finden",
+
+	"all elements loaded: {amt}, pages: {pg}":u"Alles geladen: {amt} Elemente, {pg} Seite(n)",
+	"loaded elements: {amt}, pages: {pg}":u"Geladen: {amt} Elemente, {pg} Seite(n)",
+	"load next pages":u"Seiten laden"
+
+
 }

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from vi import html5
-from vi.event import EventDispatcher
+from vi.framework.event import EventDispatcher
 from vi.network import DeferredCall
 
 class SelectTable( html5.ignite.Table ):
@@ -532,8 +532,8 @@ class DataTable( html5.Div ):
 			setattr( self, f, getattr(self.table,f))
 
 		self.cursorMovedEvent.register( self )
-		self.recalcHeight()
-		self.sinkEvent("onScroll")
+		#self.recalcHeight()
+		#self.sinkEvent("onScroll")
 
 
 	def recalcHeight(self, *args, **kwargs):
