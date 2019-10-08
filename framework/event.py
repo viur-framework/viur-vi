@@ -47,6 +47,3 @@ class EventDispatcher(object):
 		"""
 		for cb in self.queue:
 			getattr(cb, self._genTargetFuncName())(*args, **kwargs)
-
-# Global Events
-viInitializedEvent = EventDispatcher("viInitialized")
