@@ -12,6 +12,7 @@ This is the current development version.
 - Feature: Improved structuring of `NodeWidget` and `LeafWidget` for trees
 - Feature: Allow for multiple uploads in File.upload action
 - Bugfix: Tree `edit`-action should not both edit and switch parent node
+- Bugfix: Escaped dash in regex for validation of `emailBone`
 
 ## [2.5.0] Vesuv
 
