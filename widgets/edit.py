@@ -882,7 +882,17 @@ class EditWidget(html5.Div):
 
 				if vvariable:
 					context = self.context.copy() if self.context else {}
-					context[vvariable] = data["values"]["key"]
+
+					if "=" in vvariable:
+						vkey, vvalue = vvariable.split("=", 1)
+						if vvalue[0] == "$":
+							vvalue = data["values"].get(vvalue[1:])
+					else:
+						vkey = vvariable
+						vvalue = data["values"].get("key")
+
+					context[vkey] = vvalue
+
 				else:
 					context = self.context
 
