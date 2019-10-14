@@ -62,10 +62,11 @@ class NodeWidget(_StructureWidget):
 	"""
 		Displays one Node (ie a directory) inside a TreeWidget
 	"""
+	skelType =  "node"
 
 	def __init__(self, module, data, structure, *args, **kwargs):
 		super(NodeWidget, self).__init__(module, data, structure, *args, **kwargs)
-		self.addClass("treeitem", "node", "supports_drag", "supports_drop")
+		self.addClass("treeitem", self.skelType, "supports_drag", "supports_drop")
 		self.sinkEvent("onDragOver", "onDrop", "onDragStart", "onDragLeave")
 
 	def onDragOver(self, event):
@@ -113,6 +114,7 @@ class LeafWidget(_StructureWidget):
 	"""
 		Displays one Node (ie a file) inside a TreeWidget
 	"""
+	skelType = "leaf"
 
 	def __init__(self, module, data, structure, *args, **kwargs):
 		"""
@@ -123,9 +125,8 @@ class LeafWidget(_StructureWidget):
 			:param structure: The structure of that data as received from server
 			:type structure: list
 		"""
-		super(LeafWidget, self).__init__( module, data, structure, *args, **kwargs)
-
-		self.addClass("treeitem", "leaf", "supports_drag")
+		super(LeafWidget, self).__init__(module, data, structure, *args, **kwargs)
+		self.addClass("treeitem", self.skelType, "supports_drag")
 		self.sinkEvent("onDragStart")
 
 	def onDragStart(self, event):
@@ -196,10 +197,7 @@ class SelectionContainer(html5.Ul):
 		for child in self.children():
 
 			if html5.utils.doesEventHitWidgetOrChildren(event, child):
-				if self.selectionType == "node" and isinstance(child, self.nodeWidget) or \
-					self.selectionType == "leaf" and isinstance(child, self.leafWidget) or \
-					self.selectionType == "both":
-
+				if self.selectionType == "both" or self.selectionType == child.skelType:
 					self.selectionActivatedEvent.fire(self, [child])
 					break
 
@@ -378,10 +376,10 @@ class TreeWidget(html5.Div):
 
 		item = selection[0]
 
-		if isinstance(item, self.nodeWidget):
+		if item.skelType == "node":
 			self.setNode(item.data["key"])
 
-		elif isinstance(item, self.leafWidget) and "leaf" in (self.selectMode or ""):
+		elif item.skelType == "leaf" and "leaf" in (self.selectMode or ""):
 			self.returnCurrentSelection()
 
 	def activateCurrentSelection(self):
