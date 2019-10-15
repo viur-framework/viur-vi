@@ -635,7 +635,7 @@ class TableNextPage(Button):
 	def onClick(self, sender=None):
 		self.addClass("is-loading")
 		if self.currentModule:
-			self.currentModule.setPage(self.currentModule.currentPage+1)
+			self.currentModule.setPage(1)
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
@@ -657,7 +657,7 @@ class TablePrevPage(Button):
 	def onClick(self, sender=None):
 		self.addClass("is-loading")
 		if self.currentModule:
-			self.currentModule.setPage(self.currentModule.currentPage-1)
+			self.currentModule.setPage(-1)
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
@@ -685,15 +685,15 @@ class TableItems(html5.Div):
 
 		pages = self.currentModule.loadedPages
 		currentpage = self.currentModule.currentPage
-
+		print(table._model)
 		if table._dataProvider:
 			#self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, loaded elements: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage )))
 			self.elementSpan = html5.Span(html5.TextNode(
-				translate("loaded elements: {amt}, pages: {pg}", amt=rowCount, pg=pages)))
+				translate("loaded elements: {amt}, pages: {pg}", amt=len(table._model), pg=pages)))
 		else:
 			#self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, all elements loaded: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage)))
 			self.elementSpan = html5.Span(html5.TextNode(
-				translate("all elements loaded: {amt}, pages: {pg}", amt=rowCount, pg=pages)))
+				translate("all elements loaded: {amt}, pages: {pg}", amt=len(table._model), pg=pages)))
 		self.appendChild(self.elementSpan)
 
 	@staticmethod
@@ -703,6 +703,52 @@ class TableItems(html5.Div):
 		return correctAction and correctHandler
 
 actionDelegateSelector.insert(1, TableItems.isSuitableFor, TableItems)
+
+
+class SetPageRowAmountAction(html5.Div):
+	"""
+		Load a bunch of pages
+	"""
+	def __init__(self, *args, **kwargs):
+		super( SetPageRowAmountAction, self ).__init__( )
+		self["class"].append("input-group")
+
+		self.pages = html5.Select()
+		self.pages["class"].append("select ignt-select select--small")
+		for x in [5,10,25,50,75,99]:
+			opt = html5.Option(x)
+			opt["value"] = x
+			self.pages.appendChild(opt)
+		self.appendChild(self.pages)
+
+		self.btn = Button( translate( "amount" ), callback = self.onClick )
+		self.btn[ "class" ] = "bar-item btn btn--small btn--amount"
+		self.appendChild( self.btn )
+		self.sinkEvent("onClick")
+		self.currentLoadedPages = 0
+
+	def onClick(self, sender=None):
+		if sender == self.btn:
+
+			self.addClass("is-loading")
+			currentModule = self.parent().parent()
+
+			amount = int(self.pages["options"].item(self.pages["selectedIndex"]).value)
+			currentModule.setAmount(amount)
+			NetworkService.notifyChange(currentModule.module)
+
+
+	@staticmethod
+	def isSuitableFor(module, handler, actionName):
+		correctAction = actionName == "setamount"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		return correctAction and correctHandler
+
+	def resetLoadingState(self):
+		if self.hasClass("is-loading"):
+			self.removeClass("is-loading")
+
+actionDelegateSelector.insert( 1, SetPageRowAmountAction.isSuitableFor, SetPageRowAmountAction )
 
 class LoadNextBatchAction(html5.Div):
 	"""
@@ -726,12 +772,6 @@ class LoadNextBatchAction(html5.Div):
 		self.sinkEvent("onClick")
 		self.currentLoadedPages = 0
 
-	@staticmethod
-	def isSuitableFor(module, handler, actionName):
-		correctAction = actionName == "loadnext"
-		correctHandler = handler == "list" or handler.startswith("list.")
-		return correctAction and correctHandler
-
 	def onClick(self, sender=None):
 		if sender == self.btn:
 
@@ -740,11 +780,17 @@ class LoadNextBatchAction(html5.Div):
 
 			if currentModule and currentModule.table._dataProvider:
 				amount = int(self.pages["options"].item(self.pages["selectedIndex"]).value)
-				currentModule.table.amountOfPages=amount-1
-				currentModule.table._dataProvider.onNextBatchNeeded()
+				currentModule.setPage(amount)
+				#	.targetPage=amount-1
+				#currentModule.onNextBatchNeeded()
 			else:
 				self.removeClass("is-loading")
 
+	@staticmethod
+	def isSuitableFor(module, handler, actionName):
+		correctAction = actionName == "loadnext"
+		correctHandler = handler == "list" or handler.startswith("list.")
+		return correctAction and correctHandler
 
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):

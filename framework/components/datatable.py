@@ -159,26 +159,29 @@ class SelectTable( html5.ignite.Table ):
 
 	def onMouseDown(self, event):
 		tr = self._rowForEvent( event )
+
 		if tr is None:
 			return
 
 		row = self.getIndexByTr( tr )
 
 		if self._isCtlPressed:
+			print("GGGGG")
 			if row in self._selectedRows:
 				for x in self._selectedRows:
-					self.getTrByIndex(x).removeClass("is_focused") # remove focus
+					self.getTrByIndex(x).removeClass("is-focused") # remove focus
 				self.removeSelectedRow( row )
 			else:
 				self.addSelectedRow( row )
-				self.setCursorRow(row, False) # set focus
+				#self.setCursorRow(row, False) # set focus
 			event.preventDefault()
 
 		elif self._isShiftPressed:
+
 			self.unSelectAll()
 			for i in ( range(self._ctlStartRow, row+1) if self._ctlStartRow <= row else range(row, self._ctlStartRow+1) ):
 				self.addSelectedRow( i )
-			self.setCursorRow(row, False) # set focus
+			#self.setCursorRow(row, False) # set focus
 			event.preventDefault()
 
 		elif self.checkboxes and html5.utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
@@ -207,6 +210,7 @@ class SelectTable( html5.ignite.Table ):
 		self._isMouseDown = False
 
 	def onKeyDown(self, event):
+
 		if html5.isArrowDown(event):  # Arrow down
 
 			if self._currentRow is None:
@@ -262,7 +266,7 @@ class SelectTable( html5.ignite.Table ):
 				event.preventDefault()
 				return
 
-		elif html5.isControl(event):  # Ctrl
+		elif html5.isControl(event) or html5.getKey(event) == "Meta":  # Ctrl
 			self._isCtlPressed = True
 			self._ctlStartRow = self._currentRow or 0
 			if self._currentRow is not None:
@@ -276,7 +280,7 @@ class SelectTable( html5.ignite.Table ):
 				self._ctlStartRow = 0
 
 	def onKeyUp(self, event):
-		if html5.isControl(event):
+		if html5.isControl(event) or html5.getKey(event) == "Meta":
 			self._isCtlPressed = False
 			self._ctlStartRow = None
 
@@ -298,13 +302,14 @@ class SelectTable( html5.ignite.Table ):
 		"""
 			Marks a row as selected
 		"""
+
 		if row in self._selectedRows:
 			return
 
 		self._selectedRows.append( row )
 
 		tr = self.getTrByIndex( row )
-		tr.addClass("is-selected")
+		tr.addClass("is-focused")
 
 		if self.checkboxes:
 			self._checkboxes[ row ][ "checked" ] = True
@@ -323,7 +328,7 @@ class SelectTable( html5.ignite.Table ):
 		self._selectedRows.remove( row )
 
 		tr = self.getTrByIndex( row )
-		tr.removeClass("is-selected")
+		tr.removeClass("is-focused")
 
 		if self.checkboxes:
 			self._checkboxes[ row ][ "checked" ] = False
@@ -346,7 +351,7 @@ class SelectTable( html5.ignite.Table ):
 		if not newRow in self._selectedRows:
 			self._selectedRows.append( newRow )
 			tr = self.getTrByIndex( newRow )
-			tr.addClass("is-selected")
+			tr.addClass("is-focused")
 
 		self.selectionChangedEvent.fire( self, self.getCurrentSelection() )
 
@@ -443,8 +448,9 @@ class SelectTable( html5.ignite.Table ):
 		"""
 		Drops content from the table, structure remains unchanged
 		"""
+
 		for row in range(0,self.getRowCount()):
-			for col in range(0,self.currentCols):
+			for col in range(0,self.currentCols+1):
 				self.setCell(row,col,"")
 
 
@@ -464,8 +470,8 @@ class SelectTable( html5.ignite.Table ):
 		for row in self._selectedRows:
 			tr = self.getTrByIndex( row )
 
-			if not "is-selected" in tr["class"]:
-				tr.addClass("is-selected")
+			if not "is-focused" in tr["class"]:
+				tr.addClass("is-focused")
 
 			if self.checkboxes:
 				self._checkboxes[ row ][ "checked" ] = True
@@ -481,7 +487,6 @@ class SelectTable( html5.ignite.Table ):
 
 		for row in self._selectedRows:
 			tr = self.getTrByIndex( row )
-			tr.removeClass("is-selected")
 			tr.removeClass("is-focused")
 
 			if self.checkboxes:
@@ -502,10 +507,10 @@ class SelectTable( html5.ignite.Table ):
 			tr = self.getTrByIndex( row )
 
 			if row in current:
-				tr.removeClass("is-selected")
+				tr.removeClass("is-focused")
 			else:
 				self._selectedRows.append(row)
-				tr.addClass("is-selected")
+				tr.addClass("is-focused")
 
 			if self.checkboxes:
 				self._checkboxes[ row ][ "checked" ] = row in self._selectedRows
@@ -529,7 +534,6 @@ class DataTable( html5.Div ):
 		self._isAjaxLoading = False # Determines if we already requested the next batch of rows
 		self._dataProvider = None # Which object to call if we need more data
 		self._cellRender = {} # Map of renders for a given field
-		self.amountOfPages = False #sets the max amount of pages per Request
 		# We re-emit some events with custom parameters
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
@@ -598,44 +602,25 @@ class DataTable( html5.Div ):
 		self._isAjaxLoading = False
 		if "is-loading" in self.table["class"]:
 			self.table.removeClass("is-loading")
-		self.testIfNextBatchNeededImmediately()
 
-	def extend(self, objList):
+	def update(self, objList, writeToModel=True):
 		"""
 			Adds multiple rows at once.
 			Much faster than calling add() multiple times.
 		"""
-		self.table.prepareGrid( len(objList), len(self._shownFields) )
+		self.table.prepareGrid(len(objList), len(self._shownFields))
 		for obj in objList:
-			obj["_uniqeIndex"] = self._modelIdx
-			self._modelIdx += 1
-			self._model.append( obj )
-			self._renderObject( obj, tableIsPrepared=True )
+			if writeToModel:
+				obj["_uniqeIndex"] = self._modelIdx
+				self._modelIdx += 1
+				self._model.append(obj)
+			self._renderObject(obj, tableIsPrepared=True)
 			self._isAjaxLoading = False
 			if "is-loading" in self.table["class"]:
 				self.table.removeClass("is-loading")
-		self.testIfNextBatchNeededImmediately()
 
-	def testIfNextBatchNeededImmediately(self):
-		"""
-			Test if we display enough entries so that our contents are scrollable.
-			Otherwise, we'll never request a second batch
-		"""
-		if not self._dataProvider:
-			return
-
-		if not self._isAjaxLoading and self._loadOnDisplay:  # load next if LoadOnDisplay is active
-			self.amountOfPages = 99 #all content means max 99 pages
-
-		if not self.amountOfPages:
-			self.requestingFinishedEvent.fire()
-			return # no pages means no reloading
-
-		self.amountOfPages-=1
-		self._isAjaxLoading = True
-		if not "is-loading" in self.table["class"]:
-			self.table.addClass("is-loading")
-		self._dataProvider.onNextBatchNeeded()
+	def extend(self, objList,writeToModel=True):
+		self.update(objList,writeToModel=writeToModel)
 
 	def remove(self, objOrIndex):
 		"""
@@ -832,7 +817,8 @@ class ViewportDataTable(DataTable):
 
 		self.clear( keepModel=True )
 
-		if not self.table.getRowCount() == self._rows:
+		if not self.table.getRowCount() == self._rows or not self.table.currentCols == len(self._shownFields):
+			self.table.clear()
 			self.table.prepareGrid( self._rows, len(self._shownFields))
 
 		for idx, obj in enumerate(self._model):
@@ -857,9 +843,11 @@ class ViewportDataTable(DataTable):
 		if "is-loading" in self.table["class"]:
 			self.table.removeClass("is-loading")
 		self.table.tableChangedEvent.fire(self, self.getRowCount())
-		self.testIfNextBatchNeededImmediately()
 
-	def extend(self, objList):
+	def extend(self, objList, writeToModel=True):
+		self.update(objList,writeToModel=writeToModel)
+
+	def update(self, objList, writeToModel=True):
 		"""
 			Adds multiple rows at once.
 			Much faster than calling add() multiple times.
@@ -868,34 +856,18 @@ class ViewportDataTable(DataTable):
 			- removed grid preparation
 
 		"""
-		#self.table.prepareGrid( len(objList), len(self._shownFields) )
+		self.table.dropTableContent()
 		for obj in objList:
-			obj["_uniqeIndex"] = self._modelIdx
-			self._modelIdx += 1
-			self._model.append( obj )
-			self._renderObject( obj, tableIsPrepared=True )
+			if writeToModel:
+				obj["_uniqeIndex"] = self._modelIdx
+				self._modelIdx += 1
+				self._model.append(obj)
+			self._renderObject(obj, tableIsPrepared=True)
 			self._isAjaxLoading = False
 			if "is-loading" in self.table["class"]:
 				self.table.removeClass("is-loading")
+
 		self.table.tableChangedEvent.fire( self, self.getRowCount())
-		self.testIfNextBatchNeededImmediately()
-
-
-	def update(self, objList):
-		"""
-			Adds multiple rows at once.
-			Much faster than calling add() multiple times.
-			only loads current Model to Table
-
-		"""
-		for obj in objList:
-			obj["_uniqeIndex"] = self._modelIdx
-			self._modelIdx += 1
-			self._model.append( obj )
-			self._renderObject( obj, tableIsPrepared=True )
-			self._isAjaxLoading = False
-			if "is-loading" in self.table["class"]:
-				self.table.removeClass("is-loading")
 
 
 	def _renderObject(self, obj, tableIsPrepared=True):

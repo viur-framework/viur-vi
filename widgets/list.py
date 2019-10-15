@@ -36,8 +36,11 @@ class ListWidget(html5.Div):
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
 		self.module = module
 		self.context = context
+
 		self.loadedPages = 0  # Amount of Pages which are currently loaded
 		self.currentPage = self.loadedPages  # last loaded page
+		self.targetPage = 1 #the page which we want to show next if we set this to currentPage +1 and call setPage next page will be loaded
+
 		#List actions
 		self.actionBar = ActionBar(module, "list", currentAction="list")
 		self.appendChild( self.actionBar )
@@ -140,13 +143,34 @@ class ListWidget(html5.Div):
 		          "selectionActivatedEvent",
 		          "cursorMovedEvent",
 		          "tableChangedEvent",
-		          "getCurrentSelection"]:
+		          "getCurrentSelection",
+		          "requestingFinishedEvent"]:
 			setattr(self, f, getattr(self.table, f))
 
 		if self.selectMode:
 			self.selectionActivatedEvent.register(self)
 
+		self.requestingFinishedEvent.register(self)
+
 		self.table["style"]["display"] = "none"
+
+	def setAmount(self,amount):
+		self._batchSize=amount
+
+	def setPage(self,page = 0):
+		'''
+		sets targetpage. if not enougth loadedpages this pages will be requested
+		:param page: sets targetpage
+		:return:
+		'''
+
+		self.targetPage = self.currentPage+page
+		if self.targetPage > self.loadedPages:
+			self.onNextBatchNeeded()
+
+
+	def onRequestingFinished(self,*args,**kwargs):
+		pass
 
 	def onClick(self, event):
 		if event.target == self.table.element:
@@ -169,7 +193,7 @@ class ListWidget(html5.Div):
 		if self.selectMode:
 			defaultActions += ["|", "select","close"]
 
-		defaultActions += ["|", "pagefind", "reload", "loadnext", "intpreview", "selectfilter"]
+		defaultActions += ["|", "pagefind", "reload", "setamount", "loadnext", "intpreview", "selectfilter"]
 
 		#if not self.selectMode:
 		#	defaultActions += ["|", "exportcsv"]
@@ -238,6 +262,7 @@ class ListWidget(html5.Div):
 		"""
 			Requests the next rows from the server and feed them to the table.
 		"""
+		print("kkk")
 		if self._currentCursor and not self.isDetaching:
 			filter = {}
 
@@ -253,6 +278,7 @@ class ListWidget(html5.Div):
 			                                cacheable=True ) )
 			self._currentCursor = None
 		else:
+			print("FFFF")
 			self.table.setDataProvider(None)
 
 	def onAttach(self):
@@ -279,6 +305,8 @@ class ListWidget(html5.Div):
 		"""
 		self.table.clear()
 		self.loadedPages = 0
+		self.targetPage = 1
+		self.currentPage = 0
 		self._currentCursor = None
 		self._currentRequests = []
 
@@ -324,21 +352,22 @@ class ListWidget(html5.Div):
 		if not req in self._currentRequests:
 			return
 
-		self.loadedPages+=1
-		self.targetPage = self.loadedPages
-		self.currentPage = self.currentPage
+		self.loadedPages +=1
+		self.currentPage = self.loadedPages
+
 		self._currentRequests.remove( req )
 		self.actionBar.resetLoadingState()
 		self.entryActionBar.resetLoadingState()
 		self.tableBottomActionBar.resetLoadingState()
 
-
 		data = NetworkService.decode( req )
 
 		if data["structure"] is None:
 			if self.table.getRowCount():
-				self.table.setDataProvider(None) #We cant load any more results
-				self.table.amountOfPages = False
+				# We cant load any more results
+				self.targetPage = self.loadedPages #reset targetpage to maximum
+				self.requestingFinishedEvent.fire()
+				self.table.setDataProvider(None)
 				self.table.onTableChanged(None, self.table.getRowCount())
 			else:
 				self.table["style"]["display"] = "none"
@@ -358,14 +387,18 @@ class ListWidget(html5.Div):
 						self.columns.append( boneName )
 			self.setFields( self.columns )
 
-
 		if data["skellist"] and "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
 			self.table.setDataProvider(self)
 		else:
+			self.requestingFinishedEvent.fire()
 			self.table.setDataProvider(None)
 
-		self.table.extend( data["skellist"] )
+		self.table.extend( data["skellist"], writeToModel =True )
+
+		#if targetPage higher than loadedPage, request next Batch
+		if self.targetPage > self.loadedPages:
+			self.onNextBatchNeeded()
 
 	def setFields(self, fields):
 		if not self._structure:
@@ -411,7 +444,6 @@ class ListWidget(html5.Div):
 	def activateCurrentSelection(self):
 		"""
 			Emits the selectionActivated event if there's currently a selection
-
 		"""
 		self.table.activateCurrentSelection()
 
@@ -477,37 +509,66 @@ class ViewportListWidget(ListWidget):
 
 		self.table["style"]["display"] = "none"
 
+	def setAmount(self,amount):
+		self._batchSize = amount
+		self.table._rows = amount
+		self.table.rebuildTable()
 
-	def setPage(self,page = 0):
-		self.targetPage = page
+	def setPage(self, page=0):
+		'''
+		sets targetpage. if not enougth loadedpages this pages will be requested
+		else
 
-		if page > self.loadedPages:
-			amntOfMissingPages = page - self.loadedPages
-			self.table.amountOfPages = amntOfMissingPages - 1
+		:param page: sets targetpage
+		:return:
+		'''
+
+		self.targetPage = self.currentPage + page
+		if self.targetPage<0:
+			self.targetPage = 0
+
+		print("ZZZ")
+		print(self.targetPage)
+		print(self.loadedPages)
+
+
+		if self.targetPage > self.loadedPages:
 			self.onNextBatchNeeded()
-			return #waiting till pages loaded
+			return  # waiting till pages loaded
 
-		#used if nessesary pages are existing
+		# if pages are existing load page
 		self._setPage(self.targetPage)
 
-	def _setPage(self,page = 0):
-		if page > self.loadedPages: #set page to Max possible
+	def _setPage(self, page=0):
+		'''
+		render page to table
+		:param page:
+		:return:
+		'''
+		if page > self.loadedPages:  # set page to Max possible
 			page = self.loadedPages
+		elif page<0:
+			page = 0
+		print("RRRRR")
+		print(page)
+		print(self.currentPage)
 
 		start = page * self._batchSize
-		end = (page+1) * self._batchSize
+		end = (page + 1) * self._batchSize
 
 		objs = self.table._model[start:end]
-		self.currentPage = page
-		self.table.update(objs)
+		self.currentPage = max(page,1)
+		self.table.update(objs,writeToModel=False)
 
 	def onRequestingFinished(self,*args,**kwargs):
-		print("FINISHED!!!")
-		#switch Page
-		if "targetPage" in dir(self) and self.targetPage and self.targetPage < self.loadedPages:
-			print("TTTT")
+		#after Page is loaded scroll to this Page, while targetPage is lower than loadedPages
+		if self.targetPage and self.targetPage < self.loadedPages:
 			self._setPage(self.targetPage)
 
+	def setTableActionBar(self):
+		self.tableBottomActionBar = ActionBar(self.module, "list", currentAction="list")
+		self.appendChild(self.tableBottomActionBar)
+		self.tableBottomActionBar.setActions(["|","tableprev","loadnext","tablenext", "|", "tableitems"])
 
 	@staticmethod
 	def canHandle(moduleName, moduleInfo):
@@ -534,5 +595,5 @@ class ViewportListWidget(ListWidget):
 		                          autoload=autoload,
 		                          filterDescr=filterDescr)
 
-moduleHandlerSelector.insert(-1, ViewportListWidget.canHandle, ViewportListWidget.render)
+moduleHandlerSelector.insert(-1 , ViewportListWidget.canHandle, ViewportListWidget.render)
 
