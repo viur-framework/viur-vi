@@ -12,7 +12,7 @@ from vi.framework.components.button import Button
 from vi.pane import Pane
 from vi.widgets import table as tablewdgt
 from vi.widgets.edit import EditWidget
-
+from .utils import indexeddb
 
 class logEntry(html5.Span):
 	'''
@@ -115,7 +115,25 @@ class LogButton(html5.Div):
 		aitem.appendChild(listentry)
 		self.popoutlist.appendChild(aitem)
 
+		#load old logs from idb
+		idb = conf["indexeddb"]
+		data = idb.getList("vi_log")
+		data.addEventListener("dataready", self.idbdata)
 
+
+	def idbdata(self,event):
+		print("DFFFF")
+		print(len(event.detail["data"]))
+		for item in event.detail["data"]:
+			self.log(item["type"],
+			         item["msg"],
+			         item["icon"],
+		             item["modul"],
+		             item["action"],
+		             item["key"],
+		             item["data"],
+		             item["date"]
+		          )
 
 	def renderPopOut(self):
 		self.popoutlist.removeAllChildren()
@@ -149,20 +167,36 @@ class LogButton(html5.Div):
 		conf["mainWindow"].addPane(apane)
 		conf["mainWindow"].focusPane(apane)
 
-	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data =None):
+	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data =None, date=None):
 		logObj = {"type":type,
 		          "msg":msg,
 		          "icon":icon,
 		          "modul":modul,
 		          "action":action,
 		          "key":key,
-		          "data":data,
-		          "date":datetime.now().strftime("%d. %b. %Y, %H:%M:%S")
+		          "data":data
 		          }
+
+		if not date:
+			logObj.update({"date":datetime.now().strftime("%d. %b. %Y, %H:%M:%S")})
+		else:
+			logObj.update({"date":date})
+
+		#conf["indexeddb"].dbAction("createStore", "vi_log",None,{"autoIncrement": True})
+		#conf["indexeddb"].dbAction("createStore", "vi_test")
+		#conf["indexeddb"].dbAction("createStore", "vi_test2")
+		#conf["indexeddb"].dbAction("add", "vi_test", "1", {"test":1})
+		#conf["indexeddb"].dbAction("add", "vi_test", "2", {"test": 1})
+		#conf["indexeddb"].dbAction("edit", "vi_test", "2", {"test": 1,"test2":1})
+		#conf["indexeddb"].dbAction("add", "vi_test", "3", {"test": 1})
+		#conf["indexeddb"].dbAction("delete", "vi_test", "1")
+
+		conf["indexeddb"].dbAction("add","vi_log", None, logObj)
 		self.logsList.insert(0,logObj)
 		self.renderPopOut()
 
 		self.msgOverlay(logObj)
+
 
 
 	def msgOverlay(self,logObj):
@@ -279,7 +313,7 @@ class Log(html5.Div):
 		else:
 			self.addClass("is-open")
 
-	def log(self, type, msg, icon=None ):
+	def log(self, type, msg, icon=None,date=None ):
 		"""
 			Adds a message to the log
 			:param type: The type of the message.
@@ -307,9 +341,12 @@ class Log(html5.Div):
 		msgContent = html5.Div()
 		msgContent.addClass("msg-content")
 		msgWrap.appendChild(msgContent)
-
+		if not date:
+			adate = datetime.now().strftime("%d. %b. %Y, %H:%M:%S")
+		else:
+			adate = date
 		msgDate = html5.Span()
-		msgDate.appendChild( html5.TextNode( datetime.now().strftime("%d. %b. %Y, %H:%M:%S") ))
+		msgDate.appendChild( html5.TextNode( adate ))
 		msgDate.addClass("msg-date")
 		msgContent.appendChild(msgDate)
 
@@ -325,7 +362,10 @@ class Log(html5.Div):
 			msgDescr.appendChild(html5.TextNode(html5.utils.unescape(msg)))
 			msgDescr.addClass("msg-descr")
 			msgContent.appendChild(msgDescr)
+		print("FFFFFFFFFF")
+		print(conf["indexeddb"])
 
+		print("ZTUTUTUT")
 		DeferredCall(self.removeNewCls, msgWrap,_delay=2500)
 		self.logUL.appendChild( msgWrap )
 

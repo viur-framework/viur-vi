@@ -3,6 +3,7 @@ from vi import html5
 from vi.framework.event import EventDispatcher
 from .i18n import translate
 from .logics import Interpreter
+from .utils import indexeddb
 
 conf = {
 	# Vi version number
@@ -57,10 +58,10 @@ conf = {
 	"initialHashEvent": EventDispatcher("initialHash"),
 
 	# Actions in the top level bar
-    "toplevelactions": ["tasks", "userstate", "logout"],
+    "toplevelactions": ["log", "tasks", "userstate", "logout"],
 
 	# Number of rows to fetch in list widgets
-	"batchSize": 20,
+	"batchSize": 2,
 
 	# Show bone names instead of description
 	"showBoneNames": False,
@@ -76,5 +77,6 @@ conf = {
 
 	"updateParams": None,
 
-	"cacheObj": {}
+	"cacheObj": {},
+	"indexeddb":indexeddb("vi-cache")
 }
