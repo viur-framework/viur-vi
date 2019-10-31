@@ -297,7 +297,7 @@ class TreeWidget(html5.Div):
 		self.node = node or rootNode
 		self.actionBar = ActionBar(module, "tree")
 		self.appendChild(self.actionBar)
-		self.pathList = html5.Div()
+		self.pathList = html5.Ul()
 		self.pathList["class"].append("breadcrumb")
 		self.appendChild(self.pathList)
 		self.entryFrame = SelectionContainer(self.nodeWidget, self.leafWidget)
@@ -436,7 +436,7 @@ class TreeWidget(html5.Div):
 		skel = answ["values"]
 
 		if skel["parentdir"] and skel["parentdir"] != skel["key"]:
-			c = NodeWidget(self.module, skel, [])
+			c = self.nodeWidget(self.module, skel, answ["structure"])
 
 			NetworkService.request(
 				self.module, "view/node/%s" % skel["parentdir"],
@@ -444,7 +444,7 @@ class TreeWidget(html5.Div):
 			)
 
 		else:
-			c = NodeWidget(self.module, {"key": self.rootNode, "name": "root"}, [])
+			c = self.nodeWidget(self.module, {"key": self.rootNode, "name": "root"}, [])
 			c.addClass("is_rootnode")
 
 		self.pathList.prependChild(c)
