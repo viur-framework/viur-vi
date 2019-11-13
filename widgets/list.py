@@ -16,8 +16,8 @@ class ListWidget(html5.Div):
 		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
 	"""
-	def __init__(self, module, filter=None, columns=None, selectMode = None, filterID=None, filterDescr=None,
-	             batchSize = None, context = None, autoload = True, *args, **kwargs):
+	def __init__(self, module, filter=None, columns=None, selectMode=None, filterID=None, filterDescr=None,
+	             batchSize=None, context=None, autoload=True, actions=None, *args, **kwargs):
 		"""
 			:param module: Name of the module we shall handle. Must be a list application!
 			:type module: str
@@ -93,7 +93,8 @@ class ListWidget(html5.Div):
 		            "getCurrentSelection"]:
 			setattr( self, f, getattr(self.table,f))
 
-		self.actionBar.setActions( self.getDefaultActions( myView ) )
+		assert actions is None or isinstance(actions, list), "actions must be either a list or None!"
+		self.actionBar.setActions(actions or self.getDefaultActions(myView))
 
 		if self.selectMode:
 			self.selectionActivatedEvent.register(self)
@@ -118,7 +119,7 @@ class ListWidget(html5.Div):
 		if self.filterDescr:
 			self.filterDescriptionSpan.appendChild(html5.TextNode(html5.utils.unescape(self.filterDescr)))
 
-	def getDefaultActions(self, view = None ):
+	def getDefaultActions(self, view=None):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
