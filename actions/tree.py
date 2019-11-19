@@ -281,7 +281,7 @@ class SelectRootNode( html5.Select ):
 				option["selected"] = True
 			self.appendChild( option )
 
-		if len(self.children()) > 1:
+		if len(self.children()) > 1 and not self.parent().parent().context:
 			self.show()
 		else:
 			self.hide()
