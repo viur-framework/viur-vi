@@ -31,8 +31,9 @@ class TreeDirMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 			self.element.insertBefore(img.element, self.element.children.item(0))
 
 		#Remove the editbutton. This won't work on directories; but we maybe need this for other modules?!
-		self.removeChild(self.editBtn)
-		self.editBtn = None
+		if self.editBtn:
+			self.editBtn.parent().removeChild(self.editBtn)
+			self.editBtn = None
 
 	def fetchEntry(self, key):
 		NetworkService.request(self.module, "view/node/%s" % key,

@@ -491,7 +491,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		Provides the UI to display its data and a button to remove it from the bone.
 	"""
 
-	def __init__(self, parent, module, data, using, errorInfo, *args, **kwargs ):
+	def __init__(self, parent, module, data, using=None, errorInfo=None, *args, **kwargs ):
 		"""
 			:param parent: Reference to the RelationalMultiSelectionBone we belong to
 			:type parent: RelationalMultiSelectionBone

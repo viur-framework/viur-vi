@@ -14,6 +14,7 @@ This is the current development version.
 - Feature: Allow for multiple uploads in File.upload action
 - Bugfix: Tree `edit`-action should not both edit and switch parent node
 - Bugfix: Escaped dash in regex for validation of `emailBone`
+- Bugfix: `treeDirBone` fixed
 
 ## [2.5.0] Vesuv
 
