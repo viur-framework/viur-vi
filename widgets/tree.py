@@ -5,7 +5,7 @@ from widgets.actionbar import ActionBar
 from event import EventDispatcher
 from priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
 from config import conf
-
+from i18n import translate
 
 
 class NodeWidget(html5.Div):
@@ -82,11 +82,23 @@ class NodeWidget(html5.Div):
 			return
 
 		NetworkService.request(
-			self.module, "move", {
+			self.module,
+			"move", {
 				"skelType": nodeType,
 				"key": srcKey,
 				"destNode": self.data["key"]
-			}, modifies=True, secure=True)
+			},
+			failureHandler=lambda req, code:
+                conf["mainWindow"].log(
+                    "error",
+                    translate(
+                        "Node cannot be moved, error {code}.",
+                        code=code
+                    )
+                ),
+			modifies=True,
+			secure=True
+		)
 
 		event.preventDefault()
 		event.stopPropagation()
