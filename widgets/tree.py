@@ -6,6 +6,8 @@ from widgets.actionbar import ActionBar
 from event import EventDispatcher
 from priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
 from config import conf
+from i18n import translate
+
 
 class _StructureWidget(html5.Li):
 
@@ -56,7 +58,7 @@ class _StructureWidget(html5.Li):
 
 			self.appendChild(html5.utils.unescape(
 				utils.formatString(format, self.data, self.structure,
-				    language=conf["currentlanguage"])))
+					language=conf["currentlanguage"])))
 
 class NodeWidget(_StructureWidget):
 	"""
@@ -100,11 +102,23 @@ class NodeWidget(_StructureWidget):
 			return
 
 		NetworkService.request(
-			self.module, "move", {
+			self.module,
+			"move", {
 				"skelType": nodeType,
 				"key": srcKey,
 				"destNode": self.data["key"]
-			}, modifies=True, secure=True)
+			},
+			failureHandler=lambda req, code:
+				conf["mainWindow"].log(
+					"error",
+					translate(
+						"Node cannot be moved, error {code}.",
+						code=code
+					)
+				),
+			modifies=True,
+			secure=True
+		)
 
 		event.preventDefault()
 		event.stopPropagation()
@@ -280,7 +294,7 @@ class TreeWidget(html5.Div):
 	leafWidget = LeafWidget
 	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload"]
 
-	def __init__(self, module, rootNode=None, node=None, selectMode=None, *args, **kwargs):
+	def __init__(self, module, rootNode=None, node=None, selectMode=None, context=None, *args, **kwargs):
 		"""
 			:param module: Name of the module we shall handle. Must be a list application!
 			:type module: str
@@ -294,6 +308,7 @@ class TreeWidget(html5.Div):
 
 		self.module = module
 		self.rootNode = rootNode
+		self.context = context
 		self.node = node or rootNode
 		self.actionBar = ActionBar(module, "tree")
 		self.appendChild(self.actionBar)
