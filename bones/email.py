@@ -36,7 +36,7 @@ class EmailEditBone( strBone.StringEditBone ):
 	def isInvalid(value):
 		if not value:
 			return True
-		return not re.match("^[a-zA-Z0-9._%-+]+@[a-zA-Z0-9._-]+.[a-zA-Z]{2,6}$", value)
+		return not re.match("^[a-zA-Z0-9._%\-+]+@[a-zA-Z0-9._\-]+.[a-zA-Z]{2,6}$", value)
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
