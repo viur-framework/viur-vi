@@ -245,13 +245,14 @@ class ListPreviewAction(html5.Span):
 	def __init__(self, module, handler, actionName, *args, **kwargs ):
 		super(ListPreviewAction, self ).__init__(*args, **kwargs)
 
+		self.urls = conf["defaultPreview"]
+
 		self.urlCb = html5.Select()
 		self.appendChild(self.urlCb)
 
 		btn = html5.ext.Button(translate("Preview"), callback=self.onClick)
 		btn["class"] = "icon preview"
 		self.appendChild(btn)
-		self.urls = None
 
 		self["disabled"] = True
 		self.isDisabled = True
@@ -287,9 +288,12 @@ class ListPreviewAction(html5.Span):
 		if module in conf["modules"].keys():
 			moduleConfig = conf["modules"][module]
 
-			self.urls = moduleConfig.get("preview", moduleConfig.get("previewurls"))
-			if self.urls:
-				self.rebuildCB()
+			urls = moduleConfig.get("preview", moduleConfig.get("previewurls"))
+			if urls:
+				self.urls = urls
+
+		if self.urls:
+			self.rebuildCB()
 
 	def onDetach(self):
 		self.parent().parent().selectionChangedEvent.unregister(self)
@@ -307,7 +311,7 @@ class ListPreviewAction(html5.Span):
 				self.isDisabled = True
 
 	def onClick(self, sender=None):
-		if self.urls is None:
+		if not self.urls:
 			return
 
 		selection = self.parent().parent().getCurrentSelection()
@@ -346,7 +350,7 @@ class ListPreviewAction(html5.Span):
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
 		isDisabled = "disabledFunctions" in modConf and modConf["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
-		isAvailable = bool(modConf.get("preview", modConf.get("previewurls")))
+		isAvailable = bool(modConf.get("preview", modConf.get("previewurls", conf["defaultPreview"])))
 
 		return correctAction and correctHandler and hasAccess and not isDisabled and isAvailable
 
@@ -591,7 +595,6 @@ class ListSelectFilterAction( html5.ext.Button ):
 	def __init__(self, *args, **kwargs ):
 		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), *args, **kwargs )
 		self["class"] = "icon selectfilter"
-		self.urls = None
 		self.filterSelector = None
 
 	def onAttach(self):
