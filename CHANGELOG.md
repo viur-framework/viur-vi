@@ -12,6 +12,7 @@ This is the current development version.
 - Feature: Handle `frontend_default_visible`-parameter for bones also in Hierarchy handler
 - Feature: Improved structuring of `NodeWidget` and `LeafWidget` for trees
 - Feature: Allow for multiple uploads in File.upload action
+- Bugfix: `ListInternalPreviewAction` always showed up as disabled button with no function
 - Bugfix: Tree `edit`-action should not both edit and switch parent node
 - Bugfix: Escaped dash in regex for validation of `emailBone`
 

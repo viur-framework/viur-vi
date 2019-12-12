@@ -268,7 +268,7 @@ class ListPreviewAction(html5.Span):
 			self.urls = {x: x for x in self.urls}
 
 		if not isinstance(self.urls, dict) or len(self.urls.keys()) == 1:
-			self.urlCb["style"]["display"] = "none"
+			self.urlCb.hide()
 			return
 
 		for name, url in self.urls.items():
@@ -277,7 +277,7 @@ class ListPreviewAction(html5.Span):
 			o.appendChild(html5.TextNode(name))
 			self.urlCb.appendChild(o)
 
-		self.urlCb["style"]["display"] = ""
+		self.urlCb.show()
 
 	def onAttach(self):
 		super(ListPreviewAction,self).onAttach()
@@ -336,35 +336,35 @@ class ListPreviewAction(html5.Span):
 			eval("""window.open('""" + newUrl + """', '""" + target + """');""")
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		if module is None or module not in conf["modules"].keys():
+	def isSuitableFor(module, handler, actionName):
+		if module is None or module not in conf["modules"]:
 			return False
+
+		modConf = conf["modules"][module]
 
 		correctAction = actionName=="preview"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
-		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
-		isAvailable = conf["modules"][module].get("preview", conf["modules"][module].get("previewurls"))
+		isDisabled = "disabledFunctions" in modConf and modConf["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
+		isAvailable = bool(modConf.get("preview", modConf.get("previewurls")))
 
 		return correctAction and correctHandler and hasAccess and not isDisabled and isAvailable
 
-actionDelegateSelector.insert( 2, ListPreviewAction.isSuitableFor, ListPreviewAction )
+actionDelegateSelector.insert(2, ListPreviewAction.isSuitableFor, ListPreviewAction)
 
 
-class ListPreviewInlineAction( html5.ext.Button ):
-	def __init__(self, *args, **kwargs ):
-		super( ListPreviewInlineAction, self ).__init__( translate("Preview"), *args, **kwargs )
-		self["class"] = "icon preview"
-		self["disabled"] = True
-		self.urls = None
+class ListPreviewInlineAction(html5.Span):
+	def __init__(self, *args, **kwargs):
+		super(ListPreviewInlineAction, self ).__init__()
+		self.hide()
 
 	def onAttach(self):
-		super( ListPreviewInlineAction,self ).onAttach()
+		super(ListPreviewInlineAction, self).onAttach()
 		self.parent().parent().selectionChangedEvent.register( self )
 
 	def onDetach(self):
 		self.parent().parent().selectionChangedEvent.unregister( self )
-		super( ListPreviewInlineAction, self ).onDetach()
+		super(ListPreviewInlineAction, self).onDetach()
 
 	def onSelectionChanged(self, table, selection):
 		if self.parent().parent().selectMode:
@@ -398,10 +398,11 @@ class ListPreviewInlineAction( html5.ext.Button ):
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
+		generallyDisabled = not bool(conf["modules"][module].get("disableInternalPreview", not conf["internalPreview"]))
 
-		return correctAction and correctHandler and hasAccess and not isDisabled
+		return correctAction and correctHandler and hasAccess and not isDisabled and generallyDisabled
 
-actionDelegateSelector.insert( 1, ListPreviewInlineAction.isSuitableFor, ListPreviewInlineAction )
+actionDelegateSelector.insert(1, ListPreviewInlineAction.isSuitableFor, ListPreviewInlineAction)
 
 
 class CloseAction( html5.ext.Button ):
