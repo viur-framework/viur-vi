@@ -48,7 +48,7 @@ class AddNodeAction(Button):
 		Creates a new node (ie. a directory) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddNodeAction, self ).__init__(  translate("Add"), icons="icons-add-folder", *args, **kwargs )
+		super( AddNodeAction, self ).__init__(  translate("Add"), icon="icons-add-folder", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--add-node"
 
 	@staticmethod
@@ -83,7 +83,7 @@ class EditAction(Button):
 		The type (node or leaf) of the entry is determined dynamically
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__(  translate("Edit"), icons="icons-edit", *args, **kwargs )
+		super( EditAction, self ).__init__(  translate("Edit"), icon="icons-edit", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -325,7 +325,7 @@ class ReturnSelectionAction(Button):
 		to avoid conflicts with "open that folder" action.
 	"""
 	def __init__(self, *args, **kwargs ):
-		super( ReturnSelectionAction, self ).__init__( translate("Select"), icons="icons-select-add", *args, **kwargs )
+		super( ReturnSelectionAction, self ).__init__( translate("Select"), icon="icons-select-add", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--activateselection"
 
 	def onClick(self, sender=None):

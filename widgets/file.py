@@ -49,16 +49,23 @@ class FilePreviewImage(html5.Div):
 		self.downloadA = html5.A()
 		self.downloadA.hide()
 		self.appendChild(self.downloadA)
-
 		self.isImage = False
 		self.downloadOnly = False
 		self.currentFile = None
-
-		self.setFile(file)
+		self.previewIcon = None
 
 	def setFile(self, file):
+		if not file:
+			self.addClass("is-hidden")
+			if self.previewIcon:
+				self.removeChild( self.previewIcon )
+			return 0
+		else:
+			self.removeClass("is-hidden")
 		svg = None
 		self.currentFile = file
+		if self.previewIcon:
+			self.removeChild( self.previewIcon )
 		self.previewIcon = None
 
 		preview = utils.getImagePreview(file, cropped=True, size = self.size) if file else None
