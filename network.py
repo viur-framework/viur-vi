@@ -368,7 +368,10 @@ class NetworkService( object ):
 		print("onError", self.kickoffs, self.retryMax, int(code), self.retryCodes)
 
 		if self.kickoffs < self.retryMax and int(code) in self.retryCodes:
-			logError = html5.window.top.logError
+			try:
+				logError = html5.window.top.logError
+			except:
+				logError = None
 			if logError and self.kickoffs == self.retryMax - 1:
 				logError("NetworkService.onError code:%s module:%s url:%s params:%s" % (code, self.module, self.url, self.params))
 

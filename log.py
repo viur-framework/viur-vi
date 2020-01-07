@@ -117,12 +117,13 @@ class LogButton(html5.Div):
 
 		#load old logs from idb
 		idb = conf["indexeddb"]
+		if "vi_log" not in idb.objectStoreNames:
+			idb.dbAction( "createStore", "vi_log", None, { "autoIncrement": True } )
 		data = idb.getList("vi_log")
 		data.addEventListener("dataready", self.idbdata)
 
 
 	def idbdata(self,event):
-		print("DFFFF")
 		print(len(event.detail["data"]))
 		for item in event.detail["data"]:
 			self.log(item["type"],
@@ -362,10 +363,7 @@ class Log(html5.Div):
 			msgDescr.appendChild(html5.TextNode(html5.utils.unescape(msg)))
 			msgDescr.addClass("msg-descr")
 			msgContent.appendChild(msgDescr)
-		print("FFFFFFFFFF")
-		print(conf["indexeddb"])
 
-		print("ZTUTUTUT")
 		DeferredCall(self.removeNewCls, msgWrap,_delay=2500)
 		self.logUL.appendChild( msgWrap )
 

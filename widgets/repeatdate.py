@@ -2,7 +2,7 @@ from vi import html5
 
 from vi.i18n import translate
 from vi.bones import selectmulti, date
-from vi.widgets.actionbar import ActionBar
+from vi.framework.components.actionbar import ActionBar
 from vi.network import NetworkService
 from vi.config import conf
 from vi.widgets.edit import EditWidgetFieldset
@@ -32,7 +32,7 @@ class RepeatDatePopup(html5.Div):
 		self.appendChild( self.actionbar )
 		self.form = html5.Form()
 		self.appendChild(self.form)
-		self.actionbar.setActions(["create.recurrent"])
+		self.actionbar.setActions(["create.recurrent"], widget=self)
 		self.reloadData()
 
 	def reloadData(self):

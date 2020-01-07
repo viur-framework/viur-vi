@@ -183,8 +183,6 @@ class indexeddbConnector():
 		#self.createObjectStore(event.target,"vi_log")
 
 	def db_success(self, event):
-		#print("DB READY")
-
 		#event.target.dispatchEvent(CustomEvent.new("upgradeneeded"))
 		self.dbResult = self.db.result
 		self.dbVersion = self.dbResult.version
@@ -196,14 +194,9 @@ class indexeddb():
 	queue = []
 	dbqueue = []
 	def __init__(self,dbName, dbVersion=None):
-		#import js
-
-		#print("##############")
-		#print(dir(js))
-		#import asyncio
-
 		self.dbName = dbName
 		self.dbVersion = dbVersion
+		self.objectStoreNames = []
 		self.connect()
 
 	def connect(self):
@@ -211,7 +204,6 @@ class indexeddb():
 		db = dbObj.connect()
 		db.addEventListener("success", self.db_success)
 		return db
-
 
 	def getList(self,name):
 		db = self.connect()
@@ -227,14 +219,20 @@ class indexeddb():
 
 		dbResult = event.target.result
 		dbTransaction = event.target.result.transaction
+
 		trans = dbTransaction([name], "readwrite")
+
 		StoreHandler = trans.objectStore(name)
+
 		all = StoreHandler.getAll()
 		all.addEventListener("success", fetchedData)
 
 
+
 	def db_success(self,event):
 		self.dbVersion = event.target.result.version
+		self.objectStoreNames = event.target.result.objectStoreNames
+
 
 	def dbAction(self,action,name,key=None,obj=None):
 		if action in ["createStore", "deleteStore"]:

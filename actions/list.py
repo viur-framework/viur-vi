@@ -629,7 +629,7 @@ class TableNextPage(Button):
 		super(TableNextPage, self).__init__(translate("next Page"), icon="icons-table", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--next"
 
-	def postInit(self):
+	def postInit(self,widget=None):
 		self.currentModule = self.parent().parent()
 
 	def onClick(self, sender=None):
@@ -643,6 +643,10 @@ class TableNextPage(Button):
 		correctHandler = handler == "list" or handler.startswith("list.")
 		return correctAction and correctHandler
 
+	def resetLoadingState(self):
+		if self.hasClass("is-loading"):
+			self.removeClass("is-loading")
+
 actionDelegateSelector.insert(1, TableNextPage.isSuitableFor, TableNextPage)
 
 class TablePrevPage(Button):
@@ -651,7 +655,7 @@ class TablePrevPage(Button):
 		super(TablePrevPage, self).__init__(translate("prev Page"), icon="icons-table", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--prev"
 
-	def postInit(self):
+	def postInit(self,widget=None):
 		self.currentModule = self.parent().parent()
 
 	def onClick(self, sender=None):
@@ -674,7 +678,7 @@ class TableItems(html5.Div):
 		super( TableItems, self ).__init__( )
 		self["class"] = "item"
 
-	def postInit(self):
+	def postInit(self,widget=None):
 		self.currentModule = self.parent().parent()
 		if self.currentModule:
 			self.currentModule.table.tableChangedEvent.register(self)
@@ -715,7 +719,12 @@ class SetPageRowAmountAction(html5.Div):
 
 		self.pages = html5.Select()
 		self.pages["class"].append("select ignt-select select--small")
-		for x in [5,10,25,50,75,99]:
+
+		defaultSizes = [5,10,25,50,75,99]
+		if not conf["batchSize"] in defaultSizes:
+			defaultSizes.insert(0,conf["batchSize"])
+
+		for x in defaultSizes:
 			opt = html5.Option(x)
 			opt["value"] = x
 			self.pages.appendChild(opt)

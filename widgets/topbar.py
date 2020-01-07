@@ -199,7 +199,7 @@ class UserState(html5.Div):
 
 		actions = edwg.actionbar.getActions()
 		actions.append("cancel.close")
-		edwg.actionbar.setActions(actions)
+		edwg.actionbar.setActions(actions, widget=edwg)
 
 		apane.addWidget(edwg)
 

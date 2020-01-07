@@ -25,7 +25,7 @@ class ActionBar(html5.Div):
 		self.addClass("vi-actionbar bar")
 
 
-	def setActions(self, actions):
+	def setActions(self, actions,widget=None):
 		"""
 			Sets the list of valid actions for this module.
 			This function tries to resolve a suitable action-widget for each
@@ -61,7 +61,7 @@ class ActionBar(html5.Div):
 					self.appendChild( actionWdg )
 
 					if "postInit" in dir(actionWdg):
-						actionWdg.postInit()
+						actionWdg.postInit(widget=widget)
 
 					self.widgets[ action ] = actionWdg
 

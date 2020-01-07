@@ -7,7 +7,7 @@ from vi.network import NetworkService, DeferredCall
 from vi.config import conf
 from vi.priorityqueue import editBoneSelector
 from vi.widgets.tooltip import ToolTip
-from vi.widgets.actionbar import ActionBar
+from vi.framework.components.actionbar import ActionBar
 from vi.i18n import translate
 from vi.widgets.list import ListWidget
 from vi.widgets.accordion import Accordion
@@ -170,9 +170,9 @@ class EditWidget(html5.Div):
 			editActions.extend(conf["modules"][module].get("editActions", []))
 
 		if applicationType == EditWidget.appSingleton:
-			self.actionbar.setActions(["save.singleton"] + editActions)
+			self.actionbar.setActions(["save.singleton"] + editActions, widget=self)
 		else:
-			self.actionbar.setActions(["save.continue","save.close" ] + editActions)
+			self.actionbar.setActions(["save.continue","save.close" ] + editActions, widget=self)
 
 		# Set path
 		if applicationType == EditWidget.appSingleton:

@@ -3,7 +3,7 @@ from vi import html5
 import vi.utils as utils
 
 from vi.network import NetworkService
-from vi.widgets.actionbar import ActionBar
+from vi.framework.components.actionbar import ActionBar
 from vi.framework.event import EventDispatcher
 from vi.priorityqueue import moduleHandlerSelector, viewDelegateSelector
 from vi.config import conf
@@ -297,7 +297,7 @@ class HierarchyWidget(html5.Div):
 		#listview
 		self.currentKey = None
 		self.listview = ListWidget( self.module, context = self.context, autoload = False )
-		self.listview.actionBar.setActions(["preview", "selectfields"] )
+		self.listview.actionBar.setActions(["preview", "selectfields"], widget=self )
 		self.listwidgetadded = False
 		self.listviewActiv = False
 		self.setListView( self.listviewActiv )
@@ -314,7 +314,7 @@ class HierarchyWidget(html5.Div):
 		self.path = []
 		self.sinkEvent("onClick", "onDblClick")
 
-		self.actionBar.setActions(["selectrootnode","add","edit","clone","delete"]+(["select","close"] if self.selectMode else [])+["|","listview","reload"])
+		self.actionBar.setActions(["selectrootnode","add","edit","clone","delete"]+(["select","close"] if self.selectMode else [])+["|","listview","reload"], widget=self)
 		self.sinkEvent("onDrop","onDragOver")
 
 	def toggleListView( self ):

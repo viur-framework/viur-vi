@@ -107,8 +107,8 @@ class ListWidget(html5.Div):
 		#build Table
 		self.tableInitialization(*args, **kwargs)
 
-		self.actionBar.setActions( self.getDefaultActions( myView ) )
-		self.entryActionBar.setActions(self.getDefaultEntryActions(myView))
+		self.actionBar.setActions( self.getDefaultActions( myView ), widget=self )
+		self.entryActionBar.setActions(self.getDefaultEntryActions(myView), widget=self)
 
 		self.emptyNotificationDiv = html5.Div()
 		svg = embedsvg.get("icons-error-file")
@@ -165,9 +165,13 @@ class ListWidget(html5.Div):
 		'''
 
 		self.targetPage = self.currentPage+page
+		print(self.targetPage)
+		print(self.loadedPages)
+		print(self.targetPage > self.loadedPages)
 		if self.targetPage > self.loadedPages:
+			print("AAA")
 			self.onNextBatchNeeded()
-
+		print("CCC")
 
 	def onRequestingFinished(self,*args,**kwargs):
 		pass
@@ -262,7 +266,6 @@ class ListWidget(html5.Div):
 		"""
 			Requests the next rows from the server and feed them to the table.
 		"""
-		print("kkk")
 		if self._currentCursor and not self.isDetaching:
 			filter = {}
 
@@ -278,7 +281,9 @@ class ListWidget(html5.Div):
 			                                cacheable=True ) )
 			self._currentCursor = None
 		else:
-			print("FFFF")
+			self.actionBar.resetLoadingState()
+			self.entryActionBar.resetLoadingState()
+			self.tableBottomActionBar.resetLoadingState()
 			self.table.setDataProvider(None)
 
 	def onAttach(self):
@@ -568,7 +573,7 @@ class ViewportListWidget(ListWidget):
 	def setTableActionBar(self):
 		self.tableBottomActionBar = ActionBar(self.module, "list", currentAction="list")
 		self.appendChild(self.tableBottomActionBar)
-		self.tableBottomActionBar.setActions(["|","tableprev","loadnext","tablenext", "|", "tableitems"])
+		self.tableBottomActionBar.setActions(["|","tableprev","loadnext","tablenext", "|", "tableitems"], widget=self)
 
 	@staticmethod
 	def canHandle(moduleName, moduleInfo):

@@ -3,7 +3,7 @@ from vi import html5
 import vi.utils as utils
 
 from vi.network import NetworkService
-from vi.widgets.actionbar import ActionBar
+from vi.framework.components.actionbar import ActionBar
 from vi.framework.event import EventDispatcher
 from vi.priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
 from vi.config import conf
@@ -377,7 +377,7 @@ class TreeWidget(html5.Div):
 				  "selectionReturnEvent"]:
 			setattr(self, f, getattr(self.entryFrame, f))
 
-		self.actionBar.setActions(self.defaultActions + (["select", "close"] if self.selectMode else []))
+		self.actionBar.setActions(self.defaultActions + (["select", "close"] if self.selectMode else []), widget=self)
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
