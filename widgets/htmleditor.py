@@ -1,12 +1,9 @@
 from vi import html5
 import vi.network as network
-
-#from __pyjamas__ import JS #fixme!!!
-
+from js import Event as JSevent, window as JSwindow, alert as JSalert, encodeURI as JSencodeURI, summernoteEditor
 from vi.i18n import translate
 from vi.widgets.file import FileWidget
 from vi.config import conf
-
 
 class TextInsertImageAction(html5.ext.Button):
 	def __init__(self, summernote=None, boneName="", *args, **kwargs):
@@ -34,22 +31,20 @@ class TextInsertImageAction(html5.ext.Button):
 		print(selection)
 
 		for item in selection:
-			encodeURI = eval("encodeURI")
 
 			if "mimetype" in item.data.keys() and item.data["mimetype"].startswith("image/"):
-				dataUrl = "/file/download/%s/%s" % (item.data["dlkey"], encodeURI(item.data["name"]))
+				dataUrl = "/file/download/%s/%s" % (item.data["dlkey"], JSencodeURI(item.data["name"]))
 
 				self.summernote.summernote("editor.insertImage", dataUrl, item.data["name"].replace("\"", ""))
 				print("insert img %s" % dataUrl)
 			else:
-				dataUrl = "/file/download/%s/%s" % (item.data["dlkey"], encodeURI(item.data["name"]))
+				dataUrl = "/file/download/%s/%s" % (item.data["dlkey"], JSencodeURI(item.data["name"]))
 
 				text = str(self.summernote.summernote("createRange")) # selected text
 				if not text:
 					text = item.data["name"].replace("\"", "")
 
-				self.summernote.summernote("editor.createLink",
-										   JS("{url: @{{dataUrl}}, text: @{{text}}, isNewWindow: true}"))
+				self.summernote.summernote("editor.createLink",{"url":dataUrl, "text": text, "isNewWindow": True})
 				print("insert link %s<%s> " % (text, dataUrl))
 
 	@staticmethod
@@ -78,15 +73,17 @@ class HtmlEditor(html5.Textarea):
 		if not HtmlEditor.initSources:
 			print("initialize HTML Editor libraries")
 
-			js = html5.Script()
-			js["src"] = "htmleditor/htmleditor.min.js"
-			html5.Head().appendChild(js)
+			# pyodide load JS environment on start
+			# currently we do not know if it is possible to update this
+			# till this we import this globally in vi.html
+			#js = html5.Script()
+			#js["src"] = "vi/public/htmleditor/htmleditor.min.js"
+			#html5.Head().appendChild(js)
 
 			css = html5.Link()
 			css["rel"] = "stylesheet"
-			css["href"] = "htmleditor/htmleditor.min.css"
+			css["href"] = "vi/public/htmleditor/htmleditor.min.css"
 			html5.Head().appendChild(css)
-
 		HtmlEditor.initSources = True
 
 	def _attachSummernote(self, retry=0):
@@ -94,10 +91,10 @@ class HtmlEditor(html5.Textarea):
 		lang = conf["currentlanguage"]
 
 		try:
-			self.summernote = html5.window.top.summernoteEditor(elem, lang)
+			self.summernote = summernoteEditor(elem, lang)
 		except:
 			if retry >= 3:
-				alert("Unable to connect summernote, please contact technical support...")
+				JSalert("Unable to connect summernote, please contact technical support...")
 				return
 
 			print("Summernote initialization failed, retry will start in 1sec")
@@ -132,7 +129,7 @@ class HtmlEditor(html5.Textarea):
 
 	def onEditorChange(self, e, *args, **kwargs):
 		if self.parent():
-			e = JS("new Event('keyup')")
+			e = JSevent.new('keyup')# JS("new Event('keyup')")
 			self.parent().element.dispatchEvent(e)
 
 	def _getValue(self):
@@ -150,7 +147,14 @@ class HtmlEditor(html5.Textarea):
 		self.summernote.off("summernote.change")
 		self.summernote.summernote("reset")  # reset history and content
 		self.summernote.summernote("code", val)
-		self.summernote.on("summernote.change", self.onEditorChange)
+		'''
+			a importet JQuery object cant use jquery's on function! 
+			used vanilla JS Eventlistener till we now why:
+			
+			> Uncaught Error: AttributeError: 'method' object has no attribute 'guid'
+			
+		'''
+		self.summernote.get(0).addEventListener("summernote.change", self.onEditorChange) #ARGGGGG! WTF
 
 	def enable(self):
 		super(HtmlEditor, self).enable()

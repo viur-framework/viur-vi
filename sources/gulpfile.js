@@ -32,6 +32,8 @@ const stylefmt = require('gulp-stylefmt');
 
 const imagemin = require('gulp-imagemin');
 const cheerio = require('gulp-cheerio');
+const concat = require('gulp-concat');
+const uglify = require('gulp-uglify');
 
 // clean destination folder
 gulp.task('clean', function () {
@@ -41,6 +43,22 @@ gulp.task('clean', function () {
 		destpaths.embedsvg + '/**/*',
 	], {force: true});
 });
+
+// merge and minfy js
+gulp.task('js', function () {
+	return gulp.src([
+		"htmleditor/jquery-3.3.1.js",
+		"htmleditor/codemirror.js",
+		"htmleditor/codemirror_mode_xml.js",
+		"htmleditor/summernote-lite.js",
+		"htmleditor/summernote-de-DE.min.js",
+		"htmleditor/htmleditor.js"
+	])
+		.pipe(concat('htmleditor.min.js'))
+		.pipe(uglify())
+		.pipe(gulp.dest('../public/htmleditor/'))
+});
+
 
 // compilation and postproduction of LESS to CSS
 gulp.task('css', function () {

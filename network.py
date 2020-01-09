@@ -155,7 +155,7 @@ class NetworkService( object ):
 					res += '\r\n--'+boundary
 			elif isinstance( value, dict ):
 				for k,v in value.items():
-					res += '\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+b"."+k+'"\r\n\r\n'
+					res += '\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+"."+k+'"\r\n\r\n'
 					res += str(v)
 					res += '\r\n--'+boundary
 			else:

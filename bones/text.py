@@ -29,7 +29,7 @@ class TextViewBoneDelegate(object):
 					if conf["currentlanguage"] in data[field].keys():
 						resstr = data[field][conf["currentlanguage"]]
 					else:
-						if data[field].keys().length > 0:
+						if len(data[field].keys()) > 0:
 							resstr = data[field][data[field].keys()[0]]
 				value = resstr
 			else:
@@ -52,6 +52,17 @@ class TextEditBone(html5.Div):
 		self.languages = languages
 		self.descrHint = descrHint
 		self.value = {}
+		self.addClass( "vi-bone-container" )
+
+		if not readOnly and not self.isPlainText:
+			self.input = HtmlEditor()
+			self.input.boneName = self.boneName
+		else:
+			self.input = html5.Textarea()
+			if readOnly:
+				self.input["readonly"] = True
+
+		self.appendChild( self.input )
 
 		# multilangbone
 		if self.languages:
@@ -74,18 +85,10 @@ class TextEditBone(html5.Div):
 			self.appendChild(self.langButContainer)
 			self._refreshBtnStates()
 
-		if not readOnly and not self.isPlainText:
-			self.input = HtmlEditor()
-			self.input.boneName = self.boneName
-		else:
-			self.input = html5.Textarea()
-			if readOnly:
-				self.input["readonly"] = True
 
 		self.sinkEvent("onKeyUp")
 
 		self.changeEvent = EventDispatcher("boneChange")
-
 
 	def _setDisabled(self, disable):
 		"""
@@ -101,6 +104,7 @@ class TextEditBone(html5.Div):
 		self.value[self.selectedLang] = self.input["value"]
 		self.selectedLang = btn["value"]
 		self.input["value"] = self.value.get(self.selectedLang, "")
+
 		self._refreshBtnStates()
 
 	def _refreshBtnStates(self):

@@ -42,14 +42,3 @@ function preventBack()
 setTimeout(preventBack(), 0);
 window.onunload = function(){};
 
-/*** BUGSNAG ***/
-
-function logError(msg, url, line, col, error)
-{
-    if( !url || url == "" || !url.indexOf("http://127.0.0.1")
-                                || !url.indexOf("http://localhost") )
-        return; /* Ignore */
-
-    // DISABLED FOR NOW IT MAKES NO SENSE IN DEVELOPMENT VERSIONS...
-    //Bugsnag.notify(error.toString(), msg.toString());
-}
