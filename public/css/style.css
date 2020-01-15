@@ -5190,8 +5190,6 @@ a.vi-login-btn:focus {
   background-color: #fafafa;
   margin-right: 0;
   margin-left: 10px;
-  width: 200px;
-  height: 200px;
 }
 
 .vi-bone--numeric .input {
@@ -5203,7 +5201,10 @@ a.vi-login-btn:focus {
   flex-basis: 100%;
 }
 
-.vi-bone--relational .vi-relation-selectioncontainer {
+.vi-bone--relational .vi-relation-selectioncontainer,
+.vi-bone--hierarchy .vi-relation-selectioncontainer,
+.vi-bone--treeitem .vi-relation-selectioncontainer,
+.vi-bone--treedir .vi-relation-selectioncontainer {
   padding: 10px;
   margin: 5px 0;
   border: 1px solid #e0e0e0;
@@ -5211,14 +5212,20 @@ a.vi-login-btn:focus {
   align-self: stretch;
 }
 
-.vi-bone--relational .vi-tree-selectioncontainer-entry {
+.vi-bone--relational .vi-tree-selectioncontainer-entry,
+.vi-bone--hierarchy .vi-tree-selectioncontainer-entry,
+.vi-bone--treeitem .vi-tree-selectioncontainer-entry,
+.vi-bone--treedir .vi-tree-selectioncontainer-entry {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -ms-flex-flow: column;
   flex-flow: column;
 }
 
-.vi-bone--relational .vi-tree-selectioncontainer-entry .relationwrapper {
+.vi-bone--relational .vi-tree-selectioncontainer-entry .relationwrapper,
+.vi-bone--hierarchy .vi-tree-selectioncontainer-entry .relationwrapper,
+.vi-bone--treeitem .vi-tree-selectioncontainer-entry .relationwrapper,
+.vi-bone--treedir .vi-tree-selectioncontainer-entry .relationwrapper {
   margin: 0px;
   width: 100%;
 }

@@ -180,9 +180,9 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 		self.addClass("vi-tree-selectioncontainer-entry")
 
-		wrapperDiv = html5.Div()
-		wrapperDiv.appendChild(self.txtLbl)
-		wrapperDiv.addClass("vi-tree-labelwrapper input-group")
+		self.wrapperDiv = html5.Div()
+		self.wrapperDiv.appendChild(self.txtLbl)
+		self.wrapperDiv.addClass("vi-tree-labelwrapper input-group")
 
 		# Edit button
 		if (self.parent.destModule in conf["modules"].keys()
@@ -191,7 +191,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 			self.editBtn = Button(translate("Edit"), self.onEdit, icon="icons-edit")
 			self.editBtn.addClass("btn--edit")
-			wrapperDiv.appendChild(self.editBtn)
+			self.wrapperDiv.appendChild(self.editBtn)
 
 		else:
 			self.editBtn = None
@@ -199,9 +199,9 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		if not parent.readOnly:
 			remBtn = Button(translate("Remove"), self.onRemove, icon="icons-delete")
 			remBtn.addClass("btn--remove", "btn--danger")
-			wrapperDiv.appendChild(remBtn)
+			self.wrapperDiv.appendChild(remBtn)
 
-		self.appendChild(wrapperDiv)
+		self.appendChild(self.wrapperDiv)
 
 		if using:
 			self.ie = InternalEdit(
@@ -407,7 +407,7 @@ class RelationalBone(html5.Div):
 
 	def __init__(self, srcModule, boneName, readOnly, destModule,
 	                format="$(dest.name)", using=None, usingDescr=None,
-	                relskel=None, context = None, multiple=False, *args, **kwargs):
+	                relskel=None, context = None, multiple=False,params=None, *args, **kwargs):
 		"""
 			:param srcModule: Name of the module from which is referenced
 			:type srcModule: str
@@ -430,6 +430,11 @@ class RelationalBone(html5.Div):
 		self.using = using
 		self.usingDescr = usingDescr
 		self.relskel = relskel
+		self.params = params
+		self.quickselectview = False
+		if params and "vi.style" in params and params["vi.style"] == "quickselect":
+			self.quickselectview = True
+
 		self.addClass("vi-bone-container vi-tree-selectioncontainer-entry")
 		self.changeEvent = EventDispatcher("boneChange")
 
@@ -450,14 +455,18 @@ class RelationalBone(html5.Div):
 
 			self.quickselectionWrapper = html5.Div()
 			self.quickselectionWrapper.addClass("input-group")
+			if self.quickselectview:
+				self.quickselector = AutocompleteList(boneName + "_selectorid")
 
-			self.quickselector = AutocompleteList(boneName + "_selectorid")
-			self.quickselectionWrapper.appendChild(self.quickselector)
+				self.quickselectionWrapper.appendChild(self.quickselector)
 
-			self.addSelection = Button(translate("Add"), self.onAddSelection, icon="icons-add")
-			self.addSelection.addClass("btn--add is-disabled")
-			self.addSelection["disabled"] = True
-			self.quickselectionWrapper.appendChild(self.addSelection)
+				self.addSelection = Button(translate("Add"), self.onAddSelection, icon="icons-add")
+				self.addSelection.addClass("btn--add is-disabled")
+				self.addSelection["disabled"] = True
+				self.quickselectionWrapper.appendChild(self.addSelection)
+			else:
+				self.quickselector = None
+				self.addSelection = None
 
 			self.selectBtn = Button(translate("Liste"), self.onShowSelector, icon="icons-list")
 			self.selectBtn.addClass("btn--select btn--primary")
@@ -593,7 +602,7 @@ class RelationalBone(html5.Div):
 		format = skelStructure[boneName].get("format", "$(name)")
 		using = skelStructure[boneName].get("using")
 		multiple = skelStructure[boneName].get("multiple",False)
-
+		params = skelStructure[boneName].get("params",None)
 		if ("params" in skelStructure[boneName].keys()
 		    and skelStructure[boneName]["params"]
 			and "usingDescr" in skelStructure[boneName]["params"].keys()):
@@ -610,7 +619,7 @@ class RelationalBone(html5.Div):
 
 		return cls(moduleName, boneName, readOnly,
 		            destModule=destModule, format=format, using=using, usingDescr = usingDescr,
-		                relskel=skelStructure[boneName].get("relskel"), context = context,multiple= multiple)
+		                relskel=skelStructure[boneName].get("relskel"), context = context,multiple= multiple, params=params)
 
 	def unserialize(self, data):
 		"""

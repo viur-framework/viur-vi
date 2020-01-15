@@ -4,7 +4,7 @@ from vi import html5
 from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector
 from vi.widgets.file import FileWidget, LeafFileWidget
 from vi.config import conf
-from vi.bones.relational import RelationalMultiSelectionBone, RelationalSingleSelectionBone, RelationalMultiSelectionBoneEntry
+from vi.bones.relational import RelationalBone, RelationalMultiSelectionBoneEntry
 from vi.widgets.file import Uploader, FilePreviewImage
 from vi.i18n import translate
 from vi.network import NetworkService
@@ -113,7 +113,7 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		self.addClass("fileentry")
 
 		self.previewImg = FilePreviewImage()
-		self.prependChild(self.previewImg)
+		self.wrapperDiv.prependChild(self.previewImg)
 
 		if self.data["dest"]:
 			if "key" in self.data["dest"] and len(self.data["dest"]) == 1:
@@ -153,18 +153,26 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		                        params={"key": self.data["dest"]["key"]},
 		                        successHandler=self.onModuleViewAvailable)
 
-class FileMultiSelectionBone( RelationalMultiSelectionBone ):
-
-	def __init__(self, *args, **kwargs):
-		super(FileMultiSelectionBone, self).__init__( *args, **kwargs )
-		self.sinkEvent("onDragOver","onDrop")
-
-		self.addClass("vi-bone-container supports-upload")
-		self["title"] = translate("vi.tree.drag-here")
+class FileBone(RelationalBone):
+	def __init__( self, srcModule, boneName, readOnly, destModule,
+				  format = "$(dest.name)", using = None, usingDescr = None,
+				  relskel = None, context = None, multiple = False, params = None, *args, **kwargs ):
+		if params and "vi.style" in params and params[ "vi.style" ] == "quickselect":
+			params[ "vi.style" ] = None
+		print( "FILEEEEEE1" )
+		super().__init__( srcModule, boneName, readOnly, destModule,
+						  format, using, usingDescr,
+						  relskel, context, multiple, params, *args, **kwargs )
+		print( "FILEEEEEE2" )
+		self.sinkEvent( "onDragOver", "onDrop" )
+		print( "FILEEEEEE3" )
+		self.addClass( "vi-bone-container supports-upload" )
+		self[ "title" ] = translate( "vi.tree.drag-here" )
 		self.currentSelector = None
+		print("FILEEEEEE")
 
 	def onDragOver(self, event):
-		super(FileMultiSelectionBone,self).onDragOver(event)
+		super(FileBone,self).onDragOver(event)
 		self.addClass("insert-here")
 		event.preventDefault()
 		event.stopPropagation()
@@ -219,7 +227,7 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 		self.changeEvent.fire(self)
 
 	def onDetach(self):
-		super(FileMultiSelectionBone, self).onDetach()
+		super(FileBone, self).onDetach()
 
 		if self.currentSelector:
 			self.currentSelector.selectionReturnEvent.unregister(self)
@@ -237,126 +245,6 @@ class FileMultiSelectionBone( RelationalMultiSelectionBone ):
 			entry = FileMultiSelectionBoneEntry(self, self.destModule, data, using=self.using, errorInfo={})
 			self.addEntry( entry )
 
-class FileSingleSelectionBone( RelationalSingleSelectionBone ):
-
-	def __init__(self, *args, **kwargs):
-		super(FileSingleSelectionBone, self).__init__( *args, **kwargs )
-		self.sinkEvent("onDragOver","onDrop")
-		self.addClass("vi-bone-container supports-upload")
-		self["title"] = translate("vi.tree.drag-here")
-
-		self.previewImg = FilePreviewImage()
-		self.prependChild(self.previewImg)
-
-		self.selection = None
-		self.currentSelector = None
-
-	def onDragOver(self, event):
-		super(FileSingleSelectionBone,self).onDragOver(event)
-		self.addClass("insert-here")
-		event.preventDefault()
-		event.stopPropagation()
-
-	def onDrop(self, event):
-		event.preventDefault()
-		event.stopPropagation()
-		files = event.dataTransfer.files
-		self.removeClass("insert-here")
-
-		if files.length > 1:
-			conf["mainWindow"].log("error",translate("You cannot drop more than one file here!"))
-			return
-
-		for x in range(0,files.length):
-			ul = Uploader(files.item(x), None, context = self.context)
-			ul.uploadSuccess.register( self )
-
-	def onUploadSuccess(self, uploader, file):
-		self.setSelection({"dest": file, "rel":{}})
-		self.changeEvent.fire(self)
-
-	def onShowSelector(self, *args, **kwargs):
-		"""
-			Opens a TreeWidget sothat the user can select new values
-		"""
-		if not self.currentSelector:
-			fileSelector = conf.get("fileSelector")
-
-			if not fileSelector or conf["mainWindow"].containsWidget(fileSelector):
-				fileSelector = FileWidget(self.destModule, selectMode="single.leaf")
-			else:
-				fileSelector.selectMode = "single.leaf"
-
-			if not conf.get("fileSelector"):
-				conf["fileSelector"] = fileSelector
-
-			self.currentSelector = fileSelector
-
-		self.currentSelector.selectionReturnEvent.register(self, reset=True)
-
-		conf["mainWindow"].stackWidget(self.currentSelector)
-		self.parent().addClass("is-active")
-
-	def onSelectionReturn(self, table, selection):
-		"""
-			Merges the selection made in the TreeWidget into our value(s)
-		"""
-		hasValidSelection = False
-		for s in selection:
-			if isinstance( s, LeafFileWidget ):
-				hasValidSelection = True
-				break
-		if not hasValidSelection: #Its just a folder that's been activated
-			return
-
-		self.setSelection([{"dest": x.data for x in selection if isinstance(x,LeafFileWidget)}][0] )
-		self.changeEvent.fire(self)
-
-	def onDetach(self):
-		super(FileSingleSelectionBone, self).onDetach()
-
-		if self.currentSelector:
-			self.currentSelector.selectionReturnEvent.unregister(self)
-
-	def onEdit(self, *args, **kwargs):
-		"""
-			Edit the image.
-		"""
-		if not self.selection:
-			return
-
-		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=[ "modul_%s" % self.destModule,
-		                                                                "apptype_list", "action_edit" ] )
-		conf["mainWindow"].stackPane(pane, focus=True)
-
-		try:
-			edwg = EditWidget(self.destModule, EditWidget.appTree, key=self.selection["dest"]["key"], skelType="leaf")
-			pane.addWidget(edwg)
-		except AssertionError:
-			conf["mainWindow"].removePane(pane)
-
-	def setSelection(self, selection):
-		"""
-			Set our current value to 'selection'
-			:param selection: The new entry that this bone should reference
-			:type selection: dict
-		"""
-		self.selection = selection
-
-		if selection:
-			NetworkService.request(self.destModule, "view/leaf/%s" % selection["dest"]["key"],
-			                        successHandler=self.onSelectionDataAvailable,
-			                        cacheable=True)
-			self.selectionTxt["value"] = translate("Loading...")
-
-			self.previewImg.setFile(self.selection["dest"])
-		else:
-			self.previewImg.setFile(None)
-			self.selectionTxt["value"] = ""
-
-		self.updateButtons()
-
-
 def CheckForFileBoneSingleSelection( moduleName, boneName, skelStructure, *args, **kwargs ):
 	isMultiple = "multiple" in skelStructure[boneName].keys() and skelStructure[boneName]["multiple"]
 	return CheckForFileBone( moduleName, boneName, skelStructure ) and not isMultiple
@@ -366,10 +254,11 @@ def CheckForFileBoneMultiSelection( moduleName, boneName, skelStructure, *args, 
 	return CheckForFileBone( moduleName, boneName, skelStructure ) and isMultiple
 
 def CheckForFileBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
+	print(skelStucture[boneName]["type"])
 	return skelStucture[boneName]["type"].startswith("treeitem.file")
 
 #Register this Bone in the global queue
-editBoneSelector.insert( 5, CheckForFileBoneSingleSelection, FileSingleSelectionBone)
-editBoneSelector.insert( 5, CheckForFileBoneMultiSelection, FileMultiSelectionBone)
+editBoneSelector.insert( 5, CheckForFileBoneSingleSelection, FileBone)
+editBoneSelector.insert( 5, CheckForFileBoneMultiSelection, FileBone)
 viewDelegateSelector.insert( 3, CheckForFileBone, FileViewBoneDelegate)
 extractorDelegateSelector.insert(3, CheckForFileBone, FileBoneExtractor)
