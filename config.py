@@ -47,6 +47,7 @@ conf = {
 
 	# Language
 	"currentlanguage": "de",
+	"defaultLanguage": "de",
 
 	# Global holder to the currently logged-in user
 	"currentUser": None,

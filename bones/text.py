@@ -42,7 +42,7 @@ class TextViewBoneDelegate(object):
 
 class TextEditBone(html5.Div):
 
-	def __init__(self, moduleName, boneName, readOnly, isPlainText, languages=None, descrHint=None, *args, **kwargs):
+	def __init__(self, moduleName, boneName, readOnly, isPlainText, languages=None, descrHint=None, params=None, *args, **kwargs):
 		super(TextEditBone, self).__init__(*args, **kwargs)
 		self.moduleName = moduleName
 		self.boneName = boneName
@@ -51,8 +51,23 @@ class TextEditBone(html5.Div):
 		self.isPlainText = isPlainText
 		self.languages = languages
 		self.descrHint = descrHint
+		self.params = params
+		self.translationView = False
+		if params and "vi.style" in params and params["vi.style"] == "translation":
+			self.translationView = True
+
 		self.value = {}
 		self.addClass( "vi-bone-container" )
+
+		if self.languages and self.translationView:
+			if not readOnly and not self.isPlainText:
+				self.inputDefault = HtmlEditor()
+				self.inputDefault.boneName = self.boneName
+			else:
+				self.inputDefault = html5.Textarea()
+				if readOnly:
+					self.inputDefault[ "readonly" ] = True
+			self.appendChild( self.inputDefault )
 
 		if not readOnly and not self.isPlainText:
 			self.input = HtmlEditor()
@@ -66,10 +81,10 @@ class TextEditBone(html5.Div):
 
 		# multilangbone
 		if self.languages:
-			if "currentlanguage" in conf and conf["currentlanguage"] in self.languages:
-				self.selectedLang = conf["currentlanguage"]
-			elif len(self.languages) > 0:
-				self.selectedLang = self.languages[0]
+			noDefaultLangs = self.languages[ : ]
+			if self.translationView:
+				noDefaultLangs.remove( conf[ "defaultLanguage" ] )
+			self.selectedLang = noDefaultLangs[0]
 
 			self.langButContainer = html5.Div()
 
@@ -81,6 +96,9 @@ class TextEditBone(html5.Div):
 
 				abut["value"] = lang
 				self.langButContainer.appendChild(abut)
+
+				if conf[ "defaultLanguage" ] == lang and self.translationView:
+					abut.disable()
 
 			self.appendChild(self.langButContainer)
 			self._refreshBtnStates()
@@ -102,6 +120,8 @@ class TextEditBone(html5.Div):
 
 	def changeLang(self, btn):
 		self.value[self.selectedLang] = self.input["value"]
+		if self.translationView:
+			self.value[ conf[ "defaultLanguage" ] ] = self.inputDefault[ "value" ]
 		self.selectedLang = btn["value"]
 		self.input["value"] = self.value.get(self.selectedLang, "")
 
@@ -128,7 +148,8 @@ class TextEditBone(html5.Div):
 		langs = skelStructure[boneName]["languages"] if (
 			"languages" in skelStructure[boneName].keys() and skelStructure[boneName]["languages"]) else None
 		descr = skelStructure[boneName]["descr"] if "descr" in skelStructure[boneName].keys() else None
-		return TextEditBone(moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr)
+		params = skelStructure[boneName]["params"] if "params" in skelStructure[boneName].keys() else None
+		return TextEditBone(moduleName, boneName, readOnly, isPlainText, langs, descrHint=descr,params=params)
 
 	def unserialize(self, data):
 		data = data.get(self.boneName) or ""
@@ -143,6 +164,8 @@ class TextEditBone(html5.Div):
 					self.value[lang] = data
 
 			self.input["value"] = self.value[self.selectedLang]
+			if self.translationView:
+				self.inputDefault["value"] = self.value[conf["defaultLanguage"]]
 			self._refreshBtnStates()
 		else:
 			self.input["value"] = data
@@ -150,7 +173,10 @@ class TextEditBone(html5.Div):
 	def serializeForPost(self):
 		if self.selectedLang:
 			self.value[self.selectedLang] = self.input["value"]
+			if self.translationView:
+				self.value[conf["defaultLanguage"]] = self.inputDefault["value"]
 			return {self.boneName: self.value.copy()}
+
 
 		return {self.boneName: self.input["value"]}
 

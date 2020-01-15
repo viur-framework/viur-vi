@@ -25,6 +25,8 @@
     "postcss-focus": "^4.0.0",
     "gulp-stylefmt": "^1.1",
     "postcss-zindex": "^4.0.1",
-    "del": "^4.0.0"
+    "del": "^4.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-uglify": "^3.0.1"
   }
 }

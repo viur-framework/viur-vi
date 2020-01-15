@@ -159,7 +159,7 @@ class Tag(html5.Span):
 
 
 class StringEditBone(html5.Div):
-	def __init__(self, moduleName, boneName, readOnly, multiple=False, languages=None, multiLine=False, *args,
+	def __init__(self, moduleName, boneName, readOnly, multiple=False, languages=None, multiLine=False, params=None, *args,
 	             **kwargs):
 		super(StringEditBone, self).__init__(*args, **kwargs)
 		self.moduleName = moduleName
@@ -171,6 +171,11 @@ class StringEditBone(html5.Div):
 		self.currentTagToDrag = None
 		self.currentLanguage = None
 		self.addClass("vi-bone-container")
+
+		self.params = params
+		self.translationView = False
+		if params and "vi.style" in params and params[ "vi.style" ] == "translation":
+			self.translationView = True
 
 		if self.languages and self.multiple:
 			self.addClass("is-translated")
@@ -202,11 +207,18 @@ class StringEditBone(html5.Div):
 					addBtn.lang = lang
 					tagContainer.appendChild(addBtn)
 
+				if conf["defaultLanguage"] == lang and self.translationView:
+					langBtn.disable()
+					tagContainer.show()
+					tagContainer.addClass("defaultLanguage")
+
 				self.languagesContainer.appendChild(tagContainer)
 				self.langEdits[lang] = tagContainer
 				self.langBtns[lang] = langBtn
-
-			self.setLang(self.languages[0])
+			noDefaultLangs = self.languages[ : ]
+			if self.translationView:
+				noDefaultLangs.remove( conf[ "defaultLanguage" ] )
+			self.setLang(noDefaultLangs[0])
 
 		elif self.languages and not self.multiple:
 			self.addClass("is-translated")
@@ -223,6 +235,7 @@ class StringEditBone(html5.Div):
 				langBtn = html5.ext.Button(lang, callback=self.onLangBtnClicked)
 				langBtn.addClass("btn--lang")
 				langBtn.lang = lang
+
 				self.buttonContainer.appendChild(langBtn)
 
 				if multiLine:
@@ -235,6 +248,11 @@ class StringEditBone(html5.Div):
 				inputField.hide()
 				inputField.addClass("lang_%s" % lang)
 
+				if conf["defaultLanguage"] == lang and self.translationView:
+					langBtn.disable()
+					inputField.show()
+					inputField.addClass("defaultLanguage")
+
 				if self.readOnly:
 					inputField["readonly"] = True
 
@@ -242,7 +260,10 @@ class StringEditBone(html5.Div):
 				self.langEdits[lang] = inputField
 				self.langBtns[lang] = langBtn
 
-			self.setLang(self.languages[0])
+			noDefaultLangs = self.languages[ : ]
+			if self.translationView:
+				noDefaultLangs.remove( conf[ "defaultLanguage" ] )
+			self.setLang( noDefaultLangs[ 0 ] )
 
 		elif not self.languages and self.multiple:
 			self.addClass("is-multiple")
@@ -280,9 +301,9 @@ class StringEditBone(html5.Div):
 			multiple = skelStructure[boneName].get("multiple", False)
 			languages = skelStructure[boneName].get("languages")
 			multiLine = skelStructure[boneName].get("type") == "str.markdown"
-
+			params = skelStructure[boneName].get("params",None)
 		return StringEditBone(moduleName, boneName, readOnly, multiple=multiple, languages=languages,
-		                      multiLine=multiLine)
+		                      multiLine=multiLine,params=params)
 
 	def onLangBtnClicked(self, btn):
 		self.setLang(btn.lang)
@@ -333,6 +354,8 @@ class StringEditBone(html5.Div):
 	def setLang(self, lang):
 		if self.currentLanguage:
 			self.langEdits[self.currentLanguage].hide()
+		if self.translationView:
+			self.langEdits[conf["defaultLanguage"]].show()
 
 		self.currentLanguage = lang
 		self.langEdits[self.currentLanguage].show()

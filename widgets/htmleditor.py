@@ -1,6 +1,6 @@
 from vi import html5
 import vi.network as network
-from js import Event as JSevent, window as JSwindow, alert as JSalert, encodeURI as JSencodeURI, summernoteEditor
+from js import Event as JSevent, encodeURI as JSencodeURI, summernoteEditor
 from vi.i18n import translate
 from vi.widgets.file import FileWidget
 from vi.config import conf
@@ -94,7 +94,7 @@ class HtmlEditor(html5.Textarea):
 			self.summernote = summernoteEditor(elem, lang)
 		except:
 			if retry >= 3:
-				JSalert("Unable to connect summernote, please contact technical support...")
+				html5.ext.Alert("Unable to connect summernote, please contact technical support...")
 				return
 
 			print("Summernote initialization failed, retry will start in 1sec")
