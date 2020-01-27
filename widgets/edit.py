@@ -446,8 +446,13 @@ class EditWidget(html5.Div):
 				contextVariable: data["values"].get(contextKey)
 			})
 
+		errors = {}
+		for error in data["errors"]:
+			errors[error["fieldPath"]] = error["errorMessage"]
 		for key, bone in data["structure"]:
-
+			# FIXME: ViUR3
+			if key in errors:
+				bone["error"] = errors[key]
 			cat = defaultCat #meow!
 
 			if ("params" in bone.keys()

@@ -117,7 +117,7 @@ class FilePreviewImage(html5.Div):
 		if not self.currentFile:
 			return
 
-		self.downloadA["href"] = "/file/download/" + self.currentFile["dlkey"]
+		self.downloadA["href"] = self.currentFile["downloadUrl"]
 		self.downloadA["download"] = self.currentFile.get("name", self.currentFile["dlkey"])
 		self.downloadA.element.click()
 
@@ -135,7 +135,7 @@ class FilePreviewImage(html5.Div):
 			file = "/file/download/%s" % self.currentFile["dlkey"]
 
 			if self.currentFile.get("name"):
-				file += "/%s" % self.currentFile["name"]
+				file += "/fileName=%s" % self.currentFile["name"]
 			html5.window.open(file)
 
 
@@ -178,30 +178,31 @@ class Uploader(html5.ignite.Progress):
 			:param node: Key of the desired node of our parents tree application or None for an anonymous upload.
 			:type node: str or None
 		"""
-		super(Uploader, self).__init__(*args, **kwargs)
+		super(Uploader, self).__init__()
 		self.uploadSuccess = EventDispatcher("uploadSuccess")
 		self.responseValue = None
+		self.targetKey = None
+
 		self.context = context
-		# self.files = files
-		r = NetworkService.request("file", "getUploadURL", successHandler=self.onUploadUrlAvailable, secure=True)
+
+		r = NetworkService.request("file", "getUploadURL",
+			params={"node": node} if node else {},
+			successHandler=self.onUploadUrlAvailable,
+			failureHandler=self.onUploadUrlFailure,
+			secure=True
+		)
 		r.file = file
 		r.node = node
+
 		conf["mainWindow"].log("progress", self)
-		self.parent().addClass( "is-uploading" )
+		self.parent().addClass("is-uploading")
 
 	def onUploadUrlAvailable(self, req):
 		"""
 			Internal callback - the actual upload url (retrieved by calling /file/getUploadURL) is known.
 		"""
-		r = NetworkService.request("", "/admin/skey", successHandler=self.onSkeyAvailable)
-		r.file = req.file
-		r.node = req.node
-		r.destUrl = req.result
+		params = NetworkService.decode(req)["values"]
 
-	def onSkeyAvailable(self, req):
-		"""
-			Internal callback - the Security-Key is known.
-		"""
 		formData = html5.jseval("new FormData();")
 		formData.append("file", req.file)
 
@@ -212,9 +213,16 @@ class Uploader(html5.ignite.Progress):
 		if req.node and str(req.node) != "null":
 			formData.append("node", req.node)
 
-		formData.append("skey", NetworkService.decode(req))
+		for key, value in params["params"].items():
+			if key == "key":
+				self.targetKey = value[:-16]  # Truncate source/file.dat
+				fileName = req.file.name
+				value = value.replace("file.dat", fileName)
+
+			formData.append(key, value)
+
 		self.xhr = html5.jseval("new XMLHttpRequest()")
-		self.xhr.open("POST", req.destUrl)
+		self.xhr.open("POST", params["url"])
 		self.xhr.onload = self.onLoad
 		self.xhr.upload.onprogress = self.onProgress
 		self.xhr.send(formData)
@@ -223,11 +231,22 @@ class Uploader(html5.ignite.Progress):
 		"""
 			Internal callback - The state of our upload changed.
 		"""
-		if self.xhr.status == 200:
-			self.responseValue = json.loads(self.xhr.responseText)
-			DeferredCall(self.onSuccess, _delay=1000)
+		if self.xhr.status in [200, 204]:
+			NetworkService.request(
+				"file", "add", {
+					"key": self.targetKey,
+					"node": self.node,
+					"skelType": "leaf"
+				},
+			    successHandler=self.onUploadAdded,
+				secure=True
+			)
 		else:
 			DeferredCall(self.onFailed, self.xhr.status, _delay=1000)
+
+	def onUploadAdded(self, req):
+		self.responseValue = NetworkService.decode(req)
+		DeferredCall(self.onSuccess, _delay=1000)
 
 	def onProgress(self, event):
 		"""
@@ -242,8 +261,11 @@ class Uploader(html5.ignite.Progress):
 		"""
 			Internal callback - The upload succeeded.
 		"""
-		for v in self.responseValue["values"]:
-			self.uploadSuccess.fire(self, v)
+		if isinstance(self.responseValue["values"], list):
+			for v in self.responseValue["values"]:
+				self.uploadSuccess.fire(self, v)
+		else:
+			self.uploadSuccess.fire(self, self.responseValue["values"])
 
 		NetworkService.notifyChange("file")
 		self.replaceWithMessage("Upload complete", isSuccess=True)

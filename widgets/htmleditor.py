@@ -67,25 +67,6 @@ class HtmlEditor(html5.Textarea):
 		self.summernoteContainer = self
 		self.boneName = ""
 
-		self._attachSources()
-
-	def _attachSources(self):
-		if not HtmlEditor.initSources:
-			print("initialize HTML Editor libraries")
-
-			# pyodide load JS environment on start
-			# currently we do not know if it is possible to update this
-			# till this we import this globally in vi.html
-			#js = html5.Script()
-			#js["src"] = "vi/public/htmleditor/htmleditor.min.js"
-			#html5.Head().appendChild(js)
-
-			css = html5.Link()
-			css["rel"] = "stylesheet"
-			css["href"] = "vi/public/htmleditor/htmleditor.min.css"
-			html5.Head().appendChild(css)
-		HtmlEditor.initSources = True
-
 	def _attachSummernote(self, retry=0):
 		elem = self.summernoteContainer.element
 		lang = conf["currentlanguage"]
@@ -148,11 +129,11 @@ class HtmlEditor(html5.Textarea):
 		self.summernote.summernote("reset")  # reset history and content
 		self.summernote.summernote("code", val)
 		'''
-			a importet JQuery object cant use jquery's on function! 
+			a importet JQuery object cant use jquery's on function!
 			used vanilla JS Eventlistener till we now why:
-			
+
 			> Uncaught Error: AttributeError: 'method' object has no attribute 'guid'
-			
+
 		'''
 		self.summernote.get(0).addEventListener("summernote.change", self.onEditorChange) #ARGGGGG! WTF
 

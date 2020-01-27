@@ -8,6 +8,8 @@ from vi.priorityqueue import editBoneSelector
 class SpatialBone(html5.Div):
 	def __init__(self, moduleName, boneName, readOnly, *args, **kwargs):
 		super(SpatialBone, self).__init__(*args, **kwargs)
+		moduleName = moduleName or "embed"
+
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.latitude = html5.Input()

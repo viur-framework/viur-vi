@@ -274,6 +274,9 @@ class RecordMultiBoneEntry(html5.Div):
 
 	def onChange(self, event):
 		data = self.data.copy()
+		if not isinstance(data.get("rel"), dict):
+			data["rel"] = {}
+
 		data["rel"].update(self.ie.doSave())
 
 		self.updateLabel(data)
