@@ -188,11 +188,12 @@ class Uploader(html5.ignite.Progress):
 		r = NetworkService.request("file", "getUploadURL",
 			params={"node": node} if node else {},
 			successHandler=self.onUploadUrlAvailable,
-			failureHandler=self.onUploadUrlFailure,
+			failureHandler=self.onFailed,
 			secure=True
 		)
 		r.file = file
 		r.node = node
+		self.node = node
 
 		conf["mainWindow"].log("progress", self)
 		self.parent().addClass("is-uploading")
@@ -204,14 +205,13 @@ class Uploader(html5.ignite.Progress):
 		params = NetworkService.decode(req)["values"]
 
 		formData = html5.jseval("new FormData();")
-		formData.append("file", req.file)
 
-		if self.context:
-			for k, v in self.context.items():
-				formData.append(k, v)
+		#if self.context:
+		#	for k, v in self.context.items():
+		#		formData.append(k, v)
 
-		if req.node and str(req.node) != "null":
-			formData.append("node", req.node)
+		#if req.node and str(req.node) != "null":
+		#	formData.append("node", req.node)
 
 		for key, value in params["params"].items():
 			if key == "key":
@@ -220,6 +220,7 @@ class Uploader(html5.ignite.Progress):
 				value = value.replace("file.dat", fileName)
 
 			formData.append(key, value)
+		formData.append("file", req.file)
 
 		self.xhr = html5.jseval("new XMLHttpRequest()")
 		self.xhr.open("POST", params["url"])
