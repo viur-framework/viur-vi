@@ -1,1 +1,4 @@
-htmleditor/*.js linguist-vendored
+sources/htmleditor/* linguist-vendored
+public/htmleditor/* linguist-vendored
+public/css/*.css linguist-generated
+
