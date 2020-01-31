@@ -3,16 +3,8 @@
 *.pyc
 *.iml
 
+pyodide
 node_modules
-output
-public/vi.css
-public/vi_custom.less
 version.py
-vi
-vi_plugins
-
-\.DS_Store
-
 node_modules
 
-sources/package-lock\.json
