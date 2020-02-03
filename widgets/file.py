@@ -11,8 +11,7 @@ from vi.network import NetworkService, DeferredCall
 from vi.priorityqueue import displayDelegateSelector, moduleHandlerSelector
 from vi.widgets.search import Search
 from vi.widgets.tree import TreeWidget, LeafWidget
-from vi.framework.embedsvg import embedsvg
-
+from vi.framework.components.icon import Icon
 
 class FileImagePopup(html5.ext.Popup):
 	def __init__(self, preview, *args, **kwargs):
@@ -53,6 +52,8 @@ class FilePreviewImage(html5.Div):
 		self.downloadOnly = False
 		self.currentFile = None
 		self.previewIcon = None
+		self.setFile(file)
+
 
 	def setFile(self, file):
 		if not file:
@@ -83,29 +84,22 @@ class FilePreviewImage(html5.Div):
 					for mimesplit in mime.split("/"):
 						for icon in ["text", "pdf", "image", "audio", "video", "zip"]:
 							if icon in mimesplit:
-								svg = embedsvg.get("icons-%s-file" % icon)
-								if not svg:
-									svg = embedsvg.get("icons-%s" % icon)
+								svg = "icons-%s-file" % icon
 								self.downloadOnly = False
 								break
 			else:
 				self.addClass("no-preview")
 
 			if not svg:
-				svg = embedsvg.get("icons-file")
+				svg = "icons-file"
 
 		if preview:
-			self.previewIcon = html5.Img()
-			self.previewIcon["src"] = preview
-			self.removeClass("no-preview")
-		elif svg:
-			self.previewIcon = html5.I()
-			self.previewIcon.addClass("i")
-			self.previewIcon.element.innerHTML = svg + self.previewIcon.element.innerHTML
 			self.removeClass("no-preview")
 
-		if self.previewIcon:
-			self.appendChild(self.previewIcon)
+		if svg:
+			preview = svg
+
+		self.appendChild(Icon(self.currentFile.get("name"), preview))
 
 		if self.currentFile:
 			self.addClass("is-clickable")
@@ -156,8 +150,7 @@ class LeafFileWidget(LeafWidget):
 		super(LeafFileWidget, self).__init__(module, data, structure, *args, **kwargs)
 
 		self.previewImg = FilePreviewImage(data)
-		self.leafImage.appendChild(self.previewImg)
-
+		self.nodeImage.appendChild(self.previewImg)
 		self.sinkEvent("onDragOver", "onDragLeave")
 
 	def onDragOver(self, event):

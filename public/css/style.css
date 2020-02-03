@@ -4369,7 +4369,6 @@ td img ~ span {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
-  height: 200px;
   min-height: 50px;
   overflow: hidden;
 }

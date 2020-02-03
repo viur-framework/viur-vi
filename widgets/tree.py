@@ -76,10 +76,20 @@ class _StructureWidget(html5.Li):
 				if "format" in moduleInfo.keys():
 					format = moduleInfo["format"]
 
-			self.appendChild(html5.utils.unescape(
+			self.nodeHeadline.appendChild(html5.utils.unescape(
 				utils.formatString(format, self.data, self.structure,
 				    language=conf["currentlanguage"])))
 
+			if self.data and "size" in self.data and self.data["size"]:
+				def convert_bytes(num):
+					step_unit = 1000.0  # 1024 size
+
+					for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+						if num < step_unit:
+							return "%3.1f %s" % (num, x)
+						num /= step_unit
+				size = convert_bytes(self.data["size"])
+				self.nodeSubline.appendChild(html5.TextNode(size))
 class NodeWidget(_StructureWidget):
 	"""
 		Displays one Node (ie a directory) inside a TreeWidget
@@ -154,20 +164,6 @@ class LeafWidget(_StructureWidget):
 			:type structure: list
 		"""
 		super(LeafWidget, self).__init__(module, data, structure, *args, **kwargs)
-		self.module = module
-		self.data = data
-		self.structure = structure
-
-		self.fromHTML("""
-			<div class="item-image" [name]="leafImage"></div>
-			<div class="item-content" [name]="leafContent">
-				<div class="item-headline" [name]="leafHeadline"></div>
-				<div class="item-subline" [name]="leafSubline"></div>
-			</div>
-			<div class="item-controls" [name]="leafControls"></div>
-		""")
-
-		self.buildDescription()
 		self["class"] = "vi-tree-item vi-tree-leaf item has-hover is-draggable"
 		self["draggable"] = True
 		self.sinkEvent("onDragStart")
