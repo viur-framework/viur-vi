@@ -1,105 +1,16 @@
 <!doctype html>
 <html>
-<head>
-	<meta charset="UTF-8">
-	<link rel="stylesheet" href="public/css/style.css"/>
-	<link rel="stylesheet" href="public/htmleditor/htmleditor.min.css"/>
-	<script src="public/htmleditor/htmleditor.min.js"></script>
-	<script>
-		window.languagePluginUrl = "./pyodide/";
-	</script>
-	<script src="./pyodide/pyodide.js"></script>
-</head>
-<body>
-<script>
-	function loadSources(module, files) {
-		let promises = [];
-		let baseURL = `/${module}/s/`;
-
-		for (var f in files) {
-			promises.push(
-					new Promise((resolve, reject) => {
-						let file = files[f];
-						let url = baseURL + file;
-
-						fetch(url, {}).then((response) => {
-							if (response.status === 200)
-								return response.text().then((code) => {
-									let path = (window.pyodide._pythonPath + module + "/" + file).split("/");
-									let lookup = "";
-
-									for (let i in path) {
-										if (!path[i]) {
-											continue;
-										}
-
-										lookup += "/" + path[i];
-
-										if (parseInt(i) === path.length - 1) {
-											window.pyodide._module.FS.writeFile(lookup, code);
-											console.debug(`fetched ${lookup}`);
-										} else {
-											try {
-												window.pyodide._module.FS.lookupPath(lookup);
-											} catch {
-												window.pyodide._module.FS.mkdir(lookup);
-												console.debug(`created ${lookup}`);
-											}
-										}
-									}
-
-									resolve();
-								});
-							else
-								reject();
-						});
-					})
-			);
-		}
-
-		return Promise.all(promises);
-	}
-
-	function fetchSources() {
-		let promises = [];
-
-		for( let i of ["vi", "vi_plugins"] )
-		{
-			promises.push(
-				new Promise((resolve, reject) => {
-					fetch(`/${i}/s/files.json`, {}).then((response) => {
-						if (response.status === 200) {
-							response.text().then((list) => {
-								let files = JSON.parse(list);
-
-								loadSources(i, files).then(() => {
-									resolve();
-								})
-							})
-						} else {
-							reject();
-						}
-					})
-				}));
-		}
-
-
-		return Promise.all(promises);
-	}
-
-	languagePluginLoader.then(() => {
-		fetchSources().then(() => {
-			window.pyodide.loadedPackages["vi"] = "default channel";
-			window.pyodide.loadedPackages["vi_plugins"] = "default channel";
-
-			window.pyodide.runPython(
-					'import importlib as _importlib\n' +
-					'_importlib.invalidate_caches()\n'
-			);
-
-			window.pyodide.runPythonAsync("import vi\nimport vi_plugins\nvi.start()");
-		});
-	});
-</script>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="public/css/style.css"/>
+		<link rel="stylesheet" href="public/htmleditor/htmleditor.min.css"/>
+		<script src="public/htmleditor/htmleditor.min.js"></script>
+		<script>
+			window.languagePluginUrl = "./pyodide/";
+		</script>
+		<script src="./pyodide/pyodide.js"></script>
+		<script src="public/js/app.js"></script>
+	</head>
+	<body class="vi-screen is-loading">
+	</body>
 </html>
