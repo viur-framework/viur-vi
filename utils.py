@@ -2,6 +2,7 @@
 
 from vi import html5
 from js import CustomEvent
+from vi.config import conf
 
 def formatString(format, data, structure = None, prefix = None, language = None, _rec = 0):
 	"""
@@ -110,17 +111,19 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 	return res
 
 def getImagePreview(data, cropped = False, size = 150):
-	return data["downloadUrl"] #fixme ViUR3
-	if "mimetype" in data.keys() and isinstance(data["mimetype"], str) and data["mimetype"].startswith("image/svg"):
-		return "/file/download/%s/%s" % (data["dlkey"], data.get("name", "").replace("\"", ""))
+	if conf["core.version"][0] == 3:
+		return data["downloadUrl"] #fixme ViUR3
+	else:
+		if "mimetype" in data.keys() and isinstance(data["mimetype"], str) and data["mimetype"].startswith("image/svg"):
+			return "/file/download/%s/%s" % (data["dlkey"], data.get("name", "").replace("\"", ""))
 
-	elif "servingurl" in data.keys():
-		if data["servingurl"]:
-			return data["servingurl"] + (("=s%d" % size) if size else "") + ("-c" if cropped else "")
+		elif "servingurl" in data.keys():
+			if data["servingurl"]:
+				return data["servingurl"] + (("=s%d" % size) if size else "") + ("-c" if cropped else "")
 
-		return ""
+			return ""
 
-	return None
+		return None
 
 def setPreventUnloading(mode = True):
 	try:

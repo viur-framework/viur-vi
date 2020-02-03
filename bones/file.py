@@ -159,17 +159,13 @@ class FileBone(RelationalBone):
 				  relskel = None, context = None, multiple = False, params = None, *args, **kwargs ):
 		if params and "vi.style" in params and params[ "vi.style" ] == "quickselect":
 			params[ "vi.style" ] = None
-		print( "FILEEEEEE1" )
 		super().__init__( srcModule, boneName, readOnly, destModule,
 						  format, using, usingDescr,
 						  relskel, context, multiple, params, *args, **kwargs )
-		print( "FILEEEEEE2" )
 		self.sinkEvent( "onDragOver", "onDrop" )
-		print( "FILEEEEEE3" )
 		self.addClass( "vi-bone-container supports-upload" )
 		self[ "title" ] = translate( "vi.tree.drag-here" )
 		self.currentSelector = None
-		print("FILEEEEEE")
 
 	def onDragOver(self, event):
 		super(FileBone,self).onDragOver(event)
@@ -254,7 +250,6 @@ def CheckForFileBoneMultiSelection( moduleName, boneName, skelStructure, *args, 
 	return CheckForFileBone( moduleName, boneName, skelStructure ) and isMultiple
 
 def CheckForFileBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	print(skelStucture[boneName]["type"])
 	return skelStucture[boneName]["type"].startswith("treeitem.file")
 
 #Register this Bone in the global queue

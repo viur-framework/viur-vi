@@ -117,7 +117,11 @@ class FilePreviewImage(html5.Div):
 		if not self.currentFile:
 			return
 
-		self.downloadA["href"] = self.currentFile["downloadUrl"]
+		if conf["core.version"][0] == 3:
+			self.downloadA["href"] = self.currentFile["downloadUrl"]
+		else:
+			self.downloadA["href"] = "/file/download/" + self.currentFile["dlkey"]
+
 		self.downloadA["download"] = self.currentFile.get("name", self.currentFile["dlkey"])
 		self.downloadA.element.click()
 
@@ -135,7 +139,11 @@ class FilePreviewImage(html5.Div):
 			file = "/file/download/%s" % self.currentFile["dlkey"]
 
 			if self.currentFile.get("name"):
-				file += "/fileName=%s" % self.currentFile["name"]
+				if conf["core.version"][0] == 3:
+					file += "/fileName=%s" % self.currentFile["name"]
+				else:
+					file += "/%s" % self.currentFile["name"]
+
 			html5.window.open(file)
 
 
@@ -202,28 +210,59 @@ class Uploader(html5.ignite.Progress):
 		"""
 			Internal callback - the actual upload url (retrieved by calling /file/getUploadURL) is known.
 		"""
-		params = NetworkService.decode(req)["values"]
+		if conf["core.version"][0] == 3:
 
+			params = NetworkService.decode(req)["values"]
+
+			formData = html5.jseval("new FormData();")
+
+			#if self.context:
+			#	for k, v in self.context.items():
+			#		formData.append(k, v)
+
+			#if req.node and str(req.node) != "null":
+			#	formData.append("node", req.node)
+
+			for key, value in params["params"].items():
+				if key == "key":
+					self.targetKey = value[:-16]  # Truncate source/file.dat
+					fileName = req.file.name
+					value = value.replace("file.dat", fileName)
+
+				formData.append(key, value)
+			formData.append("file", req.file)
+
+			self.xhr = html5.jseval("new XMLHttpRequest()")
+			self.xhr.open("POST", params["url"])
+			self.xhr.onload = self.onLoad
+			self.xhr.upload.onprogress = self.onProgress
+			self.xhr.send(formData)
+
+		else:
+			r = NetworkService.request("", "/vi/skey", successHandler=self.onSkeyAvailable)
+			r.file = req.file
+			r.node = req.node
+			r.destUrl = req.result
+
+
+	def onSkeyAvailable(self, req):
+		"""
+			Internal callback - the Security-Key is known.
+			Only for core 2.x needed
+		"""
 		formData = html5.jseval("new FormData();")
-
-		#if self.context:
-		#	for k, v in self.context.items():
-		#		formData.append(k, v)
-
-		#if req.node and str(req.node) != "null":
-		#	formData.append("node", req.node)
-
-		for key, value in params["params"].items():
-			if key == "key":
-				self.targetKey = value[:-16]  # Truncate source/file.dat
-				fileName = req.file.name
-				value = value.replace("file.dat", fileName)
-
-			formData.append(key, value)
 		formData.append("file", req.file)
 
+		if self.context:
+			for k, v in self.context.items():
+				formData.append(k, v)
+
+		if req.node and str(req.node) != "null":
+			formData.append("node", req.node)
+
+		formData.append("skey", NetworkService.decode(req))
 		self.xhr = html5.jseval("new XMLHttpRequest()")
-		self.xhr.open("POST", params["url"])
+		self.xhr.open("POST", req.destUrl)
 		self.xhr.onload = self.onLoad
 		self.xhr.upload.onprogress = self.onProgress
 		self.xhr.send(formData)
@@ -232,18 +271,26 @@ class Uploader(html5.ignite.Progress):
 		"""
 			Internal callback - The state of our upload changed.
 		"""
-		if self.xhr.status in [200, 204]:
-			NetworkService.request(
-				"file", "add", {
-					"key": self.targetKey,
-					"node": self.node,
-					"skelType": "leaf"
-				},
-			    successHandler=self.onUploadAdded,
-				secure=True
-			)
+		if conf["core.version"][0] == 3:
+			if self.xhr.status in [200, 204]:
+				NetworkService.request(
+					"file", "add", {
+						"key": self.targetKey,
+						"node": self.node,
+						"skelType": "leaf"
+					},
+				    successHandler=self.onUploadAdded,
+					secure=True
+				)
+			else:
+				DeferredCall(self.onFailed, self.xhr.status, _delay=1000)
 		else:
-			DeferredCall(self.onFailed, self.xhr.status, _delay=1000)
+
+			if self.xhr.status == 200:
+				self.responseValue = json.loads(self.xhr.responseText)
+				DeferredCall(self.onSuccess, _delay=1000)
+			else:
+				DeferredCall(self.onFailed, self.xhr.status, _delay=1000)
 
 	def onUploadAdded(self, req):
 		self.responseValue = NetworkService.decode(req)
@@ -265,6 +312,7 @@ class Uploader(html5.ignite.Progress):
 		if isinstance(self.responseValue["values"], list):
 			for v in self.responseValue["values"]:
 				self.uploadSuccess.fire(self, v)
+
 		else:
 			self.uploadSuccess.fire(self, self.responseValue["values"])
 

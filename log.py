@@ -277,7 +277,7 @@ class Log(html5.Div):
 		if name:
 			versionspan = html5.Span()
 			versionspan.appendChild("%s v%s" %
-				(name, ".".join([str(x) for x in conf["server.version"]])))
+				(name, ".".join([str(x) for x in conf["core.version"]])))
 			versionspan.addClass("serverspan")
 			versionDiv.appendChild(versionspan)
 

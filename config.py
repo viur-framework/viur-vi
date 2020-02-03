@@ -3,7 +3,6 @@ from vi import html5
 from vi.framework.event import EventDispatcher
 from .i18n import translate
 from .logics import Interpreter
-from .utils import indexeddb
 
 conf = {
 	# Vi version number
@@ -37,7 +36,7 @@ conf = {
 	"server": {},
 
 	# ViUR server version number
-	"server.version": None,
+	"core.version": None,
 
 	# Modules list
 	"modules": {"_tasks": {"handler": "singleton", "name": "Tasks"}},
@@ -79,5 +78,5 @@ conf = {
 	"updateParams": None,
 
 	"cacheObj": {},
-	"indexeddb":indexeddb("vi-cache")
+	"indexeddb":None
 }

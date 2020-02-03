@@ -447,12 +447,16 @@ class EditWidget(html5.Div):
 			})
 
 		errors = {}
-		for error in data["errors"]:
-			errors[error["fieldPath"]] = error["errorMessage"]
+
+		if conf["core.version"][0] == 3:
+			for error in data["errors"]:
+				errors[error["fieldPath"]] = error["errorMessage"]
+
 		for key, bone in data["structure"]:
 			# FIXME: ViUR3
 			if key in errors:
 				bone["error"] = errors[key]
+
 			cat = defaultCat #meow!
 
 			if ("params" in bone.keys()

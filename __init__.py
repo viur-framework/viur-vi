@@ -27,7 +27,7 @@ class Application(html5.Div):
 	def startup(self, *args, **kwargs):
 
 
-		if conf["server.version"] is None:
+		if conf["core.version"] is None:
 			network.NetworkService.request(None, "/vi/getVersion",
 			                               successHandler=self.getVersionSuccess,
 			                               failureHandler=self.startupFailure,
@@ -39,19 +39,19 @@ class Application(html5.Div):
 	                                        cacheable=True)
 
 	def getVersionSuccess(self, req):
-		conf["server.version"] = network.NetworkService.decode(req)
+		conf["core.version"] = network.NetworkService.decode(req)
 
-		if ((conf["server.version"][0] >= 0                              # check version?
-			and (conf["server.version"][0] != conf["vi.version"][0]      # major version mismatch
-				or conf["server.version"][1] > conf["vi.version"][1]))): # minor version mismatch
+		if ((conf["core.version"][0] >= 0                              # check version?
+			and (conf["core.version"][0] != conf["vi.version"][0]      # major version mismatch
+				or conf["core.version"][1] > conf["vi.version"][1]))): # minor version mismatch
 
 			params = {
-				"server.version": ".".join(str(x) for x in conf["server.version"]),
+				"core.version": ".".join(str(x) for x in conf["core.version"]),
 				"vi.version": ".".join(str(x) for x in conf["vi.version"]),
 			}
 
 			html5.ext.Alert(
-				translate("The ViUR server (v{server.version}) is incompatible to this Vi (v{vi.version}).", **params)
+				translate("The ViUR server (v{core.version}) is incompatible to this Vi (v{vi.version}).", **params)
 					+ "\n" + translate("There may be a lack on functionality.")
 					+ "\n" + translate("Please update either your server or Vi!"),
 				title=translate("Version mismatch"),
@@ -131,6 +131,7 @@ def start():
 	network.NetworkService.prefix = "/vi"
 	network.NetworkService.host = ""
 	conf["currentlanguage"] = i18n.getLanguage()
+	conf["indexeddb"] = utils.indexeddb("vi-cache")
 
 	# Application
 	app = Application()
