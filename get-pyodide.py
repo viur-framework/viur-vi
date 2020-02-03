@@ -1,23 +1,40 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import os, sys, tarfile, urllib.request
 
-import os, sys, zipfile, urllib.request
+VERSION = "0.14.3"
+URL = "https://github.com/iodide-project/pyodide/releases/download/{VERSION}/pyodide-build-{VERSION}.tar.bz2"
 
-# Install latest built of Pyodide...
-zipname = "pyodide_2019-09-24-bin.zip"
+download = VERSION + ".tar.bz2"
 
 sys.stdout.write("Downloading Pyodide...")
 sys.stdout.flush()
-urllib.request.urlretrieve("https://github.com/mausbrand/pyodide/releases/download/2019-09-24/pyodide_2019-09-24-bin.zip", zipname)
+urllib.request.urlretrieve(URL.format(VERSION=VERSION), download)
 print("Done")
 
-sys.stdout.write("Extracting Pyodide...")
-sys.stdout.flush()
+print("Extracting Pyodide...")
 
-zip = zipfile.ZipFile(zipname, "r")
-zip.extractall()
-zip.close()
+tar = tarfile.open(download, "r")
 
-os.remove(zipname)
+extracted = []
+for member in tar.getmembers():
+	if not member.name.startswith("pyodide."):
+		continue
+
+	print(">>> %s" % member.name)
+	tar.extract(member, "pyodide")
+	extracted.append(member.name)
+
+tar.close()
+
+if not extracted:
+	print("This doesn't look like a Pyodide build package!")
+	sys.exit(1)
+
+# Write an empty packages.json
+f = open("pyodide/packages.json", "w")
+f.write("""{"dependencies": {}, "import_name_to_package_name": {}}""")
+f.close()
+
+os.remove(download)
 print("Done")
-

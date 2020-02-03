@@ -1,6 +1,32 @@
-# ViUR Vi [UNSTABLE PYTHON3/PYODIDE PORT, WORK IN PROGRESS!]
+# ViUR Vi
+
+**WARNING: THIS IS AN UNSTABLE PYTHON3 / PYODIDE PORT, WORK IN PROGRESS!**
 
 **Vi** is a web-based administration client for the [ViUR framework](https://www.viur.dev).
+
+This is the current development version 3.0 of the Vi which aims to be running both with [ViUR 2](https://github.com/viur-framework/server) and [ViUR 3](https://github.com/viur-framework/viur-core). 
+
+This program is now entirely established on [Pyodide](https://github.com/iodide-project/pyodide), the official Python 3.7 interpreter compiled to WebAssembly. Therefore it is necessary to "install" Pyodide as described below.
+
+## Usage
+
+Vi can be used as a submodule (see https://github.com/viur-framework/viur-base for an example) to be included into a ViUR project. 
+
+After cloning or extracting Vi, run
+
+```bash
+get-pyodide.py
+```
+
+to download and install the latest Pyodide version as WebAssembly runtime environment.
+
+When you add or remove any files from the Vi repo, don't forget to call
+
+```bash
+gen-files-json.py
+```
+
+to rebuild the file `files.json` which is used to pre-fetch the Vi into Pyodide. Latter one is also necessary when writing Vi-Plugins. See viur-base for a detailed and pre-configured setup.
 
 ## Contributing
 

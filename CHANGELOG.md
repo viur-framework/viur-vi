@@ -3,10 +3,11 @@
 This file documents any relevant changes done to ViUR Vi since version 2.
 
 
-## [develop] 
+## [develop]
 
 This is the current development version.
 
+- Switched runtime environment to [Pyodide](https://github.com/iodide-project/pyodide)
 - Feature: selected multiple entities (range) in a list while holding the shift key
 - Restructured the LESS/CSS tool chain
 - Added ViUR Ignite LESS/CSS

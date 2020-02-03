@@ -31,7 +31,7 @@ class app {
 						fetch(url, {}).then((response) => {
 							if (response.status === 200)
 								return response.text().then((code) => {
-									let path = (window.pyodide._pythonPath + module + "/" + file).split("/");
+									let path = ("/lib/python3.7/site-packages/" + module + "/" + file).split("/");
 									let lookup = "";
 
 									for (let i in path) {
