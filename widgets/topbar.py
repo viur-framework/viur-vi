@@ -8,6 +8,7 @@ from vi.widgets.task import TaskSelectWidget
 from vi.priorityqueue import toplevelActionSelector
 from vi.framework.components.button import Button
 from vi.framework.embedsvg import embedsvg
+from vi.framework.components.icon import Icon
 from vi.pane import Pane
 from vi.widgets.edit import EditWidget
 from vi.log import LogButton
@@ -28,7 +29,7 @@ class TopBarWidget(html5.Header):
 				<div class="vi-tb-logo" [name]="topbarLogo"></div>
 				<h1 class="vi-tb-title" [name]="moduleH1"></h1>
 				<div class="vi-tb-currentmodul item" [name]="moduleContainer">
-					<div class="item-image" [name]="modulImg"></div>
+					<div [name]="modulImg"></div>
 					<div class="item-content" [name]="moduleName"></div>
 				</div>
 			</div>
@@ -87,33 +88,12 @@ class TopBarWidget(html5.Header):
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
 	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None, path=None):
-		for c in self.modulImg._children[:]:
-			self.modulImg.removeChild(c)
-		for c in self.moduleName._children[:]:
-			self.moduleName.removeChild( c )
-		for c in self.modulImg["class"]:
-			self.modulImg.removeClass(c)
-
-		self.modulImg.addClass("item-image")
-
+		self.moduleName.removeAllChildren()
 		descr = html5.utils.unescape(descr)
 		self.moduleName.appendChild(html5.TextNode(descr))
 
-		if iconURL is not None:
-			svg = embedsvg.get(iconURL)
-			if svg:
-				modulIcon = html5.I()
-				modulIcon.addClass("i")
-				modulIcon.element.innerHTML = svg + modulIcon.element.innerHTML
-				self.modulImg.appendChild(modulIcon)
-			else:
-				img = html5.Img()
-				img["src"] = iconURL
-				self.modulImg.appendChild(img)
-
-		if iconClasses is not None:
-			for cls in iconClasses:
-				self.modulImg.addClass( cls )
+		self.modulImg.removeAllChildren()
+		self.modulImg.appendChild( Icon(descr, iconURL) )
 
 		conf["theApp"].setTitle(descr)
 

@@ -5,7 +5,6 @@ from .list import ListWidget
 from .edit import EditWidget
 from .tooltip import ToolTip
 from .table import DataTable
-from .actionbar import ActionBar
 from .tree import TreeWidget
 from .hierarchy import HierarchyWidget
 from .file import FileWidget

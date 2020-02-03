@@ -2,10 +2,11 @@
 from vi import html5
 
 from .framework.embedsvg import embedsvg
+from .framework.components.icon import Icon
 from .config import conf
 from .priorityqueue import HandlerClassSelector
 from .network import DeferredCall
-
+from .framework.event import EventDispatcher
 
 class Pane(html5.Div):
 	"""
@@ -54,6 +55,7 @@ class Pane(html5.Div):
 		self.item.appendChild(self.label)
 
 		self.defaultIconURL = self.iconURL
+		self.itemImage = None
 		self.setText(descr, iconURL)
 
 		self.closeBtn = html5.ext.Button(u"×", self.onBtnCloseReleased)
@@ -66,7 +68,6 @@ class Pane(html5.Div):
 		self.closeable = closeable
 		self.isExpanded = False
 
-
 		DeferredCall(self.setText, _delay=250)
 
 	def __setattr__(self, key, value):
@@ -78,25 +79,18 @@ class Pane(html5.Div):
 				self.closeBtn.hide()
 
 	def setImage( self,loading=False ):
-		self.itemIcon.removeAllChildren()
+		try:
+			self.label.removeChild(self.itemImage)
+		except:
+			pass
+
 		if loading:
-			img = html5.Img()
-			img[ "src" ] = "icons/is_loading32.gif"
-			self.itemIcon.appendChild( img )
-			return "0"
+			self.itemImage = Icon(self.descr, "icons/is_loading32.gif")
 
-		if self.defaultIconURL is not None:
-			embedSvg = embedsvg.get(self.defaultIconURL)
-			if embedSvg:
-				self.itemIcon.element.innerHTML = embedSvg
-			else:
-				img = html5.Img()
-				img["src"] = self.defaultIconURL
-				self.itemIcon.appendChild(img)
 		else:
-			self.itemIcon.appendChild(self.descr[:1])
+			self.itemImage = Icon(self.descr, self.defaultIconURL)
 
-
+		self.label.appendChild(self.itemImage)
 
 	def lock(self):
 		self.disable()
@@ -108,13 +102,6 @@ class Pane(html5.Div):
 
 	def setText(self, descr = None, iconURL = None):
 		self.label.removeAllChildren()
-
-		self.itemImage = html5.Div()
-		self.itemImage.addClass("item-image")
-		self.label.appendChild(self.itemImage)
-		self.itemIcon = html5.I()
-		self.itemIcon.addClass("i")
-		self.itemImage.appendChild(self.itemIcon)
 
 		if descr is None:
 			descr = self.descr
