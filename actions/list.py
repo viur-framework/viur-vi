@@ -249,6 +249,8 @@ class ListPreviewAction(html5.Span):
 	def __init__(self, module, handler, actionName, *args, **kwargs ):
 		super(ListPreviewAction, self ).__init__(*args, **kwargs)
 
+		self.urls = conf["defaultPreview"]
+
 		self.addClass("input-group")
 
 		self.urlCb = html5.ignite.Select()
@@ -257,7 +259,6 @@ class ListPreviewAction(html5.Span):
 		btn = Button(translate("Preview"), callback=self.onClick, icon="icons-preview")
 		btn["class"] = "bar-item btn btn--small btn--preview"
 		self.appendChild(btn)
-		self.urls = None
 
 		self["disabled"] = True
 		self.isDisabled = True
@@ -293,9 +294,12 @@ class ListPreviewAction(html5.Span):
 		if module in conf["modules"].keys():
 			moduleConfig = conf["modules"][module]
 
-			self.urls = moduleConfig.get("preview", moduleConfig.get("previewurls"))
-			if self.urls:
-				self.rebuildCB()
+			urls = moduleConfig.get("preview", moduleConfig.get("previewurls"))
+			if urls:
+				self.urls = urls
+
+		if self.urls:
+			self.rebuildCB()
 
 	def onDetach(self):
 		self.parent().parent().selectionChangedEvent.unregister(self)
@@ -313,7 +317,7 @@ class ListPreviewAction(html5.Span):
 				self.isDisabled = True
 
 	def onClick(self, sender=None):
-		if self.urls is None:
+		if not self.urls:
 			return
 
 		selection = self.parent().parent().getCurrentSelection()
@@ -429,8 +433,9 @@ class ListPreviewInlineAction(Button):
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
+		generallyDisabled = not bool(conf["modules"][module].get("disableInternalPreview", not conf["internalPreview"]))
 
-		return correctAction and correctHandler and hasAccess and not isDisabled
+		return correctAction and correctHandler and hasAccess and not isDisabled and generallyDisabled
 
 actionDelegateSelector.insert( 1, ListPreviewInlineAction.isSuitableFor, ListPreviewInlineAction )
 
