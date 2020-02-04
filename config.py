@@ -52,7 +52,7 @@ conf = {
 	"currentUser": None,
 
 	# A value displayed as "empty value"
-	"empty_value": translate("-"),
+	"emptyValue": translate("-"),
 
 	# Event dispatcher for initial startup Hash
 	"initialHashEvent": EventDispatcher("initialHash"),

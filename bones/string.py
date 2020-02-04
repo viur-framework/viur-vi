@@ -22,7 +22,7 @@ class StringBoneExtractor(BaseBoneExtractor):
 
 	def render(self, data, field):
 		if not data.get(field):
-			return conf["empty_value"]
+			return conf["emptyValue"]
 
 		if isinstance(data[field], dict):
 			return '"%s"' % self._unescape(data[field].get(conf["currentLanguage"] or data[field].keys()[0]))
@@ -61,7 +61,7 @@ class StringViewBoneDelegate(object):
 
 	def render(self, data, field):
 		if field not in data:
-			return self.getViewElement(conf["empty_value"], False)
+			return self.getViewElement(conf["emptyValue"], False)
 
 		value = data[field]
 

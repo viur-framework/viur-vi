@@ -25,7 +25,7 @@ class SelectMultiBoneExtractor(BaseBoneExtractor):
 
 			return ",".join(result)
 
-		return conf["empty_value"]
+		return conf["emptyValue"]
 
 class SelectMultiViewBoneDelegate( object ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
@@ -59,7 +59,7 @@ class SelectMultiViewBoneDelegate( object ):
 
 			return delegato
 		else:
-			delegato = html5.Div(conf["empty_value"])
+			delegato = html5.Div(conf["emptyValue"])
 
 		delegato.addClass("vi-delegato", "vi-delegato--select", "vi-delegato--selectmulti")
 		return delegato

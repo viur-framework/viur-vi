@@ -23,7 +23,7 @@ class ColorViewBoneDelegate( object ):
 			delegato.appendChild(color)
 			delegato.appendChild(lbl)
 		else:
-			delegato = html5.Div(conf[ "empty_value" ])
+			delegato = html5.Div(conf[ "emptyValue" ])
 
 		delegato.addClass("vi-delegato", "vi-delegato--color")
 		return delegato

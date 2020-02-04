@@ -86,7 +86,7 @@ class RecordViewBoneDelegate(object):
 		lbl = html5.Label()
 
 		if val is None:
-			lbl.appendChild(conf["empty_value"])
+			lbl.appendChild(conf["emptyValue"])
 			return lbl
 
 		structure = self.structure[self.boneName]

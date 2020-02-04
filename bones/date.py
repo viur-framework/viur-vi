@@ -15,7 +15,7 @@ class DateBoneExtractor(BaseBoneExtractor):
 	def render(self, data, field):
 		if not(self.boneName in self.skelStructure
 		        and data and data.get(field)):
-			return conf["empty_value"]
+			return conf["emptyValue"]
 
 		structure = self.skelStructure[self.boneName]
 		val = data[field]
@@ -59,7 +59,7 @@ class DateViewBoneDelegate( object ):
 	def render( self, data, field ):
 
 		if not(self.boneName in self.skelStructure and data and data.get(field)):
-			return html5.Div(conf["empty_value"])
+			return html5.Div(conf["emptyValue"])
 
 		structure = self.skelStructure[self.boneName]
 		val = data[field]

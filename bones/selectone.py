@@ -12,9 +12,9 @@ class SelectOneBoneExtractor(BaseBoneExtractor):
 	def render(self, data, field):
 		if field in data and field in self.skelStructure:
 			options = {k: v for k, v in self.skelStructure[field]["values"]}
-			return options.get(data[field], conf["empty_value"])
+			return options.get(data[field], conf["emptyValue"])
 
-		return conf["empty_value"]
+		return conf["emptyValue"]
 
 
 class SelectOneViewBoneDelegate( object ):
@@ -25,7 +25,7 @@ class SelectOneViewBoneDelegate( object ):
 		self.moduleName = moduleName
 
 	def render( self, data, field ):
-		value = conf["empty_value"]
+		value = conf["emptyValue"]
 		if field in data.keys():
 			if data and field and field in self.skelStructure:
 				options = {k: v for k, v in self.skelStructure[field]["values"]}

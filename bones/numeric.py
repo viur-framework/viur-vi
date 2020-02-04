@@ -31,7 +31,7 @@ class NumericViewBoneDelegate(object):
 		self.moduleName = moduleName
 
 	def render(self, data, field):
-		value =  conf["empty_value"]
+		value =  conf["emptyValue"]
 		if field in data.keys():
 			try:
 				prec = self.skelStructure[field].get("precision")

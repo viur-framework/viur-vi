@@ -18,7 +18,7 @@ class BaseBoneExtractor(object):
 		if field in data.keys():
 			return str(data[field])
 
-		return conf["empty_value"]
+		return conf["emptyValue"]
 
 	def raw(self, data, field):
 		if field in data.keys():
@@ -40,7 +40,7 @@ class BaseViewBoneDelegate( object ):
 		self.moduleName=moduleName
 
 	def render(self, data, field):
-		value = conf[ "empty_value" ]
+		value = conf[ "emptyValue" ]
 
 		if field in data.keys():
 			value = str(data[field])

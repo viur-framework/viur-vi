@@ -111,7 +111,7 @@ class RelationalViewBoneDelegate(object):
 		delegato.addClass("vi-delegato", "vi-delegato--relational")
 
 		if val is None:
-			delegato.appendChild(conf["empty_value"])
+			delegato.appendChild(conf["emptyValue"])
 			return delegato
 
 		structure = self.structure[self.boneName]
