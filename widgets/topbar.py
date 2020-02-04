@@ -245,7 +245,13 @@ class Logout(Button):
 		self.sinkEvent("onClick")
 
 	def onClick(self, event):
-		html5.ext.YesNoDialog( translate(u"Möchten Sie das Vi wirklich beenden?\n Alle nicht gespeicherten Einträge gehen dabei verloren!"), title = u"Logout", yesCallback = self.logout )
+		html5.ext.YesNoDialog(
+			translate("Möchten Sie {vi.name} wirklich beenden?\n"
+			          "Alle nicht gespeicherten Einträge gehen dabei verloren!",
+			          **conf),
+			title=translate("Logout"),
+			yesCallback=lambda *args, **kwargs: self.logout()
+		)
 		event.stopPropagation()
 		event.preventDefault()
 
