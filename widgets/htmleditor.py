@@ -69,7 +69,7 @@ class HtmlEditor(html5.Textarea):
 
 	def _attachSummernote(self, retry=0):
 		elem = self.summernoteContainer.element
-		lang = conf["currentlanguage"]
+		lang = conf["currentLanguage"]
 
 		try:
 			self.summernote = summernoteEditor(elem, lang)

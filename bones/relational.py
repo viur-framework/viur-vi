@@ -51,9 +51,9 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 
 			val = ", ".join([(utils.formatString(
 								utils.formatString(self.format, x["dest"], structure["relskel"],
-								                    prefix=["dest"], language=conf["currentlanguage"]),
+								                    prefix=["dest"], language=conf["currentLanguage"]),
 									x["rel"], structure["using"],
-										prefix=["rel"], language=conf["currentlanguage"])
+										prefix=["rel"], language=conf["currentLanguage"])
 			                    or x["key"]) for x in val])
 		except:
 			#We probably received some garbage
@@ -78,9 +78,9 @@ class RelationalBoneExtractor(BaseBoneExtractor):
 
 			val = [(utils.formatString(
 								utils.formatString(self.format, x["dest"], structure["relskel"],
-								                    prefix=["dest"], language=conf["currentlanguage"]),
+								                    prefix=["dest"], language=conf["currentLanguage"]),
 									x["rel"], structure["using"],
-										prefix=["rel"], language=conf["currentlanguage"])
+										prefix=["rel"], language=conf["currentLanguage"])
 			                    or x["key"]) for x in val]
 		except:
 			#We probably received some garbage
@@ -128,16 +128,16 @@ class RelationalViewBoneDelegate(object):
 			if structure["using"]:
 				res = "\n".join([(utils.formatString(
 									utils.formatString(self.format, x["dest"], structure["relskel"],
-									                    prefix=["dest"], language=conf["currentlanguage"]),
+									                    prefix=["dest"], language=conf["currentLanguage"]),
 										x["rel"], structure["using"],
-											prefix=["rel"], language=conf["currentlanguage"])
+											prefix=["rel"], language=conf["currentLanguage"])
 				                  or x["key"]) for x in val])
 			else:
 				res = "\n".join([(utils.formatString(
 									utils.formatString(self.format, x["dest"], structure["relskel"],
-									                    prefix=["dest"], language=conf["currentlanguage"]),
+									                    prefix=["dest"], language=conf["currentLanguage"]),
 														x["dest"], structure["relskel"],
-															language=conf["currentlanguage"])
+															language=conf["currentLanguage"])
 				                  or x["key"]) for x in val])
 
 			if conf["maxMultiBoneEntries"] and count > conf["maxMultiBoneEntries"]:
@@ -225,11 +225,11 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 
 		self.txtLbl.removeAllChildren()
 		txt = utils.formatString(self.parent.format, data["dest"], self.parent.relskel,
-		                            prefix=["dest"], language=conf["currentlanguage"])
+		                            prefix=["dest"], language=conf["currentLanguage"])
 
 		if self.ie:
 			txt = utils.formatString(txt, self.ie.serializeForDocument(), self.parent.using,
-			                            prefix=["rel"], language=conf["currentlanguage"])
+			                            prefix=["rel"], language=conf["currentLanguage"])
 
 		html5.utils.textToHtml(self.txtLbl, txt)
 
@@ -519,10 +519,10 @@ class RelationalBone(html5.Div):
 						entity,
 						structure,
 						prefix = [ "dest" ],
-						language = conf[ "currentlanguage" ] ),
+						language = conf[ "currentLanguage" ] ),
 				entity,
 				structure,
-				language = conf[ "currentlanguage" ] )
+				language = conf[ "currentLanguage" ] )
 			   or entity[ "key" ])
 
 		return res

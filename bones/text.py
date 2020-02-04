@@ -25,9 +25,9 @@ class TextViewBoneDelegate(object):
 			##multilangs
 			if isinstance(data[field], dict):
 				resstr = ""
-				if "currentlanguage" in conf.keys():
-					if conf["currentlanguage"] in data[field].keys():
-						resstr = data[field][conf["currentlanguage"]]
+				if "currentLanguage" in conf.keys():
+					if conf["currentLanguage"] in data[field].keys():
+						resstr = data[field][conf["currentLanguage"]]
 					else:
 						if len(data[field].keys()) > 0:
 							resstr = data[field][data[field].keys()[0]]

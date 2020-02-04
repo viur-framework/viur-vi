@@ -44,8 +44,8 @@ conf = {
 	# Callable tasks
 	"tasks": {"server": [], "client": []},
 
-	# Language
-	"currentlanguage": "de",
+	# Language settings
+	"currentLanguage": "de",
 	"defaultLanguage": "de",
 
 	# Global holder to the currently logged-in user

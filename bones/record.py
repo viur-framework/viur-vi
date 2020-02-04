@@ -34,7 +34,7 @@ class RecordBoneExtractor(BaseBoneExtractor):
 			if not isinstance(val, list):
 				val = [val or ""]
 
-			val = ", ".join([utils.formatString(self.format, x, structure["using"], language=conf["currentlanguage"])
+			val = ", ".join([utils.formatString(self.format, x, structure["using"], language=conf["currentLanguage"])
 			                 for x in val])
 		except:
 			# We probably received some garbage
@@ -57,7 +57,7 @@ class RecordBoneExtractor(BaseBoneExtractor):
 			if not isinstance(val, list):
 				val = [val]
 
-			val = ", ".join([utils.formatString(self.format, x, structure["using"], language=conf["currentlanguage"])
+			val = ", ".join([utils.formatString(self.format, x, structure["using"], language=conf["currentLanguage"])
 			                 for x in val])
 		except:
 			# We probably received some garbage
@@ -100,7 +100,7 @@ class RecordViewBoneDelegate(object):
 				if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:
 					val = val[:conf["maxMultiBoneEntries"] - 1]
 
-			res = "\n".join([utils.formatString(self.format, x, structure["using"], language=conf["currentlanguage"])
+			res = "\n".join([utils.formatString(self.format, x, structure["using"], language=conf["currentLanguage"])
 			                 for x in val])
 
 			if conf["maxMultiBoneEntries"] and count >= conf["maxMultiBoneEntries"]:

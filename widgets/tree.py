@@ -78,7 +78,7 @@ class _StructureWidget(html5.Li):
 
 			self.nodeHeadline.appendChild(html5.utils.unescape(
 				utils.formatString(format, self.data, self.structure,
-				    language=conf["currentlanguage"])))
+				    language=conf["currentLanguage"])))
 
 			if self.data and "size" in self.data and self.data["size"]:
 				def convert_bytes(num):

@@ -106,7 +106,7 @@ class HierarchyItem(html5.Li):
 
 			self.appendChild(html5.utils.unescape(
 				utils.formatString(format, self.data, self.structure,
-				    language=conf["currentlanguage"])))
+				    language=conf["currentLanguage"])))
 
 	def onDragOver(self, event):
 		"""

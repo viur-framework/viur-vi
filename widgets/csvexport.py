@@ -19,7 +19,7 @@ class ExportCsv(html5.Progress):
 			encoding = "utf-8"
 
 		if language is None or language not in conf["server"].keys():
-			language = conf["currentlanguage"]
+			language = conf["currentLanguage"]
 
 		self.widget = widget
 		self.module = widget.module
@@ -67,8 +67,8 @@ class ExportCsv(html5.Progress):
 
 		assert self.structure
 
-		defaultLanguage = conf["currentlanguage"]
-		conf["currentlanguage"] = self.lang
+		defaultLanguage = conf["currentLanguage"]
+		conf["currentLanguage"] = self.lang
 
 		# Visualize progress
 		self["max"] = len(self.data)
@@ -119,7 +119,7 @@ class ExportCsv(html5.Progress):
 			self["value"] += 1
 
 		# Virtual File
-		conf["currentlanguage"] = defaultLanguage
+		conf["currentLanguage"] = defaultLanguage
 
 		a = html5.A()
 		a.hide()
@@ -187,7 +187,7 @@ class ExportCsvStarter(html5.ext.Popup):
 				opt["value"] = key
 				opt.appendChild(html5.TextNode(value))
 
-				if key == conf["currentlanguage"]:
+				if key == conf["currentLanguage"]:
 					opt["selected"] = True
 
 				self.langSelect.appendChild(opt)

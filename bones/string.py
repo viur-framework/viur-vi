@@ -25,7 +25,7 @@ class StringBoneExtractor(BaseBoneExtractor):
 			return conf["empty_value"]
 
 		if isinstance(data[field], dict):
-			return '"%s"' % self._unescape(data[field].get(conf["currentlanguage"] or data[field].keys()[0]))
+			return '"%s"' % self._unescape(data[field].get(conf["currentLanguage"] or data[field].keys()[0]))
 
 		elif isinstance(data[field], list):
 			return ", ".join([self.unescape(item) for item in data[field]])
@@ -67,8 +67,8 @@ class StringViewBoneDelegate(object):
 
 		##multilangs
 		if isinstance(value, dict):
-			if "currentlanguage" in conf and conf["currentlanguage"] in value:
-				value = value[conf["currentlanguage"]]
+			if "currentLanguage" in conf and conf["currentLanguage"] in value:
+				value = value[conf["currentLanguage"]]
 			elif len(data[field].keys()) > 0:
 				value = value[value.keys()[0]]
 			else:

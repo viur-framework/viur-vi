@@ -131,7 +131,7 @@ def start():
 	# Configure vi as network render prefix
 	network.NetworkService.prefix = "/vi"
 	network.NetworkService.host = ""
-	conf["currentlanguage"] = i18n.getLanguage()
+	conf["currentLanguage"] = i18n.getLanguage()
 	conf["indexeddb"] = utils.indexeddb("vi-cache")
 
 	# Application

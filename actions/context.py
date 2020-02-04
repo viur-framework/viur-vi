@@ -89,8 +89,8 @@ class ContextAction(Button):
 				title = data.get(key)
 
 				if title:
-					if isinstance(title, dict) and conf["currentlanguage"] in title:
-						title = title[conf["currentlanguage"]]
+					if isinstance(title, dict) and conf["currentLanguage"] in title:
+						title = title[conf["currentLanguage"]]
 
 					break
 
