@@ -70,6 +70,9 @@ conf = {
 	# Globally enable/disable dataset preview in lists
 	"internalPreview": True,
 
+	# Fallback default preview path template (if set None, adminInfo.preview only takes place)
+	"defaultPreview": None,  # "/{{module}}/view/{{key}}"
+
 	# Max number of entries to show in multiple Bones
 	"maxMultiBoneEntries": 5,
 
