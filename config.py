@@ -6,16 +6,16 @@ from .logics import Interpreter
 
 conf = {
 	# Vi version number
-	"vi.version": (2, 5, 0),
+	"vi.version": (3, 0, 0),
 
 	# Appendix to version
-	"vi.version.appendix": "",
+	"vi.version.appendix": "dev",
 
-	# Vi server name
-	"vi.viur": "ViUR",
+	# ViUR core name
+	"vi.viur": "ViUR-core",
 
-	# Vi name
-	"vi.name": "ViUR Visual Interface",
+	# ViUR vi name
+	"vi.name": "ViUR-vi",
 
 	# Title delimiter
 	"vi.title.delimiter": " - ",

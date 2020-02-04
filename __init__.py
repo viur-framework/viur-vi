@@ -42,7 +42,8 @@ class Application(html5.Div):
 		conf["core.version"] = network.NetworkService.decode(req)
 
 		if ((conf["core.version"][0] >= 0                              # check version?
-			and (conf["core.version"][0] != conf["vi.version"][0]      # major version mismatch
+			#and (conf["core.version"][0] != conf["vi.version"][0]     # major version mismatch (disabled)
+		     and (conf["core.version"][0] not in [2, conf["vi.version"][0]]# major version mismatch (used currently!)
 				or conf["core.version"][1] > conf["vi.version"][1]))): # minor version mismatch
 
 			params = {
@@ -51,12 +52,12 @@ class Application(html5.Div):
 			}
 
 			html5.ext.Alert(
-				translate("The ViUR server (v{core.version}) is incompatible to this Vi (v{vi.version}).", **params)
+				translate("ViUR-core (v{core.version}) is incompatible to this Vi (v{vi.version}).", **params)
 					+ "\n" + translate("There may be a lack on functionality.")
 					+ "\n" + translate("Please update either your server or Vi!"),
 				title=translate("Version mismatch"),
 				okCallback=self.startup,
-				okLabel=translate("Continue anyway")
+				okLabel=translate("Continue at your own risk")
 			)
 
 			return

@@ -131,14 +131,6 @@ class AdminScreen(Screen):
 		if ("configuration" in config.keys()
 			and isinstance(config["configuration"], dict)):
 
-			if ("modulGroups" in config["configuration"].keys()
-				and isinstance(config["configuration"]["modulGroups"], list)):
-				alert("Hello! Your project is still using 'admin.modulGroups' for its module grouping information.\n"
-					  "Please rename it to 'admin.moduleGroups' (yes, with 'e') to avoid this alert message.\n\n"
-					  "Thank you!")
-
-				moduleGroups = config["configuration"]["modulGroups"]
-
 			if ("moduleGroups" in config["configuration"].keys()
 				and isinstance(config["configuration"]["moduleGroups"], list)):
 				moduleGroups = config["configuration"]["moduleGroups"]
