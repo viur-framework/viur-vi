@@ -1,21 +1,11 @@
 class app {
 
-	constructor(){
-
+	constructor(modules){
 		languagePluginLoader.then(() => {
-			this.fetchSources().then(() => {
-				window.pyodide.loadedPackages["vi"] = "default channel";
-				window.pyodide.loadedPackages["vi_plugins"] = "default channel";
-
-				window.pyodide.runPython(
-						'import importlib as _importlib\n' +
-						'_importlib.invalidate_caches()\n'
-				);
-
+			this.fetchSources(modules).then(() => {
 				window.pyodide.runPythonAsync("import vi\nimport vi_plugins\nvi.start()").then(() => this.initializingComplete());
 			});
 		});
-
 	}
 
 	loadSources(module, files) {
@@ -66,19 +56,19 @@ class app {
 		return Promise.all(promises);
 	}
 
-	fetchSources() {
+	fetchSources(modules) {
 		let promises = [];
 
-		for( let i of ["vi", "vi_plugins"] )
+		for( let module of modules )
 		{
 			promises.push(
 				new Promise((resolve, reject) => {
-					fetch(`/${i}/s/files.json`, {}).then((response) => {
+					fetch(`/${module}/s/files.json`, {}).then((response) => {
 						if (response.status === 200) {
 							response.text().then((list) => {
 								let files = JSON.parse(list);
 
-								this.loadSources(i, files).then(() => {
+								this.loadSources(module, files).then(() => {
 									resolve();
 								})
 							})
@@ -89,7 +79,16 @@ class app {
 				}));
 		}
 
-		return Promise.all(promises);
+		return Promise.all(promises).then(() => {
+			for( let module of modules ) {
+				window.pyodide.loadedPackages[module] = "default channel";
+			}
+
+			window.pyodide.runPython(
+				'import importlib as _importlib\n' +
+				'_importlib.invalidate_caches()\n'
+			);
+		});
 	}
 
 	initializingComplete() {
@@ -99,5 +98,5 @@ class app {
 }
 
 (function () {
-	window.top.app = new app();
+	window.top.app = new app(["vi", "vi_plugins"]);
 })();
