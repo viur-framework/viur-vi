@@ -61,7 +61,7 @@ conf = {
     "toplevelactions": ["log", "tasks", "userstate", "logout"],
 
 	# Number of rows to fetch in list widgets
-	"batchSize": 2,
+	"batchSize": 30,
 
 	# Show bone names instead of description
 	"showBoneNames": False,
