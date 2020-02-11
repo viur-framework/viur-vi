@@ -92,7 +92,7 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 				res = formatString(res, val[0], struct, prefix + [key], language, _rec = _rec + 1)
 
 		elif isinstance(val, list):
-			val = ", ".join(val)
+			val = ", ".join(map(str, val))
 
 		# Check for select-bones
 		if isinstance(struct, dict) and "values" in struct and struct["values"]:
