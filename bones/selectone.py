@@ -69,7 +69,7 @@ class SelectOneEditBone( html5.ignite.Select ):
 
 	def unserialize(self, data):
 		if self.boneName in data.keys():
-			self.val = data[ self.boneName ] if data[ self.boneName ] else ""
+			self.val = str(data[ self.boneName ]) if data[ self.boneName ] else ""
 			for aoption in self._children:
 				if aoption["value"] == self.val:
 					aoption["selected"]=True
