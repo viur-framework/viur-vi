@@ -191,6 +191,7 @@ class AdminScreen(Screen):
 			if "views" in info.keys() and info["views"]:
 				for v in info["views"]:  # Work-a-round for PyJS not supporting id()
 					v["__id"] = predefinedFilterCounter
+					v["handler"] = info["handler"]
 					predefinedFilterCounter += 1
 
 			if currentActiveGroup or module in topLevelModules:
