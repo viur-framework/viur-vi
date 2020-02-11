@@ -21,9 +21,14 @@ class FileBoneExtractor(BaseBoneExtractor):
 			self.format = structure[boneName]["format"]
 
 	def renderFileentry(self, fileentry):
-		return ("%s %s/file/download/%s?download=1&fileName=%s" %
+		if conf["core.version"][0] == 3:
+			url = self.currentFile["downloadUrl"]
+		else:
+			url = "/file/download/" + str(fileentry["dest"]["dlkey"])
+
+		return ("%s %s%s?download=1&fileName=%s" %
 		            (fileentry["dest"]["name"], html5.window.location.origin,
-		                str(fileentry["dest"]["dlkey"]), str(fileentry["dest"]["name"])))
+		                url, str(fileentry["dest"]["name"])))
 
 	def render(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
