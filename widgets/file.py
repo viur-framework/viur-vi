@@ -131,7 +131,7 @@ class FilePreviewImage(html5.Div):
 				return
 			
 			if self.currentFile.get("name"):
-				if conf["core.version"][0] == 2:
+				if conf["core.version"][0] == 3:
 					file = "%s/fileName=%s" % (self.currentFile[ "downloadUrl" ], self.currentFile["name"])
 				else:
 					file = "/file/download/%s/%s" % (self.currentFile[ "dlkey" ], self.currentFile["name"])
