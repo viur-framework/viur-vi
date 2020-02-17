@@ -4,5 +4,7 @@
 *.iml
 
 pyodide
-node_modules
 version.py
+
+sources/node_modules
+sources/package-lock.json
