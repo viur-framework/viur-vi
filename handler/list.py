@@ -38,7 +38,7 @@ class ListHandler(Pane):
 	def _buildViewPanes(self, views, register=False, requested=False):
 		for view in views:
 			# Extend some inherited attributes from moduleInfo, if not overridden
-			for inherit in ["+name", "+columns", "+filter", "+context", "+actions"]:
+			for inherit in ["+name", "+columns", "+filter", "+context", "+actions", "+handler"]:
 				if inherit in view:
 					inherit = inherit[1:]
 
@@ -67,7 +67,7 @@ class ListHandler(Pane):
 					del view["+" + inherit]
 
 			# Inherit some default attributes from moduleInfo, if not overridden or extended
-			for inherit in ["icon", "columns", "filter", "context"]:
+			for inherit in ["icon", "columns", "filter", "context", "handler"]:
 				if inherit not in view and inherit in self.moduleInfo:
 					view[inherit] = self.moduleInfo[inherit]
 

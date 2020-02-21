@@ -246,8 +246,8 @@ class Pane(html5.Div):
 
 	def onClick(self, event=None, *args, **kwargs):
 		self.focus()
-
-		event.stopPropagation()
+		if event:
+			event.stopPropagation()
 
 	def expand(self):
 		if self.childDomElem and self.collapseable and not self.isExpanded:
