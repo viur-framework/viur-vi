@@ -44,7 +44,7 @@ class Application(html5.Div):
 		if ((conf["core.version"][0] >= 0                              # check version?
 			#and (conf["core.version"][0] != conf["vi.version"][0]     # major version mismatch (disabled)
 		     and (conf["core.version"][0] not in [2, conf["vi.version"][0]]# major version mismatch (used currently!)
-				or conf["core.version"][1] > conf["vi.version"][1]))): # minor version mismatch
+				or (conf["core.version"][0] == 3 and conf["core.version"][1] > conf["vi.version"][1])))): # minor version mismatch
 
 			params = {
 				"core.version": ".".join(str(x) for x in conf["core.version"]),

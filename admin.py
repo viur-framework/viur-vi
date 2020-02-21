@@ -216,7 +216,8 @@ class AdminScreen(Screen):
 			conf["modules"][module] = info
 
 		# Sorting top level entries
-		panes.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1] is None else 0, entry[1] or 0, entry[0]))
+		print(panes)
+		panes.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1] is None else 0,  0 if entry[1] is None else int(entry[1]), entry[0]))
 
 		# Add panes in the created order
 		for name, idx, pane in panes:
