@@ -87,7 +87,7 @@ class ContextAction(html5.ext.Button):
 
 		# Generate title
 		if title is None:
-			for key in ["name", "title"]:
+			for key in conf["vi.context.title.bones"]:
 				title = data.get(key)
 
 				if title:
