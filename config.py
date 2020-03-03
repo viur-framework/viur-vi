@@ -26,6 +26,9 @@ conf = {
 	# Context access variable prefix
 	"vi.context.prefix": "",
 
+	# Context action title fields
+	"vi.context.title.bones": ["name"],
+
 	# Global holder to main configuration taken from the server
 	"mainConfig": None,
 
