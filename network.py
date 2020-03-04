@@ -88,7 +88,7 @@ class HTTPRequest(object):
 			else:
 				self.cb.onError( self.req.responseText, self.req.status )
 
-class NetworkService( object ):
+class NetworkService(object):
 	"""
 		Generic wrapper around ajax requests.
 		Handles caching and multiplexing multiple concurrent requests to
@@ -101,7 +101,7 @@ class NetworkService( object ):
 	prefix = "/json"
 	defaultFailureHandler = None
 
-	retryCodes = [0, -1, 500, 502]
+	retryCodes = [0, -1]
 	retryMax = 3
 	retryDelay = 5000
 
