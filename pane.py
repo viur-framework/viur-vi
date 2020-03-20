@@ -85,7 +85,7 @@ class Pane(html5.Div):
 			pass
 
 		if loading:
-			self.itemImage = Icon(self.descr, "icons/is_loading32.gif")
+			self.itemImage = Icon(self.descr, "./public/images/is-loading32.gif")
 
 		else:
 			self.itemImage = Icon(self.descr, self.defaultIconURL)
@@ -94,19 +94,20 @@ class Pane(html5.Div):
 
 	def lock(self):
 		self.disable()
-		self.setImage(loading = True)
+		self.setText(loading = True)
 
 	def unlock(self):
-		self.setImage(loading = False)
+		self.setText(loading = False)
 		self.enable()
 
-	def setText(self, descr = None, iconURL = None):
+	def setText(self, descr = None, iconURL = None,loading=False):
 		self.label.removeAllChildren()
 
 		if descr is None:
 			descr = self.descr
-
-		self.setImage(loading = False)
+		else:
+			self.descr = descr
+		self.setImage(loading = loading)
 
 		if self.iconClasses is not None:
 			for cls in self.iconClasses:
