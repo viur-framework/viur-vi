@@ -28,7 +28,7 @@ class TopBarWidget(html5.Header):
 			<div class="vi-tb-left bar-group bar-group--left" [name]="topbarLeft">
 				<div class="vi-tb-logo" [name]="topbarLogo"></div>
 				<h1 class="vi-tb-title" [name]="moduleH1"></h1>
-				<div class="vi-tb-currentmodul item" [name]="moduleContainer">
+				<div class="item" [name]="moduleContainer">
 					<div [name]="modulImg"></div>
 					<div class="item-content" [name]="moduleName"></div>
 				</div>
