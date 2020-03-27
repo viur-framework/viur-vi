@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from vi.framework.embedsvg import embedsvg
+from vi.embedsvg import embedsvg
 from vi import html5
 
 class Icon(html5.Div):

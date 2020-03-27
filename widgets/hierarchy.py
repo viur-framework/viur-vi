@@ -8,7 +8,7 @@ from vi.framework.event import EventDispatcher
 from vi.priorityqueue import moduleHandlerSelector, viewDelegateSelector
 from vi.config import conf
 from vi.i18n import translate
-from vi.framework.embedsvg import embedsvg
+from vi.embedsvg import embedsvg
 from vi.widgets.list import ListWidget
 
 from time import time

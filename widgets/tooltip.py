@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from vi import html5
 from vi.i18n import translate
-from vi.framework.embedsvg import embedsvg
+from vi.embedsvg import embedsvg
 
 
 class ToolTip(html5.Div):

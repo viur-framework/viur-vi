@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from ... import html5
-from ..embedsvg import embedsvg
+from ...embedsvg import embedsvg
 from vi.framework.utils import DeferredCall
 from vi.framework.components.button import Button
 from vi.i18n import translate

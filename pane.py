@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from vi import html5
 
-from .framework.embedsvg import embedsvg
+from .embedsvg import embedsvg
 from .framework.components.icon import Icon
 from .config import conf
 from .priorityqueue import HandlerClassSelector

@@ -7,7 +7,7 @@ from vi.config import conf
 from vi.widgets.task import TaskSelectWidget
 from vi.priorityqueue import toplevelActionSelector
 from vi.framework.components.button import Button
-from vi.framework.embedsvg import embedsvg
+from vi.embedsvg import embedsvg
 from vi.framework.components.icon import Icon
 from vi.pane import Pane
 from vi.widgets.edit import EditWidget

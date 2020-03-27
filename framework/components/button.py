@@ -1,5 +1,5 @@
 from ... import html5
-from ..embedsvg import embedsvg
+from ...embedsvg import embedsvg
 
 class Button(html5.ext.Button):
 	def __init__(self, txt=None, callback=None, className=None, icon = None, *args, **kwargs):

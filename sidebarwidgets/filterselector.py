@@ -5,7 +5,7 @@ from vi.config import conf
 from vi.widgets.search import Search
 from vi.priorityqueue import extendedSearchWidgetSelector
 from vi.i18n import translate
-from vi.framework.embedsvg import embedsvg
+from vi.embedsvg import embedsvg
 
 
 class CompoundFilter(html5.Div):

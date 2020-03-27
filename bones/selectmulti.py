@@ -6,7 +6,7 @@ from vi.framework.event import EventDispatcher
 from vi.i18n import translate
 from vi.config import conf
 from vi.bones.base import BaseBoneExtractor
-from vi.framework.embedsvg import embedsvg
+from vi.embedsvg import embedsvg
 
 class SelectMultiBoneExtractor(BaseBoneExtractor):
 

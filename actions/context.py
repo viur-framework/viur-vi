@@ -7,7 +7,7 @@ from vi.i18n import translate
 from vi.config import conf
 from vi.pane import Pane
 from vi.framework.components.button import Button
-import vi.framework.embedsvg
+import vi.embedsvg
 
 
 class ContextAction(Button):
