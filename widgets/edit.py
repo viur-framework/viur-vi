@@ -489,7 +489,9 @@ class EditWidget(html5.Div):
 
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
-			if bone["required"] or (bone.get("unique") and bone["error"]) or (bone["error"] and "dependency error:" in bone["error"]):
+			if bone["required"] or \
+					(bone.get("unique") and bone["error"]) or \
+					(bone["error"] and isinstance(bone["error"],str) and "dependency error:" in bone["error"]):
 				descrLbl.addClass("is-required")
 
 				if bone["error"] is not None:
