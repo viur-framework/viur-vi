@@ -35,6 +35,7 @@ class FileImagePopup(html5.ext.Popup):
 		self.close()
 
 	def onDownloadBtnClick(self, sender = None):
+		self.preview.imageDownload = True
 		self.preview.download()
 
 class FilePreviewImage(html5.Div):
@@ -53,6 +54,7 @@ class FilePreviewImage(html5.Div):
 		self.currentFile = None
 		self.previewIcon = None
 		self.setFile(file)
+		self.imageDownload = False
 
 
 	def setFile(self, file):
@@ -115,21 +117,23 @@ class FilePreviewImage(html5.Div):
 			self.downloadA["href"] = self.currentFile["downloadUrl"]
 		else:
 			self.downloadA["href"] = "/file/download/" + self.currentFile["dlkey"]
-
-		self.downloadA["download"] = self.currentFile.get("name", self.currentFile["dlkey"])
+			self.downloadA["download"] = self.currentFile.get("name", self.currentFile["dlkey"])
+		self.downloadA["target"] = "_blank"
 		self.downloadA.element.click()
 
-	def onClick(self, event):
+
+	def onClick(self,sender=None):
 		if not self.currentFile:
 			return
 
-		if self.isImage:
+		if self.isImage and not self.imageDownload:
 			FileImagePopup(self)
 		else:
+			self.imageDownload = False
 			if self.downloadOnly:
 				self.download()
 				return
-			
+
 			if self.currentFile.get("name"):
 				if conf["core.version"][0] == 3:
 					file = "%s/fileName=%s" % (self.currentFile[ "downloadUrl" ], self.currentFile["name"])
