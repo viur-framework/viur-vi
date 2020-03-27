@@ -9,7 +9,7 @@ from vi.priorityqueue import viewDelegateSelector, moduleHandlerSelector
 #from vi.widgets.actionbar import ActionBar
 from vi.widgets.sidebar import SideBar
 from vi.framework.components.datatable import DataTable, ViewportDataTable
-from vi.framework.embedsvg import embedsvg
+from vi.embedsvg import embedsvg
 from vi.framework.components.actionbar import ActionBar
 
 
@@ -85,7 +85,6 @@ class ListWidget(html5.Div):
 		self._structure = None
 		self._currentRequests = []
 		self.columns = []
-
 		self.selectMode = selectMode
 		assert selectMode in [None, "single", "multi"]
 
@@ -197,7 +196,7 @@ class ListWidget(html5.Div):
 		if self.selectMode:
 			defaultActions += ["|", "select","close"]
 
-		defaultActions += ["|", "pagefind", "reload", "setamount", "loadnext", "intpreview", "selectfilter"]
+		defaultActions += ["|",  "reload", "setamount", "intpreview", "selectfilter"] #"pagefind",  "loadnext",
 
 		#if not self.selectMode:
 		#	defaultActions += ["|", "exportcsv"]
@@ -458,11 +457,10 @@ class ListWidget(html5.Div):
 
 	@staticmethod
 	def render(moduleName, adminInfo, context=None):
-
 		filter = adminInfo.get("filter")
 		columns = adminInfo.get("columns")
-		filterID = adminInfo.get("__id"),
-		filterDescr = adminInfo.get("visibleName", ""),
+		filterID = adminInfo.get("__id")
+		filterDescr = adminInfo.get("visibleName", "")
 		autoload = adminInfo.get("autoload", True)
 		selectMode = adminInfo.get("selectMode")
 		batchSize = adminInfo.get("batchSize", conf["batchSize"])

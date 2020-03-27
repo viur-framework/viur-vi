@@ -16,8 +16,8 @@ lngDe = {
 	"Close":u"Schließen",
 	"Abort":u"Abbrechen",
 	"Select":u"Auswählen",
-	"Select fields":u"Felder auswählen",
-	"Select Filter":u"Filter auswählen",
+	"Select fields":u"Felder",
+	"Select Filter":u"Filtern",
 	"Delete them?":u"Wirklich löschen?",
 	"Delete {amt} Entries?":u"Sollen {amt} Einträge gelöscht werden?",
 	"Keep":u"Behalten",
@@ -193,7 +193,7 @@ lngDe = {
 	"vi.select.default-option":u"- Bitte wählen -",
 
 	#Sidebar
-	"vi.sidebar.internalpreview": u"Informationen",
+	"vi.sidebar.internalpreview": u"Details",
 
 	"Load all": u"Alles laden",
 	"Find on Page": u"finden",
@@ -201,7 +201,7 @@ lngDe = {
 	"all elements loaded: {amt}, pages: {pg}":u"Alles geladen: {amt} Elemente, {pg} Seite(n)",
 	"loaded elements: {amt}, pages: {pg}":u"Geladen: {amt} Elemente, {pg} Seite(n)",
 	"load next pages":u"Seiten laden",
-	"amount":u"Anzahl der Elemente"
+	"amount":u"pro Seiten"
 
 
 }
