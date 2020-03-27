@@ -10,7 +10,7 @@ from vi.widgets.csvexport import ExportCsvStarter
 from vi.sidebarwidgets.internalpreview import InternalPreview
 from vi.sidebarwidgets.filterselector import FilterSelector
 from vi.i18n import translate
-from vi.framework.embedsvg import embedsvg
+from vi.embedsvg import embedsvg
 from vi.framework.components.button import Button
 from vi.framework.utils import DeferredCall
 
@@ -738,18 +738,23 @@ class SetPageRowAmountAction(html5.Div):
 		self.btn = Button( translate( "amount" ), callback = self.onClick )
 		self.btn[ "class" ] = "bar-item btn btn--small btn--amount"
 		self.appendChild( self.btn )
-		self.sinkEvent("onClick")
+		self.sinkEvent("onChange")
 		self.currentLoadedPages = 0
 
 	def onClick(self, sender=None):
 		if sender == self.btn:
+			self.setPageAmount()
 
-			self.addClass("is-loading")
-			currentModule = self.parent().parent()
+	def onChange(self,sender=None):
+		self.setPageAmount()
 
-			amount = int(self.pages["options"].item(self.pages["selectedIndex"]).value)
-			currentModule.setAmount(amount)
-			NetworkService.notifyChange(currentModule.module)
+	def setPageAmount(self):
+		self.addClass("is-loading")
+		currentModule = self.parent().parent()
+
+		amount = int(self.pages["options"].item(self.pages["selectedIndex"]).value)
+		currentModule.setAmount(amount)
+		NetworkService.notifyChange(currentModule.module)
 
 
 	@staticmethod
@@ -783,22 +788,28 @@ class LoadNextBatchAction(html5.Div):
 		self.btn = Button( translate( "load next pages" ), callback = self.onClick )
 		self.btn[ "class" ] = "bar-item btn btn--small btn--loadnext"
 		self.appendChild( self.btn )
-		self.sinkEvent("onClick")
+		self.sinkEvent("onChange")
 		self.currentLoadedPages = 0
 
 	def onClick(self, sender=None):
 		if sender == self.btn:
+			self.loadnextPages()
 
-			self.addClass("is-loading")
-			currentModule = self.parent().parent()
+	def onChange(self, sender=None):
+		self.loadnextPages()
 
-			if currentModule and currentModule.table._dataProvider:
-				amount = int(self.pages["options"].item(self.pages["selectedIndex"]).value)
-				currentModule.setPage(amount)
-				#	.targetPage=amount-1
-				#currentModule.onNextBatchNeeded()
-			else:
-				self.removeClass("is-loading")
+	def loadnextPages(self):
+		self.addClass("is-loading")
+		currentModule = self.parent().parent()
+
+		if currentModule and currentModule.table._dataProvider:
+			amount = int(self.pages["options"].item(self.pages["selectedIndex"]).value)
+			currentModule.setPage(amount)
+		#	.targetPage=amount-1
+		# currentModule.onNextBatchNeeded()
+		else:
+			self.removeClass("is-loading")
+
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
