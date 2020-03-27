@@ -98,4 +98,5 @@ class Accordion(html5.Form):
 
 		for s in self._segments:
 			self.appendChild(s)
+		self._segments = [] #reset all added sections
 		return 0
