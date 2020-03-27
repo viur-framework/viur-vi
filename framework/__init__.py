@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 from . import components
-from . import utils, event, embedsvg
+from . import utils, event
