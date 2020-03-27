@@ -73,6 +73,10 @@ class ListHandler(Pane):
 
 			pane = ListHandler(self.moduleName, view, isView=True, wasRequested=requested)
 
+			self.isExpanded=False
+			if self.childDomElem:
+				self.childDomElem.hide()
+
 			if not register:
 				#print("adding pane %s to %s" % (pane.moduleInfo.get("name"), self.moduleInfo.get("name")))
 				self.addChildPane(pane)

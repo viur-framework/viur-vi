@@ -216,7 +216,6 @@ class AdminScreen(Screen):
 			conf["modules"][module] = info
 
 		# Sorting top level entries
-		print(panes)
 		panes.sort(key=lambda entry: "%d-%010d-%s" % (1 if entry[1] is None else 0,  0 if entry[1] is None else int(entry[1]), entry[0]))
 
 		# Add panes in the created order
@@ -387,11 +386,13 @@ class AdminScreen(Screen):
 		self.currentPane = pane
 		self.currentPane.widgetsDomElm.addClass("is-active")
 
-		if self.currentPane.collapseable and self.currentPane.childDomElem:
-			self.currentPane.childDomElem["style"]["display"] = "block"
-			self.currentPane.childDomElem.addClass("is-active")
-
 		self.currentPane.item.addClass("is-active")
+
+		if self.currentPane.collapseable:
+			if self.currentPane.isExpanded:
+				self.currentPane.collapse()
+			else:
+				self.currentPane.expand()
 
 		# Also open parent panes, if not already done
 		pane = self.currentPane.parentPane
