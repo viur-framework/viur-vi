@@ -68,12 +68,34 @@ class AccordionSegment(html5.Fieldset):
 
 class Accordion(html5.Form):
 
-	def addSegment(self, ident, title = None, *args):
+	_segments = []
+
+	def addSegment(self, ident, title = None, directAdd=False, *args):
 		seg = AccordionSegment(ident, title)
-		self.appendChild(seg)
+		if directAdd:
+			self.appendChild(seg) #used for editviews
+		else:
+			self._segments.append(seg) #normal form Cats can be ordered
 		self.addClass("vi-accordion")
 
 		for widget in args:
 			seg.addWidget(widget)
 
 		return seg
+
+	def buildAccordion(self,order=None):
+		'''
+
+		:param sort: None: sorted by Bones, "asc":ascending, "desc":descending, dict: {"category":index,...}
+		:return:
+		'''
+		if order == "asc":
+			self._segments.sort(key=lambda x: x["name"])
+		elif order == "desc":
+			self._segments.sort(key=lambda x: x["name"], reverse=True)
+		elif isinstance(order,list):
+			self._segments.sort(key=lambda x: order.index(x["name"]) if x["name"] in order else 999)
+
+		for s in self._segments:
+			self.appendChild(s)
+		return 0

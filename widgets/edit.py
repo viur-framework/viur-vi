@@ -429,9 +429,6 @@ class EditWidget(html5.Div):
 		defaultCat = conf["modules"][self.module].get("visibleName", self.module)
 		adminCat = conf["modules"][self.module].get("defaultCategory",None)
 
-
-		print(conf["modules"][self.module])
-
 		contextVariable = conf["modules"][self.module].get("editContext")
 		if self.mode == "edit" and contextVariable:
 			if not self.context:
@@ -451,6 +448,7 @@ class EditWidget(html5.Div):
 		if conf["core.version"][0] == 3:
 			for error in data["errors"]:
 				errors[error["fieldPath"]] = error["errorMessage"]
+
 
 		for key, bone in data["structure"]:
 			# FIXME: ViUR3
@@ -541,6 +539,7 @@ class EditWidget(html5.Div):
 			if bone["params"] and bone["params"].get("logic.readonlyIf"):
 				self.containers[key].disable()
 
+
 		# Hide all segments where all fields are invisible
 		for fs in segments.values():
 			fs.checkVisibility()
@@ -548,6 +547,8 @@ class EditWidget(html5.Div):
 		# Show default category
 		if firstCat:
 			firstCat.activate()
+
+		self.accordion.buildAccordion("asc")  # order and add to dom
 
 		# Views
 		views = conf["modules"][self.module].get("editViews")
@@ -571,7 +572,7 @@ class EditWidget(html5.Div):
 				vdescr = conf["modules"][vmodule]
 
 				if vmodule not in segments:
-					segments[vmodule] = self.accordion.addSegment(vmodule, vtitle or vdescr.get("name", vmodule))
+					segments[vmodule] = self.accordion.addSegment(vmodule, vtitle or vdescr.get("name", vmodule),directAdd=True)
 					segments[vmodule].addClass("editview")
 
 				if vclass:
