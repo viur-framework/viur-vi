@@ -28,6 +28,7 @@ class Icon(html5.Div):
 				img.onError = lambda e: self.onError(e)
 				img.sinkEvent("onError")
 				img["src"] = self._icon
+				self.modulIcon["style"]["background"] = "none"
 				self.modulIcon.appendChild(img)
 
 		else:
@@ -37,6 +38,8 @@ class Icon(html5.Div):
 
 	def onError(self, event):
 		self.modulIcon.removeAllChildren()
+		self.modulIcon["style"]["background"] = None
+
 		self.modulIcon.appendChild(self._descr[:1])
 
 
