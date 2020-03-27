@@ -4,7 +4,7 @@ from vi import html5
 from .network import DeferredCall
 from .i18n import translate
 from .config import conf
-from .framework.embedsvg import embedsvg
+from vi.embedsvg import embedsvg
 
 from datetime import datetime
 from vi.priorityqueue import toplevelActionSelector
