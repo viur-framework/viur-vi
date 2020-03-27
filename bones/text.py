@@ -65,6 +65,7 @@ class TextEditBone(html5.Div):
 				self.inputDefault.boneName = self.boneName
 			else:
 				self.inputDefault = html5.Textarea()
+				self.inputDefault["class"].append("textarea")
 				if readOnly:
 					self.inputDefault[ "readonly" ] = True
 			self.appendChild( self.inputDefault )
@@ -74,6 +75,7 @@ class TextEditBone(html5.Div):
 			self.input.boneName = self.boneName
 		else:
 			self.input = html5.Textarea()
+			self.input["class"].append("textarea")
 			if readOnly:
 				self.input["readonly"] = True
 
