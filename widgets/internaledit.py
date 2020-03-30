@@ -58,7 +58,7 @@ class InternalEdit(html5.Div):
 					self.accordion = Accordion()
 					self.appendChild(self.accordion)
 
-				segments[cat] = self.accordion.addSegment(cat)
+				segments[cat] = self.accordion.addSegment(cat, directAdd=True)
 
 				if not firstCat:
 					firstCat = segments[cat]
