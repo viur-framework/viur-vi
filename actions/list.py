@@ -236,8 +236,17 @@ class DeleteAction(Button):
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
 		for x in deleteList:
-			NetworkService.request( self.parent().parent().module, "delete", {"key": x}, secure=True, modifies=True )
-			conf["mainWindow"].log("success",translate("Eintrag gelöscht"),key=x, modul=self.parent().parent().module,action="delete" )
+			NetworkService.request( self.parent().parent().module, "delete", {"key": x},
+									secure=True, modifies=True,
+									successHandler = self.deletedSuccess,
+									failureHandler = self.deletedFailed )
+
+
+	def deletedSuccess( self, req=None, code=None ):
+		conf["mainWindow"].log("success",translate("Eintrag gelöscht"),modul=self.parent().parent().module,action="delete" )
+
+	def deletedFailed( self, req=None, code=None ):
+		conf["mainWindow"].log("error",translate("Eintrag konnte nicht gelöscht werden (status: %s)"%code),modul=self.parent().parent().module,action="delete" )
 
 	def resetLoadingState(self):
 		pass
