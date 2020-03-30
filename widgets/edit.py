@@ -449,7 +449,7 @@ class EditWidget(html5.Div):
 			for error in data["errors"]:
 				errors[error["fieldPath"]] = error["errorMessage"]
 
-
+		self.accordion.clearSegments()
 		for key, bone in data["structure"]:
 			# FIXME: ViUR3
 			if key in errors:

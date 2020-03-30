@@ -83,6 +83,9 @@ class Accordion(html5.Form):
 
 		return seg
 
+	def clearSegments( self ):
+		self._segments = []
+
 	def buildAccordion(self,order=None):
 		'''
 
