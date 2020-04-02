@@ -24,9 +24,12 @@ class CompoundFilter(html5.Div):
 			self.addClass("vi-sb-compoundfilter--standalone")
 			self.addClass("is-collapsed")
 
+		self.filterheader = html5.Div()
+		self.filterheader["class"]="vi-sb-compoundfilter-header"
+
 		filterImage = html5.Div()
 		filterImage.addClass("item-image")
-		self.appendChild(filterImage)
+		self.filterheader.appendChild(filterImage)
 
 		self.filterIcon = html5.I()
 		self.filterIcon.addClass("i")
@@ -47,7 +50,9 @@ class CompoundFilter(html5.Div):
 			h2 = html5.H2()
 			h2.addClass("vi-sb-compoundfilter-name item-content")
 			h2.appendChild(html5.TextNode(view["name"]))
-			self.appendChild(h2)
+			self.filterheader.appendChild(h2)
+
+		self.appendChild(self.filterheader)
 
 		self.extendedFilters = []
 		self.mutualExclusiveFilters = {}

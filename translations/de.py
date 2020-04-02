@@ -201,7 +201,8 @@ lngDe = {
 	"all elements loaded: {amt}, pages: {pg}":u"Alles geladen: {amt} Elemente, {pg} Seite(n)",
 	"loaded elements: {amt}, pages: {pg}":u"Geladen: {amt} Elemente, {pg} Seite(n)",
 	"load next pages":u"Seiten laden",
-	"amount":u"pro Seiten"
+	"amount":u"pro Seiten",
+	"vi.sidebar.filterselector": "verfügbare Filter"
 
 
 }
