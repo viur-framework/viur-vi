@@ -11,6 +11,7 @@ from vi.network import NetworkService
 from vi.widgets.edit import EditWidget
 from vi.pane import Pane
 from vi.bones.base import BaseBoneExtractor
+from vi.actions.file import AddLeafAction
 
 
 class FileBoneExtractor(BaseBoneExtractor):
@@ -171,6 +172,13 @@ class FileBone(RelationalBone):
 		self.addClass( "vi-bone-container supports-upload" )
 		self[ "title" ] = translate( "vi.tree.drag-here" )
 		self.currentSelector = None
+		if params and "vi.directupload" in params and params[ "vi.directupload" ]:
+			addbtn = AddLeafAction()
+			addbtn[ "class" ] = "bar-item btn btn--upload btn--add"
+			addbtn.filebone = self
+			self.quickselectionWrapper.appendChild(addbtn)
+			self.quickselectionWrapper.removeChild(self.selectBtn)
+
 
 	def onDragOver(self, event):
 		super(FileBone,self).onDragOver(event)

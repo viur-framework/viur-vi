@@ -26,7 +26,13 @@ class FileSelectUploader(html5.Input):
 	def onChange(self, event):
 		if event.target.files.length > 0:
 			for i in range(event.target.files.length):
-				Uploader(event.target.files.item(i), self.parent().node)
+				try:
+					node = self.parent().node
+				except:
+					node = None
+				ul = Uploader(event.target.files.item(i), node)
+				if "filebone" in dir(self):
+					ul.uploadSuccess.register( self.filebone )
 
 		self.parent().removeChild( self )
 
@@ -53,6 +59,8 @@ class AddLeafAction(Button):
 
 	def onClick(self, sender=None):
 		uploader = FileSelectUploader()
+		if "filebone" in dir(self):
+			uploader.filebone = self.filebone
 		self.parent().parent().appendChild(uploader)
 		uploader.element.click()
 
@@ -60,7 +68,6 @@ class AddLeafAction(Button):
 		pass
 
 actionDelegateSelector.insert( 3, AddLeafAction.isSuitableFor, AddLeafAction )
-
 
 class DownloadAction(Button):
 	"""
