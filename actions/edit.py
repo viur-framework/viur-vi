@@ -16,12 +16,16 @@ class SaveContinue(Button):
 		return( actionName=="save.continue" )
 
 	def onClick(self, sender=None):
+		self[ "disabled" ] = True
 		self["class"].append("is-loading")
+		self.setIcon("icons-loader")
 		self.parent().parent().doSave(closeOnSuccess=False)
 
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):
 			self["class"].remove("is-loading")
+			self[ "disabled" ] = False
+			self.resetIcon()
 
 actionDelegateSelector.insert( 1, SaveContinue.isSuitableFor, SaveContinue )
 
@@ -35,12 +39,16 @@ class SaveSingleton(Button):
 		return actionName == "save.singleton" and module != "_tasks"
 
 	def onClick(self, sender=None):
+		self[ "disabled" ] = True
 		self["class"].append("is-loading")
+		self.setIcon( "icons-loader" )
 		self.parent().parent().doSave(closeOnSuccess=False)
 
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):
 			self["class"].remove("is-loading")
+			self[ "disabled" ] = False
+			self.resetIcon()
 
 actionDelegateSelector.insert(1, SaveSingleton.isSuitableFor, SaveSingleton)
 
@@ -54,12 +62,16 @@ class ExecuteSingleton(Button):
 		return actionName == "save.singleton" and module == "_tasks"
 
 	def onClick(self, sender=None):
+		self[ "disabled" ] = True
 		self["class"].append("is-loading")
+		self.setIcon( "icons-loader" )
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):
 			self["class"].remove("is-loading")
+			self[ "disabled" ] = False
+			self.resetIcon()
 
 actionDelegateSelector.insert(1, ExecuteSingleton.isSuitableFor, ExecuteSingleton)
 
@@ -73,13 +85,16 @@ class SaveClose(Button):
 		return( actionName=="save.close" )
 
 	def onClick(self, sender=None):
+		self[ "disabled" ] = True
 		self.addClass("is-loading")
+		self.setIcon( "icons-loader" )
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
-		pass
+			self[ "disabled" ] = False
+			self.resetIcon()
 
 actionDelegateSelector.insert( 1, SaveClose.isSuitableFor, SaveClose )
 
@@ -122,13 +137,14 @@ class CancelClose(Button):
 
 	def onClick(self, sender=None):
 		self.addClass("is-loading")
-
+		self[ "disabled" ] = True
 		currentPane = conf["mainWindow"].containsWidget(self.parent().parent())
 		conf[ "mainWindow" ].removePane( currentPane )
 
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
-		pass
+			self[ "disabled" ] = False
+
 
 actionDelegateSelector.insert( 1, CancelClose.isSuitableFor, CancelClose )
