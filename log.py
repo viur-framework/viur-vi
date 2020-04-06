@@ -191,9 +191,9 @@ class LogButton(html5.Div):
 		#conf["indexeddb"].dbAction("edit", "vi_test", "2", {"test": 1,"test2":1})
 		#conf["indexeddb"].dbAction("add", "vi_test", "3", {"test": 1})
 		#conf["indexeddb"].dbAction("delete", "vi_test", "1")
-
-		conf["indexeddb"].dbAction("add","vi_log", None, logObj)
-		self.logsList.insert(0,logObj)
+		if isinstance(msg,str):
+			conf["indexeddb"].dbAction("add","vi_log", None, logObj)
+			self.logsList.insert(0,logObj)
 		self.renderPopOut()
 
 		self.msgOverlay(logObj)
