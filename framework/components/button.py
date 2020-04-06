@@ -12,6 +12,17 @@ class Button(html5.ext.Button):
 				self.element.innerHTML = svg + self.element.innerHTML
 
 
+	def resetIcon( self ):
+		if self.svg:
+			self.element.innerHTML = self.svg + self["title"]
+
+	def setIcon( self,icon ):
+		if not icon:
+			return 0
+		svg = embedsvg.get( icon )
+		if svg:
+			self.element.innerHTML = svg + self["title"]
+
 	def setText(self, txt):
 		if txt is not None:
 			if "svg" in dir(self) and self.svg:
