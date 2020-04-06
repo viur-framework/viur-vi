@@ -37,10 +37,11 @@ class Icon(html5.Div):
 		self.appendChild(self.modulIcon)
 
 	def onError(self, event):
-		self.modulIcon.removeAllChildren()
-		self.modulIcon["style"]["background"] = None
-
+		self.removeChild(self.modulIcon)
+		self.modulIcon = html5.I()
+		self.modulIcon.addClass( "i" )
 		self.modulIcon.appendChild(self._descr[:1])
+		self.appendChild( self.modulIcon )
 
 
 
