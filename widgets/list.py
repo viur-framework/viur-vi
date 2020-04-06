@@ -164,13 +164,9 @@ class ListWidget(html5.Div):
 		'''
 
 		self.targetPage = self.currentPage+page
-		print(self.targetPage)
-		print(self.loadedPages)
-		print(self.targetPage > self.loadedPages)
+
 		if self.targetPage > self.loadedPages:
-			print("AAA")
 			self.onNextBatchNeeded()
-		print("CCC")
 
 	def onRequestingFinished(self,*args,**kwargs):
 		pass
@@ -552,9 +548,6 @@ class ViewportListWidget(ListWidget):
 			page = self.loadedPages
 		elif page<0:
 			page = 0
-		print("RRRRR")
-		print(page)
-		print(self.currentPage)
 
 		start = page * self._batchSize
 		end = (page + 1) * self._batchSize
