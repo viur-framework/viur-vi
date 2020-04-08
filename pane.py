@@ -200,7 +200,7 @@ class Pane(html5.Div):
 		if disableOtherWidgets:
 			for w in self.widgetsDomElm.children():
 				w.disable()
-
+		widget["class"].append("vi-operator")
 		self.widgetsDomElm.appendChild(widget)
 		self.rebuildChildrenClassInfo()
 
