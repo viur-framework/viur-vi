@@ -54,7 +54,7 @@ class SelectTable( html5.ignite.Table ):
 
 		self.indexes = indexes
 		self.indexes_col = 0 if indexes else -1
-
+		self.currentCols = 0 # amount of current Columns
 		self._checkboxes = {} # The checkbox items per row (better to use a dict!)
 		self.checkboxes = checkboxes
 		self.checkboxes_col = (self.indexes_col + 1) if checkboxes else -1
@@ -448,7 +448,8 @@ class SelectTable( html5.ignite.Table ):
 		"""
 		Drops content from the table, structure remains unchanged
 		"""
-
+		if not self.currentCols:
+			return 0
 		for row in range(0,self.getRowCount()):
 			for col in range(0,self.currentCols+1):
 				self.setCell(row,col,"")
@@ -534,6 +535,7 @@ class DataTable( html5.Div ):
 		self._isAjaxLoading = False # Determines if we already requested the next batch of rows
 		self._dataProvider = None # Which object to call if we need more data
 		self._cellRender = {} # Map of renders for a given field
+		self._renderedModel = [] #save already rendered Field (used to rebuild Table if new Fields were selected
 		# We re-emit some events with custom parameters
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
@@ -608,8 +610,10 @@ class DataTable( html5.Div ):
 			Adds multiple rows at once.
 			Much faster than calling add() multiple times.
 		"""
-		self.table.prepareGrid(len(objList), len(self._shownFields))
+		#self.table.prepareGrid(len(objList), len(self._shownFields))
+		self.table.fastGrid(len(objList), len(self._shownFields))
 		for obj in objList:
+			self._renderedModel.append( { } )
 			if writeToModel:
 				obj["_uniqeIndex"] = self._modelIdx
 				self._modelIdx += 1
@@ -619,7 +623,10 @@ class DataTable( html5.Div ):
 			if "is-loading" in self.table["class"]:
 				self.table.removeClass("is-loading")
 
+		self.table.tableChangedEvent.fire( self, self.getRowCount() )
+
 	def extend(self, objList,writeToModel=True):
+
 		self.update(objList,writeToModel=writeToModel)
 
 	def remove(self, objOrIndex):
@@ -646,7 +653,7 @@ class DataTable( html5.Div ):
 		if not keepModel:
 			self._model = []
 
-	def _renderObject(self, obj, tableIsPrepared=False):
+	def _renderObject(self, obj, tableIsPrepared=False, recalculate=True):
 		"""
 			Renders the object to into the table.
 			Does nothing if the list of _shownFields is empty.
@@ -663,25 +670,31 @@ class DataTable( html5.Div ):
 			self.table.prepareCol( rowIdx, len( self._shownFields ) - 1 )
 
 		for field in self._shownFields:
-			if field in self._cellRender.keys():
-				lbl = self._cellRender[ field ].render( obj, field )
-			elif field in obj.keys():
-				lbl = html5.Div(obj[field])
+			if not recalculate and rowIdx<len(self._renderedModel) and field in self._renderedModel[rowIdx] and self._renderedModel[rowIdx][field]:
+				lbl = self._renderedModel[rowIdx][field]
 			else:
-				lbl = html5.Div("...")
-			lbl.addClass("ignt-table-content")
+				if field in self._cellRender.keys():
+					lbl = self._cellRender[ field ].render( obj, field )
+				elif field in obj.keys():
+					lbl = html5.Div(obj[field])
+				else:
+					lbl = html5.Div("...")
+				lbl.addClass("ignt-table-content")
+				self._renderedModel[rowIdx][field] = lbl
+
 			self.table.setCell( rowIdx, cellIdx, lbl )
 			cellIdx += 1
 
-	def rebuildTable(self):
+	def rebuildTable(self, recalculate=True):
 		"""
 			Rebuilds the entire table.
 			Useful if something fundamental changed (ie. the cell renderer or the list of visible fields)
 		"""
 		self.clear( keepModel=True )
-		self.table.prepareGrid( len(self._model), len(self._shownFields))
+		#self.table.prepareGrid( len(self._model), len(self._shownFields))
+		self.table.fastGrid( len(self._model), len(self._shownFields))
 		for obj in self._model:
-			self._renderObject( obj, tableIsPrepared=True )
+			self._renderObject( obj, tableIsPrepared=True, recalculate=recalculate )
 
 	def setShownFields(self,fields):
 		"""
@@ -692,7 +705,8 @@ class DataTable( html5.Div ):
 			:type fields: list
 		"""
 		self._shownFields = fields
-		self.rebuildTable()
+		self.rebuildTable(recalculate=True) #we only add or remove new rows, dont recalculate existing values
+		self.table.tableChangedEvent.fire( self, self.getRowCount() )
 
 	def onSelectionChanged( self, table, rows ):
 		"""
@@ -736,7 +750,8 @@ class DataTable( html5.Div ):
 		else:
 			assert "render" in dir(render), "The render must provide a 'render' method"
 			self._cellRender[ field ] = render
-		self.rebuildTable()
+
+		#self.rebuildTable()
 
 	def setCellRenders(self, renders ):
 		"""
@@ -751,7 +766,8 @@ class DataTable( html5.Div ):
 			else:
 				assert "render" in dir(render), "The render must provide a 'render' method"
 				self._cellRender[ field ] = render
-		self.rebuildTable()
+
+		#self.rebuildTable()
 
 	def activateCurrentSelection(self):
 		"""
@@ -768,33 +784,6 @@ class ViewportDataTable(DataTable):
 		super(ViewportDataTable, self).__init__(_loadOnDisplay,*args,**kwargs)
 		self._rows = rows
 
-	def _renderObject(self, obj, tableIsPrepared=False):
-		"""
-			Renders the object to into the table.
-			Does nothing if the list of _shownFields is empty.
-			:param obj: Dictionary of values for this row
-			:type obj: dict
-		"""
-		if not self._shownFields:
-			return
-
-		rowIdx = self._model.index(obj)
-		cellIdx = 0
-
-		if not tableIsPrepared:
-			self.table.prepareCol( rowIdx, len( self._shownFields ) - 1 )
-
-		for field in self._shownFields:
-			if field in self._cellRender.keys():
-				lbl = self._cellRender[ field ].render( obj, field )
-			elif field in obj.keys():
-				lbl = html5.Div(obj[field])
-			else:
-				lbl = html5.Div("...")
-			lbl.addClass("ignt-table-content")
-			self.table.setCell( rowIdx, cellIdx, lbl )
-			cellIdx += 1
-
 	def clear(self, keepModel=False):
 		"""
 			Flushes the whole table.
@@ -805,7 +794,7 @@ class ViewportDataTable(DataTable):
 		if not keepModel:
 			self._model = []
 
-	def rebuildTable(self):
+	def rebuildTable(self , recalculate=True):
 		"""
 			Rebuilds the entire table.
 			Useful if something fundamental changed (ie. the cell renderer or the list of visible fields)#
@@ -814,16 +803,15 @@ class ViewportDataTable(DataTable):
 			- uses the predefined _rows to prepare the grid
 			- only load first rows from model
 		"""
-
 		self.clear( keepModel=True )
 
 		if not self.table.getRowCount() == self._rows or not self.table.currentCols == len(self._shownFields):
 			self.table.clear()
-			self.table.prepareGrid( self._rows, len(self._shownFields))
+			self.table.fastGrid( self._rows, len(self._shownFields), createHidden = True) #at the beginning all rows are hidden
 
 		for idx, obj in enumerate(self._model):
 			if idx < self._rows:
-				self._renderObject( obj, tableIsPrepared=True )
+				self._renderObject( obj, tableIsPrepared=True, recalculate=recalculate )
 
 
 	def add(self, obj):
@@ -857,7 +845,9 @@ class ViewportDataTable(DataTable):
 
 		"""
 		self.table.dropTableContent()
+
 		for obj in objList:
+			self._renderedModel.append( { } )
 			if writeToModel:
 				obj["_uniqeIndex"] = self._modelIdx
 				self._modelIdx += 1
@@ -867,10 +857,11 @@ class ViewportDataTable(DataTable):
 			if "is-loading" in self.table["class"]:
 				self.table.removeClass("is-loading")
 
+
+
 		self.table.tableChangedEvent.fire( self, self.getRowCount())
 
-
-	def _renderObject(self, obj, tableIsPrepared=True):
+	def _renderObject(self, obj, tableIsPrepared=True, recalculate=True):
 		"""
 			Renders the object to into the table.
 			Does nothing if the list of _shownFields is empty.
@@ -886,14 +877,21 @@ class ViewportDataTable(DataTable):
 
 		rowIdx = self._model.index(obj) % self._rows
 		cellIdx = 0
-		print(rowIdx)
+
 		for field in self._shownFields:
-			if field in self._cellRender.keys():
-				lbl = self._cellRender[ field ].render( obj, field )
-			elif field in obj.keys():
-				lbl = html5.Div(obj[field])
+			if not recalculate and rowIdx<len(self._renderedModel) and field in self._renderedModel[rowIdx] and self._renderedModel[rowIdx][field]:
+				lbl = self._renderedModel[rowIdx][field]
 			else:
-				lbl = html5.Div("...")
-			lbl.addClass("ignt-table-content")
+
+				if field in self._cellRender.keys():
+					lbl = self._cellRender[ field ].render( obj, field )
+				elif field in obj.keys():
+					lbl = html5.Div(obj[field])
+				else:
+					lbl = html5.Div("...")
+				lbl.addClass("ignt-table-content")
+				self._renderedModel[ rowIdx ][ field ] = lbl
+
+			self.table.getTrByIndex(rowIdx).removeClass("is-hidden") #unhide used rows
 			self.table.setCell( rowIdx, cellIdx, lbl )
 			cellIdx += 1
