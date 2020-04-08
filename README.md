@@ -6,7 +6,7 @@
 
 This is the current development version 3.0 of the Vi which aims to be running both with [ViUR 2](https://github.com/viur-framework/server) and [ViUR 3](https://github.com/viur-framework/viur-core). 
 
-This program is now entirely established on [Pyodide](https://github.com/iodide-project/pyodide), the official Python 3.7 interpreter compiled to WebAssembly. Therefore it is necessary to "install" Pyodide as described below.
+This program is now entirely built on [Pyodide](https://github.com/iodide-project/pyodide), the official Python 3.7 interpreter compiled to WebAssembly. Therefore it is necessary to "install" Pyodide as described below.
 
 ## Usage
 
@@ -18,7 +18,7 @@ After cloning or extracting Vi, run
 get-pyodide.py
 ```
 
-to download and install the latest Pyodide version as WebAssembly runtime environment.
+to download and install the latest Pyodide version as a WebAssembly runtime environment.
 
 When you add or remove any files from the Vi repo, don't forget to call
 
@@ -26,11 +26,11 @@ When you add or remove any files from the Vi repo, don't forget to call
 gen-files-json.py
 ```
 
-to rebuild the file `files.json` which is used to pre-fetch the Vi into Pyodide. Latter one is also necessary when writing Vi-Plugins. See viur-base for a detailed and pre-configured setup.
+to rebuild the file `files.json` which is used to pre-fetch the Vi into Pyodide. This is also necessary when writing Vi-Plugins. See viur-base for a detailed and pre-configured setup.
 
 ## Contributing
 
-We take a great interest in your opinion about ViUR. We appreciate your feedback and are looking forward to hear about your ideas. Share your visions or questions with us and participate in ongoing discussions.
+We take great interest in your opinion about ViUR. We appreciate your feedback and are looking forward to hear about your ideas. Share your vision or questions with us and participate in ongoing discussions.
 
 - [ViUR](https://www.viur.dev)
 - [#ViUR on freenode IRC](https://webchat.freenode.net/?channels=viur)
