@@ -192,7 +192,7 @@ class Tasks(Button):
 		self.sinkEvent("onClick")
 		self.hide()
 		self.addClass("btn vi-tb-tasks")
-		self.appendChild(html5.TextNode(translate("System Configuration")))
+		self.appendChild(html5.TextNode(translate("System")))
 
 		if not conf[ "tasks" ][ "server" ]:
 			NetworkService.request( None, "/vi/_tasks/list",
