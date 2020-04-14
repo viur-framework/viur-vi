@@ -1621,6 +1621,10 @@ html {
 	position: relative;
 }
 
+.has-multiple-children .vi-operator {
+	width: 50%;
+}
+
 .vi-pane {
 	display: none;
 }
@@ -1740,6 +1744,25 @@ html {
 	margin: 5px 0;
 	width: 100%;
 	text-align: center;
+}
+
+.btn > .logo {
+	align-self: center;
+	width: 1.3em;
+	height: 1.3em;
+}
+
+.btn > .logo:first-child {
+	margin-left: -0.2em;
+	margin-right: 0.25em;
+}
+
+.btn--small {
+	font-size: 0.8em;
+}
+
+.btn--small > .logo:first-child {
+	margin-right: 0.15em;
 }
 
 .btn.is-busy .icon rect,
@@ -3526,7 +3549,7 @@ a.item:focus,
 	pointer-events: none;
 }
 
-.vi-accordion-segment.is-active .vi-accordion-title .icon,
+.vi-accordion-segment.is-active > .vi-accordion-legend > .vi-accordion-title .icon,
 .vi-accordion-segment:target .vi-accordion-title .icon {
 	transform: rotate(90deg);
 }
@@ -3539,7 +3562,7 @@ a.item:focus,
 	overflow: hidden;
 }
 
-.vi-accordion-segment.is-active .vi-accordion-section,
+.vi-accordion-segment.is-active > .vi-accordion-section,
 .vi-accordion-segment:target .vi-accordion-section {
 	display: block;
 }
@@ -4895,6 +4918,18 @@ a.vi-login-btn:focus {
 
 .vi-relation-selectioncontainer {
 	flex-basis: 100%;
+}
+
+.vi-relation-selectioncontainer button.btn {
+	align-self: baseline;
+}
+
+.vi-relation-selectioncontainer .vi-tree-labelwrapper > .ignt-label {
+	white-space: normal;
+}
+
+.vi-tree-selectioncontainer-entry .vi-tree-labelwrapper > button.btn {
+	align-self: baseline;
 }
 
 .vi-bone--relational .vi-relation-selectioncontainer,
