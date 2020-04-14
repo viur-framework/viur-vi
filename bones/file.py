@@ -168,11 +168,13 @@ class FileBone(RelationalBone):
 		super().__init__( srcModule, boneName, readOnly, destModule,
 						  format, using, usingDescr,
 						  relskel, context, multiple, params, *args, **kwargs )
-		self.sinkEvent( "onDragOver", "onDrop" )
-		self.addClass( "vi-bone-container supports-upload" )
+
+		self.addClass( "vi-bone-container" )
 		self[ "title" ] = translate( "vi.tree.drag-here" )
 		self.currentSelector = None
-		if params and "vi.directupload" in params and params[ "vi.directupload" ]:
+		if params and "vi.style" in params and params[ "vi.style" ]=="directupload":
+			self.sinkEvent( "onDragOver", "onDrop" )
+			self.addClass("supports-upload")
 			addbtn = AddLeafAction()
 			addbtn[ "class" ] = "bar-item btn btn--upload btn--add"
 			addbtn.filebone = self
