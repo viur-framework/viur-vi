@@ -15,6 +15,8 @@ class Button(html5.ext.Button):
 	def resetIcon( self ):
 		if self.svg:
 			self.element.innerHTML = self.svg + self["title"]
+		else:
+			self.element.innerHTML = self[ "title" ]
 
 	def setIcon( self,icon ):
 		if not icon:
