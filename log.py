@@ -97,7 +97,7 @@ class LogButton(html5.Div):
 		self["class"] = ["popout-opener", "popout-anchor", "popout--sw"]
 
 
-		self.logbtn = Button(icon="icons-diagnosis", className="btn btn--topbar btn--log")
+		self.logbtn = Button(icon="icons-time", className="btn btn--topbar btn--log")
 		self.appendChild(self.logbtn)
 
 		popout = html5.Div()
