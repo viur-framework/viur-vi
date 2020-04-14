@@ -411,13 +411,15 @@ class ListWidget(html5.Div):
 		fields = [x for x in fields if x in tmpDict.keys()]
 		self.columns = fields
 
-		self.table.setShownFields(fields)
+
 
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			delegateFactory = viewDelegateSelector.select( self.module, boneName, tmpDict )( self.module, boneName, tmpDict )
 			self.table.setCellRender( boneName, delegateFactory )
 			boneInfoList.append( boneInfo )
+
+		self.table.setShownFields( fields )
 
 		if conf["showBoneNames"]:
 			self.table.setHeader(fields)
@@ -526,11 +528,6 @@ class ViewportListWidget(ListWidget):
 		if self.targetPage<0:
 			self.targetPage = 0
 
-		print("ZZZ")
-		print(self.targetPage)
-		print(self.loadedPages)
-
-
 		if self.targetPage > self.loadedPages:
 			self.onNextBatchNeeded()
 			return  # waiting till pages loaded
@@ -568,7 +565,7 @@ class ViewportListWidget(ListWidget):
 
 	@staticmethod
 	def canHandle(moduleName, moduleInfo):
-		return moduleInfo["handler"] == "list" or moduleInfo["handler"].startswith("list.")
+		return moduleInfo["handler"] == "list.viewport" or moduleInfo["handler"].startswith("list.viewport.")
 
 	@staticmethod
 	def render(moduleName, adminInfo, context=None):
@@ -591,5 +588,5 @@ class ViewportListWidget(ListWidget):
 		                          autoload=autoload,
 		                          filterDescr=filterDescr)
 
-moduleHandlerSelector.insert(-1 , ViewportListWidget.canHandle, ViewportListWidget.render)
+moduleHandlerSelector.insert(10, ViewportListWidget.canHandle, ViewportListWidget.render)
 
