@@ -10,7 +10,7 @@ from vi.widgets.accordion import Accordion
 class InternalEdit(html5.Div):
 
 	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False,
-	                        context=None, defaultCat="", module = None):
+	                        context=None, defaultCat="", module = None,boneparams = None):
 		super(InternalEdit, self).__init__()
 
 		self.addClass("vi-internaledit")
@@ -23,6 +23,7 @@ class InternalEdit(html5.Div):
 		self.defaultCat = defaultCat
 		self.context = context
 		self.module = module
+		self.boneparams = boneparams
 
 		self.accordion = None
 
@@ -117,8 +118,11 @@ class InternalEdit(html5.Div):
 			if not bone["visible"]:
 				self.containers[key].hide()
 
-		if firstCat:
-			firstCat.activate()
+		print(self.boneparams)
+		if self.boneparams and "vi.style.rel.categories" in self.boneparams and self.boneparams["vi.style.rel.categories"] == "collapsed":pass
+		else:
+			if firstCat:
+				firstCat.activate()
 
 	def serializeForPost(self, validityCheck = False):
 		res = {}
