@@ -294,15 +294,21 @@ class GroupPane(Pane):
 
 		self.unlock()
 
+	def DeferredLoadChildren( self,delay=1000 ):
+		if not self.childPanes:
+			self.lock()
+			if not delay:
+				self.loadChildren()
+			else:
+				DeferredCall(self.loadChildren, _delay=delay)
+
 	def onClick(self, event = None, *args, **kwargs):
 		if not self.childDomElem:
 			self.childDomElem = html5.Ul()
 			self.childDomElem["style"]["display"] = "none"
 			self.appendChild(self.childDomElem)
 
-		if not self.childPanes:
-			self.lock()
-			DeferredCall(self.loadChildren, _delay=100)
+		self.DeferredLoadChildren()
 
 		if self.isExpanded:
 			self.collapse()

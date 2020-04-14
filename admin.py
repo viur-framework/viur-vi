@@ -222,6 +222,10 @@ class AdminScreen(Screen):
 		for name, idx, pane in panes:
 			self.addPane(pane)
 
+		if not currentActiveGroup:
+			for group in moduleGroups:
+				groupPanes[ group[ "prefix" ] ].DeferredLoadChildren( 0 )
+
 		# Finalizing!
 		viInitializedEvent.fire()
 		DeferredCall(self.checkInitialHash)
