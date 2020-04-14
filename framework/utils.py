@@ -15,9 +15,16 @@ class DeferredCall( object ):
 		"""
 		super( DeferredCall, self ).__init__()
 		delay = 25
+		self._callback = None
+
 		if "_delay" in kwargs.keys():
 			delay = kwargs["_delay"]
 			del kwargs["_delay"]
+
+		if "_callback" in kwargs.keys():
+			self._callback = kwargs["_callback"]
+			del kwargs["_callback"]
+
 		self._tFunc = func
 		self._tArgs = args
 		self._tKwArgs = kwargs
@@ -28,3 +35,5 @@ class DeferredCall( object ):
 			Internal callback that executes the callback function
 		"""
 		self._tFunc( *self._tArgs, **self._tKwArgs )
+		if self._callback:
+			self._callback(self)

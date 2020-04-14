@@ -543,6 +543,7 @@ class SelectFieldsPopup( html5.ext.Popup ):
 
 	def doApply(self, *args, **kwargs):
 		self.applyBtn.addClass("is-loading")
+		self.applyBtn.setIcon("icons-loader")
 		self.applyBtn["disabled"] = True
 
 		res = []
@@ -559,7 +560,13 @@ class SelectFieldsPopup( html5.ext.Popup ):
 		self.applyBtn["class"].append("is_loading")
 		self.applyBtn["disabled"] = True
 
-		self.listWdg.setFields( res )
+		DeferredCall(self.listWdg.setFields, res, _delay=100, _callback=self.doSetFields)
+		#self.listWdg.setFields( res )
+		#self.applyBtn.resetIcon()
+		#self.close()
+
+	def doSetFields( self,*args,**kwargs ):
+		self.applyBtn.resetIcon()
 		self.close()
 
 	def doCancel(self, *args, **kwargs):
@@ -703,7 +710,7 @@ class TableItems(html5.Div):
 
 		pages = self.currentModule.loadedPages
 		currentpage = self.currentModule.currentPage
-		print(table._model)
+		#print(table._model)
 		if table._dataProvider:
 			#self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, loaded elements: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage )))
 			self.elementSpan = html5.Span(html5.TextNode(
