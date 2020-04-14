@@ -344,6 +344,10 @@ class ListWidget(html5.Div):
 			return( {k:v for k,v in self.filter.items()})
 		return( {} )
 
+
+	def updateEmptyNotification( self ):
+		pass
+
 	def onCompletion(self, req):
 		"""
 			Pass the rows received to the datatable.
@@ -372,7 +376,7 @@ class ListWidget(html5.Div):
 			else:
 				self.table["style"]["display"] = "none"
 				self.emptyNotificationDiv.addClass("is-active")
-
+				self.updateEmptyNotification()
 			return
 
 		self.table["style"]["display"] = ""
