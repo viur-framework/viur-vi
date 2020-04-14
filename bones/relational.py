@@ -207,7 +207,8 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			self.ie = InternalEdit(
 				using, data["rel"], errorInfo,
 			    readOnly = parent.readOnly,
-			    defaultCat = parent.usingDescr
+			    defaultCat = parent.usingDescr,
+				boneparams = self.parent.params
 			)
 			self.ie.addClass("relationwrapper")
 			self.appendChild(self.ie)
@@ -513,17 +514,20 @@ class RelationalBone(html5.Div):
 								cacheable = True )
 
 	def formatValue( self,entity,structure ):
+		if self.using:
+			emptyUsing = {k:"" for k,v in self.using}
+		else:
+			emptyUsing = {}
+
 		res = (utils.formatString(
-					utils.formatString(
-						self.format,
-						entity,
-						structure,
-						prefix = [ "dest" ],
-						language = conf[ "currentLanguage" ] ),
-				entity,
-				structure,
-				language = conf[ "currentLanguage" ] )
-			   or entity[ "key" ])
+					utils.formatString(self.format,
+									   entity, structure,
+									prefix=["dest"], language=conf["currentLanguage"]),
+									emptyUsing, self.using,
+									prefix=["rel"], language=conf["currentLanguage"])
+					or entity["key"]
+		)
+
 
 		return res
 
@@ -564,8 +568,7 @@ class RelationalBone(html5.Div):
 
 			matches = [ v for k, v in self.searchMap.items() if k.startswith( self.filter["search"] ) ]
 			matchlist = sum(matches,[])
-			print(matches)
-			print(matchlist)
+
 			if matchlist:
 				self.buildPreviewList( matchlist, data[ "structure" ] )
 			else:
