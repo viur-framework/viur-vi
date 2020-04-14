@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import re, datetime
+import re, datetime,json
 
 from vi import html5
 
@@ -47,7 +47,6 @@ class DateBoneExtractor(BaseBoneExtractor):
 
 		except:
 			return str(val)
-
 
 class DateViewBoneDelegate( object ):
 	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
@@ -110,14 +109,14 @@ class DateViewBoneDelegate( object ):
 		except: #Something got wrong parsing the date
 			return html5.Div(str(val))
 
-
 class DateEditBone( html5.Div ):
-	def __init__(self, moduleName, boneName, readOnly, date=True, time=True, *args, **kwargs ):
+	def __init__(self, moduleName, boneName, readOnly, date=True, time=True, params=None, *args, **kwargs ):
 		super( DateEditBone,  self ).__init__(*args, **kwargs)
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.hasdate = date
 		self.hastime = time
+		self.params = params
 		self.addClass("vi-bone-container")
 
 		if date:
@@ -141,6 +140,7 @@ class DateEditBone( html5.Div ):
 			#IE11
 			try:
 				self.timeinput["type"] = "time"
+				self.timeinput["step"] = "2"
 			except:
 				pass
 
@@ -154,7 +154,8 @@ class DateEditBone( html5.Div ):
 		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
 		date = skelStructure[ boneName ]["date"] if "date" in skelStructure[ boneName ].keys() else True
 		time = skelStructure[ boneName ]["time"] if "time" in skelStructure[ boneName ].keys() else True
-		return DateEditBone(moduleName, boneName, readOnly, date, time)
+		params = skelStructure[ boneName ][ "params" ] if "params" in skelStructure[ boneName ].keys() else None
+		return DateEditBone(moduleName, boneName, readOnly, date, time, params=params)
 
 	def unserialize(self, data, extendedErrorInformation=None):
 		if data.get(self.boneName):
@@ -173,9 +174,33 @@ class DateEditBone( html5.Div ):
 					self.timeinput["value"]=dateobj.strftime("%H:%M:%S")
 
 				except ValueError:
-					self.dateinput["value"] = "-"
-					self.timeinput["value"] = "-"
+					self.dateinput[ "value" ] = "-"
+					self.timeinput[ "value" ] = "-"
+		else:
+			if self.params and "prefill" in self.params and self.params[ "prefill" ]:
+				'''
+					use string "now" for currentDate
+					or timedelta params to define relative dates
+					i.e: {"days":-2}
+				'''
+				startDate = datetime.datetime.now()
+				if self.params[ "prefill" ] != "now":
+					try:
+						startDate = startDate + datetime.timedelta( **self.params[ "prefill" ] )
+					except:
+						self.dateinput[ "value" ] = "-"
+						self.timeinput[ "value" ] = "-"
+						return 0
 
+				if self.hasdate:
+					self.dateinput[ "value" ] = startDate.strftime( "%Y-%m-%d" )
+
+				if self.hastime:
+					self.timeinput[ "value" ] = startDate.strftime( "%H:%M:%S" )
+
+			else:
+				self.dateinput[ "value" ] = "-"
+				self.timeinput[ "value" ] = "-"
 	def serializeForPost(self):
 		#[day, month, year, hour, min, sec]
 		adatetime=["00","00","0000","00","00","00"]
