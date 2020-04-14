@@ -41,6 +41,7 @@ class AutocompleteList(html5.Div):
 		self._suggestionContainer = html5.Div()
 		self._suggestionContainer["style"]["position"] = "absolute"
 		self._suggestionContainer["style"]["background-color"] = "white"
+		self._suggestionContainer["style"]["width"] = "100%"
 		self._suggestionContainer.hide()
 
 		self.suggestionList = html5.Ul()
@@ -98,12 +99,8 @@ class AutocompleteList(html5.Div):
 		self.suggestionList.appendChild(item)
 
 	def updateContainer( self ):
-		print("UPDATE")
-		inputPos = self.input.element.getBoundingClientRect()
-		print(inputPos.right)
-		print(inputPos.left)
-		print("%spx" % (inputPos.right - inputPos.left))
-		self._suggestionContainer[ "style" ][ "width" ] = "%spx" % (inputPos.right - inputPos.left)
+		#inputPos = self.input.element.getBoundingClientRect()
+		#self._suggestionContainer[ "style" ][ "width" ] = "%spx" % (inputPos.right - inputPos.left)
 		self._suggestionContainer[ "style" ][ "z-index" ] = 9999
 		self._suggestionContainer[ "style" ][ "box-shadow" ] = "0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2)"
 		self._suggestionContainer[ "style" ][ "max-height" ] = "255px"
@@ -111,8 +108,6 @@ class AutocompleteList(html5.Div):
 		self._suggestionContainer[ "style" ][ "overflow" ] = "hidden"
 
 	def setSelection( self,targetElement ):
-		print("SETSELECTION")
-
 		entry = [x for x in self.suggestionList.children() if x.element == targetElement]
 		if entry:
 			entry = entry[0]
@@ -125,7 +120,7 @@ class AutocompleteList(html5.Div):
 			return 0
 
 		data = self._dataProvider.dataList[entry["data"]["value"]]
-		print(data)
+
 		self.input["value"] = entry.element.innerHTML
 		self.currentSelection = data
 		self._dataProvider.selectionupdate()
