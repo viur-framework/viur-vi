@@ -150,7 +150,7 @@ class RelationalViewBoneDelegate(object):
 
 			res = ""
 
-		html5.utils.textToHtml(delegato, html5.utils.unescape(res))
+		html5.utils.textToHtml(delegato, res)
 		return delegato
 
 class RelationalMultiSelectionBoneEntry(html5.Div):

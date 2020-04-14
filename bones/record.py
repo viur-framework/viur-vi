@@ -114,7 +114,7 @@ class RecordViewBoneDelegate(object):
 
 			res = ""
 
-		html5.utils.textToHtml(lbl, html5.utils.unescape(res))
+		html5.utils.textToHtml(lbl,res)
 		return lbl
 
 

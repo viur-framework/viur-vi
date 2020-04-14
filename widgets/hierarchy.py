@@ -104,9 +104,9 @@ class HierarchyItem(html5.Li):
 				if "format" in moduleInfo.keys():
 					format = moduleInfo["format"]
 
-			self.appendChild(html5.utils.unescape(
+			self.appendChild(
 				utils.formatString(format, self.data, self.structure,
-				    language=conf["currentLanguage"])))
+				    language=conf["currentLanguage"]))
 
 	def onDragOver(self, event):
 		"""
