@@ -179,7 +179,7 @@ class StringEditBone(html5.Div):
 		if params and "vi.style" in params and params[ "vi.style" ] == "translation":
 			self.translationView = True
 
-		if params and "vi.style.visibleItems" in params and params["vi.style.visibleItems"] == "":
+		if params and "vi.style.visibleItems" in params and params["vi.style.visibleItems"]:
 			self.visibleItems = params["vi.style.visibleItems"]
 		else:
 			self.visibleItems = 99
