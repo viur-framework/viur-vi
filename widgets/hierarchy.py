@@ -323,7 +323,7 @@ class HierarchyWidget(html5.Div):
 
 	def setListView( self,visible=False ):
 		if visible:
-			self[ "style" ][ "width" ] = "33%"
+			self[ "style" ][ "width" ] = "50%"
 			self.listviewActive = True
 			self.showListView()
 			return
