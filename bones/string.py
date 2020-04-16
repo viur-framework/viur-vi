@@ -122,6 +122,7 @@ class Tag(html5.Span):
 
 	def onDelBtnClick(self, *args, **kwargs):
 		self.parent().removeChild(self)
+		self.parentBone.updateItems()
 
 	def focus(self):
 		self.input.focus()
@@ -159,6 +160,7 @@ class Tag(html5.Span):
 
 
 class StringEditBone(html5.Div):
+
 	def __init__(self, moduleName, boneName, readOnly, multiple=False, languages=None, multiLine=False, params=None, *args,
 	             **kwargs):
 		super(StringEditBone, self).__init__(*args, **kwargs)
@@ -176,6 +178,11 @@ class StringEditBone(html5.Div):
 		self.translationView = False
 		if params and "vi.style" in params and params[ "vi.style" ] == "translation":
 			self.translationView = True
+
+		if params and "vi.style.visibleItems" in params and params["vi.style.visibleItems"] == "":
+			self.visibleItems = params["vi.style.visibleItems"]
+		else:
+			self.visibleItems = 99
 
 		if self.languages and self.multiple:
 			self.addClass("is-translated")
@@ -266,6 +273,7 @@ class StringEditBone(html5.Div):
 			self.setLang( noDefaultLangs[ 0 ] )
 
 		elif not self.languages and self.multiple:
+			self.showall = False
 			self.addClass("is-multiple")
 			self.tagContainer = html5.Div()
 			self.tagContainer.addClass("vi-bone-tagcontainer")
@@ -277,6 +285,11 @@ class StringEditBone(html5.Div):
 				addBtn.addClass("btn--add")
 
 				self.tagContainer.appendChild(addBtn)
+
+			self.more = Button("mehr",callback = self.toggleContent)
+			#self.more.addClass("is-hidden")
+			self.appendChild(self.more)
+			self.updateItems()
 
 		else:  # not languages and not multiple:
 
@@ -292,6 +305,43 @@ class StringEditBone(html5.Div):
 
 			if self.readOnly:
 				self.input["readonly"] = True
+
+	def updateItems( self ):
+		counter = 0
+		for idx, child in enumerate(self.tagContainer._children):
+			if isinstance( child, Tag ):
+				counter+=1
+				if self.showall:
+					child.removeClass( "is-hidden" )
+				else:
+					if idx > self.visibleItems:
+						child.addClass( "is-hidden" )
+					else:
+						child.removeClass( "is-hidden" )
+
+		if counter>self.visibleItems:
+			if self.showall:
+				self.more.setText( "weniger" )
+			else:
+				self.more.setText( "mehr (%s)" % (counter - self.visibleItems) )
+		else:
+			self.more.setText("mehr")
+
+		if counter>self.visibleItems and self.more.hasClass("is-hidden"):
+			self.more.removeClass( "is-hidden" )
+		elif counter <=self.visibleItems:
+			self.more.addClass("is-hidden")
+
+
+
+	def toggleContent( self,btn ):
+		self.showall = not self.showall
+		self.updateItems()
+
+
+
+
+
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
@@ -368,8 +418,10 @@ class StringEditBone(html5.Div):
 				btn.removeClass("is-active")
 
 	def onBtnGenTag(self, btn):
+		self.showall = True
 		tag = self.genTag("", lang=btn.lang)
 		tag.focus()
+		self.updateItems()
 
 	def unserialize(self, data, extendedErrorInformation=None):
 		data = data.get(self.boneName)
@@ -420,6 +472,7 @@ class StringEditBone(html5.Div):
 			else:
 				self.genTag(html5.utils.unescape(data))
 
+			self.updateItems()
 		else:
 			if data is None:
 				data = ""

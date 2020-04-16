@@ -186,14 +186,6 @@ class ListWidget(html5.Div):
 		"""
 		defaultActions = ["add", "selectfields"]
 
-		if self.selectMode == "multi":
-			defaultActions += ["|", "selectall", "unselectall", "selectinvert"]
-
-		if self.selectMode:
-			defaultActions += ["|", "select","close"]
-
-		defaultActions += ["|",  "reload", "setamount", "intpreview", "selectfilter"] #"pagefind",  "loadnext",
-
 		#if not self.selectMode:
 		#	defaultActions += ["|", "exportcsv"]
 
@@ -214,13 +206,21 @@ class ListWidget(html5.Div):
 
 				defaultActions.extend( cfg["actions"] )
 
+		if self.selectMode == "multi":
+			defaultActions += ["|", "selectall", "unselectall", "selectinvert"]
+
+		if self.selectMode:
+			defaultActions += ["|", "select","close"]
+
+		defaultActions += ["|",  "reload", "setamount", "intpreview", "selectfilter"] #"pagefind",  "loadnext",
+
 		return defaultActions
 
 	def getDefaultEntryActions(self, view = None ):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
-		defaultActions = ["edit", "clone", "delete", "|", "preview"]
+		defaultActions = ["edit", "clone", "delete"]
 
 		# Extended actions from view?
 		if view and "actions" in view.keys():
@@ -234,11 +234,11 @@ class ListWidget(html5.Div):
 			cfg = conf["modules"][ self.module ]
 
 			if "entryActions" in cfg.keys() and cfg["entryActions"]:
-				if defaultActions[-1] != "|":
-					defaultActions.append( "|" )
+				#if defaultActions[-1] != "|":
+				#	defaultActions.append( "|" )
 
 				defaultActions.extend( cfg["entryActions"] )
-
+		defaultActions.extend(["|", "preview"])
 		return defaultActions
 
 	def showErrorMsg(self, req=None, code=None):
