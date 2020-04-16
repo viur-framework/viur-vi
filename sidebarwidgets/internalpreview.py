@@ -3,6 +3,8 @@ from vi import html5
 
 from vi.priorityqueue import viewDelegateSelector
 from vi.config import conf
+from vi.framework.components.button import Button
+from js import document
 
 class InternalPreview( html5.Ul ):
 	def __init__(self, module, structure, item, *args, **kwargs):
@@ -33,10 +35,34 @@ class InternalPreview( html5.Ul ):
 			self.ipdd = html5.Dd()
 			self.ipdd.addClass("vi-sb-intprev-descr")
 			delegateFactory = viewDelegateSelector.select(module, key, tmpDict)(module, key, tmpDict)
-			self.ipdd.appendChild(delegateFactory.render(item, key))
+
+			if key == "key":
+				keydiv = html5.Div()
+				keydiv["style"]["display"] ="inline-block"
+				copybtn = Button(txt="copy",callback = self.onCopyKey)
+
+				keyvaluediv = delegateFactory.render(item, key)
+				keyfield = html5.Input()
+				keyfield["value"] = item[key]
+				keyfield["style"]["opacity"] = 0
+				keyfield["style"]["position"] = "absolute"
+				keyfield["id"] = "keyfield"
+				keydiv.appendChild( keyfield )
+				keydiv.appendChild(keyvaluediv)
+				keydiv.appendChild( copybtn )
+				self.ipdd.appendChild(keydiv )
+			else:
+				self.ipdd.appendChild(delegateFactory.render(item, key))
 
 			self.ipdl.appendChild(self.ipdt)
 			self.ipdl.appendChild(self.ipdd)
 			self.ipli.appendChild(self.ipdl)
 
 			self.appendChild(self.ipli)
+
+	def onCopyKey( self,btn ):
+		akey = document.getElementById("keyfield")
+		akey.select()
+		akey.setSelectionRange(0, 99999)
+		document.execCommand("copy")
+
