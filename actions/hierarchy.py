@@ -34,8 +34,12 @@ class AddAction(Button):
 	def onClick(self, sender=None):
 		pane = Pane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_hierarchy", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
+		node = self.parent().parent().currentKey
+		if not node:
+			node = self.parent().parent().rootNode
+
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy,
-		                    node=self.parent().parent().rootNode,
+		                    node=node,
 		                    context=self.parent().parent().context)
 		pane.addWidget( edwg )
 		pane.focus()
