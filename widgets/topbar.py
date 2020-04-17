@@ -136,7 +136,7 @@ class UserState(html5.Div):
 			return
 
 		aitem = html5.Div()
-		aitem[ "class" ] = [ "item", "has-hover", "item--small item--info" ]
+		aitem[ "class" ] = [ "item", "has-hover", "item--small" ]
 		# userinfo
 		usrinfo = html5.Div()
 		usermail = html5.Span()

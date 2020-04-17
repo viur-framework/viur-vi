@@ -16,7 +16,7 @@ class AddAction(Button):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( AddAction, self ).__init__( translate("Add"), icon="icons-add", *args, **kwargs )
-		self["class"] = "bar-item btn btn--small <btn--primary"
+		self["class"] = "bar-item btn btn--small btn--primary"
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
