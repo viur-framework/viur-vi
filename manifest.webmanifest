@@ -2,7 +2,7 @@
   "name": "Vi",
   "short_name": "vi",
   "start_url": "/vi/s/main.html",
-  "display": "browser",
+  "display": "fullscreen",
   "theme_color": "#ffffff",
   "background_color":"#ffffff",
   "icons": [
