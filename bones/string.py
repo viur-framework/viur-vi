@@ -273,6 +273,7 @@ class StringEditBone(html5.Div):
 			self.setLang( noDefaultLangs[ 0 ] )
 
 		elif not self.languages and self.multiple:
+			self.addClass( "vi-bone-container-visibleItems" )
 			self.showall = False
 			self.addClass("is-multiple")
 			self.tagContainer = html5.Div()
