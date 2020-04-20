@@ -231,7 +231,10 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 			self.password.focus()
 
 	def doLoginFailure(self, req, code, *args, **kwargs):
-		alert("Failure %d" % int(code))
+		html5.ext.Alert(
+				translate("Failure %d" % int(code) ),
+				title = translate( "Login error" )
+				)
 
 	def onVerifyClick(self, sender = None):
 		if not self.otp["value"]:
@@ -432,7 +435,10 @@ class LoginScreen(Screen):
 				h.disable()
 
 	def onGetAuthMethodsFailure(self, *args, **kwargs):
-		alert("Fail")
+		html5.ext.Alert(
+				translate( "Fail"),
+				title = translate( "error" )
+				)
 
 	def redirectNoAdmin(self):
 		html5.window.top.location = "/"
