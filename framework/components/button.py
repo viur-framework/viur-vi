@@ -1,37 +1,57 @@
 from ... import html5
 from ...embedsvg import embedsvg
+from ...i18n import translate
 
-class Button(html5.ext.Button):
-	def __init__(self, txt=None, callback=None, className=None, icon = None, *args, **kwargs):
-		super(Button, self).__init__(txt=txt, callback=callback, className=className, *args, **kwargs)
+@html5.tag
+class Button(html5.Button):
+	def __init__(self, text=None, callback=None, className="", icon=None):
+		super(Button, self).__init__()
+		self.addClass("btn", className)
+		self.sinkEvent("onClick")
 		self.svg = None
-		if icon:
-			svg = embedsvg.get(icon)
-			self.svg = svg
-			if svg:
-				self.element.innerHTML = svg + self.element.innerHTML
 
+		if icon is not None:
+			self["icon"] = icon
 
-	def resetIcon( self ):
+		if text is not None:
+			self["text"] = text
+
+		self.callback = callback
+
+	def onBind(self, widget, name):
+		if self.callback is None:
+			funcName = "on" + name[0].upper() + name[1:] + "Click"
+			if funcName in dir(widget):
+				self.callback = getattr(widget, funcName)
+
+	def onClick(self, event):
+		event.stopPropagation()
+		event.preventDefault()
+
+		if self.callback is not None:
+			try:
+				self.callback(self)
+			except TypeError:
+				self.callback()
+
+	def resetIcon(self):
 		if self.svg:
 			self.element.innerHTML = self.svg + self["title"]
 		else:
-			self.element.innerHTML = self[ "title" ]
+			self.element.innerHTML = self["title"]
 
-	def setIcon( self,icon ):
+	def _setIcon(self, icon):
 		if not icon:
-			return 0
-		svg = embedsvg.get( icon )
+			return
+
+		svg = embedsvg.get(icon)
 		if svg:
 			self.element.innerHTML = svg + self["title"]
 
-	def setText(self, txt):
-		if txt is not None:
-			if "svg" in dir(self) and self.svg:
-				self.element.innerHTML = self.svg + txt
-			else:
-				self.element.innerHTML = txt
-			self["title"] = txt
+	def _setText(self, text):
+		if text is not None:
+			self.element.innerHTML = (self.svg or "") + translate(text)
+			self["title"] = text
 		else:
 			self.element.innerHTML = ""
 			self["title"] = ""
