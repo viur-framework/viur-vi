@@ -338,7 +338,7 @@ class ListPreviewAction(html5.Span):
 			if isinstance(self.urls, str):
 				newUrl = self.urls
 			elif len(self.urls.keys()) == 1:
-				newUrl = self.urls.values()[0]
+				newUrl = list(self.urls.values())[0]
 			else:
 				newUrl = self.urlCb["options"].item(self.urlCb["selectedIndex"]).value
 
@@ -346,8 +346,12 @@ class ListPreviewAction(html5.Span):
 						.replace( "{{modul}}", self.parent().parent().module)\
 							.replace("{{module}}", self.parent().parent().module)
 
+			if "updateParams" in conf and conf[ "updateParams" ]:
+				for k, v in conf[ "default_params" ].items():
+					newUrl = newUrl.replace( "{{%s}}"%k, v )
+
 			for k, v in entry.items():
-				newUrl = newUrl.replace("{{%s}}" % k, v)
+				newUrl = newUrl.replace("{{%s}}" % k, str(v))
 
 			newUrl = newUrl.replace("'", "\\'")
 
