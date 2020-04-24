@@ -199,8 +199,11 @@ class DateEditBone( html5.Div ):
 					self.timeinput[ "value" ] = startDate.strftime( "%H:%M:%S" )
 
 			else:
-				self.dateinput[ "value" ] = "-"
-				self.timeinput[ "value" ] = "-"
+				if self.hasdate:
+					self.dateinput[ "value" ] = "-"
+				if self.hastime:
+					self.timeinput[ "value" ] = "-"
+					
 	def serializeForPost(self):
 		#[day, month, year, hour, min, sec]
 		adatetime=["00","00","0000","00","00","00"]
