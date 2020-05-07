@@ -148,9 +148,9 @@ class UserState(html5.Div):
 		self.currentUser = user["key"] or None
 		self.addClass("vi-tb-accountmgnt")
 		try:
-			self.btn.setText( "%s. %s" %(user["firstname"][0],user["lastname"]))
+			self.btn["text"] = "%s. %s" % (user["firstname"][0], user["lastname"])
 		except:
-			self.btn.setText(user["name"])
+			self.btn["text"] = user["name"]
 
 	@staticmethod
 	def canHandle( action ):

@@ -18,7 +18,7 @@ class SaveContinue(Button):
 	def onClick(self, sender=None):
 		self[ "disabled" ] = True
 		self["class"].append("is-loading")
-		self.setIcon("icons-loader")
+		self["icon"] = "icons-loader"
 		self.parent().parent().doSave(closeOnSuccess=False)
 
 	def resetLoadingState(self):
@@ -41,7 +41,7 @@ class SaveSingleton(Button):
 	def onClick(self, sender=None):
 		self[ "disabled" ] = True
 		self["class"].append("is-loading")
-		self.setIcon( "icons-loader" )
+		self["icon"] =  "icons-loader"
 		self.parent().parent().doSave(closeOnSuccess=False)
 
 	def resetLoadingState(self):
@@ -64,7 +64,7 @@ class ExecuteSingleton(Button):
 	def onClick(self, sender=None):
 		self[ "disabled" ] = True
 		self["class"].append("is-loading")
-		self.setIcon( "icons-loader" )
+		self["icon"] =  "icons-loader"
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):
@@ -87,7 +87,7 @@ class SaveClose(Button):
 	def onClick(self, sender=None):
 		self[ "disabled" ] = True
 		self.addClass("is-loading")
-		self.setIcon( "icons-loader" )
+		self["icon"] = "icons-loader"
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):

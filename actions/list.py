@@ -547,7 +547,7 @@ class SelectFieldsPopup( html5.ext.Popup ):
 
 	def doApply(self, *args, **kwargs):
 		self.applyBtn.addClass("is-loading")
-		self.applyBtn.setIcon("icons-loader")
+		self.applyBtn["icon"] = "icons-loader"
 		self.applyBtn["disabled"] = True
 
 		res = []
