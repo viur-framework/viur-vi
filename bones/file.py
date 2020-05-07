@@ -10,7 +10,7 @@ from vi.i18n import translate
 from vi.network import NetworkService
 from vi.widgets.edit import EditWidget
 from vi.pane import Pane
-from vi.bones.base import BaseBoneExtractor
+from vi.bones.base import BaseViewBoneDelegate
 from vi.actions.file import AddLeafAction
 
 
@@ -31,7 +31,7 @@ class FileBoneExtractor(BaseBoneExtractor):
 		            (fileentry["dest"]["name"], html5.window.location.origin,
 		                url, str(fileentry["dest"]["name"])))
 
-	def render(self, data, field ):
+	def toString(self, data, field ):
 		assert field == self.boneName, "render() was called with field %s, expected %s" % (field,self.boneName)
 		val = data.get(field, "")
 
@@ -42,7 +42,7 @@ class FileBoneExtractor(BaseBoneExtractor):
 
 		return val
 
-class FileViewBoneDelegate(object):
+class FileViewBoneDelegate(BaseViewBoneDelegate):
 
 	def __init__(self, module, boneName, structure):
 		super(FileViewBoneDelegate, self).__init__()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from vi import html5
 
-from vi.priorityqueue import viewDelegateSelector
+from vi.priorityqueue import boneSelector
 from vi.config import conf
 from vi.framework.components.button import Button
 from js import document
@@ -34,14 +34,14 @@ class InternalPreview( html5.Ul ):
 
 			self.ipdd = html5.Dd()
 			self.ipdd.addClass("vi-sb-intprev-descr")
-			delegateFactory = viewDelegateSelector.select(module, key, tmpDict)(module, key, tmpDict)
+			boneFactory = boneSelector.select(module, key, tmpDict)(module, key, tmpDict)
 
 			if key == "key":
 				keydiv = html5.Div()
 				keydiv["style"]["display"] ="inline-block"
 				copybtn = Button(txt="copy",callback = self.onCopyKey)
 
-				keyvaluediv = delegateFactory.render(item, key)
+				keyvaluediv = boneFactory.render(item[key])
 				keyfield = html5.Input()
 				keyfield["value"] = item[key]
 				keyfield["style"]["opacity"] = 0
@@ -52,7 +52,7 @@ class InternalPreview( html5.Ul ):
 				keydiv.appendChild( copybtn )
 				self.ipdd.appendChild(keydiv )
 			else:
-				self.ipdd.appendChild(delegateFactory.render(item, key))
+				self.ipdd.appendChild(boneFactory.render(item[key]))
 
 			self.ipdl.appendChild(self.ipdt)
 			self.ipdl.appendChild(self.ipdd)

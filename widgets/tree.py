@@ -5,7 +5,7 @@ import vi.utils as utils
 from vi.network import NetworkService
 from vi.framework.components.actionbar import ActionBar
 from vi.framework.event import EventDispatcher
-from vi.priorityqueue import displayDelegateSelector, viewDelegateSelector, moduleHandlerSelector
+from vi.priorityqueue import displayDelegateSelector, boneSelector, moduleHandlerSelector
 from vi.config import conf
 from vi.i18n import translate
 from vi.embedsvg import embedsvg
@@ -61,10 +61,12 @@ class _StructureWidget(html5.Li):
 				params = boneInfo["params"]
 				if "frontend_default_visible" in params and params["frontend_default_visible"]:
 					structure = {k: v for k, v in self.structure}
-					wdg = viewDelegateSelector.select(self.module, boneName, structure)
+					wdg = boneSelector.select(self.module, boneName, structure)
 
 					if wdg is not None:
-						self.nodeHeadline.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
+						self.nodeHeadline.appendChild(
+							wdg(self.module, boneName, structure).toViewWidget(self.data[boneName])
+						)
 						hasDescr = True
 
 		# In case there is no bone configured for visualization, use a format-string

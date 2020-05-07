@@ -679,7 +679,7 @@ class DataTable( html5.Div ):
 
 		for field in self._shownFields:
 			if field in self._cellRender.keys():
-				lbl = self._cellRender[ field ].render( obj, field )
+				lbl = self._cellRender[field].toViewWidget(obj[field])
 			elif field in obj.keys():
 				lbl = html5.Div(obj[field])
 			else:

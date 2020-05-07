@@ -1,63 +1,24 @@
 # -*- coding: utf-8 -*-
-import re, datetime,json
+import re, datetime
 
 from vi import html5
 
-from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extractorDelegateSelector, extendedSearchWidgetSelector
+from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
 from vi.framework.event import EventDispatcher
 from vi.i18n import translate
 from vi.config import conf
-from vi.bones.base import BaseBoneExtractor
+from bones.base import BaseViewBoneDelegate
 
 
-class DateBoneExtractor(BaseBoneExtractor):
-
-	def render(self, data, field):
-		if not(self.boneName in self.skelStructure
-		        and data and data.get(field)):
-			return conf["emptyValue"]
-
-		structure = self.skelStructure[self.boneName]
-		val = data[field]
-
-		try:
-			if structure["date"] and structure["time"]:
-				try:
-					dt = datetime.datetime.strptime( val, "%d.%m.%Y %H:%M:%S")
-				except:
-					return "Error parsing Date"
-
-				return dt.strftime("%d.%m.%Y %H:%M:%S")
-
-			elif structure["date"] and not structure["time"]:
-				try:
-					dt = datetime.datetime.strptime( val, "%d.%m.%Y")
-				except:
-					return "Error parsing Date"
-
-				return dt.strftime("%d.%m.%Y")
-
-			elif not structure["date"] and structure["time"]:
-				try:
-					dt = datetime.datetime.strptime( val, "%H:%M:%S")
-				except:
-					return "Error parsing time"
-
-				return dt.strftime("%H:%M:%S")
-
-		except:
-			return str(val)
-
-class DateViewBoneDelegate( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( DateViewBoneDelegate, self ).__init__()
+class DateViewBoneDelegate(BaseViewBoneDelegate):
+	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
+		super(DateViewBoneDelegate, self).__init__()
 		self.skelStructure = skelStructure
 		self.boneName = boneName
 		self.moduleName = moduleName
 
-	def render( self, data, field ):
-
-		if not(self.boneName in self.skelStructure and data and data.get(field)):
+	def toWidget(self, data, field):
+		if not (self.boneName in self.skelStructure and data and data.get(field)):
 			return html5.Div(conf["emptyValue"])
 
 		structure = self.skelStructure[self.boneName]
@@ -74,10 +35,10 @@ class DateViewBoneDelegate( object ):
 				span.addClass("vi-delegato", "vi-delegato--datetime")
 				dateSpan = html5.Span()
 				dateSpan.addClass("date")
-				dateSpan.appendChild( html5.TextNode( dt.strftime("%d.%m.%Y") ))
+				dateSpan.appendChild(html5.TextNode(dt.strftime("%d.%m.%Y")))
 				timeSpan = html5.Span()
 				timeSpan.addClass("time")
-				timeSpan.appendChild( html5.TextNode( dt.strftime("%H:%M:%S") ))
+				timeSpan.appendChild(html5.TextNode(dt.strftime("%H:%M:%S")))
 				span.appendChild(dateSpan)
 				span.appendChild(timeSpan)
 
@@ -85,7 +46,7 @@ class DateViewBoneDelegate( object ):
 
 			elif structure["date"] and not structure["time"]:
 				try:
-					dt = datetime.datetime.strptime( val, "%d.%m.%Y")
+					dt = datetime.datetime.strptime(val, "%d.%m.%Y")
 				except:
 					return html5.TextNode(translate("Error parsing Date"))
 
@@ -103,15 +64,52 @@ class DateViewBoneDelegate( object ):
 
 				timeSpan = html5.Span()
 				timeSpan.addClass("vi-delegato", "vi-delegato--time")
-				timeSpan.appendChild( html5.TextNode(dt.strftime("%H:%M:%S")))
+				timeSpan.appendChild(html5.TextNode(dt.strftime("%H:%M:%S")))
 				return timeSpan
 
-		except: #Something got wrong parsing the date
+		except:  # Something got wrong parsing the date
 			return html5.Div(str(val))
 
-class DateEditBone( html5.Div ):
-	def __init__(self, moduleName, boneName, readOnly, date=True, time=True, params=None, *args, **kwargs ):
-		super( DateEditBone,  self ).__init__(*args, **kwargs)
+	def toString(self, data, field):
+		if not (self.boneName in self.skelStructure
+		        and data and data.get(field)):
+			return conf["emptyValue"]
+
+		structure = self.skelStructure[self.boneName]
+		val = data[field]
+
+		try:
+			if structure["date"] and structure["time"]:
+				try:
+					dt = datetime.datetime.strptime(val, "%d.%m.%Y %H:%M:%S")
+				except:
+					return "Error parsing Date"
+
+				return dt.strftime("%d.%m.%Y %H:%M:%S")
+
+			elif structure["date"] and not structure["time"]:
+				try:
+					dt = datetime.datetime.strptime(val, "%d.%m.%Y")
+				except:
+					return "Error parsing Date"
+
+				return dt.strftime("%d.%m.%Y")
+
+			elif not structure["date"] and structure["time"]:
+				try:
+					dt = datetime.datetime.strptime(val, "%H:%M:%S")
+				except:
+					return "Error parsing time"
+
+				return dt.strftime("%H:%M:%S")
+
+		except:
+			return str(val)
+
+
+class DateEditBone(html5.Div):
+	def __init__(self, moduleName, boneName, readOnly, date=True, time=True, params=None, *args, **kwargs):
+		super(DateEditBone, self).__init__(*args, **kwargs)
 		self.boneName = boneName
 		self.readOnly = readOnly
 		self.hasdate = date
@@ -122,7 +120,7 @@ class DateEditBone( html5.Div ):
 		if date:
 			self.dateinput = html5.ignite.Input()
 
-			#IE11
+			# IE11
 			try:
 				self.dateinput["type"] = "date"
 			except:
@@ -135,9 +133,9 @@ class DateEditBone( html5.Div ):
 				self.dateinput["readonly"] = True
 
 		if time:
-			self.timeinput=html5.ignite.Input()
+			self.timeinput = html5.ignite.Input()
 
-			#IE11
+			# IE11
 			try:
 				self.timeinput["type"] = "time"
 				self.timeinput["step"] = "2"
@@ -151,65 +149,65 @@ class DateEditBone( html5.Div ):
 
 	@staticmethod
 	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		date = skelStructure[ boneName ]["date"] if "date" in skelStructure[ boneName ].keys() else True
-		time = skelStructure[ boneName ]["time"] if "time" in skelStructure[ boneName ].keys() else True
-		params = skelStructure[ boneName ][ "params" ] if "params" in skelStructure[ boneName ].keys() else None
+		readOnly = "readonly" in skelStructure[boneName].keys() and skelStructure[boneName]["readonly"]
+		date = skelStructure[boneName]["date"] if "date" in skelStructure[boneName].keys() else True
+		time = skelStructure[boneName]["time"] if "time" in skelStructure[boneName].keys() else True
+		params = skelStructure[boneName]["params"] if "params" in skelStructure[boneName].keys() else None
 		return DateEditBone(moduleName, boneName, readOnly, date, time, params=params)
 
 	def unserialize(self, data, extendedErrorInformation=None):
 		if data.get(self.boneName):
 			if self.hastime and not self.hasdate:
-				self.timeinput["value"] = data[ self.boneName ]
+				self.timeinput["value"] = data[self.boneName]
 
 			if self.hasdate and not self.hastime:
-				dateobj = datetime.datetime.strptime(data[ self.boneName ], "%d.%m.%Y")
-				self.dateinput["value"] = dateobj.strftime( "%Y-%m-%d" )
+				dateobj = datetime.datetime.strptime(data[self.boneName], "%d.%m.%Y")
+				self.dateinput["value"] = dateobj.strftime("%Y-%m-%d")
 
 			if self.hasdate and self.hastime:
 				# FIXME: temporarily fixing a bug in extended relational bone
 				try:
 					dateobj = datetime.datetime.strptime(data[self.boneName], "%d.%m.%Y %H:%M:%S")
-					self.dateinput["value"]=dateobj.strftime("%Y-%m-%d")
-					self.timeinput["value"]=dateobj.strftime("%H:%M:%S")
+					self.dateinput["value"] = dateobj.strftime("%Y-%m-%d")
+					self.timeinput["value"] = dateobj.strftime("%H:%M:%S")
 
 				except ValueError:
-					self.dateinput[ "value" ] = "-"
-					self.timeinput[ "value" ] = "-"
+					self.dateinput["value"] = "-"
+					self.timeinput["value"] = "-"
 		else:
-			if self.params and "prefill" in self.params and self.params[ "prefill" ]:
+			if self.params and "prefill" in self.params and self.params["prefill"]:
 				'''
 					use string "now" for currentDate
 					or timedelta params to define relative dates
 					i.e: {"days":-2}
 				'''
 				startDate = datetime.datetime.now()
-				if self.params[ "prefill" ] != "now":
+				if self.params["prefill"] != "now":
 					try:
-						startDate = startDate + datetime.timedelta( **self.params[ "prefill" ] )
+						startDate = startDate + datetime.timedelta(**self.params["prefill"])
 					except:
-						self.dateinput[ "value" ] = "-"
-						self.timeinput[ "value" ] = "-"
+						self.dateinput["value"] = "-"
+						self.timeinput["value"] = "-"
 						return 0
 
 				if self.hasdate:
-					self.dateinput[ "value" ] = startDate.strftime( "%Y-%m-%d" )
+					self.dateinput["value"] = startDate.strftime("%Y-%m-%d")
 
 				if self.hastime:
-					self.timeinput[ "value" ] = startDate.strftime( "%H:%M:%S" )
+					self.timeinput["value"] = startDate.strftime("%H:%M:%S")
 
 			else:
 				if self.hasdate:
-					self.dateinput[ "value" ] = "-"
+					self.dateinput["value"] = "-"
 				if self.hastime:
-					self.timeinput[ "value" ] = "-"
-					
+					self.timeinput["value"] = "-"
+
 	def serializeForPost(self):
-		#[day, month, year, hour, min, sec]
-		adatetime=["00","00","0000","00","00","00"]
+		# [day, month, year, hour, min, sec]
+		adatetime = ["00", "00", "0000", "00", "00", "00"]
 
 		if self.hastime:
-			result = re.match('(\d+):(\d+)(:(\d+))?',self.timeinput["value"])
+			result = re.match('(\d+):(\d+)(:(\d+))?', self.timeinput["value"])
 			if result:
 				adatetime[3] = result.group(1)
 				adatetime[4] = result.group(2)
@@ -218,19 +216,20 @@ class DateEditBone( html5.Div ):
 					adatetime[5] = result.group(4)
 
 		if self.hasdate:
-			result = re.match('(\d+).(\d+).(\d+)',self.dateinput["value"])
+			result = re.match('(\d+).(\d+).(\d+)', self.dateinput["value"])
 			if result:
 				adatetime[0] = result.group(3)
 				adatetime[1] = result.group(2)
 				adatetime[2] = result.group(1)
 
-		if adatetime[2] == "0000": #when year is unset
+		if adatetime[2] == "0000":  # when year is unset
 			if self.hastime:
-				return {self.boneName: adatetime[3]+":"+adatetime[4]+":00"}
+				return {self.boneName: adatetime[3] + ":" + adatetime[4] + ":00"}
 
 			return {self.boneName: ""}
 
-		returnvalue = adatetime[0]+"."+adatetime[1]+"."+adatetime[2]+" "+adatetime[3]+":"+adatetime[4]+":"+adatetime[5]
+		returnvalue = adatetime[0] + "." + adatetime[1] + "." + adatetime[2] + " " + adatetime[3] + ":" + adatetime[
+			4] + ":" + adatetime[5]
 		return {self.boneName: returnvalue}
 
 	def serializeForDocument(self):
@@ -316,7 +315,8 @@ class DateRangeFilterPlugin(html5.Div):
 
 	@staticmethod
 	def canHandleExtension(extension, view, module):
-		return isinstance(extension, dict) and "type" in extension.keys() and (extension["type"] == "date" or extension["type"].startswith("date."))
+		return isinstance(extension, dict) and "type" in extension.keys() and (
+					extension["type"] == "date" or extension["type"].startswith("date."))
 
 
 # Register this Bone in the global queue

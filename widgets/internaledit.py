@@ -2,7 +2,7 @@
 from vi import html5
 from vi.network import DeferredCall
 from vi.config import conf
-from vi.priorityqueue import editBoneSelector
+from vi.priorityqueue import boneSelector
 from vi.exception import InvalidBoneValueException
 from vi.widgets.tooltip import ToolTip
 from vi.widgets.accordion import Accordion
@@ -64,8 +64,8 @@ class InternalEdit(html5.Div):
 				if not firstCat:
 					firstCat = segments[cat]
 
-			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
-			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
+			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict)
+			widget = boneFactory.toEditWidget()
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 
 			descrLbl = html5.Label(bone["descr"])
@@ -124,12 +124,13 @@ class InternalEdit(html5.Div):
 			if firstCat:
 				firstCat.activate()
 
-	def serializeForPost(self, validityCheck = False):
+	def serializeForPost(self, validityCheck = False): #fixme consolidate this with serializeForDocument() to just serialize()
 		res = {}
 
 		for key, bone in self.bones.items():
 			try:
-				res.update(bone.serializeForPost())
+				res[key] = bone.serialize()
+
 			except InvalidBoneValueException:
 				if validityCheck:
 					# Fixme: Bad hack..
@@ -147,7 +148,7 @@ class InternalEdit(html5.Div):
 
 		for key, bone in self.bones.items():
 			try:
-				res.update(bone.serializeForDocument())
+				res[key] = bone.serialize()
 			except InvalidBoneValueException as e:
 				res[key] = str(e)
 
@@ -164,12 +165,12 @@ class InternalEdit(html5.Div):
 		"""
 			Applies the actual data to the bones.
 		"""
-		for bone in self.bones.values():
+		for key, bone in self.bones.items():
 			if "setContext" in dir(bone) and callable(bone.setContext):
 				bone.setContext(self.context)
 
 			if data is not None:
-				bone.unserialize(data)
+				bone.unserialize(data.get(key))
 
 		DeferredCall(self.performLogics)
 

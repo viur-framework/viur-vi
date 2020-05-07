@@ -5,7 +5,7 @@ import vi.utils as utils
 
 from vi.network import NetworkService, DeferredCall
 from vi.config import conf
-from vi.priorityqueue import editBoneSelector
+from vi.priorityqueue import boneSelector
 from vi.widgets.tooltip import ToolTip
 from vi.framework.components.actionbar import ActionBar
 from vi.i18n import translate
@@ -465,8 +465,9 @@ class EditWidget(html5.Div):
 			if cat not in segments:
 				segments[cat] = self.accordion.addSegment(cat)
 
-			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
-			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
+			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict)
+			widget = boneFactory.toEditWidget()
+
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
 			if "setContext" in dir(widget) and callable(widget.setContext):
@@ -606,14 +607,14 @@ class EditWidget(html5.Div):
 		"""
 			Applies the actual data to the bones.
 		"""
-		for bone in self.bones.values():
+		for key, bone in self.bones.items():
 			if "setContext" in dir(bone) and callable(bone.setContext):
 				bone.setContext(self.context)
 
 			if data is not None:
-				bone.unserialize(data)
+				bone.unserialize(data.get(key))
 
-	def serializeForPost(self, validityCheck = False):
+	def serializeForPost(self, validityCheck = False): #fixme consolidate this with serializeForDocument() to just serialize()
 		res = {}
 
 		for key, bone in self.bones.items():
@@ -621,7 +622,8 @@ class EditWidget(html5.Div):
 				continue #ignore the key, it is stored in self.key!
 
 			try:
-				res.update(bone.serializeForPost())
+				res[key] = bone.serialize()
+
 			except InvalidBoneValueException:
 				if validityCheck:
 					# Fixme: Bad hack..
@@ -639,7 +641,7 @@ class EditWidget(html5.Div):
 
 		for key, bone in self.bones.items():
 			try:
-				res.update(bone.serializeForDocument())
+				res[key] = bone.serialize()
 			except InvalidBoneValueException as e:
 				res[key] = str(e)
 

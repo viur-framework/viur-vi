@@ -5,7 +5,7 @@ from vi import html5
 
 from vi.network import NetworkService, DeferredCall
 from vi.config import conf
-from vi.priorityqueue import extractorDelegateSelector
+from vi.priorityqueue import boneSelector
 from vi.i18n import translate
 from vi.framework.components.button import Button
 
@@ -85,7 +85,7 @@ class ExportCsv(html5.Progress):
 			#if bone["visible"] and ("params" not in bone or bone["params"] is None or "ignoreForCsvExport" not in bone[
 			#	"params"] or not bone["params"]["ignoreForCsvExport"]):
 			if bone["visible"]:
-				cellRenderer[key] = extractorDelegateSelector.select(self.module, key, struct)
+				cellRenderer[key] = boneSelector.select(self.module, key, struct)
 				if cellRenderer[key]:
 					cellRenderer[key] = cellRenderer[key](self.module, key, struct)
 
@@ -108,7 +108,7 @@ class ExportCsv(html5.Progress):
 
 				try:
 					if cellRenderer[key] is not None:
-						row[fields[key]] = cellRenderer[key].render(entry, key)
+						row[fields[key]] = cellRenderer[key].toString(entry, key) #fixme: ViUR3
 					else:
 						row[fields[key]] = str(value)
 

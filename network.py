@@ -5,18 +5,21 @@ from vi import html5
 from vi import framework
 from vi.config import conf
 
-class DeferredCall( framework.utils.DeferredCall ):
+
+class DeferredCall(framework.utils.DeferredCall):
 	'''
 		Deprecated. Moved to framework.utils
 	'''
 	pass
 
+
 class HTTPRequest(object):
 	"""
 		Wrapper around XMLHttpRequest
 	"""
-	def __init__(self, *args, **kwargs ):
-		super( HTTPRequest, self ).__init__( *args, **kwargs )
+
+	def __init__(self, *args, **kwargs):
+		super(HTTPRequest, self).__init__(*args, **kwargs)
 		self.req = html5.jseval("new XMLHttpRequest()")
 		self.req.onreadystatechange = self.onReadyStateChange
 		self.cb = None
@@ -34,9 +37,9 @@ class HTTPRequest(object):
 		self.type = "GET"
 		self.payload = None
 		self.content_type = None
-		self.req.open("GET",url,True)
+		self.req.open("GET", url, True)
 
-	def asyncPost(self, url, payload, cb, content_type=None ):
+	def asyncPost(self, url, payload, cb, content_type=None):
 		"""
 			Performs a POST operation on a remote server
 			:param url: The url to fetch. Either absolute or relative to the server
@@ -48,25 +51,26 @@ class HTTPRequest(object):
 		self.type = "POST"
 		self.payload = payload
 		self.content_type = content_type
-		self.req.open("POST",url,True)
+		self.req.open("POST", url, True)
 
 	def onReadyStateChange(self, *args, **kwargs):
 		"""
 			Internal callback.
 		"""
 		if self.req.readyState == 1 and not self.hasBeenSent:
-			self.hasBeenSent = True # Internet Explorer calls this function twice!
+			self.hasBeenSent = True  # Internet Explorer calls this function twice!
 
-			if self.type=="POST" and self.content_type is not None:
+			if self.type == "POST" and self.content_type is not None:
 				self.req.setRequestHeader('Content-Type', self.content_type)
 
-			self.req.send( self.payload )
+			self.req.send(self.payload)
 
 		if self.req.readyState == 4:
 			if self.req.status >= 200 and self.req.status < 300:
-				self.cb.onCompletion( self.req.responseText )
+				self.cb.onCompletion(self.req.responseText)
 			else:
-				self.cb.onError( self.req.responseText, self.req.status )
+				self.cb.onError(self.req.responseText, self.req.status)
+
 
 class NetworkService(object):
 	"""
@@ -75,8 +79,8 @@ class NetworkService(object):
 		the same resource. It also acts as the central proxy to notify
 		currently active widgets of changes made to data on the server.
 	"""
-	changeListeners = [] # All currently active widgets which will be informed of changes made
-	_cache = {} # module->Cache index map (for requests that can be cached)
+	changeListeners = []  # All currently active widgets which will be informed of changes made
+	_cache = {}  # module->Cache index map (for requests that can be cached)
 	host = ""
 	prefix = "/json"
 	defaultFailureHandler = None
@@ -95,7 +99,7 @@ class NetworkService(object):
 			:type module: str
 		"""
 		if module in NetworkService._cache.keys():
-			NetworkService._cache[ module ] += 1
+			NetworkService._cache[module] += 1
 
 		for c in NetworkService.changeListeners:
 			c.onDataChanged(module, **kwargs)
@@ -116,55 +120,76 @@ class NetworkService(object):
 		NetworkService.changeListeners.append(listener)
 
 	@staticmethod
-	def removeChangeListener( listener ):
+	def removeChangeListener(listener):
 		"""
 			Unregisters the object 'listener' from change notifications.
 			:param listener: The object to unregister. It must be currently registered.
 			:type listener: object
 		"""
-		assert listener in NetworkService.changeListeners, "Attempt to remove unregistered listener %s" % str( listener )
-		NetworkService.changeListeners.remove( listener )
+		assert listener in NetworkService.changeListeners, "Attempt to remove unregistered listener %s" % str(listener)
+		NetworkService.changeListeners.remove(listener)
 
 	@staticmethod
-	def genReqStr( params ):
+	def genReqStr(params: dict):
 		"""
 			Creates a MIME (multipart/mixed) payload for post requests transmitting
 			the values given in params.
+
 			:param params: Dictionary of key->values to encode
 			:type params: dict
-			:returns: (string payload, string boundary )
-		"""
-		boundary_str = "---"+''.join( [ random.choice(string.ascii_lowercase+string.ascii_uppercase + string.digits) for x in range(13) ] )
-		boundary = boundary_str
-		res = 'Content-Type: multipart/mixed; boundary="' + boundary + '"\r\nMIME-Version: 1.0\r\n'
-		res += '\r\n--'+boundary
-		for(key, value) in list(params.items()):
-			if all( [x in dir( value ) for x in ["name", "read"] ] ): #File
-				try:
-					(type, encoding) = mimetypes.guess_type( value.name.decode( sys.getfilesystemencoding() ), strict=False )
-					type = type or "application/octet-stream"
-				except:
-					type = "application/octet-stream"
-				res += '\r\nContent-Type: '+type+'\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+'"; filename="'+os.path.basename(value.name).decode(sys.getfilesystemencoding())+'"\r\n\r\n'
-				res += str(value.read())
-				res += '\r\n--'+boundary
-			elif isinstance( value, list ):
-				for val in value:
-					res += '\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+'"\r\n\r\n'
-					res += str(val)
-					res += '\r\n--'+boundary
-			elif isinstance( value, dict ):
-				for k,v in value.items():
-					res += '\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+"."+k+'"\r\n\r\n'
-					res += str(v)
-					res += '\r\n--'+boundary
-			else:
-				res += '\r\nContent-Type: application/octet-stream\r\nMIME-Version: 1.0\r\nContent-Disposition: form-data; name="'+key+'"\r\n\r\n'
-				res += str(value)
-				res += '\r\n--'+boundary
-		res += '--\r\n'
-		return( res, boundary )
 
+			:returns: (string payload, string boundary)
+		"""
+		boundary_str = "---" + ''.join(
+			[random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for x in range(13)])
+		boundary = boundary_str
+
+		res = f"Content-Type: multipart/mixed; boundary=\"{boundary}\"\r\nMIME-Version: 1.0\r\n"
+		res += "\r\n--" + boundary
+
+		def expand(key, value):
+			ret = ""
+
+			if all([x in dir(value) for x in ["name", "read"]]):  # File
+				type = "application/octet-stream"
+				filename = os.path.basename(value.name).decode(sys.getfilesystemencoding())
+
+				ret += \
+					f"\r\nContent-Type: {type}" \
+					f"\r\nMIME - Version: 1.0" \
+					f"\r\nContent-Disposition: form-data; name=\"{key}\"; filename=\"{filename}\"\r\n\r\n"
+				ret += str(value.read())
+				ret += '\r\n--' + boundary
+
+			elif isinstance(value, list):
+				if any([isinstance(entry, dict) for entry in value]):
+					for idx, entry in enumerate(value):
+						ret += expand(key + "." + str(idx), entry)
+				else:
+					for entry in value:
+						ret += expand(key, entry)
+
+			elif isinstance(value, dict):
+				for key_, entry in value.items():
+					ret += expand(((key + ".") if key else "") + key_, entry)
+
+			else:
+				ret += \
+					"\r\nContent-Type: application/octet-stream" \
+					"\r\nMIME-Version: 1.0" \
+					f"\r\nContent-Disposition: form-data; name=\"{key}\"\r\n\r\n"
+				ret += str(value)
+				ret += '\r\n--' + boundary
+
+			return ret
+
+		for key, value in params.items():
+			res += expand(key, value)
+
+		res += "--\r\n"
+
+		print(res)
+		return res, boundary
 
 	@staticmethod
 	def decode(req):
@@ -199,13 +224,13 @@ class NetworkService(object):
 
 		if cacheable and module:
 			if not module in NetworkService._cache.keys():
-				NetworkService._cache[ module ] = 1
+				NetworkService._cache[module] = 1
 
-			cacheKey = "c%s" % NetworkService._cache[ module ]
+			cacheKey = "c%s" % NetworkService._cache[module]
 
 		if module:
 			href = "%s/%s/%s?_unused_time_stamp=%s" % (NetworkService.prefix,
-			                                                module, path, cacheKey)
+			                                           module, path, cacheKey)
 		else:
 			href = "%s%s_unused_time_stamp=%s" % (path, "&" if "?" in path else "?", cacheKey)
 
@@ -215,7 +240,7 @@ class NetworkService(object):
 		return NetworkService.host + href
 
 	def __init__(self, module, url, params, successHandler, failureHandler, finishedHandler,
-	                modifies, cacheable, secure, kickoff):
+	             modifies, cacheable, secure, kickoff):
 		"""
 			Constructs a new NetworkService request.
 			Should not be called directly (use NetworkService.request instead).
@@ -253,7 +278,7 @@ class NetworkService(object):
 
 	@staticmethod
 	def request(module, url, params=None, successHandler=None, failureHandler=None,
-		   finishedHandler=None, modifies=False, cacheable=False, secure=False, kickoff=True):
+	            finishedHandler=None, modifies=False, cacheable=False, secure=False, kickoff=True):
 		"""
 			Performs an AJAX request. Handles caching and security-keys.
 
@@ -278,13 +303,13 @@ class NetworkService(object):
 			:type secure: bool
 
 		"""
-		print("NS REQUEST", module, url, params )
-		assert not( cacheable and modifies ), "Cannot cache a request modifying data!"
+		print("NS REQUEST", module, url, params)
+		assert not (cacheable and modifies), "Cannot cache a request modifying data!"
 
-		#Seems not cacheable or not cached
+		# Seems not cacheable or not cached
 		return NetworkService(module, url, params,
-		                        successHandler, failureHandler, finishedHandler,
-				                    modifies, cacheable, secure, kickoff)
+		                      successHandler, failureHandler, finishedHandler,
+		                      modifies, cacheable, secure, kickoff)
 
 	def doFetch(self, url, params, skey):
 		"""
@@ -292,7 +317,7 @@ class NetworkService(object):
 		"""
 
 		if "updateParams" in conf and conf["updateParams"] and callable(conf["updateParams"]):
-			params = conf["updateParams"](url,params)
+			params = conf["updateParams"](url, params)
 
 		if params:
 			if skey:
@@ -329,15 +354,15 @@ class NetworkService(object):
 		if self.waitingForSkey:
 			self.waitingForSkey = False
 			self.doFetch(NetworkService.urlForArgs(self.module, self.url, self.cacheable),
-			                self.params, json.loads(text))
+			             self.params, json.loads(text))
 		else:
 			self.result = text
 			self.status = "succeeded"
 			try:
 				for s in self.successHandler:
-					s( self )
+					s(self)
 				for s in self.finishedHandler:
-					s( self )
+					s(self)
 			except:
 				if self.modifies:
 					DeferredCall(
@@ -373,7 +398,8 @@ class NetworkService(object):
 			except:
 				logError = None
 			if logError and self.kickoffs == self.retryMax - 1:
-				logError("NetworkService.onError code:%s module:%s url:%s params:%s" % (code, self.module, self.url, self.params))
+				logError("NetworkService.onError code:%s module:%s url:%s params:%s" % (
+				code, self.module, self.url, self.params))
 
 			print("error %d, kickoff %d, will retry now" % (int(code), self.kickoffs))
 			DeferredCall(self.kickoff, _delay=self.retryDelay)
