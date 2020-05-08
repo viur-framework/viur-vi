@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from . import base
+from . import string
+
 # from . import relational
 # from . import record
 # from . import file
@@ -8,7 +10,6 @@ from . import base
 # from . import selectone
 # from . import text
 # from . import date
-# from . import string
 # from . import boolean
 # from . import color
 # from . import email
