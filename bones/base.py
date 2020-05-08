@@ -5,6 +5,8 @@ from vi.framework.components.button import Button
 from vi.priorityqueue import boneSelector
 from vi.config import conf
 
+import json
+
 
 class BaseEditWidget(html5.ignite.Input):
 	"""
@@ -58,15 +60,59 @@ class BaseMultiEditWidgetEntry(html5.Div):
 			setattr(self, fct, getattr(self.widget, fct))
 
 		self.appendChild(
+			# todo: must be styled, it is NOT a button!
+			"""<div [name]="dragArea" class="btn vi-bone-dragger">↕</div>""",
 			self.widget,
 			"""<button [name]="removeBtn" class="btn--delete" text="Delete" icon="icons-delete" />"""
 		)
 
 		if widget.bone.boneStructure["readonly"]:
 			self.removeBtn.hide()
+		else:
+			# Proxy dragging event features of the dragArea to this widget!
+			for event in ["onDragStart", "onDragOver", "onDragEnd", "onDrop"]:
+				setattr(self.dragArea, event, getattr(self, event))
+				self.dragArea.sinkEvent(event)  # sink has to be done behind setattr!
+
+			self.dragArea["draggable"] = True
 
 	def onRemoveBtnClick(self):
 		self.parent().removeChild(self)
+
+	def onDragStart(self, event):
+		print("START")
+		self.parent()._widgetToDrag = self
+		event.dataTransfer.setData("application/json", json.dumps(self.widget.serialize()))
+		event.stopPropagation()
+
+	def onDragOver(self, event):
+		event.preventDefault()
+
+	def onDragEnd(self, event):
+		self.parent()._widgetToDrag = None
+		event.stopPropagation()
+
+	def onDrop(self, event):
+		event.preventDefault()
+		event.stopPropagation()
+
+		widgetToDrop = self.parent()._widgetToDrag
+
+		if widgetToDrop and widgetToDrop != self:
+			if self.element.offsetTop > widgetToDrop.element.offsetTop:
+				parentChildren = self.parent().children()
+
+				if parentChildren[-1] is self:
+					self.parent().appendChild(widgetToDrop)
+				else:
+					self.parent().insertBefore(
+						widgetToDrop,
+						parentChildren[parentChildren.index(self) + 1]
+					)
+			else:
+				self.parent().insertBefore(widgetToDrop, self)
+
+		self.parent()._widgetToDrag = None
 
 
 class BaseMultiEditWidget(html5.Div):
@@ -85,6 +131,8 @@ class BaseMultiEditWidget(html5.Div):
 
 		self.bone = bone
 		self.widgetFactory = widgetFactory
+
+		self.widgets._widgetToDrag = None
 
 		if self.bone.boneStructure["readonly"]:
 			self.addBtn.hide()
