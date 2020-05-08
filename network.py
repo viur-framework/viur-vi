@@ -156,7 +156,7 @@ class NetworkService(object):
 
 				ret += \
 					f"\r\nContent-Type: {type}" \
-					f"\r\nMIME - Version: 1.0" \
+					f"\r\nMIME-Version: 1.0" \
 					f"\r\nContent-Disposition: form-data; name=\"{key}\"; filename=\"{filename}\"\r\n\r\n"
 				ret += str(value.read())
 				ret += '\r\n--' + boundary
@@ -188,7 +188,6 @@ class NetworkService(object):
 
 		res += "--\r\n"
 
-		print(res)
 		return res, boundary
 
 	@staticmethod

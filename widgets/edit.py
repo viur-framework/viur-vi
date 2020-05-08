@@ -466,7 +466,7 @@ class EditWidget(html5.Div):
 				segments[cat] = self.accordion.addSegment(cat)
 
 			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict)
-			widget = boneFactory.toEditWidget()
+			widget = boneFactory.editWidget()
 
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 

@@ -9,8 +9,14 @@ from vi.config import conf
 class BaseEditWidget(html5.ignite.Input):
 	"""
 	Base class for a bone-compliant edit widget implementation using an input field.
+	This widget defines the general interface of a bone edit control.
 	"""
 	style = ["vi-bone"]
+
+	def __init__(self, bone, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.bone = bone
+		self["readonly"] = bool(self.bone.boneStructure.get("readonly"))
 
 	def unserialize(self, value=None):
 		self["value"] = value or ""
@@ -25,8 +31,17 @@ class BaseViewWidget(html5.Div):
 	"""
 	style = ["vi-bone"]
 
+	def __init__(self, bone, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.bone = bone
+		self.value = None
+
 	def unserialize(self, value=None):
+		self.value = value
 		self.appendChild(html5.TextNode(value or conf["emptyValue"]), replace=True)
+
+	def serialize(self):
+		return self.value
 
 
 class BaseMultiEditWidgetEntry(html5.Div):
@@ -47,6 +62,9 @@ class BaseMultiEditWidgetEntry(html5.Div):
 			"""<button [name]="removeBtn" class="btn--delete" text="Delete" icon="icons-delete" />"""
 		)
 
+		if widget.bone.boneStructure["readonly"]:
+			self.removeBtn.hide()
+
 	def onRemoveBtnClick(self):
 		self.parent().removeChild(self)
 
@@ -57,7 +75,7 @@ class BaseMultiEditWidget(html5.Div):
 	"""
 	entryFactory = BaseMultiEditWidgetEntry
 
-	def __init__(self, widgetFactory: callable):
+	def __init__(self, bone, widgetFactory: callable):
 		super().__init__("""
 			<div [name]="widgets" class="vi-bone-widgets"></div>
 			<div [name]="actions" class="vi-bone-actions">
@@ -65,7 +83,11 @@ class BaseMultiEditWidget(html5.Div):
 			</div>
 		""")
 
+		self.bone = bone
 		self.widgetFactory = widgetFactory
+
+		if self.bone.boneStructure["readonly"]:
+			self.addBtn.hide()
 
 	def onAddBtnClick(self):
 		last = self.widgets.children(-1)
@@ -77,7 +99,7 @@ class BaseMultiEditWidget(html5.Div):
 		entry.focus()
 
 	def addEntry(self, value=None):
-		entry = self.widgetFactory()
+		entry = self.widgetFactory(self.bone)
 		if self.entryFactory:
 			entry = self.entryFactory(entry)
 
@@ -101,8 +123,9 @@ class BaseMultiEditWidget(html5.Div):
 
 
 class BaseMultiViewWidget(html5.Ul):
-	def __init__(self, widgetFactory: callable):
+	def __init__(self, bone, widgetFactory: callable):
 		super().__init__()
+		self.bone = bone
 		self.widgetFactory = widgetFactory
 
 	def unserialize(self, value):
@@ -112,10 +135,12 @@ class BaseMultiViewWidget(html5.Ul):
 			return
 
 		for entry in value:
-			widget = self.widgetFactory()
-			print(widget, entry)
+			widget = self.widgetFactory(self.bone)
 			widget.unserialize(entry)
 			self.appendChild(widget)
+
+	def serialize(self):
+		return [widget.serialize() for widget in self]
 
 
 class BaseLanguageEditWidget(html5.Div):
@@ -123,14 +148,16 @@ class BaseLanguageEditWidget(html5.Div):
 	Class for encapsulating a bone for each language inside a container
 	"""
 
-	def __init__(self, widgetFactory: callable, languages: list):
+	def __init__(self, bone, widgetFactory: callable):
 		super().__init__("""
 			<div [name]="widgets" class="vi-bone-widgets"></div>
 			<div [name]="actions" class="vi-bone-actions"></div>
 		""")
 
+		languages = bone.skelStructure[bone.boneName]["languages"]
 		assert languages, "This parameter must not be empty!"
 
+		self.bone = bone
 		self.languages = languages
 		self._languageWidgets = {}
 
@@ -145,7 +172,7 @@ class BaseLanguageEditWidget(html5.Div):
 
 			self.actions.appendChild(langBtn)
 
-			langWidget = widgetFactory()
+			langWidget = widgetFactory(self.bone)
 
 			if lang != conf["defaultLanguage"]:
 				langWidget.hide()
@@ -181,6 +208,10 @@ class BaseLanguageEditWidget(html5.Div):
 class BaseBone(object):
 	editWidgetFactory = BaseEditWidget
 	viewWidgetFactory = BaseViewWidget
+	multiEditWidgetFactory = BaseMultiEditWidget
+	multiViewWidgetFactory = BaseMultiViewWidget
+	languageEditWidgetFactory = BaseLanguageEditWidget
+	languageViewWidgetFactory = BaseLanguageEditWidget  # use edit language widget also to view!
 
 	"""
 	Base "Catch-All" delegate for everything not handled separately.
@@ -191,36 +222,35 @@ class BaseBone(object):
 		self.moduleName = moduleName
 		self.boneName = boneName
 		self.skelStructure = skelStructure
+		self.boneStructure = self.skelStructure[self.boneName]
 
-	def toEditWidget(self, value=None) -> html5.Widget:
-		boneStructure = self.skelStructure[self.boneName]
+	def editWidget(self, value=None) -> html5.Widget:
 		widgetFactory = self.editWidgetFactory
 
-		if boneStructure.get("multiple"):
+		if self.multiEditWidgetFactory and self.boneStructure.get("multiple"):
 			multiWidgetFactory = widgetFactory  # have to make a separate "free" variable
-			widgetFactory = lambda: BaseMultiEditWidget(multiWidgetFactory)
+			widgetFactory = lambda bone: self.multiEditWidgetFactory(bone, multiWidgetFactory)
 
-		if boneStructure.get("languages"):
+		if self.languageEditWidgetFactory and self.boneStructure.get("languages"):
 			languageWidgetFactory = widgetFactory  # have to make a separate "free" variable
-			widgetFactory = lambda: BaseLanguageEditWidget(languageWidgetFactory, boneStructure["languages"])
+			widgetFactory = lambda bone: self.languageEditWidgetFactory(bone, languageWidgetFactory)
 
-		widget = widgetFactory()
+		widget = widgetFactory(self)
 		widget.unserialize(value)
 		return widget
 
-	def toViewWidget(self, value=None):
-		boneStructure = self.skelStructure[self.boneName]
+	def viewWidget(self, value=None):
 		widgetFactory = self.viewWidgetFactory
 
-		if boneStructure.get("multiple"):
+		if self.multiViewWidgetFactory and self.boneStructure.get("multiple"):
 			multiWidgetFactory = widgetFactory  # have to make a separate "free" variable
-			widgetFactory = lambda: BaseMultiViewWidget(multiWidgetFactory)
+			widgetFactory = lambda bone: self.multiViewWidgetFactory(bone, multiWidgetFactory)
 
-		if boneStructure.get("languages"):
-			languageWidgetFactory = widgetFactory   # have to make a separate "free" variable
-			widgetFactory = lambda: BaseLanguageEditWidget(languageWidgetFactory, boneStructure["languages"])
+		if self.languageViewWidgetFactory and self.boneStructure.get("languages"):
+			languageWidgetFactory = widgetFactory  # have to make a separate "free" variable
+			widgetFactory = lambda bone: self.languageViewWidgetFactory(bone, languageWidgetFactory)
 
-		widget = widgetFactory()
+		widget = widgetFactory(self)
 		widget.unserialize(value)
 		return widget
 

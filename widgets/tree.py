@@ -65,7 +65,7 @@ class _StructureWidget(html5.Li):
 
 					if wdg is not None:
 						self.nodeHeadline.appendChild(
-							wdg(self.module, boneName, structure).toViewWidget(self.data[boneName])
+							wdg(self.module, boneName, structure).viewWidget(self.data[boneName])
 						)
 						hasDescr = True
 

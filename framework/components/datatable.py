@@ -674,7 +674,7 @@ class DataTable( html5.Div ):
 				lbl = self._renderedModel[rowIdx][field]
 			else:
 				if field in self._cellRender.keys():
-					lbl = self._cellRender[field].toViewWidget(obj[field])
+					lbl = self._cellRender[field].viewWidget(obj[field])
 				elif field in obj.keys():
 					lbl = html5.Div(obj[field])
 				else:
@@ -748,7 +748,7 @@ class DataTable( html5.Div ):
 			if field in self._cellRender.keys():
 				del self._cellRender[ field ]
 		else:
-			assert "toViewWidget" in dir(render), "The render must provide a 'render' method"
+			assert "viewWidget" in dir(render), "The render must provide a 'render' method"
 			self._cellRender[ field ] = render
 
 		#self.rebuildTable()
@@ -764,7 +764,7 @@ class DataTable( html5.Div ):
 				if field in self._cellRender.keys():
 					del self._cellRender[ field ]
 			else:
-				assert "toViewWidget" in dir(render), "The render must provide a 'render' method"
+				assert "viewWidget" in dir(render), "The render must provide a 'render' method"
 				self._cellRender[ field ] = render
 
 		#self.rebuildTable()
@@ -884,7 +884,7 @@ class ViewportDataTable(DataTable):
 			else:
 
 				if field in self._cellRender.keys():
-					lbl = self._cellRender[field].toViewWidget(obj[field])
+					lbl = self._cellRender[field].viewWidget(obj[field])
 				elif field in obj.keys():
 					lbl = html5.Div(obj[field])
 				else:

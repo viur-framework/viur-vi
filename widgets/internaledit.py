@@ -65,7 +65,7 @@ class InternalEdit(html5.Div):
 					firstCat = segments[cat]
 
 			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict)
-			widget = boneFactory.toEditWidget()
+			widget = boneFactory.editWidget()
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 
 			descrLbl = html5.Label(bone["descr"])
