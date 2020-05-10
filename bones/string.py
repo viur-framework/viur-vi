@@ -8,7 +8,7 @@ from vi.bones.base import BaseBone, BaseViewWidget
 class StringEditWidget(html5.Div):
 	style = ["vi-bone", "vi-bone--string"]
 
-	def __init__(self, bone):
+	def __init__(self, bone, **kwargs):
 		super().__init__("""
 			<ignite-input [name]="input">
 			<div [name]="length">0</div>

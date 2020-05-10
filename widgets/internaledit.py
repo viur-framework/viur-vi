@@ -28,7 +28,9 @@ class InternalEdit(html5.Div):
 		self.accordion = None
 
 		self.renderStructure(readOnly=readOnly)
-		self.unserialize(values)
+
+		if values:
+			self.unserialize(values)
 
 	def renderStructure(self, readOnly = False):
 		self.bones = {}
