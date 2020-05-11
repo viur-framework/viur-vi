@@ -29,8 +29,10 @@ class RelationalEditWidget(html5.Div):
 			<ignite-input [name]="destWidget" readonly>
 			<button [name]="selectBtn" class="btn--select" text="Select" icon="icons-select"></button>
 		""")
+		self.sinkEvent("onChange")
 
 		self.bone = bone
+		self.value = None
 		self.language = language
 
 		# Current bone config
@@ -54,38 +56,50 @@ class RelationalEditWidget(html5.Div):
 		# Current data state
 		self.destKey = None
 
-	def unserialize(self, value=None):
-		if not value:
-			self.destKey = None
-			self.destWidget["value"] = ""
+	def updateString(self):
+		if not self.value:
 
 			if self.dataWidget:
 				self.dataWidget.disable()
 
-		else:
-			self.destKey = value["dest"]["key"]
+			return
+
+		txt = utils.formatString(
+			self.formatString,
+			self.value["dest"],
+			self.destStructure,
+			prefix=["dest"],
+			language=self.language
+		)
+
+		if self.dataWidget:
+			self.dataWidget.unserialize(self.value["rel"] or {})
+			self.dataWidget.enable()
 
 			txt = utils.formatString(
-				self.formatString,
-				value["dest"],
-				self.destStructure,
-				prefix=["dest"],
+				txt,
+				self.dataWidget.serializeForDocument(),
+				self.dataStructure,
+				prefix=["rel"],
 				language=self.language
 			)
 
-			if self.dataWidget:
-				self.dataWidget.unserialize(value["rel"] or {})
-				self.dataWidget.enable()
+		self.destWidget["value"] = txt
 
-				txt = utils.formatString(
-					txt,
-					self.dataWidget.serializeForDocument(),
-					self.dataStructure,
-				    prefix=["rel"],
-					language=self.language
-				)
+	def onChange(self, event):
+		if self.dataWidget:
+			self.value["rel"] = self.dataWidget.doSave()
+			self.updateString()
 
-			self.destWidget["value"] = txt
+	def unserialize(self, value=None):
+		if not value:
+			self.destKey = None
+			self.destWidget["value"] = ""
+		else:
+			self.destKey = value["dest"]["key"]
+
+		self.value = value
+		self.updateString()
 
 	def serialize(self):
 		# fixme: Maybe we need a serializeForDocument also?
