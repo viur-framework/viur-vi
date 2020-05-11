@@ -47,6 +47,7 @@ class RelationalEditWidget(html5.Div):
 				self.dataStructure,
 				readOnly=self.readonly
 			)
+			self.appendChild(self.dataWidget)
 		else:
 			self.dataWidget = None
 
@@ -78,8 +79,7 @@ class RelationalEditWidget(html5.Div):
 
 				txt = utils.formatString(
 					txt,
-					self.
-					self.ie.serializeForDocument(),
+					self.dataWidget.serializeForDocument(),
 					self.dataStructure,
 				    prefix=["rel"],
 					language=self.language
