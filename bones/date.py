@@ -1,326 +1,125 @@
 # -*- coding: utf-8 -*-
-import re, datetime
+import datetime, logging
 
 from vi import html5
 
-from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector
-from vi.framework.event import EventDispatcher
-from vi.i18n import translate
+from vi.priorityqueue import boneSelector
 from vi.config import conf
-from bones.base import BaseViewBoneDelegate
+from vi.bones.base import BaseBone, BaseViewWidget
+from vi.i18n import translate
 
 
-class DateViewBoneDelegate(BaseViewBoneDelegate):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
-		super(DateViewBoneDelegate, self).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName = moduleName
+class DateEditWidget(html5.Div):
+	style = ["vi-bone", "vi-bone--date"]
 
-	def toWidget(self, data, field):
-		if not (self.boneName in self.skelStructure and data and data.get(field)):
-			return html5.Div(conf["emptyValue"])
+	def __init__(self, bone, **kwargs):
+		super().__init__()
+		self.bone = bone
 
-		structure = self.skelStructure[self.boneName]
-		val = data[field]
+		self.serverToClient = []
 
-		try:
-			if structure["date"] and structure["time"]:
-				try:
-					dt = datetime.datetime.strptime(val, "%d.%m.%Y %H:%M:%S")
-				except:
-					return html5.TextNode(translate("Error parsing Date"))
+		if self.bone.boneStructure.get("date", True):
+			self.dateInput = self.appendChild(
+				"""<ignite-input type="date" />"""
+			)[0]
+			self.serverToClient.append("%d.%m.%Y")  # fixme: Still using German format server-side?
 
-				span = html5.Span()
-				span.addClass("vi-delegato", "vi-delegato--datetime")
-				dateSpan = html5.Span()
-				dateSpan.addClass("date")
-				dateSpan.appendChild(html5.TextNode(dt.strftime("%d.%m.%Y")))
-				timeSpan = html5.Span()
-				timeSpan.addClass("time")
-				timeSpan.appendChild(html5.TextNode(dt.strftime("%H:%M:%S")))
-				span.appendChild(dateSpan)
-				span.appendChild(timeSpan)
-
-				return span
-
-			elif structure["date"] and not structure["time"]:
-				try:
-					dt = datetime.datetime.strptime(val, "%d.%m.%Y")
-				except:
-					return html5.TextNode(translate("Error parsing Date"))
-
-				dateSpan = html5.Span()
-				dateSpan.addClass("vi-delegato", "vi-delegato--date")
-				dateSpan.appendChild(html5.TextNode(dt.strftime("%d.%m.%Y")))
-
-				return dateSpan
-
-			elif not structure["date"] and structure["time"]:
-				try:
-					dt = datetime.datetime.strptime(val, "%H:%M:%S")
-				except:
-					return html5.TextNode(translate("Error parsing Date"))
-
-				timeSpan = html5.Span()
-				timeSpan.addClass("vi-delegato", "vi-delegato--time")
-				timeSpan.appendChild(html5.TextNode(dt.strftime("%H:%M:%S")))
-				return timeSpan
-
-		except:  # Something got wrong parsing the date
-			return html5.Div(str(val))
-
-	def toString(self, data, field):
-		if not (self.boneName in self.skelStructure
-		        and data and data.get(field)):
-			return conf["emptyValue"]
-
-		structure = self.skelStructure[self.boneName]
-		val = data[field]
-
-		try:
-			if structure["date"] and structure["time"]:
-				try:
-					dt = datetime.datetime.strptime(val, "%d.%m.%Y %H:%M:%S")
-				except:
-					return "Error parsing Date"
-
-				return dt.strftime("%d.%m.%Y %H:%M:%S")
-
-			elif structure["date"] and not structure["time"]:
-				try:
-					dt = datetime.datetime.strptime(val, "%d.%m.%Y")
-				except:
-					return "Error parsing Date"
-
-				return dt.strftime("%d.%m.%Y")
-
-			elif not structure["date"] and structure["time"]:
-				try:
-					dt = datetime.datetime.strptime(val, "%H:%M:%S")
-				except:
-					return "Error parsing time"
-
-				return dt.strftime("%H:%M:%S")
-
-		except:
-			return str(val)
-
-
-class DateEditBone(html5.Div):
-	def __init__(self, moduleName, boneName, readOnly, date=True, time=True, params=None, *args, **kwargs):
-		super(DateEditBone, self).__init__(*args, **kwargs)
-		self.boneName = boneName
-		self.readOnly = readOnly
-		self.hasdate = date
-		self.hastime = time
-		self.params = params
-		self.addClass("vi-bone-container")
-
-		if date:
-			self.dateinput = html5.ignite.Input()
-
-			# IE11
-			try:
-				self.dateinput["type"] = "date"
-			except:
-				pass
-
-			self.dateinput["style"]["float"] = "left"
-			self.appendChild(self.dateinput)
-
-			if self.readOnly:
-				self.dateinput["readonly"] = True
-
-		if time:
-			self.timeinput = html5.ignite.Input()
-
-			# IE11
-			try:
-				self.timeinput["type"] = "time"
-				self.timeinput["step"] = "2"
-			except:
-				pass
-
-			self.appendChild(self.timeinput)
-
-			if self.readOnly:
-				self.timeinput["readonly"] = True
-
-	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
-		readOnly = "readonly" in skelStructure[boneName].keys() and skelStructure[boneName]["readonly"]
-		date = skelStructure[boneName]["date"] if "date" in skelStructure[boneName].keys() else True
-		time = skelStructure[boneName]["time"] if "time" in skelStructure[boneName].keys() else True
-		params = skelStructure[boneName]["params"] if "params" in skelStructure[boneName].keys() else None
-		return DateEditBone(moduleName, boneName, readOnly, date, time, params=params)
-
-	def unserialize(self, data, extendedErrorInformation=None):
-		if data.get(self.boneName):
-			if self.hastime and not self.hasdate:
-				self.timeinput["value"] = data[self.boneName]
-
-			if self.hasdate and not self.hastime:
-				dateobj = datetime.datetime.strptime(data[self.boneName], "%d.%m.%Y")
-				self.dateinput["value"] = dateobj.strftime("%Y-%m-%d")
-
-			if self.hasdate and self.hastime:
-				# FIXME: temporarily fixing a bug in extended relational bone
-				try:
-					dateobj = datetime.datetime.strptime(data[self.boneName], "%d.%m.%Y %H:%M:%S")
-					self.dateinput["value"] = dateobj.strftime("%Y-%m-%d")
-					self.timeinput["value"] = dateobj.strftime("%H:%M:%S")
-
-				except ValueError:
-					self.dateinput["value"] = "-"
-					self.timeinput["value"] = "-"
 		else:
-			if self.params and "prefill" in self.params and self.params["prefill"]:
-				'''
-					use string "now" for currentDate
-					or timedelta params to define relative dates
-					i.e: {"days":-2}
-				'''
-				startDate = datetime.datetime.now()
-				if self.params["prefill"] != "now":
-					try:
-						startDate = startDate + datetime.timedelta(**self.params["prefill"])
-					except:
-						self.dateinput["value"] = "-"
-						self.timeinput["value"] = "-"
-						return 0
+			self.dateInput = None
 
-				if self.hasdate:
-					self.dateinput["value"] = startDate.strftime("%Y-%m-%d")
+		if self.bone.boneStructure.get("time", True):
+			self.timeInput = self.appendChild(
+				"""<ignite-input type="time" step="1" />"""
+			)[0]
+			self.timeInput["readonly"] = bool(self.bone.boneStructure.get("readonly"))
+			self.serverToClient.append("%H:%M:%S")
+		else:
+			self.timeInput = None
 
-				if self.hastime:
-					self.timeinput["value"] = startDate.strftime("%H:%M:%S")
+		assert self.dateInput or self.timeInput, "You may not configure a dateBone(date=False, time=False)"
 
+	def unserialize(self, value=None):
+		if value:
+			try:
+				value = datetime.datetime.strptime(value, " ".join(self.serverToClient))
+			except Exception as e:
+				logging.exception(e)
+				value = None
+
+			if value:
+				if self.dateInput:
+					self.dateInput["value"] = value.strftime("%Y-%m-%d")
+
+				if self.timeInput:
+					self.timeInput["value"] = value.strftime("%H:%M:%S")
+
+
+	def serialize(self):
+		value = datetime.datetime.strptime("00:00:00", "%H:%M:%S")
+		haveTime = False
+		haveDate = False
+
+		if self.dateInput:
+			if self.dateInput["value"]:
+				try:
+					date = datetime.datetime.strptime(self.dateInput["value"], "%Y-%m-%d")
+					value = value.replace(year=date.year, month=date.month, day=date.day)
+					haveDate = True
+
+				except Exception as e:
+					logging.exception(e)
+		else:
+			haveDate = True
+
+		if self.timeInput:
+			if self.timeInput["value"]:
+				try:
+					time = datetime.datetime.strptime(self.timeInput["value"], "%H:%M:%S")
+					value = value.replace(hour=time.hour, minute=time.minute, second=time.second)
+					haveTime = True
+
+				except Exception as e:
+					logging.exception(e)
 			else:
-				if self.hasdate:
-					self.dateinput["value"] = "-"
-				if self.hastime:
-					self.timeinput["value"] = "-"
+				# date without time is OK!
+				haveTime = haveDate and self.dateInput
+		else:
+			haveTime = True
 
-	def serializeForPost(self):
-		# [day, month, year, hour, min, sec]
-		adatetime = ["00", "00", "0000", "00", "00", "00"]
+		if haveDate and haveTime:
+			return value.strftime(" ".join(self.serverToClient))
 
-		if self.hastime:
-			result = re.match('(\d+):(\d+)(:(\d+))?', self.timeinput["value"])
-			if result:
-				adatetime[3] = result.group(1)
-				adatetime[4] = result.group(2)
-
-				if result.group(4):
-					adatetime[5] = result.group(4)
-
-		if self.hasdate:
-			result = re.match('(\d+).(\d+).(\d+)', self.dateinput["value"])
-			if result:
-				adatetime[0] = result.group(3)
-				adatetime[1] = result.group(2)
-				adatetime[2] = result.group(1)
-
-		if adatetime[2] == "0000":  # when year is unset
-			if self.hastime:
-				return {self.boneName: adatetime[3] + ":" + adatetime[4] + ":00"}
-
-			return {self.boneName: ""}
-
-		returnvalue = adatetime[0] + "." + adatetime[1] + "." + adatetime[2] + " " + adatetime[3] + ":" + adatetime[
-			4] + ":" + adatetime[5]
-		return {self.boneName: returnvalue}
-
-	def serializeForDocument(self):
-		return self.serializeForPost()
+		return ""
 
 
-def CheckForDateBone(moduleName, boneName, skelStucture, *args, **kwargs):
-	return skelStucture[boneName]["type"] == "date"
+class DateViewWidget(BaseViewWidget):
+
+	def unserialize(self, value=None):
+		if value:
+			serverToClient = []
+
+			if self.bone.boneStructure.get("date", True):
+				serverToClient.append("%d.%m.%Y") # fixme: Again german format??
+
+			if self.bone.boneStructure.get("time", True):
+				serverToClient.append("%H:%M:%S")
+
+			try:
+				self.value = datetime.datetime.strptime(value or "", " ".join(serverToClient))
+				value = self.value.strftime(translate("vi.bone.date.at").join(serverToClient)) #fixme: hmm...
+			except:
+				value = "Invalid Datetime Format"
+
+		self.appendChild(html5.TextNode(value or conf["emptyValue"]), replace=True)
 
 
-class DateRangeFilterPlugin(html5.Div):
-	def __init__(self, extension, view, module, *args, **kwargs):
-		super(DateRangeFilterPlugin, self).__init__(*args, **kwargs)
-		self.view = view
-		self.extension = extension
-		self.module = module
-		self.mutualExclusiveGroupTarget = "daterange-filter"
-		self.mutualExclusiveGroupKey = extension["target"]
-		self.filterChangedEvent = EventDispatcher("filterChanged")
-		title = html5.H2()
-		title.appendChild(html5.TextNode(extension["name"]))
-		self.appendChild(title)
-
-		# from daterange value
-		self.beginDatepicker = html5.Input()
-		self.beginDatepicker["type"] = "date"
-		self.beginDatepicker["id"] = "begin-date-%s" % self.extension["target"]
-		self.beginDatepicker["class"] = "js-extended-date-range-filter"
-		beginLabel = html5.Label(translate("Begin date"))
-		beginLabel["for"] = "begin-date-%s" % self.extension["target"]
-		span = html5.Span()
-		span.appendChild(beginLabel)
-		span.appendChild(self.beginDatepicker)
-		self.appendChild(span)
-
-		# to daterange value
-		self.toDatepicker = html5.Input()
-		self.toDatepicker["type"] = "date"
-		self.toDatepicker["id"] = "to-date-%s" % self.extension["target"]
-		self.toDatepicker["class"] = "extended-date-range-filter %s" % self.extension["target"]
-		toLabel = html5.Label(translate("End date"))
-		toLabel["for"] = "to-date-%s" % self.extension["target"]
-		span2 = html5.Span()
-		span2.appendChild(toLabel)
-		span2.appendChild(self.toDatepicker)
-		self.appendChild(span2)
-		self.clearButton = html5.ext.Button(translate("Clear filter"), self.clearFilter)
-		self.appendChild(self.clearButton)
-		self.sinkEvent("onChange")
-
-	def clearFilter(self, fire=True):
-		self.beginDatepicker["value"] = None
-		self.toDatepicker["value"] = None
-		if fire:
-			self.filterChangedEvent.fire()
-
-	def updateFilter(self, filter, mutualExclusiveGroupTarget=None, mutualExclusiveGroupKey=None):
-		if mutualExclusiveGroupTarget == self.mutualExclusiveGroupTarget and mutualExclusiveGroupKey != self.mutualExclusiveGroupKey:
-			del filter["%s$gt" % self.extension["target"]]
-			del filter["%s$lt" % self.extension["target"]]
-			self.clearFilter(False)
-			return filter
-
-		clearedFilter = {}
-		for key, value in filter.items():
-			if key.find("$") != -1 and key.find(self.extension["target"]) == -1:
-				continue
-			else:
-				clearedFilter[key] = value
-
-		if self.beginDatepicker["value"] and self.toDatepicker["value"]:
-			clearedFilter["orderby"] = self.extension["target"]
-			clearedFilter["%s$gt" % self.extension["target"]] = self.beginDatepicker["value"]
-			clearedFilter["%s$lt" % self.extension["target"]] = self.toDatepicker["value"]
-		return clearedFilter
-
-	def onChange(self, event):
-		event.stopPropagation()
-		self.filterChangedEvent.fire(
-			mutualExclusiveGroupTarget=self.mutualExclusiveGroupTarget,
-			mutualExclusiveGroupKey=self.mutualExclusiveGroupKey
-		)
+class DateBone(BaseBone):
+	editWidgetFactory = DateEditWidget
+	viewWidgetFactory = DateViewWidget
 
 	@staticmethod
-	def canHandleExtension(extension, view, module):
-		return isinstance(extension, dict) and "type" in extension.keys() and (
-					extension["type"] == "date" or extension["type"].startswith("date."))
+	def checkFor(moduleName, boneName, skelStructure):
+		return skelStructure[boneName]["type"] == "date" or skelStructure[boneName]["type"].startswith("date.")
 
 
-# Register this Bone in the global queue
-editBoneSelector.insert(3, CheckForDateBone, DateEditBone)
-viewDelegateSelector.insert(3, CheckForDateBone, DateViewBoneDelegate)
-extractorDelegateSelector.insert(3, CheckForDateBone, DateBoneExtractor)
-extendedSearchWidgetSelector.insert(1, DateRangeFilterPlugin.canHandleExtension, DateRangeFilterPlugin)
+boneSelector.insert(1, DateBone.checkFor, DateBone)

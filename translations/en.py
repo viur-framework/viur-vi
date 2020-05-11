@@ -40,7 +40,10 @@ lngEn = {
 	# Sidebar
 	"vi.sidebar.internalpreview": u"Informations",
 
-	"Load all": u"fetch all"
+	"Load all": u"fetch all",
+
+	# Bones
+	"vi.bone.date.at": " at "
 }
 
 

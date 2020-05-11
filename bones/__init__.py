@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from . import base
+from . import date
 from . import relational
 from . import string
 
@@ -9,7 +10,6 @@ from . import string
 # from . import selectmulti
 # from . import selectone
 # from . import text
-# from . import date
 # from . import boolean
 # from . import color
 # from . import email

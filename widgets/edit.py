@@ -198,6 +198,8 @@ class EditWidget(html5.Div):
 		utils.setPreventUnloading(True)
 
 	def performLogics(self):
+		return  # fixme: Logics temporarily disabled
+
 		fields = self.serializeForDocument()
 
 		for key, desc in self.dataCache["structure"]:

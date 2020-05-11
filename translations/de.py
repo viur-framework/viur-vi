@@ -202,7 +202,9 @@ lngDe = {
 	"loaded elements: {amt}, pages: {pg}":u"Geladen: {amt} Elemente, {pg} Seite(n)",
 	"load next pages":u"Seiten laden",
 	"amount":u"pro Seiten",
-	"vi.sidebar.filterselector": "verfügbare Filter"
+	"vi.sidebar.filterselector": "verfügbare Filter",
 
+	# Bones
+	"vi.bone.date.at": " um "
 
 }
