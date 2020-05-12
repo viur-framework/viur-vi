@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from . import base
 from . import date
+from . import numeric
 from . import relational
 from . import string
 
@@ -14,6 +15,5 @@ from . import string
 # from . import color
 # from . import email
 # from . import password
-# from . import numeric
 # from . import treedir
 # from . import spatial

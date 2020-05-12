@@ -1,183 +1,182 @@
 # -*- coding: utf-8 -*-
+import re, logging
 from vi import html5
-from vi.priorityqueue import editBoneSelector, viewDelegateSelector, extendedSearchWidgetSelector, extractorDelegateSelector
-from vi.framework.event import EventDispatcher
+
+from vi.priorityqueue import boneSelector
 from vi.config import conf
-from vi.bones.base import BaseBoneExtractor
+from vi.bones.base import BaseBone, BaseViewWidget
 
-class NumericBoneExtractor(BaseBoneExtractor):
 
-	def render(self, data, field):
-		return str(self.raw(data, field)).replace(".", ",")
+class NumericEditWidget(html5.Div):
+	style = ["vi-bone", "vi-bone--numeric"]
 
-	def raw(self, data, field):
-		if field in data.keys():
-			value = data[field]
+	def __init__(self, bone, **kwargs):
+		super().__init__()
 
-			if isinstance(value, int):
-				return value
+		self.widget = self.__createWidget()
 
-			elif isinstance(value, float):
-				return round(value, self.skelStructure[field].get("precision", 2))
+		# Bone references
+		self.bone = bone
+		self.value = None
 
-		return 0
+		# Numeric bone precision, min and max
+		self.precision = self.bone.boneStructure.get("precision") or 0
+		self.min = html5.utils.parseFloat(str(self.bone.boneStructure.get("min")), None)
+		self.max = html5.utils.parseFloat(str(self.bone.boneStructure.get("max")), None)
 
-class NumericViewBoneDelegate(object):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs):
-		super(NumericViewBoneDelegate, self).__init__()
+		# Currency mode
+		self.currency = None
+		self.currencyDecimalDelimiter = ","
+		self.currencyThousandDelimiter = "."
+		self.currencyPattern = None
 
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName = moduleName
+		# Style parameters
+		style = (self.bone.boneStructure.get("params") or {}).get("style", "")
+		for s in style.split(" "):
+			if s.lower().startswith("amount."):
+				self.currency = s.split(".", 1)[1]
+				if self.bone.boneStructure.get("precision") is None:
+					self.precision = 2  #default precision for amounts
 
-	def render(self, data, field):
-		value =  conf["emptyValue"]
-		if field in data.keys():
+			if s.lower().startswith("delimiter."):
+				fmt = s.split(".", 1)[1]
+				if fmt == "dot":
+					self.currencyDecimalDelimiter = "."
+					self.currencyThousandDelimiter = ","
+				# else: fixme are there more configs?
+
+		self.__configureWidget()
+
+	def __createWidget(self):
+		self.sinkEvent("onChange")
+		return self.appendChild(html5.ignite.Input())[0]
+
+	def __configureWidget(self):
+		# Widget state
+		self.widget["readonly"] = bool(self.bone.boneStructure.get("readonly"))
+		self.widget["required"] = bool(self.bone.boneStructure.get("required"))
+
+		# Standard- or currency mode
+		if not self.currency:
+			self.widget["type"] = "number"
+
+			if self.precision:
+				self.widget["step"] = pow(10, -self.precision)
+
+			else:  # Precision is zero, treat as integer input
+				self.widget["step"] = 1
+
+			if self.min is not None:
+				self.widget["min"] = self.min
+
+			if self.max is not None:
+				self.widget["max"] = self.max
+
+		else:
+			assert self.currencyThousandDelimiter[0] not in "^-+()[]"
+			assert self.currencyDecimalDelimiter[0] not in "^-+()[]"
+
+			self.currencyPattern = re.compile(r"-?((\d{1,3}[%s])*|\d*)[%s]\d+|-?\d+" %
+			                                    (self.currencyThousandDelimiter[0],
+			                                        self.currencyDecimalDelimiter[0]))
+
+	def setValue(self, value):
+		if not self.currency:
+			if self.precision:
+				self.value = html5.utils.parseFloat(value or 0)
+			else:
+				self.value = html5.utils.parseInt(value or 0)
+
+			return str(self.value)
+
+		if value is None or str(value).strip() is "":
+			self.value = None
+			return ""
+
+		if isinstance(value, float):
+			value = str(value).replace(".", self.currencyDecimalDelimiter)
+
+		value = str(value).strip()
+
+		if self.currencyPattern.match(value):
 			try:
-				prec = self.skelStructure[field].get("precision")
+				value = re.sub(r"[^-0-9%s]" % self.currencyDecimalDelimiter, "", value)
+				value = value.replace(self.currencyDecimalDelimiter, ".")
 
-				if prec and data[field] is not None:
-					value = ( "%." + str( prec ) + "f" ) % data[field]
+				if self.precision == 0:
+					self.value = int(float(value))
+					value = [str(self.value)]
 				else:
-					value = str(data[field])
+					self.value = float("%.*f" % (self.precision, float(value)))
+					value = ("%.*f" % (self.precision, self.value)).split(".")
 
-			except:
-				value = str(data[field])
+				# Check boundaries
+				if self.min is not None and self.value < self.min:
+					return self.setValue(self.min)
+				elif self.max is not None and self.value > self.max:
+					return self.setValue(self.max)
 
-		delegato = html5.Div(value)
-		delegato.addClass("vi-delegato", "vi-delegato--numeric")
-		return delegato
+				if value[0].startswith("-"):
+					value[0] = value[0][1:]
+					neg = True
+				else:
+					neg = False
 
-class NumericEditBone(html5.Div):
-	def __init__(self, moduleName, boneName, readOnly, _min=False, _max=False, precision=False, currency=None,
-	                *args, **kwargs ):
-		super( NumericEditBone,  self ).__init__( *args, **kwargs )
-		self.boneName = boneName
-		self.readOnly = readOnly
-		self.addClass("vi-bone-container")
+				ival = ""
+				for i in range(0, len(value[0])):
+					if ival and i % 3 == 0:
+						ival = self.currencyThousandDelimiter + ival
 
-		self.input = html5.ignite.Input()
-		self.appendChild(self.input)
+					ival = value[0][-(i+1)] + ival
 
-		if currency:
-			self.appendChild(html5.Span(currency))
+				self.widget.removeClass("is-invalid")
+				return ("-" if neg else "") + ival + \
+				       ((self.currencyDecimalDelimiter + value[1]) if len(value) > 1 else "") + \
+				       " " + self.currency
 
-		self.input["type"] = "number"
+			except Exception as e:
+				logging.exception(e)
 
-		if _min:
-			self.input["min"] = _min
+		self.widget.addClass("is-invalid")
+		return value
 
-		if _max:
-			self.input["max"] = _max
+	def onChange(self, event):
+		self.widget["value"] = self.setValue(self.widget["value"])
 
-		if precision:
-			self.input["step"] = pow(10, -precision)
-		else: #Precision is zero, treat as integer input
-			self.input["step"] = 1
+	def unserialize(self, value=None):
+		self.widget["value"] = self.setValue(value)
 
-		if self.readOnly:
-			self.input["readonly"] = True
+	def serialize(self):
+		return self.value
 
-	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
-		params = skelStructure[boneName].get("params")
-		readOnly = skelStructure[boneName].get("readonly", False)
 
-		currency = None
+class NumericViewWidget(NumericEditWidget):
 
-		# View bone as readOnly even if it's not readOnly by system.
-		if not readOnly and params:
-			style = params.get("style", "").lower()
-			for s in style.split(" "):
-				if s == "readonly":
-					readOnly = True
+	def __createWidget(self):
+		return self
 
-				elif s.startswith("amount."):
-					currency = s.split(".", 1)[1]
-					currency = {
-						"euro": u"€",
-						"dollar": u"$",
-						"yen": u"¥",
-						"pound": u"£",
-						"baht": u"฿",
-						"bitcoin": u"฿"
-					}.get(currency, currency)
-
-		return NumericEditBone(moduleName, boneName, readOnly,
-		                       skelStructure[boneName].get("min", False),
-		                       skelStructure[boneName].get("max", False),
-		                       skelStructure[boneName].get("precision", False),
-		                       currency = currency)
-
-	def unserialize(self, data):
-		if self.boneName in data:
-			self.input["value"] = data.get(self.boneName, "")
-
-	def serializeForPost(self):
-		return {
-			self.boneName: self.input["value"]
-		}
-
-	def serializeForDocument(self):
-		return self.serializeForPost()
-
-	def setExtendedErrorInformation(self, errorInfo ):
+	def __configureWidget(self):
 		pass
 
-class ExtendedNumericSearch( html5.Div ):
-	def __init__(self, extension, view, module, *args, **kwargs ):
-		super( ExtendedNumericSearch, self ).__init__( *args, **kwargs )
-		self.view = view
-		self.extension = extension
-		self.module = module
-		self.opMode = extension["mode"]
-		self.filterChangedEvent = EventDispatcher("filterChanged")
-		assert self.opMode in ["equals","from", "to","range"]
-		self.appendChild( html5.TextNode(extension["name"]))
-		self.sinkEvent("onKeyDown")
-		if self.opMode in ["equals","from", "to"]:
-			self.input = html5.Input()
-			self.input["type"] = "number"
-			self.appendChild( self.input )
-		elif self.opMode == "range":
-			self.input1 = html5.Input()
-			self.input1["type"] = "number"
-			self.appendChild( self.input1 )
-			self.appendChild( html5.TextNode("to") )
-			self.input2 = html5.Input()
-			self.input2["type"] = "number"
-			self.appendChild( self.input2 )
+	def unserialize(self, value=None):
+		self.value = value
 
-	def onKeyDown(self, event):
-		if html5.isReturn(event):
-			self.filterChangedEvent.fire()
+		if value is None:
+			value = conf["emptyValue"]
+		else:
+			value = self.setValue(value)
 
-	def updateFilter(self, filter):
-		if self.opMode=="equals":
-			filter[ self.extension["target"] ] = self.input["value"]
-		elif self.opMode=="from":
-			filter[ self.extension["target"]+"$gt" ] = self.input["value"]
-		elif self.opMode=="to":
-			filter[ self.extension["target"]+"$lt" ] = self.input["value"]
-		elif self.opMode=="prefix":
-			filter[ self.extension["target"]+"$lk" ] = self.input["value"]
-		elif self.opMode=="range":
-			filter[ self.extension["target"]+"$gt" ] = self.input1["value"]
-			filter[ self.extension["target"]+"$lt" ] = self.input2["value"]
-		return( filter )
+		self.appendChild(html5.TextNode(value), replace=True)
+
+
+class NumericBone(BaseBone):
+	editWidgetFactory = NumericEditWidget
+	viewWidgetFactory = NumericViewWidget
 
 	@staticmethod
-	def canHandleExtension(extension, view, module):
-		return( isinstance( extension, dict) and "type" in extension.keys() and (extension["type"]=="numeric" or extension["type"].startswith("numeric.") ) )
+	def checkFor(moduleName, boneName, skelStructure):
+		return skelStructure[boneName]["type"] == "numeric" or skelStructure[boneName]["type"].startswith("numeric.")
 
 
+boneSelector.insert(1, NumericBone.checkFor, NumericBone)
 
-
-def CheckForNumericBone(moduleName, boneName, skelStucture, *args, **kwargs):
-	return skelStucture[boneName]["type"] == "numeric"
-
-#Register this Bone in the global queue
-editBoneSelector.insert( 3, CheckForNumericBone, NumericEditBone)
-viewDelegateSelector.insert( 3, CheckForNumericBone, NumericViewBoneDelegate)
-extendedSearchWidgetSelector.insert( 1, ExtendedNumericSearch.canHandleExtension, ExtendedNumericSearch )
-extractorDelegateSelector.insert( 3, CheckForNumericBone, NumericBoneExtractor)
