@@ -3,6 +3,7 @@ from . import base
 from . import date
 from . import numeric
 from . import relational
+from . import select
 from . import string
 
 # from . import record
