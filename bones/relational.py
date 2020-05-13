@@ -4,7 +4,7 @@ from vi import html5
 from vi.priorityqueue import boneSelector
 from vi.config import conf
 import vi.utils as utils
-from vi.bones.base import BaseBone, BaseViewWidget, BaseMultiEditWidget
+from vi.bones.base import BaseBone, BaseMultiEditWidget
 from vi.widgets.internaledit import InternalEdit
 from vi.widgets.list import ListWidget
 
@@ -47,7 +47,8 @@ class RelationalEditWidget(html5.Div):
 		if self.dataStructure:
 			self.dataWidget = InternalEdit(
 				self.dataStructure,
-				readOnly=self.readonly
+				readOnly=self.readonly,
+				defaultCat=None  # fixme: IMHO not necessary
 			)
 			self.appendChild(self.dataWidget)
 		else:
@@ -73,9 +74,6 @@ class RelationalEditWidget(html5.Div):
 		)
 
 		if self.dataWidget:
-			self.dataWidget.unserialize(self.value["rel"] or {})
-			self.dataWidget.enable()
-
 			txt = utils.formatString(
 				txt,
 				self.dataWidget.serializeForDocument(),
@@ -97,6 +95,10 @@ class RelationalEditWidget(html5.Div):
 			self.destWidget["value"] = ""
 		else:
 			self.destKey = value["dest"]["key"]
+
+		if self.dataWidget:
+			self.dataWidget.unserialize((value["rel"] or {}) if value else {})
+			self.dataWidget.enable()
 
 		self.value = value
 		self.updateString()
@@ -175,7 +177,7 @@ class RelationalViewWidget(html5.Div):
 		self.appendChild(html5.TextNode(txt or conf["emptyValue"]), replace=True)
 
 	def serialize(self):
-		return self.value  # fixme: The format here is invalid!
+		return self.value  # fixme: The format here is invalid for POST!
 
 
 class RelationalMultiEditWidget(BaseMultiEditWidget):
