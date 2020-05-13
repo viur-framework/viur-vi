@@ -1,66 +1,47 @@
-# -*- coding: utf-8 -*-
 from vi import html5
-from vi.priorityqueue import editBoneSelector, viewDelegateSelector
+
+from vi.priorityqueue import boneSelector
 from vi.config import conf
+from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 
-class ColorViewBoneDelegate( object ):
-	def __init__(self, moduleName, boneName, skelStructure, *args, **kwargs ):
-		super( ColorViewBoneDelegate, self ).__init__()
-		self.skelStructure = skelStructure
-		self.boneName = boneName
-		self.moduleName = moduleName
 
-	def render( self, data, field ):
-		if field in data.keys():
-			color = html5.Div()
-			color.addClass("vi-delegato-icon")
-			color["style"]["background-Color"]=str( data[field])
+class ColorEditWidget(BaseEditWidget):
+	style = ["vi-bone", "vi-bone--color"]
 
-			lbl = html5.Span(str( data[field]))
-			lbl.addClass("vi-delegato-label")
+	def _createWidget(self):
+		return self.fromHTML("""
+			<input [name]="widget" type="color">
+			<button [name]="unsetBtn" text="Unset" icon="icons-delete" class="btn--delete">
+		""")
 
-			delegato = html5.Div()
-			delegato.appendChild(color)
-			delegato.appendChild(lbl)
+	def onUnsetBtnClick(self):
+		self.widget["value"] = ""
+
+	def serialize(self):
+		value = self.widget["value"]
+		return value if value else None
+
+class ColorViewWidget(BaseViewWidget):
+
+	def unserialize(self, value=None):
+		self.value = value
+
+		if value:
+			self["style"]["background-color"] = value
+			self.appendChild(value)
 		else:
-			delegato = html5.Div(conf[ "emptyValue" ])
-
-		delegato.addClass("vi-delegato", "vi-delegato--color")
-		return delegato
+			self.appendChild(conf["emptyValue"])
 
 
-class ColorEditBone( html5.Input ):
-
-	def __init__(self, moduleName, boneName,readOnly, *args, **kwargs ):
-		super( ColorEditBone,  self ).__init__( *args, **kwargs )
-		self.boneName = boneName
-		self.readOnly = readOnly
-		self["type"]="color"
-		if readOnly:
-			self["disabled"]=True
-
+class ColorBone(BaseBone):
+	editWidgetFactory = ColorEditWidget
+	viewWidgetFactory = ColorViewWidget
+	multiEditWidgetFactory = None
+	multiViewWidgetFactory = None
 
 	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
-		readOnly = "readonly" in skelStructure[ boneName ].keys() and skelStructure[ boneName ]["readonly"]
-		return ColorEditBone(moduleName, boneName, readOnly)
+	def checkFor(moduleName, boneName, skelStructure):
+		return skelStructure[boneName]["type"] == "color" or skelStructure[boneName]["type"].startswith("color.")
 
-	##read
-	def unserialize(self, data, extendedErrorInformation=None):
-		if self.boneName in data.keys():
-			self._setValue(data[self.boneName])
 
-	##save
-	def serializeForPost(self):
-		return { self.boneName: str(self._getValue())}
-
-	##UNUSED
-	def serializeForDocument(self):
-		return self.serializeForPost()
-
-def CheckForColorBone(moduleName, boneName, skelStucture, *args, **kwargs):
-	return skelStucture[boneName]["type"] == "color"
-
-#Register this Bone in the global queue
-editBoneSelector.insert( 3, CheckForColorBone, ColorEditBone)
-viewDelegateSelector.insert( 3, CheckForColorBone, ColorViewBoneDelegate)
+boneSelector.insert(1, ColorBone.checkFor, ColorBone)

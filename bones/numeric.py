@@ -44,31 +44,31 @@ class NumericEditWidget(html5.Div):
 				# else: fixme are there more configs?
 
 		self.widget = self._createWidget()
+		self.appendChild(self.widget)
 
 	def _createWidget(self):
 		self.sinkEvent("onChange")
-		return self.appendChild(html5.ignite.Input())[0]
+		widget = html5.ignite.Input()
 
-	def _configureWidget(self):
 		# Widget state
-		self.widget["readonly"] = bool(self.bone.boneStructure.get("readonly"))
-		self.widget["required"] = bool(self.bone.boneStructure.get("required"))
+		widget["readonly"] = bool(self.bone.boneStructure.get("readonly"))
+		widget["required"] = bool(self.bone.boneStructure.get("required"))
 
 		# Standard- or currency mode
 		if not self.currency:
-			self.widget["type"] = "number"
+			widget["type"] = "number"
 
 			if self.precision:
-				self.widget["step"] = pow(10, -self.precision)
+				widget["step"] = pow(10, -self.precision)
 
 			else:  # Precision is zero, treat as integer input
-				self.widget["step"] = 1
+				widget["step"] = 1
 
 			if self.min is not None:
-				self.widget["min"] = self.min
+				widget["min"] = self.min
 
 			if self.max is not None:
-				self.widget["max"] = self.max
+				widget["max"] = self.max
 
 		else:
 			assert self.currencyThousandDelimiter[0] not in "^-+()[]"
@@ -77,6 +77,8 @@ class NumericEditWidget(html5.Div):
 			self.currencyPattern = re.compile(r"-?((\d{1,3}[%s])*|\d*)[%s]\d+|-?\d+" %
 			                                    (self.currencyThousandDelimiter[0],
 			                                        self.currencyDecimalDelimiter[0]))
+
+		return widget
 
 	def setValue(self, value):
 		if not self.currency:

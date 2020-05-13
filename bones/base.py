@@ -23,13 +23,18 @@ class BaseEditWidget(html5.Div):
 		self.readonly = bool(self.bone.boneStructure.get("readonly"))
 		self.required = bool(self.bone.boneStructure.get("required"))
 
-		self.widget = self._createWidget()
+		widget = self._createWidget()
+		if isinstance(widget, html5.Widget):
+			if not self.widget:
+				self.widget = widget
+
+			if not widget.parent():
+				self.appendChild(widget)
 
 	def _createWidget(self):
 		widget = html5.ignite.Input()
 		widget["readonly"] = self.readonly
 		widget["required"] = self.required
-		self.appendChild(widget)
 		return widget
 
 	def unserialize(self, value=None):

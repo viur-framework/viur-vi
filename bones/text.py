@@ -9,24 +9,21 @@ from vi.widgets.htmleditor import HtmlEditor
 class TextEditWidget(BaseEditWidget):
 	style = ["vi-bone", "vi-bone--text"]
 
-	def __init__(self, bone, **kwargs):
-		super().__init__(bone, **kwargs)
-
 	def _createWidget(self):
 		if self.bone.boneStructure["validHtml"]:
-			self.widget = HtmlEditor()
-			self.widget.boneName = self.bone.boneName  # fixme WTF?
+			widget = HtmlEditor()
+			widget.boneName = self.bone.boneName  # fixme WTF?
 
 			if bool(self.bone.boneStructure.get("readonly")):
-				self.widget.disable()
+				widget.disable()
 		else:
-			self.widget = html5.ignite.Textarea()
-			self.widget["readonly"] = bool(self.bone.boneStructure.get("readonly"))
+			widget = html5.ignite.Textarea()
+			widget["readonly"] = bool(self.bone.boneStructure.get("readonly"))
 
-		self.appendChild(self.widget)
 		self.sinkEvent("onKeyUp")
 
 		#self.changeEvent = EventDispatcher("boneChange")  # fixme: later...
+		return widget
 
 	def _setDisabled(self, disable):
 		super()._setDisabled(disable)

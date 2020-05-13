@@ -10,14 +10,14 @@ class StringEditWidget(html5.Div):
 
 	def __init__(self, bone, **kwargs):
 		super().__init__("""
-			<ignite-input [name]="input">
+			<ignite-input [name]="widget">
 			<div [name]="length">0</div>
 			<div [name]="maxlength" hidden>0</div> <!-- fixme: add later ... -->
 		""")
 
 		self.bone = bone
 
-		self.input["readonly"] = bool(self.bone.boneStructure.get("readonly"))
+		self.widget["readonly"] = bool(self.bone.boneStructure.get("readonly"))
 
 		self.sinkEvent("onChange", "onKeyUp")
 		self.timeout = None
@@ -40,14 +40,14 @@ class StringEditWidget(html5.Div):
 		self.updateLength()
 
 	def updateLength(self):
-		self.length.appendChild(len(self.input["value"] or ""), replace=True)
+		self.length.appendChild(len(self.widget["value"] or ""), replace=True)
 
 	def unserialize(self, value=None):
-		self.input["value"] = html5.utils.unescape(str(value or ""))  # fixme: is html5.utils.unescape() still required?
+		self.widget["value"] = html5.utils.unescape(str(value or ""))  # fixme: is html5.utils.unescape() still required?
 		self.updateLength()
 
 	def serialize(self):
-		return self.input["value"]
+		return self.widget["value"]
 
 
 class StringViewWidget(BaseViewWidget):
