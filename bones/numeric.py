@@ -13,8 +13,6 @@ class NumericEditWidget(html5.Div):
 	def __init__(self, bone, **kwargs):
 		super().__init__()
 
-		self.widget = self.__createWidget()
-
 		# Bone references
 		self.bone = bone
 		self.value = None
@@ -45,13 +43,13 @@ class NumericEditWidget(html5.Div):
 					self.currencyThousandDelimiter = ","
 				# else: fixme are there more configs?
 
-		self.__configureWidget()
+		self.widget = self._createWidget()
 
-	def __createWidget(self):
+	def _createWidget(self):
 		self.sinkEvent("onChange")
 		return self.appendChild(html5.ignite.Input())[0]
 
-	def __configureWidget(self):
+	def _configureWidget(self):
 		# Widget state
 		self.widget["readonly"] = bool(self.bone.boneStructure.get("readonly"))
 		self.widget["required"] = bool(self.bone.boneStructure.get("required"))

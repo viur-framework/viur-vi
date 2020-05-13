@@ -8,7 +8,7 @@ from vi.config import conf
 import json
 
 
-class BaseEditWidget(html5.ignite.Input): #fixme: maybe generally replace by div?
+class BaseEditWidget(html5.Div):
 	"""
 	Base class for a bone-compliant edit widget implementation using an input field.
 	This widget defines the general interface of a bone edit control.
@@ -18,14 +18,25 @@ class BaseEditWidget(html5.ignite.Input): #fixme: maybe generally replace by div
 	def __init__(self, bone, **kwargs):
 		super().__init__()
 		self.bone = bone
-		self["readonly"] = bool(self.bone.boneStructure.get("readonly"))
-		self["required"] = bool(self.bone.boneStructure.get("required"))
+		self.widget = None
+
+		self.readonly = bool(self.bone.boneStructure.get("readonly"))
+		self.required = bool(self.bone.boneStructure.get("required"))
+
+		self.widget = self._createWidget()
+
+	def _createWidget(self):
+		widget = html5.ignite.Input()
+		widget["readonly"] = self.readonly
+		widget["required"] = self.required
+		self.appendChild(widget)
+		return widget
 
 	def unserialize(self, value=None):
-		self["value"] = value or ""
+		self.widget["value"] = value or ""
 
 	def serialize(self):
-		return self["value"]
+		return self.widget["value"]
 
 
 class BaseViewWidget(html5.Div):
