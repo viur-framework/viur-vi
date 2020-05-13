@@ -3,7 +3,7 @@ from vi import html5
 from vi.config import conf
 from vi.priorityqueue import boneSelector
 
-from vi.bones.base import BaseBone
+from vi.bones.base import BaseBone, BaseViewWidget
 
 
 class SelectMultipleEditBone(html5.Div):
@@ -76,10 +76,27 @@ class SelectSingleEditBone(html5.Select):
 		return None
 
 
+class SelectViewWidget(BaseViewWidget):
+
+	def unserialize(self, value=None):
+		self.value = value
+		self.appendChild(
+			html5.TextNode(self.bone.valuesDict.get(value, value) if value else conf["emptyValue"]),
+			replace=True
+		)
+
+
 class SelectMultipleBone(BaseBone):
 	editWidgetFactory = SelectMultipleEditBone
 	multiEditWidgetFactory = None
-	#viewWidgetFactory = StringViewWidget
+	viewWidgetFactory = SelectViewWidget
+
+	"""
+	Base "Catch-All" delegate for everything not handled separately.
+	"""
+	def __init__(self, moduleName, boneName, skelStructure):
+		super().__init__(moduleName, boneName, skelStructure)
+		self.valuesDict = {k: v for k, v in self.boneStructure["values"]}  #fixme this could be obsolete when core renders dict...
 
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):
@@ -90,10 +107,8 @@ class SelectMultipleBone(BaseBone):
 boneSelector.insert(1, SelectMultipleBone.checkFor, SelectMultipleBone)
 
 
-class SelectSingleBone(BaseBone):
+class SelectSingleBone(SelectMultipleBone):
 	editWidgetFactory = SelectSingleEditBone
-	multiEditWidgetFactory = None
-	#viewWidgetFactory = StringViewWidget
 
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):
