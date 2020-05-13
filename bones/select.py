@@ -66,7 +66,12 @@ class SelectSingleEditBone(html5.Select):
 		for entry in self.children():
 			if entry["value"] == value or "":
 				entry["selected"] = True
-				break
+				return
+
+		# If no match found, select first entry
+		first = self.children(0)
+		if first:
+			first["selected"] = True
 
 	def serialize(self):
 		for entry in self.children():
