@@ -71,7 +71,7 @@ class BaseMultiEditWidgetEntry(html5.Div):
 			self.removeBtn.hide()
 		else:
 			# Proxy dragging event features of the dragArea to this widget!
-			for event in ["onDragStart", "onDragOver", "onDragEnd", "onDrop"]:
+			for event in ["onDragStart", "onDragOver", "onDragLeave", "onDragEnd", "onDrop"]:
 				setattr(self.dragArea, event, getattr(self, event))
 				self.dragArea.sinkEvent(event)  # sink has to be done behind setattr!
 
@@ -81,15 +81,45 @@ class BaseMultiEditWidgetEntry(html5.Div):
 		self.parent().removeChild(self)
 
 	def onDragStart(self, event):
+		if self.parent()["disabled"]:
+			return
+
+		self.addClass("is-dragging")
+
 		self.parent()._widgetToDrag = self
 		event.dataTransfer.setData("application/json", json.dumps(self.widget.serialize()))
 		event.stopPropagation()
 
 	def onDragOver(self, event):
+		if self.parent()["disabled"]:
+			return
+
+		if self.parent()._widgetToDrag is not self:
+			self.addClass("is-dragging-over")
+			self.parent()._widgetIsOver = self
+
+		event.preventDefault()
+
+	def onDragLeave(self, event):
+		if self.parent()["disabled"]:
+			return
+
+		self.removeClass("is-dragging-over")
+		self.parent()._widgetIsOver = None
+
 		event.preventDefault()
 
 	def onDragEnd(self, event):
+		if self.parent()["disabled"]:
+			return
+
+		self.removeClass("is-dragging")
 		self.parent()._widgetToDrag = None
+
+		if self.parent()._widgetIsOver:
+			self.parent()._widgetIsOver.removeClass("is-dragging-over")
+			self.parent()._widgetIsOver = None
+
 		event.stopPropagation()
 
 	def onDrop(self, event):
@@ -134,6 +164,7 @@ class BaseMultiEditWidget(html5.Div):
 		self.kwargs = kwargs
 
 		self.widgets._widgetToDrag = None
+		self.widgets._widgetIsOver = None  # "We have clearance, Clarence." - "Roger, Roger. What's our vector, Victor?"
 
 		if self.bone.boneStructure["readonly"]:
 			self.addBtn.hide()

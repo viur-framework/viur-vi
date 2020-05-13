@@ -9,8 +9,6 @@ from . import string
 # from . import record
 # from . import file
 # from . import hierarchy
-# from . import selectmulti
-# from . import selectone
 # from . import text
 # from . import boolean
 # from . import color
