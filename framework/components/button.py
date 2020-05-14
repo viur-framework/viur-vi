@@ -46,7 +46,8 @@ class Button(html5.Button):
 
 		svg = embedsvg.get(icon)
 		if svg:
-			self.element.innerHTML = svg + self["title"]
+			self.svg = svg
+			self.element.innerHTML = self.svg + self["title"]
 
 	def _setText(self, text):
 		if text is not None:
