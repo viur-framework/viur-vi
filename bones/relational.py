@@ -105,14 +105,14 @@ class RelationalEditWidget(html5.Div):
 
 	def serialize(self):
 		# fixme: Maybe we need a serializeForDocument also?
-		if self.dataWidget:
+		if self.destKey and self.dataWidget:
 			res = {
 				"key": self.destKey
 			}
 			res.update(self.dataWidget.serializeForPost())  # fixme: call serializeForPost()?
 			return res
 
-		return self.destKey
+		return self.destKey or None
 
 	def onSelectBtnClick(self):
 		currentSelector = ListWidget(

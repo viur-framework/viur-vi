@@ -624,7 +624,9 @@ class EditWidget(html5.Div):
 				continue #ignore the key, it is stored in self.key!
 
 			try:
-				res[key] = bone.serialize()
+				value = bone.serialize()
+				if value:
+					res[key] = value
 
 			except InvalidBoneValueException:
 				if validityCheck:

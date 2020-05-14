@@ -215,7 +215,13 @@ class BaseMultiEditWidget(html5.Div):
 			self.addEntry(entry)
 
 	def serialize(self):
-		return [widget.serialize() for widget in self.widgets]
+		ret = []
+		for widget in self.widgets:
+			value = widget.serialize()
+			if value:
+				ret.append(value)
+
+		return ret
 
 
 class BaseMultiViewWidget(html5.Ul):
@@ -237,7 +243,13 @@ class BaseMultiViewWidget(html5.Ul):
 			self.appendChild(widget)
 
 	def serialize(self):
-		return [widget.serialize() for widget in self]
+		ret = []
+		for widget in self.widgets:
+			value = widget.serialize()
+			if value:
+				ret.append(value)
+
+		return ret
 
 
 class BaseLanguageEditWidget(html5.Div):
@@ -302,7 +314,9 @@ class BaseLanguageEditWidget(html5.Div):
 	def serialize(self):
 		ret = {}
 		for lang, (_, widget) in self._languageWidgets.items():
-			ret[lang] = widget.serialize()
+			value = widget.serialize()
+			if value:
+				ret[lang] = value
 
 		return ret
 

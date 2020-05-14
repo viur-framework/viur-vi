@@ -178,7 +178,7 @@ class NetworkService(object):
 					"\r\nContent-Type: application/octet-stream" \
 					"\r\nMIME-Version: 1.0" \
 					f"\r\nContent-Disposition: form-data; name=\"{key}\"\r\n\r\n"
-				ret += str(value)
+				ret += str(value) if value is not None else ""
 				ret += '\r\n--' + boundary
 
 			return ret
