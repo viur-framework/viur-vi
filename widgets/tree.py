@@ -90,7 +90,7 @@ class _StructureWidget(html5.Li):
 						if num < step_unit:
 							return "%3.1f %s" % (num, x)
 						num /= step_unit
-				size = convert_bytes(self.data["size"])
+				size = convert_bytes(int(self.data["size"]))
 				self.nodeSubline.appendChild(html5.TextNode(size))
 class NodeWidget(_StructureWidget):
 	"""

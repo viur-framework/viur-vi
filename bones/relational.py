@@ -4,7 +4,7 @@ from vi import html5
 from vi.priorityqueue import boneSelector
 from vi.config import conf
 import vi.utils as utils
-from vi.bones.base import BaseBone, BaseMultiEditWidget
+from vi.bones.base import BaseBone, BaseEditWidget, BaseMultiEditWidget
 from vi.widgets.internaledit import InternalEdit
 from vi.widgets.list import ListWidget
 
@@ -21,22 +21,25 @@ def _getDefaultValues(structure):
 	return defaultValues
 
 
-class RelationalEditWidget(html5.Div):
+class RelationalEditWidget(BaseEditWidget):
 	style = ["vi-bone", "vi-bone--relational"]
 
+	def _createWidget(self):
+		return self.fromHTML(
+			"""
+				<ignite-input [name]="destWidget" readonly>
+				<button [name]="selectBtn" class="btn--select" text="Select" icon="icons-select"></button>
+			"""
+		)
+
 	def __init__(self, bone, language=None, **kwargs):
-		super().__init__("""
-			<ignite-input [name]="destWidget" readonly>
-			<button [name]="selectBtn" class="btn--select" text="Select" icon="icons-select"></button>
-		""")
+		super().__init__(bone)
 		self.sinkEvent("onChange")
 
-		self.bone = bone
 		self.value = None
 		self.language = language
 
 		# Current bone config
-		self.readonly = bool(self.bone.boneStructure.get("readonly"))
 		self.formatString = self.bone.boneStructure["format"]
 
 		# Structures
