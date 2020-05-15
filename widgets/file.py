@@ -361,7 +361,7 @@ class FileWidget(TreeWidget):
 			s = html5.Span()
 			s.appendChild(html5.TextNode("Search"))
 			self.pathList.appendChild(s)
-			self.reloadData({"node": self.rootNode, "search": searchStr})
+			self.reloadData({"parententry": self.rootNode, "search": searchStr})
 
 	def setNode(self, node):
 		"""

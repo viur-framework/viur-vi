@@ -487,7 +487,7 @@ class TreeWidget(html5.Div):
 		answ = NetworkService.decode(req)
 		skel = answ["values"]
 
-		if skel["parentdir"] and skel["parentdir"] != skel["key"]:
+		if skel["parententry"] and skel["parententry"] != skel["key"]:
 			c = NodeWidget(self.module, skel, [])
 
 			NetworkService.request(
@@ -509,7 +509,7 @@ class TreeWidget(html5.Div):
 		if paramsOverride:
 			params = paramsOverride.copy()
 		else:
-			params = {"node": self.node}
+			params = {"parententry": self.node}
 
 		if "amount" not in params:
 			params["amount"] = self._batchSize
