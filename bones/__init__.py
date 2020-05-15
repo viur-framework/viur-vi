@@ -7,6 +7,7 @@ from . import numeric
 from . import record
 from . import relational
 from . import select
+from . import spatial
 from . import string
 from . import text
 

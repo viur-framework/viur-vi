@@ -45,8 +45,6 @@ class TextBone(BaseBone):
 
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):
-		print(boneName, skelStructure[boneName]["type"] == "text" or skelStructure[boneName]["type"].startswith("text."))
-
 		return skelStructure[boneName]["type"] == "text" or skelStructure[boneName]["type"].startswith("text.")
 
 
