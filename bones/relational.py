@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from vi import html5
+from vi import html5, utils
 
-from vi.priorityqueue import boneSelector
+from vi.priorityqueue import boneSelector, moduleWidgetSelector
 from vi.config import conf
-import vi.utils as utils
 from vi.bones.base import BaseBone, BaseEditWidget, BaseMultiEditWidget
 from vi.widgets.internaledit import InternalEdit
-from vi.widgets.list import ListWidget
+from vi.widgets.file import FileWidget, LeafFileWidget, Uploader, FilePreviewImage
 
 
 def _getDefaultValues(structure):
@@ -39,17 +38,10 @@ class RelationalEditWidget(BaseEditWidget):
 		self.value = None
 		self.language = language
 
-		# Current bone config
-		self.formatString = self.bone.boneStructure["format"]
-
-		# Structures
-		self.destStructure = self.bone.boneStructure["relskel"]
-		self.dataStructure = self.bone.boneStructure["using"]
-
 		# Relation edit widget
-		if self.dataStructure:
+		if self.bone.dataStructure:
 			self.dataWidget = InternalEdit(
-				self.dataStructure,
+				self.bone.dataStructure,
 				readOnly=self.readonly,
 				defaultCat=None  # fixme: IMHO not necessary
 			)
@@ -62,16 +54,15 @@ class RelationalEditWidget(BaseEditWidget):
 
 	def updateString(self):
 		if not self.value:
-
 			if self.dataWidget:
 				self.dataWidget.disable()
 
 			return
 
 		txt = utils.formatString(
-			self.formatString,
+			self.bone.formatString,
 			self.value["dest"],
-			self.destStructure,
+			self.bone.destStructure,
 			prefix=["dest"],
 			language=self.language
 		)
@@ -80,7 +71,7 @@ class RelationalEditWidget(BaseEditWidget):
 			txt = utils.formatString(
 				txt,
 				self.dataWidget.serializeForDocument(),
-				self.dataStructure,
+				self.bone.dataStructure,
 				prefix=["rel"],
 				language=self.language
 			)
@@ -118,21 +109,29 @@ class RelationalEditWidget(BaseEditWidget):
 		return self.destKey or None
 
 	def onSelectBtnClick(self):
-		currentSelector = ListWidget(
-			self.bone.boneStructure["module"],
-			selectMode="single",
-			#context=self.context
-		)
-		currentSelector.selectionActivatedEvent.register(self)
+		selector = conf["selectors"].get(self.bone.destModule)
 
-		conf["mainWindow"].stackWidget(currentSelector)
+		if selector is None:
+			selector = moduleWidgetSelector.select(self.bone.destModule, self.bone.destInfo)
+			assert selector, "No selector can be found for %r" % self.destModule
+
+			selector = selector(
+				self.bone.destModule,
+				**self.bone.destInfo
+			)
+
+			conf["selectors"][self.bone.destModule] = selector
+
+		# todo: set context
+		selector.setSelector(
+			self.bone.selectModeSingle,
+			lambda selector, selection: self.unserialize({
+				"dest": selection[0],
+				"rel": _getDefaultValues(self.bone.dataStructure) if self.bone.dataStructure else None
+			}))
+
+		conf["mainWindow"].stackWidget(selector)
 		self.parent().addClass("is-active")
-
-	def onSelectionActivated(self, table, selection):
-		self.unserialize({
-			"dest": selection[0],
-			"rel": _getDefaultValues(self.dataStructure) if self.dataStructure else None
-		})
 
 
 class RelationalViewWidget(html5.Div):
@@ -142,15 +141,6 @@ class RelationalViewWidget(html5.Div):
 		super().__init__()
 		self.bone = bone
 		self.language = language
-
-		# Current bone config
-		self.readonly = bool(self.bone.boneStructure.get("readonly"))
-		self.formatString = self.bone.boneStructure["format"]
-
-		# Structures
-		self.destStructure = self.bone.boneStructure["relskel"]
-		self.dataStructure = self.bone.boneStructure["using"]
-
 		self.value = None
 
 	def unserialize(self, value=None):
@@ -158,18 +148,18 @@ class RelationalViewWidget(html5.Div):
 
 		if value:
 			txt = utils.formatString(
-				self.formatString,
+				self.bone.formatString,
 				value["dest"],
-				self.destStructure,
+				self.bone.destStructure,
 				prefix=["dest"],
 				language=self.language
 			)
 
-			if self.dataStructure and value["rel"]:
+			if self.bone.dataStructure and value["rel"]:
 				txt = utils.formatString(
 					txt,
 					value["rel"],
-					self.dataStructure,
+					self.bone.dataStructure,
 					prefix=["rel"],
 					language=self.language
 				)
@@ -193,17 +183,29 @@ class RelationalMultiEditWidget(BaseMultiEditWidget):
 		self.addBtn.addClass("btn--select")
 
 	def onAddBtnClick(self):
-		currentSelector = ListWidget(
-			self.bone.boneStructure["module"],
-			selectMode="single",
-			# context=self.context
-		)
-		currentSelector.selectionActivatedEvent.register(self)
+		selector = conf["selectors"].get(self.bone.destModule)
 
-		conf["mainWindow"].stackWidget(currentSelector)
+		if selector is None:
+			selector = moduleWidgetSelector.select(self.bone.destModule, self.bone.destInfo)
+			assert selector, "No selector can be found for %r" % self.destModule
+
+			selector = selector(
+				self.bone.destModule,
+				**self.bone.destInfo
+			)
+
+			conf["selectors"][self.bone.destModule] = selector
+
+		# todo: set context
+		selector.setSelector(
+			self.bone.selectModeSingle,
+			self._addEntriesFromSelection
+		)
+
+		conf["mainWindow"].stackWidget(selector)
 		self.parent().addClass("is-active")
 
-	def onSelectionActivated(self, table, selection):
+	def _addEntriesFromSelection(self, selector, selection):
 		for entry in selection:
 			self.addEntry({
 				"dest": entry,
@@ -217,9 +219,99 @@ class RelationalBone(BaseBone):
 	viewWidgetFactory = RelationalViewWidget
 	multiEditWidgetFactory = RelationalMultiEditWidget
 
+	selectModeSingle = "single"
+	selectModeMulti = "multi"
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+
+		self.formatString = self.boneStructure["format"]
+		self.destModule = self.boneStructure["module"]
+		self.destInfo = conf["modules"].get(self.destModule)
+		self.destStructure = self.boneStructure["relskel"]
+		self.dataStructure = self.boneStructure["using"]
+
+		print(self.destModule, self.destInfo)
+
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):
 		return skelStructure[boneName]["type"] == "relational" or skelStructure[boneName]["type"].startswith("relational.")
 
 
 boneSelector.insert(1, RelationalBone.checkFor, RelationalBone)
+
+# --- hierarchyBone ---
+
+class HierarchyBone(RelationalBone):  # fixme: this bone is obsolete! It behaves exactly as relational.
+
+	@staticmethod
+	def checkFor(moduleName, boneName, skelStructure):
+		return skelStructure[boneName]["type"] == "hierarchy" or skelStructure[boneName]["type"].startswith("hierarchy.")
+
+boneSelector.insert(1, HierarchyBone.checkFor, HierarchyBone)
+
+# --- treeItemBone ---
+
+class TreeItemBone(RelationalBone):
+	selectModeSingle = "single.leaf"
+	selectModeMulti = "multi.leaf"
+
+	@staticmethod
+	def checkFor(moduleName, boneName, skelStructure):
+		# fixme: this is rather "relational.tree.leaf" than a "treeitem"...
+		return skelStructure[boneName]["type"] == "treeitem" or skelStructure[boneName]["type"].startswith("treeitem.")
+
+boneSelector.insert(1, TreeItemBone.checkFor, TreeItemBone)
+
+# --- treeDirBone ---
+
+class TreeDirBone(RelationalBone):
+	selectModeSingle = "single.node"
+	selectModeMulti = "multi.node"
+
+	@staticmethod
+	def checkFor(moduleName, boneName, skelStructure):
+		# fixme: this is rather "relational.tree.node" than a "treedir"...
+		return skelStructure[boneName]["type"] == "treedir" or skelStructure[boneName]["type"].startswith("treedir.")
+
+boneSelector.insert(1, TreeDirBone.checkFor, TreeDirBone)
+
+# --- fileBone ---
+
+class FileEditWidget(RelationalEditWidget):
+	style = ["vi-bone", "vi-bone--file"]
+
+	def _createWidget(self):
+		self.previewImg = FilePreviewImage()
+		self.appendChild(self.previewImg)
+
+		self.fromHTML(
+			"""
+				<ignite-input [name]="destWidget" readonly>
+				<button [name]="selectBtn" class="btn--select" text="Select" icon="icons-select"></button>
+			"""
+		)
+
+	def unserialize(self, value=None):
+		super().unserialize(value)
+
+		if self.value:
+			self.previewImg.setFile(self.value["dest"])
+
+
+class FileViewWidget(RelationalViewWidget):
+
+	def unserialize(self, value=None):
+		self.appendChild(FilePreviewImage(value["dest"] if value else None), replace=True)
+
+
+class FileBone(TreeItemBone):
+	editWidgetFactory = FileEditWidget
+	viewWidgetFactory = FileViewWidget
+
+	@staticmethod
+	def checkFor(moduleName, boneName, skelStructure):
+		return skelStructure[boneName]["type"] == "treeitem.file" or skelStructure[boneName]["type"].startswith("treeitem.file.")
+
+
+boneSelector.insert(2, FileBone.checkFor, FileBone)

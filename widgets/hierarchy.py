@@ -5,7 +5,7 @@ import vi.utils as utils
 from vi.network import NetworkService
 from vi.framework.components.actionbar import ActionBar
 from vi.framework.event import EventDispatcher
-from vi.priorityqueue import moduleHandlerSelector, boneSelector
+from vi.priorityqueue import moduleWidgetSelector, boneSelector
 from vi.config import conf
 from vi.i18n import translate
 from vi.embedsvg import embedsvg
@@ -259,6 +259,7 @@ class HierarchyItem(html5.Li):
 
 		self.isExpanded = not self.isExpanded
 
+
 class HierarchyWidget(html5.Div):
 	"""
 		Displays a hierarchy where entries are direct children of each other.
@@ -290,8 +291,8 @@ class HierarchyWidget(html5.Div):
 		self._currentRequests = []
 		self.addClass("is-drop-target")
 
-		assert selectMode in [None, "single", "multi"]
-		self.selectMode = selectMode
+		self.selectMode = None
+		self.selectCallback = None
 
 		self._expandedNodes = []
 		self.context = context
@@ -304,20 +305,33 @@ class HierarchyWidget(html5.Div):
 		self.listviewActiv = False
 		self.setListView( self.listviewActiv )
 
-
 		if self.rootNode:
 			self.reloadData()
 		else:
-			NetworkService.request(self.module, "listRootNodes",
-			                       self.context or {},
-			                       successHandler=self.onSetDefaultRootNode,
-			                       failureHandler=self.showErrorMsg )
+			NetworkService.request(
+				self.module,
+				"listRootNodes",
+			    self.context or {},
+			    successHandler=self.onSetDefaultRootNode,
+			    failureHandler=self.showErrorMsg
+			)
 
 		self.path = []
-		self.sinkEvent("onClick", "onDblClick")
+		self.sinkEvent("onClick", "onDblClick", "onDrop", "onDragOver")
+		self.setSelector(None)
 
-		self.actionBar.setActions(["selectrootnode","add","edit","clone","delete"]+(["select","close"] if self.selectMode else [])+["|","listview","reload"], widget=self)
-		self.sinkEvent("onDrop","onDragOver")
+	def setSelector(self, mode, callback=None):
+		"""
+		Configures the widget as a selector.
+		"""
+		assert mode in [None, "single", "multi"]
+		self.selectMode = mode
+		self.selectCallback = callback
+
+		# Fixme: This is bullshit.
+		self.actionBar.setActions(
+			["selectrootnode", "add", "edit", "clone", "delete"] + (["select", "close"] if self.selectMode else []) +
+				["|", "listview", "reload"], widget=self)
 
 	def toggleListView( self ):
 		self.setListView(not self.listviewActive)
@@ -619,9 +633,11 @@ class HierarchyWidget(html5.Div):
 	def canHandle(moduleName, moduleInfo):
 		return moduleInfo["handler"] == "hierarchy" or moduleInfo["handler"].startswith("hierarchy.")
 
-	@staticmethod
-	def render(moduleName, adminInfo, context):
-		rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
-		return HierarchyWidget(module=moduleName, rootNode=rootNode, context=context)
+	#fixme: Old render function, remove when working!
+	#
+	#@staticmethod
+	#def render(moduleName, adminInfo, context):
+	#	rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
+	#	return HierarchyWidget(module=moduleName, rootNode=rootNode, context=context)
 
-moduleHandlerSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget.render)
+moduleWidgetSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget)

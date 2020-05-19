@@ -117,6 +117,7 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 
 def getImagePreview(data, cropped = False, size = 150):
 	if conf["core.version"][0] == 3:
+		print(data["downloadUrl"])
 		return data["downloadUrl"] #fixme ViUR3
 	else:
 		if "mimetype" in data.keys() and isinstance(data["mimetype"], str) and data["mimetype"].startswith("image/svg"):
@@ -345,15 +346,12 @@ class indexeddb():
 		dbResult.dispatchEvent(CustomEvent.new("versionchange"))
 
 
+def mergeDict(original, target):
+	for key, value in original.items():
+		if isinstance(value, dict):
+			node = target.setdefault(key, {})
+			mergeDict(value, node)
+		else:
+			target[key] = value
 
-
-
-
-
-
-
-
-
-
-
-
+	return target

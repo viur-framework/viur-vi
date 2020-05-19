@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from vi.network import NetworkService, DeferredCall
 from vi.priorityqueue import HandlerClassSelector, initialHashHandler
-from vi.widgets import ListWidget
 from vi.config import conf
 from vi.pane import Pane
 from vi.widgets.edit import EditWidget
 from vi.i18n import translate
-from vi.priorityqueue import moduleHandlerSelector
+from vi.priorityqueue import moduleWidgetSelector
 
 class ListHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, isView=False, wasRequested = False, *args, **kwargs):
@@ -93,12 +92,13 @@ class ListHandler(Pane):
 		return False
 
 	def _createWidget(self):
-		widgen = moduleHandlerSelector.select(self.moduleName, self.moduleInfo)
+		widgen = moduleWidgetSelector.select(self.moduleName, self.moduleInfo)
 		assert widgen
 
 		return widgen(
 			self.moduleName,
-			self.moduleInfo)
+			**self.moduleInfo
+		)
 
 	def handleInitialHash(self, pathList, params):
 		assert self.canHandleInitialHash(pathList, params)

@@ -1,8 +1,8 @@
 #-*- coding: utf-8 -*-
-from vi import html5
+from vi import utils
 
 from vi.widgets import ListWidget, EditWidget
-from vi.priorityqueue import actionDelegateSelector, moduleHandlerSelector
+from vi.priorityqueue import actionDelegateSelector, moduleWidgetSelector
 from vi.i18n import translate
 from vi.config import conf
 from vi.pane import Pane
@@ -80,7 +80,7 @@ class ContextAction(Button):
 
 	def openModule(self, data, title = None):
 		# Have a handler?
-		widgen = moduleHandlerSelector.select(self.contextModule, self.adminInfo)
+		widgen = moduleWidgetSelector.select(self.contextModule, self.adminInfo)
 		assert widgen
 
 		# Generate title
@@ -111,9 +111,7 @@ class ContextAction(Button):
 
 			context[key] = value
 
-		print(context)
-
-		widget = widgen(self.contextModule, self.adminInfo, context)
+		widget = widgen(self.contextModule, **utils.mergeDict(self.adminInfo, context))
 
 		if widget:
 			pane = Pane(translate(u"{module} - {name}", module=self.title, name=title),

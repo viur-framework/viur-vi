@@ -106,7 +106,7 @@ Release date: Oct 2, 2018
 - File selector is cached globally for a better user experience (you don't have
   to navigate to the previous location again and again and again...)
 - ViUR logics integration updated and made their rendering smoother.
-- Bugfix: FileWidget which wasn't recognized by moduleHandlerSelector.
+- Bugfix: FileWidget which wasn't recognized by moduleWidgetSelector.
 - Bugfix: Reset the actionbar loading state in tree module.
 
 ## [2.2.0] Etna

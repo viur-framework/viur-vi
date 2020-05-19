@@ -8,7 +8,7 @@ from vi.config import conf
 from vi.framework.event import EventDispatcher
 from vi.i18n import translate
 from vi.network import NetworkService, DeferredCall
-from vi.priorityqueue import displayDelegateSelector, moduleHandlerSelector
+from vi.priorityqueue import displayDelegateSelector, moduleWidgetSelector
 from vi.widgets.search import Search
 from vi.widgets.tree import TreeWidget, LeafWidget
 from vi.framework.components.icon import Icon
@@ -38,6 +38,7 @@ class FileImagePopup(html5.ext.Popup):
 		self.preview.imageDownload = True
 		self.preview.download()
 
+
 class FilePreviewImage(html5.Div):
 	def __init__(self, file = None, size=150, *args, **kwargs):
 		super(FilePreviewImage, self).__init__(*args, **kwargs)
@@ -56,22 +57,20 @@ class FilePreviewImage(html5.Div):
 		self.setFile(file)
 		self.imageDownload = False
 
-
 	def setFile(self, file):
+		if self.previewIcon:
+			self.removeChild(self.previewIcon)
+
 		if not file:
 			self.addClass("is-hidden")
-			if self.previewIcon:
-				self.removeChild( self.previewIcon )
-			return 0
-		else:
-			self.removeClass("is-hidden")
+			return
+
+		self.removeClass("is-hidden")
+
 		svg = None
 		self.currentFile = file
-		if self.previewIcon:
-			self.removeChild( self.previewIcon )
-		self.previewIcon = None
 
-		preview = utils.getImagePreview(file, cropped=True, size = self.size) if file else None
+		preview = utils.getImagePreview(file, cropped=True, size=self.size) if file else None
 
 		if preview:
 			self.downloadOnly = self.isImage = True
@@ -98,16 +97,13 @@ class FilePreviewImage(html5.Div):
 		if preview:
 			self.removeClass("no-preview")
 
-		if svg:
-			preview = svg
-
-		self.appendChild(Icon(self.currentFile.get("name"), preview))
+		self.previewIcon = Icon(self.currentFile.get("name"), preview or svg)
+		self.appendChild(self.previewIcon)
 
 		if self.currentFile:
 			self.addClass("is-clickable")
 		else:
 			self.removeClass("is-clickable")
-
 
 	def download(self):
 		if not self.currentFile:
@@ -120,7 +116,6 @@ class FilePreviewImage(html5.Div):
 			self.downloadA["download"] = self.currentFile.get("name", self.currentFile["dlkey"])
 		self.downloadA["target"] = "_blank"
 		self.downloadA.element.click()
-
 
 	def onClick(self,sender=None):
 		if not self.currentFile:
@@ -391,11 +386,13 @@ class FileWidget(TreeWidget):
 		for x in range(0, files.length):
 			Uploader(files.item(x), self.node)
 
-	@staticmethod
-	def render(moduleName, adminInfo, context):
-		rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
-		return FileWidget(module=moduleName, rootNode=rootNode, context=context)
+	#fixme: Old render function, remove when working!
+	#
+	#@staticmethod
+	#def render(moduleName, adminInfo, context):
+	#	rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
+	#	return FileWidget(module=moduleName, rootNode=rootNode, context=context)
 
 
 displayDelegateSelector.insert(3, FileWidget.canHandle, FileWidget)
-moduleHandlerSelector.insert(3, FileWidget.canHandle, FileWidget.render)
+moduleWidgetSelector.insert(3, FileWidget.canHandle, FileWidget)

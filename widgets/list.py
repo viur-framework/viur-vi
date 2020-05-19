@@ -4,13 +4,11 @@ from vi import html5
 from vi.config import conf
 from vi.i18n import translate
 from vi.network import NetworkService
-from vi.priorityqueue import boneSelector, moduleHandlerSelector
-# from vi.sidebarwidgets.filterselector import CompoundFilter #fixme
-#from vi.widgets.actionbar import ActionBar
+from vi.priorityqueue import boneSelector, moduleWidgetSelector
 from vi.widgets.sidebar import SideBar
 from vi.framework.components.datatable import DataTable, ViewportDataTable
-from vi.embedsvg import embedsvg
 from vi.framework.components.actionbar import ActionBar
+from vi.embedsvg import embedsvg
 
 
 class ListWidget(html5.Div):
@@ -19,7 +17,7 @@ class ListWidget(html5.Div):
 		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
 	"""
-	def __init__(self, module, filter=None, columns=None, selectMode = None, filterID=None, filterDescr=None,
+	def __init__(self, module, filter=None, columns=None, filterID=None, filterDescr=None,
 	             batchSize = None, context = None, autoload = True, *args, **kwargs):
 		"""
 			:param module: Name of the module we shall handle. Must be a list application!
@@ -85,8 +83,9 @@ class ListWidget(html5.Div):
 		self._structure = None
 		self._currentRequests = []
 		self.columns = []
-		self.selectMode = selectMode
-		assert selectMode in [None, "single", "multi"]
+
+		self.selectMode = None
+		self.selectCallback = None
 
 		if self.selectMode and filter is None and columns is None:
 			#Try to select a reasonable set of cols / filter
@@ -106,7 +105,7 @@ class ListWidget(html5.Div):
 		#build Table
 		self.tableInitialization(*args, **kwargs)
 
-		self.actionBar.setActions( self.getDefaultActions( myView ), widget=self )
+		self.actionBar.setActions(self.getDefaultActions(myView), widget=self)
 		self.entryActionBar.setActions(self.getDefaultEntryActions(myView), widget=self)
 
 		self.emptyNotificationDiv = html5.Div()
@@ -120,10 +119,23 @@ class ListWidget(html5.Div):
 		self.emptyNotificationDiv.removeClass("is-active")
 
 		self.setTableActionBar()
+		self.setSelector(None)
+
 		if autoload:
 			self.reloadData()
 
 		self.sinkEvent("onClick")
+
+	def setSelector(self, mode, callback=None):
+		"""
+		Configures the widget as a selector.
+		"""
+		assert mode in [None, "single", "multi"]
+		self.selectMode = mode
+		self.selectCallback = callback
+
+		# Fixme: This is bullshit.
+		self.actionBar.setActions(self.getDefaultActions(), widget=self)
 
 	def tableInitialization(self,*args,**kwargs):
 		'''
@@ -146,9 +158,7 @@ class ListWidget(html5.Div):
 		          "requestingFinishedEvent"]:
 			setattr(self, f, getattr(self.table, f))
 
-		if self.selectMode:
-			self.selectionActivatedEvent.register(self)
-
+		self.selectionActivatedEvent.register(self)
 		self.requestingFinishedEvent.register(self)
 
 		self.table["style"]["display"] = "none"
@@ -180,7 +190,7 @@ class ListWidget(html5.Div):
 		self.appendChild(self.tableBottomActionBar)
 		self.tableBottomActionBar.setActions(["|","loadnext", "|", "tableitems"]) #,"tableprev","tablenext"
 
-	def getDefaultActions(self, view = None ):
+	def getDefaultActions(self, view = None):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
@@ -282,12 +292,12 @@ class ListWidget(html5.Div):
 			self.table.setDataProvider(None)
 
 	def onAttach(self):
-		super( ListWidget, self ).onAttach()
+		super(ListWidget, self).onAttach()
 		NetworkService.registerChangeListener( self )
 
 	def onDetach(self):
 		self.isDetaching = True
-		super( ListWidget, self ).onDetach()
+		super(ListWidget, self).onDetach()
 		NetworkService.removeChangeListener( self )
 
 	def onDataChanged(self, module, **kwargs):
@@ -341,9 +351,8 @@ class ListWidget(html5.Div):
 
 	def getFilter(self):
 		if self.filter:
-			return( {k:v for k,v in self.filter.items()})
-		return( {} )
-
+			return {k:v for k,v in self.filter.items()}
+		return {}
 
 	def updateEmptyNotification( self ):
 		pass
@@ -442,10 +451,14 @@ class ListWidget(html5.Div):
 		self._tableHeaderIsValid = True
 
 	def getFields(self):
-		return( self.columns[:] )
+		return self.columns[:]
 
-	def onSelectionActivated(self, table, selection):
-		conf["mainWindow"].removeWidget(self)
+	def onSelectionActivated(self, selector, selection):
+		if self.selectMode:
+			conf["mainWindow"].removeWidget(self)
+
+			if self.selectCallback:
+				self.selectCallback(selector, selection)
 
 	def activateCurrentSelection(self):
 		"""
@@ -457,27 +470,29 @@ class ListWidget(html5.Div):
 	def canHandle(moduleName, moduleInfo):
 		return moduleInfo["handler"] == "list" or moduleInfo["handler"].startswith("list.")
 
-	@staticmethod
-	def render(moduleName, adminInfo, context=None):
-		filter = adminInfo.get("filter")
-		columns = adminInfo.get("columns")
-		filterID = adminInfo.get("__id")
-		filterDescr = adminInfo.get("visibleName", "")
-		autoload = adminInfo.get("autoload", True)
-		selectMode = adminInfo.get("selectMode")
-		batchSize = adminInfo.get("batchSize", conf["batchSize"])
+	#fixme: Old render function, remove when working!
+	#
+	# @staticmethod
+	# def render(moduleName, adminInfo, context=None):
+	# 	filter = adminInfo.get("filter")
+	# 	columns = adminInfo.get("columns")
+	# 	filterID = adminInfo.get("__id")
+	# 	filterDescr = adminInfo.get("visibleName", "")
+	# 	autoload = adminInfo.get("autoload", True)
+	# 	selectMode = adminInfo.get("selectMode")
+	# 	batchSize = adminInfo.get("batchSize", conf["batchSize"])
+	#
+	# 	return ListWidget(module=moduleName,
+	# 	                          filter=filter,
+	# 	                          filterID=filterID,
+	# 	                          selectMode=selectMode,
+	# 	                          batchSize=batchSize,
+	# 	                          columns=columns,
+	# 	                          context=context,
+	# 	                          autoload=autoload,
+	# 	                          filterDescr=filterDescr)
 
-		return ListWidget(module=moduleName,
-		                          filter=filter,
-		                          filterID=filterID,
-		                          selectMode=selectMode,
-		                          batchSize=batchSize,
-		                          columns=columns,
-		                          context=context,
-		                          autoload=autoload,
-		                          filterDescr=filterDescr)
-
-moduleHandlerSelector.insert(1, ListWidget.canHandle, ListWidget.render)
+moduleWidgetSelector.insert(1, ListWidget.canHandle, ListWidget)
 
 
 class ViewportListWidget(ListWidget):
@@ -507,9 +522,7 @@ class ViewportListWidget(ListWidget):
 		          "requestingFinishedEvent"]:
 			setattr(self, f, getattr(self.table, f))
 
-		if self.selectMode:
-			self.selectionActivatedEvent.register(self)
-
+		self.selectionActivatedEvent.register(self)
 		self.requestingFinishedEvent.register(self)
 
 		self.table["style"]["display"] = "none"
@@ -571,26 +584,6 @@ class ViewportListWidget(ListWidget):
 	def canHandle(moduleName, moduleInfo):
 		return moduleInfo["handler"] == "list.viewport" or moduleInfo["handler"].startswith("list.viewport.")
 
-	@staticmethod
-	def render(moduleName, adminInfo, context=None):
 
-		filter = adminInfo.get("filter")
-		columns = adminInfo.get("columns")
-		filterID = adminInfo.get("__id"),
-		filterDescr = adminInfo.get("visibleName", ""),
-		autoload = adminInfo.get("autoload", True)
-		selectMode = adminInfo.get("selectMode")
-		batchSize = adminInfo.get("batchSize",conf["batchSize"])
-
-		return ViewportListWidget(module=moduleName,
-		                          filter=filter,
-		                          filterID=filterID,
-		                          selectMode=selectMode,
-		                          batchSize=batchSize,
-		                          columns=columns,
-		                          context=context,
-		                          autoload=autoload,
-		                          filterDescr=filterDescr)
-
-moduleHandlerSelector.insert(10, ViewportListWidget.canHandle, ViewportListWidget.render)
+moduleWidgetSelector.insert(10, ViewportListWidget.canHandle, ViewportListWidget)
 

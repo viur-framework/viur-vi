@@ -81,6 +81,9 @@ conf = {
 	# Global ViUR Logics interpreter instance
 	"logics": Interpreter(),
 
+	# Cached selector widgets on relationalBones for re-use
+	"selectors": {},
+
 	"updateParams": None,
 
 	"cacheObj": {},
