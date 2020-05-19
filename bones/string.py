@@ -2,22 +2,18 @@ from vi import html5
 
 from vi.priorityqueue import boneSelector
 from vi.config import conf
-from vi.bones.base import BaseBone, BaseViewWidget
+from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 
 
-class StringEditWidget(html5.Div):
+class StringEditWidget(BaseEditWidget):
 	style = ["vi-bone", "vi-bone--string"]
 
-	def __init__(self, bone, **kwargs):
-		super().__init__("""
+	def _createWidget(self):
+		self.appendChild("""
 			<ignite-input [name]="widget">
 			<div [name]="length">0</div>
 			<div [name]="maxlength" hidden>0</div> <!-- fixme: add later ... -->
 		""")
-
-		self.bone = bone
-
-		self.widget["readonly"] = bool(self.bone.boneStructure.get("readonly"))
 
 		self.sinkEvent("onChange", "onKeyUp")
 		self.timeout = None
@@ -69,3 +65,4 @@ class StringBone(BaseBone):
 
 
 boneSelector.insert(1, StringBone.checkFor, StringBone)
+

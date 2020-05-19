@@ -31,11 +31,16 @@ class BaseEditWidget(html5.Div):
 			if not widget.parent():
 				self.appendChild(widget)
 
+		self._updateWidget()
+
 	def _createWidget(self):
 		widget = html5.ignite.Input()
 		widget["readonly"] = self.readonly
 		widget["required"] = self.required
 		return widget
+
+	def _updateWidget(self):
+		pass
 
 	def unserialize(self, value=None):
 		self.widget["value"] = value or ""
