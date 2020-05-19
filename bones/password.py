@@ -1,69 +1,41 @@
-# -*- coding: utf-8 -*-
-from vi import html5
-
-from vi.priorityqueue import editBoneSelector, viewDelegateSelector
+from vi.priorityqueue import boneSelector
+from vi.config import conf
+from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 from vi.exception import InvalidBoneValueException
 from vi.i18n import translate
 
 
-class PasswordEditBone( html5.Div ):
-	def __init__(self, moduleName, boneName, readOnly, verify = True, *args, **kwargs ):
-		super( PasswordEditBone,  self ).__init__( *args, **kwargs )
-		self.boneName = boneName
-		self.readOnly = readOnly
-		self.addClass("vi-bone-container input-group")
+class PasswordEditWidget(BaseEditWidget):
+	style = ["vi-bone", "vi-bone--password", "vi-bone-container", "input-group"]
 
-		self.primeinput = html5.ignite.Input()
-		self.primeinput["type"] = "password"
-		self.appendChild(self.primeinput)
+	def _createWidget(self):
+		self.appendChild("""<ignite-input [name]="widget" type="password">""")
 
-		if verify and not readOnly:
-
-			lbl = html5.ignite.Label(translate("reenter password"))
-			lbl["for"] = (moduleName or "") + "_" + boneName + "_reenterpwd"
-			self.appendChild(lbl)
-
-			self.secondinput = html5.ignite.Input()
-			self.secondinput["type"] = "password"
-			self.secondinput["name"] = lbl["for"]
-			self.appendChild(self.secondinput)
+		user = conf["currentUser"]
+		if self.readonly or (user and "root" in user["access"]):
+			self.verify = None
 		else:
-			self.secondinput = None
+			self.appendChild("""
+				<label>
+					{{txt}}
+					<ignite-input [name]="verify" type="password">
+				</label>
+			""",
+			vars={"txt": translate("reenter password")})
 
-		if self.readOnly:
-			self["disabled"] = True
-
-	@staticmethod
-	def fromSkelStructure(moduleName, boneName, skelStructure, *args, **kwargs):
-		verify = True
-		if ("params" in skelStructure[boneName]
-		    and skelStructure[boneName]["params"]):
-			verify = skelStructure[boneName]["params"].get("verify", True)
-
-		readOnly = skelStructure[boneName].get("readonly", False)
-
-		return PasswordEditBone(moduleName, boneName, readOnly, verify)
-
-	def unserialize(self, data):
-		pass
-
-	def serializeForPost(self):
-		if not self.secondinput or self.primeinput["value"] == self.secondinput["value"]:
-			return {self.boneName: self.primeinput["value"]}
+	def serialize(self):
+		if not self.verify or self.widget["value"] == self.verify["value"]:
+			return self.widget["value"]
 
 		raise InvalidBoneValueException()
 
-	def serializeForDocument(self):
-		return {self.boneName: self.primeinput["value"]}
 
-	def setExtendedErrorInformation(self, errorInfo ):
-		pass
+class PasswordBone(BaseBone):
+	editWidgetFactory = PasswordEditWidget
 
-
-def CheckForPasswordBone(  moduleName, boneName, skelStucture, *args, **kwargs ):
-	return str(skelStucture[boneName]["type"]).startswith("password")
-
-#Register this Bone in the global queue
-editBoneSelector.insert( 5, CheckForPasswordBone, PasswordEditBone)
+	@staticmethod
+	def checkFor(moduleName, boneName, skelStructure):
+		return skelStructure[boneName]["type"] == "password" or skelStructure[boneName]["type"].startswith("password.")
 
 
+boneSelector.insert(1, PasswordBone.checkFor, PasswordBone)
