@@ -7,7 +7,6 @@ from vi.i18n import translate
 from vi.config import conf
 from vi.pane import Pane
 from vi.framework.components.button import Button
-import vi.embedsvg
 
 
 class ContextAction(Button):
@@ -29,7 +28,7 @@ class ContextAction(Button):
 
 		icon = adminInfo.get("icon")
 
-		super(ContextAction, self).__init__(txt=title, icon=icon, *args, **kwargs)
+		super(ContextAction, self).__init__(text=title, icon=icon, *args, **kwargs)
 
 		self.widget = None
 		self.adminInfo = adminInfo

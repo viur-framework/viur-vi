@@ -10,7 +10,7 @@ for root, dirnames, filenames in walkObj:
 	for f in filenames:
 		if (f.endswith(".py")
 			and not "(" in f
-			and not any([f.startswith(i) for i in ["get-", "gen-"]])):
+			and not any([f.startswith(i) for i in ["get-", "gen-", "test-"]])):
 
 			f = os.path.join(root, f)[2:]
 			files.append(f)
