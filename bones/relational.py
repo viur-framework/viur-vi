@@ -5,7 +5,7 @@ from vi.priorityqueue import boneSelector, moduleWidgetSelector
 from vi.config import conf
 from vi.bones.base import BaseBone, BaseEditWidget, BaseMultiEditWidget
 from vi.widgets.internaledit import InternalEdit
-from vi.widgets.file import FileWidget, LeafFileWidget, Uploader, FilePreviewImage
+from vi.widgets.file import FileWidget, Uploader, FilePreviewImage
 
 
 def _getDefaultValues(structure):

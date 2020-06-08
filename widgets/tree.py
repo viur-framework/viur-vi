@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from vi import html5
 import vi.utils as utils
-
 from vi.network import NetworkService
 from vi.framework.components.actionbar import ActionBar
 from vi.framework.event import EventDispatcher
@@ -9,47 +8,243 @@ from vi.priorityqueue import displayDelegateSelector, boneSelector, moduleWidget
 from vi.config import conf
 from vi.i18n import translate
 from vi.embedsvg import embedsvg
+from time import time
 
-class _StructureWidget(html5.Li):
-
-	def __init__(self, module, data, structure, *args, **kwargs):
+class ElementWidget( html5.Li ):
+	def __init__( self, module, data, structure, widget, *args, **kwargs ):
 		"""
-			:param module: Name of the module for which we'll display data
-			:type module: str
-			:param data: The data we're going to display
-			:type data: dict
-			:param structure: The structure of that data as received from server
-			:type structure: list
-		"""
-		super(_StructureWidget, self).__init__()
-
+					:param module: Name of the module for which we'll display data
+					:type module: str
+					:param data: The data we're going to display
+					:type data: dict
+					:param structure: The structure of that data as received from server
+					:type structure: list
+					:param widget: tree widget
+				"""
+		super( ElementWidget, self ).__init__()
+		self[ "class" ] = "vi-tree-item item has-hover is-drop-target is-draggable"
 		self.module = module
 		self.data = data
+
+		self.currentStatus = None
+
 		self.structure = structure
+		self.widget = widget
 
-		self.fromHTML("""
-			<div class="item-image" [name]="nodeImage"></div>
-			<div class="item-content" [name]="nodeContent">
-				<div class="item-headline" [name]="nodeHeadline"></div>
-				<div class="item-subline" [name]="nodeSubline"></div>
-			</div>
-			<div class="item-controls" [name]="nodeControls"></div>
-		""")
+		self.isExpanded = False
+		self.childrenLoaded = False
+		self.isDragged = False
 
+		self.sortindex = data[ "sortindex" ] if "sortindex" in data else 0
+
+		self.fromHTML( """
+					<div style="flex-direction:column;width:100%" [name]="nodeWrapper">
+						<div class="item" [name]="nodeGrouper">
+							<a class="expandlink hierarchy-toggle" [name]="nodeToggle"></a>
+							<div class="item-image is-hidden" [name]="nodeImage"></div>
+							<div class="item-content" [name]="nodeContent">
+								<div class="item-headline" [name]="nodeHeadline"></div>
+								<div class="item-subline" [name]="nodeSubline"></div>
+							</div>
+							<div class="item-controls" [name]="nodeControls"></div>
+						</div>
+
+						<ol class="hierarchy-sublist is-hidden" [name]="ol"></ol>
+					</div>
+				""" )
+
+		self[ "draggable" ] = True
+
+		self.sinkEvent( "onDragOver", "onDrop", "onDragStart", "onDragLeave", "onDragEnd" )
+
+		self.setStyle()
+
+		self.sinkEvent( "onClick", "onDragStart" )
+
+	def setStyle( self ):
+		'''
+			is used to define the appearance of the element
+		'''
+		self[ "class" ].append( "hierarchy-item" )
+		self.additionalDropAreas()
 		self.buildDescription()
+		self.toggleArrow()
+		# self.EntryIcon()
 
-		svg = embedsvg.get("icons-folder")
+	def additionalDropAreas( self ):
+		'''
+			Drag and Drop areas
+		'''
+		self.afterDiv = html5.Div()
+		self.afterDiv[ "class" ] = [ "after-element" ]
+		self.afterDiv.hide()
+		aftertxt = html5.TextNode( translate( u"Nach dem Element einfügen" ) )
+		self.afterDiv.appendChild( aftertxt )
+		self.nodeWrapper.appendChild( self.afterDiv )
+
+		self.beforeDiv = html5.Div()
+		self.beforeDiv[ "class" ] = [ "before-element" ]
+		self.beforeDiv.hide()
+		beforetxt = html5.TextNode( translate( u"Vor dem Element einfügen" ) )
+		self.beforeDiv.appendChild( beforetxt )
+		self.nodeWrapper.prependChild( self.beforeDiv )
+
+	def markDraggedElement( self ):
+		'''
+			mark the current dragged Element
+		'''
+		self[ "style" ][ "opacity" ] = "0.5"
+
+	def unmarkDraggedElement( self ):
+		self[ "style" ][ "opacity" ] = "1"
+
+	def onDragStart( self, event ):
+		event.dataTransfer.setData( "Text", "%s/%s" % (self.data[ "key" ], self.skelType) )
+		self.isDragged = True
+		self.markDraggedElement()
+		event.stopPropagation()
+
+	def onDragEnd( self, event ):
+		self.isDragged = False
+		self.unmarkDraggedElement()
+
+		if "afterDiv" in dir( self ) or "beforeDiv" in dir( self ):
+			self.disableDragMarkers()
+
+	def onDragOver( self, event ):
+		"""
+			Test wherever the current drag would mean "make it a child of us", "insert before us" or
+			"insert after us" and apply the correct classes.
+		"""
+		if self.isDragged:
+			return
+
+		if "afterDiv" in dir( self ):
+			self.afterDiv.show()  # show dropzones
+		if "beforeDiv" in dir( self ):
+			self.beforeDiv.show()
+
+		self.leaveElement = False  # reset leaveMarker
+
+		self[ "title" ] = translate( "vi.data-insert" )
+		if "beforeDiv" in dir( self ) and event.target == self.beforeDiv.element:
+			self.currentStatus = "top"
+			self.removeClass( "insert-here" )
+			self.beforeDiv.addClass( "is-focused" )
+			self.afterDiv.removeClass( "is-focused" )
+
+		elif "afterDiv" in dir( self ) and event.target == self.afterDiv.element:
+			self.currentStatus = "bottom"
+			self.removeClass( "insert-here" )
+			self.beforeDiv.removeClass( "is-focused" )
+			self.afterDiv.addClass( "is-focused" )
+
+		elif html5.utils.doesEventHitWidgetOrChildren( event, self ):
+			self.currentStatus = "inner"
+			self.addClass( "insert-here" )
+			if "beforeDiv" in dir( self ):
+				self.beforeDiv.removeClass( "is-focused" )
+			if "afterDiv" in dir( self ):
+				self.afterDiv.removeClass( "is-focused" )
+			self[ "title" ] = translate( u"In das Element einfügen" )
+
+		event.preventDefault()
+		event.stopPropagation()
+
+	def onDragLeave( self, event ):
+		"""
+			Remove all drop indicating classes.
+		"""
+		# Only leave if target not before or after
+		if html5.utils.doesEventHitWidgetOrChildren( event, self.nodeWrapper ):
+			self.leaveElement = False
+			return
+		else:
+			self.leaveElement = True
+
+		if "beforeDiv" in dir( self ) or "afterDiv" in dir( self ):
+			w = html5.window
+			w.setTimeout( self.disableDragMarkers, 2000 )  # test later to leave, to avoid flickering...
+
+	def disableDragMarkers( self ):
+		if self.leaveElement:
+			self[ "title" ] = translate( "vi.data-insert" )
+			self.currentStatus = None
+			if self.afterDiv:
+				self.afterDiv.hide()
+			if self.beforeDiv:
+				self.beforeDiv.hide()
+			self.removeClass( "insert-here" )
+		else:
+			self.leaveElement = True
+			w = html5.window
+			w.setTimeout( self.disableDragMarkers, 5000 )
+
+	def onDrop( self, event ):
+		"""
+			We received a drop. Test wherever its means "make it a child of us", "insert before us" or
+			"insert after us" and initiate the corresponding NetworkService requests.
+		"""
+		event.stopPropagation()
+		event.preventDefault()
+		srcKey, skelType = event.dataTransfer.getData( "Text" ).split( "/" )
+
+		if self.currentStatus == "inner":
+			NetworkService.request( self.module, "move",
+									{ "skelType": skelType, "key": srcKey, "parentNode": self.data[ "key" ] },
+									secure = True, modifies = True )
+
+		elif self.currentStatus == "top":
+			parentID = self.data[ "parententry" ]
+			if parentID:
+				lastIdx = 0
+				for c in self.parent()._children:
+					if "data" in dir( c ) and "sortindex" in c.data.keys():
+						if c == self:
+							break
+						lastIdx = float( c.data[ "sortindex" ] )
+				newIdx = str( (lastIdx + float( self.data[ "sortindex" ] )) / 2.0 )
+				req = NetworkService.request( self.module, "move",
+											  { "skelType": skelType, "key": srcKey, "parentNode": parentID, "sortindex": newIdx },
+											  secure = True, modifies = True )
+
+
+
+		elif self.currentStatus == "bottom":
+			parentID = self.data[ "parententry" ]
+
+			if parentID:
+				lastIdx = time()
+				doUseNextChild = False
+				for c in self.parent()._children:
+					if "data" in dir( c ) and "sortindex" in c.data.keys():
+						if doUseNextChild:
+							lastIdx = float( c.data[ "sortindex" ] )
+							break
+						if c == self:
+							doUseNextChild = True
+
+				newIdx = str( (lastIdx + float( self.data[ "sortindex" ] )) / 2.0 )
+				req = NetworkService.request( self.module, "move",
+											  { "skelType": skelType, "key": srcKey, "parentNode": parentID, "sortindex": newIdx },
+											  secure = True, modifies = True )
+
+	def EntryIcon( self ):
+		self.nodeImage.removeClass( "is-hidden" )
+		svg = embedsvg.get( "icons-folder" )
 		if svg:
 			nodeIcon = html5.I()
-			nodeIcon.addClass("i")
+			nodeIcon.addClass( "i" )
 			nodeIcon.element.innerHTML = svg + nodeIcon.element.innerHTML
-			self.nodeImage.appendChild(nodeIcon)
+			self.nodeImage.appendChild( nodeIcon )
 
-		self["draggable"] = True
+	def toggleArrow( self ):
+		self.nodeToggle[ "title" ] = translate( "Expand/Collapse" )
+		embedSvg = embedsvg.get( "icons-arrow-right" )
+		if embedSvg:
+			self.nodeToggle.element.innerHTML = embedSvg + self.nodeToggle.element.innerHTML
 
-		self.sinkEvent("onDragOver", "onDrop", "onDragStart", "onDragLeave")
-
-	def buildDescription(self):
+	def buildDescription( self ):
 		"""
 			Creates the visual representation of our entry
 		"""
@@ -57,545 +252,566 @@ class _StructureWidget(html5.Li):
 		hasDescr = False
 
 		for boneName, boneInfo in self.structure:
-			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
-				params = boneInfo["params"]
-				if "frontend_default_visible" in params and params["frontend_default_visible"]:
-					structure = {k: v for k, v in self.structure}
-					wdg = boneSelector.select(self.module, boneName, structure)
+			if "params" in boneInfo.keys() and isinstance( boneInfo[ "params" ], dict ):
+				params = boneInfo[ "params" ]
+				if "frontend_default_visible" in params and params[ "frontend_default_visible" ]:
+					structure = { k: v for k, v in self.structure }
+					wdg = boneSelector.select( self.module, boneName, structure )
 
 					if wdg is not None:
 						self.nodeHeadline.appendChild(
-							wdg(self.module, boneName, structure).viewWidget(self.data[boneName])
-						)
+								wdg( self.module, boneName, structure ).viewWidget( self.data[ boneName ] )
+								)
 						hasDescr = True
 
 		# In case there is no bone configured for visualization, use a format-string
 		if not hasDescr:
-			format = "$(name)" #default fallback
+			format = "$(name)"  # default fallback
 
-			if self.module in conf["modules"].keys():
-				moduleInfo = conf["modules"][self.module]
+			if self.module in conf[ "modules" ].keys():
+				moduleInfo = conf[ "modules" ][ self.module ]
 				if "format" in moduleInfo.keys():
-					format = moduleInfo["format"]
+					format = moduleInfo[ "format" ]
 
 			self.nodeHeadline.appendChild(
-				utils.formatString(format, self.data, self.structure,
-				    language=conf["currentLanguage"]))
+					utils.formatString( format, self.data, self.structure,
+										language = conf[ "currentLanguage" ] ) )
 
-			if self.data and "size" in self.data and self.data["size"]:
-				def convert_bytes(num):
+			if self.data and "size" in self.data and self.data[ "size" ]:
+				def convert_bytes( num ):
 					step_unit = 1000.0  # 1024 size
 
-					for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+					for x in [ 'bytes', 'KB', 'MB', 'GB', 'TB' ]:
 						if num < step_unit:
 							return "%3.1f %s" % (num, x)
 						num /= step_unit
-				size = convert_bytes(int(self.data["size"]))
-				self.nodeSubline.appendChild(html5.TextNode(size))
 
-class NodeWidget(_StructureWidget):
-	"""
-		Displays one Node (ie a directory) inside a TreeWidget
-	"""
+				size = convert_bytes( int( self.data[ "size" ] ) )
+				self.nodeSubline.appendChild( html5.TextNode( size ) )
 
-	def __init__(self, module, data, structure, *args, **kwargs):
-		super(NodeWidget, self).__init__(module, data, structure, *args, **kwargs)
-		self["class"] = "vi-tree-item vi-tree-node item has-hover is-drop-target is-draggable"
-		self.sinkEvent("onDragOver", "onDrop", "onDragStart", "onDragLeave")
+	def onClick( self, event ):
 
-	def onDragOver(self, event):
-		"""
-			Check if we can handle the drag-data
-		"""
-		if not self.hasClass("insert-here"):
-			self.addClass("insert-here")
-			self["data-insert"] = translate("vi-data-insert")
-		try:
-			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
-		except:
-			return( super(NodeWidget,self).onDragOver(event) )
+		'''
+			on Click auf Name select
+		'''
+		if event.target != self.nodeToggle.element:
+			self.widget.updateElementSelection( self )
 
-		event.preventDefault()
-		event.stopPropagation()
-
-	def onDragLeave(self, event):
-		if self.hasClass("insert-here"):
-			self.removeClass("insert-here")
-			self["data-insert"] = None
-		return( super(NodeWidget, self).onDragLeave(event))
-
-
-	def onDragStart(self, event):
-		"""
-			Store our information in the drag's dataTransfer object
-		"""
-		event.dataTransfer.setData("Text", "node/" + self.data["key"])
-		event.stopPropagation()
-
-	def onDrop(self, event):
-		"""
-			Check if we can handle that drop and make the entries direct children of this node
-		"""
-		try:
-			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
-		except:
-			return
-
-		NetworkService.request(
-			self.module, "move", {
-				"skelType": nodeType,
-				"key": srcKey,
-				"destNode": self.data["key"]
-			}, modifies=True, secure=True)
-
-		event.preventDefault()
-		event.stopPropagation()
-
-
-class LeafWidget(_StructureWidget):
-	"""
-		Displays one Node (ie a file) inside a TreeWidget
-	"""
-
-	def __init__(self, module, data, structure, *args, **kwargs):
-		"""
-			:param module: Name of the module for which we'll display data
-			:type module: str
-			:param data: The data we're going to display
-			:type data: dict
-			:param structure: The structure of that data as received from server
-			:type structure: list
-		"""
-		super(LeafWidget, self).__init__(module, data, structure, *args, **kwargs)
-		self["class"] = "vi-tree-item vi-tree-leaf item has-hover is-draggable"
-		self["draggable"] = True
-		self.sinkEvent("onDragStart")
-
-	def onDragStart(self, event):
-		"""
-			Store our information in the drag's dataTransfer object
-		"""
-		event.dataTransfer.setData("Text", "leaf/" + self.data["key"])
-		event.stopPropagation()
-
-
-class SelectionContainer(html5.Ul):
-	"""
-		Provides a Container, which allows selecting its contents.
-		Designed to be used within a tree widget, as it distinguishes between
-		two different types of content (nodes and leafs) and allows selections to
-		be restricted to a certain kind.
-	"""
-	def __init__(self, nodeWidget, leafWidget, *args, **kwargs ):
-		super(SelectionContainer, self ).__init__(*args, **kwargs)
-		self.addClass("vi-tree-selectioncontainer", "vi-selectioncontainer", "list")
-		self["title"] = translate("vi.tree.drag-here")
-		self["tabindex"] = 1
-		self.selectMode = None
-		self.nodeWidget = nodeWidget
-		self.leafWidget = leafWidget
-		self.selectionChangedEvent = EventDispatcher("selectionChanged")
-		self.selectionActivatedEvent = EventDispatcher("selectionActivated")  # Double-Click on an currently selected item - ITEM CLICKED !!!!
-		self.cursorMovedEvent = EventDispatcher("cursorMoved")
-		self._selectedItems = []  # List of row-indexes currently selected
-		self._currentItem = None  # Rowindex of the cursor row
-		self._isMouseDown = False  # Tracks status of the left mouse button
-		self._isCtlPressed = False  # Tracks status of the ctrl key
-		self._ctlStartRow = None  # Stores the row where a multi-selection (using the ctrl key) started
-		self.sinkEvent("onClick", "onDblClick", "onMouseMove", "onMouseDown", "onMouseUp", "onKeyDown", "onKeyUp")
-
-	def setCurrentItem(self, item):
-		"""
-			Sets the  currently selected item (=the cursor) to 'item'
-			If there was such an item before, its unselected afterwards.
-		"""
-		if self._currentItem:
-			self._currentItem.removeClass("is-focused")
-		self._currentItem = item
-		if item:
-			item.addClass("is-focused")
-
-	def onClick(self, event):
-		self.focus()
-		for child in self._children:
-			if html5.utils.doesEventHitWidgetOrChildren(event, child):
-				self.setCurrentItem(child)
-				if self._isCtlPressed:
-					self.addSelectedItem(child)
-		if not self._isCtlPressed:
-			self.clearSelection()
-		if self._selectedItems:
-			self.selectionChangedEvent.fire(self, self._selectedItems[:])
-		elif self._currentItem:
-			self.selectionChangedEvent.fire(self, [self._currentItem])
 		else:
-			self.selectionChangedEvent.fire(self, [])
+			self.toggleExpand()
 
-	def onDblClick(self, event):
-		for child in self.children():
-			if html5.utils.doesEventHitWidgetOrChildren(event, child):
-				if ("node" in (self.selectMode or "") and isinstance(child, self.nodeWidget)) or \
-						("leaf" in (self.selectMode or "") and isinstance(child, self.leafWidget)) \
-							or self.selectMode:
+		event.preventDefault()
+		event.stopPropagation()
 
-					self.selectionActivatedEvent.fire(self, [child])
-					break
+	def toggleExpand( self ):
+		'''
+			Toggle a Node and request if needed child elements
+		'''
 
-	def activateCurrentSelection(self):
-		"""
-			Emits the selectionActivated event if there's currently a selection
+		if self.isExpanded:
+			self.ol.addClass( "is-hidden" )
+			self.nodeGrouper.removeClass( "is-expanded" )
+			self.nodeGrouper.addClass( "is-collapsed" )
+			self.removeClass( "is-expanded" )
+			self.addClass( "is-collapsed" )
+		else:
+			self.ol.removeClass( "is-hidden" )
+			self.nodeGrouper.addClass( "is-expanded" )
+			self.nodeGrouper.removeClass( "is-collapsed" )
+			self.addClass( "is-expanded" )
+			self.removeClass( "is-collapsed" )
 
-		"""
-		if len(self._selectedItems) > 0:
-			self.selectionActivatedEvent.fire(self, [item.data for item in self._selectedItems])
+		self.isExpanded = not self.isExpanded
 
-		elif self._currentItem is not None:
-			self.selectionActivatedEvent.fire(self, [self._currentItem.data])
+		if not self.childrenLoaded:
+			self.childrenLoaded = True
+			self.widget.requestChildren( self )
 
-	def onKeyDown(self, event):
-		if html5.isReturn(event):  # Return
-			self.activateCurrentSelection()
-			event.preventDefault()
+class LeafWidget( ElementWidget ):
+	skelType = "leaf"
 
-		elif html5.isControl(event):
-			self._isCtlPressed = True
+	def setStyle( self ):
+		'''
+			Leaf have a different color
+		'''
+		super( LeafWidget, self ).setStyle()
+		self[ "style" ][ "background-color" ] = "#f7edd2"
 
-	def onKeyUp(self, event):
-		if html5.isControl(event):
-			self._isCtlPressed = False
+	def toggleArrow( self ):
+		'''
+			Leafes cant be toggled
+		'''
+		if self.skelType == "leaf":
+			self.nodeToggle[ "style" ][ "width" ] = "27px"
 
-	def clearSelection(self):
-		for child in self._children[:]:
-			self.removeSelectedItem(child)
+	def EntryIcon( self ):
+		'''
+			Leafs have a different Icon
+		'''
+		self.nodeImage.removeClass( "is-hidden" )
+		svg = embedsvg.get( "icons-file" )
+		if svg:
+			nodeIcon = html5.I()
+			nodeIcon.addClass( "i" )
+			nodeIcon.element.innerHTML = svg + nodeIcon.element.innerHTML
+			self.nodeImage.appendChild( nodeIcon )
 
-	def addSelectedItem(self, item):
-		if ("node" in (self.selectMode or "") and isinstance(item, self.nodeWidget)) or \
-				("leaf" in (self.selectMode or "") and isinstance(item, self.leafWidget)) \
-					or self.selectMode:
-
-			if not item in self._selectedItems:
-				self._selectedItems.append(item)
-				item.addClass("is-selected")
-
-	def removeSelectedItem(self, item):
-		if not item in self._selectedItems:
-			return
-
-		self._selectedItems.remove( item )
-		item.removeClass("is-selected")
-
-	def clear(self):
-		self.clearSelection()
-		for child in self._children[:]:
-			self.removeChild(child)
-		self.selectionChangedEvent.fire(self, [])
-
-	def getCurrentSelection(self):
-		if len(self._selectedItems) > 0:
-			return self._selectedItems[:]
-
-		if self._currentItem:
-			return [self._currentItem]
-
-		return None
-
+class NodeWidget( ElementWidget ):
+	skelType = "node"
 
 class TreeWidget(html5.Div):
+	"""
+			Displays a hierarchy where entries are direct children of each other.
+			(There's only one type on entries in a HierarchyApplication. If you need to
+			differentiate between nodes/leafs use a TreeApplication instead)
+		"""
+
 	nodeWidget = NodeWidget
 	leafWidget = LeafWidget
-	defaultActions = ["add.node", "add.leaf", "selectrootnode", "edit", "delete", "reload"]
 
-	def __init__(self, module, rootNode=None, node=None, *args, **kwargs):
+	def __init__( self, module, rootNode = None, selectMode = None, node=None, context = None, *args, **kwargs ):
 		"""
-			:param module: Name of the module we shall handle. Must be a list application!
+			:param module: Name of the module we shall handle. Must be a hierarchy application!
 			:type module: str
-			:param rootNode: The rootNode we shall display. If None, we try to select one.
+			:param rootNode: The repository we shall display. If none, we try to select one.
 			:type rootNode: str or None
-			:param node: The node we shall display at start. Must be a child of rootNode
-			:type node: str or None
 		"""
-
-		super( TreeWidget, self ).__init__( )
-		self.addClass("vi-widget vi-widget--tree vi-tree")
+		super( TreeWidget, self ).__init__()
 
 		self.module = module
 		self.rootNode = rootNode
 		self.node = node or rootNode
-		self.actionBar = ActionBar(module, "tree")
-		self.appendChild(self.actionBar)
-		self.pathList = html5.Div()
+		self.addClass( "vi-widget vi-widget--hierarchy" )
+		self.actionBar = ActionBar( module, "tree" )
+		self.appendChild( self.actionBar )
 
-		self.pathList.addClass("vi-tree-breadcrumb")
-		self.appendChild(self.pathList)
+		self.breadcrumb()
 
-		self.selectionContainer = SelectionContainer(self.nodeWidget, self.leafWidget) # fixme: selectMode
-		self.appendChild(self.selectionContainer)
-		self.selectionContainer.selectionActivatedEvent.register(self)
-		self._batchSize = 99
-		self._currentCursor = {"node": None, "leaf": None}
-		self._currentRequests = []
-		self.rootNodeChangedEvent = EventDispatcher("rootNodeChanged")
-		self.nodeChangedEvent = EventDispatcher("nodeChanged")
+		self._isCtlPressed = False
+
+		self.entryFrame = html5.Ol()
+		self.entryFrame.addClass( "hierarchy" )
+		self.appendChild( self.entryFrame )
+		self.selectionChangedEvent = EventDispatcher( "selectionChanged" )
+		self.selectionActivatedEvent = EventDispatcher( "selectionActivated" )
+		self.rootNodeChangedEvent = EventDispatcher( "rootNodeChanged" )
+		self.nodeChangedEvent = EventDispatcher( "nodeChanged" )
+
+		self.allowMultiSelection = True
+		self.currentSelectedElements = []
+
+		self._currentCursor = None
+		self._currentRequests = [ ]
+		self.addClass( "is-drop-target" )
 
 		self.selectMode = None
 		self.selectCallback = None
 
+		self._expandedNodes = [ ]
+		self.context = context
+
 		if self.rootNode:
 			self.reloadData()
-			self.rebuildPath()
 		else:
-			NetworkService.request(self.module, "listRootNodes", successHandler=self.onSetDefaultRootNode)
+			NetworkService.request(
+					self.module,
+					"listRootNodes",
+					self.context or { },
+					successHandler = self.onSetDefaultRootNode,
+					failureHandler = self.showErrorMsg
+					)
 
-		self.sinkEvent("onClick")
+		self.path = [ ]
+		self.sinkEvent("onKeyDown", "onKeyUp", "onClick", "onDblClick", "onDrop", "onDragOver","onDragLeave","onDragEnd" )
+		self.setSelector( None )
+		self.selectionChangedEvent.register( self )
+		self.buildSideWidget()
 
-		# Proxy some events and functions of the original table
-		for f in [
-			"selectionChangedEvent",
-			"selectionActivatedEvent",
-			"cursorMovedEvent",
-			"getCurrentSelection"
-		]:
-			setattr(self, f, getattr(self.selectionContainer, f))
+	def buildSideWidget( self ):
+		'''
+			Currently used by hierarchy widget
+		'''
+		return 0
 
-		self.setSelector(None)
+	def breadcrumb( self ):
+		'''
+			Currently used by treebrowser and file widget
+		'''
+		return 0
 
-	def setSelector(self, mode, callback=None):
+	def rebuildPath( self ):
+		'''
+			Currently used by treebrowser and file widget
+		'''
+		return 0
+
+	def clearSelection( self ):
+		self.currentSelectedElements = []
+
+	def updateElementSelection( self, element ):
+		if self._isCtlPressed:
+			if element in self.currentSelectedElements:
+				self.currentSelectedElements.remove(element)
+				element.removeClass("is-focused")
+			else:
+				self.currentSelectedElements.append(element)
+				element.addClass("is-focused")
+		else:
+			for e in self.currentSelectedElements:
+				e.removeClass("is-focused")
+
+			if element:
+				element.addClass( "is-focused" )
+				self.currentSelectedElements = [element]
+			else:
+				self.currentSelectedElements = []
+
+		self.selectionChangedEvent.fire( self, self.currentSelectedElements )
+
+	def requestChildren( self,element ):
+		self.loadNode(element.data["key"])
+
+	def setSelector( self, mode, callback = None ):
 		"""
 		Configures the widget as a selector.
 		"""
-		assert mode in [None, "single", "multi", "single.leaf", "single.node", "multi.leaf", "multi.node"]
+		assert mode in [ None, "single", "multi" ]
 		self.selectMode = mode
-		self.selectionContainer.selectMode = mode
 		self.selectCallback = callback
 
 		# Fixme: This is bullshit.
-		self.actionBar.setActions(self.defaultActions + (["select", "close"] if self.selectMode else []), widget=self)
+		self.actionBar.setActions(
+				[ "selectrootnode", "add","add.node","add.leaf", "edit", "clone", "delete" ] + ([ "select", "close" ] if self.selectMode else [ ]) +
+				[ "|", "listview", "reload" ], widget = self )
 
-	def showErrorMsg(self, req=None, code=None):
+	def showErrorMsg( self, req = None, code = None ):
 		"""
-			Removes all currently visible elements and displays an error message
+			Removes all currently visible elements and displayes an error message
 		"""
-		self.actionBar["style"]["display"] = "none"
-		self.selectionContainer["style"]["display"] = "none"
+
+		self.actionBar[ "style" ][ "display" ] = "none"
+		self.entryFrame[ "style" ][ "display" ] = "none"
 		errorDiv = html5.Div()
-
-		errorDiv.addClass("popup popup--center msg msg--error is-active")
-		if code and (code==401 or code==403):
-			txt = "Access denied!"
+		errorDiv.addClass( "popup popup--center popup--local msg msg--error is-active error_msg" )
+		if code and (code == 401 or code == 403):
+			txt = translate( "Access denied!" )
 		else:
-			txt = "An unknown error occurred!"
-		errorDiv.addClass("error_code_%s" % (code or 0))
+			txt = translate( "An unknown error occurred!" )
+		errorDiv.addClass( "error_code_%s" % (code or 0) )
 		errorDiv.appendChild( html5.TextNode( txt ) )
 		self.appendChild( errorDiv )
 
-	def onAttach(self):
-		super(TreeWidget, self).onAttach()
-		NetworkService.registerChangeListener(self)
+	def onDataChanged( self, module, **kwargs ):
 
-	def onDetach(self):
-		super(TreeWidget, self).onDetach()
-		NetworkService.removeChangeListener(self)
-
-	def onDataChanged(self, module, **kwargs):
 		if module != self.module:
 
 			isRootNode = False
-			for k, v in conf["modules"].items():
+			for k, v in conf[ "modules" ].items():
 				if (k == module
-					and v.get("handler") == "list"
-					and v.get("rootNodeOf") == self.module):
+						and v.get( "handler" ) == "list"
+						and v.get( "rootNodeOf" ) == self.module):
+
 					isRootNode = True
 					break
 
 			if not isRootNode:
 				return
 
-		if "selectrootnode" in self.actionBar.widgets.keys():
-			self.actionBar.widgets["selectrootnode"].update()
-
+		self.actionBar.widgets[ "selectrootnode" ].update()
 		self.reloadData()
 
-	def onSelectionActivated(self, selector, selection):
-		if not selection:
-			return
+	def onAttach( self ):
+		super( TreeWidget, self ).onAttach()
+		NetworkService.registerChangeListener( self )
 
-		item = selection[0]
+	def onDetach( self ):
+		super( TreeWidget, self ).onDetach()
+		NetworkService.removeChangeListener( self )
 
-		if isinstance(item, self.nodeWidget):
-			self.setNode(item.data["key"])
+	def itemForKey( self, key, elem = None ):
+		"""
+			Returns the HierarchyWidget displaying the entry with the given key.
+			:param key: The key (id) of the item.
+			:type key: str
+			:returns: HierarchyItem
+		"""
+		if elem is None:
+			elem = self.entryFrame
+		for child in elem._children:
+			if child.data[ "key" ] == key:
+				return (child)
+			tmp = self.itemForKey( key, child.ol )
+			if tmp is not None:
+				return (tmp)
+		return (None)
 
-		elif isinstance(item, self.leafWidget) and "leaf" in (self.selectMode or ""):
-			self.returnCurrentSelection()
+	def onClick( self, event ):
+		if event.target == self.element:
+			# empty click
+			self.updateElementSelection(None)
+			self.selectionChangedEvent.fire( self, self.currentSelectedElements )
 
-	def activateCurrentSelection(self):
-		return self.selectionContainer.activateCurrentSelection()
+	def onDblClick( self, event ):
+		for s in self.currentSelectedElements:
+			if isinstance(s,NodeWidget) and html5.utils.doesEventHitWidgetOrChildren(event,s):
+				s.toggleExpand()
+				self.updateElementSelection( s )
+				break
 
-	def returnCurrentSelection(self):
-		assert self.selectMode
+		if self.selectMode:
+			conf[ "mainWindow" ].removeWidget( self )
 
-		if self.selectCallback:
-			selection = []
+	def onSetDefaultRootNode( self, req ):
+		"""
+			We requested the list of rootNodes for that module and that
+			request just finished. Parse the respone and set our rootNode
+			to the first rootNode received.
+		"""
+		data = NetworkService.decode( req )
+		if len( data ) > 0:
+			self.setRootNode( data[ 0 ][ "key" ], self.node )
 
-			if len(self.selectionContainer._selectedItems) > 0:
-				selection = self.selectionContainer._selectedItems
-			elif self.selectionContainer._currentItem:
-				selection = [self.selectionContainer._currentItem]
-
-			if "node" in self.selectMode:
-				selection = [item.data for item in selection if isinstance(item, self.nodeWidget)]
-			elif "leaf" in self.selectMode:
-				selection = [item.data for item in selection if isinstance(item, self.leafWidget)]
-			else:
-				selection = [item.data for item in selection]
-
-			if selection:
-				self.selectCallback(self, selection)
-
-		conf["mainWindow"].removeWidget(self)
-
-	def onClick(self, event):
-		super(TreeWidget, self).onClick(event)
-		for c in self.pathList._children:
-			# Test if the user clicked inside the path-list
-			if html5.utils.doesEventHitWidgetOrParents(event, c):
-				self.setNode(c.data["key"])
-				return
-
-	def onSetDefaultRootNode(self, req):
-		data = NetworkService.decode(req)
-		if len(data) > 0:
-			self.setRootNode(data[0]["key"], self.node)
-
-	def setRootNode(self, rootNode, node=None):
+	def setRootNode( self, rootNode, node=None ):
+		"""
+			Set the currently displayed hierarchy to 'rootNode'.
+			:param rootNode: Key of the rootNode which children we shall display
+			:type rootNode: str
+		"""
 		self.rootNode = rootNode
 		self.node = node or rootNode
-		self.rootNodeChangedEvent.fire(rootNode)
+		self.currentKey = self.rootNode
+		self._currentCursor = None
+		self.rootNodeChangedEvent.fire( rootNode )
 		if node:
 			self.nodeChangedEvent.fire(node)
 		self.reloadData()
+
+	def reloadData( self ):
+		"""
+			Reload the data were displaying.
+		"""
+		def collectExpandedNodes( currNode ):
+			res = [ ]
+			for c in currNode._children[ : ]:
+				if isinstance( c, ElementWidget ):
+					if c.isExpanded:
+						res.append( c.data[ "key" ] )
+					res.extend( collectExpandedNodes( c.ol ) )
+			return (res)
+
+		self._expandedNodes = collectExpandedNodes( self.entryFrame )
+		self._currentRequests = [ ]
+		for c in self.entryFrame._children[ : ]:
+			self.entryFrame.removeChild( c )
+		self.loadNode( self.rootNode )
 		self.rebuildPath()
 
-	def setNode(self, node):
+	def loadNode( self, node, cursor = None, overrideParams= None ):
+		"""
+			Fetch the (direct) children of the given node.
+			Once the list is received, append them to their parent node.
+			:param node: Key of the node to fetch
+			:type node: str
+		"""
 		self.node = node
-		self.nodeChangedEvent.fire(node)
-		self.reloadData()
-		self.rebuildPath()
 
-	def rebuildPath(self):
+		params = {
+				"parententry": node,
+				"orderby"    : "sortindex",
+				"amount"	 :99
+				}
+
+		if cursor:
+			params.update( { "cursor": cursor } )
+
+		if overrideParams:
+			params.update(overrideParams)
+
+		if self.context:
+			params.update( self.context )
+
+		r = NetworkService.request( self.module, "list/node",
+									params,
+									successHandler = self.onRequestSucceded,
+									failureHandler = self.showErrorMsg )
+		r.reqType = "node"
+		r.node = node
+		self._currentRequests.append( r )
+
+		if self.leafWidget:
+			r = NetworkService.request( self.module, "list/leaf", params,
+										successHandler = self.onRequestSucceded,
+										failureHandler = self.showErrorMsg )
+			r.reqType = "leaf"
+			r.node = node
+			self._currentRequests.append( r )
+
+	def onRequestSucceded( self, req ):
+		"""
+			The NetworkRequest for a (sub)node finished.
+			Create a new HierarchyItem for each entry received and add them to our view
+		"""
+		if not req in self._currentRequests:
+			# Prevent inserting old (stale) data
+			self.actionBar.resetLoadingState()
+			return
+
+		self._currentRequests.remove( req )
+		data = NetworkService.decode( req )
+
+		if req.node == self.rootNode:
+			ol = self.entryFrame
+		else:
+			tmp = self.itemForKey( req.node )
+			if not tmp:
+				ol = self.entryFrame
+			else:
+				ol = tmp.ol
+
+		for skel in data[ "skellist" ]:
+			if req.reqType == "leaf":
+				hi = self.leafWidget( self.module, skel, data[ "structure" ], self )
+			else:
+				hi = self.nodeWidget( self.module, skel, data[ "structure" ], self )
+			ol.appendChild( hi )
+			if hi.data[ "key" ] in self._expandedNodes:
+				hi.toggleExpand()
+				if not hi.childrenLoaded:
+					hi.childrenLoaded = True
+					self.loadNode( hi.data[ "key" ] )
+		ol.sortChildren( self.getChildKey )
+
+		if not ol._children and ol != self.entryFrame:
+			ol.parent().addClass( "has-no-child" )
+
+		if data[ "skellist" ] and data[ "cursor" ]:
+			self.loadNode( req.node, data[ "cursor" ] )
+
+		self.actionBar.resetLoadingState()
+
+
+	def onDrop( self, event ):
+		"""
+			We got a drop event. Make that item a direct child of our rootNode
+		"""
+		if event.target == self.element: #only move if droped
+			srcKey,skelType = event.dataTransfer.getData( "Text" ).split("/")
+
+			NetworkService.request( self.module, "move", { "skelType":skelType, "key": srcKey, "parentNode": self.rootNode }, secure = True, modifies = True )
+			event.stopPropagation()
+
+	def onDragOver( self, event ):
+		"""
+			Allow dropping children on the rootNode
+		"""
+		event.preventDefault()
+		event.stopPropagation()
+
+	def getChildKey(self, widget):
+		"""
+			Order by sortindex
+		"""
+		name = float(widget.data.get("sortindex") or 0)
+		return name
+
+	def onSelectionChanged( self, widget,selection ):
+		return 0
+
+	@staticmethod
+	def canHandle( moduleName, moduleInfo ):
+		return  moduleInfo["handler"] == "tree"
+
+moduleWidgetSelector.insert(1, TreeWidget.canHandle, TreeWidget)
+displayDelegateSelector.insert(1, TreeWidget.canHandle, TreeWidget)
+
+
+
+class BrowserLeafWidget(LeafWidget):
+	def setStyle( self ):
+		self[ "style" ][ "background-color" ] = "#f7edd2"
+		self[ "class" ].append( "hierarchy-item" )
+		self.additionalDropAreas()
+		self.buildDescription()
+		# self.toggleArrow()
+		# self.EntryIcon()
+
+class BrowserNodeWidget(NodeWidget):
+	def setStyle( self ):
+		self[ "class" ].append( "hierarchy-item" )
+		self.additionalDropAreas()
+		self.buildDescription()
+		# self.toggleArrow()
+		# self.EntryIcon()
+
+class BreadcrumbNodeWidget(NodeWidget):
+	def setStyle( self ):
+		#self[ "style" ][ "background-color" ] = "#f7edd2"
+		self.buildDescription()
+		#self.toggleArrow()
+		#self.EntryIcon()
+
+class TreeBrowserWidget( TreeWidget ):
+	leafWidget = BrowserLeafWidget
+	nodeWidget = BrowserNodeWidget
+
+	def __init__( self, module, rootNode = None, selectMode = None, node = None, context = None, *args, **kwargs ):
+		super( TreeBrowserWidget, self ).__init__( module, rootNode, selectMode, node, context, *args, **kwargs )
+
+	def rebuildPath( self ):
 		"""
 			Rebuild the displayed path-list.
 		"""
 		self.pathList.removeAllChildren()
 
 		NetworkService.request(
-			self.module, "view/node/%s" % self.node,
-			successHandler=self.onPathRequestSucceded
-		)
+				self.module, "view/node/%s" % self.node,
+				successHandler = self.onPathRequestSucceded
+				)
 
-	def onPathRequestSucceded(self, req):
+	def onPathRequestSucceded( self, req ):
 		"""
 			Rebuild the displayed path-list according to request data
 		"""
-		answ = NetworkService.decode(req)
-		skel = answ["values"]
+		answ = NetworkService.decode( req )
+		skel = answ[ "values" ]
 
-		if skel["parententry"] and skel["parententry"] != skel["key"]:
-			c = NodeWidget(self.module, skel, [])
+		if skel[ "parententry" ] and skel[ "parententry" ] != skel[ "key" ]:
+			c = BreadcrumbNodeWidget( self.module, skel, [ ], self )
 
 			NetworkService.request(
-				self.module, "view/node/%s" % skel["parentdir"],
-				successHandler=self.onPathRequestSucceded
-			)
+					self.module, "view/node/%s" % skel[ "parententry" ],
+					successHandler = self.onPathRequestSucceded
+					)
 
 		else:
-			c = NodeWidget(self.module, {"key": self.rootNode, "name": "root"}, [])
-			c.addClass("is-rootnode")
+			c = BreadcrumbNodeWidget( self.module, { "key": self.rootNode, "name": "root" }, [ ], self )
+			c.addClass( "is-rootnode" )
 
-		self.pathList.prependChild(c)
+		self.pathList.prependChild( c )
 
+	def breadcrumb( self ):
+		self.pathList = html5.Div()
+		self.pathList.addClass( "vi-tree-breadcrumb" )
+		self.appendChild( self.pathList )
 
-	def reloadData(self, paramsOverride=None):
-		assert self.node is not None, "reloadData called while self.node is None"
-		self.selectionContainer.clear()
-		self._currentRequests = []
-		if paramsOverride:
-			params = paramsOverride.copy()
-		else:
-			params = {"parententry": self.node}
+	def onDblClick( self, event ):
+		for s in self.currentSelectedElements:
+			if isinstance( s, NodeWidget ) and html5.utils.doesEventHitWidgetOrChildren( event, s ):
 
-		if "amount" not in params:
-			params["amount"] = self._batchSize
+				for c in self.entryFrame._children[ : ]:
+					self.entryFrame.removeChild( c )
 
-		r = NetworkService.request(self.module, "list/node", params,
-								   successHandler=self.onRequestSucceded,
-								   failureHandler=self.showErrorMsg)
-		r.reqType = "node"
-		self._currentRequests.append(r)
-		r = NetworkService.request(self.module, "list/leaf", params,
-								   successHandler=self.onRequestSucceded,
-								   failureHandler=self.showErrorMsg)
-		r.reqType = "leaf"
-		self._currentRequests.append(r)
+				self.loadNode( s.data[ "key" ] )
+				self.rebuildPath()
+				break
 
-		from vi.handler.tree import TreeHandler # import must be here, otherwise it throws an importError
-		if isinstance(conf["mainWindow"].currentPane, TreeHandler):
-			conf["theApp"].setPath(self.module + "/list/" + self.node)
-
-	def onRequestSucceded(self, req):
-		if not req in self._currentRequests:
-			return
-
-		self._currentRequests.remove(req)
-		data = NetworkService.decode(req)
-
-		for skel in data["skellist"]:
-			if req.reqType == "node":
-				n = self.nodeWidget(self.module, skel, data["structure"])
-			else:
-				n = self.leafWidget(self.module, skel, data["structure"])
-
-			self.selectionContainer.appendChild(n)
-
-		self.selectionContainer.sortChildren(self.getChildKey)
-
-		if "cursor" in data.keys() and len(data["skellist"]) == req.params["amount"]:
-			self._currentCursor[req.reqType] = data["cursor"]
-
-			req.params["cursor"] = data["cursor"]
-			r = NetworkService.request(self.module, "list/%s" % req.reqType, req.params,
-									   successHandler=self.onRequestSucceded,
-									   failureHandler=self.showErrorMsg)
-			r.reqType = req.reqType
-			self._currentRequests.append(r)
-		else:
-			self._currentCursor[req.reqType] = None
-
-		self.actionBar.resetLoadingState()
-
-	def getChildKey(self, widget):
-		"""
-			Derives a string used to sort the entries in our selectionContainer
-		"""
-		name = (widget.data.get("name") or "").lower()
-
-		if isinstance(widget, self.nodeWidget):
-			return "0-%s" % name
-		elif isinstance(widget, self.leafWidget):
-			return "1-%s" % name
-		else:
-			return "2-"
+		if self.selectMode:
+			conf[ "mainWindow" ].removeWidget( self )
 
 	@staticmethod
-	def canHandle(moduleName, moduleInfo):
-		return moduleInfo["handler"].startswith("tree.")
-
-	#fixme: Old render function, remove when working!
-	#
-	#@staticmethod
-	#def render(moduleName, adminInfo, context):
-	#	rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
-	#	return TreeWidget(module=moduleName, rootNode=rootNode, context=context)
+	def canHandle( module, moduleInfo ):
+		return (moduleInfo[ "handler" ].startswith( "tree.browser" ))
 
 
-displayDelegateSelector.insert(1, TreeWidget.canHandle, TreeWidget)
-moduleWidgetSelector.insert(1, TreeWidget.canHandle, TreeWidget)
+moduleWidgetSelector.insert(1, TreeBrowserWidget.canHandle, TreeBrowserWidget)
+displayDelegateSelector.insert(1, TreeBrowserWidget.canHandle, TreeBrowserWidget)

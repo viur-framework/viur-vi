@@ -14,7 +14,7 @@ class AddLeafAction(Button):
 		Creates a new leaf (ie. a file) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddLeafAction, self ).__init__( translate("Add"), icon="icons-add-file", *args, **kwargs )
+		super( AddLeafAction, self ).__init__( translate("Add"), icon="icons-add", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--add-leaf btn--primary"
 
 	@staticmethod
@@ -151,10 +151,10 @@ class EditAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().getCurrentSelection()
+		selection = self.parent().parent().currentSelectedElements
 		if not selection:
 			return
-		print(selection)
+
 		for s in selection:
 			pane = Pane(translate("Edit"), closeable=True)
 			conf["mainWindow"].stackPane( pane, focus=True )

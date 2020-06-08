@@ -302,7 +302,7 @@ class EditWidget(html5.Div):
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg )
 
-		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
+		elif False and self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
 			if self.key and (not self.clone or self.wasInitialRequest):
 				NetworkService.request(self.module, "edit/%s" % self.key, data,
 				                       secure=not self.wasInitialRequest,
@@ -314,7 +314,7 @@ class EditWidget(html5.Div):
 				                       successHandler=self.setData,
 				                       failureHandler=self.showErrorMsg)
 
-		elif self.applicationType == EditWidget.appTree: ## Application: Tree
+		elif self.applicationType == EditWidget.appTree or self.applicationType == EditWidget.appHierarchy: ## Application: Tree
 			if self.key and not self.clone:
 				NetworkService.request(self.module, "edit/%s/%s" % (self.skelType, self.key), data,
 				                       secure=not self.wasInitialRequest,
