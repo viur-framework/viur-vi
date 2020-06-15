@@ -620,13 +620,12 @@ class EditWidget(html5.Div):
 		res = {}
 
 		for key, bone in self.bones.items():
-			if key == "key":
-				continue #ignore the key, it is stored in self.key!
+			# ignore the key, it is stored in self.key, and read-only bones
+			if key == "key" or bone.readonly:
+				continue
 
 			try:
-				value = bone.serialize()
-				if value:
-					res[key] = value
+				res[key] = bone.serialize() or ""
 
 			except InvalidBoneValueException:
 				if validityCheck:

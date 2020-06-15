@@ -28,6 +28,7 @@ class RelationalEditWidget(BaseEditWidget):
 			"""
 				<ignite-input [name]="destWidget" readonly>
 				<button [name]="selectBtn" class="btn--select" text="Select" icon="icons-select"></button>
+				<button hidden [name]="deleteBtn" class="btn--delete" text="Delete" icon="icons-delete"></button>
 			"""
 		)
 
@@ -48,6 +49,10 @@ class RelationalEditWidget(BaseEditWidget):
 			self.appendChild(self.dataWidget)
 		else:
 			self.dataWidget = None
+
+		# Only allow to delete entry when not multiple and not required!
+		if not bone.multiple and not bone.required:
+			self.deleteBtn.show()
 
 		# Current data state
 		self.destKey = None
@@ -132,6 +137,9 @@ class RelationalEditWidget(BaseEditWidget):
 
 		conf["mainWindow"].stackWidget(selector)
 		self.parent().addClass("is-active")
+
+	def onDeleteBtnClick(self):
+		self.unserialize()
 
 
 class RelationalViewWidget(html5.Div):
@@ -285,12 +293,7 @@ class FileEditWidget(RelationalEditWidget):
 		self.previewImg = FilePreviewImage()
 		self.appendChild(self.previewImg)
 
-		self.fromHTML(
-			"""
-				<ignite-input [name]="destWidget" readonly>
-				<button [name]="selectBtn" class="btn--select" text="Select" icon="icons-select"></button>
-			"""
-		)
+		super()._createWidget()
 
 	def unserialize(self, value=None):
 		super().unserialize(value)
