@@ -717,6 +717,16 @@ class TreeWidget(html5.Div):
 	def onSelectionChanged( self, widget,selection ):
 		return 0
 
+	def activateCurrentSelection(self):
+		#fixme: This is awkward...
+		#self.selectionActivatedEvent.fire(self, self.currentSelectedElements)
+
+		if self.selectMode:
+			conf["mainWindow"].removeWidget(self)
+
+			if self.selectCallback:
+				self.selectCallback(self, [element.data for element in self.currentSelectedElements])
+
 	@staticmethod
 	def canHandle( moduleName, moduleInfo ):
 		return moduleInfo["handler"] == "tree" or moduleInfo["handler"].startswith("tree.")
