@@ -20,7 +20,7 @@ def formatOneEntry(key, format, data, structure = None, prefix = None, language 
 				if language and language in langs:
 					val = val.get( language, "" )
 				else:
-					val = ", ".join( val.values() )
+					val = ", ".join([str(value) for value in val.values()])
 
 			else:
 				return ""

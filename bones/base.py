@@ -20,9 +20,6 @@ class BaseEditWidget(html5.Div):
 		self.bone = bone
 		self.widget = None
 
-		self.readonly = bool(self.bone.boneStructure.get("readonly"))
-		self.required = bool(self.bone.boneStructure.get("required"))
-
 		widget = self._createWidget()
 		if isinstance(widget, html5.Widget):
 			if not self.widget:
@@ -35,8 +32,8 @@ class BaseEditWidget(html5.Div):
 
 	def _createWidget(self):
 		widget = html5.ignite.Input()
-		widget["readonly"] = self.readonly
-		widget["required"] = self.required
+		widget["readonly"] = self.bone.readonly
+		widget["required"] = self.bone.required
 		return widget
 
 	def _updateWidget(self):
@@ -345,14 +342,19 @@ class BaseBone(object):
 		self.skelStructure = skelStructure
 		self.boneStructure = self.skelStructure[self.boneName]
 
+		self.readonly = bool(self.boneStructure.get("readonly"))
+		self.required = bool(self.boneStructure.get("required"))
+		self.multiple = bool(self.boneStructure.get("multiple"))
+		self.languages = self.boneStructure.get("languages")
+
 	def editWidget(self, value=None) -> html5.Widget:
 		widgetFactory = self.editWidgetFactory
 
-		if self.multiEditWidgetFactory and self.boneStructure.get("multiple"):
+		if self.multiEditWidgetFactory and self.multiple:
 			multiWidgetFactory = widgetFactory  # have to make a separate "free" variable
 			widgetFactory = lambda bone, **kwargs: self.multiEditWidgetFactory(bone, multiWidgetFactory, **kwargs)
 
-		if self.languageEditWidgetFactory and self.boneStructure.get("languages"):
+		if self.languageEditWidgetFactory and self.languages:
 			languageWidgetFactory = widgetFactory  # have to make a separate "free" variable
 			widgetFactory = lambda bone, **kwargs: self.languageEditWidgetFactory(bone, languageWidgetFactory, **kwargs)
 
