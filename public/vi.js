@@ -22,9 +22,5 @@ function preventBack(){window.history.forward();}
 
 function logError(msg, url, line, col, error)
 {
-    if( !url || url == "" || !url.indexOf("http://127.0.0.1")
-                                || !url.indexOf("http://localhost") )
-        return; /* Ignore */
-
-    Bugsnag.notify(error.toString(), msg.toString());
+	return;
 }
