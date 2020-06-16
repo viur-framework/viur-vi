@@ -621,7 +621,7 @@ class EditWidget(html5.Div):
 
 		for key, bone in self.bones.items():
 			# ignore the key, it is stored in self.key, and read-only bones
-			if key == "key" or bone.readonly:
+			if key == "key" or bone.bone.readonly:
 				continue
 
 			try:
