@@ -4,16 +4,12 @@ from vi import html5
 from vi.network import NetworkService
 from vi.pane import Pane
 from vi.widgets.edit import EditWidget
-
 from vi.config import conf
 from vi.i18n import translate
 from vi.network import DeferredCall
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.file import Uploader
 from vi.framework.components.button import Button
-
-
-
 
 
 class FileSelectUploader(html5.Input):
@@ -48,8 +44,12 @@ class AddNodeAction(Button):
 		Adds a new directory to a tree.simple application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddNodeAction, self ).__init__( translate("Add Node"), icon="icons-add-folder", *args, **kwargs )
-		self["class"] = "bar-item btn btn--small btn--mkdir btn--primary"
+		super(AddNodeAction, self).__init__(
+			translate("Add folder"),
+			icon="icons-add-folder",
+			*args, **kwargs
+		)
+		self.addClass("bar-item btn btn--small btn--mkdir")
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -62,7 +62,6 @@ class AddNodeAction(Button):
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add-node" in conf["modules"][module]["disabledFunctions"]
 
 		return correctAction and correctHandler and hasAccess and not isDisabled
-
 
 	def onClick(self, sender=None):
 		i = html5.ext.InputDialog(
@@ -94,8 +93,12 @@ class AddLeafAction(Button):
 		Allows uploading of files using the file dialog.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddLeafAction, self ).__init__( translate("Add"), icon="icons-upload-file", *args, **kwargs )
-		self["class"] = "bar-item btn btn--small btn--upload"
+		super(AddLeafAction, self).__init__(
+			translate("Upload"),
+			icon="icons-upload-file",
+			*args, **kwargs
+		)
+		self.addClass("bar-item btn btn--small btn--upload btn--primary")
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
