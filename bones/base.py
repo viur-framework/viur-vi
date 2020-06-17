@@ -31,13 +31,23 @@ class BaseEditWidget(html5.Div):
 		self._updateWidget()
 
 	def _createWidget(self):
+		"""
+		Function for creating the Widget or multiple Widgets that represent the bone.
+		"""
 		widget = html5.ignite.Input()
 		widget["readonly"] = self.bone.readonly
 		widget["required"] = self.bone.required
 		return widget
 
 	def _updateWidget(self):
-		pass
+		"""
+		Function for updating the Widget or multiple Widgets that represent the bone.
+		"""
+		if not self.widget:
+			return
+
+		if self.bone.readonly:
+			self.widget.disable()
 
 	def unserialize(self, value=None):
 		self.widget["value"] = value or ""

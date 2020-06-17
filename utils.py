@@ -156,7 +156,7 @@ class indexeddbConnector():
 
 	def __init__(self,dbName, version=None):
 		self.dbName = dbName
-		self.dbVersion = version
+		self.dbVersion = version or 0
 		self.dbHandler = None
 		for dbvar in ["indexedDB"]:#, "mozIndexedDB", "webkitIndexedDB", "msIndexedDB"]:
 			if dbvar in dir(html5.window):
@@ -247,7 +247,7 @@ class indexeddb():
 	def dbAction(self,action,name,key=None,obj=None):
 		if action in ["createStore", "deleteStore"]:
 			self.dbqueue.append([action, name, key, obj])
-			self.dbVersion +=1
+			#self.dbVersion +=1
 		else:
 			self.queue.append([action,name,key,obj])
 		db = self.connect()

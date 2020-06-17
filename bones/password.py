@@ -12,7 +12,7 @@ class PasswordEditWidget(BaseEditWidget):
 		self.appendChild("""<ignite-input [name]="widget" type="password">""")
 
 		user = conf["currentUser"]
-		if self.readonly or (user and "root" in user["access"]):
+		if self.bone.readonly or (user and "root" in user["access"]):
 			self.verify = None
 		else:
 			self.appendChild("""

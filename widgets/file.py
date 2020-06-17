@@ -1,17 +1,20 @@
-# -*- coding: utf-8 -*-
 import json
-
 from vi import html5
-import vi.utils as utils
-
-from vi.config import conf
-from vi.framework.event import EventDispatcher
 from vi.i18n import translate
+import vi.utils as utils
+from vi.config import conf
+
+from vi.widgets.tree import LeafWidget, NodeWidget, TreeBrowserWidget
+from vi.widgets.search import Search
+from vi.framework.components.icon import Icon
+
+
+from vi.framework.event import EventDispatcher
 from vi.network import NetworkService, DeferredCall
 from vi.priorityqueue import displayDelegateSelector, moduleWidgetSelector
-from vi.widgets.search import Search
-from vi.widgets.tree import TreeWidget, LeafWidget
-from vi.framework.components.icon import Icon
+
+
+
 
 class FileImagePopup(html5.ext.Popup):
 	def __init__(self, preview, *args, **kwargs):
@@ -37,7 +40,6 @@ class FileImagePopup(html5.ext.Popup):
 	def onDownloadBtnClick(self, sender = None):
 		self.preview.imageDownload = True
 		self.preview.download()
-
 
 class FilePreviewImage(html5.Div):
 	def __init__(self, file = None, size=150, *args, **kwargs):
@@ -136,33 +138,6 @@ class FilePreviewImage(html5.Div):
 					file = "/file/download/%s/%s" % (self.currentFile[ "dlkey" ], self.currentFile["name"])
 
 			html5.window.open(file)
-
-
-class LeafFileWidget(LeafWidget):
-	"""
-		Displays a file inside a tree application.
-	"""
-
-	def __init__(self, module, data, structure, *args, **kwargs):
-		super(LeafFileWidget, self).__init__(module, data, structure, *args, **kwargs)
-
-		self.previewImg = FilePreviewImage(data)
-		self.nodeImage.appendChild(self.previewImg)
-		self.sinkEvent("onDragOver", "onDragLeave")
-
-	def onDragOver(self, event):
-		if not self.hasClass("insert-before"):
-			self.addClass("insert-before")
-			self["title"] = translate("vi.data-insert")
-
-		super(LeafFileWidget, self).onDragOver(event)
-
-	def onDragLeave(self, event):
-		if self.hasClass("insert-before"):
-			self.removeClass("insert-before")
-			self["title"] = None
-		super(LeafFileWidget,self).onDragLeave( event )
-
 
 class Uploader(html5.ignite.Progress):
 	"""
@@ -324,75 +299,77 @@ class Uploader(html5.ignite.Progress):
 		self.parent().appendChild(msg)
 		self.parent().removeChild(self)
 
+class FileLeafWidget(LeafWidget):
 
-class FileWidget(TreeWidget):
-	"""
-		Extends the TreeWidget to allow drag&drop upload of files to the current node.
-	"""
-	defaultActions = ["add.node", "add.leaf", "selectrootnode", "|", "edit", "delete", "download", "|", "reload"]
-	leafWidget = LeafFileWidget
+	def EntryIcon( self ):
+		self.previewImg = FilePreviewImage( self.data )
+		self.nodeImage.appendChild( self.previewImg )
+		self.nodeImage.removeClass( "is-hidden" )
 
-	def __init__(self, *args, **kwargs):
-		super(FileWidget, self).__init__(*args, **kwargs)
-		self.sinkEvent("onDragOver", "onDrop")
+	def setStyle( self ):
+		self.buildDescription()
+		self.EntryIcon()
+
+class FileNodeWidget(NodeWidget):
+	def setStyle( self ):
+		self.buildDescription()
+		self.EntryIcon()
+
+class FileWidget(TreeBrowserWidget):
+
+	leafWidget = FileLeafWidget
+	nodeWidget = FileNodeWidget
+
+	def __init__( self, module, rootNode = None, selectMode = None, node=None, context = None, *args, **kwargs ):
+		super(FileWidget,self).__init__(module,rootNode,selectMode,node,context,*args,**kwargs)
+		self.searchWidget()
 		self.addClass("supports-upload")
+		self.entryFrame.addClass( "vi-tree-selectioncontainer" )
+		self.entryFrame["title"] = "Ziehe Deine Dateien hier her."
 
+	def searchWidget( self ):
 		searchBox = html5.Div()
-		searchBox.addClass("vi-search-wrap")
-		self.appendChild(searchBox)
+		searchBox.addClass( "vi-search-wrap" )
+		self.appendChild( searchBox )
 
 		self.search = Search()
-		self.search.addClass("input-group")
-		searchBox.appendChild(self.search)
-		self.search.searchLbl.addClass("label")
-		self.search.startSearchEvent.register(self)
+		self.search.addClass( "input-group" )
+		searchBox.appendChild( self.search )
+		self.search.searchLbl.addClass( "label" )
+		self.search.startSearchEvent.register( self )
 
 	def onStartSearch(self, searchStr, *args, **kwargs):
 		if not searchStr:
 			self.setRootNode(self.rootNode)
 		else:
+			for c in self.entryFrame._children[ : ]:
+				self.entryFrame.removeChild( c )
+
 			for c in self.pathList._children[:]:
 				self.pathList.removeChild(c)
 			s = html5.Span()
 			s.appendChild(html5.TextNode("Search"))
 			self.pathList.appendChild(s)
-			self.reloadData({"parententry": self.rootNode, "search": searchStr})
+			self.loadNode(node = self.rootNode ,overrideParams = {"search": searchStr})
 
-	def setNode(self, node):
+	def getChildKey(self, widget):
 		"""
-			Override setNode sothat we can reset our search field if a folder has been clicked
-		:param node:
-		:return:
+			Derives a string used to sort the entries on each level
 		"""
-		self.search.searchInput["value"] = ""
-		super(FileWidget, self).setNode(node)
+		name = str(widget.data.get("name")).lower()
+
+		if isinstance(widget, self.nodeWidget):
+			return "0-%s" % name
+		elif isinstance(widget, self.leafWidget):
+			return "1-%s" % name
+		else:
+			return "2-"
+
 
 	@staticmethod
-	def canHandle(module, moduleInfo):
-		return (moduleInfo["handler"].startswith("tree.simple.file"))
-
-	def onDragOver(self, event):
-		self.addClass("insert-here")
-		event.preventDefault()
-		event.stopPropagation()
-
-	# print("%s %s" % (event.offsetX, event.offsetY))
-
-	def onDrop(self, event):
-		event.preventDefault()
-		event.stopPropagation()
-		self.removeClass("insert-here")
-		files = event.dataTransfer.files
-		for x in range(0, files.length):
-			Uploader(files.item(x), self.node)
-
-	#fixme: Old render function, remove when working!
-	#
-	#@staticmethod
-	#def render(moduleName, adminInfo, context):
-	#	rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
-	#	return FileWidget(module=moduleName, rootNode=rootNode, context=context)
+	def canHandle( module, moduleInfo ):
+		return (moduleInfo[ "handler" ].startswith( "tree.file" ) or moduleInfo[ "handler" ].startswith( "tree.simple.file" ) )
 
 
-displayDelegateSelector.insert(3, FileWidget.canHandle, FileWidget)
-moduleWidgetSelector.insert(3, FileWidget.canHandle, FileWidget)
+moduleWidgetSelector.insert(1, FileWidget.canHandle, FileWidget)
+displayDelegateSelector.insert(1, FileWidget.canHandle, FileWidget)

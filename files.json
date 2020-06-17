@@ -83,7 +83,6 @@
   "actions/list.py",
   "actions/list_order.py",
   "actions/edit.py",
-  "actions/tree_simple.py",
   "actions/hierarchy.py",
   "actions/context.py",
   "actions/__init__.py",
