@@ -64,7 +64,7 @@ class SelectSingleEditBone(html5.Select):
 
 	def unserialize(self, value=None):
 		for entry in self.children():
-			if entry["value"] == value or "":
+			if entry["value"] == str(value) or "":
 				entry["selected"] = True
 				return
 
