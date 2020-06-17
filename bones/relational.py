@@ -32,6 +32,19 @@ class RelationalEditWidget(BaseEditWidget):
 			"""
 		)
 
+	def _updateWidget(self):
+		super()._updateWidget()
+
+		if self.bone.readonly:
+			self.selectBtn.hide()
+			self.deleteBtn.hide()
+		else:
+			self.selectBtn.show()
+
+			# Only allow to delete entry when not multiple and not required!
+			if not self.bone.multiple and not self.bone.required:
+				self.deleteBtn.show()
+
 	def __init__(self, bone, language=None, **kwargs):
 		super().__init__(bone)
 		self.sinkEvent("onChange")
@@ -49,10 +62,6 @@ class RelationalEditWidget(BaseEditWidget):
 			self.appendChild(self.dataWidget)
 		else:
 			self.dataWidget = None
-
-		# Only allow to delete entry when not multiple and not required!
-		if not bone.multiple and not bone.required:
-			self.deleteBtn.show()
 
 		# Current data state
 		self.destKey = None
