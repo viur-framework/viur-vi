@@ -37,7 +37,11 @@ class BaseEditWidget(html5.Div):
 		return widget
 
 	def _updateWidget(self):
-		pass
+		if not self.widget:
+			return
+
+		if self.bone.readonly:
+			self.widget.disable()
 
 	def unserialize(self, value=None):
 		self.widget["value"] = value or ""
