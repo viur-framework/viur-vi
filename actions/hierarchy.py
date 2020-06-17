@@ -39,6 +39,7 @@ class AddAction(Button):
 			node = self.parent().parent().rootNode
 
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy,
+						  	skelType = "node",
 		                    node=node,
 		                    context=self.parent().parent().context)
 		pane.addWidget( edwg )
@@ -71,13 +72,13 @@ class EditAction(Button):
 		super(EditAction,self).onDetach()
 
 	def onSelectionChanged(self, table, selection ):
-		if selection:
+		if len( selection ) > 0:
 			if self.isDisabled:
 				self.isDisabled = False
-			self["disabled"]= False
+			self[ "disabled" ] = False
 		else:
 			if not self.isDisabled:
-				self["disabled"]= True
+				self[ "disabled" ] = True
 				self.isDisabled = True
 
 	def onSelectionActivated(self, table, selection):
@@ -98,17 +99,21 @@ class EditAction(Button):
 
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().getCurrentSelection()
+		selection = self.parent().parent().currentSelectedElements
 		if not selection:
 			return
+
 		for s in selection:
-			self.openEditor( s["key"] )
+			self.openEditor( s.data["key"] )
 
 	def openEditor(self, key):
 		pane = Pane(translate("Edit"), closeable=True)
 		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy, key=key,
-		                    context=self.parent().parent().context)
+		edwg = EditWidget(self.parent().parent().module,
+						  EditWidget.appHierarchy,
+						  skelType="node",
+						  key=key,
+		                  context=self.parent().parent().context)
 		pane.addWidget( edwg )
 
 	def resetLoadingState(self):
@@ -157,17 +162,18 @@ class CloneAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().getCurrentSelection()
+		selection = self.parent().parent().currentSelectedElements
 		if not selection:
 			return
+
 		for s in selection:
-			self.openEditor( s["key"] )
+			self.openEditor( s.data[ "key" ] )
 
 	def openEditor(self, key):
 		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_hierarchy", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy,
-		                  node=self.parent().parent().rootNode, key=key,
+		                  node=self.parent().parent().rootNode, key=key,skelType="node",
 		                    context=self.parent().parent().context,
 		                    clone=True)
 		pane.addWidget( edwg )
@@ -222,17 +228,17 @@ class DeleteAction(Button):
 
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().getCurrentSelection()
+		selection = self.parent().parent().currentSelectedElements
 		if not selection:
 			return
 		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
-		d.deleteList = [x["key"] for x in selection]
+		d.deleteList = [x.data[ "key" ] for x in selection]
 		d.addClass( "delete" )
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
 		for x in deleteList:
-			NetworkService.request( self.parent().parent().module, "delete", {"key": x}, secure=True, modifies=True )
+			NetworkService.request( self.parent().parent().module, "delete", {"key": x, "skelType":"node"}, secure=True, modifies=True )
 
 	def resetLoadingState(self):
 		pass
