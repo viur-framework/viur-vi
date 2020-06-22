@@ -87,7 +87,7 @@ class EditAction(Button):
 				self.isDisabled = True
 
 	def onSelectionActivated(self, table, selection ):
-		if not self.parent().parent().selectMode and len(selection)==1:
+		if not self.parent().parent().selectCallback and len(selection)==1:
 			self.openEditor( selection[0]["key"] )
 
 	@staticmethod
@@ -391,7 +391,7 @@ class ListPreviewInlineAction(Button):
 		super( ListPreviewInlineAction, self ).onDetach()
 
 	def onSelectionChanged(self, table, selection):
-		if self.parent().parent().selectMode:
+		if self.parent().parent().selectCallback:
 			return
 
 		if len(selection)>0:

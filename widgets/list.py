@@ -84,20 +84,12 @@ class ListWidget(html5.Div):
 		self._currentRequests = []
 		self.columns = []
 
-		self.selectMode = None
+		self.selectMulti = True
+		self.selectGuard = None
 		self.selectCallback = None
 
-		if self.selectMode and filter is None and columns is None:
-			#Try to select a reasonable set of cols / filter
-			if conf["modules"] and module in conf["modules"].keys():
-				tmpData = conf["modules"][module]
-				if "columns" in tmpData.keys():
-					columns = tmpData["columns"]
-				if "filter" in tmpData.keys():
-					filter = tmpData["filter"]
-
-		self.filter = filter.copy() if isinstance(filter,dict) else {}
-		self.columns = columns[:] if isinstance(columns,list) else []
+		self.filter = filter.copy() if isinstance(filter, dict) else {}
+		self.columns = columns[:] if isinstance(columns, list) else []
 		self.filterID = filterID #Hint for the sidebarwidgets which predefined filter is currently active
 		self.filterDescr = filterDescr #Human-readable description of the current filter
 		self._tableHeaderIsValid = False
@@ -126,15 +118,11 @@ class ListWidget(html5.Div):
 
 		self.sinkEvent("onClick")
 
-	def setSelector(self, mode, callback=None):
+	def setSelector(self, callback):
 		"""
 		Configures the widget as a selector.
 		"""
-		assert mode in [None, "single", "multi"]
-		self.selectMode = mode
 		self.selectCallback = callback
-
-		# Fixme: This is bullshit.
 		self.actionBar.setActions(self.getDefaultActions(), widget=self)
 
 	def tableInitialization(self,*args,**kwargs):
@@ -194,7 +182,15 @@ class ListWidget(html5.Div):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
-		defaultActions = ["add", "selectfields"]
+		defaultActions = []
+
+		if self.selectCallback:
+			defaultActions += ["select", "close", "|"]
+
+			if self.selectMulti:
+				defaultActions += ["selectall", "unselectall", "selectinvert", "|"]
+
+		defaultActions += ["add", "selectfields"]
 
 		#if not self.selectMode:
 		#	defaultActions += ["|", "exportcsv"]
@@ -215,12 +211,6 @@ class ListWidget(html5.Div):
 					defaultActions.append( "|" )
 
 				defaultActions.extend( cfg["actions"] )
-
-		if self.selectMode == "multi":
-			defaultActions += ["|", "selectall", "unselectall", "selectinvert"]
-
-		if self.selectMode:
-			defaultActions += ["|", "select","close"]
 
 		defaultActions += ["|",  "reload", "setamount", "intpreview", "selectfilter"] #"pagefind",  "loadnext",
 
@@ -424,8 +414,6 @@ class ListWidget(html5.Div):
 		fields = [x for x in fields if x in tmpDict.keys()]
 		self.columns = fields
 
-
-
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict)
@@ -454,11 +442,9 @@ class ListWidget(html5.Div):
 		return self.columns[:]
 
 	def onSelectionActivated(self, selector, selection):
-		if self.selectMode:
+		if self.selectCallback:
 			conf["mainWindow"].removeWidget(self)
-
-			if self.selectCallback:
-				self.selectCallback(selector, selection)
+			self.selectCallback(selector, selection)
 
 	def activateCurrentSelection(self):
 		"""
@@ -469,28 +455,6 @@ class ListWidget(html5.Div):
 	@staticmethod
 	def canHandle(moduleName, moduleInfo):
 		return moduleInfo["handler"] == "list" or moduleInfo["handler"].startswith("list.")
-
-	#fixme: Old render function, remove when working!
-	#
-	# @staticmethod
-	# def render(moduleName, adminInfo, context=None):
-	# 	filter = adminInfo.get("filter")
-	# 	columns = adminInfo.get("columns")
-	# 	filterID = adminInfo.get("__id")
-	# 	filterDescr = adminInfo.get("visibleName", "")
-	# 	autoload = adminInfo.get("autoload", True)
-	# 	selectMode = adminInfo.get("selectMode")
-	# 	batchSize = adminInfo.get("batchSize", conf["batchSize"])
-	#
-	# 	return ListWidget(module=moduleName,
-	# 	                          filter=filter,
-	# 	                          filterID=filterID,
-	# 	                          selectMode=selectMode,
-	# 	                          batchSize=batchSize,
-	# 	                          columns=columns,
-	# 	                          context=context,
-	# 	                          autoload=autoload,
-	# 	                          filterDescr=filterDescr)
 
 moduleWidgetSelector.insert(1, ListWidget.canHandle, ListWidget)
 

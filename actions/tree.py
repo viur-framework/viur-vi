@@ -99,7 +99,7 @@ class EditAction(Button):
 		super(EditAction,self).onDetach()
 
 	def onSelectionActivated(self, table, selection ):
-		if (not self.parent().parent().selectMode
+		if (not self.parent().parent().selectCallback
 			and len(selection) == 1
 			and isinstance(selection[0], self.parent().parent().leafWidget)):
 
@@ -329,7 +329,7 @@ class ReturnSelectionAction(Button):
 		self["class"] = "bar-item btn btn--small btn--activateselection"
 
 	def onClick(self, sender=None):
-		self.parent().parent().returnCurrentSelection()
+		self.parent().parent().activateCurrentSelection()
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):

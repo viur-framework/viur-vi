@@ -10,13 +10,19 @@ class HierarchyWidget(TreeWidget):
 	'''
 	leafWidget = None
 
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.listview = None
+		self.listwidgetadded = False
+		self.listviewActive = False
+
 	def buildSideWidget(self):
 		# listview
 		self.listview = ListWidget( self.module, context = self.context, autoload = False )
 		self.listview.actionBar.setActions( [ "preview", "selectfields" ], widget = self )
 		self.listwidgetadded = False
-		self.listviewActiv = False
-		self.setListView( self.listviewActiv )
+		self.listviewActive = False
+		self.setListView( self.listviewActive )
 
 	def reloadData( self ):
 		super(HierarchyWidget,self).reloadData()
