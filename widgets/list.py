@@ -8,7 +8,10 @@ from vi.priorityqueue import boneSelector, moduleWidgetSelector
 from vi.widgets.sidebar import SideBar
 from vi.framework.components.datatable import DataTable, ViewportDataTable
 from vi.framework.components.actionbar import ActionBar
+from vi.framework.event import EventDispatcher
 from vi.embedsvg import embedsvg
+
+import logging
 
 
 class ListWidget(html5.Div):
@@ -68,7 +71,7 @@ class ListWidget(html5.Div):
 
 				#fixme
 				#self.appendChild(CompoundFilter(myView, module, embed=True))
-				print("fixme!")
+				logging.error("#fixme CompoundFilter")
 
 		self._checkboxes = (conf["modules"]
 		              and module in conf["modules"].keys()
@@ -84,9 +87,9 @@ class ListWidget(html5.Div):
 		self._currentRequests = []
 		self.columns = []
 
-		self.selectMulti = True
-		self.selectGuard = None
-		self.selectCallback = None
+		self.selectionMulti = True
+		self.selectionAllow = None
+		self.selectionCallback = None
 
 		self.filter = filter.copy() if isinstance(filter, dict) else {}
 		self.columns = columns[:] if isinstance(columns, list) else []
@@ -96,8 +99,9 @@ class ListWidget(html5.Div):
 
 		#build Table
 		self.tableInitialization(*args, **kwargs)
+		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 
-		self.actionBar.setActions(self.getDefaultActions(myView), widget=self)
+		self.actionBar.setActions(self.getActions(myView), widget=self)
 		self.entryActionBar.setActions(self.getDefaultEntryActions(myView), widget=self)
 
 		self.emptyNotificationDiv = html5.Div()
@@ -111,19 +115,38 @@ class ListWidget(html5.Div):
 		self.emptyNotificationDiv.removeClass("is-active")
 
 		self.setTableActionBar()
-		self.setSelector(None)
 
 		if autoload:
 			self.reloadData()
 
 		self.sinkEvent("onClick")
 
-	def setSelector(self, callback):
+	def setSelector(self, callback, multi=True, allow=None):
 		"""
-		Configures the widget as a selector.
+		Configures the widget as selector for a relationalBone and shows it.
 		"""
-		self.selectCallback = callback
-		self.actionBar.setActions(self.getDefaultActions(), widget=self)
+		self.selectionCallback = callback
+		self.selectionMulti = multi
+
+		if allow:
+			logging.warning("allow is not implemented for List")
+
+		actions = ["select", "close", "|"]
+
+		if multi:
+			actions += ["selectall", "unselectall", "selectinvert", "|"]
+
+		self.actionBar.setActions(actions + self.getActions())
+		conf["mainWindow"].stackWidget(self)
+
+	def selectorReturn(self):
+		"""
+		Returns the current selection to the callback configured with `setSelector`.
+		"""
+		conf["mainWindow"].removeWidget(self)
+
+		if self.selectionCallback:
+			self.selectionCallback(self, self.getCurrentSelection())
 
 	def tableInitialization(self,*args,**kwargs):
 		'''
@@ -139,14 +162,13 @@ class ListWidget(html5.Div):
 
 		# Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent",
-		          "selectionActivatedEvent",
 		          "cursorMovedEvent",
 		          "tableChangedEvent",
 		          "getCurrentSelection",
 		          "requestingFinishedEvent"]:
 			setattr(self, f, getattr(self.table, f))
 
-		self.selectionActivatedEvent.register(self)
+		self.table.selectionActivatedEvent.register(self)
 		self.requestingFinishedEvent.register(self)
 
 		self.table["style"]["display"] = "none"
@@ -178,68 +200,60 @@ class ListWidget(html5.Div):
 		self.appendChild(self.tableBottomActionBar)
 		self.tableBottomActionBar.setActions(["|","loadnext", "|", "tableitems"]) #,"tableprev","tablenext"
 
-	def getDefaultActions(self, view = None):
+	def getActions(self, view = None):
 		"""
-			Returns the list of actions available in our actionBar
+			Returns the list of actions available in the action bar.
 		"""
-		defaultActions = []
-
-		if self.selectCallback:
-			defaultActions += ["select", "close", "|"]
-
-			if self.selectMulti:
-				defaultActions += ["selectall", "unselectall", "selectinvert", "|"]
-
-		defaultActions += ["add", "selectfields"]
+		actions = ["add", "selectfields"]
 
 		#if not self.selectMode:
-		#	defaultActions += ["|", "exportcsv"]
+		#	actions += ["|", "exportcsv"]
 
 		# Extended actions from view?
 		if view and "actions" in view.keys():
-			if defaultActions[-1] != "|":
-				defaultActions.append( "|" )
+			if actions[-1] != "|":
+				actions.append( "|" )
 
-			defaultActions.extend( view[ "actions" ] or [] )
+			actions.extend( view[ "actions" ] or [] )
 
 		# Extended Actions from config?
 		elif conf["modules"] and self.module in conf["modules"].keys():
 			cfg = conf["modules"][ self.module ]
 
 			if "actions" in cfg.keys() and cfg["actions"]:
-				if defaultActions[-1] != "|":
-					defaultActions.append( "|" )
+				if actions[-1] != "|":
+					actions.append( "|" )
 
-				defaultActions.extend( cfg["actions"] )
+				actions.extend( cfg["actions"] )
 
-		defaultActions += ["|",  "reload", "setamount", "intpreview", "selectfilter"] #"pagefind",  "loadnext",
+		actions += ["|",  "reload", "setamount", "intpreview", "selectfilter"] #"pagefind",  "loadnext",
 
-		return defaultActions
+		return actions
 
 	def getDefaultEntryActions(self, view = None ):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
-		defaultActions = ["edit", "clone", "delete"]
+		actions = ["edit", "clone", "delete"]
 
 		# Extended actions from view?
 		if view and "actions" in view.keys():
-			if defaultActions[-1] != "|":
-				defaultActions.append( "|" )
+			if actions[-1] != "|":
+				actions.append( "|" )
 
-			defaultActions.extend( view[ "actions" ] or [] )
+			actions.extend( view[ "actions" ] or [] )
 
 		# Extended Actions from config?
 		elif conf["modules"] and self.module in conf["modules"].keys():
 			cfg = conf["modules"][ self.module ]
 
 			if "entryActions" in cfg.keys() and cfg["entryActions"]:
-				#if defaultActions[-1] != "|":
-				#	defaultActions.append( "|" )
+				#if actions[-1] != "|":
+				#	actions.append( "|" )
 
-				defaultActions.extend( cfg["entryActions"] )
-		defaultActions.extend(["|", "preview"])
-		return defaultActions
+				actions.extend( cfg["entryActions"] )
+		actions.extend(["|", "preview"])
+		return actions
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -441,16 +455,16 @@ class ListWidget(html5.Div):
 	def getFields(self):
 		return self.columns[:]
 
-	def onSelectionActivated(self, selector, selection):
-		if self.selectCallback:
-			conf["mainWindow"].removeWidget(self)
-			self.selectCallback(selector, selection)
+	def onSelectionActivated(self, table, selection):
+		self.activateSelection()
 
-	def activateCurrentSelection(self):
-		"""
-			Emits the selectionActivated event if there's currently a selection
-		"""
-		self.table.activateCurrentSelection()
+	def activateSelection(self):
+		selection = self.getCurrentSelection()
+		if selection:
+			if self.selectionCallback:
+				self.selectorReturn()
+			else:
+				self.selectionActivatedEvent.fire(self, selection)
 
 	@staticmethod
 	def canHandle(moduleName, moduleInfo):
@@ -486,7 +500,6 @@ class ViewportListWidget(ListWidget):
 		          "requestingFinishedEvent"]:
 			setattr(self, f, getattr(self.table, f))
 
-		self.selectionActivatedEvent.register(self)
 		self.requestingFinishedEvent.register(self)
 
 		self.table["style"]["display"] = "none"

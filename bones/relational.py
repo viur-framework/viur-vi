@@ -139,21 +139,15 @@ class RelationalEditWidget(BaseEditWidget):
 
 		# todo: set context
 
-		# set a select guard when configured
-		selector.selectGuard = self.bone.selectorGuard
-
-		# allow multiple selection?
-		selector.selectMulti = self.bone.multiple
-
 		# Start widget with selector callback
 		selector.setSelector(
 			lambda selector, selection: self.unserialize({
 				"dest": selection[0],
 				"rel": _getDefaultValues(self.bone.dataStructure) if self.bone.dataStructure else None
-			}))
-
-		conf["mainWindow"].stackWidget(selector)
-		self.parent().addClass("is-active")
+			}),
+			multi=self.bone.multiple,
+			allow=self.bone.selectorAllow
+		)
 
 	def onDeleteBtnClick(self):
 		self.unserialize()
@@ -223,19 +217,12 @@ class RelationalMultiEditWidget(BaseMultiEditWidget):
 
 		# todo: set context
 
-		# set a select guard when configured
-		selector.selectGuard = self.bone.selectorGuard
-
-		# allow multiple selection?
-		selector.selectMulti = self.bone.multiple
-
 		# Start widget with selector callback
 		selector.setSelector(
-			self._addEntriesFromSelection
+			self._addEntriesFromSelection,
+			multi=self.bone.multiple,
+			allow=self.bone.selectorAllow
 		)
-
-		conf["mainWindow"].stackWidget(selector)
-		self.parent().addClass("is-active")
 
 	def _addEntriesFromSelection(self, selector, selection):
 		for entry in selection:
@@ -251,7 +238,7 @@ class RelationalBone(BaseBone):
 	viewWidgetFactory = RelationalViewWidget
 	multiEditWidgetFactory = RelationalMultiEditWidget
 
-	selectorGuard = None
+	selectorAllow = (TreeNodeWidget, TreeLeafWidget)
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -284,7 +271,7 @@ boneSelector.insert(1, HierarchyBone.checkFor, HierarchyBone)
 # --- treeItemBone ---
 
 class TreeItemBone(RelationalBone):
-	selectorGuard = lambda _, element: isinstance(element, TreeLeafWidget)
+	selectorAllow = TreeLeafWidget
 
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):
@@ -296,7 +283,7 @@ boneSelector.insert(2, TreeItemBone.checkFor, TreeItemBone)
 # --- treeDirBone ---
 
 class TreeDirBone(RelationalBone):
-	selectorGuard = lambda _, element: isinstance(element, TreeNodeWidget)
+	selectorAllow = TreeNodeWidget
 
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):

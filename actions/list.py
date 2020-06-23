@@ -87,8 +87,8 @@ class EditAction(Button):
 				self.isDisabled = True
 
 	def onSelectionActivated(self, table, selection ):
-		if not self.parent().parent().selectCallback and len(selection)==1:
-			self.openEditor( selection[0]["key"] )
+		if len(selection) == 1:
+			self.openEditor(selection[0]["key"])
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -455,31 +455,39 @@ actionDelegateSelector.insert( 1, ListPreviewInlineAction.isSuitableFor, ListPre
 
 class CloseAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( CloseAction, self ).__init__( translate("Close"), icon="icons-cancel", *args, **kwargs )
-		self["class"] = "bar-item btn btn--small btn--close"
+		super(CloseAction, self).__init__(
+			translate("Close"),
+			icon="icons-cancel",
+			*args, **kwargs
+		)
+		self.addClass("bar-item btn btn--small btn--close")
 
 	def onClick(self, sender=None):
-		conf["mainWindow"].removeWidget( self.parent().parent() )
+		conf["mainWindow"].removeWidget(self.parent().parent())
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
 		return actionName=="close"
 
-actionDelegateSelector.insert( 1, CloseAction.isSuitableFor, CloseAction )
+actionDelegateSelector.insert(1, CloseAction.isSuitableFor, CloseAction)
 
-class ActivateSelectionAction(Button):
+class SelectAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( ActivateSelectionAction, self ).__init__( translate("Select"), icon="icons-select-add", *args, **kwargs )
-		self["class"] = "bar-item btn btn--small btn--activateselection"
+		super().__init__(
+			translate("Select"),
+			icon="icons-select-add",
+			*args, **kwargs
+		)
+		self.addClass("bar-item btn btn--small btn--activateselection")
 
 	def onClick(self, sender=None):
-		self.parent().parent().activateCurrentSelection()
+		self.parent().parent().selectorReturn()
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
 		return actionName=="select"
 
-actionDelegateSelector.insert( 1, ActivateSelectionAction.isSuitableFor, ActivateSelectionAction )
+actionDelegateSelector.insert(1, SelectAction.isSuitableFor, SelectAction)
 
 
 class SelectFieldsPopup( html5.ext.Popup ):

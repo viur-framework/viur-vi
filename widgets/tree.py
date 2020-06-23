@@ -8,6 +8,7 @@ from vi.config import conf
 from vi.i18n import translate
 from vi.embedsvg import embedsvg
 from time import time
+import logging
 
 
 class TreeItemWidget(html5.Li):
@@ -22,7 +23,7 @@ class TreeItemWidget(html5.Li):
 			:param widget: tree widget
 		"""
 		super(TreeItemWidget, self).__init__()
-		self["class"] = "vi-tree-item item has-hover is-drop-target is-draggable"
+		self.addClass("vi-tree-item item has-hover is-drop-target is-draggable")
 		self.module = module
 		self.data = data
 
@@ -37,6 +38,7 @@ class TreeItemWidget(html5.Li):
 
 		self.sortindex = data["sortindex"] if "sortindex" in data else 0
 
+		#fixme: HTML below contains inline styling...
 		self.fromHTML("""
 			<div style="flex-direction:column;width:100%" [name]="nodeWrapper">
 				<div class="item" [name]="nodeGrouper">
@@ -55,11 +57,17 @@ class TreeItemWidget(html5.Li):
 
 		self["draggable"] = True
 
-		self.sinkEvent("onDragOver", "onDrop", "onDragStart", "onDragLeave", "onDragEnd")
+		self.sinkEvent(
+			"onClick",
+			"onDblClick",
+			"onDragOver",
+			"onDrop",
+			"onDragStart",
+			"onDragLeave",
+			"onDragEnd"
+		)
 
 		self.setStyle()
-
-		self.sinkEvent("onClick", "onDragStart")
 
 	def setStyle(self):
 		'''
@@ -210,8 +218,6 @@ class TreeItemWidget(html5.Li):
 				                              "sortindex": newIdx},
 				                             secure=True, modifies=True)
 
-
-
 		elif self.currentStatus == "bottom":
 			parentID = self.data["parententry"]
 
@@ -293,11 +299,16 @@ class TreeItemWidget(html5.Li):
 				self.nodeSubline.appendChild(html5.TextNode(size))
 
 	def onClick(self, event):
-		if event.target != self.nodeToggle.element:
+		if html5.utils.doesEventHitWidgetOrChildren(event, self.nodeToggle):
+			self.toggleExpand()
+		else:
 			self.widget.extendSelection(self)
 
-		else:
-			self.toggleExpand()
+		event.preventDefault()
+		event.stopPropagation()
+
+	def onDblClick(self, event):
+		self.widget.activateSelection(self)
 
 		event.preventDefault()
 		event.stopPropagation()
@@ -363,10 +374,8 @@ class TreeNodeWidget(TreeItemWidget):
 
 class TreeWidget(html5.Div):
 	"""
-			Displays a hierarchy where entries are direct children of each other.
-			(There's only one type on entries in a HierarchyApplication. If you need to
-			differentiate between nodes/leafs use a TreeApplication instead)
-		"""
+	Base Widget that renders a tree.
+	"""
 
 	nodeWidget = TreeNodeWidget
 	leafWidget = TreeLeafWidget
@@ -379,39 +388,48 @@ class TreeWidget(html5.Div):
 			:type rootNode: str or None
 		"""
 		super(TreeWidget, self).__init__()
+		self.addClass("vi-widget vi-widget--hierarchy is-drop-target")
+		self.sinkEvent(
+			"onKeyDown",
+			"onKeyUp",
+			"onDrop",
+			"onDragOver"
+		)
 
 		self.module = module
 		self.rootNode = rootNode
 		self.node = node or rootNode
-		self.addClass("vi-widget vi-widget--hierarchy")
+		self.context = context
+
+		# Action bar
 		self.actionBar = ActionBar(module, "tree")
+		self.actionBar.setActions(self.getActions(), widget=self)
 		self.appendChild(self.actionBar)
 
-		self.breadcrumb()
-
-		self._isCtlPressed = False
-
+		# Entry frame
 		self.entryFrame = html5.Ol()
 		self.entryFrame.addClass("hierarchy")
 		self.appendChild(self.entryFrame)
+
+		# States
+		self._isCtrlPressed = False
+		self._expandedNodes = []
+		self._currentRequests = []
+		self.path = []
+
+		# Selection
+		self.selectionCallback = None
+		self.selectionAllow = TreeItemWidget
+		self.selectionMulti = True
+		self.selection = []
+
+		# Events
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 		self.rootNodeChangedEvent = EventDispatcher("rootNodeChanged")
 		self.nodeChangedEvent = EventDispatcher("nodeChanged")
 
-		self.allowMultiSelection = True
-		self.currentSelectedElements = []
-
-		self._currentCursor = None
-		self._currentRequests = []
-		self.addClass("is-drop-target")
-
-		self.selectMulti = True
-		self.selectCallback = None
-
-		self._expandedNodes = []
-		self.context = context
-
+		# Either load content or get root Nodes
 		if self.rootNode:
 			self.reloadData()
 		else:
@@ -423,120 +441,126 @@ class TreeWidget(html5.Div):
 				failureHandler=self.showErrorMsg
 			)
 
-		self.path = []
-		self.sinkEvent("onKeyDown", "onKeyUp", "onClick", "onDblClick", "onDrop", "onDragOver", "onDragLeave",
-		               "onDragEnd")
-		self.setSelector(None)
-		self.selectionChangedEvent.register(self)
-		self.buildSideWidget()
-
-	def selectGuard(self, child):
+	def setSelector(self, callback, multi=True, allow=None):
 		"""
-		Guard function, checking if child does match a "selectable" item of this widget.
+		Configures the widget as selector for a relationalBone and shows it.
 		"""
-		print("selectGuard", child)
-		return isinstance(child, (TreeNodeWidget, TreeLeafWidget))
+		self.selectionCallback = callback
+		self.selectionAllow = allow or TreeItemWidget
+		self.selectionMulti = multi
 
-	def buildSideWidget(self):
-		'''
-			Currently used by hierarchy widget
-		'''
-		return 0
+		self.actionBar.setActions(["select", "close", "|"] + self.getActions())
+		conf["mainWindow"].stackWidget(self)
 
-	def breadcrumb(self):
-		'''
-			Currently used by treebrowser and file widget
-		'''
-		return 0
+	def selectorReturn(self):
+		"""
+		Returns the current selection to the callback configured with `setSelector`.
+		"""
+		conf["mainWindow"].removeWidget(self)
 
-	def rebuildPath(self):
-		'''
-			Currently used by treebrowser and file widget
-		'''
-		return 0
+		if self.selectionCallback:
+			self.selectionCallback(self, [element.data for element in self.selection])
+
+	def onKeyDown(self, event):
+		# fixme: This is not working
+		logging.error("#fixme onkeydown")
+		if html5.isControl(event):
+			self._isCtrlPressed = True
+
+	def onKeyUp(self, event):
+		# fixme: This is not working
+		logging.error("#fixme onkeyup")
+		if html5.isControl(event):
+			self._isCtrlPressed = False
+
+	def getActions(self):
+		"""
+		Returns a list of actions that are being set for the ActionBar.
+		Override this to provide additional actions.
+		"""
+		return [
+			"selectrootnode",
+			"add",
+			"add.node",
+			"add.leaf",
+			"edit",
+			"clone",
+			"delete",
+			"|",
+			"listview",
+			"reload"
+		]
 
 	def clearSelection(self):
-		for e in self.currentSelectedElements:
-			e.removeClass("is-focused")
+		"""
+		Empties the current selection.
+		"""
+		for element in self.selection:
+			element.removeClass("is-focused")
 
-		self.currentSelectedElements = []
+		self.selection.clear()
 
 	def extendSelection(self, element):
 		"""
 		Extends the current selection to element.
-		"""
 
-		print("extendSelection", element.data)
-		if self.selectGuard and not self.selectGuard(element):
-			print("Oh ich bin nicht im guard")
+		This is normally done by clicking or tabbing on an element.
+		"""
+		if not isinstance(element, self.selectionAllow):
+			logging.warning("Element %r not allowed for selection", element)
 			return False
 
 		# Perform selection
-		if self._isCtlPressed and self.selectMulti:
-			if element in self.currentSelectedElements:
-				self.currentSelectedElements.remove(element)
+		if self._isCtrlPressed and self.selectionMulti:
+			if element in self.selection:
+				self.selection.remove(element)
 				element.removeClass("is-focused")
 			else:
-				self.currentSelectedElements.append(element)
+				self.selection.append(element)
 				element.addClass("is-focused")
 		else:
 			self.clearSelection()
+			self.selection.append(element)
+			element.addClass("is-focused")
 
-			if element:
-				element.addClass("is-focused")
-				self.currentSelectedElements = [element]
+		self.selectionChangedEvent.fire(self, self.selection)
+
+	def activateSelection(self, element):
+		"""
+		Activates the current selection or element.
+
+		An activation mostly is an action like selecting or editing an item.
+		This is normally done by double-clicking an element.
+		"""
+		if self.selection:
+			if self.selectionCallback:
+				self.selectorReturn()
 			else:
-				self.currentSelectedElements = []
-
-		self.selectionChangedEvent.fire(self, self.currentSelectedElements)
-		return bool(self.currentSelectedElements)
+				self.selectionActivatedEvent.fire(self, self.selection)
 
 	def requestChildren(self, element):
 		self.loadNode(element.data["key"])
-
-	def setSelector(self, callback):
-		"""
-		Configures the widget as a selector.
-		"""
-		self.selectCallback = callback
-		self.actionBar.setActions(
-			(["select", "close", "|"] if self.selectCallback else [])
-			+ [
-				"selectrootnode",
-				"add",
-				"add.node",
-				"add.leaf",
-				"edit",
-				"clone",
-				"delete",
-				"|",
-				"listview",
-				"reload"
-			],
-			widget=self
-		)
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
 			Removes all currently visible elements and displayes an error message
 		"""
+		self.actionBar.hide()
+		self.entryFrame.hide()
 
-		self.actionBar["style"]["display"] = "none"
-		self.entryFrame["style"]["display"] = "none"
 		errorDiv = html5.Div()
 		errorDiv.addClass("popup popup--center popup--local msg msg--error is-active error_msg")
 		if code and (code == 401 or code == 403):
 			txt = translate("Access denied!")
 		else:
-			txt = translate("An unknown error occurred!")
-		errorDiv.addClass("error_code_%s" % (code or 0))
+			txt = translate("Error {code} occurred!", code=code)
+
+		errorDiv.addClass("error_code_%s" % (code or 0))  # fixme: not an ignite style?
 		errorDiv.appendChild(html5.TextNode(txt))
 		self.appendChild(errorDiv)
 
 	def onDataChanged(self, module, **kwargs):
-
 		if module != self.module:
-
 			isRootNode = False
 			for k, v in conf["modules"].items():
 				if (k == module
@@ -576,28 +600,6 @@ class TreeWidget(html5.Div):
 				return (tmp)
 		return (None)
 
-	def onClick(self, event):
-		if event.target == self.element:
-			# empty click
-			self.clearSelection()
-			self.selectionChangedEvent.fire(self, self.currentSelectedElements)
-
-	def onDblClick(self, event):
-		for child in self.entryFrame.children():
-			if html5.utils.doesEventHitWidgetOrChildren(event, child):
-				print("OnDblClick")
-
-				if self.selectCallback:
-					print("selectMode")
-					self.clearSelection()
-					if self.extendSelection(child):
-						self.activateCurrentSelection()
-				elif isinstance(child, TreeNodeWidget):
-					print("ToggleMode")
-					child.toggleExpand()
-
-				break
-
 	def onSetDefaultRootNode(self, req):
 		"""
 			We requested the list of rootNodes for that module and that
@@ -630,19 +632,20 @@ class TreeWidget(html5.Div):
 
 		def collectExpandedNodes(currNode):
 			res = []
-			for c in currNode._children[:]:
+			for c in currNode.children():
 				if isinstance(c, TreeItemWidget):
 					if c.isExpanded:
 						res.append(c.data["key"])
+
 					res.extend(collectExpandedNodes(c.ol))
-			return (res)
+
+			return res
 
 		self._expandedNodes = collectExpandedNodes(self.entryFrame)
 		self._currentRequests = []
-		for c in self.entryFrame._children[:]:
-			self.entryFrame.removeChild(c)
+		self.entryFrame.removeAllChildren()
+
 		self.loadNode(self.rootNode)
-		self.rebuildPath()
 
 	def loadNode(self, node, cursor=None, overrideParams=None):
 		"""
@@ -753,16 +756,6 @@ class TreeWidget(html5.Div):
 		name = float(widget.data.get("sortindex") or 0)
 		return name
 
-	def onSelectionChanged(self, widget, selection):
-		return 0
-
-	def activateCurrentSelection(self):
-		conf["mainWindow"].removeWidget(self)
-
-		if self.selectCallback:
-			print([element.data for element in self.currentSelectedElements])
-			self.selectCallback(self, [element.data for element in self.currentSelectedElements])
-
 	@staticmethod
 	def canHandle(moduleName, moduleInfo):
 		return moduleInfo["handler"] == "tree" or moduleInfo["handler"].startswith("tree.")
@@ -806,6 +799,15 @@ class TreeBrowserWidget(TreeWidget):
 	def __init__(self, module, rootNode=None, node=None, context=None, *args, **kwargs):
 		super(TreeBrowserWidget, self).__init__(module, rootNode, node, context, *args, **kwargs)
 
+		# Breadcrumb (bröselige Bröselbrotbrösel, oder was damit sonst auch immer gemeint sein soll...)
+		self.pathList = html5.Div()
+		self.pathList.addClass("vi-tree-breadcrumb")
+		self.insertChild(self.pathList, self.entryFrame)
+
+	def reloadData(self):
+		super().reloadData()
+		self.rebuildPath()
+
 	def rebuildPath(self):
 		"""
 			Rebuild the displayed path-list.
@@ -838,25 +840,13 @@ class TreeBrowserWidget(TreeWidget):
 
 		self.pathList.prependChild(c)
 
-	def breadcrumb(self):
-		self.pathList = html5.Div()
-		self.pathList.addClass("vi-tree-breadcrumb")
-		self.appendChild(self.pathList)
-
-	def onDblClick(self, event):
-		for child in self.entryFrame.children():
-			if html5.utils.doesEventHitWidgetOrChildren(event, child):
-				if self.selectCallback:
-					self.clearSelection()
-					if self.extendSelection(child):
-						self.activateCurrentSelection()
-
-				elif isinstance(child, TreeNodeWidget):
-					self.entryFrame.removeAllChildren()
-					self.loadNode(child.data["key"])
-					self.rebuildPath()
-
-				break
+	def activateSelection(self, element):
+		if isinstance(element, TreeNodeWidget):
+			self.entryFrame.removeAllChildren()
+			self.loadNode(element.data["key"])
+			self.rebuildPath()
+		else:
+			super().activateSelection(element)
 
 	@staticmethod
 	def canHandle(module, moduleInfo):

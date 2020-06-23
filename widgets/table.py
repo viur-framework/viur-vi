@@ -789,12 +789,11 @@ class DataTable( html5.Div ):
 				self._cellRender[ field ] = render
 		self.rebuildTable()
 
-	def activateCurrentSelection(self):
+	def activateSelection(self):
 		"""
 			Emits the selectionActivated event if there's currently a selection
-
 		"""
 		selection = self.getCurrentSelection()
-		if len( selection )>0:
-			self.selectionActivatedEvent.fire( self, selection )
+		if selection:
+			self.selectionActivatedEvent.fire(self, selection)
 

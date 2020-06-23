@@ -184,7 +184,6 @@ class DeleteAction(Button):
 		self["disabled"]= True
 		self.isDisabled=True
 
-
 	def onAttach(self):
 		super(DeleteAction,self).onAttach()
 		self.parent().parent().selectionChangedEvent.register( self )
@@ -317,23 +316,3 @@ class SelectRootNode( html5.Select ):
 		return actionName=="selectrootnode" and (handler == "tree" or handler.startswith("tree."))
 
 actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
-
-
-class ReturnSelectionAction(Button):
-	"""
-		This is the new "activateSelectionAction" for Trees - we need a different event
-		to avoid conflicts with "open that folder" action.
-	"""
-	def __init__(self, *args, **kwargs ):
-		super( ReturnSelectionAction, self ).__init__( translate("Select"), icon="icons-select-add", *args, **kwargs )
-		self["class"] = "bar-item btn btn--small btn--activateselection"
-
-	def onClick(self, sender=None):
-		self.parent().parent().activateCurrentSelection()
-
-	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		correctHandler = handler == "tree" or handler.startswith("tree.")
-		return( actionName=="select" and  correctHandler)
-
-actionDelegateSelector.insert( 3, ReturnSelectionAction.isSuitableFor, ReturnSelectionAction )
