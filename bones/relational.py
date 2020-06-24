@@ -34,12 +34,12 @@ class RelationalEditWidget(BaseEditWidget):
 		)
 
 	def _updateWidget(self):
-		super()._updateWidget()
-
 		if self.bone.readonly:
+			self.destWidget.disable()
 			self.selectBtn.hide()
 			self.deleteBtn.hide()
 		else:
+			self.destWidget.enable()
 			self.selectBtn.show()
 
 			# Only allow to delete entry when not multiple and not required!

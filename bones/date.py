@@ -5,27 +5,28 @@ from vi import html5
 
 from vi.priorityqueue import boneSelector
 from vi.config import conf
-from vi.bones.base import BaseBone, BaseViewWidget
+from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 from vi.i18n import translate
 
 
-class DateEditWidget(html5.Div):
+class DateEditWidget(BaseEditWidget):
 	style = ["vi-bone", "vi-bone--date"]
 
 	def __init__(self, bone, **kwargs):
-		super().__init__()
-		self.bone = bone
-
 		self.serverToClient = []
 
+		self.dateInput = None
+		self.timeInput = None
+
+		super().__init__(bone, **kwargs)
+		assert self.dateInput or self.timeInput, "You may not configure a dateBone(date=False, time=False)"
+
+	def _createWidget(self):
 		if self.bone.boneStructure.get("date", True):
 			self.dateInput = self.appendChild(
 				"""<ignite-input type="date" />"""
 			)[0]
 			self.serverToClient.append("%d.%m.%Y")  # fixme: Still using German format server-side?
-
-		else:
-			self.dateInput = None
 
 		if self.bone.boneStructure.get("time", True):
 			self.timeInput = self.appendChild(
@@ -33,10 +34,15 @@ class DateEditWidget(html5.Div):
 			)[0]
 			self.timeInput["readonly"] = bool(self.bone.boneStructure.get("readonly"))
 			self.serverToClient.append("%H:%M:%S")
-		else:
-			self.timeInput = None
 
-		assert self.dateInput or self.timeInput, "You may not configure a dateBone(date=False, time=False)"
+	def _updateWidget(self):
+		if self.dateInput:
+			self.dateInput["required"] = self.bone.required
+			self.dateInput["readonly"] = self.bone.readonly
+
+		if self.timeInput:
+			self.timeInput["required"] = self.bone.required
+			self.timeInput["readonly"] = self.bone.readonly
 
 	def unserialize(self, value=None):
 		if value:
@@ -52,7 +58,6 @@ class DateEditWidget(html5.Div):
 
 				if self.timeInput:
 					self.timeInput["value"] = value.strftime("%H:%M:%S")
-
 
 	def serialize(self):
 		value = datetime.datetime.strptime("00:00:00", "%H:%M:%S")

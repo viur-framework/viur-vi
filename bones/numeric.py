@@ -4,17 +4,15 @@ from vi import html5
 
 from vi.priorityqueue import boneSelector
 from vi.config import conf
-from vi.bones.base import BaseBone, BaseViewWidget
+from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 
 
-class NumericEditWidget(html5.Div):
+class NumericEditWidget(BaseEditWidget):
 	style = ["vi-bone", "vi-bone--numeric"]
 
 	def __init__(self, bone, **kwargs):
-		super().__init__()
+		super().__init__(bone, **kwargs)
 
-		# Bone references
-		self.bone = bone
 		self.value = None
 
 		# Numeric bone precision, min and max
@@ -43,35 +41,27 @@ class NumericEditWidget(html5.Div):
 					self.currencyThousandDelimiter = ","
 				# else: fixme are there more configs?
 
-		self.widget = self._createWidget()
-		self.appendChild(self.widget)
-
-	def _createWidget(self):
 		self.sinkEvent("onChange")
-		widget = html5.ignite.Input()
-
-		# Widget state
-		widget["readonly"] = bool(self.bone.boneStructure.get("readonly"))
-		widget["required"] = bool(self.bone.boneStructure.get("required"))
+		self.widget = html5.ignite.Input()
 
 		# Standard- or currency mode
 		if not self.currency:
-			widget["type"] = "number"
+			self.widget["type"] = "number"
 
 			if self.precision:
 				if self.precision <= 16:
-					widget["step"] = "0." + ("0" * (self.precision - 1)) + "1"
+					self.widget["step"] = "0." + ("0" * (self.precision - 1)) + "1"
 				else:
-					widget["step"] = "any"
+					self.widget["step"] = "any"
 
 			else:  # Precision is zero, treat as integer input
-				widget["step"] = 1
+				self.widget["step"] = 1
 
 			if self.min is not None:
-				widget["min"] = self.min
+				self.widget["min"] = self.min
 
 			if self.max is not None:
-				widget["max"] = self.max
+				self.widget["max"] = self.max
 
 		else:
 			assert self.currencyThousandDelimiter[0] not in "^-+()[]"
@@ -81,7 +71,12 @@ class NumericEditWidget(html5.Div):
 			                                    (self.currencyThousandDelimiter[0],
 			                                        self.currencyDecimalDelimiter[0]))
 
-		return widget
+		self.appendChild(self.widget)
+		self._updateWidget()
+
+	def _createWidget(self):
+		# this is done inside the constructor
+		return None
 
 	def setValue(self, value):
 		if not self.currency:

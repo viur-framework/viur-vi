@@ -25,6 +25,20 @@ class TextEditWidget(BaseEditWidget):
 		#self.changeEvent = EventDispatcher("boneChange")  # fixme: later...
 		return widget
 
+	def _updateWidget(self):
+		if self.bone.readonly:
+			if isinstance(self.widget, HtmlEditor):
+				self.widget.disable()
+			else:
+				self.widget["readonly"] = True
+		else:
+			if isinstance(self.widget, HtmlEditor):
+				self.widget.enable()
+			else:
+				self.widget["readonly"] = False
+
+		# fixme: required?
+
 	def _setDisabled(self, disable):
 		super()._setDisabled(disable)
 

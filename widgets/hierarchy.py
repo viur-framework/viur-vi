@@ -36,8 +36,8 @@ class HierarchyWidget(TreeWidget):
 			"skelType": "node"
 		}
 
-		if self.currentSelectedElements:
-			listfilter.update({"parententry": self.currentSelectedElements[0].data["key"]})
+		if self.selection:
+			listfilter.update({"parententry": self.selection[0].data["key"]})
 		else:
 			listfilter.update({"parententry": self.rootNode})
 

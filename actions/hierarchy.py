@@ -82,7 +82,7 @@ class EditAction(Button):
 				self.isDisabled = True
 
 	def onSelectionActivated(self, table, selection):
-		if not self.parent().parent().selectCallback and len(selection)>0:
+		if len(selection)>0:
 			self.openEditor(selection[0].data["key"])
 
 	@staticmethod
