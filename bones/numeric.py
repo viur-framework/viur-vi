@@ -59,7 +59,10 @@ class NumericEditWidget(html5.Div):
 			widget["type"] = "number"
 
 			if self.precision:
-				widget["step"] = pow(10, -self.precision)
+				if self.precision <= 16:
+					widget["step"] = "0." + ("0" * (self.precision - 1)) + "1"
+				else:
+					widget["step"] = "any"
 
 			else:  # Precision is zero, treat as integer input
 				widget["step"] = 1
