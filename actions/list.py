@@ -391,7 +391,8 @@ class ListPreviewInlineAction(Button):
 		super( ListPreviewInlineAction, self ).onDetach()
 
 	def onSelectionChanged(self, table, selection):
-		if self.parent().parent().selectCallback:
+		# Disallow internal preview in selector mode
+		if self.parent().parent().selectionCallback:
 			return
 
 		if len(selection)>0:
