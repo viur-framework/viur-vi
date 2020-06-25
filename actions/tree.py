@@ -99,7 +99,7 @@ class EditAction(Button):
 		super(EditAction,self).onDetach()
 
 	def onSelectionActivated(self, table, selection ):
-		if (not self.parent().parent().selectMode
+		if (not self.parent().parent().selectCallback
 			and len(selection) == 1
 			and isinstance(selection[0], self.parent().parent().leafWidget)):
 
@@ -151,7 +151,7 @@ class EditAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().currentSelectedElements
+		selection = self.parent().parent().selection
 		if not selection:
 			return
 
@@ -183,7 +183,6 @@ class DeleteAction(Button):
 		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled=True
-
 
 	def onAttach(self):
 		super(DeleteAction,self).onAttach()
@@ -217,9 +216,10 @@ class DeleteAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().currentSelectedElements
+		selection = self.parent().parent().selection
 		if not selection:
 			return
+
 		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = selection
 		d.addClass( "delete" )
@@ -317,23 +317,3 @@ class SelectRootNode( html5.Select ):
 		return actionName=="selectrootnode" and (handler == "tree" or handler.startswith("tree."))
 
 actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
-
-
-class ReturnSelectionAction(Button):
-	"""
-		This is the new "activateSelectionAction" for Trees - we need a different event
-		to avoid conflicts with "open that folder" action.
-	"""
-	def __init__(self, *args, **kwargs ):
-		super( ReturnSelectionAction, self ).__init__( translate("Select"), icon="icons-select-add", *args, **kwargs )
-		self["class"] = "bar-item btn btn--small btn--activateselection"
-
-	def onClick(self, sender=None):
-		self.parent().parent().returnCurrentSelection()
-
-	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		correctHandler = handler == "tree" or handler.startswith("tree.")
-		return( actionName=="select" and  correctHandler)
-
-actionDelegateSelector.insert( 3, ReturnSelectionAction.isSuitableFor, ReturnSelectionAction )

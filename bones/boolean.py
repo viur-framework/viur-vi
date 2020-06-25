@@ -12,6 +12,12 @@ class BooleanEditWidget(BaseEditWidget):
 	def _createWidget(self):
 		return html5.ignite.Switch()
 
+	def _updateWidget(self):
+		if self.bone.readonly:
+			self.widget.disable()
+		else:
+			self.widget.enable()
+
 	def unserialize(self, value=None):
 		self.widget["checked"] = bool(value)
 

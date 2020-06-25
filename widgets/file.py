@@ -4,7 +4,7 @@ from vi.i18n import translate
 import vi.utils as utils
 from vi.config import conf
 
-from vi.widgets.tree import LeafWidget, NodeWidget, TreeBrowserWidget
+from vi.widgets.tree import TreeLeafWidget, TreeNodeWidget, TreeBrowserWidget
 from vi.widgets.search import Search
 from vi.framework.components.icon import Icon
 
@@ -299,7 +299,7 @@ class Uploader(html5.ignite.Progress):
 		self.parent().appendChild(msg)
 		self.parent().removeChild(self)
 
-class FileLeafWidget(LeafWidget):
+class FileLeafWidget(TreeLeafWidget):
 
 	def EntryIcon( self ):
 		self.previewImg = FilePreviewImage( self.data )
@@ -310,7 +310,7 @@ class FileLeafWidget(LeafWidget):
 		self.buildDescription()
 		self.EntryIcon()
 
-class FileNodeWidget(NodeWidget):
+class FileNodeWidget(TreeNodeWidget):
 	def setStyle( self ):
 		self.buildDescription()
 		self.EntryIcon()

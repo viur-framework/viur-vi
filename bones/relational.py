@@ -5,6 +5,7 @@ from vi.priorityqueue import boneSelector, moduleWidgetSelector
 from vi.config import conf
 from vi.bones.base import BaseBone, BaseEditWidget, BaseMultiEditWidget
 from vi.widgets.internaledit import InternalEdit
+from vi.widgets.tree import TreeNodeWidget, TreeLeafWidget
 from vi.widgets.file import FileWidget, Uploader, FilePreviewImage
 
 
@@ -33,12 +34,12 @@ class RelationalEditWidget(BaseEditWidget):
 		)
 
 	def _updateWidget(self):
-		super()._updateWidget()
-
 		if self.bone.readonly:
+			self.destWidget.disable()
 			self.selectBtn.hide()
 			self.deleteBtn.hide()
 		else:
+			self.destWidget.enable()
 			self.selectBtn.show()
 
 			# Only allow to delete entry when not multiple and not required!
@@ -137,15 +138,16 @@ class RelationalEditWidget(BaseEditWidget):
 			conf["selectors"][self.bone.destModule] = selector
 
 		# todo: set context
+
+		# Start widget with selector callback
 		selector.setSelector(
-			self.bone.selectModeSingle,
 			lambda selector, selection: self.unserialize({
 				"dest": selection[0],
 				"rel": _getDefaultValues(self.bone.dataStructure) if self.bone.dataStructure else None
-			}))
-
-		conf["mainWindow"].stackWidget(selector)
-		self.parent().addClass("is-active")
+			}),
+			multi=self.bone.multiple,
+			allow=self.bone.selectorAllow
+		)
 
 	def onDeleteBtnClick(self):
 		self.unserialize()
@@ -214,13 +216,13 @@ class RelationalMultiEditWidget(BaseMultiEditWidget):
 			conf["selectors"][self.bone.destModule] = selector
 
 		# todo: set context
-		selector.setSelector(
-			self.bone.selectModeSingle,
-			self._addEntriesFromSelection
-		)
 
-		conf["mainWindow"].stackWidget(selector)
-		self.parent().addClass("is-active")
+		# Start widget with selector callback
+		selector.setSelector(
+			self._addEntriesFromSelection,
+			multi=self.bone.multiple,
+			allow=self.bone.selectorAllow
+		)
 
 	def _addEntriesFromSelection(self, selector, selection):
 		for entry in selection:
@@ -236,8 +238,7 @@ class RelationalBone(BaseBone):
 	viewWidgetFactory = RelationalViewWidget
 	multiEditWidgetFactory = RelationalMultiEditWidget
 
-	selectModeSingle = "single"
-	selectModeMulti = "multi"
+	selectorAllow = (TreeNodeWidget, TreeLeafWidget)
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -270,28 +271,26 @@ boneSelector.insert(1, HierarchyBone.checkFor, HierarchyBone)
 # --- treeItemBone ---
 
 class TreeItemBone(RelationalBone):
-	selectModeSingle = "single.leaf"
-	selectModeMulti = "multi.leaf"
+	selectorAllow = TreeLeafWidget
 
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):
 		# fixme: this is rather "relational.tree.leaf" than a "treeitem"...
-		return skelStructure[boneName]["type"] == "treeitem" or skelStructure[boneName]["type"].startswith("treeitem.")
+		return skelStructure[boneName]["type"] == "relational.treeitem" or skelStructure[boneName]["type"].startswith("relational.treeitem.")
 
-boneSelector.insert(1, TreeItemBone.checkFor, TreeItemBone)
+boneSelector.insert(2, TreeItemBone.checkFor, TreeItemBone)
 
 # --- treeDirBone ---
 
 class TreeDirBone(RelationalBone):
-	selectModeSingle = "single.node"
-	selectModeMulti = "multi.node"
+	selectorAllow = TreeNodeWidget
 
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):
 		# fixme: this is rather "relational.tree.node" than a "treedir"...
-		return skelStructure[boneName]["type"] == "treedir" or skelStructure[boneName]["type"].startswith("treedir.")
+		return skelStructure[boneName]["type"] == "relational.treedir" or skelStructure[boneName]["type"].startswith("relational.treedir.")
 
-boneSelector.insert(1, TreeDirBone.checkFor, TreeDirBone)
+boneSelector.insert(2, TreeDirBone.checkFor, TreeDirBone)
 
 # --- fileBone ---
 
@@ -323,7 +322,10 @@ class FileBone(TreeItemBone):
 
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):
+		#print(moduleName, boneName, skelStructure[boneName]["type"], skelStructure[boneName]["type"] == "relational.file" or skelStructure[boneName]["type"].startswith("relational.file."))
 		return skelStructure[boneName]["type"] == "treeitem.file" or skelStructure[boneName]["type"].startswith("treeitem.file.")
+		#fixme: This type should be relational.treeitem.file and NOT relational.file.... WTF
+		#return skelStructure[boneName]["type"] == "relational.treeitem.file" or skelStructure[boneName]["type"].startswith("relational.treeitem.file.")
 
 
-boneSelector.insert(2, FileBone.checkFor, FileBone)
+boneSelector.insert(3, FileBone.checkFor, FileBone)

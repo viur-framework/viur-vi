@@ -8,7 +8,10 @@ from vi.priorityqueue import boneSelector, moduleWidgetSelector
 from vi.widgets.sidebar import SideBar
 from vi.framework.components.datatable import DataTable, ViewportDataTable
 from vi.framework.components.actionbar import ActionBar
+from vi.framework.event import EventDispatcher
 from vi.embedsvg import embedsvg
+
+import logging
 
 
 class ListWidget(html5.Div):
@@ -68,7 +71,7 @@ class ListWidget(html5.Div):
 
 				#fixme
 				#self.appendChild(CompoundFilter(myView, module, embed=True))
-				print("fixme!")
+				logging.error("#fixme CompoundFilter")
 
 		self._checkboxes = (conf["modules"]
 		              and module in conf["modules"].keys()
@@ -84,28 +87,21 @@ class ListWidget(html5.Div):
 		self._currentRequests = []
 		self.columns = []
 
-		self.selectMode = None
-		self.selectCallback = None
+		self.selectionMulti = True
+		self.selectionAllow = None
+		self.selectionCallback = None
 
-		if self.selectMode and filter is None and columns is None:
-			#Try to select a reasonable set of cols / filter
-			if conf["modules"] and module in conf["modules"].keys():
-				tmpData = conf["modules"][module]
-				if "columns" in tmpData.keys():
-					columns = tmpData["columns"]
-				if "filter" in tmpData.keys():
-					filter = tmpData["filter"]
-
-		self.filter = filter.copy() if isinstance(filter,dict) else {}
-		self.columns = columns[:] if isinstance(columns,list) else []
+		self.filter = filter.copy() if isinstance(filter, dict) else {}
+		self.columns = columns[:] if isinstance(columns, list) else []
 		self.filterID = filterID #Hint for the sidebarwidgets which predefined filter is currently active
 		self.filterDescr = filterDescr #Human-readable description of the current filter
 		self._tableHeaderIsValid = False
 
 		#build Table
 		self.tableInitialization(*args, **kwargs)
+		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 
-		self.actionBar.setActions(self.getDefaultActions(myView), widget=self)
+		self.actionBar.setActions(self.getActions(myView), widget=self)
 		self.entryActionBar.setActions(self.getDefaultEntryActions(myView), widget=self)
 
 		self.emptyNotificationDiv = html5.Div()
@@ -119,23 +115,38 @@ class ListWidget(html5.Div):
 		self.emptyNotificationDiv.removeClass("is-active")
 
 		self.setTableActionBar()
-		self.setSelector(None)
 
 		if autoload:
 			self.reloadData()
 
 		self.sinkEvent("onClick")
 
-	def setSelector(self, mode, callback=None):
+	def setSelector(self, callback, multi=True, allow=None):
 		"""
-		Configures the widget as a selector.
+		Configures the widget as selector for a relationalBone and shows it.
 		"""
-		assert mode in [None, "single", "multi"]
-		self.selectMode = mode
-		self.selectCallback = callback
+		self.selectionCallback = callback
+		self.selectionMulti = multi
 
-		# Fixme: This is bullshit.
-		self.actionBar.setActions(self.getDefaultActions(), widget=self)
+		if allow:
+			logging.warning("allow is not implemented for List")
+
+		actions = ["select", "close", "|"]
+
+		if multi:
+			actions += ["selectall", "unselectall", "selectinvert", "|"]
+
+		self.actionBar.setActions(actions + self.getActions())
+		conf["mainWindow"].stackWidget(self)
+
+	def selectorReturn(self):
+		"""
+		Returns the current selection to the callback configured with `setSelector`.
+		"""
+		conf["mainWindow"].removeWidget(self)
+
+		if self.selectionCallback:
+			self.selectionCallback(self, self.getCurrentSelection())
 
 	def tableInitialization(self,*args,**kwargs):
 		'''
@@ -151,14 +162,13 @@ class ListWidget(html5.Div):
 
 		# Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent",
-		          "selectionActivatedEvent",
 		          "cursorMovedEvent",
 		          "tableChangedEvent",
 		          "getCurrentSelection",
 		          "requestingFinishedEvent"]:
 			setattr(self, f, getattr(self.table, f))
 
-		self.selectionActivatedEvent.register(self)
+		self.table.selectionActivatedEvent.register(self)
 		self.requestingFinishedEvent.register(self)
 
 		self.table["style"]["display"] = "none"
@@ -190,66 +200,60 @@ class ListWidget(html5.Div):
 		self.appendChild(self.tableBottomActionBar)
 		self.tableBottomActionBar.setActions(["|","loadnext", "|", "tableitems"]) #,"tableprev","tablenext"
 
-	def getDefaultActions(self, view = None):
+	def getActions(self, view = None):
 		"""
-			Returns the list of actions available in our actionBar
+			Returns the list of actions available in the action bar.
 		"""
-		defaultActions = ["add", "selectfields"]
+		actions = ["add", "selectfields"]
 
 		#if not self.selectMode:
-		#	defaultActions += ["|", "exportcsv"]
+		#	actions += ["|", "exportcsv"]
 
 		# Extended actions from view?
 		if view and "actions" in view.keys():
-			if defaultActions[-1] != "|":
-				defaultActions.append( "|" )
+			if actions[-1] != "|":
+				actions.append( "|" )
 
-			defaultActions.extend( view[ "actions" ] or [] )
+			actions.extend( view[ "actions" ] or [] )
 
 		# Extended Actions from config?
 		elif conf["modules"] and self.module in conf["modules"].keys():
 			cfg = conf["modules"][ self.module ]
 
 			if "actions" in cfg.keys() and cfg["actions"]:
-				if defaultActions[-1] != "|":
-					defaultActions.append( "|" )
+				if actions[-1] != "|":
+					actions.append( "|" )
 
-				defaultActions.extend( cfg["actions"] )
+				actions.extend( cfg["actions"] )
 
-		if self.selectMode == "multi":
-			defaultActions += ["|", "selectall", "unselectall", "selectinvert"]
+		actions += ["|",  "reload", "setamount", "intpreview", "selectfilter"] #"pagefind",  "loadnext",
 
-		if self.selectMode:
-			defaultActions += ["|", "select","close"]
-
-		defaultActions += ["|",  "reload", "setamount", "intpreview", "selectfilter"] #"pagefind",  "loadnext",
-
-		return defaultActions
+		return actions
 
 	def getDefaultEntryActions(self, view = None ):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
-		defaultActions = ["edit", "clone", "delete"]
+		actions = ["edit", "clone", "delete"]
 
 		# Extended actions from view?
 		if view and "actions" in view.keys():
-			if defaultActions[-1] != "|":
-				defaultActions.append( "|" )
+			if actions[-1] != "|":
+				actions.append( "|" )
 
-			defaultActions.extend( view[ "actions" ] or [] )
+			actions.extend( view[ "actions" ] or [] )
 
 		# Extended Actions from config?
 		elif conf["modules"] and self.module in conf["modules"].keys():
 			cfg = conf["modules"][ self.module ]
 
 			if "entryActions" in cfg.keys() and cfg["entryActions"]:
-				#if defaultActions[-1] != "|":
-				#	defaultActions.append( "|" )
+				#if actions[-1] != "|":
+				#	actions.append( "|" )
 
-				defaultActions.extend( cfg["entryActions"] )
-		defaultActions.extend(["|", "preview"])
-		return defaultActions
+				actions.extend( cfg["entryActions"] )
+		actions.extend(["|", "preview"])
+		return actions
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -424,8 +428,6 @@ class ListWidget(html5.Div):
 		fields = [x for x in fields if x in tmpDict.keys()]
 		self.columns = fields
 
-
-
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
 			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict)
@@ -453,44 +455,20 @@ class ListWidget(html5.Div):
 	def getFields(self):
 		return self.columns[:]
 
-	def onSelectionActivated(self, selector, selection):
-		if self.selectMode:
-			conf["mainWindow"].removeWidget(self)
+	def onSelectionActivated(self, table, selection):
+		self.activateSelection()
 
-			if self.selectCallback:
-				self.selectCallback(selector, selection)
-
-	def activateCurrentSelection(self):
-		"""
-			Emits the selectionActivated event if there's currently a selection
-		"""
-		self.table.activateCurrentSelection()
+	def activateSelection(self):
+		selection = self.getCurrentSelection()
+		if selection:
+			if self.selectionCallback:
+				self.selectorReturn()
+			else:
+				self.selectionActivatedEvent.fire(self, selection)
 
 	@staticmethod
 	def canHandle(moduleName, moduleInfo):
 		return moduleInfo["handler"] == "list" or moduleInfo["handler"].startswith("list.")
-
-	#fixme: Old render function, remove when working!
-	#
-	# @staticmethod
-	# def render(moduleName, adminInfo, context=None):
-	# 	filter = adminInfo.get("filter")
-	# 	columns = adminInfo.get("columns")
-	# 	filterID = adminInfo.get("__id")
-	# 	filterDescr = adminInfo.get("visibleName", "")
-	# 	autoload = adminInfo.get("autoload", True)
-	# 	selectMode = adminInfo.get("selectMode")
-	# 	batchSize = adminInfo.get("batchSize", conf["batchSize"])
-	#
-	# 	return ListWidget(module=moduleName,
-	# 	                          filter=filter,
-	# 	                          filterID=filterID,
-	# 	                          selectMode=selectMode,
-	# 	                          batchSize=batchSize,
-	# 	                          columns=columns,
-	# 	                          context=context,
-	# 	                          autoload=autoload,
-	# 	                          filterDescr=filterDescr)
 
 moduleWidgetSelector.insert(1, ListWidget.canHandle, ListWidget)
 
@@ -522,7 +500,6 @@ class ViewportListWidget(ListWidget):
 		          "requestingFinishedEvent"]:
 			setattr(self, f, getattr(self.table, f))
 
-		self.selectionActivatedEvent.register(self)
 		self.requestingFinishedEvent.register(self)
 
 		self.table["style"]["display"] = "none"

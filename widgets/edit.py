@@ -625,7 +625,9 @@ class EditWidget(html5.Div):
 				continue
 
 			try:
-				res[key] = bone.serialize() or ""
+				res[key] = bone.serialize()
+				if res[key] is None:
+					res[key] = ""
 
 			except InvalidBoneValueException:
 				if validityCheck:

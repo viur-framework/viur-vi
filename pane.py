@@ -101,13 +101,18 @@ class Pane(html5.Div):
 		self.enable()
 
 	def setText(self, descr = None, iconURL = None,loading=False):
-		self.label.removeAllChildren()
+		try:
+			# It might already be gone...
+			self.label.removeAllChildren()
+		except:
+			return
 
 		if descr is None:
 			descr = self.descr
 		else:
 			self.descr = descr
-		self.setImage(loading = loading)
+
+		self.setImage(loading=loading)
 
 		if self.iconClasses is not None:
 			for cls in self.iconClasses:

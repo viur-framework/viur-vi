@@ -148,7 +148,7 @@ class EditAction(Button):
 		super(EditAction,self).onDetach()
 
 	def onSelectionActivated(self, table, selection ):
-		if not self.parent().parent().selectMode and len(selection)==1 and isinstance(selection[0], self.parent().parent().leafWidget):
+		if not self.parent().parent().selectCallback and len(selection)==1 and isinstance(selection[0], self.parent().parent().leafWidget):
 			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
 			conf["mainWindow"].stackPane( pane )
 			skelType = "leaf"

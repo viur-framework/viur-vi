@@ -39,20 +39,20 @@ class InternalPreview( html5.Ul ):
 			if key == "key":
 				keydiv = html5.Div()
 				keydiv["style"]["display"] ="inline-block"
-				copybtn = Button(txt="copy",callback = self.onCopyKey)
+				copybtn = Button("Copy", self.onCopyKey)
 
-				keyvaluediv = boneFactory.render(item[key])
+				keyvaluediv = boneFactory.viewWidget(item[key])
+
 				keyfield = html5.Input()
 				keyfield["value"] = item[key]
 				keyfield["style"]["opacity"] = 0
 				keyfield["style"]["position"] = "absolute"
 				keyfield["id"] = "keyfield"
-				keydiv.appendChild( keyfield )
-				keydiv.appendChild(keyvaluediv)
-				keydiv.appendChild( copybtn )
-				self.ipdd.appendChild(keydiv )
+
+				keydiv.appendChild(keyfield, keyvaluediv, copybtn)
+				self.ipdd.appendChild(keydiv)
 			else:
-				self.ipdd.appendChild(boneFactory.render(item[key]))
+				self.ipdd.appendChild(boneFactory.viewWidget(item[key]))
 
 			self.ipdl.appendChild(self.ipdt)
 			self.ipdl.appendChild(self.ipdd)

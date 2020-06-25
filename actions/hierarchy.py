@@ -82,8 +82,8 @@ class EditAction(Button):
 				self.isDisabled = True
 
 	def onSelectionActivated(self, table, selection):
-		if not self.parent().parent().selectMode and len(selection)>0:
-			self.openEditor( selection[0].data["key"] )
+		if len(selection)>0:
+			self.openEditor(selection[0].data["key"])
 
 	@staticmethod
 	def isSuitableFor( module, handler, actionName ):
@@ -99,7 +99,7 @@ class EditAction(Button):
 
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().currentSelectedElements
+		selection = self.parent().parent().selection
 		if not selection:
 			return
 
@@ -162,7 +162,7 @@ class CloneAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().currentSelectedElements
+		selection = self.parent().parent().selection
 		if not selection:
 			return
 
@@ -228,7 +228,7 @@ class DeleteAction(Button):
 
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().currentSelectedElements
+		selection = self.parent().parent().selection
 		if not selection:
 			return
 		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )

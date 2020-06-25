@@ -3,11 +3,12 @@ from vi import html5
 from vi.config import conf
 from vi.priorityqueue import boneSelector
 
-from vi.bones.base import BaseBone, BaseViewWidget
+from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 
 
-class SelectMultipleEditBone(html5.Div):
+class SelectMultipleEditWidget(BaseEditWidget):
 	style = ["vi-bone-container", "option-group"]
+
 	entryTemplate = html5.parseHTML("""
 		<label class="check">
 			<input type="checkbox" class="check-input" name="{{key}}">
@@ -15,16 +16,21 @@ class SelectMultipleEditBone(html5.Div):
 		</label>
 	""")
 
-	def __init__(self, bone, **kwargs):
-		super().__init__()
-		self.bone = bone
+	def _createWidget(self):
+		for key, value in self.bone.boneStructure["values"]:
+			self.appendChild(
+				self.entryTemplate,
+				key=key,
+				value=value
+			)
 
-		for key, value in bone.boneStructure["values"]:
-			print(self.entryTemplate)
-			self.appendChild(self.entryTemplate, vars={"key": key, "value": value})
-
-		if bool(self.bone.boneStructure.get("readonly")):
+	def _updateWidget(self):
+		if self.bone.readonly:
 			self.disable()
+		else:
+			self.enable()
+
+		# fixme: required?
 
 	def unserialize(self, value=None):
 		if value is None:
@@ -43,38 +49,57 @@ class SelectMultipleEditBone(html5.Div):
 
 		return value
 
-class SelectSingleEditBone(html5.Select):
+
+class SelectSingleEditWidget(BaseEditWidget):
 	entryTemplate = html5.parseHTML("""
 		<option value="{{key}}">{{value}}</option>
 	""")
 
-	def __init__(self, bone, **kwargs):
-		super().__init__()
-		self.bone = bone
+	def _createWidget(self):
+		widget = html5.Select()
 
 		# Add empty entry to allow "select nothing"
-		if not bool(self.bone.boneStructure.get("required")):
-			self.appendChild(self.entryTemplate, vars={"key": "", "value": conf["emptyValue"]})
+		first = widget.appendChild(
+			self.entryTemplate,
+			key="",
+			value=conf["emptyValue"]
+		)[0]
 
-		for key, value in bone.boneStructure["values"]:
-			self.appendChild(self.entryTemplate, vars={"key": key, "value": value})
+		# Make this first entry disabled when required
+		if self.bone.required:
+			first.disable()
 
-		if bool(self.bone.boneStructure.get("readonly")):
-			self.disable()
+		# Create entries for key+value pairs
+		for key, value in self.bone.boneStructure["values"]:
+			widget.appendChild(
+				self.entryTemplate,
+				key=key,
+				value=value
+			)
+
+		return widget
+
+	def _updateWidget(self):
+		if self.bone.readonly:
+			self.widget.disable()
+		else:
+			self.widget.enable()
+
+		# fixme: required?
 
 	def unserialize(self, value=None):
-		for entry in self.children():
+		for entry in self.widget.children():
 			if entry["value"] == str(value) or "":
 				entry["selected"] = True
 				return
 
 		# If no match found, select first entry
-		first = self.children(0)
+		first = self.widget.children(0)
 		if first:
 			first["selected"] = True
 
 	def serialize(self):
-		for entry in self.children():
+		for entry in self.widget.children():
 			if entry["selected"]:
 				return entry["value"]
 
@@ -92,7 +117,7 @@ class SelectViewWidget(BaseViewWidget):
 
 
 class SelectMultipleBone(BaseBone):
-	editWidgetFactory = SelectMultipleEditBone
+	editWidgetFactory = SelectMultipleEditWidget
 	multiEditWidgetFactory = None
 	viewWidgetFactory = SelectViewWidget
 
@@ -113,7 +138,7 @@ boneSelector.insert(1, SelectMultipleBone.checkFor, SelectMultipleBone)
 
 
 class SelectSingleBone(SelectMultipleBone):
-	editWidgetFactory = SelectSingleEditBone
+	editWidgetFactory = SelectSingleEditWidget
 
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):

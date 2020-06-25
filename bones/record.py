@@ -4,63 +4,48 @@ from vi import html5
 from vi.priorityqueue import boneSelector
 from vi.config import conf
 import vi.utils as utils
-from vi.bones.base import BaseBone
+from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 from vi.widgets.internaledit import InternalEdit
 
 
-class RecordEditWidget(html5.Div):
+class RecordEditWidget(BaseEditWidget):
 	style = ["vi-bone", "vi-bone--record"]
 
-	def __init__(self, bone, **kwargs):
-		super().__init__()
-
-		self.bone = bone
-		self.value = None
-
-		# Current bone config
-		self.readonly = bool(self.bone.boneStructure.get("readonly"))
-
-		# Relation edit widget
-		self.widget = InternalEdit(
+	def _createWidget(self):
+		return InternalEdit(
 			self.bone.boneStructure["using"],
-			readOnly=self.readonly,
+			readOnly=self.bone.readonly,
 			defaultCat=None  # fixme: IMHO not necessary
 		)
-		self.appendChild(self.widget)
+
+	def _updateWidget(self):
+		if self.bone.readonly:
+			self.widget.disable()
+		else:
+			self.widget.enable()
 
 	def unserialize(self, value=None):
 		self.widget.unserialize(value or {})
-		self.value = value
 
 	def serialize(self):
 		return self.widget.serializeForPost()  # fixme: call serializeForPost()?
 
 
-class RecordViewWidget(html5.Div):
+class RecordViewWidget(BaseViewWidget):
 	style = ["vi-bone", "vi-bone--record"]
 
 	def __init__(self, bone, language=None, **kwargs):
-		super().__init__()
-		self.bone = bone
+		super().__init__(bone, **kwargs)
 		self.language = language
-
-		# Current bone config
-		self.readonly = bool(self.bone.boneStructure.get("readonly"))
-		self.formatString = self.bone.boneStructure["format"]
-
-		# Structures
-		self.structure = self.bone.boneStructure["using"]
-
-		self.value = None
 
 	def unserialize(self, value=None):
 		self.value = value
 
 		if value:
 			txt = utils.formatString(
-				self.formatString,
+				self.bone.boneStructure["format"],
 				value,
-				self.structure,
+				self.bone.boneStructure["using"],
 				language=self.language
 			)
 
@@ -68,9 +53,6 @@ class RecordViewWidget(html5.Div):
 			txt = None
 
 		self.appendChild(html5.TextNode(txt or conf["emptyValue"]), replace=True)
-
-	def serialize(self):
-		return self.value  # fixme: The format here is invalid for POST!
 
 
 class RecordBone(BaseBone):
