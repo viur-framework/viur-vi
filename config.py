@@ -2,7 +2,9 @@
 from vi import html5
 from vi.framework.event import EventDispatcher
 from .i18n import translate
-from .logics import Interpreter
+# from .logics import Interpreter
+from .safeeval import SafeEval
+
 
 conf = {
 	# Vi version number
@@ -79,7 +81,7 @@ conf = {
 	"maxMultiBoneEntries": 5,
 
 	# Global ViUR Logics interpreter instance
-	"logics": Interpreter(),
+	"logics": SafeEval(),
 
 	# Cached selector widgets on relationalBones for re-use
 	"selectors": {},
