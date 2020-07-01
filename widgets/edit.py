@@ -212,14 +212,14 @@ class EditWidget(html5.Div):
 
 					# Compile logic at first run
 					if isinstance(logic, str):
-						desc["params"][event] = conf["logics"].compile(logic)
+						desc["params"][event] = conf["safeEvalInterpreter"].compile(logic)
 						if desc["params"][event] is None:
 							alert("ViUR logics: Parse error in >%s<" % logic)
 							continue
 
 						logic = desc["params"][event]
 
-					res = conf["logics"].execute(logic, fields)
+					res = conf["safeEvalInterpreter"].execute(logic, fields)
 
 					if event == "logic.evaluate":
 						self.bones[key].unserialize({key: res})

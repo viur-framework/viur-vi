@@ -1,6 +1,3 @@
-[submodule "logics"]
-	path = logics
-	url = https://github.com/viur-framework/viur-logics.git
 [submodule "safeeval"]
 	path = safeeval
 	url = https://github.com/viur-framework/safeeval.git

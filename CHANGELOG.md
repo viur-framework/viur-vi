@@ -39,6 +39,7 @@ This is the current development version.
 - Feature: Improved structuring of `TreeNodeWidget` and `TreeLeafWidget` for trees
 - Feature: Allow for multiple uploads in File.upload action
 - Bugfix: Tree `edit`-action should not both edit and switch parent node
+- Feature: replaced logics by safeeval interpreter
 
 ## [2.5.0] Vesuv
 
