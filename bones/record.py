@@ -11,14 +11,14 @@ from vi.widgets.internaledit import InternalEdit
 class RecordEditWidget(BaseEditWidget):
 	style = ["vi-bone", "vi-bone--record"]
 
-	def _createWidget(self):
+	def createWidget(self):
 		return InternalEdit(
 			self.bone.boneStructure["using"],
 			readOnly=self.bone.readonly,
 			defaultCat=None  # fixme: IMHO not necessary
 		)
 
-	def _updateWidget(self):
+	def updateWidget(self):
 		if self.bone.readonly:
 			self.widget.disable()
 		else:

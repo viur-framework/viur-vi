@@ -204,7 +204,7 @@ class EditWidget(html5.Div):
 
 		for key, desc in self.dataCache["structure"]:
 			if desc.get("params") and desc["params"]:
-				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate"]: #add more here!
+				for event in ["logic.visibleIf", "logic.readonlyIf", "logic.evaluate", "logic.requiredIf"]: #add more here!
 					logic = desc["params"].get(event)
 
 					if not logic:
@@ -228,14 +228,35 @@ class EditWidget(html5.Div):
 							self.containers[key].show()
 						elif event == "logic.readonlyIf":
 							self.containers[key].disable()
-
+						elif event == "logic.requiredIf":
+							self.bones[key].bone.required = True
+							self.bones[key].updateWidget()
+							self.updateWidgetLabel(key)
 						# add more here...
 					else:
 						if event == "logic.visibleIf":
 							self.containers[key].hide()
 						elif event == "logic.readonlyIf":
 							self.containers[key].enable()
+						elif event == "logic.requiredIf":
+							self.bones[key].bone.required = False
+							self.bones[key].updateWidget()
+							self.updateWidgetLabel(key)
 						# add more here...
+
+	def updateWidgetLabel(self, key):
+		"""Reflects bone param changes also for its label if present
+
+		:param key:
+		:return:
+		"""
+		bone = self.bones[key].bone
+		descrLbl = self.desciptionLabels[key]
+		if bone and descrLbl:
+			if bone.required or bone.unique:
+				descrLbl.addClass("is-required")
+			else:
+				descrLbl.removeClass("is-required")
 
 	def onChange(self, event):
 		self.modified = True
@@ -419,6 +440,7 @@ class EditWidget(html5.Div):
 		self.bones = {}
 		self.views = {}
 		self.containers = {}
+		self.desciptionLabels = {}
 		self.actionbar.resetLoadingState()
 		self.dataCache = data
 		self.modified = False
@@ -489,7 +511,6 @@ class EditWidget(html5.Div):
 			# /Elements (TEMP TEMP TEMP)
 
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
-
 			if bone["required"] or \
 					(bone.get("unique") and bone["error"]) or \
 					(bone["error"] and isinstance(bone["error"],str) and "dependency error:" in bone["error"]):
@@ -528,6 +549,7 @@ class EditWidget(html5.Div):
 			currRow += 1
 			self.bones[key] = widget
 			self.containers[key] = containerDiv
+			self.desciptionLabels[key] = descrLbl
 
 			#Hide invisible bones or logic-flavored bones with their default desire
 			if not bone["visible"] or (bone["params"] and bone["params"].get("logic.visibleIf")):

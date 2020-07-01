@@ -21,7 +21,7 @@ class DateEditWidget(BaseEditWidget):
 		super().__init__(bone, **kwargs)
 		assert self.dateInput or self.timeInput, "You may not configure a dateBone(date=False, time=False)"
 
-	def _createWidget(self):
+	def createWidget(self):
 		if self.bone.boneStructure.get("date", True):
 			self.dateInput = self.appendChild(
 				"""<ignite-input type="date" />"""
@@ -35,7 +35,7 @@ class DateEditWidget(BaseEditWidget):
 			self.timeInput["readonly"] = bool(self.bone.boneStructure.get("readonly"))
 			self.serverToClient.append("%H:%M:%S")
 
-	def _updateWidget(self):
+	def updateWidget(self):
 		if self.dateInput:
 			self.dateInput["required"] = self.bone.required
 			self.dateInput["readonly"] = self.bone.readonly

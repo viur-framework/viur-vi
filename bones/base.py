@@ -19,8 +19,9 @@ class BaseEditWidget(html5.Div):
 		super().__init__()
 		self.bone = bone
 		self.widget = None
+		self.descrLbl = None  # will be set when constructing EditWidget
 
-		widget = self._createWidget()
+		widget = self.createWidget()
 		if isinstance(widget, html5.Widget):
 			if not self.widget:
 				self.widget = widget
@@ -28,15 +29,15 @@ class BaseEditWidget(html5.Div):
 			if not widget.parent():
 				self.appendChild(widget)
 
-			self._updateWidget()
+			self.updateWidget()
 
-	def _createWidget(self):
+	def createWidget(self):
 		"""
 		Function for creating the Widget or multiple Widgets that represent the bone.
 		"""
 		return html5.ignite.Input()
 
-	def _updateWidget(self):
+	def updateWidget(self):
 		"""
 		Function for updating the Widget or multiple Widgets that represent the bone.
 		"""
@@ -349,6 +350,7 @@ class BaseBone(object):
 		self.readonly = bool(self.boneStructure.get("readonly"))
 		self.required = bool(self.boneStructure.get("required"))
 		self.multiple = bool(self.boneStructure.get("multiple"))
+		self.unique = bool(self.boneStructure.get("unique"))
 		self.languages = self.boneStructure.get("languages")
 
 	def editWidget(self, value=None) -> html5.Widget:

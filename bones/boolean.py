@@ -9,10 +9,10 @@ from vi.i18n import translate
 class BooleanEditWidget(BaseEditWidget):
 	style = ["vi-bone", "vi-bone--boolean"]
 
-	def _createWidget(self):
+	def createWidget(self):
 		return html5.ignite.Switch()
 
-	def _updateWidget(self):
+	def updateWidget(self):
 		if self.bone.readonly:
 			self.widget.disable()
 		else:

@@ -91,7 +91,7 @@ class ListHandler(Pane):
 
 		return False
 
-	def _createWidget(self):
+	def createWidget(self):
 		widgen = moduleWidgetSelector.select(self.moduleName, self.moduleInfo)
 		assert widgen
 
@@ -104,7 +104,7 @@ class ListHandler(Pane):
 		assert self.canHandleInitialHash(pathList, params)
 
 		if pathList[1] == "list":
-			self.addWidget(self._createWidget())
+			self.addWidget(self.createWidget())
 			self.focus()
 
 		elif pathList[1] == "add":
@@ -129,7 +129,7 @@ class ListHandler(Pane):
 
 	def onClick(self, *args, **kwargs):
 		if self.mode == "normal" and not self.widgetsDomElm.children():
-			self.addWidget(self._createWidget())
+			self.addWidget(self.createWidget())
 
 		''' no time right now...
 		if self.childDomElem is None and "views" in self.moduleInfo:

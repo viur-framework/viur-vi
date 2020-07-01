@@ -8,7 +8,7 @@ from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 class ColorEditWidget(BaseEditWidget):
 	style = ["vi-bone", "vi-bone--color"]
 
-	def _createWidget(self):
+	def createWidget(self):
 		return self.fromHTML("""
 			<input [name]="widget" type="color">
 			<button [name]="unsetBtn" text="Unset" icon="icons-delete" class="btn--delete">

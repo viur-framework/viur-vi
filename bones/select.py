@@ -16,7 +16,7 @@ class SelectMultipleEditWidget(BaseEditWidget):
 		</label>
 	""")
 
-	def _createWidget(self):
+	def createWidget(self):
 		for key, value in self.bone.boneStructure["values"]:
 			self.appendChild(
 				self.entryTemplate,
@@ -24,7 +24,7 @@ class SelectMultipleEditWidget(BaseEditWidget):
 				value=value
 			)
 
-	def _updateWidget(self):
+	def updateWidget(self):
 		if self.bone.readonly:
 			self.disable()
 		else:
@@ -55,7 +55,7 @@ class SelectSingleEditWidget(BaseEditWidget):
 		<option value="{{key}}">{{value}}</option>
 	""")
 
-	def _createWidget(self):
+	def createWidget(self):
 		widget = html5.Select()
 
 		# Add empty entry to allow "select nothing"
@@ -79,7 +79,7 @@ class SelectSingleEditWidget(BaseEditWidget):
 
 		return widget
 
-	def _updateWidget(self):
+	def updateWidget(self):
 		if self.bone.readonly:
 			self.widget.disable()
 		else:
