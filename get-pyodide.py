@@ -1,55 +1,85 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import os, sys, tarfile, urllib.request
+import os, sys, json, requests
 
-VERSION = "0.14.3"
-URL = "https://github.com/iodide-project/pyodide/releases/download/{VERSION}/pyodide-build-{VERSION}.tar.bz2"
+VERSION = "0.15.0"
+CDN = "https://pyodide-cdn2.iodide.io"
+URL = "{CDN}/v{VERSION}/full/{file}"
+DIR = "pyodide"
 
-download = VERSION + ".tar.bz2"
+if not os.path.isdir(DIR):
+	sys.stdout.write(f"Creating {DIR}/...")
+	sys.stdout.flush()
 
-sys.stdout.write("Downloading Pyodide...")
-sys.stdout.flush()
-urllib.request.urlretrieve(URL.format(VERSION=VERSION), download)
-print("Done")
+	os.mkdir(DIR)
+	print("Done")
 
-print("Extracting Pyodide...")
+print(f"Installing Pyodide v{VERSION}:")
 
-tar = tarfile.open(download, "r")
+for file in [
+	"console.html",
+	"distlib.data",
+	"distlib.js",
+	"micropip.data",
+	"micropip.js",
+	"pyodide.asm.data",
+	"pyodide.asm.data.js",
+	"pyodide.asm.js",
+	"pyodide.asm.wasm",
+	"pyodide.js",
+	"renderedhtml.css",
+	"setuptools.data",
+	"setuptools.js"
+]:
+	url = URL.format(file=file, CDN=CDN, VERSION=VERSION)
+	file = os.path.join(DIR, file)
 
-extracted = []
-for member in tar.getmembers():
-	if not (member.name.startswith("pyodide.")
-			or member.name.startswith("micropip.")
-			or member.name.startswith("distlib.")
-			or member.name in ["console.html", "renderedhtml.css"]
-		):
-		continue
+	sys.stdout.write(f">>> {url}...")
+	sys.stdout.flush()
 
-	print(">>> %s" % member.name)
-	tar.extract(member, "pyodide")
-	extracted.append(member.name)
+	r = requests.get(url, stream=True)
+	with open(file, 'wb') as f:
+		for chunk in r.iter_content(2 * 1024):
+			f.write(chunk)
 
-tar.close()
+	print("Done")
 
-if not extracted:
-	print("This doesn't look like a Pyodide build package!")
-	sys.exit(1)
+print(f"Done installing Pyodide v{VERSION}!")
 
 # Patch console.html to use pyodide.js
-with open("pyodide/console.html", "r") as f:
+file = os.path.join(DIR, "console.html")
+sys.stdout.write(f"Patching {file}...")
+sys.stdout.flush()
+
+with open(file, "r") as f:
 	console_html = f.read()
 
-with open("pyodide/console.html", "w") as f:
+with open(file, "w") as f:
 	f.write(console_html.replace(
 		"""<script src="./pyodide_dev.js"></script>""",
 		"""<script>window.languagePluginUrl = "./";</script>"""
 		"""<script src="./pyodide.js"></script>"""
 	))
 
-# Write a minimal packages.json with micropip and distlibs pre-installed.
-f = open("pyodide/packages.json", "w")
-f.write("""{"dependencies": {"micropip": ["distlib"], "distlib": []}, "import_name_to_package_name": {"distlib": "distlib", "micropip": "micropip"}}""")
-f.close()
+print("Done")
 
-os.remove(download)
+# Write a minimal packages.json with micropip, setuptools and distlibs pre-installed.
+file = os.path.join(DIR, "packages.json")
+sys.stdout.write(f"Patching {file}...")
+sys.stdout.flush()
+
+with open(file, "w") as f:
+	f.write(json.dumps({
+		"dependencies": {
+			"micropip": ["distlib"],
+			"distlib": [],
+			"setuptools": []
+		},
+		"import_name_to_package_name": {
+			"distlib": "distlib",
+			"setuptools":"setuptools",
+			"micropip": "micropip"
+		}
+	}))
+
 print("Done")
