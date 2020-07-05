@@ -80,7 +80,14 @@ conf = {
 	"maxMultiBoneEntries": 5,
 
 	# Global ViUR SafeEval interpreter instance
-	"safeEvalInterpreter": SafeEval(),
+	"safeEvalInterpreter": SafeEval(
+		{
+			"format": str.format,
+			"str": str,
+			"int": int,
+			"float": float
+		}
+	),
 
 	# Cached selector widgets on relationalBones for re-use
 	"selectors": {},
