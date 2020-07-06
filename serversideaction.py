@@ -19,6 +19,7 @@ class ServerSideActionWdg(Button):
 		self.pendingFetches = []
 		self.selectionCheckerAst = None
 		self.additionalEvalData = actionData.get("additionalEvalData")
+		self.sinkEvent("onClick")
 		if "enabled" in actionData:
 			try:
 				self.selectionCheckerAst = SafeEval.parse(actionData["enabled"])
