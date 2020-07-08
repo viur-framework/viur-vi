@@ -19,7 +19,6 @@ class BaseEditWidget(html5.Div):
 		super().__init__()
 		self.bone = bone
 		self.widget = None
-		self.descrLbl = None  # will be set when constructing EditWidget
 
 		widget = self.createWidget()
 		if isinstance(widget, html5.Widget):
@@ -41,7 +40,7 @@ class BaseEditWidget(html5.Div):
 		"""
 		Function for updating the Widget or multiple Widgets that represent the bone.
 		"""
-		self.widget["required"] = self.bone.required
+		self.widget["required"] = self.bone.required or self.bone.unique
 		self.widget["readonly"] = self.bone.readonly
 
 	def unserialize(self, value=None):
