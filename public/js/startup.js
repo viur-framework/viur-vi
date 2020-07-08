@@ -110,7 +110,7 @@ class apploader {
 window.addEventListener(
 	"load",
 	(event) => {
-		window.top.apploader = new apploader({
+		window.apploader = new apploader({
 			"vi": ".",
 			"vi_plugins": "/vi_plugins"
 		},
