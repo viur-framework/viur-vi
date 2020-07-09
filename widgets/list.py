@@ -282,7 +282,7 @@ class ListWidget(html5.Div):
 				filter.update(self.context)
 
 			filter.update(self.filter)
-			filter["amount"] = self._batchSize
+			filter["limit"] = self._batchSize
 			filter["cursor"] = self._currentCursor
 
 			self._currentRequests.append(NetworkService.request(self.module, "list", filter,
@@ -329,7 +329,7 @@ class ListWidget(html5.Div):
 			filter.update(self.context)
 
 		filter.update(self.filter)
-		filter["amount"] = self._batchSize
+		filter["limit"] = self._batchSize
 
 		self._currentRequests.append(
 			NetworkService.request(self.module, "list", filter,
