@@ -1,55 +1,57 @@
 class pyodide_scripts {
 
-	constructor(modules){
+	constructor(modules, invocation){
 		languagePluginLoader.then(() => {
+
 			this.fetchSources(modules).then(() => {
-				window.pyodide.runPythonAsync("import vi\nimport vi_plugins\nvi.start()").then(() => this.initializingComplete());
+					window.pyodide.runPythonAsync("import " + Object.keys(modules).join("\nimport ") + "\n" + invocation + "\n").then(() => this.initializingComplete());
+
 			});
+
 		});
 	}
 
-	loadSources(module, files) {
+	loadSources(module, baseURL, files) {
 		let promises = [];
-		let baseURL = `/${module}/s/`;
 
 		for (let f in files) {
 			promises.push(
-					new Promise((resolve, reject) => {
-						let file = files[f];
-						let url = baseURL + file;
+				new Promise((resolve, reject) => {
+					let file = files[f];
+					let url = (baseURL ? baseURL + "/" : "") + file;
 
-						fetch(url, {}).then((response) => {
-							if (response.status === 200)
-								return response.text().then((code) => {
-									let path = ("/lib/python3.7/site-packages/" + module + "/" + file).split("/");
-									let lookup = "";
+					fetch(url, {}).then((response) => {
+						if (response.status === 200)
+							return response.text().then((code) => {
+								let path = ("/lib/python3.7/site-packages/" + module + "/" + file).split("/");
+								let lookup = "";
 
-									for (let i in path) {
-										if (!path[i]) {
-											continue;
-										}
-
-										lookup += "/" + path[i];
-
-										if (parseInt(i) === path.length - 1) {
-											window.pyodide._module.FS.writeFile(lookup, code);
-											console.debug(`fetched ${lookup}`);
-										} else {
-											try {
-												window.pyodide._module.FS.lookupPath(lookup);
-											} catch {
-												window.pyodide._module.FS.mkdir(lookup);
-												console.debug(`created ${lookup}`);
-											}
-										}
+								for (let i in path) {
+									if (!path[i]) {
+										continue;
 									}
 
-									resolve();
-								});
-							else
-								reject();
-						});
-					})
+									lookup += (lookup ? "/" : "") + path[i];
+
+									if (parseInt(i) === path.length - 1) {
+										window.pyodide._module.FS.writeFile(lookup, code);
+										console.debug(`fetched ${lookup}`);
+									} else {
+										try {
+											window.pyodide._module.FS.lookupPath(lookup);
+										} catch {
+											window.pyodide._module.FS.mkdir(lookup);
+											console.debug(`created ${lookup}`);
+										}
+									}
+								}
+
+								resolve();
+							});
+						else
+							reject();
+					});
+				})
 			);
 		}
 
@@ -59,16 +61,25 @@ class pyodide_scripts {
 	fetchSources(modules) {
 		let promises = [];
 
-		for( let module of modules )
+		for( let module of Object.keys(modules) )
 		{
 			promises.push(
 				new Promise((resolve, reject) => {
-					fetch(`/${module}/s/files.json`, {}).then((response) => {
+					let mapfile = `${modules[module]}/files.json`;
+					fetch(mapfile, {}).then((response) => {
 						if (response.status === 200) {
 							response.text().then((list) => {
-								let files = JSON.parse(list);
+								let files = [];
 
-								this.loadSources(module, files).then(() => {
+								try {
+									files = JSON.parse(list);
+								}
+								catch (e) {
+									console.error(`Unable to parse ${mapfile} properly, check for correct config of ${module}`);
+									return reject();
+								}
+
+								this.loadSources(module, modules[module], files).then(() => {
 									resolve();
 								})
 							})
@@ -80,7 +91,7 @@ class pyodide_scripts {
 		}
 
 		return Promise.all(promises).then(() => {
-			for( let module of modules ) {
+			for( let module of Object.keys(modules) ) {
 				window.pyodide.loadedPackages[module] = "default channel";
 			}
 
@@ -94,9 +105,8 @@ class pyodide_scripts {
 	initializingComplete() {
 		document.body.classList.remove("is-loading")
 	}
-
 }
 
 (function () {
-	window.top.pyodide_scripts = new pyodide_scripts(["vi", "vi_plugins"]);
+	window.top.pyodide_scripts = new pyodide_scripts({"vi":".", "vi_plugins":"/vi_plugins"}, "vi.start()");
 })();
