@@ -722,7 +722,7 @@ class TableItems(html5.Div):
 		else:
 			#self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, all elements loaded: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage)))
 			self.elementSpan = html5.Span(html5.TextNode(
-				translate("all elements loaded: {amt}, pages: {pg}", amt=len(table._model), pg=pages)))
+				translate("all elements loaded: {amt}, pages: {pg}", amt=len(table._model), pg=pages-1)))
 		self.appendChild(self.elementSpan)
 
 	@staticmethod

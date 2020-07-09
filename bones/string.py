@@ -116,7 +116,7 @@ class Tag(html5.Span):
 			self["draggable"] = True
 			self.sinkEvent("onDrop", "onDragOver", "onDragStart", "onDragEnd")
 
-			delBtn = Button(translate("Delete"), self.onDelBtnClick, icon="icons-delete")
+			delBtn = Button(translate("Delete"), self.onDelBtnClick, icon="icons-delete", notext = True)
 			delBtn.addClass("btn--delete btn--small")
 			self.appendChild(delBtn)
 
@@ -209,7 +209,7 @@ class StringEditBone(html5.Div):
 				self.buttonContainer.appendChild(langBtn)
 
 				if not self.readOnly:
-					addBtn = Button(translate("Add"), callback=self.onBtnGenTag, icon="icons-add")
+					addBtn = Button(translate("Add"), callback=self.onBtnGenTag, icon="icons-add", notext = True)
 					addBtn.addClass("btn--add")
 					addBtn.lang = lang
 					tagContainer.appendChild(addBtn)
@@ -276,16 +276,19 @@ class StringEditBone(html5.Div):
 			self.addClass( "vi-bone-container-visibleItems" )
 			self.showall = False
 			self.addClass("is-multiple")
+
+			if not self.readOnly:
+				addBtn = Button(translate("Add"), callback=self.onBtnGenTag, icon="icons-add", notext = True)
+				addBtn.lang = None
+				addBtn.addClass("btn--add")
+				btnwrap = html5.Div()
+				btnwrap.addClass("vi-bone-more-wrap")
+				btnwrap.appendChild(addBtn)
+				self.appendChild(btnwrap)
+
 			self.tagContainer = html5.Div()
 			self.tagContainer.addClass("vi-bone-tagcontainer")
 			self.appendChild(self.tagContainer)
-
-			if not self.readOnly:
-				addBtn = Button(translate("Add"), callback=self.onBtnGenTag, icon="icons-add")
-				addBtn.lang = None
-				addBtn.addClass("btn--add")
-
-				self.tagContainer.appendChild(addBtn)
 
 			self.more = Button("mehr",callback = self.toggleContent)
 			#self.more.addClass("is-hidden")

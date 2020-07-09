@@ -172,6 +172,7 @@ class FileBone(RelationalBone):
 		self.addClass( "vi-bone-container" )
 		self[ "title" ] = translate( "vi.tree.drag-here" )
 		self.currentSelector = None
+
 		if params and "vi.style" in params and params[ "vi.style" ]=="directupload":
 			self.sinkEvent( "onDragOver", "onDrop" )
 			self.addClass("supports-upload")
@@ -181,6 +182,16 @@ class FileBone(RelationalBone):
 			self.quickselectionWrapper.appendChild(addbtn)
 			self.quickselectionWrapper.removeChild(self.selectBtn)
 
+			self.extendWidget()
+
+			if self.multiple:
+				self.quickselectionWrapper.removeChild(self.removeAllBtn)
+				self.quickselectionWrapper.appendChild(self.removeAllBtn)
+
+
+
+	def extendWidget( self ):
+		pass
 
 	def onDragOver(self, event):
 		super(FileBone,self).onDragOver(event)

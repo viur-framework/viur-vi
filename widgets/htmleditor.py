@@ -20,7 +20,34 @@ class TextInsertImageAction(html5.ext.Button):
 	def onClick(self, sender=None):
 		currentSelector = FileWidget("file", selectMode="multi")
 		currentSelector.selectionActivatedEvent.register(self)
+		currentSelector.selectionReturnEvent.register(self)
 		conf["mainWindow"].stackWidget(currentSelector)
+
+
+	def onSelectionReturn( self,selectWdg, selection ):
+		print( "onSelectionActivated" )
+
+		if not selection:
+			return
+
+		print( selection )
+
+		for item in selection:
+
+			if "mimetype" in item.data.keys() and item.data[ "mimetype" ].startswith( "image/" ):
+				dataUrl = "/file/download/%s/%s" % (item.data[ "dlkey" ], JSencodeURI( item.data[ "name" ] ))
+
+				self.summernote.summernote( "editor.insertImage", dataUrl, item.data[ "name" ].replace( "\"", "" ) )
+				print( "insert img %s" % dataUrl )
+			else:
+				dataUrl = "/file/download/%s/%s" % (item.data[ "dlkey" ], JSencodeURI( item.data[ "name" ] ))
+
+				text = str( self.summernote.summernote( "createRange" ) )  # selected text
+				if not text:
+					text = item.data[ "name" ].replace( "\"", "" )
+
+				self.summernote.summernote( "editor.createLink", { "url": dataUrl, "text": text, "isNewWindow": True } )
+				print( "insert link %s<%s> " % (text, dataUrl) )
 
 	def onSelectionActivated(self, selectWdg, selection):
 		print("onSelectionActivated")

@@ -172,7 +172,7 @@ class EditWidget(html5.Div):
 		if applicationType == EditWidget.appSingleton:
 			self.actionbar.setActions(["save.singleton"] + editActions, widget=self)
 		else:
-			self.actionbar.setActions(["save.continue","save.close" ] + editActions, widget=self)
+			self.actionbar.setActions(["save.continue"] + editActions +["save.close" ], widget=self)
 
 		# Set path
 		if applicationType == EditWidget.appSingleton:

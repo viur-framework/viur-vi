@@ -314,7 +314,11 @@ class HierarchyWidget(html5.Div):
 		self.path = []
 		self.sinkEvent("onClick", "onDblClick")
 
-		self.actionBar.setActions(["selectrootnode","add","edit","clone","delete"]+(["select","close"] if self.selectMode else [])+["|","listview","reload"], widget=self)
+		if self.selectMode:
+			normallist = []
+		else:
+			normallist = ["listview"]
+		self.actionBar.setActions(["selectrootnode","add","edit","clone","delete"]+["|","reload"]+normallist+(["|","select","close"] if self.selectMode else []), widget=self)
 		self.sinkEvent("onDrop","onDragOver")
 
 	def toggleListView( self ):

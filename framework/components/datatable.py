@@ -166,7 +166,6 @@ class SelectTable( html5.ignite.Table ):
 		row = self.getIndexByTr( tr )
 
 		if self._isCtlPressed:
-			print("GGGGG")
 			if row in self._selectedRows:
 				for x in self._selectedRows:
 					self.getTrByIndex(x).removeClass("is-focused") # remove focus
@@ -177,7 +176,6 @@ class SelectTable( html5.ignite.Table ):
 			event.preventDefault()
 
 		elif self._isShiftPressed:
-
 			self.unSelectAll()
 			for i in ( range(self._ctlStartRow, row+1) if self._ctlStartRow <= row else range(row, self._ctlStartRow+1) ):
 				self.addSelectedRow( i )
@@ -278,6 +276,7 @@ class SelectTable( html5.ignite.Table ):
 				self._ctlStartRow = self._currentRow or self._selectedRows[0] or 0
 			except:
 				self._ctlStartRow = 0
+
 
 	def onKeyUp(self, event):
 		if html5.isControl(event) or html5.getKey(event) == "Meta":

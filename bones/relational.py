@@ -189,7 +189,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			and ("root" in conf["currentUser"]["access"]
 			     or self.parent.destModule + "-edit" in conf["currentUser"]["access"])):
 
-			self.editBtn = Button(translate("Edit"), self.onEdit, icon="icons-edit")
+			self.editBtn = Button(translate("Edit"), self.onEdit, icon="icons-edit", notext = True)
 			self.editBtn.addClass("btn--edit")
 			self.wrapperDiv.appendChild(self.editBtn)
 
@@ -197,7 +197,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			self.editBtn = None
 
 		if not parent.readOnly:
-			remBtn = Button(translate("Remove"), self.onRemove, icon="icons-delete")
+			remBtn = Button(translate("Remove"), self.onRemove, icon="icons-delete", notext = True)
 			remBtn.addClass("btn--remove", "btn--danger")
 			self.wrapperDiv.appendChild(remBtn)
 
@@ -211,6 +211,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 				boneparams = self.parent.params
 			)
 			self.ie.addClass("relationwrapper")
+			self.addClass("extrel")
 			self.appendChild(self.ie)
 		else:
 			self.ie = None
@@ -461,7 +462,7 @@ class RelationalBone(html5.Div):
 
 				self.quickselectionWrapper.appendChild(self.quickselector)
 
-				self.addSelection = Button(translate("Add"), self.onAddSelection, icon="icons-add")
+				self.addSelection = Button(translate("Add"), self.onAddSelection, icon="icons-add", notext = True)
 				self.addSelection.addClass("btn--add is-disabled")
 				self.addSelection["disabled"] = True
 				self.quickselectionWrapper.appendChild(self.addSelection)
@@ -469,9 +470,16 @@ class RelationalBone(html5.Div):
 				self.quickselector = None
 				self.addSelection = None
 
-			self.selectBtn = Button(translate("Liste"), self.onShowSelector, icon="icons-list")
-			self.selectBtn.addClass("btn--select btn--primary")
+			self.selectBtn = Button(translate("Liste"), self.onShowSelector, icon="icons-list", notext = True)
+			self.selectBtn.addClass("btn--select btn--add")
+
 			self.quickselectionWrapper.appendChild( self.selectBtn )
+
+			if multiple:
+				self.removeAllBtn = Button(translate("Alles Entfernen"),self.removeAllRelations,icon = "icons-delete",notext = True)
+				self.removeAllBtn.addClass( "btn--removeall", "btn--danger")
+				self.quickselectionWrapper.appendChild( self.removeAllBtn )
+
 			self.appendChild(self.quickselectionWrapper)
 		else:
 			self.selectBtn = None
@@ -479,8 +487,12 @@ class RelationalBone(html5.Div):
 			self.addSelection = None
 
 		self.selectionDiv = html5.Div()
+
 		if multiple:
 			self.selectionDiv.addClass("vi-relation-selectioncontainer", "vi-selectioncontainer", "list")
+
+		else:
+			self.selectionDiv.addClass("vi-relation-selectioncontainer-single")
 		self.appendChild(self.selectionDiv)
 		self.selectionDiv.hide()
 
@@ -491,6 +503,17 @@ class RelationalBone(html5.Div):
 
 		if self.quickselector:
 			DeferredCall( self.loadList, _delay = 500 )
+
+		self.extendRelWidget()
+
+	def extendRelWidget( self ):
+		pass
+
+
+	def removeAllRelations( self, *args,**kwargs ):
+		for child in self.selectionDiv.children():
+			self.removeEntry(child)
+
 
 	def selectionupdate(self):
 		if self.quickselector.currentSelection:

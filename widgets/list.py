@@ -209,11 +209,14 @@ class ListWidget(html5.Div):
 		if self.selectMode == "multi":
 			defaultActions += ["|", "selectall", "unselectall", "selectinvert"]
 
+
+
+
+
 		if self.selectMode:
-			defaultActions += ["|", "select","close"]
-
-		defaultActions += ["|",  "reload", "setamount", "intpreview", "selectfilter"] #"pagefind",  "loadnext",
-
+			defaultActions += ["|", "reload", "selectfilter", "|", "select","close"]
+		else:
+			defaultActions += [ "|", "reload", "setamount", "intpreview", "selectfilter" ]  # "pagefind",  "loadnext",
 		return defaultActions
 
 	def getDefaultEntryActions(self, view = None ):
