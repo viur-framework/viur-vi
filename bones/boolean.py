@@ -7,7 +7,7 @@ from vi.i18n import translate
 
 
 class BooleanEditWidget(BaseEditWidget):
-	style = ["vi-bone", "vi-bone--boolean"]
+	style = ["vi-value", "vi-value--boolean"]
 
 	def _createWidget(self):
 		return html5.ignite.Switch()

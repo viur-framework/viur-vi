@@ -22,7 +22,7 @@ def _getDefaultValues(structure):
 
 
 class RelationalEditWidget(BaseEditWidget):
-	style = ["vi-bone", "vi-bone--relational"]
+	style = ["vi-value", "vi-value--relational", "input-group"]
 
 	def _createWidget(self):
 		return self.fromHTML(
@@ -154,7 +154,7 @@ class RelationalEditWidget(BaseEditWidget):
 
 
 class RelationalViewWidget(html5.Div):
-	style = ["vi-bone", "vi-bone--relational"]
+	style = ["vi-value", "vi-value--relational", "input-group"]
 
 	def __init__(self, bone, language=None, **kwargs):
 		super().__init__()
@@ -295,7 +295,7 @@ boneSelector.insert(2, TreeDirBone.checkFor, TreeDirBone)
 # --- fileBone ---
 
 class FileEditWidget(RelationalEditWidget):
-	style = ["vi-bone", "vi-bone--file"]
+	style = ["vi-value", "vi-value--file", "input-group"]
 
 	def _createWidget(self):
 		self.previewImg = FilePreviewImage()

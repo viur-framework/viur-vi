@@ -34,7 +34,7 @@ class TopBarWidget(html5.Header):
 				</div>
 			</div>
 			<nav class="vi-tb-right bar-group bar-group--right" [name]="topbarRight">
-				<div class="input-group" [name]="iconnav">
+				<div class="input-group input-group--bar" [name]="iconnav">
 				</div>
 			</nav>
 		""")
@@ -104,7 +104,7 @@ class UserState(html5.Div):
 	def __init__(self, *args, **kwargs):
 		super( UserState, self ).__init__(*args, **kwargs)
 
-		self[ "class" ] = [ "popout-opener" ]
+		self[ "class" ] = [ "popout-opener", "popout-anchor", "popout--sw" ]
 
 		self.btn = Button( icon = "icons-user", className = "btn btn--topbar btn--user" )
 		self.appendChild( self.btn )

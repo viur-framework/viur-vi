@@ -10,7 +10,7 @@ from vi.i18n import translate
 
 
 class DateEditWidget(BaseEditWidget):
-	style = ["vi-bone", "vi-bone--date"]
+	style = ["vi-value", "vi-value--date"]
 
 	def __init__(self, bone, **kwargs):
 		self.serverToClient = []
