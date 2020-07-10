@@ -6,7 +6,7 @@ from vi.i18n import translate
 
 
 class PasswordEditWidget(BaseEditWidget):
-	style = ["vi-bone", "vi-bone--password", "vi-bone-container", "input-group"]
+	style = ["vi-value", "vi-value--password", "vi-value-container", "input-group"]
 
 	def _createWidget(self):
 		self.appendChild("""<ignite-input [name]="widget" type="password">""")

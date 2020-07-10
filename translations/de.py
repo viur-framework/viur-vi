@@ -191,7 +191,7 @@ lngDe = {
 	"vi.tree.drag-here": "Ziehe Deine Dateien hier her.",
 
 	#Bones
-	"vi.tooltip.headline": "Hinweis für ",
+	"vi.tooltip.headline": "Hinweis",
 	"vi.select.default-option": "- Bitte wählen -",
 
 	#Sidebar

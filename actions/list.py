@@ -804,7 +804,7 @@ class LoadNextBatchAction(html5.Div):
 	"""
 	def __init__(self, *args, **kwargs):
 		super( LoadNextBatchAction, self ).__init__( )
-		self["class"].append("input-group")
+		self["class"].append("input-group bar-item")
 
 		self.pages = html5.Select()
 		self.pages["class"].append("select ignt-select select--small")

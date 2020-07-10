@@ -490,9 +490,10 @@ class EditWidget(html5.Div):
 
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
-			if bone["required"] or \
+			# FIXME! no bone["error"] field anymore!
+			if 0 and (bone["required"] or \
 					(bone.get("unique") and bone["error"]) or \
-					(bone["error"] and isinstance(bone["error"],str) and "dependency error:" in bone["error"]):
+					(bone["error"] and isinstance(bone["error"],str) and "dependency error:" in bone["error"])):
 				descrLbl.addClass("is-required")
 
 				if bone["error"] is not None:
@@ -506,7 +507,7 @@ class EditWidget(html5.Div):
 				elif bone["error"] is None and not self.wasInitialRequest:
 					descrLbl.addClass("is-valid")
 
-			if isinstance(bone["error"], dict):
+			if 0 and isinstance(bone["error"], dict):  # Fixme!
 				widget.setExtendedErrorInformation(bone["error"])
 
 			containerDiv = html5.Div()
