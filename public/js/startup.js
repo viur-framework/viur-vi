@@ -5,7 +5,17 @@ class apploader {
 			// If you require for pre-loaded Python packages, enable the promise below.
 			//window.pyodide.runPythonAsync("import setuptools, micropip").then(()=>{
 				this.fetchSources(modules).then(() => {
-					window.pyodide.runPythonAsync("import " + Object.keys(modules).join("\nimport ") + "\n" + invocation + "\n").then(() => this.initializingComplete());
+					for( let module of Object.keys(modules) )
+					{
+						if( modules[module].optional === true ) {
+							invocation = `try:\n\timport ${module}\nexcept:\n\tpass\n` + invocation
+						} else {
+							invocation = `import ${module}\n` + invocation
+						}
+					}
+
+					window.pyodide.runPythonAsync( invocation).then(
+						() => this.initializingComplete());
 				});
 			//});
 		});
@@ -65,7 +75,7 @@ class apploader {
 		{
 			promises.push(
 				new Promise((resolve, reject) => {
-					let mapfile = `${modules[module]}/files.json`;
+					let mapfile = `${modules[module]["path"]}/files.json`;
 					fetch(mapfile, {}).then((response) => {
 						if (response.status === 200) {
 							response.text().then((list) => {
@@ -75,15 +85,26 @@ class apploader {
 									files = JSON.parse(list);
 								}
 								catch (e) {
-									console.error(`Unable to parse ${mapfile} properly, check for correct config of ${module}`);
-									return reject();
+									if( modules[module]["optional"] ) {
+										console.info(`Optional module ${module} wasn't found`);
+										return resolve();
+									}
+									else {
+										console.error(`Unable to parse ${mapfile} properly, check for correct config of ${module}`);
+										return reject();
+									}
 								}
 
-								this.loadSources(module, modules[module], files).then(() => {
+								this.loadSources(module, modules[module]["path"], files).then(() => {
 									resolve();
 								})
 							})
 						} else {
+							if( modules[module]["optional"] ) {
+								console.info(`Optional module ${module} wasn't found`);
+								return resolve();
+							}
+
 							reject();
 						}
 					})
@@ -111,8 +132,13 @@ window.addEventListener(
 	"load",
 	(event) => {
 		window.apploader = new apploader({
-			"vi": ".",
-			"vi_plugins": "/vi_plugins"
+			"vi": {
+				"path": "."
+			},
+			"vi_plugins": {
+				"path": "./vi_plugins",
+				"optional": true
+			}
 		},
 		"vi.start()");
 	}
