@@ -7,7 +7,7 @@ from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 
 
 class SelectMultipleEditWidget(BaseEditWidget):
-	style = ["vi-bone-container", "option-group"]
+	style = ["vi-value-container", "option-group"]
 
 	entryTemplate = html5.parseHTML("""
 		<label class="check">
@@ -57,6 +57,7 @@ class SelectSingleEditWidget(BaseEditWidget):
 
 	def createWidget(self):
 		widget = html5.Select()
+		widget.addClass("select")
 
 		# Add empty entry to allow "select nothing"
 		first = widget.appendChild(

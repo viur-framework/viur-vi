@@ -8,7 +8,7 @@ from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 
 
 class NumericEditWidget(BaseEditWidget):
-	style = ["vi-bone", "vi-bone--numeric"]
+	style = ["vi-value", "vi-value--numeric"]
 
 	def __init__(self, bone, **kwargs):
 		super().__init__(bone, **kwargs)

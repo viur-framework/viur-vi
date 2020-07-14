@@ -4,7 +4,8 @@ from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 
 
 class EmailEditWidget(BaseEditWidget):
-	def updateWidget(self):
+	style = ["vi-value", "vi-value--email"]
+	def _updateWidget(self):
 		self.widget["type"] = "email"
 
 

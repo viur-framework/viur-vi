@@ -527,7 +527,7 @@ class EditWidget(html5.Div):
 				elif bone["error"] is None and not self.wasInitialRequest:
 					descrLbl.addClass("is-valid")
 
-			if isinstance(bone["error"], dict):
+			if 0 and isinstance(bone["error"], dict):  # Fixme!
 				widget.setExtendedErrorInformation(bone["error"])
 
 			containerDiv = html5.Div()

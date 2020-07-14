@@ -43,6 +43,12 @@ class InternalEdit(html5.Div):
 		defaultCat = self.defaultCat
 		firstCat = None
 
+		errors = { }
+
+		if conf[ "core.version" ][ 0 ] == 3 and self.errorInformation:
+			for error in self.errorInformation:
+				errors[ error[ "fieldPath" ] ] = error[ "errorMessage" ]
+
 		for key, bone in self.skelStructure:
 
 			#Enforcing readOnly mode
@@ -77,7 +83,10 @@ class InternalEdit(html5.Div):
 			if bone["required"]:
 				descrLbl["class"].append("is-required")
 
-			if (bone["required"]
+			if key in errors:
+				bone["error"] = errors[key]
+
+			if (bone["required"] and "error" in bone
 			    and (bone["error"] is not None
 			            or (self.errorInformation and key in self.errorInformation.keys()))):
 				descrLbl["class"].append("is-invalid")
@@ -89,7 +98,7 @@ class InternalEdit(html5.Div):
 				if segments and cat in segments:
 					segments[cat]["class"].append("is-incomplete")
 
-			if bone["required"] and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
+			if bone["required"] and "error" in bone and not (bone["error"] is not None or (self.errorInformation and key in self.errorInformation.keys())):
 				descrLbl["class"].append("is-valid")
 
 			if "params" in bone.keys() and isinstance(bone["params"], dict) and "tooltip" in bone["params"].keys():

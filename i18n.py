@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from vi import html5
+import logging
+from . import html5
 from . import translations
 
 _currentLanguage = None
@@ -16,7 +17,7 @@ if not _currentLanguage:
 if len(_currentLanguage) > 2:
 	_currentLanguage = _currentLanguage[:2]
 
-print("Configured for language: %s" % _currentLanguage)
+logging.info("_currentLanguage is %r", _currentLanguage)
 
 _runtimeTranslations = {}
 _lngMap = {}

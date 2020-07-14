@@ -6,7 +6,7 @@ from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 
 
 class ColorEditWidget(BaseEditWidget):
-	style = ["vi-bone", "vi-bone--color"]
+	style = ["vi-value", "vi-value--color"]
 
 	def createWidget(self):
 		return self.fromHTML("""

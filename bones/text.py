@@ -7,7 +7,7 @@ from vi.widgets.htmleditor import HtmlEditor
 
 
 class TextEditWidget(BaseEditWidget):
-	style = ["vi-bone", "vi-bone--text"]
+	style = ["vi-value", "vi-value--text"]
 
 	def createWidget(self):
 		if self.bone.boneStructure["validHtml"]:

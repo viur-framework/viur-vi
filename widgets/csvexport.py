@@ -24,7 +24,7 @@ class ExportCsv(html5.Progress):
 		self.widget = widget
 		self.module = widget.module
 		self.params = self.widget.getFilter().copy()
-		self.params["amount"] = 99
+		self.params["limit"] = 99
 		self.data = []
 		self.structure = None
 		self.separator = separator or ";"

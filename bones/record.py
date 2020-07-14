@@ -9,7 +9,7 @@ from vi.widgets.internaledit import InternalEdit
 
 
 class RecordEditWidget(BaseEditWidget):
-	style = ["vi-bone", "vi-bone--record"]
+	style = ["vi-value", "vi-value--record"]
 
 	def createWidget(self):
 		return InternalEdit(

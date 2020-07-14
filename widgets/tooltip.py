@@ -24,7 +24,7 @@ class ToolTip(html5.Div):
 			</div>
 		""")
 
-		self.tooltipHeadline.element.innerHTML = translate("vi.tooltip.headline") + " " + shortText
+		self.tooltipHeadline.element.innerHTML = translate("vi.tooltip.headline")
 		self.tooltipDescr.element.innerHTML = longText.replace( "\n", "<br />" )
 
 	def onClick(self, event):

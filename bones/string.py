@@ -6,13 +6,13 @@ from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 
 
 class StringEditWidget(BaseEditWidget):
-	style = ["vi-bone", "vi-bone--string"]
+	style = ["vi-value", "vi-value--string", "input-group"]
 
 	def createWidget(self):
 		self.appendChild("""
 			<ignite-input [name]="widget">
-			<div [name]="length">0</div>
-			<div [name]="maxlength" hidden>0</div> <!-- fixme: add later ... -->
+			<div class="label" [name]="length">0</div>
+			<div class="label" [name]="maxlength" hidden>0</div> <!-- fixme: add later ... -->
 		""")
 
 		self.sinkEvent("onChange", "onKeyUp")

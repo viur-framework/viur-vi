@@ -13,7 +13,7 @@ class BaseEditWidget(html5.Div):
 	Base class for a bone-compliant edit widget implementation using an input field.
 	This widget defines the general interface of a bone edit control.
 	"""
-	style = ["vi-bone"]
+	style = ["vi-value"]
 
 	def __init__(self, bone, **kwargs):
 		super().__init__()
@@ -70,6 +70,8 @@ class BaseViewWidget(html5.Div):
 
 
 class BaseMultiEditWidgetEntry(html5.Div):
+	style = ["vi-bone-widgets-item"]
+
 	"""
 	Base class for an entry in a MultiBone container.
 	"""
@@ -83,8 +85,7 @@ class BaseMultiEditWidgetEntry(html5.Div):
 			setattr(self, fct, getattr(self.widget, fct))
 
 		self.appendChild(
-			# todo: must be styled, it is NOT a button!
-			"""<div [name]="dragArea" class="btn vi-bone-dragger">↕</div>""",
+			"""<div [name]="dragArea" class="label vi-bone-dragger"><icon embedsvg="icons-drag-handle" ></icon></div>""",
 			self.widget,
 			"""<button [name]="removeBtn" class="btn--delete" text="Delete" icon="icons-delete" />"""
 		)
@@ -172,11 +173,12 @@ class BaseMultiEditWidget(html5.Div):
 	Class for encapsulating multiple bones inside a container
 	"""
 	entryFactory = BaseMultiEditWidgetEntry
+	style = ["vi-value-container"]
 
 	def __init__(self, bone, widgetFactory: callable, **kwargs):
 		super().__init__("""
 			<div [name]="widgets" class="vi-bone-widgets"></div>
-			<div [name]="actions" class="vi-bone-actions">
+			<div [name]="actions" class="vi-bone-actions input-group">
 				<button [name]="addBtn" class="btn--add" text="Add" icon="icons-add"></button>
 			</div>
 		""")
@@ -259,6 +261,7 @@ class BaseMultiViewWidget(html5.Ul):
 
 
 class BaseLanguageEditWidget(html5.Div):
+	style = ["vi-value-container-langbtns", "input-group"]
 	"""
 	Class for encapsulating a bone for each language inside a container
 	"""
@@ -266,7 +269,7 @@ class BaseLanguageEditWidget(html5.Div):
 	def __init__(self, bone, widgetFactory: callable, **kwargs):
 		super().__init__("""
 			<div [name]="widgets" class="vi-bone-widgets"></div>
-			<div [name]="actions" class="vi-bone-actions"></div>
+			<div [name]="actions" class="vi-bone-actions input-group"></div>
 		""")
 
 		languages = bone.skelStructure[bone.boneName]["languages"]
