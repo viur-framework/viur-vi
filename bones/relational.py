@@ -57,7 +57,7 @@ class RelationalEditWidget(BaseEditWidget):
 		if self.bone.dataStructure:
 			self.dataWidget = InternalEdit(
 				self.bone.dataStructure,
-				readOnly=self.readonly,
+				readOnly=self.bone.readonly,
 				defaultCat=None  # fixme: IMHO not necessary
 			)
 			self.appendChild(self.dataWidget)
