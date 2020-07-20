@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, sys, json, string, random, time
+import os, sys, json, string, random, time, logging
 
 from vi import html5
 from vi import framework
@@ -305,7 +305,7 @@ class NetworkService(object):
 			:type secure: bool
 
 		"""
-		print("NS REQUEST", module, url, params)
+		logging.info("NS REQUEST", module, url, params)
 		assert not (cacheable and modifies), "Cannot cache a request modifying data!"
 
 		# Seems not cacheable or not cached
@@ -392,7 +392,10 @@ class NetworkService(object):
 		self.status = "failed"
 		self.result = text
 
-		print("onError", self.kickoffs, self.retryMax, int(code), self.retryCodes)
+		logging.error(
+			"received http %r (kickoffs=%r, retryMax=%r, retryCodes=%r)",
+		    code, self.kickoffs, self.retryMax, self.retryCodes
+		)
 
 		if self.kickoffs < self.retryMax and int(code) in self.retryCodes:
 			try:
@@ -403,7 +406,7 @@ class NetworkService(object):
 				logError("NetworkService.onError code:%s module:%s url:%s params:%s" % (
 				code, self.module, self.url, self.params))
 
-			print("error %d, kickoff %d, will retry now" % (int(code), self.kickoffs))
+			logging.info("error %r, kickoff %r: will retry now" , code, self.kickoffs)
 			DeferredCall(self.kickoff, _delay=self.retryDelay)
 			return
 

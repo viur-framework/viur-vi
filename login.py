@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-import re, json
+import re, json, logging
 from vi import html5
 from vi.framework.event import EventDispatcher
 
@@ -203,7 +203,6 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.sendBtn["disabled"] = False
 
 		answ = self.parseAnswer(req)
-		print("doLoginSuccess", answ)
 
 		if answ == "OKAY":
 			self.login()
@@ -254,7 +253,6 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.verifyBtn["disabled"] = False
 
 		answ = self.parseAnswer(req)
-		print("doVerifySuccess", answ)
 
 		if answ == "OKAY":
 			self.login()
@@ -276,8 +274,6 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		params = self.editwidget.doSave()
 		if self.editskey:
 			params["skey"] = self.editskey
-
-		print(params)
 
 		NetworkService.request("user", self.editaction,
 		                        params=params,
@@ -405,7 +401,7 @@ class LoginScreen(Screen):
 				return
 				#self.loginScreen.redirectNoAdmin()
 
-		print("User already logged in")
+		logging.info("User already logged in")
 		conf["theApp"].admin()
 
 	def onGetAuthMethodsSuccess(self, req):
@@ -415,7 +411,7 @@ class LoginScreen(Screen):
 		for method in answ:
 			handler = loginHandlerSelector.select(method[0], method[1])
 			if not handler:
-				print("Warning: Login-Handler \"%s\" with second factor \"%s\" unknown" % (method[0], method[1]))
+				logging.warning("Login-Handler for %r with second factor %r is not known to Vi", method[0], method[1])
 				continue
 			# Check if this handler is already inserted!
 			if not any([c.__class__.__name__ == handler.__name__ for c in self.loginMethodSelector._children]):
