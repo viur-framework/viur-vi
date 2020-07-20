@@ -280,6 +280,10 @@ class HierarchyWidget(html5.Div):
 
 		self.entryFrame = html5.Ol()
 		self.entryFrame.addClass("hierarchy")
+		self.entryFrame["style"]["overflow"] ="auto"
+		self.entryFrame["stlye"]["margin-bottom"] ="0px"
+
+
 		self.appendChild( self.entryFrame )
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
