@@ -111,8 +111,6 @@ class ContextAction(Button):
 
 			context[key] = value
 
-		print(context)
-
 		widget = widgen(self.contextModule, self.adminInfo, context)
 
 		if widget:

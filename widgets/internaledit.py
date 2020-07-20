@@ -118,7 +118,6 @@ class InternalEdit(html5.Div):
 			if not bone["visible"]:
 				self.containers[key].hide()
 
-		print(self.boneparams)
 		if self.boneparams and "vi.style.rel.categories" in self.boneparams and self.boneparams["vi.style.rel.categories"] == "collapsed":pass
 		else:
 			if firstCat:

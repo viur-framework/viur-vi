@@ -71,8 +71,7 @@ class logWidget(html5.Div):
 			for fidx in range(0,len(tablehead)):
 				table.prepareCol(eidx,fidx+1)
 				currentDatafield = tablefields[fidx]
-				print(currentDatafield)
-				print(entry)
+
 				if currentDatafield=="msg":
 
 					if isinstance(entry[currentDatafield], html5.Widget):

@@ -292,8 +292,6 @@ class indexeddb():
 		trans = dbTransaction([name], "readwrite")
 		StoreHandler = trans.objectStore(name)
 		if key:
-			print("FFFFF")
-			print(key)
 			StoreHandler.add(obj, key)
 		else:
 			StoreHandler.add(obj)
@@ -317,11 +315,8 @@ class indexeddb():
 
 		def update(event):
 			result = event.target.result
-			print(result)
-			print(dir(result))
 			for k,v in obj.items():
 				setattr(result,k,v)
-			print(dir(result))
 			StoreHandler.put(result,key)
 
 		currentEntry = StoreHandler.get(key)

@@ -22,8 +22,8 @@ class Datalist(html5.Div):
 		self.sinkEvent("onInput")
 
 	def onInput(self, event):
-		print(event.target)
-		print("FJFJFJFJFJFJFJ")
+		print("AAA")
+
 
 
 class AutocompleteList(html5.Div):

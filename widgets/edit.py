@@ -606,12 +606,16 @@ class EditWidget(html5.Div):
 		"""
 			Applies the actual data to the bones.
 		"""
-		for bone in self.bones.values():
-			if "setContext" in dir(bone) and callable(bone.setContext):
-				bone.setContext(self.context)
+		#ensure bonevalues!
+		data = {x:data[x] for x in data if x in self.bones}
 
-			if data is not None:
-				bone.unserialize(data)
+		if data:
+			for bone in self.bones.values():
+				if "setContext" in dir(bone) and callable(bone.setContext):
+					bone.setContext(self.context)
+
+				if data is not None:
+					bone.unserialize(data)
 
 	def serializeForPost(self, validityCheck = False):
 		res = {}

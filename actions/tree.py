@@ -154,7 +154,7 @@ class EditAction(Button):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		print(selection)
+
 		for s in selection:
 			pane = Pane(translate("Edit"), closeable=True)
 			conf["mainWindow"].stackPane( pane, focus=True )

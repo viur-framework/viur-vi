@@ -400,7 +400,7 @@ class AccessMultiSelectBone( html5.Div ):
 		return self.serializeForPost()
 
 def CheckForAccessMultiSelectBone(moduleName, boneName, skelStructure, *args, **kwargs):
-	print(moduleName, boneName, skelStructure[boneName]["type"], skelStructure[boneName]["type"] in ["select.access", "selectmulti.access"])
+	#print(moduleName, boneName, skelStructure[boneName]["type"], skelStructure[boneName]["type"] in ["select.access", "selectmulti.access"])
 	return skelStructure[boneName]["type"] in ["select.access", "selectmulti.access"]
 
 #Register this Bone in the global queue
