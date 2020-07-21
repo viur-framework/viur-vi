@@ -206,18 +206,6 @@ class SelectionContainer(html5.Ul):
 		self.mouseIsMoving = False
 		self.sinkEvent("onClick", "onDblClick", "onMouseMove", "onMouseDown", "onMouseUp", "onKeyDown", "onKeyUp")
 
-
-	def onMouseUp( self,event ):
-		self.mouseIsMoving = False
-
-	def onMouseDown( self,event ):
-		self.mouseIsMoving = True
-		self.mousePos = event.pageY
-
-	def onMouseMove( self,event ):
-		if self.mouseIsMoving:
-			self.element.scrollTop = self.element.scrollTop + (self.mousePos - event.pageY)
-
 	def setCurrentItem(self, item):
 		"""
 			Sets the  currently selected item (=the cursor) to 'item'
