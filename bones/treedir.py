@@ -32,9 +32,6 @@ class TreeDirMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 
 		#Remove the editbutton. This won't work on directories; but we maybe need this for other modules?!
 		if self.editBtn:
-			print(dir(self))
-
-
 			self.wrapperDiv.removeChild(self.editBtn)
 			self.editBtn = None
 

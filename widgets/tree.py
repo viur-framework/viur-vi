@@ -106,7 +106,7 @@ class NodeWidget(_StructureWidget):
 		"""
 		if not self.hasClass("insert-here"):
 			self.addClass("insert-here")
-			self["data-insert"] = translate("vi-data-insert")
+			#self["data-insert"] = translate("vi-data-insert")
 		try:
 			nodeType, srcKey = event.dataTransfer.getData("Text").split("/")
 		except:
@@ -118,7 +118,7 @@ class NodeWidget(_StructureWidget):
 	def onDragLeave(self, event):
 		if self.hasClass("insert-here"):
 			self.removeClass("insert-here")
-			self["data-insert"] = None
+			#self["data-insert"] = None
 		return( super(NodeWidget, self).onDragLeave(event))
 
 
@@ -443,7 +443,7 @@ class TreeWidget(html5.Div):
 		super(TreeWidget, self).onClick(event)
 		for c in self.pathList._children:
 			# Test if the user clicked inside the path-list
-			if html5.utils.doesEventHitWidgetOrParents(event, c):
+			if html5.utils.doesEventHitWidgetOrChildren(event, c):
 				self.setNode(c.data["key"])
 				return
 

@@ -388,7 +388,7 @@ class FileWidget(TreeWidget):
 		event.stopPropagation()
 		self.removeClass("insert-here")
 		files = event.dataTransfer.files
-		for x in range(0, files.length):
+		for x in range(0, len(files)):
 			Uploader(files.item(x), self.node)
 
 	@staticmethod
