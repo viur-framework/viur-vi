@@ -203,7 +203,20 @@ class SelectionContainer(html5.Ul):
 		self._isMouseDown = False  # Tracks status of the left mouse button
 		self._isCtlPressed = False  # Tracks status of the ctrl key
 		self._ctlStartRow = None  # Stores the row where a multi-selection (using the ctrl key) started
+		self.mouseIsMoving = False
 		self.sinkEvent("onClick", "onDblClick", "onMouseMove", "onMouseDown", "onMouseUp", "onKeyDown", "onKeyUp")
+
+
+	def onMouseUp( self,event ):
+		self.mouseIsMoving = False
+
+	def onMouseDown( self,event ):
+		self.mouseIsMoving = True
+		self.mousePos = event.pageY
+
+	def onMouseMove( self,event ):
+		if self.mouseIsMoving:
+			self.element.scrollTop = self.element.scrollTop + (self.mousePos - event.pageY)
 
 	def setCurrentItem(self, item):
 		"""
@@ -502,6 +515,8 @@ class TreeWidget(html5.Div):
 
 	def reloadData(self, paramsOverride=None):
 		assert self.node is not None, "reloadData called while self.node is None"
+		self.addClass("is-loading")
+
 		self.entryFrame.clear()
 		self._currentRequests = []
 		if paramsOverride:
@@ -555,7 +570,8 @@ class TreeWidget(html5.Div):
 			self._currentRequests.append(r)
 		else:
 			self._currentCursor[req.reqType] = None
-
+		if not self._currentRequests:
+			self.removeClass( "is-loading" )
 		self.actionBar.resetLoadingState()
 
 	def getChildKey(self, widget):
