@@ -495,7 +495,10 @@ class EditWidget(html5.Div):
 			if bone["required"]:
 				descrLbl.addClass( "is-required" )
 
-			if bone["error"] and bone["error"]["severity"]%2 == 1:
+			if bone["error"] and (
+				(bone["error"]["severity"]%2==0 and bone["required"]) or\
+				(bone["error"]["severity"]%2 == 1)
+			):
 				#todo if severity = 1 dependency error, we need to mark futher bones
 
 				descrLbl.addClass("is-invalid")
