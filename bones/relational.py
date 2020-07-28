@@ -323,7 +323,7 @@ class FileBone(TreeItemBone):
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):
 		#print(moduleName, boneName, skelStructure[boneName]["type"], skelStructure[boneName]["type"] == "relational.file" or skelStructure[boneName]["type"].startswith("relational.file."))
-		return skelStructure[boneName]["type"] == "treeitem.file" or skelStructure[boneName]["type"].startswith("treeitem.file.")
+		return skelStructure[boneName]["type"] == "treeitem.file" or skelStructure[boneName]["type"].startswith("relational.tree.leaf.file")
 		#fixme: This type should be relational.treeitem.file and NOT relational.file.... WTF
 		#return skelStructure[boneName]["type"] == "relational.treeitem.file" or skelStructure[boneName]["type"].startswith("relational.treeitem.file.")
 

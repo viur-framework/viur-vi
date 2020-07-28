@@ -22,8 +22,8 @@ class ParsedErrorItem(html5.Li):
 	style = []
 
 	def __init__(self, error):
-		super().__init__("""<span>Severity: </span><span [name]="errorSeverity"></span><span>Message: </span><span [name]="errorMessage"></span>
-				<ul [name]="errorList"></ul>
+		super().__init__("""<div><span>Severity: </span><span [name]="errorSeverity"></span> <span>Message: </span><span [name]="errorMessage"></span>
+				<div [name]="invalidatedArea"><h4>Invalidated Fields</h4><ul [name]="errorList"></ul>
 			""")
 
 		self.errorSeverity.element.innerHTML = str(ReadFromClientErrorSeverity(error["severity"])).split(".")[1]
@@ -470,6 +470,7 @@ class EditWidget(html5.Div):
 
 		errors = {}
 
+		console.log("before change", data["errors"])
 		if conf["core.version"][0] == 3:
 			for error in data["errors"]:
 				errors[error["fieldPath"]] = error
@@ -523,7 +524,7 @@ class EditWidget(html5.Div):
 				(bone["error"]["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
 				(bone["error"]["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
 			):
-				#todo if severity = 1 dependency error, we need to mark futher bones
+				#todo if severity = 1 dependency error, we need to mark further bones
 
 				descrLbl.addClass("is-invalid")
 
