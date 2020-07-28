@@ -13,6 +13,25 @@ from vi.widgets.list import ListWidget
 from vi.widgets.accordion import Accordion
 from vi.exception import InvalidBoneValueException
 
+from js import console
+
+from vi.bones.base import ReadFromClientErrorSeverity
+
+
+class ParsedErrorItem(html5.Li):
+	style = []
+
+	def __init__(self, error):
+		super().__init__("""<span>Severity: </span><span [name]="errorSeverity"></span><span>Message: </span><span [name]="errorMessage"></span>
+				<ul [name]="errorList"></ul>
+			""")
+
+		self.errorSeverity.element.innerHTML = str(ReadFromClientErrorSeverity(error["severity"])).split(".")[1]
+		self.errorMessage.element.innerHTML = error["errorMessage"]
+		if error["invalidatedFields"]:
+			for item in error["invalidatedFields"]:
+				self.errorList.appendChild("<li>{}</li>".format(item))
+
 
 def parseHashParameters( src, prefix="" ):
 	"""
@@ -374,6 +393,10 @@ class EditWidget(html5.Div):
 		conf["mainWindow"].log("success", translate( u"The hierarchy will be cloned in the background." ))
 		self.closeOrContinue()
 
+	def formatReadFromClientErrorSeverity(self, error):
+
+		template = "Severity {severity}: "
+
 	def setData(self, request=None, data=None, ignoreMissing=False, askHierarchyCloning=True):
 		"""
 		Rebuilds the UI according to the skeleton received from server
@@ -453,13 +476,11 @@ class EditWidget(html5.Div):
 
 		self.accordion.clearSegments()
 		for key, bone in data["structure"]:
-
-			if key in errors:
-				bone["error"] = errors[key]
-			else:
-				bone[ "error" ] = None
-
+			console.log("errors complete", errors)
+			bone["error"] = errors.get(key)
 			cat = defaultCat #meow!
+
+			console.log("bone", key, bone["error"])
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)
@@ -495,14 +516,21 @@ class EditWidget(html5.Div):
 			if bone["required"]:
 				descrLbl.addClass( "is-required" )
 
+			fieldErrors = html5.fromHTML("""<div class="vi-bone-widget-item"></div>""")[0]
+			fieldWrapper = html5.fromHTML("""<div class="vi-value-container"><div></div>""")[0]
+
 			if bone["error"] and (
-				(bone["error"]["severity"]%2==0 and bone["required"]) or\
-				(bone["error"]["severity"]%2 == 1)
+				(bone["error"]["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
+				(bone["error"]["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
 			):
 				#todo if severity = 1 dependency error, we need to mark futher bones
 
 				descrLbl.addClass("is-invalid")
-				descrLbl["title"] = bone["error"]
+
+				if isinstance(bone["error"], dict):
+					fieldErrors.appendChild(ParsedErrorItem(bone["error"]))
+				elif isinstance(bone["error"], list):
+					fieldErrors.appendChild(ParsedErrorItem(error) for error in bone["error"])
 
 				segments[cat].addClass("is-incomplete is-active")
 
@@ -515,7 +543,9 @@ class EditWidget(html5.Div):
 
 			containerDiv = html5.Div()
 			containerDiv.appendChild(descrLbl)
-			containerDiv.appendChild(widget)
+			fieldWrapper.appendChild(widget)
+			fieldWrapper.appendChild(fieldErrors)
+			containerDiv.appendChild(fieldWrapper)
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)

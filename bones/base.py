@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from enum import Enum, IntEnum
+
 from vi import html5
 
 from vi.framework.components.button import Button
@@ -6,6 +8,13 @@ from vi.priorityqueue import boneSelector
 from vi.config import conf
 
 import json
+
+
+class ReadFromClientErrorSeverity(IntEnum):
+	NotSet = 0
+	InvalidatesOther = 1
+	Empty = 2
+	Invalid = 3
 
 
 class BaseEditWidget(html5.Div):
@@ -87,7 +96,8 @@ class BaseMultiEditWidgetEntry(html5.Div):
 		self.appendChild(
 			"""<div [name]="dragArea" class="label vi-bone-dragger"><icon embedsvg="icons-drag-handle" ></icon></div>""",
 			self.widget,
-			"""<button [name]="removeBtn" class="btn--delete" text="Delete" icon="icons-delete" />"""
+			"""<button [name]="removeBtn" class="btn--delete" text="Delete" icon="icons-delete" />
+			"""
 		)
 
 		if widget.bone.boneStructure["readonly"]:
