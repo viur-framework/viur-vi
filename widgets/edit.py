@@ -519,7 +519,7 @@ class EditWidget(html5.Div):
 			if cat not in segments:
 				segments[cat] = self.accordion.addSegment(cat)
 
-			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, errorQueue=errorQueue)
+			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, data["errors"], errorQueue=errorQueue)
 			widget = boneFactory.editWidget(errorInformation=data["errors"])
 
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)

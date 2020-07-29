@@ -80,7 +80,7 @@ class InternalEdit(html5.Div):
 				if not firstCat:
 					firstCat = segments[cat]
 
-			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict)
+			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, errors, self.errorQueue)
 			widget = boneFactory.editWidget()
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 

@@ -14,7 +14,7 @@ class RecordEditWidget(BaseEditWidget):
 	def _createWidget(self):
 		return InternalEdit(
 			self.bone.boneStructure["using"],
-			errorInformation=self.bone.errorInformation,
+			errorInformation=self.bone.errors,
 			readOnly=self.bone.readonly,
 			defaultCat=None,  # fixme: IMHO not necessary
 			errorQueue=self.bone.errorQueue

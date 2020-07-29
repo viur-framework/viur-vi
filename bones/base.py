@@ -354,13 +354,14 @@ class BaseBone(object):
 	"""
 	Base "Catch-All" delegate for everything not handled separately.
 	"""
-	def __init__(self, moduleName, boneName, skelStructure, errorQueue=None):
+	def __init__(self, moduleName, boneName, skelStructure, errors, errorQueue=None):
 		super().__init__()
 
 		self.moduleName = moduleName
 		self.boneName = boneName
 		self.skelStructure = skelStructure
 		self.boneStructure = self.skelStructure[self.boneName]
+		self.errors = errors
 		self.errorQueue = errorQueue
 
 		self.readonly = bool(self.boneStructure.get("readonly"))

@@ -1,4 +1,6 @@
 #-*- coding: utf-8 -*-
+from collections import defaultdict
+
 from vi import html5
 
 from vi.config import conf
@@ -430,7 +432,7 @@ class ListWidget(html5.Div):
 
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict)
+			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict, defaultdict(list))
 			self.table.setCellRender(boneName, boneFactory)
 			boneInfoList.append( boneInfo )
 
@@ -445,7 +447,7 @@ class ListWidget(html5.Div):
 
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict)
+			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict, defaultdict(list))
 			rendersDict[boneName] = boneFactory
 			boneInfoList.append(boneInfo)
 
