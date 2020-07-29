@@ -562,7 +562,9 @@ class EditWidget(html5.Div):
 				for i in invalidatedFields:
 					container = self.containers.get(i)
 					if container:
-						container.children()[0].addClass("is-invalid")
+						otherLabel = container.children()[0]
+						otherLabel.removeClass("is-valid")
+						otherLabel.addClass("is-invalid")
 						container.children()[1].children()[1].appendChild(PassiveErrorItem(error))
 					else:
 						errorQueue[i].append(error)
@@ -612,11 +614,13 @@ class EditWidget(html5.Div):
 				self.containers[key].disable()
 
 		for myKey, myErrors in errorQueue.items():
-			console.log("myKEy, myErrors", myKey, myErrors)
 			container = self.containers.get(myKey)
-			container.children()[0].addClass("is-invalid")
-			for myError in myError:
-				container.children()[1].children()[1].appendChild(PassiveErrorItem(myError))
+			if container:
+				otherLabel = container.children()[0]
+				otherLabel.removeClass("is-valid")
+				otherLabel.addClass("is-invalid")
+				for myError in myErrors:
+					container.children()[1].children()[1].appendChild(PassiveErrorItem(myError))
 
 		# Hide all segments where all fields are invisible
 		for fs in segments.values():
