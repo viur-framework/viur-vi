@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from typing import List, Tuple
+from collections import defaultdict, deque
+
 from vi import html5
 
 import vi.utils as utils
@@ -22,8 +25,8 @@ class ParsedErrorItem(html5.Li):
 	style = []
 
 	def __init__(self, error):
-		super().__init__("""<div><span>Severity: </span><span [name]="errorSeverity"></span> <span>Message: </span><span [name]="errorMessage"></span>
-				<div [name]="invalidatedArea"><h4>Invalidated Fields</h4><ul [name]="errorList"></ul>
+		super().__init__("""<div><span>Severity: </span><span [name]="errorSeverity"></span>&nbsp;<span>Message: </span><span [name]="errorMessage"></span>
+				<div [name]="invalidatedArea"><h4>Invalidated Fields</h4><ul [name]="errorList"></ul></div>
 			""")
 
 		self.errorSeverity.element.innerHTML = str(ReadFromClientErrorSeverity(error["severity"])).split(".")[1]
@@ -31,6 +34,16 @@ class ParsedErrorItem(html5.Li):
 		if error["invalidatedFields"]:
 			for item in error["invalidatedFields"]:
 				self.errorList.appendChild("<li>{}</li>".format(item))
+		else:
+			self.invalidatedArea.hide()
+
+
+class PassiveErrorItem(html5.Li):
+	style = []
+
+	def __init__(self, error):
+		super().__init__("""<div><span [name]="errorSeverity"></span></div>""")
+		self.errorSeverity.element.innerHTML = "Invalidated by other field {}!".format(error["fieldPath"])
 
 
 def parseHashParameters( src, prefix="" ):
@@ -468,20 +481,35 @@ class EditWidget(html5.Div):
 				contextVariable: data["values"].get(contextKey)
 			})
 
-		errors = {}
+		errors = defaultdict(list)
 
 		console.log("before change", data["errors"])
 		if conf["core.version"][0] == 3:
 			for error in data["errors"]:
-				errors[error["fieldPath"]] = error
+				errors[error["fieldPath"]].append(error)
+
+		def checkErrors(bone) -> Tuple[bool, List[str]]:
+			errors = bone["errors"]
+			if not errors:
+				return False, list()
+			invalidatedFields = list()
+			for error in errors:
+				if (
+						(error["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
+						(error["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
+				):
+					if error["invalidatedFields"]:
+						invalidatedFields.extend(error["invalidatedFields"])
+			return True, invalidatedFields
 
 		self.accordion.clearSegments()
+		errorQueue = defaultdict(list)
 		for key, bone in data["structure"]:
 			console.log("errors complete", errors)
-			bone["error"] = errors.get(key)
+			bone["errors"] = errors.get(key)
 			cat = defaultCat #meow!
 
-			console.log("bone", key, bone["error"])
+			console.log("bone", key, bone["errors"])
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)
@@ -520,18 +548,24 @@ class EditWidget(html5.Div):
 			fieldErrors = html5.fromHTML("""<div class="vi-bone-widget-item"></div>""")[0]
 			fieldWrapper = html5.fromHTML("""<div class="vi-value-container"><div></div>""")[0]
 
-			if bone["error"] and (
-				(bone["error"]["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
-				(bone["error"]["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
-			):
+			errorsFound, invalidatedFields = checkErrors(bone)
+			if errorsFound:
 				#todo if severity = 1 dependency error, we need to mark further bones
-
 				descrLbl.addClass("is-invalid")
 
-				if isinstance(bone["error"], dict):
-					fieldErrors.appendChild(ParsedErrorItem(bone["error"]))
-				elif isinstance(bone["error"], list):
-					fieldErrors.appendChild(ParsedErrorItem(error) for error in bone["error"])
+				if isinstance(bone["errors"], dict):
+					fieldErrors.appendChild(ParsedErrorItem(bone["errors"]))
+				elif isinstance(bone["errors"], list):
+					for error in bone["errors"]:
+						fieldErrors.appendChild(ParsedErrorItem(error))
+				console.log("invalidatedFields", invalidatedFields)
+				for i in invalidatedFields:
+					container = self.containers.get(i)
+					if container:
+						container.children()[0].addClass("is-invalid")
+						container.children()[1].children()[1].appendChild(PassiveErrorItem(error))
+					else:
+						errorQueue[i].append(error)
 
 				segments[cat].addClass("is-incomplete is-active")
 
@@ -577,6 +611,12 @@ class EditWidget(html5.Div):
 			if bone["params"] and bone["params"].get("logic.readonlyIf"):
 				self.containers[key].disable()
 
+		for myKey, myErrors in errorQueue.items():
+			console.log("myKEy, myErrors", myKey, myErrors)
+			container = self.containers.get(myKey)
+			container.children()[0].addClass("is-invalid")
+			for myError in myError:
+				container.children()[1].children()[1].appendChild(PassiveErrorItem(myError))
 
 		# Hide all segments where all fields are invisible
 		for fs in segments.values():
