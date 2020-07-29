@@ -105,6 +105,20 @@ def parseHashParameters( src, prefix="" ):
 	return res
 
 
+def checkErrors(bone) -> Tuple[bool, List[str]]:
+	errors = bone["errors"]
+	if not errors:
+		return False, list()
+	invalidatedFields = list()
+	for error in errors:
+		if (
+				(error["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
+				(error["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
+		):
+			if error["invalidatedFields"]:
+				invalidatedFields.extend(error["invalidatedFields"])
+	return True, invalidatedFields
+
 
 class EditWidget(html5.Div):
 	appList = "list"
@@ -488,20 +502,6 @@ class EditWidget(html5.Div):
 			for error in data["errors"]:
 				errors[error["fieldPath"]].append(error)
 
-		def checkErrors(bone) -> Tuple[bool, List[str]]:
-			errors = bone["errors"]
-			if not errors:
-				return False, list()
-			invalidatedFields = list()
-			for error in errors:
-				if (
-						(error["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
-						(error["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
-				):
-					if error["invalidatedFields"]:
-						invalidatedFields.extend(error["invalidatedFields"])
-			return True, invalidatedFields
-
 		self.accordion.clearSegments()
 		errorQueue = defaultdict(list)
 		for key, bone in data["structure"]:
@@ -519,8 +519,8 @@ class EditWidget(html5.Div):
 			if cat not in segments:
 				segments[cat] = self.accordion.addSegment(cat)
 
-			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict)
-			widget = boneFactory.editWidget()
+			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, errorQueue=errorQueue)
+			widget = boneFactory.editWidget(errorInformation=data["errors"])
 
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
@@ -546,8 +546,6 @@ class EditWidget(html5.Div):
 				descrLbl.addClass( "is-required" )
 
 			fieldErrors = html5.fromHTML("""<div class="vi-bone-widget-item"></div>""")[0]
-			fieldWrapper = html5.fromHTML("""<div class="vi-value-container"><div></div>""")[0]
-
 			errorsFound, invalidatedFields = checkErrors(bone)
 			if errorsFound:
 				#todo if severity = 1 dependency error, we need to mark further bones
@@ -580,9 +578,8 @@ class EditWidget(html5.Div):
 
 			containerDiv = html5.Div()
 			containerDiv.appendChild(descrLbl)
-			fieldWrapper.appendChild(widget)
-			fieldWrapper.appendChild(fieldErrors)
-			containerDiv.appendChild(fieldWrapper)
+			containerDiv.appendChild(widget)
+			containerDiv.appendChild(fieldErrors)
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)

@@ -58,7 +58,9 @@ class RelationalEditWidget(BaseEditWidget):
 			self.dataWidget = InternalEdit(
 				self.bone.dataStructure,
 				readOnly=self.bone.readonly,
-				defaultCat=None  # fixme: IMHO not necessary
+				errorInformation=kwargs.get("errorInformation"),
+				defaultCat=None,  # fixme: IMHO not necessary
+				errorQueue=self.bone.errorQueue
 			)
 			self.appendChild(self.dataWidget)
 		else:
