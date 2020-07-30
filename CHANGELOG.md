@@ -3,9 +3,7 @@
 This file documents any relevant changes done to ViUR Vi since version 2.
 
 
-## [develop] 
-
-This is the current development version.
+## [2.5.1] Vesuv
 
 - Feature: New "action" parameter supported in "editViews" feature
 - Feature: Allow to parametrize context variable prefixes using `conf["vi.context.prefix"]`
