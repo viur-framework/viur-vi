@@ -17,7 +17,8 @@ class RecordEditWidget(BaseEditWidget):
 			errorInformation=self.bone.errors,
 			readOnly=self.bone.readonly,
 			defaultCat=None,  # fixme: IMHO not necessary
-			errorQueue=self.bone.errorQueue
+			errorQueue=self.bone.errorQueue,
+			prefix="{}.rel".format(self.bone.boneName)
 		)
 
 	def _updateWidget(self):

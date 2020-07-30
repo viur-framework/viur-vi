@@ -17,13 +17,14 @@ from vi.widgets.edit import ParsedErrorItem, PassiveErrorItem, checkErrors
 class InternalEdit(html5.Div):
 
 	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False,
-	                        context=None, defaultCat="", module = None,boneparams = None, errorQueue=None):
+	                        context=None, defaultCat="", module = None,boneparams = None, errorQueue=None, prefix=None):
+		console.log("InternalEdit: %r, %r, %r, %r, %r, %r, %r, %r, %r", skelStructure, values, errorInformation, readOnly, context, defaultCat, boneparams, errorQueue, prefix)
 		super(InternalEdit, self).__init__()
 
 		self.errorQueue = errorQueue
 		self.addClass("vi-internaledit")
 		self.sinkEvent("onChange", "onKeyDown")
-
+		self.prefix = prefix
 		self.editIdx = 1
 		self.skelStructure = skelStructure
 		self.values = values
@@ -55,7 +56,9 @@ class InternalEdit(html5.Div):
 
 		if conf["core.version"][0] == 3:
 			for error in self.errorInformation:
-				errors[error["fieldPath"]].append(error)
+				if error["fieldPath"].startswith(self.prefix):  # just filter errors for our InternalEdit, since errors are prefixed for rel bones
+					console.log("found a prefixed bone error for us: %r, %r", error, error["fieldPath"].replace(self.prefix, ""))
+					errors[error["fieldPath"].replace(self.prefix, "")].append(error)
 
 		for key, bone in self.skelStructure:
 

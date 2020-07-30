@@ -60,7 +60,8 @@ class RelationalEditWidget(BaseEditWidget):
 				readOnly=self.bone.readonly,
 				errorInformation=kwargs.get("errorInformation"),
 				defaultCat=None,  # fixme: IMHO not necessary
-				errorQueue=self.bone.errorQueue
+				errorQueue=self.bone.errorQueue,
+				prefix="{}.rel".format(self.bone.boneName)
 			)
 			self.appendChild(self.dataWidget)
 		else:
