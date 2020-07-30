@@ -54,7 +54,7 @@ class BaseViewWidget(html5.Div):
 	"""
 	Base class for a bone-compliant view widget implementation using a div.
 	"""
-	style = ["vi-bone"]
+	style = ["vi-value"]
 
 	def __init__(self, bone, **kwargs):
 		super().__init__()

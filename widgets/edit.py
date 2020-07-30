@@ -471,13 +471,15 @@ class EditWidget(html5.Div):
 
 		if conf["core.version"][0] == 3:
 			for error in data["errors"]:
-				errors[error["fieldPath"]] = error["errorMessage"]
+				errors[error["fieldPath"]] = error
 
 		self.accordion.clearSegments()
 		for key, bone in data["structure"]:
-			# FIXME: ViUR3
+
 			if key in errors:
 				bone["error"] = errors[key]
+			else:
+				bone[ "error" ] = None
 
 			cat = defaultCat #meow!
 
@@ -516,19 +518,23 @@ class EditWidget(html5.Div):
 					(bone["error"] and isinstance(bone["error"],str) and "dependency error:" in bone["error"]):
 				descrLbl.addClass("is-required")
 
-				if bone["error"] is not None:
-					descrLbl.addClass("is-invalid")
-					descrLbl["title"] = bone["error"]
+			if bone["error"] and (
+				(bone["error"]["severity"]%2==0 and bone["required"]) or\
+				(bone["error"]["severity"]%2 == 1)
+			):
+				#todo if severity = 1 dependency error, we need to mark futher bones
 
-					segments[cat].addClass("is-incomplete is-active")
+				descrLbl.addClass("is-invalid")
+				descrLbl["title"] = bone["error"]
 
-					hasMissing = True
+				segments[cat].addClass("is-incomplete is-active")
 
-				elif bone["error"] is None and not self.wasInitialRequest:
-					descrLbl.addClass("is-valid")
+				hasMissing = True
 
-			if 0 and isinstance(bone["error"], dict):  # Fixme!
-				widget.setExtendedErrorInformation(bone["error"])
+			elif not self.wasInitialRequest: #
+				descrLbl.addClass( "is-valid" )
+			else:
+				pass # first Call no highlighting
 
 			containerDiv = html5.Div()
 			containerDiv.appendChild(descrLbl)

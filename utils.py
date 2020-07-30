@@ -229,14 +229,11 @@ class indexeddb():
 
 		dbResult = event.target.result
 		dbTransaction = event.target.result.transaction
-
 		trans = dbTransaction([name], "readwrite")
-
 		StoreHandler = trans.objectStore(name)
 
 		all = StoreHandler.getAll()
 		all.addEventListener("success", fetchedData)
-
 
 
 	def db_success(self,event):
@@ -247,7 +244,7 @@ class indexeddb():
 	def dbAction(self,action,name,key=None,obj=None):
 		if action in ["createStore", "deleteStore"]:
 			self.dbqueue.append([action, name, key, obj])
-			#self.dbVersion +=1
+			self.dbVersion +=1
 		else:
 			self.queue.append([action,name,key,obj])
 		db = self.connect()
@@ -293,8 +290,6 @@ class indexeddb():
 		trans = dbTransaction([name], "readwrite")
 		StoreHandler = trans.objectStore(name)
 		if key:
-			print("FFFFF")
-			print(key)
 			StoreHandler.add(obj, key)
 		else:
 			StoreHandler.add(obj)
@@ -318,11 +313,8 @@ class indexeddb():
 
 		def update(event):
 			result = event.target.result
-			print(result)
-			print(dir(result))
 			for k,v in obj.items():
 				setattr(result,k,v)
-			print(dir(result))
 			StoreHandler.put(result,key)
 
 		currentEntry = StoreHandler.get(key)

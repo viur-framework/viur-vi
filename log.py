@@ -120,7 +120,7 @@ class LogButton(html5.Div):
 		if "vi_log" not in idb.objectStoreNames:
 			idb.dbAction( "createStore", "vi_log", None, { "autoIncrement": True } )
 		data = idb.getList("vi_log")
-		#data.addEventListener("dataready", self.idbdata)
+		data.addEventListener("dataready", self.idbdata)
 
 
 	def idbdata(self,event):

@@ -32,7 +32,7 @@ class RecordEditWidget(BaseEditWidget):
 
 
 class RecordViewWidget(BaseViewWidget):
-	style = ["vi-bone", "vi-bone--record"]
+	style = ["vi-value", "vi-value--record"]
 
 	def __init__(self, bone, language=None, **kwargs):
 		super().__init__(bone, **kwargs)
