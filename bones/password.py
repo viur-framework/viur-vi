@@ -9,19 +9,20 @@ class PasswordEditWidget(BaseEditWidget):
 	style = ["vi-value", "vi-value--password", "vi-value-container", "input-group"]
 
 	def _createWidget(self):
-		self.appendChild("""<ignite-input [name]="widget" type="password">""")
+		self.appendChild("""<ignite-input [name]="widget" type="password" >""")
 
-		user = conf["currentUser"]
-		if self.bone.readonly or (user and "root" in user["access"]):
+		if self.bone.readonly:
 			self.verify = None
 		else:
 			self.appendChild("""
-				<label>
+				<label class="label vi-label vi-label--password is-required">
 					{{txt}}
-					<ignite-input [name]="verify" type="password">
 				</label>
+				<ignite-input [name]="verify" type="password">
 			""",
 			vars={"txt": translate("reenter password")})
+
+			self.widget.element.autocomplete="new-password"
 
 	def serialize(self):
 		if not self.verify or self.widget["value"] == self.verify["value"]:
