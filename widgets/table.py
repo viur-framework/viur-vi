@@ -537,7 +537,7 @@ class DataTable( html5.Div ):
 
 
 	def recalcHeight(self, *args, **kwargs):
-		self["style"]["max-height"] = "%spx" % (int(html5.window.top.innerHeight)-110)
+		self["style"]["max-height"] = "%spx" % (int(html5.window.innerHeight)-110)
 
 	def setDataProvider(self,obj):
 		"""

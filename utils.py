@@ -133,7 +133,7 @@ def getImagePreview(data, cropped = False, size = 150):
 
 def setPreventUnloading(mode = True):
 	try:
-		count = html5.window.top.preventViUnloading
+		count = html5.window.preventViUnloading
 	except:
 		return
 
@@ -145,7 +145,7 @@ def setPreventUnloading(mode = True):
 
 	count += (1 if mode else -1)
 
-	html5.window.top.preventViUnloading = count
+	html5.window.preventViUnloading = count
 	return count
 
 

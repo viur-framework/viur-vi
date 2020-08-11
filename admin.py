@@ -63,8 +63,8 @@ class AdminScreen(Screen):
 
 		# Register the error-handling for this iframe
 		try:
-			html5.window.top.onerror = html5.window.top.logError
-			html5.window.onerror = html5.window.top.logError
+			html5.window.onerror = html5.window.logError
+			html5.window.onerror = html5.window.logError
 		except:
 			print("logError is disabled")
 

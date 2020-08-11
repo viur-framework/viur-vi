@@ -24,6 +24,7 @@ class TopBarWidget(html5.Header):
 
 		self.sinkEvent("onClick")
 
+		# language=HTML
 		self.fromHTML("""
 			<div class="vi-tb-left bar-group bar-group--left" [name]="topbarLeft">
 				<div class="vi-tb-logo" [name]="topbarLogo"></div>
@@ -99,6 +100,7 @@ class TopBarWidget(html5.Header):
 
 		if path:
 			conf[ "theApp" ].setPath( path )
+
 
 class UserState(html5.Div):
 	def __init__(self, *args, **kwargs):
@@ -184,7 +186,9 @@ class UserState(html5.Div):
 		apane.addWidget(edwg)
 
 		conf["mainWindow"].focusPane(apane)
+
 toplevelActionSelector.insert( 0, UserState.canHandle, UserState )
+
 
 class Tasks(Button):
 	def __init__(self, *args, **kwargs):
@@ -235,7 +239,9 @@ class Tasks(Button):
 	@staticmethod
 	def canHandle( action ):
 		return action == "tasks"
+
 toplevelActionSelector.insert( 0, Tasks.canHandle, Tasks )
+
 
 class Logout(Button):
 	def __init__(self, *args, **kwargs):
