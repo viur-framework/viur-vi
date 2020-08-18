@@ -87,5 +87,6 @@ conf = {
 	"updateParams": None,
 
 	"cacheObj": {},
-	"indexeddb":None
+	"indexeddb":None,
+	"logAmount":50
 }

@@ -133,7 +133,7 @@ def getImagePreview(data, cropped = False, size = 150):
 
 def setPreventUnloading(mode = True):
 	try:
-		count = html5.window.top.preventViUnloading
+		count = html5.window.preventViUnloading
 	except:
 		return
 
@@ -145,7 +145,7 @@ def setPreventUnloading(mode = True):
 
 	count += (1 if mode else -1)
 
-	html5.window.top.preventViUnloading = count
+	html5.window.preventViUnloading = count
 	return count
 
 
@@ -229,15 +229,32 @@ class indexeddb():
 
 		dbResult = event.target.result
 		dbTransaction = event.target.result.transaction
-
 		trans = dbTransaction([name], "readwrite")
-
 		StoreHandler = trans.objectStore(name)
 
 		all = StoreHandler.getAll()
 		all.addEventListener("success", fetchedData)
 
 
+	def getListKeys( self,name ):
+		db = self.connect()
+		db.listName = name
+		db.addEventListener( "db_ready", self._getListKey )
+		return db
+
+	def _getListKey(self,event):
+		name = event.target.listName
+		db = event.target
+		def fetchedData(event):
+			db.dispatchEvent(CustomEvent.new("dataready",{"detail":{"data":event.target.result}}))
+
+		dbResult = event.target.result
+		dbTransaction = event.target.result.transaction
+		trans = dbTransaction([name], "readwrite")
+		StoreHandler = trans.objectStore(name)
+
+		all = StoreHandler.getAllKeys()
+		all.addEventListener("success", fetchedData)
 
 	def db_success(self,event):
 		self.dbVersion = event.target.result.version
@@ -247,7 +264,7 @@ class indexeddb():
 	def dbAction(self,action,name,key=None,obj=None):
 		if action in ["createStore", "deleteStore"]:
 			self.dbqueue.append([action, name, key, obj])
-			#self.dbVersion +=1
+			self.dbVersion +=1
 		else:
 			self.queue.append([action,name,key,obj])
 		db = self.connect()
@@ -293,8 +310,6 @@ class indexeddb():
 		trans = dbTransaction([name], "readwrite")
 		StoreHandler = trans.objectStore(name)
 		if key:
-			print("FFFFF")
-			print(key)
 			StoreHandler.add(obj, key)
 		else:
 			StoreHandler.add(obj)
@@ -318,11 +333,8 @@ class indexeddb():
 
 		def update(event):
 			result = event.target.result
-			print(result)
-			print(dir(result))
 			for k,v in obj.items():
 				setattr(result,k,v)
-			print(dir(result))
 			StoreHandler.put(result,key)
 
 		currentEntry = StoreHandler.get(key)

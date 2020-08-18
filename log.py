@@ -57,22 +57,25 @@ class logWidget(html5.Div):
 	def __init__(self, logList ):
 		super(logWidget, self).__init__()
 		self["class"] ="vi-widget"
-
+		self["style"]["overflow"] ="auto" #here we need a class?
+		self.logList = logList
 		header = html5.Div()
 		header["class"] = ["vi-actionbar","bar"]
 		self.appendChild(header)
 
-		tablehead = ["Datum","Status","Nachricht","Key"] #,"Daten"
-		tablefields = ["date","type","msg","key"] #,"data"
-		table = tablewdgt.SelectTable(indexes=True)
-		table.setHeader(tablehead)
+		DeferredCall(self.builDataTable)
 
-		for eidx, entry in enumerate(logList):
+	def builDataTable( self ):
+		tablehead = [ "Datum", "Status", "Nachricht", "Key" ]  # ,"Daten"
+		tablefields = [ "date", "type", "msg", "key" ]  # ,"data"
+		table = tablewdgt.SelectTable( indexes = True )
+		table.setHeader( tablehead )
+
+		for eidx, entry in enumerate(self.logList):
 			for fidx in range(0,len(tablehead)):
 				table.prepareCol(eidx,fidx+1)
 				currentDatafield = tablefields[fidx]
-				print(currentDatafield)
-				print(entry)
+
 				if currentDatafield=="msg":
 
 					if isinstance(entry[currentDatafield], html5.Widget):
@@ -120,12 +123,12 @@ class LogButton(html5.Div):
 		if "vi_log" not in idb.objectStoreNames:
 			idb.dbAction( "createStore", "vi_log", None, { "autoIncrement": True } )
 		data = idb.getList("vi_log")
-		#data.addEventListener("dataready", self.idbdata)
+		data.addEventListener("dataready", self.idbdata)
 
 
 	def idbdata(self,event):
-		print(len(event.detail["data"]))
-		for item in event.detail["data"]:
+		logAmount = conf["logAmount"]
+		for item in list(event.detail["data"])[:logAmount]:
 			self.log(item["type"],
 			         item["msg"],
 			         item["icon"],
@@ -133,8 +136,22 @@ class LogButton(html5.Div):
 		             item["action"],
 		             item["key"],
 		             item["data"],
-		             item["date"]
+		             item["date"],
+					 onlyLoad=True
 		          )
+
+		self.cleanLog()
+
+
+	def cleanLog( self ):
+		idb = conf[ "indexeddb" ]
+		data = idb.getListKeys( "vi_log" )
+		data.addEventListener( "dataready", self.cleanLogAction )
+
+	def cleanLogAction( self,event ):
+		for idx in list(event.detail["data"])[:-conf["logAmount"]-1]:
+			conf[ "indexeddb" ].dbAction( "delete", "vi_log", idx )
+
 
 	def renderPopOut(self):
 		self.popoutlist.removeAllChildren()
@@ -145,7 +162,6 @@ class LogButton(html5.Div):
 			listentry = logEntry(entry)
 			aitem.appendChild(listentry)
 			self.popoutlist.appendChild(aitem)
-
 
 
 	def onClick(self,sender=None):
@@ -168,7 +184,7 @@ class LogButton(html5.Div):
 		conf["mainWindow"].addPane(apane)
 		conf["mainWindow"].focusPane(apane)
 
-	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data =None, date=None):
+	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data =None, date=None, onlyLoad=False):
 		logObj = {"type":type,
 		          "msg":msg,
 		          "icon":icon,
@@ -192,11 +208,14 @@ class LogButton(html5.Div):
 		#conf["indexeddb"].dbAction("add", "vi_test", "3", {"test": 1})
 		#conf["indexeddb"].dbAction("delete", "vi_test", "1")
 		if isinstance(msg,str):
-			conf["indexeddb"].dbAction("add","vi_log", None, logObj)
+			if not onlyLoad:
+				conf["indexeddb"].dbAction("add","vi_log", None, logObj)
 			self.logsList.insert(0,logObj)
-		self.renderPopOut()
 
-		self.msgOverlay(logObj)
+			#self.cleanLog()
+		self.renderPopOut()
+		if not onlyLoad:
+			self.msgOverlay(logObj)
 
 
 

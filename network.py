@@ -399,7 +399,7 @@ class NetworkService(object):
 
 		if self.kickoffs < self.retryMax and int(code) in self.retryCodes:
 			try:
-				logError = html5.window.top.logError
+				logError = html5.window.logError
 			except:
 				logError = None
 			if logError and self.kickoffs == self.retryMax - 1:

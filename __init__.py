@@ -115,7 +115,7 @@ class Application(html5.Div):
 		html5.document.title = conf["vi.title.delimiter"].join(title)
 
 	def setPath(self, path = ""):
-		hash = html5.window.top.location.hash
+		hash = html5.window.location.hash
 		if "?" in hash and not "?" in path:
 			hash = hash.split("?", 1)[1]
 			if hash:
@@ -124,7 +124,7 @@ class Application(html5.Div):
 		else:
 			hash = ""
 
-		html5.window.top.location.hash = path + hash
+		html5.window.location.hash = path + hash
 
 def start():
 
