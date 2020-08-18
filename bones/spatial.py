@@ -8,8 +8,8 @@ class SpatialEditWidget(BaseEditWidget):
 	def _createWidget(self):
 		return self.fromHTML(
 			"""
-			<ignite-input [name]="latitude" type="number" placeholder="latitude">
-			<ignite-input [name]="longitude" type="number" placeholer="longitute">
+			<ignite-input [name]="latitude" type="number" placeholder="latitude" step="any">
+			<ignite-input [name]="longitude" type="number" placeholer="longitute" step="any">
 			"""
 		)
 
