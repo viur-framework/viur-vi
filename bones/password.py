@@ -14,6 +14,7 @@ class PasswordEditWidget(BaseEditWidget):
 		if self.bone.readonly:
 			self.verify = None
 		else:
+			# language=HTML
 			self.appendChild("""
 				<label class="label vi-label vi-label--password is-required">
 					{{txt}}

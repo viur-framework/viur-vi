@@ -25,6 +25,7 @@ class RelationalEditWidget(BaseEditWidget):
 	style = ["vi-value", "vi-value--relational", "input-group"]
 
 	def _createWidget(self):
+		# language=HTML
 		return self.fromHTML(
 			"""
 				<ignite-input [name]="destWidget" readonly>

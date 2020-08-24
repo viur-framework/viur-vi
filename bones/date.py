@@ -23,12 +23,14 @@ class DateEditWidget(BaseEditWidget):
 
 	def _createWidget(self):
 		if self.bone.boneStructure.get("date", True):
+			# language=HTML
 			self.dateInput = self.appendChild(
 				"""<ignite-input type="date" />"""
 			)[0]
 			self.serverToClient.append("%d.%m.%Y")  # fixme: Still using German format server-side?
 
 		if self.bone.boneStructure.get("time", True):
+			# language=HTML
 			self.timeInput = self.appendChild(
 				"""<ignite-input type="time" step="1" />"""
 			)[0]

@@ -84,6 +84,7 @@ class BaseMultiEditWidgetEntry(html5.Div):
 		for fct in ["unserialize", "serialize", "focus"]:
 			setattr(self, fct, getattr(self.widget, fct))
 
+		# language=HTML
 		self.appendChild(
 			"""<div [name]="dragArea" class="label vi-bone-dragger"><icon embedsvg="icons-drag-handle" ></icon></div>""",
 			self.widget,
@@ -176,6 +177,7 @@ class BaseMultiEditWidget(html5.Div):
 	style = ["vi-value-container"]
 
 	def __init__(self, bone, widgetFactory: callable, **kwargs):
+		# language=HTML
 		super().__init__("""
 			<div [name]="widgets" class="vi-bone-widgets"></div>
 			<div [name]="actions" class="vi-bone-actions input-group">
@@ -267,6 +269,7 @@ class BaseLanguageEditWidget(html5.Div):
 	"""
 
 	def __init__(self, bone, widgetFactory: callable, **kwargs):
+		# language=HTML
 		super().__init__("""
 			<div [name]="widgets" class="vi-bone-widgets"></div>
 			<div [name]="actions" class="vi-bone-actions input-group"></div>
