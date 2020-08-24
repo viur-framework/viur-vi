@@ -44,6 +44,9 @@ class BaseEditWidget(html5.Div):
 		self.widget["readonly"] = self.bone.readonly
 
 	def unserialize(self, value=None):
+		if value:
+			value = str(value)
+
 		self.widget["value"] = value or ""
 
 	def serialize(self):
@@ -63,7 +66,10 @@ class BaseViewWidget(html5.Div):
 
 	def unserialize(self, value=None):
 		self.value = value
-		self.appendChild(html5.TextNode(value or conf["emptyValue"]), replace=True)
+		if not value:
+			value = conf["emptyValue"]
+
+		self.appendChild(str(value), replace=True)
 
 	def serialize(self):
 		return self.value
