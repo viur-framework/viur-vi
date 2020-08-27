@@ -264,6 +264,10 @@ class indexeddb():
 	def dbAction(self,action,name,key=None,obj=None):
 		if action in ["createStore", "deleteStore"]:
 			self.dbqueue.append([action, name, key, obj])
+
+			if self.dbVersion is None:
+				self.dbVersion = 0
+
 			self.dbVersion +=1
 		else:
 			self.queue.append([action,name,key,obj])
