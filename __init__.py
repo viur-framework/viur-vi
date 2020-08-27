@@ -22,11 +22,14 @@ class Application(html5.Div):
 		self.loginScreen = None
 		self.adminScreen = None
 
+		try:
+			self.isFramed = bool(html5.jseval("window.top !== window.self"))
+		except:
+			self.isFramed = True
+
 		self.startup()
 
 	def startup(self, *args, **kwargs):
-
-
 		if conf["core.version"] is None:
 			network.NetworkService.request(None, "/vi/getVersion",
 			                               successHandler=self.getVersionSuccess,

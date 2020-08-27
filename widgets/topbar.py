@@ -40,9 +40,13 @@ class TopBarWidget(html5.Header):
 			</nav>
 		""")
 
-		svg = embedsvg.get("logos-vi")
-		if svg:
-			self.topbarLogo.element.innerHTML = svg + self.topbarLogo.element.innerHTML
+		if not conf["theApp"].isFramed:
+			svg = embedsvg.get("logos-vi")
+			if svg:
+				self.topbarLogo.element.innerHTML = svg + self.topbarLogo.element.innerHTML
+		else:
+			self.topbarLogo.hide()
+			self.moduleH1.hide()
 
 		DeferredCall(self.setTitle, _delay=500)
 
@@ -266,7 +270,8 @@ class Logout(Button):
 
 	@staticmethod
 	def canHandle( action ):
-		return action == "logout"
-toplevelActionSelector.insert( 0, Logout.canHandle, Logout )
+		return action == "logout" and not conf["theApp"].isFramed
+
+toplevelActionSelector.insert(0, Logout.canHandle, Logout)
 
 #FIXME: Put Message Center in Iconnav. The message center will be a popout in the topbar.
