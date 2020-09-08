@@ -104,8 +104,11 @@ class ListHandler(Pane):
 		assert self.canHandleInitialHash(pathList, params)
 
 		if pathList[1] == "list":
-			self.addWidget(self._createWidget())
-			self.focus()
+			if self.mode != "group":
+				self.addWidget(self._createWidget())
+				self.focus()
+			else:
+				DeferredCall(self.focus, _delay=250)
 
 		elif pathList[1] == "add":
 			pane = Pane(translate("Add"), closeable=True, iconURL="icons-add",
