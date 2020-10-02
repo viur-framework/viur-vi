@@ -67,8 +67,7 @@ class UserLogoutMsg(Popup):
 		"""
 		NetworkService.request("user", "view/self",
 		                       successHandler=self.onUserTestSuccess,
-		                       failureHandler=self.onUserTestFail,
-		                       cacheable=False)
+		                       failureHandler=self.onUserTestFail)
 
 	def onUserTestSuccess(self, req):
 		"""

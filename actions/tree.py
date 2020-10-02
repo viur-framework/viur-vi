@@ -284,8 +284,7 @@ class SelectRootNode( html5.Select ):
 	def update(self):
 		self.removeAllChildren()
 		NetworkService.request( self.parent().parent().module, "listRootNodes",
-		                            successHandler=self.onRootNodesAvailable,
-		                                cacheable=True )
+		                            successHandler=self.onRootNodesAvailable)
 
 	def onRootNodeChanged(self, newNode):
 		for option in self._children:

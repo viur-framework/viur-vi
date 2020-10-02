@@ -137,8 +137,7 @@ class UserState(html5.Div):
 		user = conf.get( "currentUser" )
 		if not user:
 			NetworkService.request( "user", "view/self",
-			                        successHandler=self.onCurrentUserAvailable,
-			                        cacheable=False )
+			                        successHandler=self.onCurrentUserAvailable)
 			return
 
 		aitem = html5.Div()
@@ -204,8 +203,7 @@ class Tasks(Button):
 
 		if not conf[ "tasks" ][ "server" ]:
 			NetworkService.request( None, "/vi/_tasks/list",
-		        successHandler=self.onTaskListAvailable,
-		        cacheable=False )
+		        successHandler=self.onTaskListAvailable)
 
 		self.update()
 
@@ -230,8 +228,7 @@ class Tasks(Button):
 		user = conf.get( "currentUser" )
 		if not user:
 			NetworkService.request( "user", "view/self",
-			                        successHandler=self.onCurrentUserAvailable,
-			                        cacheable=False )
+			                        successHandler=self.onCurrentUserAvailable)
 			return
 
 		if "root" in user[ "access" ]:

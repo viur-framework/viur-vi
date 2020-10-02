@@ -286,8 +286,7 @@ class ListWidget(html5.Div):
 			filter["cursor"] = self._currentCursor
 
 			self._currentRequests.append(NetworkService.request(self.module, "list", filter,
-			                                successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
-			                                cacheable=True ) )
+			                                successHandler=self.onCompletion, failureHandler=self.showErrorMsg) )
 			self._currentCursor = None
 		else:
 			self.actionBar.resetLoadingState()
@@ -334,8 +333,7 @@ class ListWidget(html5.Div):
 		self._currentRequests.append(
 			NetworkService.request(self.module, "list", filter,
 			                        successHandler=self.onCompletion,
-			                        failureHandler=self.showErrorMsg,
-			                        cacheable=True))
+			                        failureHandler=self.showErrorMsg))
 
 	def setFilter(self, filter, filterID=None, filterDescr=None):
 		"""

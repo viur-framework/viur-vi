@@ -95,7 +95,6 @@
   "logics/logics/vistache.py",
   "logics/vistache.py",
   "login.py",
-  "network.py",
   "pane.py",
   "priorityqueue.py",
   "screen.py",
