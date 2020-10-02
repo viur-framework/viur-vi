@@ -98,6 +98,7 @@
   "pane.py",
   "priorityqueue.py",
   "screen.py",
+  "serversideaction.py",
   "sidebarwidgets/__init__.py",
   "sidebarwidgets/filterselector.py",
   "sidebarwidgets/internalpreview.py",
