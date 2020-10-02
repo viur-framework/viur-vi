@@ -1,21 +1,31 @@
 # -*- coding: utf-8 -*-
 from flare import html5
 from flare.network import DeferredCall
+from collections import defaultdict
+
 from vi.config import conf
-from vi.priorityqueue import boneSelector
 from vi.exception import InvalidBoneValueException
-from vi.widgets.tooltip import ToolTip
+from vi.network import DeferredCall
+from vi.priorityqueue import boneSelector
 from vi.widgets.accordion import Accordion
+from vi.widgets.tooltip import ToolTip
+
+from js import console
+
+from vi.widgets.edit import ParsedErrorItem, PassiveErrorItem, checkErrors
+
 
 class InternalEdit(html5.Div):
 
 	def __init__(self, skelStructure, values=None, errorInformation=None, readOnly=False,
-	                        context=None, defaultCat="", module = None,boneparams = None):
+	                        context=None, defaultCat="", module = None,boneparams = None, errorQueue=None, prefix=None):
+		console.log("InternalEdit: %r, %r, %r, %r, %r, %r, %r, %r, %r", skelStructure, values, errorInformation, readOnly, context, defaultCat, boneparams, errorQueue, prefix)
 		super(InternalEdit, self).__init__()
 
+		self.errorQueue = errorQueue
 		self.addClass("vi-internaledit")
 		self.sinkEvent("onChange", "onKeyDown")
-
+		self.prefix = prefix
 		self.editIdx = 1
 		self.skelStructure = skelStructure
 		self.values = values
@@ -43,11 +53,13 @@ class InternalEdit(html5.Div):
 		defaultCat = self.defaultCat
 		firstCat = None
 
-		errors = { }
+		errors = defaultdict(list)
 
 		if self.errorInformation:
 			for error in self.errorInformation:
-				errors[ error[ "fieldPath" ] ] = error[ "errorMessage" ]
+				if error["fieldPath"].startswith(self.prefix):  # just filter errors for our InternalEdit, since errors are prefixed for rel bones
+					console.log("found a prefixed bone error for us: %r, %r", error, error["fieldPath"].replace(self.prefix, ""))
+					errors[error["fieldPath"].replace(self.prefix, "")].append(error)
 
 		for key, bone in self.skelStructure:
 
@@ -72,7 +84,7 @@ class InternalEdit(html5.Div):
 				if not firstCat:
 					firstCat = segments[cat]
 
-			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict)
+			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, errors, self.errorQueue)
 			widget = boneFactory.editWidget()
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 
@@ -83,17 +95,27 @@ class InternalEdit(html5.Div):
 			if bone["required"]:
 				descrLbl["class"].append("is-required")
 
-			if key in errors:
-				bone["error"] = errors[key]
+			bone["errors"] = errors.get(key)
+			fieldErrors = html5.fromHTML("""<div class="vi-bone-widget-item"></div>""")[0]
+			errorsFound, invalidatedFields = checkErrors(bone)
 
-			if (bone["required"] and "error" in bone
-			    and (bone["error"] is not None
-			            or (self.errorInformation and key in self.errorInformation.keys()))):
+			if errorsFound:
 				descrLbl["class"].append("is-invalid")
-				if bone["error"]:
-					descrLbl["title"] = bone["error"]
-				else:
-					descrLbl["title"] = self.errorInformation[ key ]
+				if isinstance(bone["errors"], dict):
+					fieldErrors.appendChild(ParsedErrorItem(bone["errors"]))
+				elif isinstance(bone["errors"], list):
+					for error in bone["errors"]:
+						fieldErrors.appendChild(ParsedErrorItem(error))
+				console.log("invalidatedFields", invalidatedFields)
+				for i in invalidatedFields:
+					container = self.containers.get(i)
+					if container:
+						otherLabel = container.children()[0]
+						otherLabel.removeClass("is-valid")
+						otherLabel.addClass("is-invalid")
+						container.children()[1].children()[1].appendChild(PassiveErrorItem(error))
+					else:
+						self.errorQueue[i].append(error)
 
 				if segments and cat in segments:
 					segments[cat]["class"].append("is-incomplete")
@@ -110,6 +132,7 @@ class InternalEdit(html5.Div):
 			self.containers[key] = html5.Div()
 			self.containers[key].appendChild(descrLbl)
 			self.containers[key].appendChild(widget)
+			self.containers[key].appendChild(fieldErrors)
 			self.containers[key].addClass("vi-bone", "vi-bone--%s" % bone["type"].replace(".","-"), "vi-bone--%s" % key)
 
 			if "." in bone["type"]:
@@ -128,6 +151,15 @@ class InternalEdit(html5.Div):
 			#Hide invisible bones
 			if not bone["visible"]:
 				self.containers[key].hide()
+
+		for myKey, myErrors in self.errorQueue.items():
+			container = self.containers.get(myKey)
+			if container:
+				otherLabel = container.children()[0]
+				otherLabel.removeClass("is-valid")
+				otherLabel.addClass("is-invalid")
+				for myError in myErrors:
+					container.children()[1].children()[1].appendChild(PassiveErrorItem(myError))
 
 		print(self.boneparams)
 		if self.boneparams and "vi.style.rel.categories" in self.boneparams and self.boneparams["vi.style.rel.categories"] == "collapsed":pass

@@ -1,5 +1,5 @@
-#-*- coding: utf-8 -*-
 from flare import html5
+from collections import defaultdict
 
 from vi.config import conf
 from vi.i18n import translate
@@ -428,7 +428,7 @@ class ListWidget(html5.Div):
 
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict)
+			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict, defaultdict(list))
 			self.table.setCellRender(boneName, boneFactory)
 			boneInfoList.append( boneInfo )
 
@@ -443,7 +443,7 @@ class ListWidget(html5.Div):
 
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict)
+			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict, defaultdict(list))
 			rendersDict[boneName] = boneFactory
 			boneInfoList.append(boneInfo)
 

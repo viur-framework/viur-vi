@@ -59,7 +59,10 @@ class RelationalEditWidget(BaseEditWidget):
 			self.dataWidget = InternalEdit(
 				self.bone.dataStructure,
 				readOnly=self.bone.readonly,
-				defaultCat=None  # fixme: IMHO not necessary
+				errorInformation=kwargs.get("errorInformation"),
+				defaultCat=None,  # fixme: IMHO not necessary
+				errorQueue=self.bone.errorQueue,
+				prefix="{}.rel".format(self.bone.boneName)
 			)
 			self.appendChild(self.dataWidget)
 		else:
@@ -330,7 +333,7 @@ class FileBone(TreeItemBone):
 	@staticmethod
 	def checkFor(moduleName, boneName, skelStructure):
 		#print(moduleName, boneName, skelStructure[boneName]["type"], skelStructure[boneName]["type"] == "relational.file" or skelStructure[boneName]["type"].startswith("relational.file."))
-		return skelStructure[boneName]["type"] == "treeitem.file" or skelStructure[boneName]["type"].startswith("treeitem.file.")
+		return skelStructure[boneName]["type"] == "treeitem.file" or skelStructure[boneName]["type"].startswith("relational.tree.leaf.file")
 		#fixme: This type should be relational.treeitem.file and NOT relational.file.... WTF
 		#return skelStructure[boneName]["type"] == "relational.treeitem.file" or skelStructure[boneName]["type"].startswith("relational.treeitem.file.")
 

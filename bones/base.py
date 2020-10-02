@@ -1,11 +1,23 @@
 # -*- coding: utf-8 -*-
+
 from flare import html5
 from flare.input import Input
 from flare.button import Button
+from enum import Enum, IntEnum
+
 from vi.priorityqueue import boneSelector
 from vi.config import conf
 
 import json
+
+
+class ReadFromClientErrorSeverity(IntEnum):
+	NotSet = 0
+	InvalidatesOther = 1
+	Empty = 2
+	Invalid = 3
+
+str(ReadFromClientErrorSeverity(int("0"))).split(".")[1]
 
 
 class BaseEditWidget(html5.Div):
@@ -82,9 +94,10 @@ class BaseMultiEditWidgetEntry(html5.Div):
 	Base class for an entry in a MultiBone container.
 	"""
 
-	def __init__(self, widget: html5.Widget):
+	def __init__(self, widget: html5.Widget, errorInformation=None):
 		super().__init__()
 		self.widget = widget
+		self.errorInformation = errorInformation
 
 		# Proxy some functions of the original widget
 		for fct in ["unserialize", "serialize", "focus"]:
@@ -94,7 +107,8 @@ class BaseMultiEditWidgetEntry(html5.Div):
 		self.appendChild(
 			"""<div [name]="dragArea" class="label vi-bone-dragger"><icon embedsvg="icons-drag-handle" ></icon></div>""",
 			self.widget,
-			"""<button [name]="removeBtn" class="btn--delete" text="Delete" icon="icons-delete" />"""
+			"""<button [name]="removeBtn" class="btn--delete" text="Delete" icon="icons-delete" />
+			"""
 		)
 
 		if widget.bone.boneStructure["readonly"]:
@@ -350,20 +364,22 @@ class BaseBone(object):
 	"""
 	Base "Catch-All" delegate for everything not handled separately.
 	"""
-	def __init__(self, moduleName, boneName, skelStructure):
+	def __init__(self, moduleName, boneName, skelStructure, errors, errorQueue=None):
 		super().__init__()
 
 		self.moduleName = moduleName
 		self.boneName = boneName
 		self.skelStructure = skelStructure
 		self.boneStructure = self.skelStructure[self.boneName]
+		self.errors = errors
+		self.errorQueue = errorQueue
 
 		self.readonly = bool(self.boneStructure.get("readonly"))
 		self.required = bool(self.boneStructure.get("required"))
 		self.multiple = bool(self.boneStructure.get("multiple"))
 		self.languages = self.boneStructure.get("languages")
 
-	def editWidget(self, value=None) -> html5.Widget:
+	def editWidget(self, value=None, errorInformation=None) -> html5.Widget:
 		widgetFactory = self.editWidgetFactory
 
 		if self.multiEditWidgetFactory and self.multiple:
@@ -374,7 +390,7 @@ class BaseBone(object):
 			languageWidgetFactory = widgetFactory  # have to make a separate "free" variable
 			widgetFactory = lambda bone, **kwargs: self.languageEditWidgetFactory(bone, languageWidgetFactory, **kwargs)
 
-		widget = widgetFactory(self)
+		widget = widgetFactory(self, errorInformation=errorInformation)
 		widget.unserialize(value)
 		return widget
 

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
+
 from flare import html5
 from flare.popup import Confirm
+from typing import List, Tuple
+from collections import defaultdict, deque
+
 import vi.utils as utils
 
 from flare.network import NetworkService, DeferredCall
@@ -12,6 +16,35 @@ from vi.i18n import translate
 from vi.widgets.list import ListWidget
 from vi.widgets.accordion import Accordion
 from vi.exception import InvalidBoneValueException
+
+from js import console
+
+from vi.bones.base import ReadFromClientErrorSeverity
+
+
+class ParsedErrorItem(html5.Li):
+	style = []
+
+	def __init__(self, error):
+		super().__init__("""<div><span>Severity: </span><span [name]="errorSeverity"></span>&nbsp;<span>Message: </span><span [name]="errorMessage"></span>
+				<div [name]="invalidatedArea"><h4>Invalidated Fields</h4><ul [name]="errorList"></ul></div>
+			""")
+
+		self.errorSeverity.element.innerHTML = str(ReadFromClientErrorSeverity(error["severity"])).split(".")[1]
+		self.errorMessage.element.innerHTML = error["errorMessage"]
+		if error["invalidatedFields"]:
+			for item in error["invalidatedFields"]:
+				self.errorList.appendChild("<li>{}</li>".format(item))
+		else:
+			self.invalidatedArea.hide()
+
+
+class PassiveErrorItem(html5.Li):
+	style = []
+
+	def __init__(self, error):
+		super().__init__("""<div><span [name]="errorSeverity"></span></div>""")
+		self.errorSeverity.element.innerHTML = "Invalidated by other field {}!".format(error["fieldPath"])
 
 
 def parseHashParameters( src, prefix="" ):
@@ -72,6 +105,20 @@ def parseHashParameters( src, prefix="" ):
 
 	return res
 
+
+def checkErrors(bone) -> Tuple[bool, List[str]]:
+	errors = bone["errors"]
+	if not errors:
+		return False, list()
+	invalidatedFields = list()
+	for error in errors:
+		if (
+				(error["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
+				(error["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
+		):
+			if error["invalidatedFields"]:
+				invalidatedFields.extend(error["invalidatedFields"])
+	return True, invalidatedFields
 
 
 class EditWidget(html5.Div):
@@ -374,6 +421,10 @@ class EditWidget(html5.Div):
 		conf["mainWindow"].log("success", translate( u"The hierarchy will be cloned in the background." ))
 		self.closeOrContinue()
 
+	def formatReadFromClientErrorSeverity(self, error):
+
+		template = "Severity {severity}: "
+
 	def setData(self, request=None, data=None, ignoreMissing=False, askHierarchyCloning=True):
 		"""
 		Rebuilds the UI according to the skeleton received from server
@@ -445,20 +496,19 @@ class EditWidget(html5.Div):
 				contextVariable: data["values"].get(contextKey)
 			})
 
-		errors = {}
+		errors = defaultdict(list)
 
-		for error in data["errors"]:
-			errors[error["fieldPath"]] = error
+		for error in data[ "errors" ]:
+			errors[ error[ "fieldPath" ] ].append( error )
 
 		self.accordion.clearSegments()
+		errorQueue = defaultdict(list)
 		for key, bone in data["structure"]:
-
-			if key in errors:
-				bone["error"] = errors[key]
-			else:
-				bone[ "error" ] = None
-
+			console.log("errors complete", errors)
+			bone["errors"] = errors.get(key)
 			cat = defaultCat #meow!
+
+			console.log("bone", key, bone["errors"])
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)
@@ -468,8 +518,8 @@ class EditWidget(html5.Div):
 			if cat not in segments:
 				segments[cat] = self.accordion.addSegment(cat)
 
-			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict)
-			widget = boneFactory.editWidget()
+			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, data["errors"], errorQueue=errorQueue)
+			widget = boneFactory.editWidget(errorInformation=data["errors"])
 
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
@@ -494,14 +544,27 @@ class EditWidget(html5.Div):
 			if bone["required"]:
 				descrLbl.addClass( "is-required" )
 
-			if bone["error"] and (
-				(bone["error"]["severity"]%2==0 and bone["required"]) or\
-				(bone["error"]["severity"]%2 == 1)
-			):
-				#todo if severity = 1 dependency error, we need to mark futher bones
-
+			fieldErrors = html5.fromHTML("""<div class="vi-bone-widget-item"></div>""")[0]
+			errorsFound, invalidatedFields = checkErrors(bone)
+			if errorsFound:
+				#todo if severity = 1 dependency error, we need to mark further bones
 				descrLbl.addClass("is-invalid")
-				descrLbl["title"] = bone["error"]
+
+				if isinstance(bone["errors"], dict):
+					fieldErrors.appendChild(ParsedErrorItem(bone["errors"]))
+				elif isinstance(bone["errors"], list):
+					for error in bone["errors"]:
+						fieldErrors.appendChild(ParsedErrorItem(error))
+				console.log("invalidatedFields", invalidatedFields)
+				for i in invalidatedFields:
+					container = self.containers.get(i)
+					if container:
+						otherLabel = container.children()[0]
+						otherLabel.removeClass("is-valid")
+						otherLabel.addClass("is-invalid")
+						container.children()[1].children()[1].appendChild(PassiveErrorItem(error))
+					else:
+						errorQueue[i].append(error)
 
 				segments[cat].addClass("is-incomplete is-active")
 
@@ -515,6 +578,7 @@ class EditWidget(html5.Div):
 			containerDiv = html5.Div()
 			containerDiv.appendChild(descrLbl)
 			containerDiv.appendChild(widget)
+			containerDiv.appendChild(fieldErrors)
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)
@@ -545,6 +609,14 @@ class EditWidget(html5.Div):
 			if bone["params"] and bone["params"].get("logic.readonlyIf"):
 				self.containers[key].disable()
 
+		for myKey, myErrors in errorQueue.items():
+			container = self.containers.get(myKey)
+			if container:
+				otherLabel = container.children()[0]
+				otherLabel.removeClass("is-valid")
+				otherLabel.addClass("is-invalid")
+				for myError in myErrors:
+					container.children()[1].children()[1].appendChild(PassiveErrorItem(myError))
 
 		# Hide all segments where all fields are invisible
 		for fs in segments.values():
