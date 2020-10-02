@@ -337,7 +337,6 @@ class TreeItemWidget(html5.Li):
 			self.childrenLoaded = True
 			self.widget.requestChildren(self)
 
-
 class TreeLeafWidget(TreeItemWidget):
 	skelType = "leaf"
 
@@ -367,10 +366,8 @@ class TreeLeafWidget(TreeItemWidget):
 			nodeIcon.element.innerHTML = svg + nodeIcon.element.innerHTML
 			self.nodeImage.appendChild(nodeIcon)
 
-
 class TreeNodeWidget(TreeItemWidget):
 	skelType = "node"
-
 
 class TreeWidget(html5.Div):
 	"""
@@ -760,7 +757,6 @@ class TreeWidget(html5.Div):
 	def canHandle(moduleName, moduleInfo):
 		return moduleInfo["handler"] == "tree" or moduleInfo["handler"].startswith("tree.")
 
-
 moduleWidgetSelector.insert(1, TreeWidget.canHandle, TreeWidget)
 displayDelegateSelector.insert(1, TreeWidget.canHandle, TreeWidget)
 
@@ -771,26 +767,23 @@ class BrowserLeafWidget(TreeLeafWidget):
 		self["class"].append("hierarchy-item")
 		self.additionalDropAreas()
 		self.buildDescription()
-	# self.toggleArrow()
-	# self.EntryIcon()
-
+		# self.toggleArrow()
+		# self.EntryIcon()
 
 class BrowserNodeWidget(TreeNodeWidget):
 	def setStyle(self):
 		self["class"].append("hierarchy-item")
 		self.additionalDropAreas()
 		self.buildDescription()
-	# self.toggleArrow()
-	# self.EntryIcon()
-
+		# self.toggleArrow()
+		# self.EntryIcon()
 
 class BreadcrumbNodeWidget(TreeNodeWidget):
 	def setStyle(self):
 		# self[ "style" ][ "background-color" ] = "#f7edd2"
 		self.buildDescription()
-# self.toggleArrow()
-# self.EntryIcon()
-
+		# self.toggleArrow()
+		# self.EntryIcon()
 
 class TreeBrowserWidget(TreeWidget):
 	leafWidget = BrowserLeafWidget
@@ -799,10 +792,9 @@ class TreeBrowserWidget(TreeWidget):
 	def __init__(self, module, rootNode=None, node=None, context=None, *args, **kwargs):
 		super(TreeBrowserWidget, self).__init__(module, rootNode, node, context, *args, **kwargs)
 
-		# Breadcrumb (bröselige Bröselbrotbrösel, oder was damit sonst auch immer gemeint sein soll...)
 		self.pathList = html5.Div()
 		self.pathList.addClass("vi-tree-breadcrumb")
-		self.insertChild(self.pathList, self.entryFrame)
+		self.appendChild(self.pathList, self.entryFrame)
 
 	def reloadData(self):
 		super().reloadData()
@@ -852,6 +844,5 @@ class TreeBrowserWidget(TreeWidget):
 	def canHandle(module, moduleInfo):
 		return moduleInfo["handler"] == "tree.browser" or moduleInfo["handler"].startswith("tree.browser.")
 
-
-moduleWidgetSelector.insert(1, TreeBrowserWidget.canHandle, TreeBrowserWidget)
-displayDelegateSelector.insert(1, TreeBrowserWidget.canHandle, TreeBrowserWidget)
+moduleWidgetSelector.insert(5, TreeBrowserWidget.canHandle, TreeBrowserWidget)
+displayDelegateSelector.insert(5, TreeBrowserWidget.canHandle, TreeBrowserWidget)

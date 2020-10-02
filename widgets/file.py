@@ -13,9 +13,6 @@ from vi.framework.event import EventDispatcher
 from vi.network import NetworkService, DeferredCall
 from vi.priorityqueue import displayDelegateSelector, moduleWidgetSelector
 
-
-
-
 class FileImagePopup(html5.ext.Popup):
 	def __init__(self, preview, *args, **kwargs):
 		super(FileImagePopup, self).__init__(title=preview.currentFile.get("name", translate("Unnamed Image")), className="image-viewer", *args, **kwargs)
@@ -370,6 +367,5 @@ class FileWidget(TreeBrowserWidget):
 	def canHandle( module, moduleInfo ):
 		return (moduleInfo[ "handler" ].startswith( "tree.file" ) or moduleInfo[ "handler" ].startswith( "tree.simple.file" ) )
 
-
-moduleWidgetSelector.insert(1, FileWidget.canHandle, FileWidget)
-displayDelegateSelector.insert(1, FileWidget.canHandle, FileWidget)
+moduleWidgetSelector.insert(5, FileWidget.canHandle, FileWidget)
+displayDelegateSelector.insert(5, FileWidget.canHandle, FileWidget)
