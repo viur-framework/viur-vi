@@ -47,6 +47,20 @@ class PassiveErrorItem(html5.Li):
 		self.errorSeverity.element.innerHTML = "Invalidated by other field {}!".format(error["fieldPath"])
 
 
+def checkErrors(bone) -> Tuple[bool, List[str]]:
+	errors = bone["errors"]
+	if not errors:
+		return False, list()
+	invalidatedFields = list()
+	for error in errors:
+		if (
+				(error["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
+				(error["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
+		):
+			if error["invalidatedFields"]:
+				invalidatedFields.extend(error["invalidatedFields"])
+	return True, invalidatedFields
+
 def parseHashParameters( src, prefix="" ):
 	"""
 		Converts a flat dictionary containing dotted properties into a multi-dimensional one.
@@ -104,22 +118,6 @@ def parseHashParameters( src, prefix="" ):
 		return newRes
 
 	return res
-
-
-def checkErrors(bone) -> Tuple[bool, List[str]]:
-	errors = bone["errors"]
-	if not errors:
-		return False, list()
-	invalidatedFields = list()
-	for error in errors:
-		if (
-				(error["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
-				(error["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
-		):
-			if error["invalidatedFields"]:
-				invalidatedFields.extend(error["invalidatedFields"])
-	return True, invalidatedFields
-
 
 class EditWidget(html5.Div):
 	appList = "list"

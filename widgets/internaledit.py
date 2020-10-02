@@ -5,14 +5,52 @@ from collections import defaultdict
 
 from vi.config import conf
 from vi.exception import InvalidBoneValueException
-from vi.network import DeferredCall
 from vi.priorityqueue import boneSelector
 from vi.widgets.accordion import Accordion
 from vi.widgets.tooltip import ToolTip
 
 from js import console
 
-from vi.widgets.edit import ParsedErrorItem, PassiveErrorItem, checkErrors
+from typing import List, Tuple
+from vi.bones.base import ReadFromClientErrorSeverity
+
+class ParsedErrorItem(html5.Li):
+	style = []
+
+	def __init__(self, error):
+		super().__init__("""<div><span>Severity: </span><span [name]="errorSeverity"></span>&nbsp;<span>Message: </span><span [name]="errorMessage"></span>
+				<div [name]="invalidatedArea"><h4>Invalidated Fields</h4><ul [name]="errorList"></ul></div>
+			""")
+
+		self.errorSeverity.element.innerHTML = str(ReadFromClientErrorSeverity(error["severity"])).split(".")[1]
+		self.errorMessage.element.innerHTML = error["errorMessage"]
+		if error["invalidatedFields"]:
+			for item in error["invalidatedFields"]:
+				self.errorList.appendChild("<li>{}</li>".format(item))
+		else:
+			self.invalidatedArea.hide()
+
+
+class PassiveErrorItem(html5.Li):
+	style = []
+
+	def __init__(self, error):
+		super().__init__("""<div><span [name]="errorSeverity"></span></div>""")
+		self.errorSeverity.element.innerHTML = "Invalidated by other field {}!".format(error["fieldPath"])
+
+def checkErrors(bone) -> Tuple[bool, List[str]]:
+	errors = bone["errors"]
+	if not errors:
+		return False, list()
+	invalidatedFields = list()
+	for error in errors:
+		if (
+				(error["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
+				(error["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
+		):
+			if error["invalidatedFields"]:
+				invalidatedFields.extend(error["invalidatedFields"])
+	return True, invalidatedFields
 
 
 class InternalEdit(html5.Div):
