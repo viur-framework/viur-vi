@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys, json, string, random, time, logging
 
-from vi import html5
+from flare import html5
 from vi import framework
 from vi.config import conf
 

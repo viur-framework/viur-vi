@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from vi import html5
+from flare import html5,utils
 from vi.embedsvg import embedsvg
 
 class AccordionSegment(html5.Fieldset):
@@ -54,7 +54,7 @@ class AccordionSegment(html5.Fieldset):
 			self.activate()
 
 	def onClick(self, event):
-		if not html5.utils.doesEventHitWidgetOrChildren(event, self.title):
+		if not utils.doesEventHitWidgetOrChildren(event, self.title):
 			return
 
 		for child in self.parent().children():

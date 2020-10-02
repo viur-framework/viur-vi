@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re, logging
-from vi import html5
-
+from flare import html5
+from flare.input import Input
 from vi.priorityqueue import boneSelector
 from vi.config import conf
 from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
@@ -42,7 +42,7 @@ class NumericEditWidget(BaseEditWidget):
 				# else: fixme are there more configs?
 
 		self.sinkEvent("onChange")
-		self.widget = html5.ignite.Input()
+		self.widget = Input()
 
 		# Standard- or currency mode
 		if not self.currency:

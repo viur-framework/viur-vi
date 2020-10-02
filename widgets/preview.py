@@ -1,4 +1,5 @@
-from vi import html5
+from flare import html5
+from flare.button import Button
 from config import conf
 
 class Preview( html5.Div ):
@@ -15,7 +16,7 @@ class Preview( html5.Div ):
 		containerDiv.appendChild(self.urlCb)
 		self.previewFrame = html5.Iframe()
 		self.appendChild(self.previewFrame)
-		btnClose = html5.ext.Button("Close", callback=self.doClose)
+		btnClose = Button("Close", callback=self.doClose)
 		btnClose.addClass("btn--close")
 		containerDiv.appendChild(btnClose)
 		currentUrl = None

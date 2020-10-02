@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
-from vi import html5
-from vi.framework.event import EventDispatcher
+from flare import html5
+from flare.event import EventDispatcher
 from .i18n import translate
 from .logics import Interpreter
 

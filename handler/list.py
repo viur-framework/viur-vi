@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from vi.network import NetworkService, DeferredCall
+from flare.network import NetworkService, DeferredCall
 from vi.priorityqueue import HandlerClassSelector, initialHashHandler
 from vi.config import conf
 from vi.pane import Pane

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-from vi.framework.event import EventDispatcher
+from flare import html5
+from flare.button import Button
+from flare.input import Input
+from flare.event import EventDispatcher
 from vi.i18n import translate
 
 
@@ -13,10 +15,10 @@ class Search(html5.Div):
 		self.searchLbl.appendChild(html5.TextNode(translate("Fulltext search")))
 		self.searchLbl.addClass("vi-search-label")
 		self.appendChild(self.searchLbl)
-		self.searchInput = html5.ignite.Input()
+		self.searchInput = Input()
 		self.searchInput["type"] = "text"
 		self.appendChild(self.searchInput)
-		self.btn = html5.ext.Button(translate("Search"), callback=self.doSearch)
+		self.btn = Button(translate("Search"), callback=self.doSearch)
 		self.appendChild(self.btn)
 		self.sinkEvent("onKeyDown")
 		self.last_search = ""

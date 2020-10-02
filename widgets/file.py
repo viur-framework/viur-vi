@@ -1,19 +1,22 @@
 import json
-from vi import html5
+from flare import html5
+from flare.button import Button
+from flare.popup import Popup
 from vi.i18n import translate
+from flare.ignite import Progress
 import vi.utils as utils
 from vi.config import conf
 
 from vi.widgets.tree import TreeLeafWidget, TreeNodeWidget, TreeBrowserWidget
 from vi.widgets.search import Search
-from vi.framework.components.icon import Icon
+from flare.icons import Icon
 
 
-from vi.framework.event import EventDispatcher
-from vi.network import NetworkService, DeferredCall
+from flare.event import EventDispatcher
+from flare.network import NetworkService, DeferredCall
 from vi.priorityqueue import displayDelegateSelector, moduleWidgetSelector
 
-class FileImagePopup(html5.ext.Popup):
+class FileImagePopup(Popup):
 	def __init__(self, preview, *args, **kwargs):
 		super(FileImagePopup, self).__init__(title=preview.currentFile.get("name", translate("Unnamed Image")), className="image-viewer", *args, **kwargs)
 		self.sinkEvent("onClick")
@@ -23,11 +26,11 @@ class FileImagePopup(html5.ext.Popup):
 		img["src"] = utils.getImagePreview(preview.currentFile, size=None)
 		self.popupBody.appendChild(img)
 
-		btn = html5.ext.Button(translate("Download"), self.onDownloadBtnClick)
+		btn = Button(translate("Download"), self.onDownloadBtnClick)
 		btn.addClass("btn--download")
 		self.popupFoot.appendChild(btn)
 
-		btn = html5.ext.Button(translate("Close"), self.onClick)
+		btn = Button(translate("Close"), self.onClick)
 		btn.addClass("btn--close")
 		self.popupFoot.appendChild(btn)
 
@@ -136,7 +139,7 @@ class FilePreviewImage(html5.Div):
 
 			html5.window.open(file)
 
-class Uploader(html5.ignite.Progress):
+class Uploader(Progress):
 	"""
 		Uploads a file to the server while providing visual feedback of the progress.
 	"""

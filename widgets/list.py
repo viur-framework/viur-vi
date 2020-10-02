@@ -1,14 +1,14 @@
 #-*- coding: utf-8 -*-
-from vi import html5
+from flare import html5
 
 from vi.config import conf
 from vi.i18n import translate
-from vi.network import NetworkService
+from flare.network import NetworkService
 from vi.priorityqueue import boneSelector, moduleWidgetSelector
 from vi.widgets.sidebar import SideBar
 from vi.framework.components.datatable import DataTable, ViewportDataTable
 from vi.framework.components.actionbar import ActionBar
-from vi.framework.event import EventDispatcher
+from flare.event import EventDispatcher
 from vi.embedsvg import embedsvg
 
 import logging

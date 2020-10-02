@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-
+from flare import html5
+from flare.popup import Confirm
 import vi.utils as utils
 
-from vi.network import NetworkService, DeferredCall
+from flare.network import NetworkService, DeferredCall
 from vi.config import conf
 from vi.priorityqueue import boneSelector
 from vi.widgets.tooltip import ToolTip
@@ -400,13 +400,13 @@ class EditWidget(html5.Div):
 			if askHierarchyCloning and self.clone:
 				# for lists, which are rootNode entries of hierarchies, ask to clone entire hierarchy
 				if self.applicationType == EditWidget.appList and "rootNodeOf" in conf[ "modules" ][ self.module ]:
-					html5.ext.YesNoDialog(translate(u"Do you want to clone the entire hierarchy?"),
+					Confirm(translate(u"Do you want to clone the entire hierarchy?"),
 				                            yesCallback=self.doCloneHierarchy,
 				                            noCallback=self.closeOrContinue)
 					return
 				# for cloning within a hierarchy, ask for cloning all subentries.
 				elif self.applicationType == EditWidget.appHierarchy:
-					html5.ext.YesNoDialog(translate(u"Do you want to clone all subentries of this item?"),
+					Confirm(translate(u"Do you want to clone all subentries of this item?"),
 				                            yesCallback=self.doCloneHierarchy,
 				                            noCallback=self.closeOrContinue)
 					return

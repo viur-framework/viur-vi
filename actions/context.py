@@ -6,7 +6,7 @@ from vi.priorityqueue import actionDelegateSelector, moduleWidgetSelector
 from vi.i18n import translate
 from vi.config import conf
 from vi.pane import Pane
-from vi.framework.components.button import Button
+from flare.button import Button
 
 
 class ContextAction(Button):

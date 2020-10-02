@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from vi import html5
+from flare import html5,utils
+from flare.button import Button
+from flare.popup import Popup
 from vi.config import conf
 from vi.i18n import translate
 from vi.widgets.edit import EditWidget
 
-class TaskWidget( html5.ext.Popup ):
+class TaskWidget( Popup ):
 	def __init__( self, title ):
 		super( TaskWidget, self ).__init__( title = title )
 		self[ "class" ].append( "popup--task" )
@@ -17,7 +19,7 @@ class ServerTaskWidget( TaskWidget ):
 		self.widget = EditWidget( "_tasks", EditWidget.appSingleton, key, logAction = "vi.tasks.started" )
 		self.popupBody.appendChild( self.widget )
 		self.popupBody.removeClass("box--content")
-		self.popupFoot.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
+		self.popupFoot.appendChild( Button( translate( "Cancel" ), self.close ) )
 
 class TaskSelectWidget( TaskWidget ):
 	def __init__( self ):
@@ -53,8 +55,8 @@ class TaskSelectWidget( TaskWidget ):
 		self.descr[ "class" ] = [ "vi-tasks-description" ]
 		self.popupBody.appendChild( self.descr )
 
-		self.popupFoot.appendChild( html5.ext.Button( translate( "Cancel" ), self.close ) )
-		self.popupFoot.appendChild( html5.ext.Button( translate( "Run" ), self.invokeTask ) )
+		self.popupFoot.appendChild( Button( translate( "Cancel" ), self.close ) )
+		self.popupFoot.appendChild( Button( translate( "Run" ), self.invokeTask ) )
 
 		# Init
 		self.setActiveTask()
@@ -74,7 +76,7 @@ class TaskSelectWidget( TaskWidget ):
 				task.get( "descr" ) or translate( "vi.tasks.no-description" ) ) )
 
 	def onChange(self, event):
-		if html5.utils.doesEventHitWidgetOrChildren(event, self.select):
+		if utils.doesEventHitWidgetOrChildren(event, self.select):
 			self.setActiveTask()
 
 	def invokeTask(self, *args, **kwargs):

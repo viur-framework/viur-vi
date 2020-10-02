@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from vi import html5
+from flare import html5
 
 
 class SideBar( html5.Div ):
@@ -23,7 +23,7 @@ class SideBar( html5.Div ):
 			</div>
 		""")
 
-		closeBtn = html5.ext.Button("&times;", self.close, className="item-action")
+		closeBtn = Button("&times;", self.close, className="item-action")
 		closeBtn.removeClass("btn")
 		self.sidebarHeadItem.appendChild(closeBtn)
 

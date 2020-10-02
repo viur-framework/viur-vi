@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from vi import html5
+from flare import html5
 
 from vi.priorityqueue import boneSelector
 from vi.config import conf
-from vi.framework.components.button import Button
+from flare.button import Button
 from js import document
 
 class InternalPreview( html5.Ul ):

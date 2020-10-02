@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-
-from vi.network import NetworkService
+from flare import html5
+from flare.popup import Confirm, Popup, Alert
+from flare.network import NetworkService
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
 from vi.config import conf
@@ -11,8 +11,8 @@ from vi.sidebarwidgets.internalpreview import InternalPreview
 from vi.sidebarwidgets.filterselector import FilterSelector
 from vi.i18n import translate
 from vi.embedsvg import embedsvg
-from vi.framework.components.button import Button
-from vi.framework.utils import DeferredCall
+from flare.button import Button
+from flare.network import DeferredCall
 
 
 class EditPane(Pane):
@@ -229,7 +229,7 @@ class DeleteAction(Button):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
+		d = Confirm(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = [x["key"] for x in selection]
 		d.addClass( "delete" )
 
@@ -491,7 +491,7 @@ class SelectAction(Button):
 actionDelegateSelector.insert(1, SelectAction.isSuitableFor, SelectAction)
 
 
-class SelectFieldsPopup( html5.ext.Popup ):
+class SelectFieldsPopup( Popup ):
 	def __init__(self, listWdg, *args, **kwargs):
 		if not listWdg._structure:
 			return
@@ -565,7 +565,7 @@ class SelectFieldsPopup( html5.ext.Popup ):
 				res.append( c["value"] )
 
 		if not res:
-			html5.ext.Alert(
+			Alert(
 				translate("You have to select at least on field to continue!")
 			)
 			return

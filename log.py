@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-from vi import html5
+from flare import html5
 
-from .network import DeferredCall
+from flare.network import DeferredCall
 from .i18n import translate
 from .config import conf
 from vi.embedsvg import embedsvg
 
 from datetime import datetime
 from vi.priorityqueue import toplevelActionSelector
-from vi.framework.components.button import Button
+from flare.button import Button
 from vi.pane import Pane
 from vi.widgets import table as tablewdgt
 from vi.widgets.edit import EditWidget
@@ -23,7 +23,7 @@ class logEntry(html5.Span):
 		if isinstance( logObj["msg"], html5.Widget ):
 			msg = logObj["msg"]
 		else:
-			msg = html5.TextNode(html5.utils.unescape(logObj["msg"]))
+			msg = html5.TextNode(html5.unescape(logObj["msg"]))
 
 		self.appendChild(msg)
 
@@ -81,7 +81,7 @@ class logWidget(html5.Div):
 					if isinstance(entry[currentDatafield], html5.Widget):
 						table["cell"][eidx][fidx+1] = entry[currentDatafield]
 					else:
-						table["cell"][eidx][fidx+1] = html5.TextNode(html5.utils.unescape( entry[currentDatafield]))
+						table["cell"][eidx][fidx+1] = html5.TextNode(html5.unescape( entry[currentDatafield]))
 				elif currentDatafield == "key":
 					table["cell"][eidx][fidx + 1] = logA(entry)
 				else:
@@ -242,7 +242,7 @@ class LogButton(html5.Div):
 		if isinstance( logObj["msg"], html5.Widget ):
 			msgdescr.appendChild( logObj["msg"] )
 		else:
-			msgdescr.appendChild(html5.TextNode(html5.utils.unescape(logObj["msg"])))
+			msgdescr.appendChild(html5.TextNode(html5.unescape(logObj["msg"])))
 
 		if logObj["icon"]:
 			svg = embedsvg.get(logObj["icon"])
@@ -279,7 +279,7 @@ class Log(html5.Div):
 		super(Log, self).__init__()
 
 		self.addClass("vi-messenger")
-		openLink = html5.ext.Button(translate("Open message center"), self.toggleMsgCenter)
+		openLink = Button(translate("Open message center"), self.toggleMsgCenter)
 		self.appendChild(openLink)
 
 
@@ -379,7 +379,7 @@ class Log(html5.Div):
 		else:
 			#Create a span element for that message
 			msgDescr = html5.Span()
-			msgDescr.appendChild(html5.TextNode(html5.utils.unescape(msg)))
+			msgDescr.appendChild(html5.TextNode(html5.unescape(msg)))
 			msgDescr.addClass("msg-descr")
 			msgContent.appendChild(msgDescr)
 

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from ... import html5
-from ... import framework
-from ..event import EventDispatcher
-from ..utils import DeferredCall
-from ...i18n import translate
+from flare import html5,utils
+from flare.ignite import Table
+from flare.event import EventDispatcher
+from flare.network import DeferredCall
 
-class SelectTable( html5.ignite.Table ):
+
+class SelectTable( Table ):
 	"""
 		Provides an Html-Table which allows for row selections.
 
@@ -154,7 +154,7 @@ class SelectTable( html5.ignite.Table ):
 
 		row = self.getIndexByTr( tr )
 
-		if self.checkboxes and html5.utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
+		if self.checkboxes and utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
 			self._checkboxes[ row ][ "checked" ] = row in self._selectedRows
 
 	def onMouseDown(self, event):
@@ -184,7 +184,7 @@ class SelectTable( html5.ignite.Table ):
 			#self.setCursorRow(row, False) # set focus
 			event.preventDefault()
 
-		elif self.checkboxes and html5.utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
+		elif self.checkboxes and utils.doesEventHitWidgetOrChildren(event, self._checkboxes[row]):
 			if row in self._selectedRows:
 				self.removeSelectedRow( row )
 			else:

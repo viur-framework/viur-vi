@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from vi import html5, utils
-from vi.network import NetworkService
+from flare import html5, utils
+from flare.forms.formatString import formatString
+from flare.network import NetworkService
 from vi.framework.components.actionbar import ActionBar
-from vi.framework.event import EventDispatcher
+from flare.event import EventDispatcher
 from vi.priorityqueue import displayDelegateSelector, boneSelector, moduleWidgetSelector
 from vi.config import conf
 from vi.i18n import translate
@@ -148,7 +149,7 @@ class TreeItemWidget(html5.Li):
 			self.beforeDiv.removeClass("is-focused")
 			self.afterDiv.addClass("is-focused")
 
-		elif html5.utils.doesEventHitWidgetOrChildren(event, self):
+		elif utils.doesEventHitWidgetOrChildren(event, self):
 			self.currentStatus = "inner"
 			self.addClass("insert-here")
 			if "beforeDiv" in dir(self):
@@ -165,7 +166,7 @@ class TreeItemWidget(html5.Li):
 			Remove all drop indicating classes.
 		"""
 		# Only leave if target not before or after
-		if html5.utils.doesEventHitWidgetOrChildren(event, self.nodeWrapper):
+		if utils.doesEventHitWidgetOrChildren(event, self.nodeWrapper):
 			self.leaveElement = False
 			return
 		else:
@@ -283,7 +284,7 @@ class TreeItemWidget(html5.Li):
 					format = moduleInfo["format"]
 
 			self.nodeHeadline.appendChild(
-				utils.formatString(format, self.data, self.structure,
+				formatString(format, self.data, self.structure,
 				                   language=conf["currentLanguage"]))
 
 			if self.data and "size" in self.data and self.data["size"]:
@@ -299,7 +300,7 @@ class TreeItemWidget(html5.Li):
 				self.nodeSubline.appendChild(html5.TextNode(size))
 
 	def onClick(self, event):
-		if html5.utils.doesEventHitWidgetOrChildren(event, self.nodeToggle):
+		if utils.doesEventHitWidgetOrChildren(event, self.nodeToggle):
 			self.toggleExpand()
 		else:
 			self.widget.extendSelection(self)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-from vi.network import DeferredCall
+from flare import html5
+from flare.network import DeferredCall
 from vi.config import conf
 from vi.priorityqueue import boneSelector
 from vi.exception import InvalidBoneValueException

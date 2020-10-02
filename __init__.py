@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
-from . import html5
-
-from . import network
+from flare import html5
+from flare.popup import Alert
+from flare import network
 from . import utils
 from . import sidebarwidgets
 from . import exception
@@ -33,13 +33,11 @@ class Application(html5.Div):
 		if conf["core.version"] is None:
 			network.NetworkService.request(None, "/vi/getVersion",
 			                               successHandler=self.getVersionSuccess,
-			                               failureHandler=self.startupFailure,
-			                               cacheable=True)
+			                               failureHandler=self.startupFailure)
 		else:
 			network.NetworkService.request(None, "/vi/config",
 			                                successHandler=self.getConfigSuccess,
-											failureHandler=self.startupFailure,
-	                                        cacheable=True)
+											failureHandler=self.startupFailure)
 
 	def getVersionSuccess(self, req):
 		conf["core.version"] = network.NetworkService.decode(req)
@@ -54,7 +52,7 @@ class Application(html5.Div):
 				"vi.version": ".".join(str(x) for x in conf["vi.version"]),
 			}
 
-			html5.ext.Alert(
+			Alert(
 				translate("ViUR-core (v{core.version}) is incompatible to this Vi (v{vi.version}).", **params)
 					+ "\n" + translate("There may be a lack on functionality.")
 					+ "\n" + translate("Please update either your server or Vi!"),
@@ -79,7 +77,7 @@ class Application(html5.Div):
 		if err in [403, 401]:
 			self.login()
 		else:
-			html5.ext.Alert(
+			Alert(
 				translate("The connection to the server could not be correctly established."),
 				title=translate("Communication error"),
 				okCallback=self.startup,
@@ -140,3 +138,6 @@ def start():
 	# Application
 	app = Application()
 	html5.Body().appendChild(app)
+
+if __name__ == "vi":
+	start()

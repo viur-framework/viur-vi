@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-
-from vi.network import NetworkService
+from flare import html5
+from flare.button import Button
+from flare.popup import Confirm
+from flare.network import NetworkService
 from vi.priorityqueue import actionDelegateSelector
 from vi.config import conf
 from vi.i18n import translate
 
 # ShopMarkAction -------------------------------------------------------------------------------------------------------
-class ShopMarkAction( html5.ext.Button ):
+class ShopMarkAction( Button ):
 	def __init__(self, action, title, cls="", txtQuestion=None, txtSuccess=None, txtFailure=None, *args, **kwargs):
 		super( ShopMarkAction, self ).__init__( translate( title ), *args, **kwargs )
 
@@ -75,7 +76,7 @@ class ShopMarkAction( html5.ext.Button ):
 		if not selection:
 			return
 
-		html5.ext.YesNoDialog( translate( self.txtQuestion, count=len( selection ) ),
+		Confirm( translate( self.txtQuestion, count=len( selection ) ),
 							   title=translate( "Mark payed" ), yesCallback=self.doMarkPayed )
 
 # ShopMarkPayedAction --------------------------------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from vi import html5
+from flare import html5
 from vi.i18n import translate
 from vi.embedsvg import embedsvg
 

@@ -1,13 +1,14 @@
 #-*- coding: utf-8 -*-
-from vi import html5
-
-from vi.network import NetworkService, DeferredCall
+from flare import html5
+from flare.button import Button
+from flare.popup import Popup
+from flare.network import NetworkService, DeferredCall
 from vi.config import conf
 from vi.i18n import translate
 
 from datetime import datetime
 
-class UserLogoutMsg(html5.ext.Popup):
+class UserLogoutMsg(Popup):
 	pollInterval = 120  # We query the server once a minute
 	checkIntervall = 1000 * 5  # We test if the system has been suspended every 5 seconds
 
@@ -21,8 +22,8 @@ class UserLogoutMsg(html5.ext.Popup):
 		                                 "Perhaps your computer fall asleep and broke connection?\n"
 		                                 "Please relogin to continue your mission."))
 		self.popupBody.appendChild(self.lbl)
-		self.popupFoot.appendChild(html5.ext.Button(translate("Refresh"), callback=self.startPolling))
-		self.popupFoot.appendChild(html5.ext.Button(translate("Login"), callback=self.showLoginWindow))
+		self.popupFoot.appendChild(Button(translate("Refresh"), callback=self.startPolling))
+		self.popupFoot.appendChild(Button(translate("Login"), callback=self.showLoginWindow))
 		setInterval = html5.window.setInterval
 		self.interval = setInterval(self.checkForSuspendResume, self.checkIntervall)
 		self.hideMessage()

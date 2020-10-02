@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from vi import html5
+from flare import html5
 from .config import conf
 
 class Screen(html5.Div):

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-
-from vi.network import NetworkService, DeferredCall
+from flare import html5,utils
+from flare.popup import Confirm
+from flare.network import NetworkService, DeferredCall
 from vi.i18n import translate
 from vi.config import conf
 from vi.widgets.task import TaskSelectWidget
 from vi.priorityqueue import toplevelActionSelector
-from vi.framework.components.button import Button
+from flare.button import Button
 from vi.embedsvg import embedsvg
-from vi.framework.components.icon import Icon
+from flare.icons import Icon
 from vi.pane import Pane
 from vi.widgets.edit import EditWidget
 from vi.log import LogButton
@@ -86,15 +86,15 @@ class TopBarWidget(html5.Header):
 			title = conf.get("vi.name")
 
 		if title:
-			self.moduleH1.appendChild(html5.TextNode(html5.utils.unescape(title)))
+			self.moduleH1.appendChild(html5.TextNode(utils.unescape(title)))
 
 	def onClick(self, event):
-		if html5.utils.doesEventHitWidgetOrChildren(event, self.moduleH1):
+		if utils.doesEventHitWidgetOrChildren(event, self.moduleH1):
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
 	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None, path=None):
 		self.moduleName.removeAllChildren()
-		descr = html5.utils.unescape(descr)
+		descr = utils.unescape(descr)
 		self.moduleName.appendChild(html5.TextNode(descr))
 
 		self.modulImg.removeAllChildren()
@@ -255,7 +255,7 @@ class Logout(Button):
 		self.sinkEvent("onClick")
 
 	def onClick(self, event):
-		html5.ext.YesNoDialog(
+		Confirm(
 			translate("Möchten Sie {vi.name} wirklich beenden?\n"
 			          "Alle nicht gespeicherten Einträge gehen dabei verloren!",
 			          **conf),

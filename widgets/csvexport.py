@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from vi import html5
+from flare import html5
+from flare.popup import Popup
 
-from vi.network import NetworkService, DeferredCall
+from flare.network import NetworkService, DeferredCall
 from vi.config import conf
 from vi.priorityqueue import boneSelector
 from vi.i18n import translate
-from vi.framework.components.button import Button
+from flare.button import Button
 
 
 class ExportCsv(html5.Progress):
@@ -159,7 +160,7 @@ class ExportCsv(html5.Progress):
 		self.parent().appendChild(msg)
 		self.parent().removeChild(self)
 
-class ExportCsvStarter(html5.ext.Popup):
+class ExportCsvStarter(Popup):
 
 	def __init__(self, widget, *args, **kwargs ):
 		super(ExportCsvStarter, self).__init__(title=translate("CSV Export"))

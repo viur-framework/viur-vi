@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-
+from flare import html5
+from flare.button import Button
 from .embedsvg import embedsvg
-from .framework.components.icon import Icon
+from flare.icons import Icon
 from .config import conf
 from .priorityqueue import HandlerClassSelector
-from .network import DeferredCall
-from .framework.event import EventDispatcher
+from flare.network import DeferredCall
+from flare.event import EventDispatcher
 
 class Pane(html5.Div):
 	"""
@@ -58,7 +58,7 @@ class Pane(html5.Div):
 		self.itemImage = None
 		self.setText(descr, iconURL)
 
-		self.closeBtn = html5.ext.Button(u"×", self.onBtnCloseReleased)
+		self.closeBtn = Button(u"×", self.onBtnCloseReleased)
 		self.closeBtn["class"] = "item-action"
 		self.item.appendChild(self.closeBtn)
 
@@ -85,10 +85,12 @@ class Pane(html5.Div):
 			pass
 
 		if loading:
-			self.itemImage = Icon(self.descr, "./public/images/is-loading32.gif")
+			#self.itemImage = Icon(self.descr, "./public/images/is-loading32.gif")
+			self.itemImage = Icon(embedsvg="./public/images/is-loading32.gif")
 
 		else:
-			self.itemImage = Icon(self.descr, self.defaultIconURL)
+			#self.itemImage = Icon(self.descr, self.defaultIconURL)
+			self.itemImage = Icon(embedsvg=self.defaultIconURL)
 
 		self.label.appendChild(self.itemImage)
 

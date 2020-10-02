@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-
+from flare import html5
+from flare.popup import Confirm
 from vi.priorityqueue import actionDelegateSelector
 from vi.i18n import translate
-from vi.framework.components.button import Button
+from flare.button import Button
 from vi.config import conf
 
 class SaveContinue(Button):
@@ -110,7 +110,7 @@ class Refresh(Button):
 
 	def onClick(self, sender=None):
 		if self.parent().parent().modified:
-			html5.ext.YesNoDialog(translate("vi.action.edit.refresh.question"),
+			Confirm(translate("vi.action.edit.refresh.question"),
 		                            translate("vi.action.edit.refresh.title"),
 		                            yesCallback=self.performReload)
 		else:

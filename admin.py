@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-from vi.framework.event import EventDispatcher
+from flare import html5,utils
+from flare.event import EventDispatcher
 from .config import conf
 from .widgets import TopBarWidget
 from .widgets.userlogoutmsg import UserLogoutMsg
-from .network import NetworkService, DeferredCall
+from flare.network import NetworkService, DeferredCall
 
 from .priorityqueue import HandlerClassSelector, initialHashHandler, startupQueue
 from .log import Log
@@ -69,7 +69,7 @@ class AdminScreen(Screen):
 			print("logError is disabled")
 
 	def onClick(self, event):
-		if html5.utils.doesEventHitWidgetOrChildren(event, self.modulePipe):
+		if utils.doesEventHitWidgetOrChildren(event, self.modulePipe):
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
 	def reset(self):

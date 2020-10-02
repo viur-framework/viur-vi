@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-from vi import html5
+from flare import html5,utils
 from js import CustomEvent
 from vi.config import conf
 
@@ -110,7 +110,7 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 	for key in data.keys():
 		res = formatOneEntry(key, res, data, structure, prefix, language, context, _rec)
 
-	res = html5.utils.unescape(res) #all strings will be unescaped
+	res = utils.unescape(res) #all strings will be unescaped
 
 	return res
 

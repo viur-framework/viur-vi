@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime, logging
 
-from vi import html5
+from flare import html5
 
 from vi.priorityqueue import boneSelector
 from vi.config import conf

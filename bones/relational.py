@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from vi import html5, utils
+from flare import html5, utils
 
 from vi.priorityqueue import boneSelector, moduleWidgetSelector
 from vi.config import conf

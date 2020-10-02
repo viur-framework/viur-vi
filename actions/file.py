@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-
-from vi.network import NetworkService
+from flare import html5
+from flare.popup import Prompt
+from flare.network import NetworkService
 from vi.pane import Pane
 from vi.widgets.edit import EditWidget
 from vi.config import conf
 from vi.i18n import translate
-from vi.network import DeferredCall
+from flare.network import DeferredCall
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.file import Uploader
-from vi.framework.components.button import Button
+from flare.button import Button
 
 
 class FileSelectUploader(html5.Input):
@@ -64,7 +64,7 @@ class AddNodeAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		i = html5.ext.InputDialog(
+		i = Prompt(
 			translate("Directory Name"),
 			successHandler=self.createDir,
 			title=translate("Create directory"),
@@ -184,7 +184,7 @@ class EditAction(Button):
 
 		for s in selection:
 			if isinstance(s,self.parent().parent().nodeWidget):
-				i = html5.ext.InputDialog(
+				i = Prompt(
 					translate("Directory Name"),
 					successHandler=self.editDir,
 					value=s.data["name"]

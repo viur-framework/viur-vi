@@ -1,9 +1,11 @@
 #-*- coding: utf-8 -*-
 import re, json, logging
-from vi import html5
-from vi.framework.event import EventDispatcher
+from flare import html5,utils
+from flare.popup import Alert
+from flare.button import Button
+from flare.event import EventDispatcher
 
-from .network import NetworkService, DeferredCall
+from flare.network import NetworkService, DeferredCall
 from .i18n import translate
 from .config import conf
 from .priorityqueue import loginHandlerSelector
@@ -134,7 +136,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.password["placeholder"] = translate("Password")
 		self.pwform.appendChild(self.password)
 
-		self.loginBtn = html5.ext.Button(translate("Login"), callback=self.onLoginClick)
+		self.loginBtn = Button(translate("Login"), callback=self.onLoginClick)
 		self.loginBtn.addClass("vi-login-btn btn--viur")
 		self.pwform.appendChild(self.loginBtn)
 
@@ -148,7 +150,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 		self.otp["placeholder"] = translate("One Time Password")
 		self.otpform.appendChild(self.otp)
 
-		self.verifyBtn = html5.ext.Button(translate("Verify"), callback=self.onVerifyClick)
+		self.verifyBtn = Button(translate("Verify"), callback=self.onVerifyClick)
 		self.otpform.appendChild(self.verifyBtn)
 
 		# Universal edit widget
@@ -161,18 +163,18 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 
 		self.editskey = self.editaction = self.editwidget = None
 
-		self.sendBtn = html5.ext.Button(translate("Send"), callback=self.onSendClick)
+		self.sendBtn = Button(translate("Send"), callback=self.onSendClick)
 		self.editform.appendChild(self.sendBtn)
 
 	def onKeyPress(self, event):
 		if html5.isReturn(event):
-			if html5.utils.doesEventHitWidgetOrChildren(event, self.username):
+			if utils.doesEventHitWidgetOrChildren(event, self.username):
 				if self.username["value"]:
 					self.password.element.focus()
-			elif html5.utils.doesEventHitWidgetOrChildren(event, self.password):
+			elif utils.doesEventHitWidgetOrChildren(event, self.password):
 				if self.username["value"] and self.password["value"]:
 					self.onLoginClick()
-			elif html5.utils.doesEventHitWidgetOrChildren(event, self.otp):
+			elif utils.doesEventHitWidgetOrChildren(event, self.otp):
 				if self.otp["value"]:
 					self.onVerifyClick()
 
@@ -230,7 +232,7 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 			self.password.focus()
 
 	def doLoginFailure(self, req, code, *args, **kwargs):
-		html5.ext.Alert(
+		Alert(
 				translate("Failure %d" % int(code) ),
 				title = translate( "Login error" )
 				)
@@ -316,7 +318,7 @@ class GoogleAccountLoginHandler(BaseLoginHandler):
 	def __init__(self, loginScreen, *args, **kwargs):
 		super(GoogleAccountLoginHandler, self).__init__(loginScreen, *args, **kwargs)
 
-		self.loginBtn = html5.ext.Button(translate("Login with Google"), callback=self.onLoginClick)
+		self.loginBtn = Button(translate("Login with Google"), callback=self.onLoginClick)
 		self.loginBtn.addClass("vi-login-btn btn--viur")
 		self.mask.appendChild(self.loginBtn)
 
@@ -383,7 +385,7 @@ class LoginScreen(Screen):
 		self.unlock()
 		self.hide()
 
-		html5.ext.Alert(translate("vi.login.insufficient-rights"),
+		Alert(translate("vi.login.insufficient-rights"),
 		                okLabel=translate("Login as different user"),
 		                okCallback=lambda: self.invoke(logout=True))
 
@@ -431,7 +433,7 @@ class LoginScreen(Screen):
 				h.disable()
 
 	def onGetAuthMethodsFailure(self, *args, **kwargs):
-		html5.ext.Alert(
+		Alert(
 				translate( "Fail"),
 				title = translate( "error" )
 				)

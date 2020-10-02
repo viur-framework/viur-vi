@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from vi import html5
-
-from vi.framework.components.button import Button
+from flare import html5
+from flare.input import Input
+from flare.button import Button
 from vi.priorityqueue import boneSelector
 from vi.config import conf
 
@@ -34,7 +34,7 @@ class BaseEditWidget(html5.Div):
 		"""
 		Function for creating the Widget or multiple Widgets that represent the bone.
 		"""
-		return html5.ignite.Input()
+		return Input()
 
 	def _updateWidget(self):
 		"""

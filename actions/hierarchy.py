@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from vi import html5
+from flare import html5
 
 from vi.config import conf
 from vi.i18n import translate
-from vi.network import NetworkService
+from flare.network import NetworkService
 from vi.pane import Pane
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
-from vi.framework.components.button import Button
+from flare.button import Button
 
 
 class AddAction(Button):
@@ -231,7 +231,7 @@ class DeleteAction(Button):
 		selection = self.parent().parent().selection
 		if not selection:
 			return
-		d = html5.ext.YesNoDialog(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
+		d = Confirm(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = [x.data[ "key" ] for x in selection]
 		d.addClass( "delete" )
 

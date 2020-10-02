@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from . import html5
+from flare import html5
 from . import translations
 
 _currentLanguage = None

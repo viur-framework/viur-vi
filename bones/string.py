@@ -1,4 +1,4 @@
-from vi import html5
+from flare import html5,utils
 
 from vi.priorityqueue import boneSelector
 from vi.config import conf
@@ -40,7 +40,7 @@ class StringEditWidget(BaseEditWidget):
 		self.length.appendChild(len(self.widget["value"] or ""), replace=True)
 
 	def unserialize(self, value=None):
-		self.widget["value"] = html5.utils.unescape(str(value or ""))  # fixme: is html5.utils.unescape() still required?
+		self.widget["value"] = utils.unescape(str(value or ""))  # fixme: is html5.utils.unescape() still required?
 		self.updateLength()
 
 	def serialize(self):
@@ -53,7 +53,7 @@ class StringViewWidget(BaseViewWidget):
 
 	def unserialize(self, value=None):
 		self.value = value
-		self.appendChild(html5.TextNode(html5.utils.unescape(value or conf["emptyValue"])), replace=True)
+		self.appendChild(html5.TextNode(html5.unescape(value or conf["emptyValue"])), replace=True)
 
 
 class StringBone(BaseBone):
