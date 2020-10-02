@@ -116,20 +116,7 @@ def formatString(format, data, structure = None, prefix = None, language = None,
 
 
 def getImagePreview(data, cropped = False, size = 150):
-	if conf["core.version"][0] == 3:
-		print(data["downloadUrl"])
-		return data["downloadUrl"] #fixme ViUR3
-	else:
-		if "mimetype" in data.keys() and isinstance(data["mimetype"], str) and data["mimetype"].startswith("image/svg"):
-			return "/file/download/%s/%s" % (data["dlkey"], data.get("name", "").replace("\"", ""))
-
-		elif "servingurl" in data.keys():
-			if data["servingurl"]:
-				return data["servingurl"] + (("=s%d" % size) if size else "") + ("-c" if cropped else "")
-
-			return ""
-
-		return None
+	return data["downloadUrl"]
 
 def setPreventUnloading(mode = True):
 	try:

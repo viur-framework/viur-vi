@@ -45,7 +45,7 @@ class InternalEdit(html5.Div):
 
 		errors = { }
 
-		if conf[ "core.version" ][ 0 ] == 3 and self.errorInformation:
+		if self.errorInformation:
 			for error in self.errorInformation:
 				errors[ error[ "fieldPath" ] ] = error[ "errorMessage" ]
 

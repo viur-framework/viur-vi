@@ -447,9 +447,8 @@ class EditWidget(html5.Div):
 
 		errors = {}
 
-		if conf["core.version"][0] == 3:
-			for error in data["errors"]:
-				errors[error["fieldPath"]] = error
+		for error in data["errors"]:
+			errors[error["fieldPath"]] = error
 
 		self.accordion.clearSegments()
 		for key, bone in data["structure"]:
