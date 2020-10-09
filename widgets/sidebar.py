@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flare import html5
-
+from flare.button import Button
 
 class SideBar( html5.Div ):
 
