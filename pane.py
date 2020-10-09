@@ -86,11 +86,11 @@ class Pane(html5.Div):
 
 		if loading:
 			#self.itemImage = Icon(self.descr, "./public/images/is-loading32.gif")
-			self.itemImage = Icon(embedsvg="./public/images/is-loading32.gif")
+			self.itemImage = Icon("loading",value="./public/images/is-loading32.gif")
 
 		else:
 			#self.itemImage = Icon(self.descr, self.defaultIconURL)
-			self.itemImage = Icon(embedsvg=self.defaultIconURL)
+			self.itemImage = Icon(self.descr,value=self.defaultIconURL)
 
 		self.label.appendChild(self.itemImage)
 
