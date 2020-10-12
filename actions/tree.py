@@ -99,7 +99,7 @@ class EditAction(Button):
 		super(EditAction,self).onDetach()
 
 	def onSelectionActivated(self, table, selection ):
-		if (not self.parent().parent().selectCallback
+		if (not self.parent().parent().selectionCallback
 			and len(selection) == 1
 			and isinstance(selection[0], self.parent().parent().leafWidget)):
 
