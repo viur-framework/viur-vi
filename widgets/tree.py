@@ -7,7 +7,7 @@ from flare.event import EventDispatcher
 from vi.priorityqueue import displayDelegateSelector, boneSelector, moduleWidgetSelector
 from vi.config import conf
 from vi.i18n import translate
-from vi.embedsvg import embedsvg
+from flare.icons import SvgIcon,Icon
 from time import time
 import logging
 
@@ -241,18 +241,13 @@ class TreeItemWidget(html5.Li):
 
 	def EntryIcon(self):
 		self.nodeImage.removeClass("is-hidden")
-		svg = embedsvg.get("icons-folder")
-		if svg:
-			nodeIcon = html5.I()
-			nodeIcon.addClass("i")
-			nodeIcon.element.innerHTML = svg + nodeIcon.element.innerHTML
-			self.nodeImage.appendChild(nodeIcon)
+		#svg = embedsvg.get("icon-folder")
+		svg = Icon( "icon-folder" )
+		self.nodeImage.appendChild(svg)
 
 	def toggleArrow(self):
 		self.nodeToggle["title"] = translate("Expand/Collapse")
-		embedSvg = embedsvg.get("icons-arrow-right")
-		if embedSvg:
-			self.nodeToggle.element.innerHTML = embedSvg + self.nodeToggle.element.innerHTML
+		self.nodeToggle.prependChild( SvgIcon( "icon-arrow-right", title = translate("Expand/Collapse") ) )
 
 	def buildDescription(self):
 		"""
@@ -360,12 +355,7 @@ class TreeLeafWidget(TreeItemWidget):
 			Leafs have a different Icon
 		'''
 		self.nodeImage.removeClass("is-hidden")
-		svg = embedsvg.get("icons-file")
-		if svg:
-			nodeIcon = html5.I()
-			nodeIcon.addClass("i")
-			nodeIcon.element.innerHTML = svg + nodeIcon.element.innerHTML
-			self.nodeImage.appendChild(nodeIcon)
+		self.nodeImage.appendChild(Icon("icon-file"))
 
 class TreeNodeWidget(TreeItemWidget):
 	skelType = "node"

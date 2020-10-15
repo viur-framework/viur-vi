@@ -87,14 +87,14 @@ class FilePreviewImage(html5.Div):
 					for mimesplit in mime.split("/"):
 						for icon in ["text", "pdf", "image", "audio", "video", "zip"]:
 							if icon in mimesplit:
-								svg = "icons-%s-file" % icon
+								svg = "icon-%s-file" % icon
 								self.downloadOnly = False
 								break
 			else:
 				self.addClass("no-preview")
 
 			if not svg:
-				svg = "icons-file"
+				svg = "icon-file"
 
 		if preview:
 			self.removeClass("no-preview")

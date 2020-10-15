@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from flare import html5
 from vi.i18n import translate
-from vi.embedsvg import embedsvg
-
+from flare.icons import SvgIcon
 
 class ToolTip(html5.Div):
 	"""
@@ -13,9 +12,8 @@ class ToolTip(html5.Div):
 		super( ToolTip, self ).__init__( *args, **kwargs )
 		self["class"] = "vi-tooltip msg is-active"
 		self.sinkEvent("onClick")
-		svg = embedsvg.get("icons-arrow-right")
-		if svg:
-			self.element.innerHTML = svg
+
+		self.prependChild( SvgIcon( "icon-arrow-right", title = shortText ) )
 
 		self.fromHTML("""
 			<div class="msg-content" [name]="tooltipMsg">

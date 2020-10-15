@@ -14,7 +14,7 @@ class AddLeafAction(Button):
 		Creates a new leaf (ie. a file) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddLeafAction, self ).__init__( translate("Add"), icon="icons-add", *args, **kwargs )
+		super( AddLeafAction, self ).__init__( translate("Add"), icon="icon-add", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--add-leaf btn--primary"
 
 	@staticmethod
@@ -30,7 +30,7 @@ class AddLeafAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane("Add", iconURL="icons-add", closeable=True, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_add_leaf"])
+		pane = Pane("Add", iconURL="icon-add", closeable=True, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_add_leaf"])
 		conf["mainWindow"].stackPane(pane)
 
 		edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
@@ -48,7 +48,7 @@ class AddNodeAction(Button):
 		Creates a new node (ie. a directory) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddNodeAction, self ).__init__(  translate("Add"), icon="icons-add-folder", *args, **kwargs )
+		super( AddNodeAction, self ).__init__(  translate("Add"), icon="icon-add-folder", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--add-node"
 
 	@staticmethod
@@ -64,7 +64,7 @@ class AddNodeAction(Button):
 		return  correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane( translate("Add"), iconURL="icons-add", closeable=True, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_add_node" ])
+		pane = Pane( translate("Add"), iconURL="icon-add", closeable=True, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_add_node" ])
 
 		conf["mainWindow"].stackPane(pane)
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="node")
@@ -83,7 +83,7 @@ class EditAction(Button):
 		The type (node or leaf) of the entry is determined dynamically
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__(  translate("Edit"), icon="icons-edit", *args, **kwargs )
+		super( EditAction, self ).__init__(  translate("Edit"), icon="icon-edit", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -105,7 +105,7 @@ class EditAction(Button):
 
 			pane = Pane(
 				translate("Edit"),
-				iconURL="icons-edit",
+				iconURL="icon-edit",
 				closeable=True,
 				iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_edit"]
 			)
@@ -179,7 +179,7 @@ class DeleteAction(Button):
 		The type (node or leaf) of the entry is determined dynamically.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__(translate("Delete"), icon="icons-delete", *args, **kwargs )
+		super( DeleteAction, self ).__init__(translate("Delete"), icon="icon-delete", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -242,7 +242,7 @@ class ReloadAction(Button):
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), icon="icons-reload", *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), icon="icon-reload", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod

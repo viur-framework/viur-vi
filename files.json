@@ -24,7 +24,6 @@
   "bones/string.py",
   "bones/text.py",
   "config.py",
-  "embedsvg.py",
   "exception.py",
   "flare/flare/__init__.py",
   "flare/flare/button.py",

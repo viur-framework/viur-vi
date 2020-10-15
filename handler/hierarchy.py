@@ -10,7 +10,7 @@ import logging
 class HierarchyHandler(Pane):
 	def __init__(self, moduleName, moduleInfo, *args, **kwargs):
 
-		icon = "icons-hierarchy"
+		icon = "icon-hierarchy"
 		if "icon" in moduleInfo.keys():
 			icon = moduleInfo["icon"]
 
@@ -43,7 +43,7 @@ class HierarchyHandler(Pane):
 			self.focus()
 
 		elif pathList[1] in ["edit", "clone"] and len(pathList) > 2:
-			pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
+			pane = Pane(translate("Edit"), closeable=True, iconURL="icon-edit",
 			            iconClasses=["module_%s" % self.moduleName, "apptype_hierarchy", "action_edit"])
 			edwg = EditWidget(self.moduleName, EditWidget.appHierarchy, key=pathList[2], hashArgs=(params or None), clone=pathList[1] == "clone")
 			pane.addWidget(edwg)

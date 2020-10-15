@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flare import html5,utils
-from vi.embedsvg import embedsvg
+from flare.icons import SvgIcon
 
 class AccordionSegment(html5.Fieldset):
 
@@ -16,9 +16,7 @@ class AccordionSegment(html5.Fieldset):
 		self.appendChild(legend)
 
 		self.title = html5.Span()
-		embedSvg = embedsvg.get("icons-arrow-right")
-		if embedSvg:
-			self.title.element.innerHTML = embedSvg
+		self.title.prependChild(SvgIcon("icon-arrow-right", title=title))
 		self.title.appendChild(html5.TextNode(title or ident))
 		self.title.addClass("vi-accordion-title")
 		self.title["role"] = "button"

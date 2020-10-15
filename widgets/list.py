@@ -9,7 +9,7 @@ from vi.widgets.sidebar import SideBar
 from vi.framework.components.datatable import DataTable, ViewportDataTable
 from vi.framework.components.actionbar import ActionBar
 from flare.event import EventDispatcher
-from vi.embedsvg import embedsvg
+from flare.icons import SvgIcon
 
 import logging
 
@@ -105,9 +105,7 @@ class ListWidget(html5.Div):
 		self.entryActionBar.setActions(self.getDefaultEntryActions(myView), widget=self)
 
 		self.emptyNotificationDiv = html5.Div()
-		svg = embedsvg.get("icons-error-file")
-		if svg:
-			self.emptyNotificationDiv.element.innerHTML = svg + self.emptyNotificationDiv.element.innerHTML
+		self.emptyNotificationDiv.prependChild( SvgIcon( "icon-error-file", title = "Currently no entries" ) )
 
 		self.emptyNotificationDiv.appendChild(html5.TextNode(translate("Currently no entries")))
 		self.emptyNotificationDiv.addClass("popup popup--center popup--local msg emptynotification")

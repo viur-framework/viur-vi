@@ -12,7 +12,7 @@ class ColorEditWidget(BaseEditWidget):
 		# language=HTML
 		return self.fromHTML("""
 			<input [name]="widget" type="color">
-			<button [name]="unsetBtn" text="Unset" icon="icons-delete" class="btn--delete">
+			<button [name]="unsetBtn" text="Unset" icon="icon-delete" class="btn--delete">
 		""")
 
 	def onUnsetBtnClick(self):

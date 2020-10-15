@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import re, logging
-from flare import html5
+from flare import html5,utils
 from flare.input import Input
 from vi.priorityqueue import boneSelector
 from vi.config import conf
@@ -17,8 +17,8 @@ class NumericEditWidget(BaseEditWidget):
 
 		# Numeric bone precision, min and max
 		self.precision = self.bone.boneStructure.get("precision") or 0
-		self.min = html5.utils.parseFloat(str(self.bone.boneStructure.get("min")), None)
-		self.max = html5.utils.parseFloat(str(self.bone.boneStructure.get("max")), None)
+		self.min = utils.parseFloat(str(self.bone.boneStructure.get("min")), None)
+		self.max = utils.parseFloat(str(self.bone.boneStructure.get("max")), None)
 
 		# Currency mode
 		self.currency = None
@@ -81,9 +81,9 @@ class NumericEditWidget(BaseEditWidget):
 	def setValue(self, value):
 		if not self.currency:
 			if self.precision:
-				self.value = html5.utils.parseFloat(value or 0)
+				self.value = utils.parseFloat(value or 0)
 			else:
-				self.value = html5.utils.parseInt(value or 0)
+				self.value = utils.parseInt(value or 0)
 
 			return str(self.value)
 

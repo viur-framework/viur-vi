@@ -5,7 +5,7 @@ from vi.config import conf
 from vi.widgets.search import Search
 from vi.priorityqueue import extendedSearchWidgetSelector
 from vi.i18n import translate
-from vi.embedsvg import embedsvg
+from flare.icons import SvgIcon,Icon
 
 
 class CompoundFilter(html5.Div):
@@ -30,21 +30,7 @@ class CompoundFilter(html5.Div):
 		filterImage = html5.Div()
 		filterImage.addClass("item-image")
 		self.filterheader.appendChild(filterImage)
-
-		self.filterIcon = html5.I()
-		self.filterIcon.addClass("i")
-		filterImage.appendChild(self.filterIcon)
-
-		if "icon" in view.keys():
-			embedSvg = embedsvg.get(view["icon"])
-			if embedSvg:
-				self.filterIcon.element.innerHTML = embedSvg + self.filterIcon.element.innerHTML
-			else:
-				img = html5.Img()
-				img["src"] = view["icon"]
-				self.filterIcon.appendChild(img)
-		else:
-			self.filterIcon.appendChild(view["name"][:1])
+		filterImage.appendChild(Icon(view["icon"],title=view.get("name")))
 
 		if "name" in view.keys():
 			h2 = html5.H2()
@@ -168,16 +154,10 @@ class FilterSelector( html5.Div ):
 			filterImage = html5.Div()
 			filterImage.addClass("item-image")
 			self.search.prependChild(filterImage)
-
-			self.filterIcon = html5.I()
-			self.filterIcon.addClass("i")
-			filterImage.appendChild(self.filterIcon)
+			filterImage.prependChild( Icon( "icon-search" ) )
 
 			self.search.searchLbl.addClass("item-content")
 
-			embedSvg = embedsvg.get("icons-search")
-			if embedSvg:
-				self.filterIcon.element.innerHTML = embedSvg + self.filterIcon.element.innerHTML
 
 
 	def onDetach(self):

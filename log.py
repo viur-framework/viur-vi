@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from flare import html5
-
+from flare.icons import SvgIcon
 from flare.network import DeferredCall
 from .i18n import translate
 from .config import conf
-from vi.embedsvg import embedsvg
 
 from datetime import datetime
 from vi.priorityqueue import toplevelActionSelector
@@ -44,7 +43,7 @@ class logA(html5.A):
 		self.openEditor(self.logObj["key"])
 
 	def openEditor(self, key):
-		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
+		pane = Pane(translate("Edit"), closeable=True, iconURL="icon-edit",
 		            iconClasses=["modul_%s" % self.logObj["modul"], "apptype_list", "action_edit"])
 		conf["mainWindow"].stackPane(pane, focus=True)
 		edwg = EditWidget(self.logObj["modul"], EditWidget.appList, key=key)
@@ -100,7 +99,7 @@ class LogButton(html5.Div):
 		self["class"] = ["popout-opener", "popout-anchor", "popout--sw"]
 
 
-		self.logbtn = Button(icon="icons-time", className="btn btn--topbar btn--log")
+		self.logbtn = Button(icon="icon-time", className="btn btn--topbar btn--log")
 		self.appendChild(self.logbtn)
 
 		popout = html5.Div()
@@ -245,16 +244,11 @@ class LogButton(html5.Div):
 			msgdescr.appendChild(html5.TextNode(html5.unescape(logObj["msg"])))
 
 		if logObj["icon"]:
-			svg = embedsvg.get(logObj["icon"])
+			svg = SvgIcon( logObj["icon"], title = logObj["msg"] )
 		else:
-			svg = embedsvg.get("icons-%s" % logObj["type"])
+			svg = SvgIcon( "icon-%s" % logObj["type"], title = logObj[ "msg" ], fallbackIcon="icon-message-news" )
 
-		if not svg:
-			svg = embedsvg.get("icons-message-news")
-
-		if svg:
-			msgwrap.element.innerHTML = svg + msgwrap.element.innerHTML
-
+		self.msgwrap.prependChild(svg)
 		self.appendChild(msgwrap)
 		DeferredCall(self.removeInfo, msgwrap, _delay=2500)
 
@@ -348,15 +342,12 @@ class Log(html5.Div):
 		msgWrap.addClass("is-new popup popup--s")
 
 		if icon:
-			svg = embedsvg.get(icon)
+			svg = SvgIcon( icon )
 		else:
-			svg = embedsvg.get("icons-%s" % type)
-
-		if not svg:
-			svg = embedsvg.get("icons-message-news")
+			svg = SvgIcon( "icon-%s" % type, fallbackIcon="icon-message-news" )
 
 		if svg:
-			msgWrap.element.innerHTML = svg + msgWrap.element.innerHTML
+			msgWrap.prependChild(svg)
 
 		msgContent = html5.Div()
 		msgContent.addClass("msg-content")

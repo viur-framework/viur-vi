@@ -15,7 +15,7 @@ class AddAction(Button):
 		Adds a new node in a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddAction, self ).__init__( translate("Add"), icon="icons-add", *args, **kwargs )
+		super( AddAction, self ).__init__( translate("Add"), icon="icon-add", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--primary"
 
 	@staticmethod
@@ -56,7 +56,7 @@ class EditAction(Button):
 		Edits a node in a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), icon="icons-edit", *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), icon="icon-edit", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -127,7 +127,7 @@ class CloneAction(Button):
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( CloneAction, self ).__init__( translate("Clone"), icon="icons-clone", *args, **kwargs )
+		super( CloneAction, self ).__init__( translate("Clone"), icon="icon-clone", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--clone"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -190,7 +190,7 @@ class DeleteAction(Button):
 		Deletes a node from a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__( translate("Delete"), icon="icons-delete", *args, **kwargs )
+		super( DeleteAction, self ).__init__( translate("Delete"), icon="icon-delete", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled = True
@@ -250,7 +250,7 @@ class ReloadAction(Button):
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), icon="icons-reload", *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), icon="icon-reload", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
@@ -336,7 +336,7 @@ class ListViewAction(Button):
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ListViewAction, self ).__init__( translate("ListViewAction"), icon="icons-list", *args, **kwargs )
+		super( ListViewAction, self ).__init__( translate("ListViewAction"), icon="icon-list", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--list"
 
 	@staticmethod

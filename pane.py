@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from flare import html5
 from flare.button import Button
-from .embedsvg import embedsvg
 from flare.icons import Icon
 from .config import conf
 from .priorityqueue import HandlerClassSelector
@@ -86,13 +85,20 @@ class Pane(html5.Div):
 
 		if loading:
 			#self.itemImage = Icon(self.descr, "./public/images/is-loading32.gif")
-			self.itemImage = Icon("loading",value="./public/images/is-loading32.gif")
+			self.itemImage = Icon(value="./public/images/is-loading32.gif",title="loading")
 
 		else:
 			#self.itemImage = Icon(self.descr, self.defaultIconURL)
-			self.itemImage = Icon(self.descr,value=self.defaultIconURL)
+			#self.itemImage = Icon(value=self.defaultIconURL, title=self.descr)
+			print("TT")
+			#language=HTML
+			self.itemImage = '''
+				<div class="item-image">
+					<icon :title="descr" :value="defaultIconURL"></icon>
+				</div>
+			'''
 
-		self.label.appendChild(self.itemImage)
+		self.label.appendChild(self.itemImage, bindTo=self)
 
 	def lock(self):
 		self.disable()

@@ -2,6 +2,7 @@
 from flare import html5
 from flare.popup import Confirm, Popup, Alert
 from flare.network import NetworkService
+from flare.icons import SvgIcon
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
 from vi.config import conf
@@ -10,7 +11,6 @@ from vi.widgets.csvexport import ExportCsvStarter
 from vi.sidebarwidgets.internalpreview import InternalPreview
 from vi.sidebarwidgets.filterselector import FilterSelector
 from vi.i18n import translate
-from vi.embedsvg import embedsvg
 from flare.button import Button
 from flare.network import DeferredCall
 
@@ -26,7 +26,7 @@ class AddAction(Button):
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddAction, self ).__init__(translate("Add"), icon="icons-add", *args, **kwargs )
+		super( AddAction, self ).__init__(translate("Add"), icon="icon-add", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--add-list btn--primary"
 
 	@staticmethod
@@ -42,7 +42,7 @@ class AddAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = EditPane(translate("Add"), closeable=True, iconURL="icons-add",
+		pane = EditPane(translate("Add"), closeable=True, iconURL="icon-add",
 		                iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_add" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, context=self.parent().parent().context)
@@ -61,7 +61,7 @@ class EditAction(Button):
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), icon="icons-edit", *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), icon="icon-edit", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -110,7 +110,7 @@ class EditAction(Button):
 			self.openEditor( s["key"] )
 
 	def openEditor(self, key):
-		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
+		pane = Pane(translate("Edit"), closeable=True, iconURL="icon-edit", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane, focus=True )
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key,
 		                    context=self.parent().parent().context)
@@ -128,7 +128,7 @@ class CloneAction(Button):
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( CloneAction, self ).__init__( translate("Clone"), icon="icons-clone", *args, **kwargs )
+		super( CloneAction, self ).__init__( translate("Clone"), icon="icon-clone", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--clone"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -171,7 +171,7 @@ class CloneAction(Button):
 			self.openEditor( s["key"] )
 
 	def openEditor(self, key):
-		pane = Pane(translate("Clone"), closeable=True, iconURL="icons-clone", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
+		pane = Pane(translate("Clone"), closeable=True, iconURL="icon-clone", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
 		conf["mainWindow"].stackPane( pane )
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key, clone=True,
 		                    context=self.parent().parent().context)
@@ -190,7 +190,7 @@ class DeleteAction(Button):
 		Allows deleting an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__( translate("Delete"), icon="icons-delete", *args, **kwargs )
+		super( DeleteAction, self ).__init__( translate("Delete"), icon="icon-delete", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -265,7 +265,7 @@ class ListPreviewAction(html5.Span):
 		self.urlCb = html5.ignite.Select()
 		self.appendChild(self.urlCb)
 
-		btn = Button(translate("Preview"), callback=self.onClick, icon="icons-preview")
+		btn = Button(translate("Preview"), callback=self.onClick, icon="icon-preview")
 		btn["class"] = "bar-item btn btn--small btn--preview"
 		self.appendChild(btn)
 
@@ -376,7 +376,7 @@ actionDelegateSelector.insert( 2, ListPreviewAction.isSuitableFor, ListPreviewAc
 
 class ListPreviewInlineAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( ListPreviewInlineAction, self ).__init__( translate("vi.sidebar.internalpreview"), icon="icons-list-item", *args, **kwargs )
+		super( ListPreviewInlineAction, self ).__init__( translate("vi.sidebar.internalpreview"), icon="icon-list-item", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--intpreview"
 		self.urls = None
 		self.intPrevActive = False
@@ -430,9 +430,8 @@ class ListPreviewInlineAction(Button):
 		if len(selection) == 1 and intPrevActive == True :
 			preview = InternalPreview( self.parent().parent().module, self.parent().parent()._structure, selection[0])
 			self.parent().parent().sideBar.sidebarHeadline.element.innerHTML = translate("vi.sidebar.internalpreview")
-			svg = embedsvg.get("icons-list-item")
-			if svg:
-				self.parent().parent().sideBar.sidebarIcon.element.innerHTML = svg
+
+			self.parent().parent().sideBar.sidebarIcon.prependChild( SvgIcon("icon-list-item" ) )
 			self.parent().parent().sideBar.setWidget(preview)
 		else:
 			if isinstance( self.parent().parent().sideBar.getWidget(), InternalPreview ):
@@ -458,7 +457,7 @@ class CloseAction(Button):
 	def __init__(self, *args, **kwargs ):
 		super(CloseAction, self).__init__(
 			translate("Close"),
-			icon="icons-cancel",
+			icon="icon-cancel",
 			*args, **kwargs
 		)
 		self.addClass("bar-item btn btn--small btn--close")
@@ -476,7 +475,7 @@ class SelectAction(Button):
 	def __init__(self, *args, **kwargs ):
 		super().__init__(
 			translate("Select"),
-			icon="icons-select-add",
+			icon="icon-select-add",
 			*args, **kwargs
 		)
 		self.addClass("bar-item btn btn--small btn--activateselection")
@@ -556,7 +555,7 @@ class SelectFieldsPopup( Popup ):
 
 	def doApply(self, *args, **kwargs):
 		self.applyBtn.addClass("is-loading")
-		self.applyBtn["icon"] = "icons-loader"
+		self.applyBtn["icon"] = "icon-loader"
 		self.applyBtn["disabled"] = True
 
 		res = []
@@ -604,7 +603,7 @@ class SelectFieldsPopup( Popup ):
 
 class SelectFieldsAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( SelectFieldsAction, self ).__init__( translate("Select fields"), icon="icons-list", *args, **kwargs )
+		super( SelectFieldsAction, self ).__init__( translate("Select fields"), icon="icon-list", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--selectfields"
 		self["disabled"] = self.isDisabled = True
 
@@ -636,7 +635,7 @@ class ReloadAction(Button):
 		Allows Reloading
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), icon="icons-reload", *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), icon="icon-reload", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
@@ -660,7 +659,7 @@ actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 class TableNextPage(Button):
 
 	def __init__(self, *args, **kwargs):
-		super(TableNextPage, self).__init__(translate("next Page"), icon="icons-table", *args, **kwargs)
+		super(TableNextPage, self).__init__(translate("next Page"), icon="icon-table", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--next"
 
 	def postInit(self,widget=None):
@@ -686,7 +685,7 @@ actionDelegateSelector.insert(1, TableNextPage.isSuitableFor, TableNextPage)
 class TablePrevPage(Button):
 
 	def __init__(self, *args, **kwargs):
-		super(TablePrevPage, self).__init__(translate("prev Page"), icon="icons-table", *args, **kwargs)
+		super(TablePrevPage, self).__init__(translate("prev Page"), icon="icon-table", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--prev"
 
 	def postInit(self,widget=None):
@@ -857,7 +856,7 @@ class LoadAllAction(Button):
 		Allows Loading all Entries in a list
 	"""
 	def __init__(self, *args, **kwargs):
-		super( LoadAllAction, self ).__init__( translate("Load all"), icon="icons-table", *args, **kwargs )
+		super( LoadAllAction, self ).__init__( translate("Load all"), icon="icon-table", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--loadall"
 
 	@staticmethod
@@ -898,7 +897,7 @@ class PageFindAction(html5.Div):
 		self.appendChild(self.searchInput)
 
 
-		btn = Button( translate( "Find on Page" ), callback = self.onClick, icon = "icons-search" )
+		btn = Button( translate( "Find on Page" ), callback = self.onClick, icon = "icon-search" )
 		btn[ "class" ] = "bar-item btn btn--small btn--pagefind"
 		self.appendChild( btn )
 		self.sinkEvent("onKeyPress")
@@ -960,7 +959,7 @@ actionDelegateSelector.insert( 1, PageFindAction.isSuitableFor, PageFindAction )
 
 class ListSelectFilterAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), icon="icons-search", *args, **kwargs )
+		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), icon="icon-search", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--selectfilter"
 		self.urls = None
 		self.filterSelector = None
@@ -986,9 +985,7 @@ class ListSelectFilterAction(Button):
 		else:
 			self.filterSelector = FilterSelector(self.parent().parent().module)
 			self.parent().parent().sideBar.sidebarHeadline.element.innerHTML = translate("vi.sidebar.filterselector")
-			svg = embedsvg.get("icons-search")
-			if svg:
-				self.parent().parent().sideBar.sidebarIcon.element.innerHTML = svg
+			self.parent().parent().sideBar.sidebarIcon.prependChild( SvgIcon( "icon-search" ) )
 			self.parent().parent().sideBar.setWidget(self.filterSelector)
 
 	@staticmethod
@@ -1007,7 +1004,7 @@ actionDelegateSelector.insert( 1, ListSelectFilterAction.isSuitableFor, ListSele
 
 class CreateRecurrentAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(CreateRecurrentAction, self ).__init__( translate("Save-Close"), icon="icons-save-file", *args, **kwargs )
+		super(CreateRecurrentAction, self ).__init__( translate("Save-Close"), icon="icon-save-file", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--primary btn--save-close"
 
 	@staticmethod
@@ -1022,7 +1019,7 @@ actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRec
 
 class ExportCsvAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(ExportCsvAction, self).__init__(translate("CSV Export"), icon="icons-download-file", *args, **kwargs)
+		super(ExportCsvAction, self).__init__(translate("CSV Export"), icon="icon-download-file", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--download"
 
 	def onClick(self, sender = None):
@@ -1036,7 +1033,7 @@ actionDelegateSelector.insert(1, ExportCsvAction.isSuitableFor, ExportCsvAction)
 
 class SelectAllAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectAllAction, self ).__init__(translate("Select all"), icon="icons-select-add", *args, **kwargs)
+		super(SelectAllAction, self ).__init__(translate("Select all"), icon="icon-select-add", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--selectall"
 		self["disabled"] = self.isDisabled = True
 
@@ -1067,7 +1064,7 @@ actionDelegateSelector.insert(1, SelectAllAction.isSuitableFor, SelectAllAction)
 
 class UnSelectAllAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), icon="icons-select-remove", *args, **kwargs)
+		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), icon="icon-select-remove", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--unselectall"
 		self["disabled"] = self.isDisabled = True
 
@@ -1097,7 +1094,7 @@ actionDelegateSelector.insert(1, UnSelectAllAction.isSuitableFor, UnSelectAllAct
 
 class SelectInvertAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectInvertAction, self ).__init__(translate("Invert selection"), icon="icons-select-invert", *args, **kwargs)
+		super(SelectInvertAction, self ).__init__(translate("Invert selection"), icon="icon-select-invert", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--selectinvert"
 		self["disabled"] = self.isDisabled = True
 
@@ -1110,11 +1107,11 @@ class SelectInvertAction(Button):
 
 		if removed and added:
 			conf["mainWindow"].log("info", translate(u"{added} items selected, {removed} items deselected",
-			                                            added=added, removed=removed), icon="icons-select-invert")
+			                                            added=added, removed=removed), icon="icon-select-invert")
 		elif removed == 0:
-			conf["mainWindow"].log("info", translate(u"{items} items had been selected", items=added), icon="icons-select-add")
+			conf["mainWindow"].log("info", translate(u"{items} items had been selected", items=added), icon="icon-select-add")
 		elif added == 0:
-			conf["mainWindow"].log("info", translate(u"{items} items had been unselected", items=removed), icon="icons-select-remove")
+			conf["mainWindow"].log("info", translate(u"{items} items had been unselected", items=removed), icon="icon-select-remove")
 
 	def onAttach(self):
 		super(SelectInvertAction,self).onAttach()

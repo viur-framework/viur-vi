@@ -8,7 +8,7 @@ from vi.config import conf
 
 class SaveContinue(Button):
 	def __init__(self, *args, **kwargs):
-		super( SaveContinue, self ).__init__( translate("Save-Continue"), icon="icons-save-file", *args, **kwargs )
+		super( SaveContinue, self ).__init__( translate("Save-Continue"), icon="icon-save-file", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--save-continue"
 
 	@staticmethod
@@ -18,7 +18,7 @@ class SaveContinue(Button):
 	def onClick(self, sender=None):
 		self[ "disabled" ] = True
 		self["class"].append("is-loading")
-		self["icon"] = "icons-loader"
+		self["icon"] = "icon-loader"
 		self.parent().parent().doSave(closeOnSuccess=False)
 
 	def resetLoadingState(self):
@@ -31,7 +31,7 @@ actionDelegateSelector.insert( 1, SaveContinue.isSuitableFor, SaveContinue )
 
 class SaveSingleton(Button):
 	def __init__(self, *args, **kwargs):
-		super(SaveSingleton, self).__init__(translate("Save"), icon="icons-save-file", *args, **kwargs)
+		super(SaveSingleton, self).__init__(translate("Save"), icon="icon-save-file", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--primary btn--save-close"
 
 	@staticmethod
@@ -41,7 +41,7 @@ class SaveSingleton(Button):
 	def onClick(self, sender=None):
 		self[ "disabled" ] = True
 		self["class"].append("is-loading")
-		self["icon"] =  "icons-loader"
+		self["icon"] =  "icon-loader"
 		self.parent().parent().doSave(closeOnSuccess=False)
 
 	def resetLoadingState(self):
@@ -54,7 +54,7 @@ actionDelegateSelector.insert(1, SaveSingleton.isSuitableFor, SaveSingleton)
 
 class ExecuteSingleton(Button):
 	def __init__(self, *args, **kwargs):
-		super(ExecuteSingleton, self).__init__(translate("Execute"), icon="icons-save-file", *args, **kwargs)
+		super(ExecuteSingleton, self).__init__(translate("Execute"), icon="icon-save-file", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--primary btn--save-close"
 
 	@staticmethod
@@ -64,7 +64,7 @@ class ExecuteSingleton(Button):
 	def onClick(self, sender=None):
 		self[ "disabled" ] = True
 		self["class"].append("is-loading")
-		self["icon"] =  "icons-loader"
+		self["icon"] =  "icon-loader"
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):
@@ -77,7 +77,7 @@ actionDelegateSelector.insert(1, ExecuteSingleton.isSuitableFor, ExecuteSingleto
 
 class SaveClose(Button):
 	def __init__(self, *args, **kwargs):
-		super( SaveClose, self ).__init__( translate("Save-Close"), icon="icons-save-file", *args, **kwargs )
+		super( SaveClose, self ).__init__( translate("Save-Close"), icon="icon-save-file", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--primary btn--save-close"
 
 	@staticmethod
@@ -87,7 +87,7 @@ class SaveClose(Button):
 	def onClick(self, sender=None):
 		self[ "disabled" ] = True
 		self.addClass("is-loading")
-		self["icon"] = "icons-loader"
+		self["icon"] = "icon-loader"
 		self.parent().parent().doSave(closeOnSuccess=True)
 
 	def resetLoadingState(self):
@@ -101,7 +101,7 @@ actionDelegateSelector.insert( 1, SaveClose.isSuitableFor, SaveClose )
 
 class Refresh(Button):
 	def __init__(self, *args, **kwargs):
-		super(Refresh, self).__init__(translate("Reload"), icon="icons-reload", *args, **kwargs)
+		super(Refresh, self).__init__(translate("Reload"), icon="icon-reload", *args, **kwargs)
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
@@ -128,7 +128,7 @@ actionDelegateSelector.insert(1, Refresh.isSuitableFor, Refresh)
 
 class CancelClose(Button):
 	def __init__(self, *args, **kwargs):
-		super( CancelClose, self ).__init__( translate("Cancel"), icon="icons-save-file", *args, **kwargs )
+		super( CancelClose, self ).__init__( translate("Cancel"), icon="icon-save-file", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--danger btn--cancel"
 
 	@staticmethod

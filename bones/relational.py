@@ -29,8 +29,8 @@ class RelationalEditWidget(BaseEditWidget):
 		return self.fromHTML(
 			"""
 				<ignite-input [name]="destWidget" readonly>
-				<button [name]="selectBtn" class="btn--select" text="Select" icon="icons-select"></button>
-				<button hidden [name]="deleteBtn" class="btn--delete" text="Delete" icon="icons-delete"></button>
+				<button [name]="selectBtn" class="btn--select" text="Select" icon="icon-select"></button>
+				<button hidden [name]="deleteBtn" class="btn--delete" text="Delete" icon="icon-delete"></button>
 			"""
 		)
 
@@ -204,7 +204,7 @@ class RelationalMultiEditWidget(BaseMultiEditWidget):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.addBtn["text"] = "Select"
-		self.addBtn["icon"] = "icons-select"
+		self.addBtn["icon"] = "icon-select"
 		self.addBtn.removeClass("btn--add")
 		self.addBtn.addClass("btn--select")
 

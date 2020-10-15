@@ -7,8 +7,7 @@ from vi.config import conf
 from vi.widgets.task import TaskSelectWidget
 from vi.priorityqueue import toplevelActionSelector
 from flare.button import Button
-from vi.embedsvg import embedsvg
-from flare.icons import Icon
+from flare.icons import Icon, SvgIcon
 from vi.pane import Pane
 from vi.widgets.edit import EditWidget
 from vi.log import LogButton
@@ -41,9 +40,7 @@ class TopBarWidget(html5.Header):
 		""")
 
 		if not conf["theApp"].isFramed:
-			svg = embedsvg.get("logos-vi")
-			if svg:
-				self.topbarLogo.element.innerHTML = svg + self.topbarLogo.element.innerHTML
+			self.topbarLogo.prependChild( SvgIcon( "logo-vi", title = "logo" ) )
 		else:
 			self.topbarLogo.hide()
 			self.moduleH1.hide()
@@ -57,9 +54,7 @@ class TopBarWidget(html5.Header):
 		newBtn["href"] = "https://www.viur.is"
 		newBtn["target"] = "_blank"
 		newBtn.addClass("btn")
-		svg = embedsvg.get("icons-ribbon")
-		if svg:
-			newBtn.element.innerHTML = svg + newBtn.element.innerHTML
+		newBtn.prependChild( SvgIcon( "logos-ribbon", title = translate("vi.topbar.newbtn") ))
 		newBtn.appendChild(translate("vi.topbar.newbtn"))
 		#self.iconnav.appendChild(newBtn)
 
@@ -98,7 +93,16 @@ class TopBarWidget(html5.Header):
 		self.moduleName.appendChild(html5.TextNode(descr))
 
 		self.modulImg.removeAllChildren()
-		self.modulImg.appendChild( Icon(descr, iconURL) )
+
+		self.mod_descr = descr
+		self.mod_iconURL = iconURL
+		# language=HTML
+		self.modulImg.appendChild( '''
+						<div class="item-image">
+							<icon :title="mod_descr" :value="mod_iconURL"></icon>
+						</div>
+					''', bindTo = self )
+		#self.modulImg.appendChild( Icon(descr, iconURL) )
 
 		conf["theApp"].setTitle(descr)
 
@@ -112,7 +116,7 @@ class UserState(html5.Div):
 
 		self[ "class" ] = [ "popout-opener", "popout-anchor", "popout--sw" ]
 
-		self.btn = Button( icon = "icons-user", className = "btn btn--topbar btn--user" )
+		self.btn = Button( icon = "icon-user", className = "btn btn--topbar btn--user" )
 		self.appendChild( self.btn )
 
 		self.sinkEvent( "onClick" )
@@ -195,7 +199,7 @@ toplevelActionSelector.insert( 0, UserState.canHandle, UserState )
 
 class Tasks(Button):
 	def __init__(self, *args, **kwargs):
-		super(Tasks, self).__init__(icon="icons-settings", *args, **kwargs)
+		super(Tasks, self).__init__(icon="icon-settings", *args, **kwargs)
 		self.sinkEvent("onClick")
 		self.hide()
 		self.addClass("btn vi-tb-tasks")
@@ -246,7 +250,7 @@ toplevelActionSelector.insert( 0, Tasks.canHandle, Tasks )
 
 class Logout(Button):
 	def __init__(self, *args, **kwargs):
-		super(Logout,self).__init__(icon="icons-logout", *args, **kwargs)
+		super(Logout,self).__init__(icon="icon-logout", *args, **kwargs)
 		self.addClass("btn vi-tb-logout")
 		self.appendChild(html5.TextNode(translate("Logout")))
 		self.sinkEvent("onClick")

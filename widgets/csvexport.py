@@ -33,7 +33,7 @@ class ExportCsv(html5.Progress):
 		self.encoding = encoding
 		self.lang = language
 
-		conf["mainWindow"].log("progress", self, icon="icons-download-file")
+		conf["mainWindow"].log("progress", self, icon="icon-download-file")
 		self.parent().addClass("is-new")
 		self.parent().addClass("log-progress")
 		self.appendChild(html5.TextNode(translate("CSV-Export")))
@@ -221,10 +221,10 @@ class ExportCsvStarter(Popup):
 			opt.appendChild(html5.TextNode(v))
 			self.encodingSelect.appendChild(opt)
 
-		self.cancelBtn = Button(translate("Cancel"), self.close, icon="icons-cancel")
+		self.cancelBtn = Button(translate("Cancel"), self.close, icon="icon-cancel")
 		self.popupFoot.appendChild(self.cancelBtn)
 
-		self.exportBtn = Button(translate("Export"), self.onExportBtnClick, icon="icons-download-file")
+		self.exportBtn = Button(translate("Export"), self.onExportBtnClick, icon="icon-download-file")
 		self.exportBtn.addClass("btn--edit")
 		self.popupFoot.appendChild(self.exportBtn)
 

@@ -46,7 +46,7 @@ class AddNodeAction(Button):
 	def __init__(self, *args, **kwargs):
 		super(AddNodeAction, self).__init__(
 			translate("Add folder"),
-			icon="icons-add-folder",
+			icon="icon-add-folder",
 			*args, **kwargs
 		)
 		self.addClass("bar-item btn btn--small btn--mkdir")
@@ -81,7 +81,7 @@ class AddNodeAction(Button):
 
 	def onMkDir(self, req):
 		dirName = req.dirName
-		conf["mainWindow"].log("success",translate("Directory \"{name}\" created.", icon="icons-add-folder",name=dirName))
+		conf["mainWindow"].log("success",translate("Directory \"{name}\" created.", icon="icon-add-folder",name=dirName))
 
 	def resetLoadingState(self):
 		pass
@@ -95,7 +95,7 @@ class AddLeafAction(Button):
 	def __init__(self, *args, **kwargs):
 		super(AddLeafAction, self).__init__(
 			translate("Upload"),
-			icon="icons-upload-file",
+			icon="icon-upload-file",
 			*args, **kwargs
 		)
 		self.addClass("bar-item btn btn--small btn--upload btn--primary")
@@ -132,7 +132,7 @@ class EditAction(Button):
 		otherwise the full editWidget is used.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), icon="icons-edit", *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), icon="icon-edit", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -214,7 +214,7 @@ class DownloadAction(Button):
 		Allows downloading files from the server.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DownloadAction, self ).__init__( translate("Download"), icon="icons-download-file", *args, **kwargs )
+		super( DownloadAction, self ).__init__( translate("Download"), icon="icon-download-file", *args, **kwargs )
 		self["class"] = "bar-item btn btn--small btn--download"
 		self["disabled"]= True
 		self.isDisabled=True
