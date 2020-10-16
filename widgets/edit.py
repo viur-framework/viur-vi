@@ -198,7 +198,6 @@ class EditWidget(html5.Div):
 		utils.setPreventUnloading(True)
 
 	def performLogics(self):
-		# return  # fixme: Logics temporarily disabled
 		print("performLogics")
 		fields = self.serializeForDocument()
 
