@@ -66,11 +66,8 @@ class ActionBar(html5.Div):
 
 					self.widgets[ action ] = actionWdg
 				else:  # We may have a server-defined action
-					print("llll1")
 					if handler and "customActions" in conf["modules"][self.module]:
-						print("llll2")
 						if action in conf["modules"][self.module]["customActions"]:
-							print("llll3")
 							actionWdg = ServerSideActionWdg(self.module, handler, action,
 														conf["modules"][self.module]["customActions"][action])
 							self.appendChild(actionWdg)
