@@ -137,18 +137,18 @@ class FileMultiSelectionBoneEntry(RelationalMultiSelectionBoneEntry):
 		"""
 			Edit the image entry.
 		"""
-		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "modul_%s" % self.parent.destModule,
+		pane = Pane(translate("Edit"), closeable=True, iconClasses=[ "module_%s" % self.relationalBone.destModule,
 		                                                                "apptype_list", "action_edit" ] )
 		conf["mainWindow"].stackPane(pane, focus=True)
 
 		try:
-			edwg = EditWidget(self.parent.destModule, EditWidget.appTree, key=self.data["dest"]["key"], skelType="leaf")
+			edwg = EditWidget(self.relationalBone.destModule, EditWidget.appTree, key=self.data["dest"]["key"], skelType="leaf")
 			pane.addWidget(edwg)
 		except AssertionError:
 			conf["mainWindow"].removePane(pane)
 
 	def update(self):
-		NetworkService.request(self.parent.destModule, "view/leaf",
+		NetworkService.request(self.relationalBone.destModule, "view/leaf",
 		                        params={"key": self.data["dest"]["key"]},
 		                        successHandler=self.onModuleViewAvailable)
 

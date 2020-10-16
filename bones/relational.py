@@ -491,7 +491,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		Provides the UI to display its data and a button to remove it from the bone.
 	"""
 
-	def __init__(self, parent, module, data, using, errorInfo, *args, **kwargs ):
+	def __init__(self, parent, module, data, using=None, errorInfo=None, *args, **kwargs ):
 		"""
 			:param parent: Reference to the RelationalMultiSelectionBone we belong to
 			:type parent: RelationalMultiSelectionBone
@@ -503,7 +503,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		super(RelationalMultiSelectionBoneEntry, self).__init__(*args, **kwargs)
 		self.sinkEvent("onDrop", "onDragOver", "onDragLeave", "onDragStart", "onDragEnd", "onChange")
 
-		self.parent = parent
+		self.relationalBone = parent
 		self.module = module
 		self.data = data
 
@@ -536,9 +536,9 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			self.ie = None
 
 		# Edit button
-		if (self.parent.destModule in conf["modules"].keys()
+		if (self.relationalBone.destModule in conf["modules"].keys()
 			and ("root" in conf["currentUser"]["access"]
-					or self.parent.destModule + "-edit" in conf["currentUser"]["access"])):
+			     or self.relationalBone.destModule + "-edit" in conf["currentUser"]["access"])):
 
 			self.editBtn = html5.ext.Button(translate("Edit"), self.onEdit)
 			self.editBtn["class"].append("icon")
@@ -556,74 +556,74 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 			data = self.data
 
 		self.txtLbl.removeAllChildren()
-		txt = utils.formatString(self.parent.format, data["dest"], self.parent.relskel,
-		                            prefix=["dest"], language=conf["currentlanguage"])
+		txt = utils.formatString(self.relationalBone.format, data["dest"], self.relationalBone.relskel,
+		                         prefix=["dest"], language=conf["currentlanguage"])
 
 		if self.ie:
-			txt = utils.formatString(txt, self.ie.doSave(), self.parent.using,
-			                            prefix=["rel"], language=conf["currentlanguage"])
+			txt = utils.formatString(txt, self.ie.serializeForDocument(), self.relationalBone.using,
+			                         prefix=["rel"], language=conf["currentlanguage"])
 
 		html5.utils.textToHtml(self.txtLbl, txt)
 
 	def onDragStart(self, event):
-		if self.parent.readOnly:
+		if self.relationalBone.readOnly:
 			return
 
 		self.addClass("is-dragging")
 
-		self.parent.currentDrag = self
+		self.relationalBone.currentDrag = self
 		event.dataTransfer.setData("application/json", json.dumps(self.data))
 		event.stopPropagation()
 
 	def onDragOver(self, event):
-		if self.parent.readOnly:
+		if self.relationalBone.readOnly:
 			return
 
-		if self.parent.currentDrag is not self:
+		if self.relationalBone.currentDrag is not self:
 			self.addClass("is-dragging-over")
-			self.parent.currentOver = self
+			self.relationalBone.currentOver = self
 
 		event.preventDefault()
 
 	def onDragLeave(self, event):
-		if self.parent.readOnly:
+		if self.relationalBone.readOnly:
 			return
 
 		self.removeClass("is-dragging-over")
-		self.parent.currentOver = None
+		self.relationalBone.currentOver = None
 
 		event.preventDefault()
 
 	def onDragEnd(self, event):
-		if self.parent.readOnly:
+		if self.relationalBone.readOnly:
 			return
 
 		self.removeClass("is-dragging")
-		self.parent.currentDrag = None
+		self.relationalBone.currentDrag = None
 
-		if self.parent.currentOver:
-			self.parent.currentOver.removeClass("is-dragging-over")
-			self.parent.currentOver = None
+		if self.relationalBone.currentOver:
+			self.relationalBone.currentOver.removeClass("is-dragging-over")
+			self.relationalBone.currentOver = None
 
 		event.stopPropagation()
 
 	def onDrop(self, event):
-		if self.parent.readOnly:
+		if self.relationalBone.readOnly:
 			return
 
 		event.preventDefault()
 		event.stopPropagation()
 
-		if self.parent.currentDrag and self.parent.currentDrag != self:
-			if self.element.offsetTop > self.parent.currentDrag.element.offsetTop:
-				if self.parent.entries[-1] is self:
-					self.parent.moveEntry(self.parent.currentDrag)
+		if self.relationalBone.currentDrag and self.relationalBone.currentDrag != self:
+			if self.element.offsetTop > self.relationalBone.currentDrag.element.offsetTop:
+				if self.relationalBone.entries[-1] is self:
+					self.relationalBone.moveEntry(self.relationalBone.currentDrag)
 				else:
-					self.parent.moveEntry(self.parent.currentDrag, self.parent.entries[self.parent.entries.index(self) + 1])
+					self.relationalBone.moveEntry(self.relationalBone.currentDrag, self.relationalBone.entries[self.relationalBone.entries.index(self) + 1])
 			else:
-				self.parent.moveEntry(self.parent.currentDrag, self)
+				self.relationalBone.moveEntry(self.relationalBone.currentDrag, self)
 
-		self.parent.currentDrag = None
+		self.relationalBone.currentDrag = None
 
 	def onChange(self, event):
 		data = self.data.copy()
@@ -632,17 +632,17 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		self.updateLabel(data)
 
 	def onRemove(self, *args, **kwargs):
-		self.parent.removeEntry(self)
-		self.parent.changeEvent.fire(self.parent)
+		self.relationalBone.removeEntry(self)
+		self.relationalBone.changeEvent.fire(self.relationalBone)
 
 	def onEdit(self, sender = None):
 		pane = Pane(translate("Edit"), closeable=True,
-					iconClasses=["module_%s" % self.parent.destModule, "apptype_list", "action_edit"])
+		            iconClasses=["module_%s" % self.relationalBone.destModule, "apptype_list", "action_edit"])
 		conf["mainWindow"].stackPane(pane, focus=True)
 
 		try:
-			edwg = EditWidget(self.parent.destModule, EditWidget.appList, key=self.data["dest"]["key"],
-			                    context=self.parent.context)
+			edwg = EditWidget(self.relationalBone.destModule, EditWidget.appList, key=self.data["dest"]["key"],
+			                  context=self.relationalBone.context)
 			pane.addWidget(edwg)
 
 		except AssertionError:
@@ -660,7 +660,7 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		res = {"rel": {}, "dest": {}}
 
 		if self.ie:
-			res["rel"] = self.ie.serializeForPost()
+			res["rel"] = self.ie.serializeForDocument()
 
 		res["dest"]["key"] = self.data["dest"]["key"]
 		return res
@@ -669,20 +669,23 @@ class RelationalMultiSelectionBoneEntry(html5.Div):
 		super(RelationalMultiSelectionBoneEntry, self).onAttach()
 		NetworkService.registerChangeListener(self)
 
+		if self.relationalBone["disabled"]:
+			self.disable()
+
 	def onDetach(self):
 		NetworkService.removeChangeListener(self)
 		super(RelationalMultiSelectionBoneEntry, self).onDetach()
 
 	def onDataChanged(self, module, key = None, **kwargs):
-		if module != self.parent.destModule or key != self.data["dest"]["key"]:
+		if module != self.relationalBone.destModule or key != self.data["dest"]["key"]:
 			return
 
 		self.update()
 
 	def update(self):
-		NetworkService.request(self.parent.destModule, "view",
-		                        params={"key": self.data["dest"]["key"]},
-		                        successHandler=self.onModuleViewAvailable)
+		NetworkService.request(self.relationalBone.destModule, "view",
+		                       params={"key": self.data["dest"]["key"]},
+		                       successHandler=self.onModuleViewAvailable)
 
 	def onModuleViewAvailable(self, req):
 		answ = NetworkService.decode(req)

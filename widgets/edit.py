@@ -861,6 +861,7 @@ class EditWidget(html5.Div):
 				vtitle = view.get("title")
 				vcolumns = view.get("columns")
 				vfilter = view.get("filter")
+				vactions = view.get("actions")
 
 				if not vmodule:
 					print("Misconfiured view: %s" % view)
@@ -882,13 +883,28 @@ class EditWidget(html5.Div):
 
 				if vvariable:
 					context = self.context.copy() if self.context else {}
-					context[vvariable] = data["values"]["key"]
+
+					if "=" in vvariable:
+						vkey, vvalue = vvariable.split("=", 1)
+						if vvalue[0] == "$":
+							vvalue = data["values"].get(vvalue[1:])
+					else:
+						vkey = vvariable
+						vvalue = data["values"].get("key")
+
+					context[vkey] = vvalue
+
 				else:
 					context = self.context
 
-				self.views[vmodule] = ListWidget(vmodule, filter=vfilter or vdescr.get("filter", {}),
-				                                    columns = vcolumns or vdescr.get("columns"),
-				                                    context = context)
+				self.views[vmodule] = ListWidget(
+					vmodule,
+					filter=vfilter or vdescr.get("filter", {}),
+					columns=vcolumns or vdescr.get("columns"),
+					context=context,
+					actions=vactions
+				)
+
 				fs._section.appendChild(self.views[vmodule])
 				self.form.appendChild(fs)
 

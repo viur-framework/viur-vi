@@ -5,7 +5,7 @@ from logics import Interpreter
 
 conf = {
 	# Vi version number
-	"vi.version": (2, 5, 0),
+	"vi.version": (2, 5, 1),
 
 	# Appendix to version
 	"vi.version.appendix": "",
@@ -21,6 +21,12 @@ conf = {
 
 	# Which access rights are required to open the Vi?
 	"vi.access.rights": ["admin", "root"],
+
+	# Context access variable prefix
+	"vi.context.prefix": "",
+
+	# Context action title fields
+	"vi.context.title.bones": ["name"],
 
 	# Global holder to main configuration taken from the server
 	"mainConfig": None,
@@ -66,6 +72,9 @@ conf = {
 
 	# Globally enable/disable dataset preview in lists
 	"internalPreview": True,
+
+	# Fallback default preview path template (if set None, adminInfo.preview only takes place)
+	"defaultPreview": None,  # "/{{module}}/view/{{key}}"
 
 	# Max number of entries to show in multiple Bones
 	"maxMultiBoneEntries": 5,

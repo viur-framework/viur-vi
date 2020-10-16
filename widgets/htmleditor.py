@@ -4,7 +4,6 @@ from __pyjamas__ import JS
 from i18n import translate
 from widgets.file import FileWidget
 from config import conf
-from utils import getImagePreview
 
 
 class TextInsertImageAction(html5.ext.Button):
@@ -90,7 +89,7 @@ class HtmlEditor(html5.Textarea):
 		lang = conf["currentlanguage"]
 
 		try:
-			self.summernote = JS("""window.top.summernoteEditor(@{{elem}}, @{{lang}})""")
+			self.summernote = html5.window.top.summernoteEditor(elem, lang)
 		except:
 			if retry >= 3:
 				alert("Unable to connect summernote, please contact technical support...")
@@ -102,8 +101,6 @@ class HtmlEditor(html5.Textarea):
 
 		imagebtn = TextInsertImageAction(summernote=self.summernote, boneName=self.boneName)
 		self.parent().appendChild(imagebtn)
-
-		self.summernote.on("summernote.change", self.onEditorChange)
 
 		if not self.enabled:
 			self.summernote.summernote("disable")
@@ -146,8 +143,10 @@ class HtmlEditor(html5.Textarea):
 			self.value = val
 			return
 
+		self.summernote.off("summernote.change")
 		self.summernote.summernote("reset")  # reset history and content
 		self.summernote.summernote("code", val)
+		self.summernote.on("summernote.change", self.onEditorChange)
 
 	def enable(self):
 		super(HtmlEditor, self).enable()

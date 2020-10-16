@@ -3,9 +3,18 @@
 This file documents any relevant changes done to ViUR Vi since version 2.
 
 
-## [develop] 
+## [2.5.1] Vesuv
 
-This is the current development version.
+- Feature: New "action" parameter supported in "editViews" feature
+- Feature: Allow to parametrize context variable prefixes using `conf["vi.context.prefix"]`
+- Feature: Handle `frontend_default_visible`-parameter for bones also in Hierarchy handler
+- Feature: Improved structuring of `NodeWidget` and `LeafWidget` for trees
+- Feature: Allow for multiple uploads in File.upload action
+- Feature: Added `conf["defaultPreview"]` to set a default preview path as fallback for List-modules
+- Bugfix: `ListInternalPreviewAction` always showed up as disabled button with no function
+- Bugfix: Tree `edit`-action should not both edit and switch parent node
+- Bugfix: Escaped dash in regex for validation of `emailBone`
+- Bugfix: `treeDirBone` fixed
 
 ## [2.5.0] Vesuv
 

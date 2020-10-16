@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import html5
+import html5, utils
+
 from network import NetworkService
 from widgets.actionbar import ActionBar
 from event import EventDispatcher
@@ -8,10 +9,7 @@ from config import conf
 from i18n import translate
 
 
-class NodeWidget(html5.Div):
-	"""
-		Displays one Node (ie a directory) inside a TreeWidget
-	"""
+class _StructureWidget(html5.Li):
 
 	def __init__(self, module, data, structure, *args, **kwargs):
 		"""
@@ -22,34 +20,56 @@ class NodeWidget(html5.Div):
 			:param structure: The structure of that data as received from server
 			:type structure: list
 		"""
-		super(NodeWidget, self).__init__(*args, **kwargs)
+		super(_StructureWidget, self).__init__()
+
 		self.module = module
 		self.data = data
 		self.structure = structure
-		self.buildDescription()
-		self.addClass("treeitem", "node", "supports_drag", "supports_drop")
-		self["draggable"] = True
 
-		self.sinkEvent("onDragOver", "onDrop", "onDragStart", "onDragLeave")
+		self.buildDescription()
+		self["draggable"] = True
 
 	def buildDescription(self):
 		"""
 			Creates the visual representation of our entry
 		"""
+		# Find any bones in the structure having "frontend_default_visible" set.
 		hasDescr = False
+
 		for boneName, boneInfo in self.structure:
 			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
 				params = boneInfo["params"]
-				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
-
+				if "frontend_default_visible" in params and params["frontend_default_visible"]:
 					structure = {k: v for k, v in self.structure}
 					wdg = viewDelegateSelector.select(self.module, boneName, structure)
 
 					if wdg is not None:
 						self.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
 						hasDescr = True
+
+		# In case there is no bone configured for visualization, use a format-string
 		if not hasDescr:
-			self.appendChild(html5.TextNode(self.data["name"]))
+			format = "$(name)" #default fallback
+
+			if self.module in conf["modules"].keys():
+				moduleInfo = conf["modules"][self.module]
+				if "format" in moduleInfo.keys():
+					format = moduleInfo["format"]
+
+			self.appendChild(html5.utils.unescape(
+				utils.formatString(format, self.data, self.structure,
+					language=conf["currentlanguage"])))
+
+class NodeWidget(_StructureWidget):
+	"""
+		Displays one Node (ie a directory) inside a TreeWidget
+	"""
+	skelType =  "node"
+
+	def __init__(self, module, data, structure, *args, **kwargs):
+		super(NodeWidget, self).__init__(module, data, structure, *args, **kwargs)
+		self.addClass("treeitem", self.skelType, "supports_drag", "supports_drop")
+		self.sinkEvent("onDragOver", "onDrop", "onDragStart", "onDragLeave")
 
 	def onDragOver(self, event):
 		"""
@@ -89,13 +109,13 @@ class NodeWidget(html5.Div):
 				"destNode": self.data["key"]
 			},
 			failureHandler=lambda req, code:
-                conf["mainWindow"].log(
-                    "error",
-                    translate(
-                        "Node cannot be moved, error {code}.",
-                        code=code
-                    )
-                ),
+				conf["mainWindow"].log(
+					"error",
+					translate(
+						"Node cannot be moved, error {code}.",
+						code=code
+					)
+				),
 			modifies=True,
 			secure=True
 		)
@@ -104,10 +124,11 @@ class NodeWidget(html5.Div):
 		event.stopPropagation()
 
 
-class LeafWidget(html5.Div):
+class LeafWidget(_StructureWidget):
 	"""
 		Displays one Node (ie a file) inside a TreeWidget
 	"""
+	skelType = "leaf"
 
 	def __init__(self, module, data, structure, *args, **kwargs):
 		"""
@@ -118,34 +139,9 @@ class LeafWidget(html5.Div):
 			:param structure: The structure of that data as received from server
 			:type structure: list
 		"""
-		super(LeafWidget, self).__init__(*args, **kwargs)
-		self.module = module
-		self.data = data
-		self.structure = structure
-		self.buildDescription()
-		self["class"] = "treeitem leaf supports_drag"
-		self["draggable"] = True
+		super(LeafWidget, self).__init__(module, data, structure, *args, **kwargs)
+		self.addClass("treeitem", self.skelType, "supports_drag")
 		self.sinkEvent("onDragStart")
-
-	def buildDescription(self):
-		"""
-			Creates the visual representation of our entry
-		"""
-		hasDescr = False
-		for boneName, boneInfo in self.structure:
-			if "params" in boneInfo.keys() and isinstance(boneInfo["params"], dict):
-				params = boneInfo["params"]
-				if "frontend_default_visible" in params.keys() and params["frontend_default_visible"]:
-
-					structure = {k: v for k, v in self.structure}
-					wdg = viewDelegateSelector.select(self.module, boneName, structure)
-
-					if wdg is not None:
-						self.appendChild(wdg(self.module, boneName, structure).render(self.data, boneName))
-						hasDescr = True
-
-		if not hasDescr:
-			self.appendChild(html5.TextNode(self.data["name"]))
 
 	def onDragStart(self, event):
 		"""
@@ -155,7 +151,7 @@ class LeafWidget(html5.Div):
 		event.stopPropagation()
 
 
-class SelectableDiv(html5.Div):
+class SelectionContainer(html5.Ul):
 	"""
 		Provides a Container, which allows selecting its contents.
 		Designed to be used within a tree widget, as it distinguishes between
@@ -164,7 +160,7 @@ class SelectableDiv(html5.Div):
 	"""
 
 	def __init__(self, nodeWidget, leafWidget, selectionType="both", multiSelection=False, *args, **kwargs):
-		super(SelectableDiv, self).__init__(*args, **kwargs)
+		super(SelectionContainer, self).__init__(*args, **kwargs)
 		self["class"].append("selectioncontainer")
 		self["tabindex"] = 1
 		self.selectionType = selectionType
@@ -212,12 +208,12 @@ class SelectableDiv(html5.Div):
 			self.selectionChangedEvent.fire(self, [])
 
 	def onDblClick(self, event):
-		for child in self._children:
+		for child in self.children():
+
 			if html5.utils.doesEventHitWidgetOrChildren(event, child):
-				if self.selectionType == "node" and isinstance(child, self.nodeWidget) or \
-					self.selectionType == "leaf" and isinstance(child, self.leafWidget) or \
-					self.selectionType == "both":
+				if self.selectionType == "both" or self.selectionType == child.skelType:
 					self.selectionActivatedEvent.fire(self, [child])
+					break
 
 	def activateCurrentSelection(self):
 		"""
@@ -316,10 +312,10 @@ class TreeWidget(html5.Div):
 		self.node = node or rootNode
 		self.actionBar = ActionBar(module, "tree")
 		self.appendChild(self.actionBar)
-		self.pathList = html5.Div()
+		self.pathList = html5.Ul()
 		self.pathList["class"].append("breadcrumb")
 		self.appendChild(self.pathList)
-		self.entryFrame = SelectableDiv(self.nodeWidget, self.leafWidget)
+		self.entryFrame = SelectionContainer(self.nodeWidget, self.leafWidget)
 		self.appendChild(self.entryFrame)
 		self.entryFrame.selectionActivatedEvent.register(self)
 		self._batchSize = 99
@@ -395,10 +391,10 @@ class TreeWidget(html5.Div):
 
 		item = selection[0]
 
-		if isinstance(item, self.nodeWidget):
+		if item.skelType == "node":
 			self.setNode(item.data["key"])
 
-		elif isinstance(item, self.leafWidget) and "leaf" in (self.selectMode or ""):
+		elif item.skelType == "leaf" and "leaf" in (self.selectMode or ""):
 			self.returnCurrentSelection()
 
 	def activateCurrentSelection(self):
@@ -423,7 +419,7 @@ class TreeWidget(html5.Div):
 
 	def setRootNode(self, rootNode, node=None):
 		self.rootNode = rootNode
-		self.node = node if node else rootNode
+		self.node = node or rootNode
 		self.rootNodeChangedEvent.fire(rootNode)
 		if node:
 			self.nodeChangedEvent.fire(node)
@@ -455,7 +451,7 @@ class TreeWidget(html5.Div):
 		skel = answ["values"]
 
 		if skel["parentdir"] and skel["parentdir"] != skel["key"]:
-			c = NodeWidget(self.module, skel, [])
+			c = self.nodeWidget(self.module, skel, answ["structure"])
 
 			NetworkService.request(
 				self.module, "view/node/%s" % skel["parentdir"],
@@ -463,7 +459,7 @@ class TreeWidget(html5.Div):
 			)
 
 		else:
-			c = NodeWidget(self.module, {"key": self.rootNode, "name": "root"}, [])
+			c = self.nodeWidget(self.module, {"key": self.rootNode, "name": "root"}, [])
 			c.addClass("is_rootnode")
 
 		self.pathList.prependChild(c)
@@ -501,6 +497,7 @@ class TreeWidget(html5.Div):
 
 		self._currentRequests.remove(req)
 		data = NetworkService.decode(req)
+
 		for skel in data["skellist"]:
 			if req.reqType == "node":
 				n = self.nodeWidget(self.module, skel, data["structure"])
@@ -508,7 +505,8 @@ class TreeWidget(html5.Div):
 				n = self.leafWidget(self.module, skel, data["structure"])
 
 			self.entryFrame.appendChild(n)
-			self.entryFrame.sortChildren(self.getChildKey)
+
+		self.entryFrame.sortChildren(self.getChildKey)
 
 		if "cursor" in data.keys() and len(data["skellist"]) == req.params["amount"]:
 			self._currentCursor[req.reqType] = data["cursor"]
@@ -543,7 +541,7 @@ class TreeWidget(html5.Div):
 
 	@staticmethod
 	def render(moduleName, adminInfo, context):
-		rootNode = context.get("rootNode") if context else None
+		rootNode = context.get(conf["vi.context.prefix"] + "rootNode") if context else None
 		return TreeWidget(module=moduleName, rootNode=rootNode, context=context)
 
 
