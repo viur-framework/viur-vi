@@ -14,9 +14,10 @@ class EmailViewWidget(BaseViewWidget):
 		self.value = value
 
 		if value:
+			# language=HTML
 			self.appendChild(
 				"""<a href="mailto:{{value}}">{{value}}</a>""",
-				vars={"value": value},
+				value=value,
 				replace=True
 			)
 		else:

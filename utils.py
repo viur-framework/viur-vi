@@ -133,7 +133,7 @@ def getImagePreview(data, cropped = False, size = 150):
 
 def setPreventUnloading(mode = True):
 	try:
-		count = html5.window.top.preventViUnloading
+		count = html5.window.preventViUnloading
 	except:
 		return
 
@@ -145,7 +145,7 @@ def setPreventUnloading(mode = True):
 
 	count += (1 if mode else -1)
 
-	html5.window.top.preventViUnloading = count
+	html5.window.preventViUnloading = count
 	return count
 
 
@@ -236,6 +236,26 @@ class indexeddb():
 		all.addEventListener("success", fetchedData)
 
 
+	def getListKeys( self,name ):
+		db = self.connect()
+		db.listName = name
+		db.addEventListener( "db_ready", self._getListKey )
+		return db
+
+	def _getListKey(self,event):
+		name = event.target.listName
+		db = event.target
+		def fetchedData(event):
+			db.dispatchEvent(CustomEvent.new("dataready",{"detail":{"data":event.target.result}}))
+
+		dbResult = event.target.result
+		dbTransaction = event.target.result.transaction
+		trans = dbTransaction([name], "readwrite")
+		StoreHandler = trans.objectStore(name)
+
+		all = StoreHandler.getAllKeys()
+		all.addEventListener("success", fetchedData)
+
 	def db_success(self,event):
 		self.dbVersion = event.target.result.version
 		self.objectStoreNames = event.target.result.objectStoreNames
@@ -244,6 +264,10 @@ class indexeddb():
 	def dbAction(self,action,name,key=None,obj=None):
 		if action in ["createStore", "deleteStore"]:
 			self.dbqueue.append([action, name, key, obj])
+
+			if self.dbVersion is None:
+				self.dbVersion = 0
+
 			self.dbVersion +=1
 		else:
 			self.queue.append([action,name,key,obj])

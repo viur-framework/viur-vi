@@ -9,6 +9,7 @@ from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 class SelectMultipleEditWidget(BaseEditWidget):
 	style = ["vi-value-container", "option-group"]
 
+	# language=HTML
 	entryTemplate = html5.parseHTML("""
 		<label class="check">
 			<input type="checkbox" class="check-input" name="{{key}}">
@@ -51,6 +52,7 @@ class SelectMultipleEditWidget(BaseEditWidget):
 
 
 class SelectSingleEditWidget(BaseEditWidget):
+	# language=HTML
 	entryTemplate = html5.parseHTML("""
 		<option value="{{key}}">{{value}}</option>
 	""")

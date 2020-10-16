@@ -9,6 +9,7 @@ class ColorEditWidget(BaseEditWidget):
 	style = ["vi-value", "vi-value--color"]
 
 	def createWidget(self):
+		# language=HTML
 		return self.fromHTML("""
 			<input [name]="widget" type="color">
 			<button [name]="unsetBtn" text="Unset" icon="icons-delete" class="btn--delete">

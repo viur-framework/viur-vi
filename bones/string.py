@@ -9,9 +9,10 @@ class StringEditWidget(BaseEditWidget):
 	style = ["vi-value", "vi-value--string", "input-group"]
 
 	def createWidget(self):
+		# language=HTML
 		self.appendChild("""
 			<ignite-input [name]="widget">
-			<div class="label" [name]="length">0</div>
+			<div class="label" [name]="length" hidden>0</div> <!-- fixme: add later ... -->
 			<div class="label" [name]="maxlength" hidden>0</div> <!-- fixme: add later ... -->
 		""")
 

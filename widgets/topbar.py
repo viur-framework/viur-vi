@@ -24,6 +24,7 @@ class TopBarWidget(html5.Header):
 
 		self.sinkEvent("onClick")
 
+		# language=HTML
 		self.fromHTML("""
 			<div class="vi-tb-left bar-group bar-group--left" [name]="topbarLeft">
 				<div class="vi-tb-logo" [name]="topbarLogo"></div>
@@ -39,9 +40,13 @@ class TopBarWidget(html5.Header):
 			</nav>
 		""")
 
-		svg = embedsvg.get("logos-vi")
-		if svg:
-			self.topbarLogo.element.innerHTML = svg + self.topbarLogo.element.innerHTML
+		if not conf["theApp"].isFramed:
+			svg = embedsvg.get("logos-vi")
+			if svg:
+				self.topbarLogo.element.innerHTML = svg + self.topbarLogo.element.innerHTML
+		else:
+			self.topbarLogo.hide()
+			self.moduleH1.hide()
 
 		DeferredCall(self.setTitle, _delay=500)
 
@@ -99,6 +104,7 @@ class TopBarWidget(html5.Header):
 
 		if path:
 			conf[ "theApp" ].setPath( path )
+
 
 class UserState(html5.Div):
 	def __init__(self, *args, **kwargs):
@@ -184,7 +190,9 @@ class UserState(html5.Div):
 		apane.addWidget(edwg)
 
 		conf["mainWindow"].focusPane(apane)
+
 toplevelActionSelector.insert( 0, UserState.canHandle, UserState )
+
 
 class Tasks(Button):
 	def __init__(self, *args, **kwargs):
@@ -235,7 +243,9 @@ class Tasks(Button):
 	@staticmethod
 	def canHandle( action ):
 		return action == "tasks"
+
 toplevelActionSelector.insert( 0, Tasks.canHandle, Tasks )
+
 
 class Logout(Button):
 	def __init__(self, *args, **kwargs):
@@ -260,7 +270,8 @@ class Logout(Button):
 
 	@staticmethod
 	def canHandle( action ):
-		return action == "logout"
-toplevelActionSelector.insert( 0, Logout.canHandle, Logout )
+		return action == "logout" and not conf["theApp"].isFramed
+
+toplevelActionSelector.insert(0, Logout.canHandle, Logout)
 
 #FIXME: Put Message Center in Iconnav. The message center will be a popout in the topbar.

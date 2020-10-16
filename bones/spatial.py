@@ -6,10 +6,11 @@ from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 class SpatialEditWidget(BaseEditWidget):
 
 	def createWidget(self):
+		# language=HTML
 		return self.fromHTML(
 			"""
-			<ignite-input [name]="latitude" type="number" placeholder="latitude">
-			<ignite-input [name]="longitude" type="number" placeholer="longitute">
+			<ignite-input [name]="latitude" type="number" placeholder="latitude" step="any">
+			<ignite-input [name]="longitude" type="number" placeholer="longitute" step="any">
 			"""
 		)
 

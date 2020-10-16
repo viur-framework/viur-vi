@@ -322,7 +322,7 @@ class GoogleAccountLoginHandler(BaseLoginHandler):
 
 	def onLoginClick(self, sender = None):
 		self.lock()
-		html5.window.top.location = "/vi/user/auth_googleaccount/login"
+		html5.window.location = "/vi/user/auth_googleaccount/login"
 
 	@staticmethod
 	def canHandle(method, secondFactor):
@@ -437,4 +437,4 @@ class LoginScreen(Screen):
 				)
 
 	def redirectNoAdmin(self):
-		html5.window.top.location = "/"
+		html5.window.location = "/"
