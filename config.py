@@ -2,7 +2,8 @@
 from vi import html5
 from vi.framework.event import EventDispatcher
 from .i18n import translate
-from .logics import Interpreter
+from .safeeval import SafeEval
+
 
 conf = {
 	# Vi version number
@@ -78,8 +79,15 @@ conf = {
 	# Max number of entries to show in multiple Bones
 	"maxMultiBoneEntries": 5,
 
-	# Global ViUR Logics interpreter instance
-	"logics": Interpreter(),
+	# Global ViUR SafeEval interpreter instance
+	"safeEvalInterpreter": SafeEval(
+		{
+			"format": str.format,
+			"str": str,
+			"int": int,
+			"float": float
+		}
+	),
 
 	# Cached selector widgets on relationalBones for re-use
 	"selectors": {},

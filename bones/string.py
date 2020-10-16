@@ -8,7 +8,7 @@ from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 class StringEditWidget(BaseEditWidget):
 	style = ["vi-value", "vi-value--string", "input-group"]
 
-	def _createWidget(self):
+	def createWidget(self):
 		# language=HTML
 		self.appendChild("""
 			<ignite-input [name]="widget">

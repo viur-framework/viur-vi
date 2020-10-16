@@ -9,7 +9,7 @@ from vi.widgets.htmleditor import HtmlEditor
 class TextEditWidget(BaseEditWidget):
 	style = ["vi-value", "vi-value--text"]
 
-	def _createWidget(self):
+	def createWidget(self):
 		if self.bone.boneStructure["validHtml"]:
 			widget = HtmlEditor()
 			widget.boneName = self.bone.boneName  # fixme WTF?
@@ -25,7 +25,7 @@ class TextEditWidget(BaseEditWidget):
 		#self.changeEvent = EventDispatcher("boneChange")  # fixme: later...
 		return widget
 
-	def _updateWidget(self):
+	def updateWidget(self):
 		if self.bone.readonly:
 			if isinstance(self.widget, HtmlEditor):
 				self.widget.disable()

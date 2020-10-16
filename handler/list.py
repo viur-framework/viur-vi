@@ -91,7 +91,7 @@ class ListHandler(Pane):
 
 		return False
 
-	def _createWidget(self):
+	def createWidget(self):
 		widgen = moduleWidgetSelector.select(self.moduleName, self.moduleInfo)
 		assert widgen
 
@@ -105,7 +105,7 @@ class ListHandler(Pane):
 
 		if pathList[1] == "list":
 			if self.mode != "group":
-				self.addWidget(self._createWidget())
+				self.addWidget(self.createWidget())
 				self.focus()
 			else:
 				DeferredCall(self.focus, _delay=250)
@@ -132,7 +132,7 @@ class ListHandler(Pane):
 
 	def onClick(self, *args, **kwargs):
 		if self.mode == "normal" and not self.widgetsDomElm.children():
-			self.addWidget(self._createWidget())
+			self.addWidget(self.createWidget())
 
 		''' no time right now...
 		if self.childDomElem is None and "views" in self.moduleInfo:

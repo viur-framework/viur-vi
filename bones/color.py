@@ -8,7 +8,7 @@ from vi.bones.base import BaseBone, BaseEditWidget, BaseViewWidget
 class ColorEditWidget(BaseEditWidget):
 	style = ["vi-value", "vi-value--color"]
 
-	def _createWidget(self):
+	def createWidget(self):
 		# language=HTML
 		return self.fromHTML("""
 			<input [name]="widget" type="color">

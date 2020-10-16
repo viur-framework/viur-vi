@@ -8,8 +8,8 @@ from vi.i18n import translate
 class PasswordEditWidget(BaseEditWidget):
 	style = ["vi-value", "vi-value--password", "vi-value-container", "input-group"]
 
-	def _createWidget(self):
-		self.appendChild("""<ignite-input [name]="widget" type="password" >""")
+	def createWidget(self):
+		self.appendChild("""<ignite-input [name]="widget" type="password">""")
 
 		if self.bone.readonly:
 			self.verify = None

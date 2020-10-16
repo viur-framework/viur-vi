@@ -24,7 +24,7 @@ def _getDefaultValues(structure):
 class RelationalEditWidget(BaseEditWidget):
 	style = ["vi-value", "vi-value--relational", "input-group"]
 
-	def _createWidget(self):
+	def createWidget(self):
 		# language=HTML
 		return self.fromHTML(
 			"""
@@ -34,7 +34,7 @@ class RelationalEditWidget(BaseEditWidget):
 			"""
 		)
 
-	def _updateWidget(self):
+	def updateWidget(self):
 		if self.bone.readonly:
 			self.destWidget.disable()
 			self.selectBtn.hide()
@@ -304,11 +304,11 @@ boneSelector.insert(2, TreeDirBone.checkFor, TreeDirBone)
 class FileEditWidget(RelationalEditWidget):
 	style = ["vi-value", "vi-value--file", "input-group"]
 
-	def _createWidget(self):
+	def createWidget(self):
 		self.previewImg = FilePreviewImage()
 		self.appendChild(self.previewImg)
 
-		super()._createWidget()
+		super().createWidget()
 
 	def unserialize(self, value=None):
 		super().unserialize(value)

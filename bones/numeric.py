@@ -72,9 +72,9 @@ class NumericEditWidget(BaseEditWidget):
 			                                        self.currencyDecimalDelimiter[0]))
 
 		self.appendChild(self.widget)
-		self._updateWidget()
+		self.updateWidget()
 
-	def _createWidget(self):
+	def createWidget(self):
 		# this is done inside the constructor
 		return None
 
@@ -150,7 +150,7 @@ class NumericEditWidget(BaseEditWidget):
 
 class NumericViewWidget(NumericEditWidget):
 
-	def __createWidget(self):
+	def createWidget(self):
 		return self
 
 	def __configureWidget(self):
