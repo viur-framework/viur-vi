@@ -25,7 +25,6 @@ class ListWidget(html5.Div):
 			:param module: Name of the module we shall handle. Must be a list application!
 			:type module: str
 		"""
-
 		if not module in conf["modules"].keys():
 			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
 			assert module in conf["modules"].keys()
@@ -86,6 +85,14 @@ class ListWidget(html5.Div):
 		self._currentRequests = []
 		self.columns = []
 		self.selectMode = selectMode
+
+		self.group = None
+		if "adminInfo" in kwargs and kwargs[ "adminInfo" ]["handler"]=="list.grouped":
+			if "group" in kwargs["adminInfo"]:
+				self.group = kwargs["adminInfo"]["group"]
+			else:
+				self.group = "all"
+
 		assert selectMode in [None, "single", "multi"]
 
 		if self.selectMode and filter is None and columns is None:
@@ -274,9 +281,22 @@ class ListWidget(html5.Div):
 			filter["amount"] = self._batchSize
 			filter["cursor"] = self._currentCursor
 
-			self._currentRequests.append(NetworkService.request(self.module, "list", filter,
-			                                successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
-			                                cacheable=True ) )
+			if conf["modules"] and self.module in conf["modules"].keys():
+				if self.group:
+					self._currentRequests.append( NetworkService.request( self.module, "list/%s" % self.group, filter,
+																		  successHandler = self.onCompletion, failureHandler = self.showErrorMsg,
+																		  cacheable = True ) )
+				else:
+					self._currentRequests.append( NetworkService.request( self.module, "list", filter,
+																		  successHandler = self.onCompletion, failureHandler = self.showErrorMsg,
+																		  cacheable = True ) )
+
+
+			else:
+
+				self._currentRequests.append(NetworkService.request(self.module, "list", filter,
+												successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
+												cacheable=True ) )
 			self._currentCursor = None
 		else:
 			self.actionBar.resetLoadingState()
@@ -320,11 +340,23 @@ class ListWidget(html5.Div):
 		filter.update(self.filter)
 		filter["amount"] = self._batchSize
 
-		self._currentRequests.append(
-			NetworkService.request(self.module, "list", filter,
-			                        successHandler=self.onCompletion,
-			                        failureHandler=self.showErrorMsg,
-			                        cacheable=True))
+		if conf[ "modules" ] and self.module in conf[ "modules" ].keys():
+			if self.group:
+				self._currentRequests.append( NetworkService.request( self.module, "list/%s" % self.group, filter,
+																	  successHandler = self.onCompletion, failureHandler = self.showErrorMsg,
+																	  cacheable = True ) )
+			else:
+				self._currentRequests.append( NetworkService.request( self.module, "list", filter,
+																	  successHandler = self.onCompletion, failureHandler = self.showErrorMsg,
+																	  cacheable = True ) )
+
+
+		else:
+
+			self._currentRequests.append( NetworkService.request( self.module, "list", filter,
+																  successHandler = self.onCompletion, failureHandler = self.showErrorMsg,
+																  cacheable = True ) )
+
 
 	def setFilter(self, filter, filterID=None, filterDescr=None):
 		"""
@@ -478,7 +510,8 @@ class ListWidget(html5.Div):
 		                          columns=columns,
 		                          context=context,
 		                          autoload=autoload,
-		                          filterDescr=filterDescr)
+		                          filterDescr=filterDescr,
+								  adminInfo = adminInfo)
 
 moduleHandlerSelector.insert(1, ListWidget.canHandle, ListWidget.render)
 
@@ -593,7 +626,8 @@ class ViewportListWidget(ListWidget):
 		                          columns=columns,
 		                          context=context,
 		                          autoload=autoload,
-		                          filterDescr=filterDescr)
+		                          filterDescr=filterDescr,
+								  adminInfo = adminInfo)
 
 moduleHandlerSelector.insert(10, ViewportListWidget.canHandle, ViewportListWidget.render)
 

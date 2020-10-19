@@ -123,10 +123,10 @@ class DownloadAction(Button):
 		DeferredCall( self.enableViUnloadingWarning, _delay=backOff+1000 )
 
 	def disableViUnloadingWarning(self, *args, **kwargs ):
-		eval("window.top.preventViUnloading = false;")
+		html5.window.top.preventViUnloading = False
 
 	def enableViUnloadingWarning(self, *args, **kwargs ):
-		eval("window.top.preventViUnloading = true;")
+		html5.window.top.preventViUnloading = True
 
 	def doDownload(self, fileData):
 		a = html5.A()

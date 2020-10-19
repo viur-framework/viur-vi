@@ -166,8 +166,9 @@ class EditWidget(html5.Div):
 		if self.mode == "edit":
 			editActions.append("refresh")
 
-		if module in conf["modules"] and conf["modules"][module]:
-			editActions.extend(conf["modules"][module].get("editActions", []))
+		self.group = None
+		if "group" in kwargs and kwargs[ "group" ]:
+			self.group = kwargs[ "group" ]
 
 		if applicationType == EditWidget.appSingleton:
 			self.actionbar.setActions(["save.singleton"] + editActions, widget=self)
@@ -289,16 +290,29 @@ class EditWidget(html5.Div):
 			                        failureHandler=self.showErrorMsg)
 
 		elif self.applicationType == EditWidget.appList: ## Application: List
-			if self.key and (not self.clone or self.wasInitialRequest):
-				NetworkService.request(self.module, "edit/%s" % self.key, data,
-				                       secure=not self.wasInitialRequest,
-				                       successHandler=self.setData,
-				                       failureHandler=self.showErrorMsg)
+			if self.group:
+				if self.key and (not self.clone or self.wasInitialRequest):
+					NetworkService.request(self.module, "edit/%s/%s" % (self.group,self.key), data,
+										   secure=not self.wasInitialRequest,
+										   successHandler=self.setData,
+										   failureHandler=self.showErrorMsg)
+				else:
+					NetworkService.request(self.module, "add/%s"%self.group, data,
+										   secure=not self.wasInitialRequest,
+										   successHandler=self.setData,
+										   failureHandler=self.showErrorMsg )
 			else:
-				NetworkService.request(self.module, "add", data,
-				                       secure=not self.wasInitialRequest,
-				                       successHandler=self.setData,
-				                       failureHandler=self.showErrorMsg )
+
+				if self.key and (not self.clone or self.wasInitialRequest):
+					NetworkService.request(self.module, "edit/%s" % self.key, data,
+										   secure=not self.wasInitialRequest,
+										   successHandler=self.setData,
+										   failureHandler=self.showErrorMsg)
+				else:
+					NetworkService.request(self.module, "add", data,
+										   secure=not self.wasInitialRequest,
+										   successHandler=self.setData,
+										   failureHandler=self.showErrorMsg )
 
 		elif self.applicationType == EditWidget.appHierarchy: ## Application: Hierarchy
 			if self.key and (not self.clone or self.wasInitialRequest):
