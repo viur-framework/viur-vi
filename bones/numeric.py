@@ -16,7 +16,7 @@ class NumericEditWidget(BaseEditWidget):
 		self.value = None
 
 		# Numeric bone precision, min and max
-		self.precision = self.bone.boneStructure.get("precision") or 0
+		self.precision = self.bone.boneStructure.get("precision")
 		self.min = html5.utils.parseFloat(str(self.bone.boneStructure.get("min")), None)
 		self.max = html5.utils.parseFloat(str(self.bone.boneStructure.get("max")), None)
 
@@ -29,10 +29,14 @@ class NumericEditWidget(BaseEditWidget):
 		# Style parameters
 		style = (self.bone.boneStructure.get("params") or {}).get("style", "")
 		for s in style.split(" "):
-			if s.lower().startswith("amount."):
-				self.currency = s.split(".", 1)[1]
-				if self.bone.boneStructure.get("precision") is None:
-					self.precision = 2  #default precision for amounts
+			if s.lower().startswith("currency"):
+				if "." in s:
+					self.currency = s.split(".", 1)[1]
+				else:
+					self.currency = "€"
+
+				if self.precision is None:
+					self.precision = 2
 
 			if s.lower().startswith("delimiter."):
 				fmt = s.split(".", 1)[1]
@@ -41,10 +45,29 @@ class NumericEditWidget(BaseEditWidget):
 					self.currencyThousandDelimiter = ","
 				# else: fixme are there more configs?
 
-		self.sinkEvent("onChange")
-		self.widget = html5.ignite.Input()
+		self.precision = self.precision or 0
 
 		# Standard- or currency mode
+		if self.currency:
+			assert self.currencyThousandDelimiter[0] not in "^-+()[]"
+			assert self.currencyDecimalDelimiter[0] not in "^-+()[]"
+
+			self.currencyPattern = re.compile(
+				r"-?((\d{1,3}[%s])*|\d*)[%s]\d+|-?\d+" % (self.currencyThousandDelimiter[0],
+				                                            self.currencyDecimalDelimiter[0]))
+
+		self._createWidget()
+
+	def _createWidget(self):
+		# Here widget creation takes place, but only for the edit widget.
+		self.widget = html5.ignite.Input()
+		self.appendChild(self.widget)
+		self.updateWidget()
+
+	def createWidget(self):
+		return None  # widget is created manually by _createWidget
+
+	def updateWidget(self):
 		if not self.currency:
 			self.widget["type"] = "number"
 
@@ -63,22 +86,15 @@ class NumericEditWidget(BaseEditWidget):
 			if self.max is not None:
 				self.widget["max"] = self.max
 
+			self.unsinkEvent("onChange")
+
 		else:
-			assert self.currencyThousandDelimiter[0] not in "^-+()[]"
-			assert self.currencyDecimalDelimiter[0] not in "^-+()[]"
-
-			self.currencyPattern = re.compile(r"-?((\d{1,3}[%s])*|\d*)[%s]\d+|-?\d+" %
-			                                    (self.currencyThousandDelimiter[0],
-			                                        self.currencyDecimalDelimiter[0]))
-
-		self.appendChild(self.widget)
-		self.updateWidget()
-
-	def createWidget(self):
-		# this is done inside the constructor
-		return None
+			self.widget["type"] = self.widget["step"] = self.widget["min"] = self.widget["max"] = None
+			self.sinkEvent("onChange")
 
 	def setValue(self, value):
+		print("setValue", value)
+
 		if not self.currency:
 			if self.precision:
 				self.value = html5.utils.parseFloat(value or 0)
@@ -127,7 +143,9 @@ class NumericEditWidget(BaseEditWidget):
 
 					ival = value[0][-(i+1)] + ival
 
-				self.widget.removeClass("is-invalid")
+				if self.widget:
+					self.widget.removeClass("is-invalid")
+
 				return ("-" if neg else "") + ival + \
 				       ((self.currencyDecimalDelimiter + value[1]) if len(value) > 1 else "") + \
 				       " " + self.currency
@@ -135,7 +153,9 @@ class NumericEditWidget(BaseEditWidget):
 			except Exception as e:
 				logging.exception(e)
 
-		self.widget.addClass("is-invalid")
+		if self.widget:
+			self.widget.addClass("is-invalid")
+
 		return value
 
 	def onChange(self, event):
@@ -150,10 +170,10 @@ class NumericEditWidget(BaseEditWidget):
 
 class NumericViewWidget(NumericEditWidget):
 
-	def createWidget(self):
-		return self
+	def _createWidget(self):
+		pass
 
-	def __configureWidget(self):
+	def updateWidget(self):
 		pass
 
 	def unserialize(self, value=None):
