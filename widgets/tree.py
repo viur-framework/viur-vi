@@ -802,7 +802,7 @@ class TreeBrowserWidget(TreeWidget):
 		# Breadcrumb (bröselige Bröselbrotbrösel, oder was damit sonst auch immer gemeint sein soll...)
 		self.pathList = html5.Div()
 		self.pathList.addClass("vi-tree-breadcrumb")
-		self.insertChild(self.pathList, self.entryFrame)
+		self.insertBefore(self.pathList, self.entryFrame)
 
 	def reloadData(self):
 		super().reloadData()

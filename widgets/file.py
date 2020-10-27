@@ -371,5 +371,5 @@ class FileWidget(TreeBrowserWidget):
 		return (moduleInfo[ "handler" ].startswith( "tree.file" ) or moduleInfo[ "handler" ].startswith( "tree.simple.file" ) )
 
 
-moduleWidgetSelector.insert(1, FileWidget.canHandle, FileWidget)
-displayDelegateSelector.insert(1, FileWidget.canHandle, FileWidget)
+moduleWidgetSelector.insert(2, FileWidget.canHandle, FileWidget)
+displayDelegateSelector.insert(2, FileWidget.canHandle, FileWidget)
