@@ -8,6 +8,7 @@ from vi.config import conf
 from vi.priorityqueue import extractorDelegateSelector
 from vi.i18n import translate
 from vi.framework.components.button import Button
+from js import escape
 
 
 class ExportCsv(html5.Progress):
@@ -98,7 +99,7 @@ class ExportCsv(html5.Progress):
 		content = self.separator.join(titles) + self.lineSeparator
 
 		for entry in self.data:
-			row = [None for _ in range(len(fields.keys()))]
+			row = ["" for _ in range(len(fields.keys()))]
 
 			for key, value in entry.items():
 				print(key, value)
@@ -129,7 +130,7 @@ class ExportCsv(html5.Progress):
 			encodeURIComponent = eval("encodeURIComponent")
 			a["href"] = "data:text/csv;charset=utf-8," + encodeURIComponent(content)
 		elif self.encoding == "iso-8859-15":
-			escape = eval("escape")
+			#escape = eval("escape")
 			a["href"] = "data:text/csv;charset=ISO-8859-15," + escape(content)
 		else:
 			raise ValueError("unknown encoding: %s" % self.encoding)
