@@ -17,6 +17,53 @@
 
 		<link rel="manifest" href="manifest.webmanifest">
 		<link rel="shortcut icon" href="public/images/favicon.png" />
+		<style>
+			.list-separator--accordion .icon {
+			    position: relative;
+			    display: -ms-inline-flexbox;
+			    display: inline-flex;
+			    transition: all .3s ease;
+			    margin-right: 5px;
+			    font-size: 1.3em;
+			    -ms-flex-item-align: center;
+			    align-self: center;
+			    pointer-events: none;
+			}
+
+			.list-separator--accordion {
+			    cursor: pointer;
+			}
+
+			.list-separator {
+			    display: -ms-flexbox;
+			    display: flex;
+			    -ms-flex: 0 0 auto;
+			    flex: 0 0 auto;
+			    padding: 3px 3.75px;
+			    color: #51514e;
+			    font-size: .8em;
+			    font-weight: 400;
+			    background-color: #ededed;
+			    border-top: 1px solid #e1e1e1;
+			}
+
+			.list-separator--accordion .icon:last-of-type {
+			    margin-left: auto;
+			}
+
+
+			.list-separator--accordion.is-active~.item, .list-separator--accordion.is-active~.list--sub.is-active {
+			    display: -ms-flexbox;
+			    display: flex;
+			}
+			.list-separator--accordion~.item, .list-separator--accordion~.list--sub {
+			    display: none;
+			}
+
+
+		</style>
+
+
 	</head>
 	<body class="vi-screen is-loading">
 	</body>

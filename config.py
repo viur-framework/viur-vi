@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 from flare import html5
 from flare.event import EventDispatcher
+from flare import conf as flr_conf
 from .i18n import translate
 from .logics import Interpreter
 
@@ -88,5 +89,9 @@ conf = {
 
 	"cacheObj": {},
 	"indexeddb":None,
-	"logAmount":50
+	"logAmount":50,
 }
+conf.update(flr_conf)
+
+
+

@@ -65,12 +65,21 @@ class Application(html5.Div):
 		self.startup()
 
 	def getConfigSuccess(self, req):
+		d = (time.time() - s)
+		print( "%.5f Sek - Config and Version received" % d  )
+
 		conf["mainConfig"] = network.NetworkService.decode(req)
 
 		if not self.adminScreen:
 			self.adminScreen = AdminScreen()
 
+		sc = (time.time() - s)
+		print( "%.5f Sek - Screen instantiated" %  sc  )
+
 		self.adminScreen.invoke()
+
+		scinv = (time.time() - s)
+		print( "%.5f Sek - Screen invoked" % scinv  )
 
 	def startupFailure(self, req, err):
 		if err in [403, 401]:
@@ -138,5 +147,15 @@ def start():
 	app = Application()
 	html5.Body().appendChild(app)
 
+s = None
+a = None
+d = None
+sc = None
+scinv = None
 if __name__ == "vi":
+	import time
+	s = time.time()
+	print("Start App")
 	start()
+	a = (time.time() - s)
+	print( "%.5f Sek - Application instantiated " % a  )
