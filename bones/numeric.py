@@ -92,6 +92,8 @@ class NumericEditWidget(BaseEditWidget):
 			self.widget["type"] = self.widget["step"] = self.widget["min"] = self.widget["max"] = None
 			self.sinkEvent("onChange")
 
+		super().updateWidget()
+
 	def setValue(self, value):
 		print("setValue", value)
 
