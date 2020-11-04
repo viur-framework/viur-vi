@@ -10,7 +10,7 @@ class StringEditWidget(BaseEditWidget):
 
 	def createWidget(self):
 		# language=HTML
-		self.appendChild("""
+		widget = self.appendChild("""
 			<ignite-input [name]="widget">
 			<div class="label" [name]="length" hidden>0</div> <!-- fixme: add later ... -->
 			<div class="label" [name]="maxlength" hidden>0</div> <!-- fixme: add later ... -->
@@ -18,6 +18,7 @@ class StringEditWidget(BaseEditWidget):
 
 		self.sinkEvent("onChange", "onKeyUp")
 		self.timeout = None
+		return widget[0]
 
 	def onChange(self, event):
 		if self.timeout:
