@@ -12,11 +12,11 @@ from .log import Log
 from .pane import Pane, GroupPane
 from .screen import Screen
 
-from flare.views.helpers import registerViews
+from flare.views.helpers import registerViews, generateView
 from vi.widgets.appnavigation import AppNavigation
 
 # BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
-from . import handler, bones, actions
+from . import bones, actions
 from . import i18n
 
 class AdminScreen(Screen):
@@ -109,8 +109,10 @@ class AdminScreen(Screen):
 		self.topBar.invoke()
 
 		self.initializeViews()
-		self.initializeAppNavigation()
+		#self.initializeAppNavigation()
+		self.initializeConfig()
 		self.unlock()
+		print(conf)
 
 	def initializeViews( self ):
 		root = os.path.dirname(__file__) #path to root package
@@ -125,16 +127,100 @@ class AdminScreen(Screen):
 		print( "%.5f Sek - ready to View" % (time.time()-s) )
 
 	def initializeAppNavigation( self ):
-		block = self.navWrapper.addNavigationBlock("Administration")
-		self.navWrapper.addNavigationPoint("Test1","icon-users","notfound",block)
 
-		for i in range(2,200):
-			self.navWrapper.addNavigationPoint("Test%s"%i,"icon-file-system","overview",block)
+		#navpoint = self.navWrapper.addNavigationPoint("Test1","icon-users","notfound",block)
+		#subpoint1  = self.navWrapper.addNavigationPoint("Test SuB","icon-users","notfound",navpoint)
+		#subpoint2 = self.navWrapper.addNavigationPoint("Test SuBSub","icon-users","notfound",subpoint1)
+		#subpoint3 = self.navWrapper.addNavigationPoint("Test SuBSubSub","icon-users","notfound",subpoint2)
+
+		#navpoint2 = self.navWrapper.addNavigationPoint( "Test2", "icon-files", "overview", block )
+
+		#for i in range(2,200):
+		#	self.navWrapper.addNavigationPoint("Test%s"%i,"icon-file-system","overview",block)
 
 		from vi import s
 		import time
 
 		print( "%.5f Sek - ready to Navigate" % (time.time() - s) )
+
+	def initializeConfig( self ):
+		print("------------------------------")
+		print(conf["mainConfig"]["configuration"])
+		groups = conf["mainConfig"]["configuration"]["moduleGroups"]
+		modules = conf["mainConfig"]["modules"]
+
+		mergedItems = groups
+		for key, m in modules.items():
+			#convert dict of dicts to list of dicts
+			m.update({"moduleName":key})
+
+			#add missing sortIndexes
+			if "sortIndex" not in m and "name" in m: #no sortidx but name
+				m.update( { "sortIndex": ord(m["name"][0].lower())-97 } )
+			elif "sortIndex" not in m and "name" not in m: #no sortidx, no name
+				m.update( { "sortIndex": 0} )
+
+			if ": " in m["name"]:
+				# find modules that belong to groups
+
+				#maybe a groupprefix
+				group = m["name"].split(": ")[0]+": "
+
+				#stack modules in groups
+				getGroup = next((item for item in mergedItems if item["prefix"]==group),None)
+				m["name"] = m["name"].replace(group,"")
+				if "subItem" not in getGroup:
+					getGroup.update({"subItem":[m]})
+				else:
+					getGroup["subItem"].append(m)
+			else:
+				#add normal modules without groups
+				mergedItems.append(m)
+
+		#sort firstLayer
+		mergedItems = sorted(mergedItems,key = lambda i:i["sortIndex"])
+
+		#all will be add to this Widget
+		adminGroupWidget = self.navWrapper.addNavigationBlock( "Administration" )
+		self.appendNavList( mergedItems, adminGroupWidget )
+
+	def appendNavList( self,NavList,target ):
+		for item in NavList:
+			viewInst = None
+			if "moduleName" in item: # its a module
+				#update conf
+				conf[ "modules" ][ item[ "moduleName" ] ] = item
+
+				#get handler view
+				handlerCls = HandlerClassSelector.select( item[ "moduleName" ], item )
+				#generate a parameterized view
+				viewInst = generateView(handlerCls,item["moduleName"],item["handler"],data=item)
+
+			#only generate navpoints if module is visible
+			if "hideInMainBar" not in item  or ("hideInMainBar" in item and not item[ "hideInMainBar" ]):
+
+				#skip Empty groups
+				if "prefix" in item and "subItem" not in item:
+					continue
+
+				#visible module
+				currentModuleWidget = self.navWrapper.addNavigationPoint(
+					item.get("name","missing Name"),
+					item.get("icon",None),
+					viewInst.name if viewInst else "notfound",
+					target
+				)
+
+				# sort and append Items modules in a Group
+				if "subItem" in item and item[ "subItem" ]:
+					subItems = sorted( item[ "subItem" ], key = lambda i: i[ "sortIndex" ] )
+					self.appendNavList( subItems, currentModuleWidget )
+
+				#sort and append views of a Module
+				if "views" in item and item[ "views" ]:
+					viewItems = sorted( item[ "views" ], key = lambda i: i[ "sortIndex" ] )
+					self.appendNavList( viewItems, currentModuleWidget )
+
 
 	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data=None):
 		self.logWdg.log(type, msg, icon,modul,action,key,data)

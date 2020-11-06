@@ -2,45 +2,68 @@ from flare import html5
 from flare.observable import StateHandler
 from vi.config import conf
 
-class NavigationElement(html5.Template):
+class NavigationElement(html5.Div):
+	# language=HTML
+	tpl = '''
+		<div [name]="item" class="item has-hover">
+			<a class="item-link" @click="navigationAction">
+				<div class="item-image">
+					<icon value="{{icon}}" ></icon>
+				</div>
+
+				<div class="item-content">
+					<div class="item-headline">{{name}}</div>
+				</div>
+			</a>
+			
+			<span [name]="itemArrow" class="item-open is-hidden" @click="ArrowAction">
+				<svgicon value="icon-arrow-left"></svgicon>
+			</span>
+			
+		</div>
+		<div [name]="subItem" class="list list--sub">
+		</div>
+		
+		
+		'''
 
 	def __init__(self,name,icon=None,view=None,nav=None):
 		super().__init__()
 		self.view = view
 		self.nav = nav
+		self["class"] = "itemGroup"
 		#register state handler
 		nav.state.register("activeNavigation",self)
 
-		#language=HTML
-		self.appendChild('''
-			<div [name]="item" class="item has-hover">
-				<a class="item-link" @click="navigationAction">
-					<div class="item-image">
-						<icon value="{{icon}}" ></icon>
-					</div>
-	
-					<div class="item-content">
-						<div class="item-headline">{{name}}</div>
-						
-					</div>
-				</a>
-			</div>
-			''',
-			 icon = icon,
-			 name = name
-		)
+		self.state = StateHandler( ["hasSubItems"],self )
+		self.state.register("hasSubItems",self)
 
-	def navigationAction( self,e,wdg):
+		self.appendChild(
+			self.tpl,
+			icon = icon,
+			name = name
+		)
+		self.state.updateState( "hasSubItems", False )
+
+	def navigationAction( self,e,wdg=None):
 		'''
 			Handle Click on Navigation Button
 		'''
-		#if we have a linked view update the view State
-		if self.view:
-			conf["views_state"].updateState("activeView", self.view)
+		if self.state.getState("hasSubItems"):
+			self.subItem.toggleClass( "is-active" )
+			self.itemArrow.toggleClass( "is-active" )
+		else:
+			#if we have a linked view, update the view State
+			if self.view:
+				conf["views_state"].updateState("activeView", self.view)
 
-		#if this element is part of a Navigation update active State
-		if self.nav:
-			self.nav.state.updateState("activeNavigation",self)
+			#if this element is part of a Navigation, update active State
+			if self.nav:
+				self.nav.state.updateState("activeNavigation",self)
+
+	def ArrowAction( self,e, wdg=None ):
+		self.subItem.toggleClass("is-active")
+		self.itemArrow.toggleClass("is-active")
 
 	def onActiveNavigationChanged( self,e,wdg ):
 		'''
@@ -51,7 +74,18 @@ class NavigationElement(html5.Template):
 		else:
 			self.item.removeClass("is-active")
 
+	def onHasSubItemsChanged( self,e,wdg ):
+		'''
+			If subChild is added, show itemArrow, hide if no subitem present
+		'''
+		if e:
+			self.itemArrow.show()
+		else:
+			self.itemArrow.hide()
 
+	def appendSubChild( self,element ):
+		self.state.updateState("hasSubItems",True)
+		self.subItem.appendChild(element)
 
 @html5.tag
 class NavigationSeperator(html5.Div):
@@ -69,7 +103,7 @@ class NavigationSeperator(html5.Div):
 		self.appendChild( '''
 					<svgicon value="icon-dashboard"></svgicon>
 					<span class="list-separator-content">%s</span>
-					<svgicon value="icon-arrow-down"></svgicon>
+					<svgicon value="icon-arrow-left"></svgicon>
 			''' % self.name )
 
 	def _setValue( self,value ):
@@ -91,16 +125,15 @@ class Navigationblock(html5.Div):
 		''',
 		 name=self.name)
 
-	def seperatorAction( self,e, wdg ):
-		wdg.toggleClass("is-active")
+	def seperatorAction( self,e, wdg=None ):
+		self.seperator.toggleClass("is-active")
 
 class AppNavigation(html5.Nav):
 
 	def __init__(self):
 		super().__init__()
-		self.state = StateHandler( self )
+		self.state = StateHandler()
 		self.state.updateState( "activeNavigation", None )
-
 
 	def addNavigationBlock( self, name ):
 		aBlock = Navigationblock(name)
@@ -112,4 +145,9 @@ class AppNavigation(html5.Nav):
 		aNav = NavigationElement(name,icon,view,self)
 		if not parent:
 			parent = self
-		parent.appendChild(aNav)
+
+		if isinstance(parent,NavigationElement):
+			parent.appendSubChild(aNav)
+		else:
+			parent.appendChild(aNav)
+		return aNav
