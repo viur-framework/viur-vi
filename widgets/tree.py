@@ -647,7 +647,7 @@ class TreeWidget(html5.Div):
 
 		self.loadNode(self.rootNode)
 
-	def loadNode(self, node, cursor=None, overrideParams=None):
+	def loadNode(self, node, cursor=None, overrideParams=None, reqType=None):
 		"""
 			Fetch the (direct) children of the given node.
 			Once the list is received, append them to their parent node.
@@ -655,6 +655,13 @@ class TreeWidget(html5.Div):
 			:type node: str
 		"""
 		self.node = node
+
+		if reqType is None:
+			self.loadNode(node, cursor, overrideParams, "node")
+
+			if self.leafWidget:
+				self.loadNode(node, cursor, overrideParams, "leaf")
+			return
 
 		params = {
 			"parententry": node,
@@ -671,21 +678,14 @@ class TreeWidget(html5.Div):
 		if self.context:
 			params.update(self.context)
 
-		r = NetworkService.request(self.module, "list/node",
+		r = NetworkService.request(self.module, "list/" + reqType,
 		                           params,
 		                           successHandler=self.onRequestSucceded,
 		                           failureHandler=self.showErrorMsg)
-		r.reqType = "node"
+		r.reqType = reqType
 		r.node = node
 		self._currentRequests.append(r)
 
-		if self.leafWidget:
-			r = NetworkService.request(self.module, "list/leaf", params,
-			                           successHandler=self.onRequestSucceded,
-			                           failureHandler=self.showErrorMsg)
-			r.reqType = "leaf"
-			r.node = node
-			self._currentRequests.append(r)
 
 	def onRequestSucceded(self, req):
 		"""
@@ -726,7 +726,7 @@ class TreeWidget(html5.Div):
 			ol.parent().addClass("has-no-child")
 
 		if data["skellist"] and data["cursor"]:
-			self.loadNode(req.node, data["cursor"])
+			self.loadNode(req.node, data["cursor"], reqType=req.reqType)
 
 		self.actionBar.resetLoadingState()
 
