@@ -167,7 +167,7 @@ class NumericEditWidget(BaseEditWidget):
 		self.widget["value"] = self.setValue(value)
 
 	def serialize(self):
-		return self.widget['value'] or 0
+		return self.value or 0
 
 
 class NumericViewWidget(NumericEditWidget):
