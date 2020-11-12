@@ -19,6 +19,9 @@ class NavigationElement(html5.Div):
 			<span [name]="itemArrow" class="item-open is-hidden" @click="ArrowAction">
 				<svgicon value="icon-arrow-left"></svgicon>
 			</span>
+			<span [name]="itemRemove" class="is-hidden" @click="RemoveAction">
+				<svgicon value="icon-cross"></svgicon>
+			</span>
 			
 		</div>
 		<div [name]="subItem" class="list list--sub">
@@ -27,10 +30,11 @@ class NavigationElement(html5.Div):
 		
 		'''
 
-	def __init__(self,name,icon=None,view=None,nav=None):
+	def __init__(self,name,icon=None,view=None,nav=None,closeable=False):
 		super().__init__()
 		self.view = view
 		self.nav = nav
+		self.closeable = closeable
 		self["class"] = "itemGroup"
 		#register state handler
 		nav.state.register("activeNavigation",self)
@@ -44,6 +48,10 @@ class NavigationElement(html5.Div):
 			name = name
 		)
 		self.state.updateState( "hasSubItems", False )
+
+		if self.closeable:
+			self.itemRemove.removeClass("is-hidden")
+
 
 	def navigationAction( self,e,wdg=None):
 		'''
@@ -60,6 +68,13 @@ class NavigationElement(html5.Div):
 			#if this element is part of a Navigation, update active State
 			if self.nav:
 				self.nav.state.updateState("activeNavigation",self)
+
+	def RemoveAction( self,e ):
+		'''
+		remove this Nav Element
+		'''
+		self.parent().removeChild(self)
+		## Remove coresponding view
 
 	def ArrowAction( self,e, wdg=None ):
 		self.subItem.toggleClass("is-active")
@@ -141,8 +156,8 @@ class AppNavigation(html5.Nav):
 		self.appendChild(aBlock)
 		return aBlock
 
-	def addNavigationPoint( self,name,icon,view=None,parent=None ):
-		aNav = NavigationElement(name,icon,view,self)
+	def addNavigationPoint( self,name,icon,view=None,parent=None,closeable=False ):
+		aNav = NavigationElement(name,icon,view,self,closeable=closeable)
 		if not parent:
 			parent = self
 
@@ -150,4 +165,10 @@ class AppNavigation(html5.Nav):
 			parent.appendSubChild(aNav)
 		else:
 			parent.appendChild(aNav)
+		return aNav
+
+	def addNavigationPointAfter( self,name,icon,view=None,beforeElement=None,closeable=False ):
+		aNav = NavigationElement( name, icon, view, self,closeable=closeable )
+
+		beforeElement.parent().insertAfter(aNav, beforeElement)
 		return aNav

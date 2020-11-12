@@ -42,12 +42,22 @@ class AddAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = EditPane(translate("Add"), closeable=True, iconURL="icon-add",
-		                iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_add" ])
-		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, context=self.parent().parent().context)
-		pane.addWidget( edwg )
-		pane.focus()
+		conf["mainWindow"].openNewMainView(
+			translate( "Add" ), 			#AnzeigeName
+			"icon-add", 					#Icon
+			"edithandler",					#viewName
+			self.parent().parent().module,	#Modulename
+			"add",							#Action
+			data = {"context":self.parent().parent().context}
+		)
+
+
+		#pane = EditPane(translate("Add"), closeable=True, iconURL="icon-add",
+		#                iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_add" ])
+		#conf["mainWindow"].stackPane( pane )
+		#edwg = EditWidget(self.parent().parent().module, EditWidget.appList, context=self.parent().parent().context)
+		#pane.addWidget( edwg )
+		#pane.focus()
 
 	def resetLoadingState(self):
 		pass
