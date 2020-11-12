@@ -6,7 +6,7 @@ from flare.popup import Popup
 
 from flare.network import NetworkService, DeferredCall
 from vi.config import conf
-from vi.priorityqueue import boneSelector
+from flare.forms import boneSelector
 from vi.i18n import translate
 from flare.button import Button
 

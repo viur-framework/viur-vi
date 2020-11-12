@@ -4,7 +4,8 @@ from collections import defaultdict
 from vi.config import conf
 from vi.i18n import translate
 from flare.network import NetworkService
-from vi.priorityqueue import boneSelector, moduleWidgetSelector
+from vi.priorityqueue import moduleWidgetSelector
+from flare.forms import boneSelector
 from vi.widgets.sidebar import SideBar
 from vi.framework.components.datatable import DataTable, ViewportDataTable
 from vi.framework.components.actionbar import ActionBar
@@ -26,7 +27,9 @@ class ListWidget(html5.Div):
 			:param module: Name of the module we shall handle. Must be a list application!
 			:type module: str
 		"""
-
+		print("LIST ---------------------------------------")
+		print(module)
+		print(conf)
 		if not module in conf["modules"].keys():
 			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
 			assert module in conf["modules"].keys()

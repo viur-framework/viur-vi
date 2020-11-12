@@ -5,14 +5,14 @@ from collections import defaultdict
 
 from vi.config import conf
 from vi.exception import InvalidBoneValueException
-from vi.priorityqueue import boneSelector
+from flare.forms import boneSelector
 from vi.widgets.accordion import Accordion
 from vi.widgets.tooltip import ToolTip
 
 from js import console
 
 from typing import List, Tuple
-from vi.bones.base import ReadFromClientErrorSeverity
+from flare.forms.bones.base import ReadFromClientErrorSeverity
 
 class ParsedErrorItem(html5.Li):
 	style = []

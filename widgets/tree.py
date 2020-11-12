@@ -4,7 +4,8 @@ from flare.forms.formatString import formatString
 from flare.network import NetworkService
 from vi.framework.components.actionbar import ActionBar
 from flare.event import EventDispatcher
-from vi.priorityqueue import displayDelegateSelector, boneSelector, moduleWidgetSelector
+from vi.priorityqueue import displayDelegateSelector, moduleWidgetSelector
+from flare.forms import boneSelector
 from vi.config import conf
 from vi.i18n import translate
 from flare.icons import SvgIcon,Icon

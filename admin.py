@@ -12,11 +12,12 @@ from .log import Log
 from .pane import Pane, GroupPane
 from .screen import Screen
 
-from flare.views.helpers import registerViews, generateView
+from flare.views.helpers import registerViews, generateView, addView
 from vi.widgets.appnavigation import AppNavigation
 
 # BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
-from . import bones, actions
+from . import actions
+from flare.forms import bones
 from . import i18n
 
 class AdminScreen(Screen):
@@ -220,6 +221,30 @@ class AdminScreen(Screen):
 				if "views" in item and item[ "views" ]:
 					viewItems = sorted( item[ "views" ], key = lambda i: i[ "sortIndex" ] )
 					self.appendNavList( viewItems, currentModuleWidget )
+
+
+	def openNewMainView( self,name,icon,viewName,moduleName,actionName,data ):
+		# generate a parameterized view
+		view = conf["views_registered"].get(viewName,"notfound").__class__
+		viewInst = generateView( view, moduleName, actionName, data = data )
+		conf["views_registered"].update({name:viewInst})
+
+		currentActivNavPoint = self.navWrapper.state.getState("activeNavigation")
+
+		print(currentActivNavPoint)
+
+		self.navWrapper.addNavigationPointAfter(
+			name,
+			icon,
+			viewInst.name if viewInst else "notfound",
+			currentActivNavPoint,
+			True
+		)
+
+
+
+
+
 
 
 	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data=None):

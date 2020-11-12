@@ -9,7 +9,7 @@ import vi.utils as utils
 
 from flare.network import NetworkService, DeferredCall
 from vi.config import conf
-from vi.priorityqueue import boneSelector
+from flare.forms import boneSelector
 from vi.widgets.tooltip import ToolTip
 from vi.framework.components.actionbar import ActionBar
 from vi.i18n import translate
@@ -19,7 +19,8 @@ from vi.exception import InvalidBoneValueException
 
 from js import console
 
-from vi.bones.base import ReadFromClientErrorSeverity
+from flare.forms.bones.base import ReadFromClientErrorSeverity
+
 
 
 class ParsedErrorItem(html5.Li):
