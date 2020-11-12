@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flare import html5
 
-from vi.priorityqueue import boneSelector
+from flare.forms import boneSelector
 from vi.config import conf
 from flare.button import Button
 from js import document
