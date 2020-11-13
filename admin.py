@@ -28,7 +28,7 @@ class AdminScreen(Screen):
 		self.sinkEvent("onClick")
 		self["id"] = "CoreWindow"
 		conf["mainWindow"] = self
-		bindApp(self)
+		bindApp(self,{"basePathSvgs":"/vi/s/public/svgs"}) #configure Flare Framework
 
 		self.topBar = TopBarWidget()
 		self.appendChild(self.topBar)
