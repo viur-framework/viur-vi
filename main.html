@@ -9,8 +9,8 @@
 		<!-- Deactivating Service Worker for ViUR3 development -->
 		<!-- <script src="/vi/s/sw.js"></script> -->
 
-		<script src="/pyodide/pyodide.js?v1"></script>
-		<script src="flare/assets/js/init.js"></script>
+		<script src="/pyodide/pyodide.js"></script>
+		<script src="flare/assets/js/init.js?v17"></script>
 		<script src="public/js/startup.js"></script>
 		<!--<script src="public/js/utils.js"></script>
 		-->
@@ -18,6 +18,8 @@
 		<link rel="manifest" href="manifest.webmanifest">
 		<link rel="shortcut icon" href="public/images/favicon.png" />
 		<style>
+			/* Will be moved to vi-styling */
+
 			.list-separator--accordion .icon {
 			    position: relative;
 			    display: -ms-inline-flexbox;
@@ -51,20 +53,63 @@
 			    margin-left: auto;
 			}
 
-
-			.list-separator--accordion.is-active~.item, .list-separator--accordion.is-active~.list--sub.is-active {
-			    display: -ms-flexbox;
-			    display: flex;
+			.list-separator--accordion.is-active~.itemGroup, .list-separator--accordion.is-active~.itemGroup .list--sub.is-active {
+			    display: block;
 			}
-			.list-separator--accordion~.item, .list-separator--accordion~.list--sub {
+			.list-separator--accordion~.itemGroup, .list-separator--accordion~.itemGroup .list--sub {
 			    display: none;
 			}
 
+			.list-separator--accordion.is-active .icon:last-of-type {
+				-webkit-transform: rotate(-90deg);
+				transform: rotate(-90deg);
+			}
+			.item-open.is-active .icon:last-of-type {
+				-webkit-transform: rotate(-90deg);
+				transform: rotate(-90deg);
+			}
 
 		</style>
 
 
 	</head>
-	<body class="vi-screen is-loading">
+	<body class="vi-screen">
+		<style>
+			/* Will be moved to vi-styling */
+			#wrapper{
+				width: 100%;
+				height: 100%;
+			}
+
+			.centercontent{
+				display: flex;
+				align-items: center;
+				flex-direction: column;
+				justify-content: center;
+				width: 100%;
+				height: 100%;
+			}
+			.loading-bar{
+				border: 1px solid black;
+				width: 50%;
+				height: 25px;
+				padding:1px
+			}
+
+		</style>
+		<script>
+
+
+
+
+		</script>
+		<div id="wrapper">
+			<div class="centercontent">
+				<div class="loading-bar" >
+					<progress id="loadingbar" class="progress progress--danger progress--small"> </progress>
+					<div id="fileinfo">loading library...</div>
+					</div>
+				</div>
+		</div>
 	</body>
 </html>
