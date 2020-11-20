@@ -94,6 +94,7 @@
   "views/edit.py",
   "views/hierarchy.py",
   "views/list.py",
+  "views/log.py",
   "views/notfound.py",
   "views/overview.py",
   "views/singleton.py",

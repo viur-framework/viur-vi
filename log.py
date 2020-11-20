@@ -167,6 +167,7 @@ class LogButton(html5.Div):
 		self.openLog()
 
 	def openLog(self):
+		'''
 		apane = Pane(
 			translate("Log"),
 			closeable=True,
@@ -179,9 +180,18 @@ class LogButton(html5.Div):
 		apane.addWidget(wg)
 
 
-
 		conf["mainWindow"].addPane(apane)
 		conf["mainWindow"].focusPane(apane)
+		'''
+		conf[ "mainWindow" ].openNewMainView(
+			translate("Log"),  # AnzeigeName
+			"icon-debug",  # Icon
+			"loghandler",  # viewName
+			None,  # Modulename
+			"list",  # Action
+			data = {"logslist":self.logsList },
+			append=True
+		)
 
 	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data =None, date=None, onlyLoad=False):
 		logObj = {"type":type,
@@ -248,7 +258,7 @@ class LogButton(html5.Div):
 		else:
 			svg = SvgIcon( "icon-%s" % logObj["type"], title = logObj[ "msg" ], fallbackIcon="icon-message-news" )
 
-		self.msgwrap.prependChild(svg)
+		msgwrap.prependChild(svg)
 		self.appendChild(msgwrap)
 		DeferredCall(self.removeInfo, msgwrap, _delay=2500)
 
