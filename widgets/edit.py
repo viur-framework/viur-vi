@@ -394,7 +394,7 @@ class EditWidget(html5.Div):
 				self.parent().close()
 				return
 
-			conf["mainWindow"].removeWidget(self)
+			conf[ "mainWindow" ].navWrapper.removeNavigationPoint(self.parent().view.name)
 			return
 
 		self.clear()

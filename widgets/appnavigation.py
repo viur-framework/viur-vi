@@ -1,5 +1,6 @@
 from flare import html5
 from flare.observable import StateHandler
+from flare.views.helpers import removeView
 from vi.config import conf
 
 class NavigationElement(html5.Div):
@@ -26,8 +27,6 @@ class NavigationElement(html5.Div):
 		</div>
 		<div [name]="subItem" class="list list--sub">
 		</div>
-		
-		
 		'''
 
 	def __init__(self,name,icon=None,view=None,nav=None,closeable=False):
@@ -53,7 +52,7 @@ class NavigationElement(html5.Div):
 			self.itemRemove.removeClass("is-hidden")
 
 
-	def navigationAction( self,e,wdg=None):
+	def navigationAction( self,e=None,wdg=None):
 		'''
 			Handle Click on Navigation Button
 		'''
@@ -69,12 +68,28 @@ class NavigationElement(html5.Div):
 			if self.nav:
 				self.nav.state.updateState("activeNavigation",self)
 
-	def RemoveAction( self,e ):
+	def RemoveAction( self,e=None ):
 		'''
 		remove this Nav Element
 		'''
-		self.parent().removeChild(self)
-		## Remove coresponding view
+		#get previous Navigation Point
+		previousItem = self.nav.getPreviousNavigationPoint(self.view)
+
+		#remove associated View and switch to previous View
+		removeView(self.view, targetView=previousItem.view)
+
+		#remove navpoint
+		del self.nav.navigationPoints[self.view]
+
+
+		print("AAAAA")
+		print(previousItem)
+		print(previousItem.view)
+
+
+		self.parent().removeChild( self )
+		if self.nav:
+			self.nav.state.updateState( "activeNavigation", previousItem )
 
 	def ArrowAction( self,e, wdg=None ):
 		self.subItem.toggleClass("is-active")
@@ -149,6 +164,26 @@ class AppNavigation(html5.Nav):
 		super().__init__()
 		self.state = StateHandler()
 		self.state.updateState( "activeNavigation", None )
+		self.navigationPoints = {}
+
+
+	def getPreviousNavigationPoint(self, view ):
+		aNav = self.navigationPoints[view]
+		try:
+			idx = aNav.parent()._children.index( aNav ) + 1
+			indexOfItem = max( idx, 0 )
+
+			previousItem = aNav.parent()._children[ indexOfItem ]
+		except:
+			# Point not in Section
+			previousItem = self.navigationPoints[list(self.navigationPoints)[-2]] #get last element in the dict
+
+		return previousItem
+
+
+	def getNavigationPoint( self,view ):
+		aNav = self.navigationPoints[ view ]
+		return aNav
 
 	def addNavigationBlock( self, name ):
 		aBlock = Navigationblock(name)
@@ -165,10 +200,27 @@ class AppNavigation(html5.Nav):
 			parent.appendSubChild(aNav)
 		else:
 			parent.appendChild(aNav)
+		self.navigationPoints.update({view:aNav})
+		if closeable:
+			aNav.navigationAction()
 		return aNav
 
 	def addNavigationPointAfter( self,name,icon,view=None,beforeElement=None,closeable=False ):
 		aNav = NavigationElement( name, icon, view, self,closeable=closeable )
+		if beforeElement:
+			beforeElement.parent().insertAfter( aNav, beforeElement )
+		else:
+			self.appendChild(aNav) #append at the end
 
-		beforeElement.parent().insertAfter(aNav, beforeElement)
+		self.navigationPoints.update({view:aNav})
+		if closeable:
+			aNav.navigationAction()
 		return aNav
+
+	def removeNavigationPoint( self,view ):
+		aNav = self.navigationPoints[view]
+		aNav.RemoveAction()
+		del self.navigationPoints[view]
+
+
+
