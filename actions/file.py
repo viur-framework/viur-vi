@@ -2,7 +2,6 @@
 from flare import html5
 from flare.popup import Prompt
 from flare.network import NetworkService
-from vi.pane import Pane
 from vi.widgets.edit import EditWidget
 from vi.config import conf
 from vi.i18n import translate
@@ -149,12 +148,19 @@ class EditAction(Button):
 
 	def onSelectionActivated(self, table, selection ):
 		if not self.parent().parent().selectCallback and len(selection)==1 and isinstance(selection[0], self.parent().parent().leafWidget):
-			pane = Pane(translate("Edit"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
-			conf["mainWindow"].stackPane( pane )
-			skelType = "leaf"
-			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=selection[0].data["key"], skelType=skelType)
-			pane.addWidget( edwg )
-			pane.focus()
+			conf[ "mainWindow" ].openNewMainView(
+				translate( "Edit" ),  # AnzeigeName
+				"icon-edit",  # Icon
+				"edithandler",  # viewName
+				self.parent().parent().module,  # Modulename
+				"edit",  # Action
+				data = { "context" : self.parent().parent().context,
+						 "baseType": EditWidget.appTree,
+						 "skelType": "leaf",
+						 "key"     : selection[0].data["key"]
+						 }
+			)
+
 
 	def onSelectionChanged(self, table, selection ):
 		if len(selection)>0:
@@ -192,11 +198,20 @@ class EditAction(Button):
 				i.dirKey = s.data["key"]
 				return
 
-			pane = Pane("Edit", closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
-			conf["mainWindow"].stackPane( pane, focus=True )
-			skelType = "leaf"
-			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=s.data["key"], skelType=skelType)
-			pane.addWidget( edwg )
+			conf[ "mainWindow" ].openNewMainView(
+				translate( "Edit" ),  # AnzeigeName
+				"icon-edit",  # Icon
+				"edithandler",  # viewName
+				self.parent().parent().module,  # Modulename
+				"edit",  # Action
+				data = { "context" : self.parent().parent().context,
+						 "baseType": EditWidget.appTree,
+						 "skelType": "leaf",
+						 "key"     : s.data["key"]
+						 }
+			)
+
+
 
 	def editDir(self, dialog, dirName ):
 		NetworkService.request( self.parent().parent().module, "edit/node", {"key": dialog.dirKey,"name": dirName}, secure=True, modifies=True)

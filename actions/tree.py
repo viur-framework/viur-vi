@@ -3,11 +3,9 @@ from flare.popup import Confirm
 from vi.config import conf
 from vi.i18n import translate
 from flare.network import NetworkService
-from vi.pane import Pane
 from vi.priorityqueue import actionDelegateSelector
-from vi.widgets.edit import EditWidget
 from flare.button import Button
-
+from vi.widgets.edit import EditWidget
 
 class AddLeafAction(Button):
 	"""
@@ -30,12 +28,19 @@ class AddLeafAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane("Add", iconURL="icon-add", closeable=True, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_add_leaf"])
-		conf["mainWindow"].stackPane(pane)
+		conf[ "mainWindow" ].openNewMainView(
+			translate( "Add" ),  # AnzeigeName
+			"icon-add",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"add",  # Action
+			data = { "context": self.parent().parent().context,
+					 "baseType":EditWidget.appTree,
+					 "node":self.parent().parent().node,
+					 "skelType":"leaf"
+			}
+		)
 
-		edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="leaf" )
-		pane.addWidget( edwg )
-		pane.focus()
 
 	def resetLoadingState(self):
 		pass
@@ -64,12 +69,20 @@ class AddNodeAction(Button):
 		return  correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		pane = Pane( translate("Add"), iconURL="icon-add", closeable=True, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_add_node" ])
+		conf[ "mainWindow" ].openNewMainView(
+			translate( "Add" ),  # AnzeigeName
+			"icon-add",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"add",  # Action
+			data = { "context" : self.parent().parent().context,
+					 "baseType": EditWidget.appTree,
+					 "node"    : self.parent().parent().node,
+					 "skelType": "node"
+					 }
+		)
 
-		conf["mainWindow"].stackPane(pane)
-		edwg = EditWidget(self.parent().parent().module, EditWidget.appTree, node=self.parent().parent().node, skelType="node")
-		pane.addWidget(edwg)
-		pane.focus()
+
 
 	def resetLoadingState(self):
 		pass
@@ -103,14 +116,6 @@ class EditAction(Button):
 			and len(selection) == 1
 			and isinstance(selection[0], self.parent().parent().leafWidget)):
 
-			pane = Pane(
-				translate("Edit"),
-				iconURL="icon-edit",
-				closeable=True,
-				iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_edit"]
-			)
-			conf["mainWindow"].stackPane(pane)
-
 			if isinstance( selection[0], self.parent().parent().nodeWidget):
 				skelType = "node"
 
@@ -120,14 +125,18 @@ class EditAction(Button):
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(selection[0])))
 
-			edwg = EditWidget(
-				self.parent().parent().module,
-				EditWidget.appTree,
-				key=selection[0].data["key"],
-				skelType=skelType
+			conf[ "mainWindow" ].openNewMainView(
+				translate( "Edit" ),  # AnzeigeName
+				"icon-edit",  # Icon
+				"edithandler",  # viewName
+				self.parent().parent().module,  # Modulename
+				"edit",  # Action
+				data = { "context" : self.parent().parent().context,
+						 "baseType": EditWidget.appTree,
+						 "skelType": skelType,
+						 "key"     : selection[0].data["key"]
+						 }
 			)
-			pane.addWidget(edwg)
-			pane.focus()
 
 	def onSelectionChanged(self, table, selection ):
 		if len(selection)>0:
@@ -156,16 +165,27 @@ class EditAction(Button):
 			return
 
 		for s in selection:
-			pane = Pane(translate("Edit"), closeable=True)
-			conf["mainWindow"].stackPane( pane, focus=True )
 			if isinstance(s,self.parent().parent().nodeWidget):
 				skelType = "node"
 			elif isinstance(s,self.parent().parent().leafWidget):
 				skelType = "leaf"
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(s)))
-			edwg = EditWidget( self.parent().parent().module, EditWidget.appTree, key=s.data["key"], skelType=skelType, iconClasses=["module_%s" % self.parent().parent().module, "apptype_tree", "action_edit" ])
-			pane.addWidget( edwg )
+
+			conf[ "mainWindow" ].openNewMainView(
+				translate( "Edit" ),  # AnzeigeName
+				"icon-edit",  # Icon
+				"edithandler",  # viewName
+				self.parent().parent().module,  # Modulename
+				"edit",  # Action
+				data = { "context" : self.parent().parent().context,
+						 "baseType": EditWidget.appTree,
+						 "skelType": skelType,
+						 "key": s.data[ "key" ]
+						 }
+			)
+
+
 
 	def resetLoadingState(self):
 		pass

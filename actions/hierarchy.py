@@ -4,7 +4,6 @@ from flare import html5
 from vi.config import conf
 from vi.i18n import translate
 from flare.network import NetworkService
-from vi.pane import Pane
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
 from flare.button import Button
@@ -32,18 +31,22 @@ class AddAction(Button):
 
 
 	def onClick(self, sender=None):
-		pane = Pane(translate("Add"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_hierarchy", "action_add" ])
-		conf["mainWindow"].stackPane( pane )
 		node = self.parent().parent().currentKey
 		if not node:
 			node = self.parent().parent().rootNode
 
-		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy,
-						  	skelType = "node",
-		                    node=node,
-		                    context=self.parent().parent().context)
-		pane.addWidget( edwg )
-		pane.focus()
+		conf[ "mainWindow" ].openNewMainView(
+			translate( "Add" ),  # AnzeigeName
+			"icon-add",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"add",  # Action
+			data = { "context" : self.parent().parent().context,
+					 "baseType": EditWidget.appHierarchy,
+					 "node"    : node,
+					 "skelType": "node"
+					 }
+		)
 
 	def resetLoadingState(self):
 		pass
@@ -107,14 +110,20 @@ class EditAction(Button):
 			self.openEditor( s.data["key"] )
 
 	def openEditor(self, key):
-		pane = Pane(translate("Edit"), closeable=True)
-		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget(self.parent().parent().module,
-						  EditWidget.appHierarchy,
-						  skelType="node",
-						  key=key,
-		                  context=self.parent().parent().context)
-		pane.addWidget( edwg )
+		conf[ "mainWindow" ].openNewMainView(
+			translate( "Edit" ),  # AnzeigeName
+			"icon-edit",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"edit",  # Action
+			data = { "context" : self.parent().parent().context,
+					 "baseType": EditWidget.appHierarchy,
+					 "skelType": "node",
+					 "key"	   :key
+					 }
+		)
+
+
 
 	def resetLoadingState(self):
 		pass
@@ -170,14 +179,21 @@ class CloneAction(Button):
 			self.openEditor( s.data[ "key" ] )
 
 	def openEditor(self, key):
-		pane = Pane(translate("Clone"), closeable=True, iconClasses=["modul_%s" % self.parent().parent().module, "apptype_hierarchy", "action_edit" ])
-		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget(self.parent().parent().module, EditWidget.appHierarchy,
-		                  node=self.parent().parent().rootNode, key=key,skelType="node",
-		                    context=self.parent().parent().context,
-		                    clone=True)
-		pane.addWidget( edwg )
-		pane.focus()
+		conf[ "mainWindow" ].openNewMainView(
+			translate( "Clone" ),  # AnzeigeName
+			"icon-clone",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"add",  # Action
+			data = { "context" : self.parent().parent().context,
+					 "baseType": EditWidget.appHierarchy,
+					 "node"    : self.parent().parent().rootNode,
+					 "skelType": "node",
+					 "key"     :key,
+					 "clone"   : True
+					 }
+		)
+
 
 	def resetLoadingState(self):
 		pass

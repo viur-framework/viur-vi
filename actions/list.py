@@ -4,19 +4,13 @@ from flare.popup import Confirm, Popup, Alert
 from flare.network import NetworkService
 from flare.icons import SvgIcon
 from vi.priorityqueue import actionDelegateSelector
-from vi.widgets.edit import EditWidget
 from vi.config import conf
-from vi.pane import Pane
 from vi.widgets.csvexport import ExportCsvStarter
 from vi.sidebarwidgets.internalpreview import InternalPreview
 from vi.sidebarwidgets.filterselector import FilterSelector
 from vi.i18n import translate
 from flare.button import Button
 from flare.network import DeferredCall
-
-
-class EditPane(Pane):
-	pass
 
 """
 	Provides the actions suitable for list applications
@@ -50,14 +44,6 @@ class AddAction(Button):
 			"add",							#Action
 			data = {"context":self.parent().parent().context}
 		)
-
-
-		#pane = EditPane(translate("Add"), closeable=True, iconURL="icon-add",
-		#                iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_add" ])
-		#conf["mainWindow"].stackPane( pane )
-		#edwg = EditWidget(self.parent().parent().module, EditWidget.appList, context=self.parent().parent().context)
-		#pane.addWidget( edwg )
-		#pane.focus()
 
 	def resetLoadingState(self):
 		pass
@@ -120,11 +106,17 @@ class EditAction(Button):
 			self.openEditor( s["key"] )
 
 	def openEditor(self, key):
-		pane = Pane(translate("Edit"), closeable=True, iconURL="icon-edit", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
-		conf["mainWindow"].stackPane( pane, focus=True )
-		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key,
-		                    context=self.parent().parent().context)
-		pane.addWidget( edwg )
+		conf[ "mainWindow" ].openNewMainView(
+			translate("Edit"),  # AnzeigeName
+			"icon-edit",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"edit",  # Action
+			data = { "context": self.parent().parent().context,
+					 "key":key}
+		)
+
+
 
 	def resetLoadingState(self):
 		pass
@@ -181,18 +173,22 @@ class CloneAction(Button):
 			self.openEditor( s["key"] )
 
 	def openEditor(self, key):
-		pane = Pane(translate("Clone"), closeable=True, iconURL="icon-clone", iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit" ])
-		conf["mainWindow"].stackPane( pane )
-		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key, clone=True,
-		                    context=self.parent().parent().context)
-		pane.addWidget( edwg )
-		pane.focus()
+		conf[ "mainWindow" ].openNewMainView(
+			translate( "Clone" ),  # AnzeigeName
+			"icon-clone",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"add",  # Action
+			data = { "context": self.parent().parent().context,
+					 "key"    : key,
+					 "clone"  : True}
+		)
+
 
 	def resetLoadingState(self):
 		pass
 
 actionDelegateSelector.insert( 1, CloneAction.isSuitableFor, CloneAction )
-
 
 
 class DeleteAction(Button):
@@ -509,6 +505,7 @@ class SelectFieldsPopup( Popup ):
 
 		self.removeClass("popup--center")
 		self.addClass("popup--n popup--selectfields")
+
 		self.listWdg = listWdg
 		self.checkboxes = []
 

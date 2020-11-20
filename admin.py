@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
+import os, time
 from flare import html5,utils,bindApp
 from flare.event import EventDispatcher
 from .config import conf
@@ -12,7 +12,7 @@ from .log import Log
 from .pane import Pane, GroupPane
 from .screen import Screen
 
-from flare.views.helpers import registerViews, generateView, addView
+from flare.views.helpers import registerViews, generateView, addView,updateDefaultView
 from vi.widgets.appnavigation import AppNavigation
 
 # BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
@@ -120,8 +120,8 @@ class AdminScreen(Screen):
 		registerViews(os.path.join(root,"views"))
 
 		#load default View
-		conf[ "views_default" ] = "overview"
-		conf["views_state"].updateState("activeView", conf["views_default"])
+		updateDefaultView("overview")
+		conf["views_state"].updateState("activeView","overview")
 		from vi import s
 		import time
 
@@ -145,8 +145,8 @@ class AdminScreen(Screen):
 		print( "%.5f Sek - ready to Navigate" % (time.time() - s) )
 
 	def initializeConfig( self ):
-		print("------------------------------")
-		print(conf["mainConfig"]["configuration"])
+		#print("------------------------------")
+		#print(conf["mainConfig"]["configuration"])
 		groups = conf["mainConfig"]["configuration"]["moduleGroups"]
 		modules = conf["mainConfig"]["modules"]
 
@@ -223,28 +223,33 @@ class AdminScreen(Screen):
 					self.appendNavList( viewItems, currentModuleWidget )
 
 
-	def openNewMainView( self,name,icon,viewName,moduleName,actionName,data ):
+	def openNewMainView( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False ):
 		# generate a parameterized view
 		view = conf["views_registered"].get(viewName,"notfound").__class__
-		viewInst = generateView( view, moduleName, actionName, data = data )
-		conf["views_registered"].update({name:viewInst})
+		instancename = "%s___%s" % (viewName, str( time.time() ).replace( ".", "_" ))
+		viewInst = generateView( view, moduleName, actionName, data = data,name=instancename )
+		conf["views_registered"].update({instancename:viewInst})
 
 		currentActivNavPoint = self.navWrapper.state.getState("activeNavigation")
+		if append:
+			self.navWrapper.addNavigationPoint(
+				name,
+				icon,
+				viewInst.name if viewInst else "notfound",
+				None,
+				True
+			)
+		else:
+			self.navWrapper.addNavigationPointAfter(
+				name,
+				icon,
+				viewInst.name if viewInst else "notfound",
+				currentActivNavPoint,
+				True
+			)
 
-		print(currentActivNavPoint)
-
-		self.navWrapper.addNavigationPointAfter(
-			name,
-			icon,
-			viewInst.name if viewInst else "notfound",
-			currentActivNavPoint,
-			True
-		)
-
-
-
-
-
+		if focusView:
+			conf[ "views_state" ].updateState( "activeView", instancename )
 
 
 	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data=None):
@@ -302,6 +307,10 @@ class AdminScreen(Screen):
 		gen = initialHashHandler.select(path, param)
 		if gen:
 			gen(path, param)
+
+
+	def stackWidget( self, widget,disableOtherWidgets=True):
+		print("TODO")
 
 	def switchFullscreen(self, fullscreen=True):
 		if fullscreen:
