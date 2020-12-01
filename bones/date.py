@@ -80,6 +80,8 @@ class DateEditWidget(BaseEditWidget):
 
 		if self.timeInput:
 			if self.timeInput["value"]:
+				if len(self.timeInput["value"].split(":")) < 3:
+					self.timeInput["value"] = self.timeInput["value"] + ":00"
 				try:
 					time = datetime.datetime.strptime(self.timeInput["value"], "%H:%M:%S")
 					value = value.replace(hour=time.hour, minute=time.minute, second=time.second)
