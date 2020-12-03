@@ -175,13 +175,29 @@ class EditWidget(html5.Div):
 		else:
 			self.actionbar.setActions(["save.continue"] + editActions +["save.close" ], widget=self)
 
-		# Set path
-		if applicationType == EditWidget.appSingleton:
-			conf["theApp"].setPath(module + "/" + self.mode)
-		elif self.mode == "edit":
-			conf["theApp"].setPath(module + "/" + (self.mode if not clone else "clone") + "/" + self.key)
+		pathList = [module]
+		if clone:
+			curr_mode = "clone"
 		else:
-			conf["theApp"].setPath(module + "/" + self.mode)
+			curr_mode = self.mode
+
+		pathList.append(curr_mode)
+
+		if self.group:
+			pathList.append(self.group)
+
+		if self.mode == "edit":
+			pathList.append(self.key)
+
+		conf[ "theApp" ].setPath( "/".join(pathList))
+
+		# Set path
+		#if applicationType == EditWidget.appSingleton:
+		#	conf["theApp"].setPath(module + "/" + self.mode)
+		#elif self.mode == "edit":
+		#	conf["theApp"].setPath(module + "/" + (self.mode if not clone else "clone") + "/" + self.key)
+		#else:
+		#	conf["theApp"].setPath(module + "/" + self.mode)
 
 		# Input form
 		self.accordion = Accordion()
@@ -480,7 +496,11 @@ class EditWidget(html5.Div):
 				segments[cat] = self.accordion.addSegment(cat)
 
 			wdgGen = editBoneSelector.select(self.module, key, tmpDict)
+			print("AAAAAAAAAAAAAAAAAAAA")
+			print(key)
+			print(wdgGen)
 			widget = wdgGen.fromSkelStructure(self.module, key, tmpDict)
+			print(widget)
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
 
 			if "setContext" in dir(widget) and callable(widget.setContext):

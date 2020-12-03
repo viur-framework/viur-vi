@@ -110,7 +110,12 @@ class ListHandler(Pane):
 		elif pathList[1] == "add":
 			pane = Pane(translate("Add"), closeable=True, iconURL="icons-add",
 			            iconClasses=["module_%s" % self.moduleName, "apptype_list", "action_add"])
-			edwg = EditWidget(self.moduleName, EditWidget.appList, hashArgs=(params or None))
+
+			agroup = None
+			if len( pathList ) >= 3:
+				agroup = pathList[ 2 ]
+
+			edwg = EditWidget(self.moduleName, EditWidget.appList, hashArgs=(params or None),group=agroup)
 			pane.addWidget(edwg)
 			conf["mainWindow"].addPane(pane, parentPane=self)
 			pane.focus()
@@ -118,7 +123,13 @@ class ListHandler(Pane):
 		elif pathList[1] in ["edit", "clone"] and len(pathList) > 2:
 			pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
 			            iconClasses=["module_%s" % self.moduleName, "apptype_list", "action_edit"])
-			edwg = EditWidget(self.moduleName, EditWidget.appList, key=pathList[2], hashArgs=(params or None), clone=pathList[1] == "clone")
+			agroup =None
+			akey = pathList[2]
+
+			if len(pathList)>3:
+				agroup = pathList[2]
+				akey = pathList[3]
+			edwg = EditWidget(self.moduleName, EditWidget.appList, key=akey, hashArgs=(params or None), clone=pathList[1] == "clone",group=agroup)
 			pane.addWidget(edwg)
 			conf["mainWindow"].addPane(pane, parentPane=self)
 			pane.focus()
