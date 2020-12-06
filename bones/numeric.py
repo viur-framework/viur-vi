@@ -86,12 +86,10 @@ class NumericEditWidget(BaseEditWidget):
 			if self.max is not None:
 				self.widget["max"] = self.max
 
-			self.unsinkEvent("onChange")
-
 		else:
 			self.widget["type"] = self.widget["step"] = self.widget["min"] = self.widget["max"] = None
-			self.sinkEvent("onChange")
 
+		self.sinkEvent("onChange")
 		super().updateWidget()
 
 	def setValue(self, value):
@@ -103,7 +101,7 @@ class NumericEditWidget(BaseEditWidget):
 			else:
 				self.value = html5.utils.parseInt(value or 0)
 
-			return str(self.value)
+			return self.value
 
 		if value is None or str(value).strip() is "":
 			self.value = None
@@ -167,7 +165,7 @@ class NumericEditWidget(BaseEditWidget):
 		self.widget["value"] = self.setValue(value)
 
 	def serialize(self):
-		return self.widget['value'] or 0
+		return self.value or 0
 
 
 class NumericViewWidget(NumericEditWidget):
