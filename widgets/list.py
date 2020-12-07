@@ -92,9 +92,6 @@ class ListWidget(html5.Div):
 				self.group = kwargs["adminInfo"]["group"]
 			else:
 				self.group = "all"
-		print(kwargs[ "adminInfo" ])
-		print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-
 
 		assert selectMode in [None, "single", "multi"]
 
