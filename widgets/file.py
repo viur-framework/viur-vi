@@ -176,7 +176,6 @@ class Uploader(html5.ignite.Progress):
 			Internal callback - the actual upload url (retrieved by calling /file/getUploadURL) is known.
 		"""
 		if conf["core.version"][0] == 3:
-
 			params = NetworkService.decode(req)["values"]
 
 			formData = html5.jseval("new FormData();")
@@ -197,11 +196,7 @@ class Uploader(html5.ignite.Progress):
 				formData.append(key, value)
 			formData.append("file", req.file)
 
-			self.xhr = html5.jseval("new XMLHttpRequest()")
-			self.xhr.open("POST", params["url"])
-			self.xhr.onload = self.onLoad
-			self.xhr.upload.onprogress = self.onProgress
-			self.xhr.send(formData)
+			html5.window.fetch(params["url"], {"method": "POST", "body": formData, "mode": "no-cors"}).then(self.onLoad)
 
 		else:
 			r = NetworkService.request("", "/vi/skey", successHandler=self.onSkeyAvailable)
@@ -237,20 +232,17 @@ class Uploader(html5.ignite.Progress):
 			Internal callback - The state of our upload changed.
 		"""
 		if conf["core.version"][0] == 3:
-			if self.xhr.status in [200, 204]:
-				NetworkService.request(
-					"file", "add", {
-						"key": self.targetKey,
-						"node": self.node,
-						"skelType": "leaf"
-					},
-				    successHandler=self.onUploadAdded,
-					secure=True
+			NetworkService.request(
+				"file", "add", {
+					"key": self.targetKey,
+					"node": self.node,
+					"skelType": "leaf"
+				},
+			    successHandler=self.onUploadAdded,
+				failureHandler=self.onFailed,
+				secure=True
 				)
-			else:
-				DeferredCall(self.onFailed, self.xhr.status, _delay=1000)
 		else:
-
 			if self.xhr.status == 200:
 				self.responseValue = json.loads(self.xhr.responseText)
 				DeferredCall(self.onSuccess, _delay=1000)
