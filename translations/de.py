@@ -207,6 +207,7 @@ lngDe = {
 	"vi.sidebar.filterselector": "verfügbare Filter",
 
 	# Bones
-	"vi.bone.date.at": " um "
-
+	"vi.bone.date.at": " um ",
+	"server.bones.passwordBone.tooWeakMessage": "Das eingegebene Passwort ist zu schwach! Bitte verwenden Sie Ziffern, sowie Klein- und Großbuchstaben.",
+	"server.bones.passwordbone.tooshortmessage": "Das eingegebene Passwort ist zu kurz! Es werden mindestens 8 Zeichen benötigt."
 }

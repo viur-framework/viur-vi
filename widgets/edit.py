@@ -521,6 +521,10 @@ class EditWidget(html5.Div):
 				(bone["error"]["severity"]%2==0 and bone["required"]) or\
 				(bone["error"]["severity"]%2 == 1)
 			):
+				#Password errors -pp
+				errMsg = str(bone["error"]["errorMessage"])
+				if "password" in errMsg:
+					pwMsg = True
 				#todo if severity = 1 dependency error, we need to mark futher bones
 
 				descrLbl.addClass("is-invalid")
@@ -628,7 +632,11 @@ class EditWidget(html5.Div):
 		self._lastData = data
 
 		if hasMissing and not self.wasInitialRequest:
-			conf["mainWindow"].log("warning",translate("Could not save entry!"),icon="icons-cancel",modul=self.module,key=self.key,action=self.mode,data=data)
+			#pw errors if-else, so only pw error or could not save message is shown -pp
+			if pwMsg:
+				conf["mainWindow"].log("warning",translate(errMsg),icon="icons-cancel",modul=self.module,key=self.key,action=self.mode,data=data)
+			else:
+				conf["mainWindow"].log("warning",translate("Could not save entry!"),icon="icons-cancel",modul=self.module,key=self.key,action=self.mode,data=data)
 
 		DeferredCall(self.performLogics)
 
