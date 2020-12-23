@@ -12,9 +12,9 @@ class InternalPreview( html5.Ul ):
 
 		self.addClass("vi-sb-intprev box-body box--content")
 
-		tmpDict = {key: bone for key, bone in structure}
+		tmpDict = {key: bone for key, bone in structure.items()}
 
-		for key, bone in structure:
+		for key, bone in structure.items():
 			if "params" in bone.keys() and bone["params"] \
 					and "previewBone" in bone["params"].keys() \
 					and bone["params"]["previewBone"] == False:

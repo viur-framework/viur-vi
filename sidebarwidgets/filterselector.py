@@ -4,7 +4,7 @@ from flare import html5,utils
 from vi.config import conf
 from vi.widgets.search import Search
 from vi.priorityqueue import extendedSearchWidgetSelector
-from vi.i18n import translate
+from flare.i18n import translate
 from flare.icons import SvgIcon,Icon
 
 
