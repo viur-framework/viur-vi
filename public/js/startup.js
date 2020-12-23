@@ -16,6 +16,9 @@ window.addEventListener(
 					},
 					"vi": {
 						"path": "."
+					},
+					"vi_plugins":{
+						"path":"/vi_plugins/s"
 					}
 				}
 			});
