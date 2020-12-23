@@ -2,7 +2,7 @@
 from flare import html5
 from flare.icons import SvgIcon
 from flare.network import DeferredCall
-from .i18n import translate
+from flare.i18n import translate
 from .config import conf
 
 from datetime import datetime

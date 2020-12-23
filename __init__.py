@@ -1,4 +1,7 @@
-#-*- coding: utf-8 -*-
+from .config import vi_conf
+from flare import loadProjectConf
+loadProjectConf(vi_conf) #prepatch flare.conf
+
 from flare import html5
 from flare.popup import Alert
 from flare import network
@@ -9,8 +12,9 @@ from . import exception
 from .login import LoginScreen
 from .admin import AdminScreen
 from .config import conf
-from .i18n import translate
-from . import i18n
+
+from flare.i18n import buildTranslations,translate
+from flare import i18n
 
 class Application(html5.Div):
 	def __init__(self):
@@ -136,6 +140,7 @@ class Application(html5.Div):
 		html5.window.location.hash = path + hash
 
 def start():
+	buildTranslations("vi")
 
 	# Configure vi as network render prefix
 	network.NetworkService.prefix = "/vi"

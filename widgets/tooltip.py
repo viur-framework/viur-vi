@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flare import html5
-from vi.i18n import translate
+from flare.i18n import translate
 from flare.icons import SvgIcon
 
 class ToolTip(html5.Div):

@@ -15,4 +15,4 @@ class OverviewWidget(ViewWidget):
 			Here we start!
 		'''
 
-		self.appendChild('''HALLO''')
+		#self.appendChild('''HALLO''')

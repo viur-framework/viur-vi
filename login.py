@@ -6,7 +6,7 @@ from flare.button import Button
 from flare.event import EventDispatcher
 
 from flare.network import NetworkService, DeferredCall
-from .i18n import translate
+from flare.i18n import translate
 from .config import conf
 from .priorityqueue import loginHandlerSelector
 from .screen import Screen

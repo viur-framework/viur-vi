@@ -3,7 +3,7 @@ from vi import utils
 
 from vi.widgets import ListWidget, EditWidget
 from vi.priorityqueue import actionDelegateSelector, moduleWidgetSelector
-from vi.i18n import translate
+from flare.i18n import translate
 from vi.config import conf
 from vi.pane import Pane
 from flare.button import Button

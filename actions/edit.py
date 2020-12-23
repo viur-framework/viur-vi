@@ -2,7 +2,7 @@
 from flare import html5
 from flare.popup import Confirm
 from vi.priorityqueue import actionDelegateSelector
-from vi.i18n import translate
+from flare.i18n import translate
 from flare.button import Button
 from vi.config import conf
 

@@ -45,7 +45,10 @@ class HierarchyWidget(TreeWidget):
 
 	def toggleListView(self):
 		self.setListView(not self.listviewActive)
-		self.reloadData()
+		if not self.viewNodeStructure:
+			self.requestStructure()
+		else:
+			self.reloadData()
 
 	def setListView(self, visible=False):
 		if visible:
@@ -66,7 +69,10 @@ class HierarchyWidget(TreeWidget):
 
 	def onSelectionChanged(self, widget, selection):
 		if self.listviewActive:
-			self.reloadData()
+			if not self.viewNodeStructure:
+				self.requestStructure()
+			else:
+				self.reloadData()
 
 	@staticmethod
 	def canHandle(moduleName, moduleInfo):

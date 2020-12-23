@@ -127,7 +127,7 @@ class InternalEdit(html5.Div):
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 
 			descrLbl = html5.Label(bone["descr"])
-			descrLbl.addClass("label", "vi-label", "vi-label--%s" % bone["type"].replace(".","-"), "vi-label--%s" % key)
+			descrLbl.addClass("label", "flr-label", "flr-label--%s" % bone["type"].replace(".","-"), "flr-label--%s" % key)
 			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % ( self.editIdx, None, "internal", cat or "empty", key)
 
 			if bone["required"]:

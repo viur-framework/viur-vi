@@ -1,8 +1,9 @@
 import json
 from flare import html5
 from flare.button import Button
+from flare.icons import SvgIcon
 from flare.popup import Popup
-from vi.i18n import translate
+from flare.i18n import translate
 from flare.ignite import Progress
 import vi.utils as utils
 from vi.config import conf
@@ -99,7 +100,7 @@ class FilePreviewImage(html5.Div):
 		if preview:
 			self.removeClass("no-preview")
 
-		self.previewIcon = Icon(self.currentFile.get("name"), preview or svg)
+		self.previewIcon = Icon( preview or svg, title = self.currentFile.get("name"))
 		self.appendChild(self.previewIcon)
 
 		if self.currentFile:
@@ -132,7 +133,7 @@ class FilePreviewImage(html5.Div):
 
 			html5.window.open(file)
 
-class Uploader(Progress):
+class Uploader(html5.Div):
 	"""
 		Uploads a file to the server while providing visual feedback of the progress.
 	"""
@@ -148,6 +149,8 @@ class Uploader(Progress):
 		self.uploadSuccess = EventDispatcher("uploadSuccess")
 		self.responseValue = None
 		self.targetKey = None
+		self.addClass("is-loading")
+		self.appendChild(SvgIcon("icon-loader", title = "uploading..."))
 
 		self.context = context
 
@@ -181,11 +184,13 @@ class Uploader(Progress):
 			formData.append(key, value)
 		formData.append("file", req.file)
 
-		self.xhr = html5.jseval("new XMLHttpRequest()")
-		self.xhr.open("POST", params["url"])
-		self.xhr.onload = self.onLoad
-		self.xhr.upload.onprogress = self.onProgress
-		self.xhr.send(formData)
+		#self.xhr = html5.jseval("new XMLHttpRequest()")
+		#self.xhr.open("POST", params["url"])
+		#self.xhr.onload = self.onLoad
+		#self.xhr.upload.onprogress = self.onProgress
+		#self.xhr.send(formData)
+
+		html5.window.fetch( params[ "url" ], { "method": "POST", "body": formData, "mode": "no-cors" } ).then( self.onLoad )
 
 
 
@@ -215,18 +220,31 @@ class Uploader(Progress):
 		"""
 			Internal callback - The state of our upload changed.
 		"""
-		if self.xhr.status in [200, 204]:
-			NetworkService.request(
-				"file", "add", {
-					"key": self.targetKey,
-					"node": self.node,
-					"skelType": "leaf"
-				},
-				successHandler=self.onUploadAdded,
-				secure=True
-			)
-		else:
-			DeferredCall(self.onFailed, self.xhr.status, _delay=1000)
+		NetworkService.request(
+			"file", "add", {
+				"key":self.targetKey,
+				"node":self.node,
+				"skelType":"leaf"
+			},
+			successHandler = self.onUploadAdded,
+			failureHandler = self.onFailed,
+			secure = True
+		)
+
+		return 0
+		#old
+		#if self.xhr.status in [200, 204]:
+		#	NetworkService.request(
+		#		"file", "add", {
+		#			"key": self.targetKey,
+		#			"node": self.node,
+		#			"skelType": "leaf"
+		#		},
+		#		successHandler=self.onUploadAdded,
+		#		secure=True
+		#	)
+		#else:
+		#	DeferredCall(self.onFailed, self.xhr.status, _delay=1000)
 
 	def onUploadAdded(self, req):
 		self.responseValue = NetworkService.decode(req)
@@ -336,6 +354,16 @@ class FileWidget(TreeBrowserWidget):
 		else:
 			return "2-"
 
+	def onDrop(self, event):
+		event.preventDefault()
+		event.stopPropagation()
+		self.removeClass("insert-here")
+		files = event.dataTransfer.files
+		if files:
+			for x in range(0, len(files)):
+				Uploader(files.item(x), self.node)
+		else:
+			super().onDrop(event)
 
 	@staticmethod
 	def canHandle( module, moduleInfo ):

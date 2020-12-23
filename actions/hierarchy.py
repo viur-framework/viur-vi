@@ -2,7 +2,7 @@
 from flare import html5
 
 from vi.config import conf
-from vi.i18n import translate
+from flare.i18n import translate
 from flare.network import NetworkService
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
@@ -35,7 +35,7 @@ class AddAction(Button):
 		if not node:
 			node = self.parent().parent().rootNode
 
-		conf[ "mainWindow" ].openNewMainView(
+		conf[ "mainWindow" ].openView(
 			translate( "Add" ),  # AnzeigeName
 			"icon-add",  # Icon
 			"edithandler",  # viewName
@@ -45,7 +45,8 @@ class AddAction(Button):
 					 "baseType": EditWidget.appHierarchy,
 					 "node"    : node,
 					 "skelType": "node"
-					 }
+					 },
+			target = "popup" if self.parent().parent().isSelector else "mainNav"
 		)
 
 	def resetLoadingState(self):
@@ -110,7 +111,7 @@ class EditAction(Button):
 			self.openEditor( s.data["key"] )
 
 	def openEditor(self, key):
-		conf[ "mainWindow" ].openNewMainView(
+		conf[ "mainWindow" ].openView(
 			translate( "Edit" ),  # AnzeigeName
 			"icon-edit",  # Icon
 			"edithandler",  # viewName
@@ -120,7 +121,8 @@ class EditAction(Button):
 					 "baseType": EditWidget.appHierarchy,
 					 "skelType": "node",
 					 "key"	   :key
-					 }
+					 },
+			target = "popup" if self.parent().parent().isSelector else "mainNav"
 		)
 
 
@@ -179,7 +181,7 @@ class CloneAction(Button):
 			self.openEditor( s.data[ "key" ] )
 
 	def openEditor(self, key):
-		conf[ "mainWindow" ].openNewMainView(
+		conf[ "mainWindow" ].openView(
 			translate( "Clone" ),  # AnzeigeName
 			"icon-clone",  # Icon
 			"edithandler",  # viewName
@@ -191,7 +193,8 @@ class CloneAction(Button):
 					 "skelType": "node",
 					 "key"     :key,
 					 "clone"   : True
-					 }
+					 },
+			target = "popup" if self.parent().parent().isSelector else "mainNav"
 		)
 
 
@@ -247,7 +250,7 @@ class DeleteAction(Button):
 		selection = self.parent().parent().selection
 		if not selection:
 			return
-		d = Confirm(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
+		d = Confirm(translate("Delete {{amt}} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = [x.data[ "key" ] for x in selection]
 		d.addClass( "delete" )
 

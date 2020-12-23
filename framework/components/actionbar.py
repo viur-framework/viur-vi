@@ -3,7 +3,7 @@ from flare import html5
 
 from vi.priorityqueue import actionDelegateSelector
 from vi.config import conf
-from vi.i18n import translate
+from flare.i18n import translate
 from vi.serversideaction import ServerSideActionWdg
 
 class ActionBar(html5.Div):

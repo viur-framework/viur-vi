@@ -1,7 +1,7 @@
 from flare import html5
 from flare.popup import Confirm
 from vi.config import conf
-from vi.i18n import translate
+from flare.i18n import translate
 from flare.network import NetworkService
 from vi.priorityqueue import actionDelegateSelector
 from flare.button import Button
@@ -28,7 +28,7 @@ class AddLeafAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		conf[ "mainWindow" ].openNewMainView(
+		conf[ "mainWindow" ].openView(
 			translate( "Add" ),  # AnzeigeName
 			"icon-add",  # Icon
 			"edithandler",  # viewName
@@ -38,7 +38,8 @@ class AddLeafAction(Button):
 					 "baseType":EditWidget.appTree,
 					 "node":self.parent().parent().node,
 					 "skelType":"leaf"
-			}
+			},
+			target = "popup" if self.parent().parent().isSelector else "mainNav"
 		)
 
 
@@ -69,7 +70,7 @@ class AddNodeAction(Button):
 		return  correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		conf[ "mainWindow" ].openNewMainView(
+		conf[ "mainWindow" ].openView(
 			translate( "Add" ),  # AnzeigeName
 			"icon-add",  # Icon
 			"edithandler",  # viewName
@@ -79,7 +80,8 @@ class AddNodeAction(Button):
 					 "baseType": EditWidget.appTree,
 					 "node"    : self.parent().parent().node,
 					 "skelType": "node"
-					 }
+					 },
+			target = "popup" if self.parent().parent().isSelector else "mainNav"
 		)
 
 
@@ -125,7 +127,7 @@ class EditAction(Button):
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(selection[0])))
 
-			conf[ "mainWindow" ].openNewMainView(
+			conf[ "mainWindow" ].openView(
 				translate( "Edit" ),  # AnzeigeName
 				"icon-edit",  # Icon
 				"edithandler",  # viewName
@@ -135,7 +137,8 @@ class EditAction(Button):
 						 "baseType": EditWidget.appTree,
 						 "skelType": skelType,
 						 "key"     : selection[0].data["key"]
-						 }
+						 },
+				target = "popup" if self.parent().parent().isSelector else "mainNav"
 			)
 
 	def onSelectionChanged(self, table, selection ):
@@ -172,7 +175,7 @@ class EditAction(Button):
 			else:
 				raise ValueError("Unknown selection type: %s" % str(type(s)))
 
-			conf[ "mainWindow" ].openNewMainView(
+			conf[ "mainWindow" ].openView(
 				translate( "Edit" ),  # AnzeigeName
 				"icon-edit",  # Icon
 				"edithandler",  # viewName
@@ -182,7 +185,8 @@ class EditAction(Button):
 						 "baseType": EditWidget.appTree,
 						 "skelType": skelType,
 						 "key": s.data[ "key" ]
-						 }
+						 },
+				target = "popup" if self.parent().parent().isSelector else "mainNav"
 			)
 
 
@@ -240,7 +244,7 @@ class DeleteAction(Button):
 		if not selection:
 			return
 
-		d = Confirm(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
+		d = Confirm(translate("Delete {{amt}} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = selection
 		d.addClass( "delete" )
 

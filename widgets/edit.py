@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from flare import html5
+from flare.forms.formerrors import collectBoneErrors, checkErrors
 from flare.popup import Confirm
-from typing import List, Tuple
+
 from collections import defaultdict, deque
 
 import vi.utils as utils
@@ -12,14 +13,13 @@ from vi.config import conf
 from flare.forms import boneSelector
 from vi.widgets.tooltip import ToolTip
 from vi.framework.components.actionbar import ActionBar
-from vi.i18n import translate
+from flare.i18n import translate
 from vi.widgets.list import ListWidget
 from vi.widgets.accordion import Accordion
 from vi.exception import InvalidBoneValueException
 
 from js import console
 
-from flare.forms.bones.base import ReadFromClientErrorSeverity
 
 
 
@@ -48,19 +48,8 @@ class PassiveErrorItem(html5.Li):
 		self.errorSeverity.element.innerHTML = "Invalidated by other field {}!".format(error["fieldPath"])
 
 
-def checkErrors(bone) -> Tuple[bool, List[str]]:
-	errors = bone["errors"]
-	if not errors:
-		return False, list()
-	invalidatedFields = list()
-	for error in errors:
-		if (
-				(error["severity"] == ReadFromClientErrorSeverity.Empty and bone["required"]) or
-				(error["severity"] == ReadFromClientErrorSeverity.InvalidatesOther)
-		):
-			if error["invalidatedFields"]:
-				invalidatedFields.extend(error["invalidatedFields"])
-	return True, invalidatedFields
+
+
 
 def parseHashParameters( src, prefix="" ):
 	"""
@@ -148,7 +137,7 @@ class EditWidget(html5.Div):
 			:type hashArgs: dict
 		"""
 		if not module in conf["modules"].keys():
-			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module),modul=self.module,key=self.key,action=self.mode,data=data)
+			conf["mainWindow"].log("error", translate("The module '{{module}}' does not exist.", module=module),modul=self.module,key=self.key,action=self.mode,data=data)
 			assert module in conf["modules"].keys()
 
 		super(EditWidget, self ).__init__(*args, **kwargs)
@@ -295,16 +284,10 @@ class EditWidget(html5.Div):
 		"""
 			Removes all currently visible elements and displays an error message
 		"""
-		try:
-			print(req.result)
-			print(NetworkService.decode(req))
-		except:
-			pass
-
 		if code and (code==401 or code==403):
 			txt = translate("Access denied!")
 		else:
-			txt = translate("An error occurred: {code}", code=code or 0)
+			txt = translate("An error occurred: {{code}}", code=code or 0)
 
 		conf["mainWindow"].log("error", txt)
 
@@ -394,7 +377,8 @@ class EditWidget(html5.Div):
 				self.parent().close()
 				return
 
-			conf[ "mainWindow" ].navWrapper.removeNavigationPoint(self.parent().view.name)
+			if not conf[ "mainWindow" ].navWrapper.removeNavigationPoint(self.parent().view.name):
+				conf[ "mainWindow" ].removeWidget(self.parent()) #if no navpoint try to kill popup
 			return
 
 		self.clear()
@@ -471,9 +455,12 @@ class EditWidget(html5.Div):
 		self.containers = {}
 		self.actionbar.resetLoadingState()
 		self.dataCache = data
+
+
+
 		self.modified = False
 
-		tmpDict = {k: v for k, v in data["structure"]}
+		tmpDict = {k: v for k, v in self.dataCache["structure"]}
 		segments = {}
 		firstCat = None
 		currRow = 0
@@ -495,19 +482,10 @@ class EditWidget(html5.Div):
 				contextVariable: data["values"].get(contextKey)
 			})
 
-		errors = defaultdict(list)
-
-		for error in data[ "errors" ]:
-			errors[ error[ "fieldPath" ] ].append( error )
-
 		self.accordion.clearSegments()
-		errorQueue = defaultdict(list)
-		for key, bone in data["structure"]:
-			console.log("errors complete", errors)
-			bone["errors"] = errors.get(key)
-			cat = defaultCat #meow!
 
-			console.log("bone", key, bone["errors"])
+		for key, bone in self.dataCache["structure"]:
+			cat = defaultCat #meow!
 
 			if ("params" in bone.keys()
 			    and isinstance(bone["params"], dict)
@@ -517,10 +495,8 @@ class EditWidget(html5.Div):
 			if cat not in segments:
 				segments[cat] = self.accordion.addSegment(cat)
 
-			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, data["errors"], errorQueue=errorQueue)
-			widget = boneFactory.editWidget(errorInformation=data["errors"])
-
-			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
+			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, data["errors"])
+			containerDiv, descrLbl, widget, hasError = boneFactory.boneWidget() #get bone
 
 			if "setContext" in dir(widget) and callable(widget.setContext):
 				widget.setContext(self.context)
@@ -528,94 +504,27 @@ class EditWidget(html5.Div):
 			if "changeEvent" in dir(widget):
 				widget.changeEvent.register(self)
 
-			descrLbl = html5.Label(key if conf["showBoneNames"] else bone.get("descr", key))
-			descrLbl.addClass("label", "vi-label", "vi-label--%s" % bone["type"].replace(".","-"), "vi-label--%s" % key)
+			segments[ cat ].addWidget( containerDiv )
 
-			# Elements (TEMP TEMP TEMP)
-			if ("params" in bone.keys()
-			    and isinstance(bone["params"], dict)
-			    and "elements.source" in bone["params"].keys()):
-				descrLbl.addClass("elements-%s" % bone["params"]["elements.source"])
-			# /Elements (TEMP TEMP TEMP)
-
-			descrLbl["for"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, self.module, self.mode, cat, key)
-
-			if bone["required"]:
-				descrLbl.addClass( "is-required" )
-
-			fieldErrors = html5.fromHTML("""<div class="vi-bone-widget-item"></div>""")[0]
-			errorsFound, invalidatedFields = checkErrors(bone)
-			if errorsFound:
-				#todo if severity = 1 dependency error, we need to mark further bones
-				descrLbl.addClass("is-invalid")
-
-				if isinstance(bone["errors"], dict):
-					fieldErrors.appendChild(ParsedErrorItem(bone["errors"]))
-				elif isinstance(bone["errors"], list):
-					for error in bone["errors"]:
-						fieldErrors.appendChild(ParsedErrorItem(error))
-				console.log("invalidatedFields", invalidatedFields)
-				for i in invalidatedFields:
-					container = self.containers.get(i)
-					if container:
-						otherLabel = container.children()[0]
-						otherLabel.removeClass("is-valid")
-						otherLabel.addClass("is-invalid")
-						container.children()[1].children()[1].appendChild(PassiveErrorItem(error))
-					else:
-						errorQueue[i].append(error)
-
-				segments[cat].addClass("is-incomplete is-active")
-
+			if hasError:
+				segments[ cat ].addClass( "is-incomplete is-active" )
 				hasMissing = True
 
-			elif not self.wasInitialRequest: #
-				descrLbl.addClass( "is-valid" )
-			else:
-				pass # first Call no highlighting
-
-			containerDiv = html5.Div()
-			containerDiv.appendChild(descrLbl)
-			containerDiv.appendChild(widget)
-			containerDiv.appendChild(fieldErrors)
-
-			if ("params" in bone.keys()
-			    and isinstance(bone["params"], dict)
-			    and "tooltip" in bone["params"].keys()):
-				containerDiv.appendChild(ToolTip(shortText=key if conf["showBoneNames"] else bone.get("descr", key), longText=bone["params"]["tooltip"]))
-
-			segments[cat].addWidget(containerDiv)
-			containerDiv.addClass("vi-bone", "vi-bone--%s" % bone["type"].replace(".","-"), "vi-bone--%s" % key)
-
-			if "." in bone["type"]:
-				for t in bone["type"].split("."):
-					containerDiv.addClass("vi-bone--%s" % t)
-
 			currRow += 1
-			self.bones[key] = widget
-			self.containers[key] = containerDiv
+			self.bones[ key ] = widget
+			self.containers[ key ] = containerDiv
 
-			#Hide invisible bones or logic-flavored bones with their default desire
-			if not bone["visible"] or (bone["params"] and bone["params"].get("logic.visibleIf")):
-				self.containers[key].hide()
-			elif bone["visible"] and not firstCat and not adminCat:
-				firstCat = segments[cat]
+			# Hide invisible bones or logic-flavored bones with their default desire
+			if not bone[ "visible" ] or (bone[ "params" ] and bone[ "params" ].get( "logic.visibleIf" )):
+				self.containers[ key ].hide()
+			elif bone[ "visible" ] and not firstCat and not adminCat:
+				firstCat = segments[ cat ]
 			elif adminCat and cat == adminCat:
-				firstCat = segments[cat]
-
+				firstCat = segments[ cat ]
 
 			# NO elif!
-			if bone["params"] and bone["params"].get("logic.readonlyIf"):
-				self.containers[key].disable()
-
-		for myKey, myErrors in errorQueue.items():
-			container = self.containers.get(myKey)
-			if container:
-				otherLabel = container.children()[0]
-				otherLabel.removeClass("is-valid")
-				otherLabel.addClass("is-invalid")
-				for myError in myErrors:
-					container.children()[1].children()[1].appendChild(PassiveErrorItem(myError))
+			if bone[ "params" ] and bone[ "params" ].get( "logic.readonlyIf" ):
+				self.containers[ key ].disable()
 
 		# Hide all segments where all fields are invisible
 		for fs in segments.values():
@@ -666,7 +575,7 @@ class EditWidget(html5.Div):
 				                                    context = context)
 				segments[vmodule].addWidget(self.views[vmodule])
 
-		self.unserialize(data["values"])
+		self.unserialize(data["values"],data["errors"])
 
 		if self._hashArgs: #Apply the default values (if any)
 			self.unserialize(self._hashArgs)
@@ -679,7 +588,7 @@ class EditWidget(html5.Div):
 
 		DeferredCall(self.performLogics)
 
-	def unserialize(self, data = None):
+	def unserialize(self, data = None, errors=()):
 		"""
 			Applies the actual data to the bones.
 		"""

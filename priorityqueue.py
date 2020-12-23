@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-
+from flare.priorityqueue import PriorityQueue
+from flare.forms import boneSelector,moduleWidgetSelector,displayDelegateSelector
 class StartupQueue( object ):
 	def __init__(self):
 		super(StartupQueue, self).__init__()
@@ -40,31 +40,11 @@ class StartupQueue( object ):
 
 startupQueue = StartupQueue()
 
-class PriorityQueue( object ):
-	def __init__( self ):
-		super( PriorityQueue, self ).__init__()
-		self._q = {}
-
-	def insert( self, priority, validateFunc, generator ):
-		priority = int( priority )
-		if not priority in self._q.keys():
-			self._q[ priority ] = []
-		self._q[ priority ].append( (validateFunc, generator) )
-
-	def select( self, *args, **kwargs ):
-		prios = list( self._q.keys() )
-		prios.sort( reverse=True )
-		for p in prios:
-			for validateFunc, generator in self._q[ p ]:
-				if validateFunc( *args, **kwargs ):
-					return( generator )
-
-
 HandlerClassSelector = PriorityQueue() # Used during startup to select an Wrapper-Class
-moduleWidgetSelector = PriorityQueue() # Used to select an embedded widget to represent a module
-boneSelector = PriorityQueue() # Queried by editWidget to locate its bones
+#moduleWidgetSelector = PriorityQueue() # Used to select an embedded widget to represent a module
+#boneSelector = PriorityQueue() # Queried by editWidget to locate its bones
 actionDelegateSelector = PriorityQueue() # Locates an action for a given module/action-name
-displayDelegateSelector = PriorityQueue() # Selects a widget used to display data from a certain module
+#displayDelegateSelector = PriorityQueue() # Selects a widget used to display data from a certain module
 initialHashHandler = PriorityQueue() # Provides the handler for the initial hash given in the url
 extendedSearchWidgetSelector = PriorityQueue() # Selects a widget used to perform user-customizable searches
 #extractorDelegateSelector = PriorityQueue() # selects a widget used to extract raw data from bones including special features like multilanguage support
@@ -76,3 +56,4 @@ loginHandlerSelector = PriorityQueue() # Login handlers
 protocolWrapperClassSelector = PriorityQueue() # Used during startup to select an Wrapper-Class
 protocolWrapperInstanceSelector = PriorityQueue() # Used afterwards to get a specific instance
 
+print(initialHashHandler._q)

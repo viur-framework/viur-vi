@@ -3,7 +3,7 @@ from flare.popup import Alert
 from flare.button import Button
 import flare.network as network
 from js import Event as JSevent, encodeURI as JSencodeURI, summernoteEditor
-from vi.i18n import translate
+from flare.i18n import translate
 from vi.widgets.file import FileWidget
 from vi.config import conf
 

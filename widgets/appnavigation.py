@@ -47,9 +47,15 @@ class NavigationElement(html5.Div):
 			name = name
 		)
 		self.state.updateState( "hasSubItems", False )
-
+		conf[ "views_state" ].register( "activeView", self )
 		if self.closeable:
 			self.itemRemove.removeClass("is-hidden")
+
+	def onActiveViewChanged( self,e,wdg ):
+		if wdg == self.view:
+			self.item.addClass( "is-active" )
+		else:
+			self.item.removeClass( "is-active" )
 
 
 	def navigationAction( self,e=None,wdg=None):
@@ -80,12 +86,6 @@ class NavigationElement(html5.Div):
 
 		#remove navpoint
 		del self.nav.navigationPoints[self.view]
-
-
-		print("AAAAA")
-		print(previousItem)
-		print(previousItem.view)
-
 
 		self.parent().removeChild( self )
 		if self.nav:
@@ -218,9 +218,13 @@ class AppNavigation(html5.Nav):
 		return aNav
 
 	def removeNavigationPoint( self,view ):
-		aNav = self.navigationPoints[view]
-		aNav.RemoveAction()
-		del self.navigationPoints[view]
+		try:
+			aNav = self.navigationPoints[ view ]
+			aNav.RemoveAction()
+			del self.navigationPoints[view]
+			return True
+		except:
+			return False
 
 
 

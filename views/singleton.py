@@ -1,5 +1,6 @@
 from flare.views.view import View, ViewWidget
 from vi.priorityqueue import HandlerClassSelector,moduleWidgetSelector
+from vi.config import conf
 
 class singletonHandler(View):
 
@@ -28,3 +29,6 @@ class singletonHandlerWidget(ViewWidget):
 		widgen = moduleWidgetSelector.select( self.moduleName, self.moduleInfo )
 		widget = widgen( self.moduleName, **self.moduleInfo )
 		self.appendChild( widget )
+
+	def onViewfocusedChanged( self, viewname, *args, **kwargs ):
+		conf["theApp"].setPath(self.moduleName + "/edit")

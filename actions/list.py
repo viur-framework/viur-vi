@@ -8,7 +8,7 @@ from vi.config import conf
 from vi.widgets.csvexport import ExportCsvStarter
 from vi.sidebarwidgets.internalpreview import InternalPreview
 from vi.sidebarwidgets.filterselector import FilterSelector
-from vi.i18n import translate
+from flare.i18n import translate
 from flare.button import Button
 from flare.network import DeferredCall
 
@@ -36,13 +36,14 @@ class AddAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		conf["mainWindow"].openNewMainView(
+		conf[ "mainWindow" ].openView(
 			translate( "Add" ), 			#AnzeigeName
 			"icon-add", 					#Icon
 			"edithandler",					#viewName
 			self.parent().parent().module,	#Modulename
 			"add",							#Action
-			data = {"context":self.parent().parent().context}
+			data = {"context":self.parent().parent().context},
+			target = "popup" if self.parent().parent().isSelector else "mainNav"
 		)
 
 	def resetLoadingState(self):
@@ -106,14 +107,15 @@ class EditAction(Button):
 			self.openEditor( s["key"] )
 
 	def openEditor(self, key):
-		conf[ "mainWindow" ].openNewMainView(
+		conf[ "mainWindow" ].openView(
 			translate("Edit"),  # AnzeigeName
 			"icon-edit",  # Icon
 			"edithandler",  # viewName
 			self.parent().parent().module,  # Modulename
 			"edit",  # Action
 			data = { "context": self.parent().parent().context,
-					 "key":key}
+					 "key":key},
+			target = "popup" if self.parent().parent().isSelector else "mainNav"
 		)
 
 
@@ -173,7 +175,7 @@ class CloneAction(Button):
 			self.openEditor( s["key"] )
 
 	def openEditor(self, key):
-		conf[ "mainWindow" ].openNewMainView(
+		conf[ "mainWindow" ].openView(
 			translate( "Clone" ),  # AnzeigeName
 			"icon-clone",  # Icon
 			"edithandler",  # viewName
@@ -181,7 +183,8 @@ class CloneAction(Button):
 			"add",  # Action
 			data = { "context": self.parent().parent().context,
 					 "key"    : key,
-					 "clone"  : True}
+					 "clone"  : True},
+			target = "popup" if self.parent().parent().isSelector else "mainNav"
 		)
 
 
@@ -235,7 +238,7 @@ class DeleteAction(Button):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		d = Confirm(translate("Delete {amt} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
+		d = Confirm(translate("Delete {{amt}} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
 		d.deleteList = [x["key"] for x in selection]
 		d.addClass( "delete" )
 
@@ -513,7 +516,7 @@ class SelectFieldsPopup( Popup ):
 		ul.addClass("option-group")
 		self.popupBody.appendChild( ul )
 
-		for key, bone in self.listWdg._structure:
+		for key, bone in self.listWdg._structure.items():
 			li = html5.Li()
 			li.addClass("check")
 
@@ -733,11 +736,11 @@ class TableItems(html5.Div):
 		if table._dataProvider:
 			#self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, loaded elements: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage )))
 			self.elementSpan = html5.Span(html5.TextNode(
-				translate("loaded elements: {amt}, pages: {pg}", amt=len(table._model), pg=pages)))
+				translate("loaded elements: {{amt}}, pages: {{pg}}", amt=len(table._model), pg=pages)))
 		else:
 			#self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, all elements loaded: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage)))
 			self.elementSpan = html5.Span(html5.TextNode(
-				translate("all elements loaded: {amt}, pages: {pg}", amt=len(table._model), pg=pages)))
+				translate("all elements loaded: {{amt}}, pages: {{pg}}", amt=len(table._model), pg=pages)))
 		self.appendChild(self.elementSpan)
 
 	@staticmethod
@@ -1050,7 +1053,7 @@ class SelectAllAction(Button):
 
 	def onClick(self, sender=None):
 		cnt = self.parent().parent().table.table.selectAll()
-		conf["mainWindow"].log("info", translate(u"{items} items had been selected", items=cnt))
+		conf["mainWindow"].log("info", translate(u"{{items}} items had been selected", items=cnt))
 
 	def onAttach(self):
 		super(SelectAllAction,self).onAttach()
@@ -1081,7 +1084,7 @@ class UnSelectAllAction(Button):
 
 	def onClick(self, sender=None):
 		cnt = self.parent().parent().table.table.unSelectAll()
-		conf["mainWindow"].log("info", translate(u"{items} items had been unselected", items=cnt))
+		conf["mainWindow"].log("info", translate(u"{{items}} items had been unselected", items=cnt))
 
 	def onAttach(self):
 		super(UnSelectAllAction,self).onAttach()
@@ -1113,12 +1116,12 @@ class SelectInvertAction(Button):
 		(added, removed) = self.parent().parent().table.table.invertSelection()
 
 		if removed and added:
-			conf["mainWindow"].log("info", translate(u"{added} items selected, {removed} items deselected",
+			conf["mainWindow"].log("info", translate(u"{{added}} items selected, {removed} items deselected",
 			                                            added=added, removed=removed), icon="icon-select-invert")
 		elif removed == 0:
-			conf["mainWindow"].log("info", translate(u"{items} items had been selected", items=added), icon="icon-select-add")
+			conf["mainWindow"].log("info", translate(u"{{items}} items had been selected", items=added), icon="icon-select-add")
 		elif added == 0:
-			conf["mainWindow"].log("info", translate(u"{items} items had been unselected", items=removed), icon="icon-select-remove")
+			conf["mainWindow"].log("info", translate(u"{{items}} items had been unselected", items=removed), icon="icon-select-remove")
 
 	def onAttach(self):
 		super(SelectInvertAction,self).onAttach()

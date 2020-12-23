@@ -3,7 +3,7 @@ from flare import html5
 from flare.button import Button
 from flare.input import Input
 from flare.event import EventDispatcher
-from vi.i18n import translate
+from flare.i18n import translate
 
 
 class Search(html5.Div):

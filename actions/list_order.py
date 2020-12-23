@@ -5,7 +5,7 @@ from flare.popup import Confirm
 from flare.network import NetworkService
 from vi.priorityqueue import actionDelegateSelector
 from vi.config import conf
-from vi.i18n import translate
+from flare.i18n import translate
 
 # ShopMarkAction -------------------------------------------------------------------------------------------------------
 class ShopMarkAction( Button ):
@@ -85,8 +85,8 @@ class ShopMarkPayedAction( ShopMarkAction ):
 	def __init__(self, *args, **kwargs):
 		super( ShopMarkPayedAction, self ).__init__(
 			"markPayed", "Mark payed", cls="order_markpayed",
-			txtQuestion = "Do you really want to mark {count} orders as payed?",
-			txtSuccess = "{count} orders had been successfully set as payed.",
+			txtQuestion = "Do you really want to mark {{count}} orders as payed?",
+			txtSuccess = "{{count}} orders had been successfully set as payed.",
 			txtFailure= "Failed to mark order payed" )
 
 	@staticmethod
@@ -101,8 +101,8 @@ class ShopMarkSentAction( ShopMarkAction ):
 	def __init__(self, *args, **kwargs):
 		super( ShopMarkSentAction, self ).__init__(
 			"markSend", "Mark sent", cls="order_marksent",
-			txtQuestion = "Do you really want to mark {count} orders as sent?",
-			txtSuccess = "{count} orders had been successfully set as sent.",
+			txtQuestion = "Do you really want to mark {{count}} orders as sent?",
+			txtSuccess = "{{count}} orders had been successfully set as sent.",
 			txtFailure = "Failed to mark order sent" )
 
 	@staticmethod
@@ -117,8 +117,8 @@ class ShopMarkCanceledAction( ShopMarkAction ):
 	def __init__(self, *args, **kwargs):
 		super( ShopMarkCanceledAction, self ).__init__(
 			"markCanceled", "Mark canceled", cls="order_markcanceled",
-			txtQuestion = "Do you really want to cancel {count} orders?",
-			txtSuccess = "{count} orders had been successfully canceled.",
+			txtQuestion = "Do you really want to cancel {{count}} orders?",
+			txtSuccess = "{{count}} orders had been successfully canceled.",
 			txtFailure = "Failed to cancel order" )
 
 	@staticmethod

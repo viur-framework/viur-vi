@@ -1,6 +1,6 @@
 from flare import html5
 
-from vi.i18n import translate
+from flare.i18n import translate
 from vi.bones import selectmulti, date
 from vi.framework.components.actionbar import ActionBar
 from flare.network import NetworkService

@@ -2,7 +2,7 @@
 from flare import html5,utils
 from flare.popup import Confirm
 from flare.network import NetworkService, DeferredCall
-from vi.i18n import translate
+from flare.i18n import translate
 from vi.config import conf
 from vi.widgets.task import TaskSelectWidget
 from vi.priorityqueue import toplevelActionSelector

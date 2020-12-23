@@ -2,7 +2,7 @@
 import os, time
 from flare import html5,utils,bindApp
 from flare.event import EventDispatcher
-from .config import conf
+from .config import conf, updateConf
 from .widgets import TopBarWidget
 from .widgets.userlogoutmsg import UserLogoutMsg
 from flare.network import NetworkService, DeferredCall
@@ -12,13 +12,20 @@ from .log import Log
 from .pane import Pane, GroupPane
 from .screen import Screen
 
+from flare.popup import Popup
+
 from flare.views.helpers import registerViews, generateView, addView,updateDefaultView
 from vi.widgets.appnavigation import AppNavigation
+from flare.i18n import translate
 
 # BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
 from . import actions
 from flare.forms import bones
-from . import i18n
+from flare import i18n
+from vi.widgets.list import ListWidget
+from vi.widgets.tree import TreeWidget
+from vi.widgets.file import FileWidget
+from vi.widgets.hierarchy import HierarchyWidget
 
 class AdminScreen(Screen):
 
@@ -27,8 +34,10 @@ class AdminScreen(Screen):
 
 		self.sinkEvent("onClick")
 		self["id"] = "CoreWindow"
+
 		conf["mainWindow"] = self
-		bindApp(self,{"basePathSvgs":"/vi/s/public/svgs"}) #configure Flare Framework
+		_conf = bindApp(self,conf) #configure Flare Framework
+		updateConf(_conf)
 
 		self.topBar = TopBarWidget()
 		self.appendChild(self.topBar)
@@ -110,10 +119,10 @@ class AdminScreen(Screen):
 		self.topBar.invoke()
 
 		self.initializeViews()
-		#self.initializeAppNavigation()
 		self.initializeConfig()
+		DeferredCall( self.checkInitialHash )
 		self.unlock()
-		print(conf)
+
 
 	def initializeViews( self ):
 		root = os.path.dirname(__file__) #path to root package
@@ -127,22 +136,6 @@ class AdminScreen(Screen):
 
 		print( "%.5f Sek - ready to View" % (time.time()-s) )
 
-	def initializeAppNavigation( self ):
-
-		#navpoint = self.navWrapper.addNavigationPoint("Test1","icon-users","notfound",block)
-		#subpoint1  = self.navWrapper.addNavigationPoint("Test SuB","icon-users","notfound",navpoint)
-		#subpoint2 = self.navWrapper.addNavigationPoint("Test SuBSub","icon-users","notfound",subpoint1)
-		#subpoint3 = self.navWrapper.addNavigationPoint("Test SuBSubSub","icon-users","notfound",subpoint2)
-
-		#navpoint2 = self.navWrapper.addNavigationPoint( "Test2", "icon-files", "overview", block )
-
-		#for i in range(2,200):
-		#	self.navWrapper.addNavigationPoint("Test%s"%i,"icon-file-system","overview",block)
-
-		from vi import s
-		import time
-
-		print( "%.5f Sek - ready to Navigate" % (time.time() - s) )
 
 	def initializeConfig( self ):
 		#print("------------------------------")
@@ -222,6 +215,13 @@ class AdminScreen(Screen):
 					viewItems = sorted( item[ "views" ], key = lambda i: i[ "sortIndex" ] )
 					self.appendNavList( viewItems, currentModuleWidget )
 
+	def openView( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False, target="mainNav" ):
+		if target == "mainNav":
+			self.openNewMainView( name,icon,viewName,moduleName,actionName,data,focusView,append )
+		elif target == "popup":
+			self.openNewPopup( name, icon, viewName, moduleName, actionName, data, focusView, append )
+		else:
+			print("No valid target: %s"%target)
 
 	def openNewMainView( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False ):
 		# generate a parameterized view
@@ -250,6 +250,15 @@ class AdminScreen(Screen):
 
 		if focusView:
 			conf[ "views_state" ].updateState( "activeView", instancename )
+
+	def openNewPopup( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False ):
+		view = conf[ "views_registered" ].get( viewName, "notfound" ).__class__
+		instancename = "%s___%s" % (viewName, str( time.time() ).replace( ".", "_" ))
+		viewInst = generateView( view, moduleName, actionName, data = data, name = instancename )
+
+		mainWidget = viewInst.widgets["viewport"](viewInst) #todo better solution is needed
+
+		self.stackWidget(mainWidget)
 
 
 	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data=None):
@@ -280,37 +289,44 @@ class AdminScreen(Screen):
 
 		param = {}
 
-		if params:
-			if isinstance(params, dict):
-				param = params
-			else:
-				for pair in params.split("&"):
-					if not "=" in pair:
-						continue
+		print(path)
+		if len(path)>=2 and path[1]=="list":
+			viewname = "".join(path)
+			conf[ "views_state" ].updateState( "activeView", viewname )
+			return
+		elif len(path)>=2 and path[1] in ["edit","add"]:
+			data = {"context":None} #fixme
+			if path[1] == "edit":
+				data = {"key"    : path[2], "context":None } #fixme
 
-					key = pair[:pair.find("=")]
-					value = pair[pair.find("=") + 1:]
-
-					if not (key and value):
-						continue
-
-					if key in param.keys():
-						if not isinstance(param[key], list):
-							param[key] = [params[key]]
-
-						param[key].append(value)
-					else:
-						param[key] = value
-
-		print("execCall", path, param)
-
-		gen = initialHashHandler.select(path, param)
-		if gen:
-			gen(path, param)
-
+			conf[ "views_state" ].updateState( "activeView", path[0]+"list" )
+			conf[ "mainWindow" ].openView(
+				translate( path[1] ),  # AnzeigeName
+				"icon-"+path[1],  # Icon
+				"edithandler",  # viewName
+				path[0],  # Modulename
+				path[1],  # Action
+				data = data
+			)
 
 	def stackWidget( self, widget,disableOtherWidgets=True):
-		print("TODO")
+		'''
+			We dont stack widgets anymore.
+			We use now Popups.
+
+
+		'''
+		widgetPopup = Popup()
+		widgetPopup["style"]["width"] = "auto"
+		widgetPopup["style"]["max-width"] = "90%"
+		widgetPopup["style"]["height"] = "90%"
+
+		widget.parentPopup = widgetPopup
+		widgetPopup.popupBody.appendChild(widget)
+
+	def removeWidget( self, widget ):
+		widget.parentPopup.close()
+
 
 	def switchFullscreen(self, fullscreen=True):
 		if fullscreen:

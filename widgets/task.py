@@ -4,7 +4,7 @@ from flare import html5,utils
 from flare.button import Button
 from flare.popup import Popup
 from vi.config import conf
-from vi.i18n import translate
+from flare.i18n import translate
 from vi.widgets.edit import EditWidget
 
 class TaskWidget( Popup ):

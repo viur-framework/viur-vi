@@ -20,20 +20,20 @@ lngDe = {
 	"Select fields": "Felder",
 	"Select Filter": "Filtern",
 	"Delete them?": "Wirklich löschen?",
-	"Delete {amt} Entries?": "Sollen {amt} Einträge gelöscht werden?",
+	"Delete {{amt}} Entries?": "Sollen {{amt}} Einträge gelöscht werden?",
 	"Keep": "Behalten",
 	"Directory Name": "Verzeichnisname",
 	"Create directory": "Neues Verzeichnis erstellen",
 	"Create": "Erstellen",
-	"Directory \"{name}\" created.": "Das Verzeichnis \"{name}\" wurde erstellt.",
+	"Directory \"{{name}}\" created.": "Das Verzeichnis \"{{name}}\" wurde erstellt.",
 	"user is logged out": "Benutzer wurde abgemeldet",
 	"Your session was terminated by our server. Perhaps your computer fall asleep and broke connection?\n Please relogin to continue your mission.": "Die Sitzung wurde beendet. Möglichweise wurde die Verbindung unterbrochen oder der Computer war im Ruhemodus\n Bitte erneut anmelden.",
 	"Login": "Anmelden",
-	"The user you choose to login differs from the user vi started with.\nolduser: {user} \nnewuser: {newuser}": "Der neue Benutzer unterscheidet sich vom aktuell angemeldeten Benutzer.\nalter Benutzer: {user} \nneuer Benutzer: {newuser}",
+	"The user you choose to login differs from the user vi started with.\nolduser: {{user}} \nnewuser: {{newuser}}": "Der neue Benutzer unterscheidet sich vom aktuell angemeldeten Benutzer.\nalter Benutzer: {{user}} \nneuer Benutzer: {{newuser}}",
 	"refresh": "Aktualisieren",
 	"relogin success :-)": "Wiederanmeldung war erfolgreich :)",
-	"Revision: {rev}": "Revision: {rev}",
-	"Build Date: {date}": "Build Datum: {date}",
+	"Revision: {{rev}}": "Revision: {{rev}}",
+	"Build Date: {{date}}": "Build Datum: {{date}}",
 	"unknown build": "Unbekannter Build",
 	"Yes": "Ja",
 	"No": "Nein",
@@ -61,8 +61,8 @@ lngDe = {
 	"Edit Text": "Text bearbeiten",
 	"Access denied!": "Zugriff verweigert",
 	"An unknown error occurred!": "Es ist ein unbekannter Fehler aufgetreten",
-	"An error occurred: {code}": "Es ist ein Fehler aufgetreten: {code}",
-	"The module '{module}' does not exist.": "Es existiert kein Modul mit dem Namen '{module}'.",
+	"An error occurred: {{code}}": "Es ist ein Fehler aufgetreten: {{code}}",
+	"The module '{{module}}' does not exist.": "Es existiert kein Modul mit dem Namen '{{module}}'.",
 	"Redo the last undone action": "Wiederholen",
 	"Undo the last action": "Rückgängig",
 	"Bold": "Fett",
@@ -113,10 +113,10 @@ lngDe = {
     "Select all": "Alle auswählen",
     "Unselect all": "Auswahl entfernen",
     "Invert selection": "Auswahl umkehren",
-	"{items} items had been selected": "{items} Einträge wurden selektiert",
-	"{items} items had been unselected": "{items} Einträge wurden deselektiert",
-	"{added} items selected, {removed} items deselected":
-		u"{added} Einträge selektiert, {removed} Einträge deselektiert",
+	"{{items}} items had been selected": "{{items}} Einträge wurden selektiert",
+	"{{items}} items had been unselected": "{{items}} Einträge wurden deselektiert",
+	"{{added}} items selected, {{removed}} items deselected":
+		u"{{added}} Einträge selektiert, {{removed}} Einträge deselektiert",
 
 	"Any changes will be lost. Do you really want to abort?":
 		u"Alle Änderungen gehen verloren. Möchten Sie wirklich abbrechen?",
@@ -126,22 +126,22 @@ lngDe = {
     "Task completed": "Aufgabe erledigt",
 
 	"Mark payed": "Als bezahlt markieren",
-	"Do you really want to mark {count} orders as payed?": "Möchten Sie wirklich {count} Bestellungen als bezahlt markieren?",
-	"{count} orders had been successfully set as payed.": "{count} Bestellungen wurden erfolgreich auf bezahlt gesetzt.",
+	"Do you really want to mark {{count}} orders as payed?": "Möchten Sie wirklich {{count}} Bestellungen als bezahlt markieren?",
+	"{{count}} orders had been successfully set as payed.": "{{count}} Bestellungen wurden erfolgreich auf bezahlt gesetzt.",
 	"Failed to mark order payed": "Bezahlt setzen der Bestellung fehlgeschlagen",
 
 	"Mark sent": "Als versendet markieren",
-	"Do you really want to mark {count} orders as sent?": "Möchten Sie wirklich {count} Bestellungen als versendet markieren?",
-	"{count} orders had been successfully set as sent.": "{count} Bestellungen wurden erfolgreich auf versendet gesetzt.",
+	"Do you really want to mark {{count}} orders as sent?": "Möchten Sie wirklich {{count}} Bestellungen als versendet markieren?",
+	"{{count}} orders had been successfully set as sent.": "{{count}} Bestellungen wurden erfolgreich auf versendet gesetzt.",
 	"Failed to mark order sent": "Versendet setzen der Bestellung fehlgeschlagen",
 
 	"Mark canceled": "Stornieren",
-	"Do you really want to cancel {count} orders?": "Möchten Sie wirklich {count} Bestellungen stornieren?",
-	"{count} orders had been successfully canceled.": "{count} Bestellungen wurden erfolgreich storniert.",
+	"Do you really want to cancel {{count}} orders?": "Möchten Sie wirklich {{count}} Bestellungen stornieren?",
+	"{{count}} orders had been successfully canceled.": "{{count}} Bestellungen wurden erfolgreich storniert.",
 	"Failed to cancel order": "Stornierung der Bestellung fehlgeschlagen",
 	"Language selection": "Sprachauswahl",
 	"Encoding": "Zeichensatz",
-	"and {count} more": "und {count} weitere",
+	"and {{count}} more": "und {{count}} weitere",
 
 	# new login method
 	"vi.login.title": "Login",
@@ -154,8 +154,8 @@ lngDe = {
 	"vi.login.handler.googleaccount": "Google",
 	"login with google": "Mit Google einloggen",
 
-	"the viur server (v{server.version}) is incompatible to this vi (v{vi.version}).":
-		u"Die Version des verwendeten ViUR Servers (v{server.version}) ist inkompatibel mit diesem Vi (v{vi.version}).",
+	"the viur server (v{{server.version}}) is incompatible to this vi (v{{vi.version}}).":
+		u"Die Version des verwendeten ViUR Servers (v{{server.version}}) ist inkompatibel mit diesem Vi (v{{vi.version}}).",
 	"there may be a lack on functionality.": "Diese Inkompatibilität kann zu technischen Problemen führen.",
 	"please update either your server or vi!": "Bitte aktualisieren Sie entweder den Server oder das Vi auf eine neuere Version!",
 	"version mismatch": "Versionen stimmen nicht überein",
@@ -192,7 +192,27 @@ lngDe = {
 
 	#Bones
 	"vi.tooltip.headline": "Hinweis",
+	"vi.tooltip.error": "Fehler",
 	"vi.select.default-option": "- Bitte wählen -",
+	"Field not set":"Feld ist leer",
+	"Field not submitted":"Feld nicht erhalten",
+	"No value submitted": "Feld ist leer",
+	"Invalid value entered":"Wert ist ungültig",
+	"Too few items":"Zu wenig Einträge",
+	"Too many items":"Zu viele Einträge",
+	"Duplicate items":"doppelte Einträge",
+	"No Captcha given!":"Kein Captcha",
+	"Invalid Captcha":"ungültiges Captcha",
+	"Invalid Value":"Wert ist ungültig",
+	"Invalid value submitted":"Wert ist ungültig",
+	"Invalid value selected":"Wert ist ungültig",
+	"server.bones.passwordBone.tooWeakMessage": "Das eingegebene Passwort ist zu schwach! Bitte verwenden Sie Ziffern, sowie Klein- und Großbuchstaben.",
+	"server.bones.passwordbone.tooshortmessage": "Das eingegebene Passwort ist zu kurz! Es werden mindestens 8 Zeichen benötigt.",
+	"The entered password is to short - it requires at least 8 characters.": "Das eingegebene Passwort ist zu schwach! Bitte verwenden Sie Ziffern, sowie Klein- und Großbuchstaben.",
+	"The entered password is too weak.": "Das eingegebene Passwort ist zu kurz! Es werden mindestens 8 Zeichen benötigt.",
+
+	
+	
 
 	#Sidebar
 	"vi.sidebar.internalpreview": "Details",
@@ -200,8 +220,8 @@ lngDe = {
 	"Load all": "Alles laden",
 	"Find on Page": "finden",
 
-	"all elements loaded: {amt}, pages: {pg}": "Alles geladen: {amt} Elemente, {pg} Seite(n)",
-	"loaded elements: {amt}, pages: {pg}": "Geladen: {amt} Elemente, {pg} Seite(n)",
+	"all elements loaded: {{amt}}, pages: {{pg}}": "Alles geladen: {{amt}} Elemente, {{pg}} Seite(n)",
+	"loaded elements: {{amt}}, pages: {{pg}}": "Geladen: {{amt}} Elemente, {{pg}} Seite(n)",
 	"load next pages": "Seiten laden",
 	"amount": "pro Seiten",
 	"vi.sidebar.filterselector": "verfügbare Filter",

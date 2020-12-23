@@ -4,7 +4,7 @@ from flare.button import Button
 from flare.popup import Popup
 from flare.network import NetworkService, DeferredCall
 from vi.config import conf
-from vi.i18n import translate
+from flare.i18n import translate
 
 from datetime import datetime
 
@@ -17,6 +17,7 @@ class UserLogoutMsg(Popup):
 		self.addClass("userloggedoutmsg")
 		self.isCurrentlyFailed = False
 		self.loginWindow = None
+		self.viIsActive = True
 		self.lastChecked = datetime.now()
 		self.lbl = html5.Label(translate("Your session was terminated by our server. "
 		                                 "Perhaps your computer fall asleep and broke connection?\n"
@@ -24,9 +25,18 @@ class UserLogoutMsg(Popup):
 		self.popupBody.appendChild(self.lbl)
 		self.popupFoot.appendChild(Button(translate("Refresh"), callback=self.startPolling))
 		self.popupFoot.appendChild(Button(translate("Login"), callback=self.showLoginWindow))
+
+		html5.document.addEventListener( "webkitvisibilitychange", self.visibilityChanged )
+
 		setInterval = html5.window.setInterval
 		self.interval = setInterval(self.checkForSuspendResume, self.checkIntervall)
 		self.hideMessage()
+
+	def visibilityChanged( self,e ):
+		if not html5.document.webkitHidden:
+			self.viIsActive = False
+		else:
+			self.viIsActive = True
 
 	def stopInterval(self):
 		clearInterval = html5.window.clearInterval
@@ -57,6 +67,9 @@ class UserLogoutMsg(Popup):
 		"""
 			Test if at least self.pollIntervall seconds have passed and query the server if
 		"""
+		if (not self.viIsActive):
+			return
+
 		if ((datetime.now() - self.lastChecked).seconds > self.pollInterval) or self.isCurrentlyFailed:
 			self.lastChecked = datetime.now()
 			self.startPolling()
@@ -65,6 +78,7 @@ class UserLogoutMsg(Popup):
 		"""
 			Start querying the server
 		"""
+
 		NetworkService.request("user", "view/self",
 		                       successHandler=self.onUserTestSuccess,
 		                       failureHandler=self.onUserTestFail)

@@ -2,7 +2,7 @@ from flare import html5
 from collections import defaultdict
 
 from vi.config import conf
-from vi.i18n import translate
+from flare.i18n import translate
 from flare.network import NetworkService
 from vi.priorityqueue import moduleWidgetSelector
 from flare.forms import boneSelector
@@ -11,6 +11,7 @@ from vi.framework.components.datatable import DataTable, ViewportDataTable
 from vi.framework.components.actionbar import ActionBar
 from flare.event import EventDispatcher
 from flare.icons import SvgIcon
+from collections import OrderedDict
 
 import logging
 
@@ -27,19 +28,19 @@ class ListWidget(html5.Div):
 			:param module: Name of the module we shall handle. Must be a list application!
 			:type module: str
 		"""
-		print("LIST ---------------------------------------")
-		print(module)
-		print(conf)
+
 		if not module in conf["modules"].keys():
-			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
+			conf["mainWindow"].log("error", translate("The module '{{module}}' does not exist.", module=module))
 			assert module in conf["modules"].keys()
 
 		super(ListWidget, self).__init__()
 		self.addClass("vi-widget vi-widget--list")
+		self["style"]["height"] = "100%"
 		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
 		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
 		self.module = module
 		self.context = context
+		self.isSelector = False
 
 		self.loadedPages = 0  # Amount of Pages which are currently loaded
 		self.currentPage = self.loadedPages  # last loaded page
@@ -115,10 +116,14 @@ class ListWidget(html5.Div):
 		self.widgetContent.appendChild(self.emptyNotificationDiv)
 		self.emptyNotificationDiv.removeClass("is-active")
 
+		self.viewStructure = None
+		self.editStructure = None
+		self.addStructure = None
+
 		self.setTableActionBar()
 
 		if autoload:
-			self.reloadData()
+			self.requestStructure()
 
 		self.sinkEvent("onClick")
 
@@ -126,6 +131,7 @@ class ListWidget(html5.Div):
 		"""
 		Configures the widget as selector for a relationalBone and shows it.
 		"""
+		self.isSelector = True
 		self.selectionCallback = callback
 		self.selectionMulti = multi
 
@@ -310,6 +316,28 @@ class ListWidget(html5.Div):
 		"""
 		if module and module != self.module:
 			return
+		if not self.viewStructure:
+			self.requestStructure()
+		else:
+			self.reloadData()
+
+	def requestStructure( self ):
+		NetworkService.request( None,
+								"/vi/getStructure/%s" % self.module,
+								successHandler = self.receivedStructure
+								)
+	def receivedStructure( self, resp ):
+		data = NetworkService.decode(resp)
+		for stype, structlist in data.items():
+			structure = OrderedDict()
+			for k, v in structlist:
+				structure[k] = v
+			if stype == "viewSkel":
+				self.viewStructure = structure
+			elif stype == "editSkel":
+				self.editStructure = structure
+			elif stype == "addSkel":
+				self.addStructure = structure
 
 		self.reloadData()
 
@@ -343,14 +371,20 @@ class ListWidget(html5.Div):
 		self.filter = filter
 		self.filterID = filterID
 		self.filterDescr = filterDescr
-		self.reloadData()
+		if not self.viewStructure:
+			self.requestStructure()
+		else:
+			self.reloadData()
 
 	def setContext(self, context):
 		"""
 			Applies a new context.
 		"""
 		self.context = context
-		self.reloadData()
+		if not self.viewStructure:
+			self.requestStructure()
+		else:
+			self.reloadData()
 
 	def getFilter(self):
 		if self.filter:
@@ -378,7 +412,7 @@ class ListWidget(html5.Div):
 
 		data = NetworkService.decode( req )
 
-		if data["structure"] is None:
+		if not data["skellist"]:
 			if self.table.getRowCount():
 				# We cant load any more results
 				self.targetPage = self.loadedPages #reset targetpage to maximum
@@ -393,12 +427,12 @@ class ListWidget(html5.Div):
 
 		self.table["style"]["display"] = ""
 		self.emptyNotificationDiv.removeClass("is-active")
-		self._structure = data["structure"]
-
+		self._structure = self.viewStructure
+		print(self.viewStructure)
 		if not self._tableHeaderIsValid:
 			if not self.columns:
 				self.columns = []
-				for boneName, boneInfo in data["structure"]:
+				for boneName, boneInfo in self.viewStructure.items():
 					if boneInfo["visible"]:
 						self.columns.append( boneName )
 			self.setFields( self.columns )
@@ -422,7 +456,7 @@ class ListWidget(html5.Div):
 			return
 
 		boneInfoList = []
-		tmpDict = {key: bone for key, bone in self._structure}
+		tmpDict = {key: bone for key, bone in self._structure.items()}
 
 		fields = [x for x in fields if x in tmpDict.keys()]
 		self.columns = fields

@@ -19,7 +19,7 @@ class editHandlerWidget(ViewWidget):
 		self.addClass( [ "vi-viewer-pane", "is-active" ] )
 		self.data = self.view.params["data"]
 		self.moduleName = self.view.params["moduleName"]
-
+		print(self.data)
 		context = self.data.get("context",None)
 		akey = self.data.get("key",None)
 		clone = self.data.get("clone",False)

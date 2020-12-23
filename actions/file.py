@@ -4,7 +4,7 @@ from flare.popup import Prompt
 from flare.network import NetworkService
 from vi.widgets.edit import EditWidget
 from vi.config import conf
-from vi.i18n import translate
+from flare.i18n import translate
 from flare.network import DeferredCall
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.file import Uploader
@@ -80,7 +80,7 @@ class AddNodeAction(Button):
 
 	def onMkDir(self, req):
 		dirName = req.dirName
-		conf["mainWindow"].log("success",translate("Directory \"{name}\" created.", icon="icon-add-folder",name=dirName))
+		conf["mainWindow"].log("success",translate("Directory \"{{name}}\" created.", icon="icon-add-folder",name=dirName))
 
 	def resetLoadingState(self):
 		pass
@@ -148,7 +148,7 @@ class EditAction(Button):
 
 	def onSelectionActivated(self, table, selection ):
 		if not self.parent().parent().selectCallback and len(selection)==1 and isinstance(selection[0], self.parent().parent().leafWidget):
-			conf[ "mainWindow" ].openNewMainView(
+			conf[ "mainWindow" ].openView(
 				translate( "Edit" ),  # AnzeigeName
 				"icon-edit",  # Icon
 				"edithandler",  # viewName
@@ -158,7 +158,8 @@ class EditAction(Button):
 						 "baseType": EditWidget.appTree,
 						 "skelType": "leaf",
 						 "key"     : selection[0].data["key"]
-						 }
+						 },
+				target = "popup" if self.parent().parent().isSelector else "mainNav"
 			)
 
 
@@ -198,7 +199,7 @@ class EditAction(Button):
 				i.dirKey = s.data["key"]
 				return
 
-			conf[ "mainWindow" ].openNewMainView(
+			conf[ "mainWindow" ].openView(
 				translate( "Edit" ),  # AnzeigeName
 				"icon-edit",  # Icon
 				"edithandler",  # viewName
@@ -208,7 +209,8 @@ class EditAction(Button):
 						 "baseType": EditWidget.appTree,
 						 "skelType": "leaf",
 						 "key"     : s.data["key"]
-						 }
+						 },
+				target = "popup" if self.parent().parent().isSelector else "mainNav"
 			)
 
 

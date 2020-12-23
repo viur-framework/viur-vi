@@ -1,3 +1,4 @@
+from flare import html5
 from flare.views.view import View, ViewWidget
 from vi.priorityqueue import HandlerClassSelector, moduleWidgetSelector
 
@@ -11,7 +12,7 @@ class hierarchyHandler(View):
 
 	@staticmethod
 	def canHandle( moduleName, moduleInfo ):
-		return moduleInfo["handler"] == "hierarchy" or moduleInfo["handler"].startswith("hierarchy.")
+		return moduleInfo["handler"] == "hierarchy" or moduleInfo["handler"].startswith("hierarchy.") or  moduleInfo["handler"].startswith("tree.hierarchy")
 
 HandlerClassSelector.insert(1, hierarchyHandler.canHandle, hierarchyHandler)
 
@@ -21,6 +22,8 @@ class hierarchyHandlerWidget(ViewWidget):
 		'''
 			Here we start!
 		'''
+		self.mainView =html5.Div()
+
 		self.addClass( [ "vi-viewer-pane", "is-active" ] )
 		self.moduleInfo = self.view.params[ "data" ]
 		self.moduleName = self.view.params[ "moduleName" ]

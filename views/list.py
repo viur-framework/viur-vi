@@ -1,5 +1,6 @@
 from flare.views.view import View, ViewWidget
-from vi.priorityqueue import HandlerClassSelector, moduleWidgetSelector
+from vi.priorityqueue import HandlerClassSelector, moduleWidgetSelector,initialHashHandler
+from vi.config import conf
 
 class listHandler(View):
 
@@ -8,7 +9,7 @@ class listHandler(View):
 			"viewport"     : listHandlerWidget
 		}
 		super().__init__(dictOfWidgets)
-
+		#initialHashHandler.insert( 1, self.canHandleInitialHash, self.handleInitialHash )
 	@staticmethod
 	def canHandle( moduleName, moduleInfo ):
 		return moduleInfo[ "handler" ] == "list" or moduleInfo[ "handler" ].startswith( "list." )
@@ -28,3 +29,6 @@ class listHandlerWidget(ViewWidget):
 		widgen = moduleWidgetSelector.select(self.moduleName, self.moduleInfo)
 		widget = widgen(self.moduleName,**self.moduleInfo)
 		self.appendChild(widget)
+
+	def onViewfocusedChanged( self, viewname, *args, **kwargs ):
+		conf["theApp"].setPath(self.moduleName + "/list")
