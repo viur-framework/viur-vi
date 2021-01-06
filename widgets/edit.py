@@ -689,5 +689,18 @@ class EditWidget(html5.Div):
 		if res is None:
 			return None
 
+		# viur2-compat
+		if conf["core.version"][0] < 3:
+			# Post-process bones for ViUR < 3
+
+			for bone, value in list(res.items()):
+				if isinstance(value, list):
+					del res[bone]
+					for i, entry in enumerate(value):
+						res[f"{bone}.{i}"] = entry
+
+			print("--- ViUR2 compatibility ---")
+			print(res)
+
 		self.save(res)
 

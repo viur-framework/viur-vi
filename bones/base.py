@@ -358,6 +358,10 @@ class BaseBone(object):
 		self.skelStructure = skelStructure
 		self.boneStructure = self.skelStructure[self.boneName]
 
+		# viur2-compat
+		if "params" not in self.boneStructure or self.boneStructure["params"] is None:
+			self.boneStructure["params"] = {}
+
 		self.readonly = bool(self.boneStructure.get("readonly"))
 		self.required = bool(self.boneStructure.get("required"))
 		self.multiple = bool(self.boneStructure.get("multiple"))

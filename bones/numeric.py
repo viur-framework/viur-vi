@@ -93,8 +93,6 @@ class NumericEditWidget(BaseEditWidget):
 		super().updateWidget()
 
 	def setValue(self, value):
-		print("setValue", value)
-
 		if not self.currency:
 			if self.precision:
 				self.value = html5.utils.parseFloat(value or 0)
