@@ -495,7 +495,7 @@ class EditWidget(html5.Div):
 			if cat not in segments:
 				segments[cat] = self.accordion.addSegment(cat)
 
-			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, data["errors"])
+			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, data.get("errors"))
 			containerDiv, descrLbl, widget, hasError = boneFactory.boneWidget() #get bone
 
 			if "setContext" in dir(widget) and callable(widget.setContext):
@@ -575,7 +575,7 @@ class EditWidget(html5.Div):
 				                                    context = context)
 				segments[vmodule].addWidget(self.views[vmodule])
 
-		self.unserialize(data["values"],data["errors"])
+		self.unserialize(data["values"], data.get("errors"))
 
 		if self._hashArgs: #Apply the default values (if any)
 			self.unserialize(self._hashArgs)

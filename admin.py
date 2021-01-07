@@ -172,7 +172,7 @@ class AdminScreen(Screen):
 				mergedItems.append(m)
 
 		#sort firstLayer
-		mergedItems = sorted(mergedItems,key = lambda i:i["sortIndex"])
+		mergedItems = sorted(mergedItems, key = lambda i: i.get("sortIndex", 0))
 
 		#all will be add to this Widget
 		adminGroupWidget = self.navWrapper.addNavigationBlock( "Administration" )
@@ -207,12 +207,12 @@ class AdminScreen(Screen):
 
 				# sort and append Items modules in a Group
 				if "subItem" in item and item[ "subItem" ]:
-					subItems = sorted( item[ "subItem" ], key = lambda i: i[ "sortIndex" ] )
+					subItems = sorted(item[ "subItem" ], key=lambda i: i.get("sortIndex", 0))
 					self.appendNavList( subItems, currentModuleWidget )
 
 				#sort and append views of a Module
 				if "views" in item and item[ "views" ]:
-					viewItems = sorted( item[ "views" ], key = lambda i: i[ "sortIndex" ] )
+					viewItems = sorted(item[ "views" ], key=lambda i: i.get("sortIndex", 0))
 					self.appendNavList( viewItems, currentModuleWidget )
 
 	def openView( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False, target="mainNav" ):

@@ -18,9 +18,22 @@ window.addEventListener(
 						"path": "."
 					},
 					"vi_plugins":{
-						"path":"/vi_plugins/s"
+						"path":"/vi_plugins/s",
+						"optional": true
 					}
 				}
 			});
 		}
 );
+
+// If no languagePluginLoader is available, fallback to Pyodide from CDN
+if( !window.languagePluginLoader ) {
+	var cdn = "https://pyodide-cdn2.iodide.io/v0.16.1/full/pyodide.js";
+	console.debug(`Using Pyodide fallback from ${cdn}...`);
+	var script = document.createElement("script");
+	script.setAttribute("src", cdn);
+	document.getElementsByTagName("head")[0].appendChild(script);
+}
+else {
+	console.debug(`Using locally installed Pyodide...`);
+}

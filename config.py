@@ -89,7 +89,7 @@ vi_conf = {
 	"cacheObj"              : { },
 	"indexeddb"             : None,
 	"logAmount"             : 50,
-	"basePathSvgs"          : "/vi/s/public/svgs"
+	"basePathSvgs"          : "public/svgs"
 }
 
 
