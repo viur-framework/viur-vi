@@ -2,7 +2,7 @@
 from flare import html5
 from flare.event import EventDispatcher
 from flare.i18n import translate
-from .logics import Interpreter
+#from .logics import Interpreter
 
 vi_conf = {
 	# Vi version number
@@ -79,7 +79,7 @@ vi_conf = {
 	"maxMultiBoneEntries"   : 5,
 
 	# Global ViUR Logics interpreter instance
-	"logics"                : Interpreter(),
+	#"logics"                : Interpreter(),
 
 	# Cached selector widgets on relationalBones for re-use
 	"selectors"             : { },

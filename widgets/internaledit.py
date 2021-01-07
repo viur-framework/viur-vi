@@ -262,6 +262,8 @@ class InternalEdit(html5.Div):
 		event.stopPropagation()
 
 	def performLogics(self):
+		return  # fixme: Logics temporarily disabled
+
 		fields = self.serializeForDocument()
 		#print("InternalEdit.performLogics", fields)
 
