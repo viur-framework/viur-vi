@@ -157,9 +157,12 @@ class Uploader(html5.ignite.Progress):
 		self.targetKey = None
 
 		self.context = context
+		params = {"fileName": file.name, "mimeType": (file.type or "application/octet-stream")}
+		if node:
+			params["node"] = node
 
 		r = NetworkService.request("file", "getUploadURL",
-			params={"node": node} if node else {},
+			params=params,
 			successHandler=self.onUploadUrlAvailable,
 			failureHandler=self.onFailed,
 			secure=True
@@ -179,29 +182,34 @@ class Uploader(html5.ignite.Progress):
 
 			params = NetworkService.decode(req)["values"]
 
-			formData = html5.jseval("new FormData();")
+			if "uploadKey" in params:  # New Resumeable upload format
+				self.targetKey = params["uploadKey"]
+				html5.window.fetch(params["uploadUrl"], {"method": "POST", "body": req.file, "mode": "no-cors"}).then(
+					self.onLoad)
+			else:
+				formData = html5.jseval("new FormData();")
 
-			#if self.context:
-			#	for k, v in self.context.items():
-			#		formData.append(k, v)
+				#if self.context:
+				#	for k, v in self.context.items():
+				#		formData.append(k, v)
 
-			#if req.node and str(req.node) != "null":
-			#	formData.append("node", req.node)
+				#if req.node and str(req.node) != "null":
+				#	formData.append("node", req.node)
 
-			for key, value in params["params"].items():
-				if key == "key":
-					self.targetKey = value[:-16]  # Truncate source/file.dat
-					fileName = req.file.name
-					value = value.replace("file.dat", fileName)
+				for key, value in params["params"].items():
+					if key == "key":
+						self.targetKey = value[:-16]  # Truncate source/file.dat
+						fileName = req.file.name
+						value = value.replace("file.dat", fileName)
 
-				formData.append(key, value)
-			formData.append("file", req.file)
+					formData.append(key, value)
+				formData.append("file", req.file)
 
-			self.xhr = html5.jseval("new XMLHttpRequest()")
-			self.xhr.open("POST", params["url"])
-			self.xhr.onload = self.onLoad
-			self.xhr.upload.onprogress = self.onProgress
-			self.xhr.send(formData)
+				self.xhr = html5.jseval("new XMLHttpRequest()")
+				self.xhr.open("POST", params["url"])
+				self.xhr.onload = self.onLoad
+				self.xhr.upload.onprogress = self.onProgress
+				self.xhr.send(formData)
 
 		else:
 			r = NetworkService.request("", "/vi/skey", successHandler=self.onSkeyAvailable)
@@ -237,7 +245,7 @@ class Uploader(html5.ignite.Progress):
 			Internal callback - The state of our upload changed.
 		"""
 		if conf["core.version"][0] == 3:
-			if self.xhr.status in [200, 204]:
+			if "xhr" not in dir(self) or self.xhr.status in [200, 204]:
 				NetworkService.request(
 					"file", "add", {
 						"key": self.targetKey,
