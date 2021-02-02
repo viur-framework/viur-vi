@@ -94,7 +94,7 @@ class Pane(html5.Div):
 			#language=HTML
 			self.itemImage = '''
 				<div class="item-image">
-					<icon :title="descr" :value="defaultIconURL"></icon>
+					<flare-icon :title="descr" :value="defaultIconURL"></flare-icon>
 				</div>
 			'''
 

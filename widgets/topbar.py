@@ -99,7 +99,7 @@ class TopBarWidget(html5.Header):
 		# language=HTML
 		self.modulImg.appendChild( '''
 						<div class="item-image">
-							<icon :title="mod_descr" :value="mod_iconURL"></icon>
+							<flare-icon :title="mod_descr" :value="mod_iconURL"></flare-icon>
 						</div>
 					''', bindTo = self )
 		#self.modulImg.appendChild( Icon(descr, iconURL) )

@@ -9,7 +9,7 @@ class NavigationElement(html5.Div):
 		<div [name]="item" class="item has-hover">
 			<a class="item-link" @click="navigationAction">
 				<div class="item-image">
-					<icon value="{{icon}}" ></icon>
+					<flare-icon value="{{icon}}" ></flare-icon>
 				</div>
 
 				<div class="item-content">
@@ -18,10 +18,10 @@ class NavigationElement(html5.Div):
 			</a>
 			
 			<span [name]="itemArrow" class="item-open is-hidden" @click="ArrowAction">
-				<svgicon value="icon-arrow-left"></svgicon>
+				<flare-svg-icon value="icon-arrow-left"></flare-svg-icon>
 			</span>
 			<span [name]="itemRemove" class="is-hidden" @click="RemoveAction">
-				<svgicon value="icon-cross"></svgicon>
+				<flare-svg-icon value="icon-cross"></flare-svg-icon>
 			</span>
 			
 		</div>
@@ -131,9 +131,9 @@ class NavigationSeperator(html5.Div):
 	def buildSeperator( self ):
 		# language=HTML
 		self.appendChild( '''
-					<svgicon value="icon-dashboard"></svgicon>
+					<flare-svg-icon value="icon-dashboard"></flare-svg-icon>
 					<span class="list-separator-content">%s</span>
-					<svgicon value="icon-arrow-left"></svgicon>
+					<flare-svg-icon value="icon-arrow-left"></flare-svg-icon>
 			''' % self.name )
 
 	def _setValue( self,value ):
