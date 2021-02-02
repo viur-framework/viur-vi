@@ -10,7 +10,8 @@ from vi.sidebarwidgets.internalpreview import InternalPreview
 from vi.sidebarwidgets.filterselector import FilterSelector
 from flare.i18n import translate
 from flare.button import Button
-from flare.network import DeferredCall
+from flare.network import DeferredCall,requestGroup
+
 
 """
 	Provides the actions suitable for list applications
@@ -244,15 +245,30 @@ class DeleteAction(Button):
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
+
+		agroup = requestGroup( self.allDeletedSuccess )
+
 		for x in deleteList:
-			NetworkService.request( self.parent().parent().module, "delete", {"key": x},
-									secure=True, modifies=True,
+			NetworkService.request( self.parent().parent().module, "delete", { "key": x },
+									secure = True, modifies = False, group=agroup,
 									successHandler = self.deletedSuccess,
 									failureHandler = self.deletedFailed )
+		agroup.call()
 
+	def allDeletedSuccess( self,success ):
+		if success:
+			conf[ "mainWindow" ].log( "success", translate( "Einträge gelöscht" ), modul = self.parent().parent().module, action = "delete" )
+		else:
+			conf[ "mainWindow" ].log( "error", translate( "Ein oder mehrere Einträge konnten nicht gelöscht werden" ), modul = self.parent().parent().module, action = "delete" )
+
+		DeferredCall(
+			NetworkService.notifyChange, self.parent().parent().module,
+			action = 'delete', _delay = 1500
+		)
 
 	def deletedSuccess( self, req=None, code=None ):
-		conf["mainWindow"].log("success",translate("Eintrag gelöscht"),modul=self.parent().parent().module,action="delete" )
+		pass
+		#conf["mainWindow"].log("success",translate("Eintrag gelöscht"),modul=self.parent().parent().module,action="delete" )
 
 	def deletedFailed( self, req=None, code=None ):
 		conf["mainWindow"].log("error",translate("Eintrag konnte nicht gelöscht werden (status: %s)"%code),modul=self.parent().parent().module,action="delete" )

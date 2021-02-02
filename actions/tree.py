@@ -2,7 +2,7 @@ from flare import html5
 from flare.popup import Confirm
 from vi.config import conf
 from flare.i18n import translate
-from flare.network import NetworkService
+from flare.network import NetworkService,requestGroup,DeferredCall
 from vi.priorityqueue import actionDelegateSelector
 from flare.button import Button
 from vi.widgets.edit import EditWidget
@@ -250,11 +250,25 @@ class DeleteAction(Button):
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
+		agroup = requestGroup( self.allDeletedSuccess )
 		for x in deleteList:
 			if isinstance(x,self.parent().parent().nodeWidget ):
-				NetworkService.request( self.parent().parent().module, "delete/node", {"key": x.data["key"]}, secure=True, modifies=True )
+				NetworkService.request( self.parent().parent().module, "delete/node", {"key": x.data["key"]}, secure=True, group=agroup )
 			elif isinstance(x,self.parent().parent().leafWidget ):
-				NetworkService.request( self.parent().parent().module, "delete/leaf", {"key": x.data["key"]}, secure=True, modifies=True )
+				NetworkService.request( self.parent().parent().module, "delete/leaf", {"key": x.data["key"]}, secure=True, group=agroup )
+
+		agroup.call()
+
+	def allDeletedSuccess( self,success ):
+		if success:
+			conf[ "mainWindow" ].log( "success", translate( "Einträge gelöscht" ), modul = self.parent().parent().module, action = "delete" )
+		else:
+			conf[ "mainWindow" ].log( "error", translate( "Ein oder mehrere Einträge konnten nicht gelöscht werden" ), modul = self.parent().parent().module, action = "delete" )
+
+		DeferredCall(
+			NetworkService.notifyChange, self.parent().parent().module,
+			action = 'delete', _delay = 1500
+		)
 
 	def resetLoadingState(self):
 		pass
