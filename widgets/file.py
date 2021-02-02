@@ -153,9 +153,12 @@ class Uploader(html5.Div):
 		self.appendChild(SvgIcon("icon-loader", title = "uploading..."))
 
 		self.context = context
+		params = {"fileName": file.name, "mimeType": (file.type or "application/octet-stream")}
+		if node:
+			params["node"] = node
 
 		r = NetworkService.request("file", "getUploadURL",
-			params={"node": node} if node else {},
+			params=params,
 			successHandler=self.onUploadUrlAvailable,
 			failureHandler=self.onFailed,
 			secure=True
@@ -173,24 +176,29 @@ class Uploader(html5.Div):
 		"""
 		params = NetworkService.decode(req)["values"]
 
-		formData = html5.jseval("new FormData();")
+		if "uploadKey" in params:  # New Resumeable upload format
+			self.targetKey = params["uploadKey"]
+			html5.window.fetch(params["uploadUrl"], {"method": "POST", "body": req.file, "mode": "no-cors"}).then(
+				self.onLoad)
+		else:
+			formData = html5.jseval( "new FormData();" )
 
-		for key, value in params["params"].items():
-			if key == "key":
-				self.targetKey = value[:-16]  # Truncate source/file.dat
-				fileName = req.file.name
-				value = value.replace("file.dat", fileName)
+			for key, value in params[ "params" ].items():
+				if key == "key":
+					self.targetKey = value[ :-16 ]  # Truncate source/file.dat
+					fileName = req.file.name
+					value = value.replace( "file.dat", fileName )
 
-			formData.append(key, value)
-		formData.append("file", req.file)
+				formData.append( key, value )
+			formData.append( "file", req.file )
 
-		#self.xhr = html5.jseval("new XMLHttpRequest()")
-		#self.xhr.open("POST", params["url"])
-		#self.xhr.onload = self.onLoad
-		#self.xhr.upload.onprogress = self.onProgress
-		#self.xhr.send(formData)
+			# self.xhr = html5.jseval("new XMLHttpRequest()")
+			# self.xhr.open("POST", params["url"])
+			# self.xhr.onload = self.onLoad
+			# self.xhr.upload.onprogress = self.onProgress
+			# self.xhr.send(formData)
 
-		html5.window.fetch( params[ "url" ], { "method": "POST", "body": formData, "mode": "no-cors" } ).then( self.onLoad )
+			html5.window.fetch( params[ "url" ], { "method": "POST", "body": formData, "mode": "no-cors" } ).then( self.onLoad )
 
 
 
