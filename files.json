@@ -44,7 +44,7 @@
   "flare/flare/handler.py",
   "flare/flare/html5/__init__.py",
   "flare/flare/html5/core.py",
-  "flare/flare/html5/safeeval.py",
+  "flare/flare/safeeval.py",
   "flare/flare/html5/svg.py",
   "flare/flare/i18n.py",
   "flare/flare/icons.py",
