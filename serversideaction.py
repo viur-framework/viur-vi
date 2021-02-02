@@ -3,7 +3,7 @@
 from vi.config import conf
 from flare.html5 import window
 from flare.button import Button
-from flare.html5.safeeval import SafeEval
+from flare.safeeval import SafeEval
 from flare.network import NetworkService
 import logging
 
