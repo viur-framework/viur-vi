@@ -9,7 +9,7 @@ class NavigationElement(html5.Div):
 		<div [name]="item" class="item has-hover">
 			<a class="item-link" @click="navigationAction">
 				<div class="item-image">
-					<flare-icon value="{{icon}}" ></flare-icon>
+					<flare-icon title="{{name}}" value="{{icon}}" ></flare-icon>
 				</div>
 
 				<div class="item-content">
