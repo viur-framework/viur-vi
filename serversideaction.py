@@ -104,9 +104,9 @@ class ServerSideActionWdg(Button):
 			self.removeClass("is-loading")
 			NetworkService.notifyChange(self.parent().parent().module)
 
-	def fetchFailed(self, req):
+	def fetchFailed(self, req,code):
 		self.pendingFetches = []
-		conf["mainWindow"].log("failed", "Failed :(")
+		conf["mainWindow"].log("error", "Failed :(")
 
 	def resetLoadingState(self):
 		self.removeClass("is-loading")
