@@ -147,7 +147,7 @@ class EditAction(Button):
 		super(EditAction,self).onDetach()
 
 	def onSelectionActivated(self, table, selection ):
-		if not self.parent().parent().selectCallback and len(selection)==1 and isinstance(selection[0], self.parent().parent().leafWidget):
+		if not self.parent().parent().selectionCallback and len(selection)==1 and isinstance(selection[0], self.parent().parent().leafWidget):
 			conf[ "mainWindow" ].openView(
 				translate( "Edit" ),  # AnzeigeName
 				"icon-edit",  # Icon
@@ -185,7 +185,7 @@ class EditAction(Button):
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().currentSelectedElements
+		selection = self.parent().parent().selection
 		if not selection:
 			return
 
