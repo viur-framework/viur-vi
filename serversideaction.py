@@ -22,9 +22,11 @@ class ServerSideActionWdg(Button):
 		self.selectionCheckerAst = None
 		self.additionalEvalData = actionData.get("additionalEvalData")
 		self.sinkEvent("onClick")
+
+		self.se = SafeEval()
 		if "enabled" in actionData:
 			try:
-				self.selectionCheckerAst = SafeEval.parse(actionData["enabled"])
+				self.selectionCheckerAst = self.se.compile(actionData["enabled"])
 			except:
 				pass
 
@@ -53,7 +55,7 @@ class ServerSideActionWdg(Button):
 					valid = True
 					for sel in selection:
 						try:
-							if not SafeEval.evalAst(self.selectionCheckerAst,
+							if not self.se.execute(self.selectionCheckerAst,
 													{"skel": sel, "additionalEvalData": self.additionalEvalData}):
 								valid = False
 								break
