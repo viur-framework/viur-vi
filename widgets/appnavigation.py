@@ -62,7 +62,7 @@ class NavigationElement(html5.Div):
 		'''
 			Handle Click on Navigation Button
 		'''
-		if self.state.getState("hasSubItems"):
+		if self.view=="notfound" and self.state.getState("hasSubItems"):
 			self.subItem.toggleClass( "is-active" )
 			self.itemArrow.toggleClass( "is-active" )
 		else:

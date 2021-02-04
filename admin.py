@@ -140,7 +140,7 @@ class AdminScreen(Screen):
 	def initializeConfig( self ):
 		#print("------------------------------")
 		#print(conf["mainConfig"]["configuration"])
-		groups = conf["mainConfig"]["configuration"]["moduleGroups"]
+		groups = conf["mainConfig"]["configuration"].get("moduleGroups",[])
 		modules = conf["mainConfig"]["modules"]
 
 		mergedItems = groups
@@ -178,9 +178,10 @@ class AdminScreen(Screen):
 		adminGroupWidget = self.navWrapper.addNavigationBlock( "Administration" )
 		self.appendNavList( mergedItems, adminGroupWidget )
 
-	def appendNavList( self,NavList,target ):
+	def appendNavList( self,NavList,target,parentInfo=() ):
 		for item in NavList:
 			viewInst = None
+
 			if "moduleName" in item: # its a module
 				#update conf
 				conf[ "modules" ][ item[ "moduleName" ] ] = item
@@ -189,6 +190,24 @@ class AdminScreen(Screen):
 				handlerCls = HandlerClassSelector.select( item[ "moduleName" ], item )
 				#generate a parameterized view
 				viewInst = generateView(handlerCls,item["moduleName"],item["handler"],data=item)
+
+			elif "moduleName" not in item and parentInfo:
+				#collect parentdata
+				item[ "moduleName" ] = parentInfo[ "moduleName" ]
+				item[ "handler" ] = parentInfo[ "handler" ]
+
+				# get handler view
+				handlerCls = HandlerClassSelector.select( item[ "moduleName" ], item )
+
+				# generate a parameterized view
+				instancename = "%s___%s" % (item[ "moduleName" ]+item[ "handler" ], str( time.time() ).replace( ".", "_" ))
+
+				#create new viewInstance
+				viewInst = generateView( handlerCls, item[ "moduleName" ], item[ "handler" ], data = item, name=instancename )
+
+				#register this new view
+				conf[ "views_registered" ].update( { instancename: viewInst } )
+
 
 			#only generate navpoints if module is visible
 			if "hideInMainBar" not in item  or ("hideInMainBar" in item and not item[ "hideInMainBar" ]):
@@ -213,7 +232,7 @@ class AdminScreen(Screen):
 				#sort and append views of a Module
 				if "views" in item and item[ "views" ]:
 					viewItems = sorted(item[ "views" ], key=lambda i: i.get("sortIndex", 0))
-					self.appendNavList( viewItems, currentModuleWidget )
+					self.appendNavList( viewItems, currentModuleWidget,item )
 
 	def openView( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False, target="mainNav" ):
 		if target == "mainNav":
