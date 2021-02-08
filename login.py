@@ -387,7 +387,7 @@ class LoginScreen(Screen):
 
 		Alert(translate("vi.login.insufficient-rights"),
 		                okLabel=translate("Login as different user"),
-		                okCallback=lambda: self.invoke(logout=True))
+		                okCallback=lambda x: self.invoke(logout=True))
 
 	def doSkipLogin(self, req):
 		answ = NetworkService.decode(req)
@@ -398,7 +398,8 @@ class LoginScreen(Screen):
 		conf["currentUser"] = answ["values"]
 
 		if conf["vi.access.rights"]:
-			if not any([x in conf["currentUser"].get("access", []) for x in conf["vi.access.rights"]]):
+			userAccess = conf["currentUser"].get("access", []) or []
+			if not any([x in userAccess for x in conf["vi.access.rights"]]):
 				self.insufficientRights()
 				return
 				#self.loginScreen.redirectNoAdmin()

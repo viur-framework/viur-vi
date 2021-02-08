@@ -257,7 +257,7 @@ class Logout(Button):
 
 	def onClick(self, event):
 		Confirm(
-			translate("Möchten Sie {vi.name} wirklich beenden?\n"
+			translate("Möchten Sie {{vi.name}} wirklich beenden?\n"
 			          "Alle nicht gespeicherten Einträge gehen dabei verloren!",
 			          **conf),
 			title=translate("Logout"),
