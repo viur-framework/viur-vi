@@ -269,7 +269,7 @@ class TreeWidget(html5.Div):
 
 	def onDetach(self):
 		super(TreeWidget, self).onDetach()
-		NetworkService.removeChangeListener(self)
+		#NetworkService.removeChangeListener(self)
 
 	def itemForKey(self, key, elem=None):
 		"""

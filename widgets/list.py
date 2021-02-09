@@ -308,12 +308,13 @@ class ListWidget(html5.Div):
 	def onDetach(self):
 		self.isDetaching = True
 		super(ListWidget, self).onDetach()
-		NetworkService.removeChangeListener( self )
+		#NetworkService.removeChangeListener( self )
 
 	def onDataChanged(self, module, **kwargs):
 		"""
 			Refresh our view if element(s) in this module have changed
 		"""
+
 		if module and module != self.module:
 			return
 		if not self.viewStructure:
@@ -428,7 +429,7 @@ class ListWidget(html5.Div):
 		self.table["style"]["display"] = ""
 		self.emptyNotificationDiv.removeClass("is-active")
 		self._structure = self.viewStructure
-		print(self.viewStructure)
+		#print(self.viewStructure)
 		if not self._tableHeaderIsValid:
 			if not self.columns:
 				self.columns = []

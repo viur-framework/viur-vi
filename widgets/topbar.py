@@ -54,7 +54,7 @@ class TopBarWidget(html5.Header):
 		newBtn["href"] = "https://www.viur.is"
 		newBtn["target"] = "_blank"
 		newBtn.addClass("btn")
-		newBtn.prependChild( SvgIcon( "logos-ribbon", title = translate("vi.topbar.newbtn") ))
+		newBtn.prependChild( SvgIcon( "icon-ribbon", title = translate("vi.topbar.newbtn") ))
 		newBtn.appendChild(translate("vi.topbar.newbtn"))
 		#self.iconnav.appendChild(newBtn)
 

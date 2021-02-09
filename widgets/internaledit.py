@@ -199,7 +199,7 @@ class InternalEdit(html5.Div):
 				for myError in myErrors:
 					container.children()[1].children()[1].appendChild(PassiveErrorItem(myError))
 
-		print(self.boneparams)
+
 		if self.boneparams and "vi.style.rel.categories" in self.boneparams and self.boneparams["vi.style.rel.categories"] == "collapsed":pass
 		else:
 			if firstCat:
