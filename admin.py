@@ -344,7 +344,8 @@ class AdminScreen(Screen):
 		widgetPopup.popupBody.appendChild(widget)
 
 	def removeWidget( self, widget ):
-		widget.parentPopup.close()
+		if "parentPopup" in dir(widget):
+			widget.parentPopup.close()
 
 
 	def switchFullscreen(self, fullscreen=True):
