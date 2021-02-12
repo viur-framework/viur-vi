@@ -1,5 +1,6 @@
 from flare.views.view import View, ViewWidget
-from vi.priorityqueue import HandlerClassSelector,moduleWidgetSelector
+from vi.priorityqueue import HandlerClassSelector, moduleWidgetSelector
+from vi.widgets.edit import EditWidget
 from vi.config import conf
 
 class singletonHandler(View):
@@ -23,12 +24,20 @@ class singletonHandlerWidget(ViewWidget):
 			Here we start!
 		'''
 		self.addClass( [ "vi-viewer-pane", "is-active" ] )
-		self.moduleInfo = self.view.params[ "data" ]
+		self.data = self.view.params[ "data" ]
 		self.moduleName = self.view.params[ "moduleName" ]
 
-		widgen = moduleWidgetSelector.select( self.moduleName, self.moduleInfo )
-		widget = widgen( self.moduleName, **self.moduleInfo )
-		self.appendChild( widget )
+		context = self.data.get("context", None)
+		clone = self.data.get("clone", False)
+		baseType = EditWidget.appSingleton
+
+		widget = EditWidget(
+			self.moduleName, baseType,
+			context=context,
+			clone=clone
+		)
+
+		self.appendChild(widget)
 
 	def onViewfocusedChanged( self, viewname, *args, **kwargs ):
 		conf["theApp"].setPath(self.moduleName + "/edit")

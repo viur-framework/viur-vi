@@ -244,6 +244,7 @@ class AdminScreen(Screen):
 
 	def openNewMainView( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False ):
 		# generate a parameterized view
+		print("actionName %r" % actionName)
 		view = conf["views_registered"].get(viewName,"notfound").__class__
 		instancename = "%s___%s" % (viewName, str( time.time() ).replace( ".", "_" ))
 		viewInst = generateView( view, moduleName, actionName, data = data,name=instancename )
@@ -314,21 +315,26 @@ class AdminScreen(Screen):
 			conf[ "views_state" ].updateState( "activeView", viewname )
 			return
 		elif len(path)>=2 and path[1] in ["edit","add"]:
-			data = {"context":None} #fixme
-			if path[1] == "edit":
-				data = {"key"    : path[2], "context":None } #fixme
+			data = {"context": None} #fixme
+			if len(path) == 2:
+				handlertype = "singletonhandler"
+			elif path[1] == "edit":
+				handlertype = "edithandler"
+				data = {"key": path[2], "context": None } #fixme
+			else:
+				handlertype = "edithandler"
 
 			conf[ "views_state" ].updateState( "activeView", path[0]+"list" )
 			conf[ "mainWindow" ].openView(
 				translate( path[1] ),  # AnzeigeName
 				"icon-"+path[1],  # Icon
-				"edithandler",  # viewName
+				handlertype,  # viewName
 				path[0],  # Modulename
 				path[1],  # Action
 				data = data
 			)
 
-	def stackWidget( self, widget,disableOtherWidgets=True):
+	def stackWidget( self, widget, disableOtherWidgets=True ):
 		'''
 			We dont stack widgets anymore.
 			We use now Popups.

@@ -170,6 +170,8 @@ class EditWidget(html5.Div):
 		self.applicationType = applicationType
 		self.key = key
 		self.mode = "edit" if self.key or applicationType == EditWidget.appSingleton else "add"
+		print("apptype %r" % applicationType)
+		print("appSingleton??? %r" % applicationType == EditWidget.appSingleton)
 		self.modified = False
 		self.node = node
 		self.skelType = skelType
