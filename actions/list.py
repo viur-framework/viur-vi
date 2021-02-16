@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flare import html5
+from flare import html5, ignite
 from flare.popup import Confirm, Popup, Alert
 from flare.network import NetworkService
 from flare.icons import SvgIcon
@@ -287,7 +287,7 @@ class ListPreviewAction(html5.Span):
 
 		self.addClass("input-group")
 
-		self.urlCb = html5.ignite.Select()
+		self.urlCb = ignite.Select()
 		self.appendChild(self.urlCb)
 
 		btn = Button(translate("Preview"), callback=self.onClick, icon="icon-preview")

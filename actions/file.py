@@ -32,7 +32,7 @@ class FileSelectUploader(html5.Input):
 					node = self.parent().node
 				except:
 					node = None
-				ul = Uploader(event.target.files.item(i), node)
+				ul = Uploader(event.target.files.item(i), node, module=self.parent().module)
 				if "filebone" in dir(self):
 					ul.uploadSuccess.register( self.filebone )
 

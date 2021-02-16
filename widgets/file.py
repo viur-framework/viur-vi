@@ -138,7 +138,7 @@ class Uploader(html5.Div):
 		Uploads a file to the server while providing visual feedback of the progress.
 	"""
 
-	def __init__(self, file, node, context=None, *args, **kwargs):
+	def __init__(self, file, node, context=None, module="file", *args, **kwargs):
 		"""
 			:param file: The file to upload
 			:type file: A javascript "File" Object
@@ -147,6 +147,7 @@ class Uploader(html5.Div):
 		"""
 		super(Uploader, self).__init__()
 		self.uploadSuccess = EventDispatcher("uploadSuccess")
+		self.module = module
 		self.responseValue = None
 		self.targetKey = None
 		self.addClass("is-loading")
@@ -157,7 +158,7 @@ class Uploader(html5.Div):
 		if node:
 			params["node"] = node
 
-		r = NetworkService.request("file", "getUploadURL",
+		r = NetworkService.request(module, "getUploadURL",
 			params=params,
 			successHandler=self.onUploadUrlAvailable,
 			failureHandler=self.onFailed,
@@ -229,10 +230,10 @@ class Uploader(html5.Div):
 			Internal callback - The state of our upload changed.
 		"""
 		NetworkService.request(
-			"file", "add", {
-				"key":self.targetKey,
-				"node":self.node,
-				"skelType":"leaf"
+			self.module, "add", {
+				"key": self.targetKey,
+				"node": self.node,
+				"skelType": "leaf"
 			},
 			successHandler = self.onUploadAdded,
 			failureHandler = self.onFailed,
@@ -369,7 +370,7 @@ class FileWidget(TreeBrowserWidget):
 		files = event.dataTransfer.files
 		if files:
 			for x in range(0, len(files)):
-				Uploader(files.item(x), self.node)
+				Uploader(files.item(x), self.node, self.module)
 		else:
 			super().onDrop(event)
 
