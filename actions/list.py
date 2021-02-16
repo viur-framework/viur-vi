@@ -670,7 +670,9 @@ class ReloadAction(Button):
 		correctHandler = handler == "list" or handler.startswith("list.")
 		return correctAction and correctHandler
 
-	def onClick(self, sender=None):
+	def onClick(self, event=None):
+		event.stopPropagation()
+		event.preventDefault()
 		self.addClass("is-loading")
 		NetworkService.notifyChange( self.parent().parent().module )
 
