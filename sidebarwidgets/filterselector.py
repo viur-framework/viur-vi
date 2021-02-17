@@ -170,11 +170,7 @@ class FilterSelector( html5.Div ):
 		self.defaultFilter = not searchTxt
 
 		if self.module in conf["modules"].keys():
-			modulConfig = conf["modules"][self.module]
-			if "filter" in modulConfig.keys():
-				filter = modulConfig["filter"]
-			else:
-				filter = {}
+			filter = self.parent().parent().filter #get filter from current list
 
 			if searchTxt:
 				filter["search"] = searchTxt
