@@ -238,6 +238,7 @@ class AccessMultiSelectBone( html5.Div ):
 
 		# Render module access flags then
 		for module in sorted( self.modules.keys() ):
+
 			label = html5.Label()
 			label.addClass("check")
 			self.appendChild( label )
@@ -251,8 +252,11 @@ class AccessMultiSelectBone( html5.Div ):
 
 			span = html5.Span()
 			span.addClass("check-label")
-
-			title = conf["modules"][module]["name"]
+			try:
+				title = conf["modules"][module]["name"]
+			except:
+				title = module
+				label.hide()
 			title = title if title else module
 			label._getData()["name"] = title
 			label.element.setAttribute( str("data-name"), title.lower() )
