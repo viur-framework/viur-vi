@@ -1,0 +1,3 @@
+[submodule "vi/flare"]
+	path = vi/flare
+	url = git@github.com:mausbrand/flare.git
