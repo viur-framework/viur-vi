@@ -12,7 +12,7 @@ soon...
 .. toctree::
    :maxdepth: 1
    :glob:
-   :caption: Flare
+   :caption: ViUR Vi
 
    doc_start/index
    doc_guide/index
