@@ -1,3 +1,5 @@
+[![release](https://github.com/viur-framework/viur-vi/actions/workflows/main.yml/badge.svg)](https://github.com/viur-framework/viur-vi/actions/workflows/main.yml)
+
 # ViUR Vi
 
 This is the web-based administration client for the [ViUR framework](https://www.viur.dev).
