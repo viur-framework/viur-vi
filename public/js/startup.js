@@ -12,7 +12,8 @@ window.addEventListener(
 				// Fetch location for locally available Python modules
 				fetch: {
 					"flare": {
-						"path": "flare/flare"
+						"path": "flare/flare",
+						"optional": true //if this not exists you musst deliver this with in the root package
 					},
 					"vi": {
 						"path": "."
