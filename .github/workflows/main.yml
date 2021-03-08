@@ -1,0 +1,81 @@
+# This is a basic workflow to help you get started with Actions
+
+name: release
+
+# Controls when the action will run.
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  # Triggers the workflow on push or pull request events but only for the master branch
+  #push:
+  #  branches: [ feature/restructure ]
+  #pull_request:
+  #  branches: [ feature/restructure ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: viur/viur-flare-build
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      #build vi
+      - name: build Vi
+        run: |
+          echo $GITHUB_WORKSPACE
+          python3 /scripts/flare.py -s $GITHUB_WORKSPACE/vi -t /build -m 1 -c 1 -z 1 -n vi
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: buildfiles
+          path: /build
+
+
+  release:
+    runs-on: ubuntu-latest
+    container: viur/viur-flare-build
+    needs: [build]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@master
+        with:
+          name: buildfiles
+          path: /build
+
+      - name: archive
+        run: cd /build && zip viur-vi.zip -r ./*
+
+      - name: Get version from tag
+        id: tag_name
+        run: |
+          echo ::set-output name=current_version::${GITHUB_REF#refs/tags/v}
+
+      - name: fetch changelog info
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: ${{ steps.tag_name.outputs.current_version }}
+
+      - name: create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: /build/viur-vi.zip
+          body: ${{ steps.changelog_reader.outputs.changes }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

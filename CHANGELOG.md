@@ -2,10 +2,7 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
-
-## [develop]
-
-This is the current development version.
+## [3.0.0-b.1] - 2021-03-08
 
 - Switched runtime environment to [Pyodide](https://github.com/iodide-project/pyodide)
 - Feature: selected multiple entities (range) in a list while holding the shift key
@@ -156,7 +153,7 @@ Release date: Dec 22, 2016
 - Styling
 
 
-[develop]: https://github.com/viur-framework/vi/compare/v2.5.0...develop
+[3.0.0-b.1]: https://github.com/viur-framework/vi/compare/v2.5.0...v3.0.0
 [2.5.0]: https://github.com/viur-framework/vi/compare/v2.4.1...v2.5.0
 [2.4.1]: https://github.com/viur-framework/vi/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/viur-framework/vi/compare/v2.3.0...v2.4.0
