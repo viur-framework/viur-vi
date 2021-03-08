@@ -126,7 +126,7 @@ class AdminScreen(Screen):
 
 	def initializeViews( self ):
 		root = os.path.dirname(__file__) #path to root package
-		registerViews(os.path.join(root,"views"))
+		registerViews(root,"views")
 
 		#load default View
 		updateDefaultView("overview")
