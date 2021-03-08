@@ -64,8 +64,6 @@
   "flare/flare/views/view.py",
   "flare/flare/widgets/__init__.py",
   "flare/flare/widgets/buttonbar.py",
-  "flare/test/__init__.py",
-  "flare/test/test_basebone.py",
   "framework/__init__.py",
   "framework/components/__init__.py",
   "framework/components/actionbar.py",
