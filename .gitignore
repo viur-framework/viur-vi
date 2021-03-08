@@ -8,3 +8,4 @@ version.py
 
 sources/node_modules
 sources/package-lock.json
+docs/build/
