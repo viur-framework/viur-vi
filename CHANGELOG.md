@@ -2,6 +2,10 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.0-b.3] - 2021-03-11
+
+- fixed tree list widget not handling cursor correctly for nodes and leafs
+
 ## [3.0.0-b.1] - 2021-03-08
 
 - Switched runtime environment to [Pyodide](https://github.com/iodide-project/pyodide)
