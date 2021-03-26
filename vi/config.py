@@ -89,7 +89,7 @@ vi_conf = {
 	"cacheObj"              : { },
 	"indexeddb"             : None,
 	"logAmount"             : 50,
-	"basePathSvgs"          : "public/svgs"
+	"flare.icon.svg.embedding.path"          : "public/svgs"
 }
 
 
