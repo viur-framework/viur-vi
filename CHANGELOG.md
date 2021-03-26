@@ -2,7 +2,7 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
-## [3.0.0-b.3] - 2021-03-26
+## [3.0.0-b.4] - 2021-03-26
 
 - flare svg icon base path is now "flare.icon.svg.embedding.path"
 - icon rendering changed.
