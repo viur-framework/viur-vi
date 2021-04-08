@@ -56,8 +56,6 @@
   "flare/flare/popout.py",
   "flare/flare/popup.py",
   "flare/flare/priorityqueue.py",
-  "flare/flare/timestamp.py",
-  "flare/flare/user.py",
   "flare/flare/utils.py",
   "flare/flare/views/__init__.py",
   "flare/flare/views/helpers.py",
