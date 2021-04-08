@@ -1,7 +1,12 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
-## [3.0.0-b.5] - 2021-04-21
+## [3.0.0-b.6] - 2021-04-08
+
+- fix for ISO-Dates in views
+- fix updated files.json
+
+## [3.0.0-b.5] - 2021-04-07
 
 - added support for ISO-Dates
 
