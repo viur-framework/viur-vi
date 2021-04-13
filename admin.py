@@ -110,6 +110,7 @@ class AdminScreen(Screen):
 		conf["theApp"].login()
 
 	def startup(self):
+
 		config = conf["mainConfig"]
 		assert config
 
@@ -166,6 +167,7 @@ class AdminScreen(Screen):
 		topLevelModules = {}
 
 		for module, info in config["modules"].items():
+
 			if not "root" in userAccess and not any([x.startswith(module) for x in userAccess]):
 				# Skip this module, as the user couldn't interact with it anyway
 				continue
@@ -222,13 +224,15 @@ class AdminScreen(Screen):
 		for name, idx, pane in panes:
 			self.addPane(pane)
 
-		if not currentActiveGroup:
-			for group in moduleGroups:
-				groupPanes[ group[ "prefix" ] ].DeferredLoadChildren( 0 )
+		# disabled because of to long startup time
+		#if not currentActiveGroup:
+		#	for group in moduleGroups:
+		#		groupPanes[ group[ "prefix" ] ].DeferredLoadChildren( 0 )
 
 		# Finalizing!
 		viInitializedEvent.fire()
 		DeferredCall(self.checkInitialHash)
+
 		self.unlock()
 
 	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data=None):

@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from vi import html5
 
 from vi.config import conf
@@ -6,7 +6,7 @@ from vi.i18n import translate
 from vi.network import NetworkService
 from vi.priorityqueue import viewDelegateSelector, moduleHandlerSelector
 # from vi.sidebarwidgets.filterselector import CompoundFilter #fixme
-#from vi.widgets.actionbar import ActionBar
+# from vi.widgets.actionbar import ActionBar
 from vi.widgets.sidebar import SideBar
 from vi.framework.components.datatable import DataTable, ViewportDataTable
 from vi.embedsvg import embedsvg
@@ -19,38 +19,40 @@ class ListWidget(html5.Div):
 		It acts as a data-provider for a DataTable and binds an action-bar
 		to this table.
 	"""
-	def __init__(self, module, filter=None, columns=None, selectMode = None, filterID=None, filterDescr=None,
-	             batchSize = None, context = None, autoload = True, *args, **kwargs):
+
+	def __init__(self, module, filter=None, columns=None, selectMode=None, filterID=None, filterDescr=None,
+				 batchSize=None, context=None, autoload=True, *args, **kwargs):
 		"""
 			:param module: Name of the module we shall handle. Must be a list application!
 			:type module: str
 		"""
+
 		if not module in conf["modules"].keys():
 			conf["mainWindow"].log("error", translate("The module '{module}' does not exist.", module=module))
 			assert module in conf["modules"].keys()
 
 		super(ListWidget, self).__init__()
 		self.addClass("vi-widget vi-widget--list")
-		self._batchSize = batchSize or conf["batchSize"]    # How many rows do we fetch at once?
-		self.isDetaching = False #If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
+		self._batchSize = batchSize or conf["batchSize"]  # How many rows do we fetch at once?
+		self.isDetaching = False  # If set, this widget is beeing about to be removed - dont issue nextBatchNeeded requests
 		self.module = module
 		self.context = context
 
 		self.loadedPages = 0  # Amount of Pages which are currently loaded
 		self.currentPage = self.loadedPages  # last loaded page
-		self.targetPage = 1 #the page which we want to show next if we set this to currentPage +1 and call setPage next page will be loaded
+		self.targetPage = 1  # the page which we want to show next if we set this to currentPage +1 and call setPage next page will be loaded
 
-		#List actions
+		# List actions
 		self.actionBar = ActionBar(module, "list", currentAction="list")
-		self.appendChild( self.actionBar )
+		self.appendChild(self.actionBar)
 
-		#Entry Actions
-		self.entryActionBar = ActionBar(module,"list", currentAction = "list")
+		# Entry Actions
+		self.entryActionBar = ActionBar(module, "list", currentAction="list")
 		self.entryActionBar["class"] = ["bar", "vi-entryactionbar"]
-		self.appendChild( self.entryActionBar )
+		self.appendChild(self.entryActionBar)
 
 		self.sideBar = SideBar()
-		self.appendChild( self.sideBar )
+		self.appendChild(self.sideBar)
 
 		self.widgetContent = html5.Div()
 		self.widgetContent.addClass("vi-widget-content")
@@ -60,25 +62,24 @@ class ListWidget(html5.Div):
 
 		if filterID:
 			if conf["modules"] and module in conf["modules"].keys():
-				if "views" in conf["modules"][ module].keys() and conf["modules"][ module]["views"]:
-					for v in conf["modules"][ module]["views"]:
+				if "views" in conf["modules"][module].keys() and conf["modules"][module]["views"]:
+					for v in conf["modules"][module]["views"]:
 						if v["__id"] == filterID:
 							myView = v
 							break
 			if myView and "extendedFilters" in myView.keys() and myView["extendedFilters"]:
-
-				#fixme
-				#self.appendChild(CompoundFilter(myView, module, embed=True))
+				# fixme
+				# self.appendChild(CompoundFilter(myView, module, embed=True))
 				print("fixme!")
 
 		self._checkboxes = (conf["modules"]
-		              and module in conf["modules"].keys()
-		              and "checkboxSelection" in conf["modules"][module].keys()
-		              and conf["modules"][module]["checkboxSelection"])
+							and module in conf["modules"].keys()
+							and "checkboxSelection" in conf["modules"][module].keys()
+							and conf["modules"][module]["checkboxSelection"])
 		self._indexes = (conf["modules"]
-		           and module in conf["modules"].keys()
-		           and "indexes" in conf["modules"][module].keys()
-		           and conf["modules"][module]["indexes"])
+						 and module in conf["modules"].keys()
+						 and "indexes" in conf["modules"][module].keys()
+						 and conf["modules"][module]["indexes"])
 
 		self._currentCursor = None
 		self._structure = None
@@ -87,7 +88,7 @@ class ListWidget(html5.Div):
 		self.selectMode = selectMode
 
 		self.group = None
-		if "adminInfo" in kwargs and kwargs[ "adminInfo" ]["handler"]=="list.grouped":
+		if "adminInfo" in kwargs and kwargs["adminInfo"]["handler"] == "list.grouped":
 			if "group" in kwargs["adminInfo"]:
 				self.group = kwargs["adminInfo"]["group"]
 			else:
@@ -96,7 +97,7 @@ class ListWidget(html5.Div):
 		assert selectMode in [None, "single", "multi"]
 
 		if self.selectMode and filter is None and columns is None:
-			#Try to select a reasonable set of cols / filter
+			# Try to select a reasonable set of cols / filter
 			if conf["modules"] and module in conf["modules"].keys():
 				tmpData = conf["modules"][module]
 				if "columns" in tmpData.keys():
@@ -104,16 +105,16 @@ class ListWidget(html5.Div):
 				if "filter" in tmpData.keys():
 					filter = tmpData["filter"]
 
-		self.filter = filter.copy() if isinstance(filter,dict) else {}
-		self.columns = columns[:] if isinstance(columns,list) else []
-		self.filterID = filterID #Hint for the sidebarwidgets which predefined filter is currently active
-		self.filterDescr = filterDescr #Human-readable description of the current filter
+		self.filter = filter.copy() if isinstance(filter, dict) else {}
+		self.columns = columns[:] if isinstance(columns, list) else []
+		self.filterID = filterID  # Hint for the sidebarwidgets which predefined filter is currently active
+		self.filterDescr = filterDescr  # Human-readable description of the current filter
 		self._tableHeaderIsValid = False
 
-		#build Table
+		# build Table
 		self.tableInitialization(*args, **kwargs)
 
-		self.actionBar.setActions( self.getDefaultActions( myView ), widget=self )
+		self.actionBar.setActions(self.getDefaultActions(myView), widget=self)
 		self.entryActionBar.setActions(self.getDefaultEntryActions(myView), widget=self)
 
 		self.emptyNotificationDiv = html5.Div()
@@ -132,7 +133,7 @@ class ListWidget(html5.Div):
 
 		self.sinkEvent("onClick")
 
-	def tableInitialization(self,*args,**kwargs):
+	def tableInitialization(self, *args, **kwargs):
 		'''
 		Instantiates the table
 		:param args: ListWidget Parameter
@@ -146,11 +147,11 @@ class ListWidget(html5.Div):
 
 		# Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent",
-		          "selectionActivatedEvent",
-		          "cursorMovedEvent",
-		          "tableChangedEvent",
-		          "getCurrentSelection",
-		          "requestingFinishedEvent"]:
+				  "selectionActivatedEvent",
+				  "cursorMovedEvent",
+				  "tableChangedEvent",
+				  "getCurrentSelection",
+				  "requestingFinishedEvent"]:
 			setattr(self, f, getattr(self.table, f))
 
 		if self.selectMode:
@@ -160,22 +161,22 @@ class ListWidget(html5.Div):
 
 		self.table["style"]["display"] = "none"
 
-	def setAmount(self,amount):
-		self._batchSize=amount
+	def setAmount(self, amount):
+		self._batchSize = amount
 
-	def setPage(self,page = 0):
+	def setPage(self, page=0):
 		'''
 		sets targetpage. if not enougth loadedpages this pages will be requested
 		:param page: sets targetpage
 		:return:
 		'''
 
-		self.targetPage = self.currentPage+page
+		self.targetPage = self.currentPage + page
 
 		if self.targetPage > self.loadedPages:
 			self.onNextBatchNeeded()
 
-	def onRequestingFinished(self,*args,**kwargs):
+	def onRequestingFinished(self, *args, **kwargs):
 		pass
 
 	def onClick(self, event):
@@ -185,48 +186,54 @@ class ListWidget(html5.Div):
 	def setTableActionBar(self):
 		self.tableBottomActionBar = ActionBar(self.module, "list", currentAction="list")
 		self.appendChild(self.tableBottomActionBar)
-		self.tableBottomActionBar.setActions(["|","loadnext", "|", "tableitems"]) #,"tableprev","tablenext"
+		self.tableBottomActionBar.setActions(["|", "loadnext", "|", "tableitems"])  # ,"tableprev","tablenext"
 
-	def getDefaultActions(self, view = None ):
+	def getDefaultActions(self, view=None):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
 		defaultActions = ["add", "selectfields"]
 
-		#if not self.selectMode:
+		# if not self.selectMode:
 		#	defaultActions += ["|", "exportcsv"]
 
 		# Extended actions from view?
 		if view and "actions" in view.keys():
 			if defaultActions[-1] != "|":
-				defaultActions.append( "|" )
+				defaultActions.append("|")
 
-			defaultActions.extend( view[ "actions" ] or [] )
+			defaultActions.extend(view["actions"] or [])
 
 		# Extended Actions from config?
 		elif conf["modules"] and self.module in conf["modules"].keys():
-			cfg = conf["modules"][ self.module ]
+			cfg = conf["modules"][self.module]
 
 			if "actions" in cfg.keys() and cfg["actions"]:
 				if defaultActions[-1] != "|":
-					defaultActions.append( "|" )
+					defaultActions.append("|")
 
-				defaultActions.extend( cfg["actions"] )
+				defaultActions.extend(cfg["actions"])
+
+		if self.group:
+			defaultActions +=["groupfilter","groupSearch"]
 
 		if self.selectMode == "multi":
 			defaultActions += ["|", "selectall", "unselectall", "selectinvert"]
 
-
-
-
-
 		if self.selectMode:
-			defaultActions += ["|", "reload", "selectfilter", "|", "select","close"]
+			defaultActions += ["|", "reload", "selectfilter", "|", "select", "close"]
 		else:
-			defaultActions += [ "|", "reload", "setamount", "intpreview", "selectfilter" ]  # "pagefind",  "loadnext",
+			defaultActions += ["|", "reload", "setamount", "intpreview"]  # "pagefind",  "loadnext",
+			if not self.group:
+				defaultActions += [ "selectfilter" ]
+
+		for actioname in self.getlistOfDisabledFunctions(view):
+			if actioname in defaultActions:
+				defaultActions.remove(actioname)
+
 		return defaultActions
 
-	def getDefaultEntryActions(self, view = None ):
+	def getDefaultEntryActions(self, view=None):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
@@ -235,21 +242,36 @@ class ListWidget(html5.Div):
 		# Extended actions from view?
 		if view and "actions" in view.keys():
 			if defaultActions[-1] != "|":
-				defaultActions.append( "|" )
+				defaultActions.append("|")
 
-			defaultActions.extend( view[ "actions" ] or [] )
+			defaultActions.extend(view["actions"] or [])
 
 		# Extended Actions from config?
 		elif conf["modules"] and self.module in conf["modules"].keys():
-			cfg = conf["modules"][ self.module ]
+			cfg = conf["modules"][self.module]
 
 			if "entryActions" in cfg.keys() and cfg["entryActions"]:
-				#if defaultActions[-1] != "|":
+				# if defaultActions[-1] != "|":
 				#	defaultActions.append( "|" )
 
-				defaultActions.extend( cfg["entryActions"] )
+				defaultActions.extend(cfg["entryActions"])
 		defaultActions.extend(["|", "preview"])
+
+		for actioname in self.getlistOfDisabledFunctions(view):
+			if actioname in defaultActions:
+				defaultActions.remove(actioname)
+
 		return defaultActions
+
+	def getlistOfDisabledFunctions(self, view=None):
+		listOfDisabledFunctions = []
+		if view and "disabledFunctions" in view:
+			listOfDisabledFunctions = view["disabledFunctions"]
+		elif conf["modules"] and self.module in conf["modules"].keys() and "disabledFunctions" in conf["modules"][
+			self.module]:
+			listOfDisabledFunctions = conf["modules"][self.module]["disabledFunctions"]
+
+		return listOfDisabledFunctions
 
 	def showErrorMsg(self, req=None, code=None):
 		"""
@@ -259,13 +281,13 @@ class ListWidget(html5.Div):
 		self.table["style"]["display"] = "none"
 		errorDiv = html5.Div()
 		errorDiv.addClass("popup popup--center popup--local msg msg--error is-active error_msg")
-		if code and (code==401 or code==403):
+		if code and (code == 401 or code == 403):
 			txt = translate("Access denied!")
 		else:
 			txt = translate("An unknown error occurred!")
 		errorDiv.addClass("error_code_%s" % (code or 0))
-		errorDiv.appendChild( html5.TextNode( txt ) )
-		self.appendChild( errorDiv )
+		errorDiv.appendChild(html5.TextNode(txt))
+		self.appendChild(errorDiv)
 
 	def onNextBatchNeeded(self):
 		"""
@@ -283,20 +305,23 @@ class ListWidget(html5.Div):
 
 			if conf["modules"] and self.module in conf["modules"].keys():
 				if self.group:
-					self._currentRequests.append( NetworkService.request( self.module, "list/%s" % self.group, filter,
-																		  successHandler = self.onCompletion, failureHandler = self.showErrorMsg,
-																		  cacheable = True ) )
+					self._currentRequests.append(NetworkService.request(self.module, "list/%s" % self.group, filter,
+																		successHandler=self.onCompletion,
+																		failureHandler=self.showErrorMsg,
+																		cacheable=True))
 				else:
-					self._currentRequests.append( NetworkService.request( self.module, "list", filter,
-																		  successHandler = self.onCompletion, failureHandler = self.showErrorMsg,
-																		  cacheable = True ) )
+					self._currentRequests.append(NetworkService.request(self.module, "list", filter,
+																		successHandler=self.onCompletion,
+																		failureHandler=self.showErrorMsg,
+																		cacheable=True))
 
 
 			else:
 
 				self._currentRequests.append(NetworkService.request(self.module, "list", filter,
-												successHandler=self.onCompletion, failureHandler=self.showErrorMsg,
-												cacheable=True ) )
+																	successHandler=self.onCompletion,
+																	failureHandler=self.showErrorMsg,
+																	cacheable=True))
 			self._currentCursor = None
 		else:
 			self.actionBar.resetLoadingState()
@@ -305,13 +330,13 @@ class ListWidget(html5.Div):
 			self.table.setDataProvider(None)
 
 	def onAttach(self):
-		super( ListWidget, self ).onAttach()
-		NetworkService.registerChangeListener( self )
+		super(ListWidget, self).onAttach()
+		NetworkService.registerChangeListener(self)
 
 	def onDetach(self):
 		self.isDetaching = True
-		super( ListWidget, self ).onDetach()
-		NetworkService.removeChangeListener( self )
+		super(ListWidget, self).onDetach()
+		NetworkService.removeChangeListener(self)
 
 	def onDataChanged(self, module, **kwargs):
 		"""
@@ -340,23 +365,25 @@ class ListWidget(html5.Div):
 		filter.update(self.filter)
 		filter["amount"] = self._batchSize
 
-		if conf[ "modules" ] and self.module in conf[ "modules" ].keys():
+		if conf["modules"] and self.module in conf["modules"].keys():
 			if self.group:
-				self._currentRequests.append( NetworkService.request( self.module, "list/%s" % self.group, filter,
-																	  successHandler = self.onCompletion, failureHandler = self.showErrorMsg,
-																	  cacheable = True ) )
+				self._currentRequests.append(NetworkService.request(self.module, "list/%s" % self.group, filter,
+																	successHandler=self.onCompletion,
+																	failureHandler=self.showErrorMsg,
+																	cacheable=True))
 			else:
-				self._currentRequests.append( NetworkService.request( self.module, "list", filter,
-																	  successHandler = self.onCompletion, failureHandler = self.showErrorMsg,
-																	  cacheable = True ) )
+				self._currentRequests.append(NetworkService.request(self.module, "list", filter,
+																	successHandler=self.onCompletion,
+																	failureHandler=self.showErrorMsg,
+																	cacheable=True))
 
 
 		else:
 
-			self._currentRequests.append( NetworkService.request( self.module, "list", filter,
-																  successHandler = self.onCompletion, failureHandler = self.showErrorMsg,
-																  cacheable = True ) )
-
+			self._currentRequests.append(NetworkService.request(self.module, "list", filter,
+																successHandler=self.onCompletion,
+																failureHandler=self.showErrorMsg,
+																cacheable=True))
 
 	def setFilter(self, filter, filterID=None, filterDescr=None):
 		"""
@@ -376,11 +403,10 @@ class ListWidget(html5.Div):
 
 	def getFilter(self):
 		if self.filter:
-			return( {k:v for k,v in self.filter.items()})
-		return( {} )
+			return ({k: v for k, v in self.filter.items()})
+		return ({})
 
-
-	def updateEmptyNotification( self ):
+	def updateEmptyNotification(self):
 		pass
 
 	def onCompletion(self, req):
@@ -391,20 +417,20 @@ class ListWidget(html5.Div):
 		if not req in self._currentRequests:
 			return
 
-		self.loadedPages +=1
+		self.loadedPages += 1
 		self.currentPage = self.loadedPages
 
-		self._currentRequests.remove( req )
+		self._currentRequests.remove(req)
 		self.actionBar.resetLoadingState()
 		self.entryActionBar.resetLoadingState()
 		self.tableBottomActionBar.resetLoadingState()
 
-		data = NetworkService.decode( req )
+		data = NetworkService.decode(req)
 
 		if data["structure"] is None:
 			if self.table.getRowCount():
 				# We cant load any more results
-				self.targetPage = self.loadedPages #reset targetpage to maximum
+				self.targetPage = self.loadedPages  # reset targetpage to maximum
 				self.requestingFinishedEvent.fire()
 				self.table.setDataProvider(None)
 				self.table.onTableChanged(None, self.table.getRowCount())
@@ -423,8 +449,8 @@ class ListWidget(html5.Div):
 				self.columns = []
 				for boneName, boneInfo in data["structure"]:
 					if boneInfo["visible"]:
-						self.columns.append( boneName )
-			self.setFields( self.columns )
+						self.columns.append(boneName)
+			self.setFields(self.columns)
 
 		if data["skellist"] and "cursor" in data.keys():
 			self._currentCursor = data["cursor"]
@@ -433,9 +459,9 @@ class ListWidget(html5.Div):
 			self.requestingFinishedEvent.fire()
 			self.table.setDataProvider(None)
 
-		self.table.extend( data["skellist"], writeToModel =True )
+		self.table.extend(data["skellist"], writeToModel=True)
 
-		#if targetPage higher than loadedPage, request next Batch
+		# if targetPage higher than loadedPage, request next Batch
 		if self.targetPage > self.loadedPages:
 			self.onNextBatchNeeded()
 
@@ -450,15 +476,14 @@ class ListWidget(html5.Div):
 		fields = [x for x in fields if x in tmpDict.keys()]
 		self.columns = fields
 
-
-
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			delegateFactory = viewDelegateSelector.select( self.module, boneName, tmpDict )( self.module, boneName, tmpDict )
-			self.table.setCellRender( boneName, delegateFactory )
-			boneInfoList.append( boneInfo )
+			delegateFactory = viewDelegateSelector.select(self.module, boneName, tmpDict)(self.module, boneName,
+																						  tmpDict)
+			self.table.setCellRender(boneName, delegateFactory)
+			boneInfoList.append(boneInfo)
 
-		self.table.setShownFields( fields )
+		self.table.setShownFields(fields)
 
 		if conf["showBoneNames"]:
 			self.table.setHeader(fields)
@@ -469,15 +494,16 @@ class ListWidget(html5.Div):
 
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			delegateFactory = viewDelegateSelector.select( self.module, boneName, tmpDict )( self.module, boneName, tmpDict )
-			rendersDict[ boneName ] = delegateFactory
-			boneInfoList.append( boneInfo )
+			delegateFactory = viewDelegateSelector.select(self.module, boneName, tmpDict)(self.module, boneName,
+																						  tmpDict)
+			rendersDict[boneName] = delegateFactory
+			boneInfoList.append(boneInfo)
 
-		self.table.setCellRenders( rendersDict )
+		self.table.setCellRenders(rendersDict)
 		self._tableHeaderIsValid = True
 
 	def getFields(self):
-		return( self.columns[:] )
+		return (self.columns[:])
 
 	def onSelectionActivated(self, table, selection):
 		conf["mainWindow"].removeWidget(self)
@@ -503,22 +529,23 @@ class ListWidget(html5.Div):
 		batchSize = adminInfo.get("batchSize", conf["batchSize"])
 
 		return ListWidget(module=moduleName,
-		                          filter=filter,
-		                          filterID=filterID,
-		                          selectMode=selectMode,
-		                          batchSize=batchSize,
-		                          columns=columns,
-		                          context=context,
-		                          autoload=autoload,
-		                          filterDescr=filterDescr,
-								  adminInfo = adminInfo)
+						  filter=filter,
+						  filterID=filterID,
+						  selectMode=selectMode,
+						  batchSize=batchSize,
+						  columns=columns,
+						  context=context,
+						  autoload=autoload,
+						  filterDescr=filterDescr,
+						  adminInfo=adminInfo)
+
 
 moduleHandlerSelector.insert(1, ListWidget.canHandle, ListWidget.render)
 
 
 class ViewportListWidget(ListWidget):
 
-	def tableInitialization(self,*args,**kwargs):
+	def tableInitialization(self, *args, **kwargs):
 		'''
 		Instantiates the table
 		:param args: ListWidget Parameter
@@ -528,19 +555,19 @@ class ViewportListWidget(ListWidget):
 			- use ViewPort DataTable with rows parameter
 		'''
 		self.table = ViewportDataTable(rows=self._batchSize,
-		                               checkboxes=self._checkboxes,
-		                               indexes=self._indexes,
-		                               *args, **kwargs)
+									   checkboxes=self._checkboxes,
+									   indexes=self._indexes,
+									   *args, **kwargs)
 		self.widgetContent.appendChild(self.table)
 		self.table.setDataProvider(self)
 
 		# Proxy some events and functions of the original table
 		for f in ["selectionChangedEvent",
-		          "selectionActivatedEvent",
-		          "cursorMovedEvent",
-		          "tableChangedEvent",
-		          "getCurrentSelection",
-		          "requestingFinishedEvent"]:
+				  "selectionActivatedEvent",
+				  "cursorMovedEvent",
+				  "tableChangedEvent",
+				  "getCurrentSelection",
+				  "requestingFinishedEvent"]:
 			setattr(self, f, getattr(self.table, f))
 
 		if self.selectMode:
@@ -550,7 +577,7 @@ class ViewportListWidget(ListWidget):
 
 		self.table["style"]["display"] = "none"
 
-	def setAmount(self,amount):
+	def setAmount(self, amount):
 		self._batchSize = amount
 		self.table._rows = amount
 		self.table.rebuildTable()
@@ -565,7 +592,7 @@ class ViewportListWidget(ListWidget):
 		'''
 
 		self.targetPage = self.currentPage + page
-		if self.targetPage<0:
+		if self.targetPage < 0:
 			self.targetPage = 0
 
 		if self.targetPage > self.loadedPages:
@@ -583,25 +610,26 @@ class ViewportListWidget(ListWidget):
 		'''
 		if page > self.loadedPages:  # set page to Max possible
 			page = self.loadedPages
-		elif page<0:
+		elif page < 0:
 			page = 0
 
 		start = page * self._batchSize
 		end = (page + 1) * self._batchSize
 
 		objs = self.table._model[start:end]
-		self.currentPage = max(page,1)
-		self.table.update(objs,writeToModel=False)
+		self.currentPage = max(page, 1)
+		self.table.update(objs, writeToModel=False)
 
-	def onRequestingFinished(self,*args,**kwargs):
-		#after Page is loaded scroll to this Page, while targetPage is lower than loadedPages
+	def onRequestingFinished(self, *args, **kwargs):
+		# after Page is loaded scroll to this Page, while targetPage is lower than loadedPages
 		if self.targetPage and self.targetPage < self.loadedPages:
 			self._setPage(self.targetPage)
 
 	def setTableActionBar(self):
 		self.tableBottomActionBar = ActionBar(self.module, "list", currentAction="list")
 		self.appendChild(self.tableBottomActionBar)
-		self.tableBottomActionBar.setActions(["|","tableprev","loadnext","tablenext", "|", "tableitems"], widget=self)
+		self.tableBottomActionBar.setActions(["|", "tableprev", "loadnext", "tablenext", "|", "tableitems"],
+											 widget=self)
 
 	@staticmethod
 	def canHandle(moduleName, moduleInfo):
@@ -616,18 +644,18 @@ class ViewportListWidget(ListWidget):
 		filterDescr = adminInfo.get("visibleName", ""),
 		autoload = adminInfo.get("autoload", True)
 		selectMode = adminInfo.get("selectMode")
-		batchSize = adminInfo.get("batchSize",conf["batchSize"])
+		batchSize = adminInfo.get("batchSize", conf["batchSize"])
 
 		return ViewportListWidget(module=moduleName,
-		                          filter=filter,
-		                          filterID=filterID,
-		                          selectMode=selectMode,
-		                          batchSize=batchSize,
-		                          columns=columns,
-		                          context=context,
-		                          autoload=autoload,
-		                          filterDescr=filterDescr,
-								  adminInfo = adminInfo)
+								  filter=filter,
+								  filterID=filterID,
+								  selectMode=selectMode,
+								  batchSize=batchSize,
+								  columns=columns,
+								  context=context,
+								  autoload=autoload,
+								  filterDescr=filterDescr,
+								  adminInfo=adminInfo)
+
 
 moduleHandlerSelector.insert(10, ViewportListWidget.canHandle, ViewportListWidget.render)
-

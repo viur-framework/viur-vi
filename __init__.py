@@ -137,3 +137,6 @@ def start():
 	# Application
 	app = Application()
 	html5.Body().appendChild(app)
+
+if __name__ == "vi":
+	start()
