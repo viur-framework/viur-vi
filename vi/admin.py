@@ -161,7 +161,12 @@ class AdminScreen(Screen):
 				group = m["name"].split(": ")[0]+": "
 
 				#stack modules in groups
-				getGroup = next((item for item in mergedItems if item["prefix"]==group),None)
+				getGroup = next((item for item in mergedItems if "prefix" in item and item["prefix"]==group),None)
+
+				if not getGroup: #corrupt group definition, add as normal module
+					mergedItems.append( m )
+					continue
+
 				m["name"] = m["name"].replace(group,"")
 				if "subItem" not in getGroup:
 					getGroup.update({"subItem":[m]})
