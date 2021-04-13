@@ -1,6 +1,11 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+
+## [3.0.0-b.7] - 2021-04-13
+
+- fix for missing modulgroup configuration
+
 ## [3.0.0-b.6] - 2021-04-08
 
 - fix for ISO-Dates in views
