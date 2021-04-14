@@ -183,7 +183,7 @@ class AdminScreen(Screen):
 		adminGroupWidget = self.navWrapper.addNavigationBlock( "Administration" )
 		self.appendNavList( mergedItems, adminGroupWidget )
 
-	def appendNavList( self,NavList,target,parentInfo=() ):
+	def appendNavList( self,NavList, target, parentInfo=() ):
 		for item in NavList:
 			viewInst = None
 
@@ -196,10 +196,43 @@ class AdminScreen(Screen):
 				#generate a parameterized view
 				viewInst = generateView(handlerCls,item["moduleName"],item["handler"],data=item)
 
-			elif "moduleName" not in item and parentInfo:
-				#collect parentdata
-				item[ "moduleName" ] = parentInfo[ "moduleName" ]
-				item[ "handler" ] = parentInfo[ "handler" ]
+			elif parentInfo:
+
+				# this is a view, cause parentInfo is only provided by views
+
+				# Extend some inherited attributes from moduleInfo
+				for inherit in ["+name", "+columns", "+filter", "+context", "+actions", "+handler"]:
+					if inherit in item:
+						inherit = inherit[1:]
+
+						if inherit in parentInfo:
+							if isinstance(parentInfo[inherit], list):
+								assert isinstance(item["+" + inherit], list)
+
+								if inherit not in item:
+									item[inherit] = parentInfo[inherit][:]
+
+								item[inherit].extend(item["+" + inherit])
+							elif isinstance(parentInfo[inherit], dict):
+								assert isinstance(item["+" + inherit], dict)
+
+								if inherit not in item:
+									item[inherit] = parentInfo[inherit]
+
+								item[inherit].update(item["+" + inherit])
+
+							else:
+								item[inherit] = parentInfo[inherit] + item["+" + inherit]
+
+						else:
+							item[inherit] = item["+" + inherit]
+
+						del item["+" + inherit]
+
+				# collect parentdata
+				for inherit in ["moduleName", "icon", "columns", "filter", "context", "handler"]:
+					if inherit not in item and inherit in parentInfo:
+						item[inherit] = parentInfo[inherit]
 
 				# get handler view
 				handlerCls = HandlerClassSelector.select( item[ "moduleName" ], item )
@@ -215,29 +248,36 @@ class AdminScreen(Screen):
 
 
 			#only generate navpoints if module is visible
-			if "hideInMainBar" not in item  or ("hideInMainBar" in item and not item[ "hideInMainBar" ]):
+			if ("hideInMainBar" in item and item[ "hideInMainBar" ]) or ("mode" in item and item["mode"]=="hidden"):
+				continue
 
-				#skip Empty groups
-				if "prefix" in item and "subItem" not in item:
-					continue
+			#skip Empty groups
+			if "prefix" in item and "subItem" not in item:
+				continue
 
-				#visible module
-				currentModuleWidget = self.navWrapper.addNavigationPoint(
-					item.get("name","missing Name"),
-					item.get("icon",None),
-					viewInst.name if viewInst else "notfound",
-					target
-				)
+			#get  viewName
+			if "mode" in item and item["mode"]=="group":
+				viewInstName = None
+			else:
+				viewInstName = viewInst.name if viewInst else "notfound"
 
-				# sort and append Items modules in a Group
-				if "subItem" in item and item[ "subItem" ]:
-					subItems = sorted(item[ "subItem" ], key=lambda i: i.get("sortIndex", 0))
-					self.appendNavList( subItems, currentModuleWidget )
+			#visible module
+			currentModuleWidget = self.navWrapper.addNavigationPoint(
+				item.get("name","missing Name"),
+				item.get("icon",None),
+				viewInstName,
+				target
+			)
 
-				#sort and append views of a Module
-				if "views" in item and item[ "views" ]:
-					viewItems = sorted(item[ "views" ], key=lambda i: i.get("sortIndex", 0))
-					self.appendNavList( viewItems, currentModuleWidget,item )
+			# sort and append Items modules in a Group
+			if "subItem" in item and item[ "subItem" ]:
+				subItems = sorted(item[ "subItem" ], key=lambda i: i.get("sortIndex", 0))
+				self.appendNavList( subItems, currentModuleWidget )
+
+			#sort and append views of a Module
+			if "views" in item and item[ "views" ]:
+				viewItems = sorted(item[ "views" ], key=lambda i: i.get("sortIndex", 0))
+				self.appendNavList( viewItems, currentModuleWidget,item )
 
 	def openView( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False, target="mainNav" ):
 		if target == "mainNav":
