@@ -846,6 +846,16 @@ class LoadNextBatchAction(html5.Div):
 		self.appendChild( self.btn )
 		self.sinkEvent("onChange")
 		self.currentLoadedPages = 0
+		self.isloading = False
+		DeferredCall(self.registerScroll)
+
+	def registerScroll(self):
+		self.parent().parent().table.addEventListener("scroll",self.onScroll)
+
+	def onScroll(self,sender=None):
+		scrollableDiv = self.parent().parent().table
+		if not self.isloading and scrollableDiv.element.offsetHeight + scrollableDiv.element.scrollTop >= scrollableDiv.element.scrollHeight:
+			self.loadnextPages()
 
 	def onClick(self, sender=None):
 		if sender == self.btn:
@@ -854,7 +864,8 @@ class LoadNextBatchAction(html5.Div):
 	def onChange(self, sender=None):
 		self.loadnextPages()
 
-	def loadnextPages(self):
+	def loadnextPages(self,*args,**kwargs):
+		self.isloading = True
 		self.addClass("is-loading")
 		currentModule = self.parent().parent()
 
@@ -876,6 +887,7 @@ class LoadNextBatchAction(html5.Div):
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
+			self.isloading = False
 
 actionDelegateSelector.insert( 1, LoadNextBatchAction.isSuitableFor, LoadNextBatchAction )
 
