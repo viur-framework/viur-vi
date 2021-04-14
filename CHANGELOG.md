@@ -2,6 +2,14 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.0-b.8] - 2021-04-14
+
+- Feature: Lists are now lazy loading again
+- Feature: added `adminInfo[mode]`
+- Feature: added +filter, +columns etc...
+
+- fix for missing modulgroup configuration
+
 ## [3.0.0-b.7] - 2021-04-13
 
 - fix for missing modulgroup configuration
