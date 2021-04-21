@@ -282,6 +282,7 @@ class ListWidget(html5.Div):
 		"""
 			Requests the next rows from the server and feed them to the table.
 		"""
+
 		if self._currentCursor and not self.isDetaching:
 			filter = {}
 
@@ -302,6 +303,7 @@ class ListWidget(html5.Div):
 			self.table.setDataProvider(None)
 
 	def onAttach(self):
+		self.isDetaching = False
 		super(ListWidget, self).onAttach()
 		NetworkService.registerChangeListener( self )
 
