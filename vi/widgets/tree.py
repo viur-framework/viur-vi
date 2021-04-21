@@ -34,6 +34,7 @@ class TreeWidget(html5.Div):
 		"""
 		super(TreeWidget, self).__init__()
 		self.addClass("vi-widget vi-widget--hierarchy is-drop-target")
+		self["tabindex"] = 1
 		self.sinkEvent(
 			"onKeyDown",
 			"onKeyUp",
@@ -58,6 +59,9 @@ class TreeWidget(html5.Div):
 
 		# States
 		self._isCtrlPressed = False
+		self._isShiftPressed = False
+		self._ctlStartRow = None
+		self._currentRow = None
 		self._expandedNodes = []
 		self._currentRequests = []
 		self.path = []
@@ -144,16 +148,26 @@ class TreeWidget(html5.Div):
 			self.selectionCallback(self, [element.data for element in self.selection])
 
 	def onKeyDown(self, event):
-		# fixme: This is not working
-		logging.error("#fixme onkeydown")
-		if html5.isControl(event):
+		if html5.isControl(event) or html5.getKey(event) == "Meta":
 			self._isCtrlPressed = True
 
+		elif html5.isShift(event):  # Shift
+			self._isShiftPressed = True
+			try:
+				self._ctlStartRow = self._currentRow or self.selection[0]
+			except:
+				self._ctlStartRow = 0
+
 	def onKeyUp(self, event):
-		# fixme: This is not working
-		logging.error("#fixme onkeyup")
-		if html5.isControl(event):
+		if html5.isControl(event) or html5.getKey(event) == "Meta":
 			self._isCtrlPressed = False
+
+		elif html5.isShift(event):
+			self._isShiftPressed = False
+			self._ctlStartRow = None
+
+
+
 
 	def getActions(self):
 		"""
@@ -188,9 +202,8 @@ class TreeWidget(html5.Div):
 
 		This is normally done by clicking or tabbing on an element.
 		"""
+
 		if not isinstance(element, self.selectionAllow):
-			print("-------------------")
-			print(element)
 			logging.warning("Element %r not allowed for selection", element)
 			return False
 
@@ -202,11 +215,21 @@ class TreeWidget(html5.Div):
 			else:
 				self.selection.append(element)
 				element.addClass("is-focused")
+		elif self._isShiftPressed and self.selectionMulti:
+			self.selection =  self.entryFrame._children[min(self.entryFrame._children.index(element),self._currentRow): max(self.entryFrame._children.index(element),self._currentRow)+1]
+
+			for x in self.entryFrame._children:
+				x.removeClass("is-focused")
+
+			for x in self.selection:
+				x.addClass("is-focused")
+
 		else:
 			self.clearSelection()
 			self.selection.append(element)
 			element.addClass("is-focused")
 
+		self._currentRow = self.entryFrame._children.index(element)
 		self.selectionChangedEvent.fire(self, self.selection)
 
 	def activateSelection(self, element):
