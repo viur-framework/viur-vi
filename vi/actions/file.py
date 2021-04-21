@@ -7,7 +7,7 @@ from vi.config import conf
 from flare.i18n import translate
 from flare.network import DeferredCall
 from vi.priorityqueue import actionDelegateSelector
-from vi.widgets.file import Uploader
+from vi.widgets.file import Uploader,MultiUploader
 from flare.button import Button
 
 
@@ -27,14 +27,23 @@ class FileSelectUploader(html5.Input):
 
 	def onChange(self, event):
 		if event.target.files.length > 0:
-			for i in range(event.target.files.length):
-				try:
-					node = self.parent().node
-				except:
-					node = None
-				ul = Uploader(event.target.files.item(i), node, module=self.parent().module)
-				if "filebone" in dir(self):
-					ul.uploadSuccess.register( self.filebone )
+			try:
+				node = self.parent().node
+			except:
+				node = None
+
+			filelist = []
+			files = event.target.files
+			for x in range(0, len(files)):
+				filelist.append(files.item(x))
+
+			if len(filelist) == 1:
+				ul = Uploader(files.item(0), node, self.parent().module)
+			else:
+				ul = MultiUploader(filelist, node,self.parent().module)
+
+			if "filebone" in dir(self):
+				ul.uploadSuccess.register( self.filebone )
 
 		self.parent().removeChild( self )
 
