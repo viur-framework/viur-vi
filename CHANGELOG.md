@@ -2,6 +2,13 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.0-b.9] - 2021-04-21
+
+- Feature: Tree handler now can use shift-click multiselection
+- Fix: reworked upload process
+- Fix: reworked file and folder delete action
+- Fix: lists are now reloaded correctly when they are dettached 
+
 ## [3.0.0-b.8] - 2021-04-15
 
 - Feature: Lists are now lazy loading again
