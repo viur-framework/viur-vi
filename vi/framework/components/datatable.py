@@ -166,7 +166,6 @@ class SelectTable( Table ):
 		row = self.getIndexByTr( tr )
 
 		if self._isCtlPressed:
-			print("GGGGG")
 			if row in self._selectedRows:
 				for x in self._selectedRows:
 					self.getTrByIndex(x).removeClass("is-focused") # remove focus

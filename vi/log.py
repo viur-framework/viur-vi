@@ -224,8 +224,8 @@ class LogButton(html5.Div):
 			#self.cleanLog()
 		self.renderPopOut()
 		if not onlyLoad:
-			self.msgOverlay(logObj)
-
+			return self.msgOverlay(logObj)
+		return None
 
 
 	def msgOverlay(self,logObj):
@@ -260,7 +260,9 @@ class LogButton(html5.Div):
 
 		msgwrap.prependChild(svg)
 		self.appendChild(msgwrap)
-		DeferredCall(self.removeInfo, msgwrap, _delay=2500)
+		if logObj["type"] != "progress":
+			DeferredCall(self.removeInfo, msgwrap, _delay=2500)
+		return msgwrap
 
 	def removeInfo(self,wrap):
 		self.removeChild(wrap)

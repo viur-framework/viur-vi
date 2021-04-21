@@ -327,7 +327,8 @@ class AdminScreen(Screen):
 
 
 	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data=None):
-		self.logWdg.log(type, msg, icon,modul,action,key,data)
+		msg = self.logWdg.log(type, msg, icon,modul,action,key,data)
+		return msg
 
 	def checkInitialHash(self, *args, **kwargs):
 		urlHash = html5.window.location.hash
