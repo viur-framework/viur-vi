@@ -2,6 +2,11 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+
+## [3.0.0-b.10] - 2021-04-22
+
+- Security: Formatstring won't be unescaped anymore.
+
 ## [3.0.0-b.9] - 2021-04-21
 
 - Feature: Tree handler now can use shift-click multiselection
