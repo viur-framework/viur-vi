@@ -25,6 +25,7 @@ self.addEventListener('install', function(event) {
 				      '/vi/s/pyodide/pyodide.asm.js',
 				      '/vi/s/pyodide/pyodide.asm.data.js',
 				      '/vi/s/pyodide/pyodide.js',
+					  '/vi/s/public/pyodide_scripts.js',
 					  '/vi/s/main.html'
 			        ])
 			    })
