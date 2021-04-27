@@ -145,7 +145,20 @@ class init {
 
 					// Then, run kickoff code
 					window.pyodide.runPythonAsync(kickoff).then(
-						() => this.initializingComplete());
+						() => this.initializingComplete()
+					).catch(
+						(err)=>{
+							console.error(err)
+							console.log("Error while importing module")
+							caches.keys().then(function(names) {
+								for (let name of names){
+									caches.delete(name);
+								}
+
+							})
+							//location.reload();
+						}
+					);
 				});
 			});
 		});

@@ -1,4 +1,4 @@
-
+console.log("sw start")
 
 self.addEventListener('install', function(event) {
 		event.waitUntil(
@@ -25,7 +25,6 @@ self.addEventListener('install', function(event) {
 				      '/vi/s/pyodide/pyodide.asm.js',
 				      '/vi/s/pyodide/pyodide.asm.data.js',
 				      '/vi/s/pyodide/pyodide.js',
-					  '/vi/s/public/pyodide_scripts.js',
 					  '/vi/s/main.html'
 			        ])
 			    })
@@ -42,7 +41,7 @@ self.addEventListener('fetch', function(event) {
     event.respondWith(
 	    caches.match(event.request).then(function(response) {
 	        if (response) {
-		        // console.debug('Found ', event.request.url, ' in cache');
+		        //console.debug('Found ', event.request.url, ' in cache');
 		        return response;
 	        }
 	        //console.debug('Request for ', event.request.url);
@@ -52,6 +51,7 @@ self.addEventListener('fetch', function(event) {
 });
 
 self.addEventListener('activate', function(event) {
+	console.log("activate")
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       return Promise.all(
