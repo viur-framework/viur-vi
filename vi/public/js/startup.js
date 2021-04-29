@@ -5,7 +5,7 @@ function postMessageChannelToFrame(frameId, origin, channel) {
 window.addEventListener(
 		"load",
 		(event) => {
-			window.init = new init({
+			window.init = new flare({
 				// Prelude to be executed before fetching local modules
 				prelude: ``,
 
@@ -29,7 +29,7 @@ window.addEventListener(
 
 // If no languagePluginLoader is available, fallback to Pyodide from CDN
 if( !window.languagePluginLoader ) {
-	var cdn = "https://pyodide-cdn2.iodide.io/v0.16.1/full/pyodide.js";
+	var cdn = "https://cdn.jsdelivr.net/pyodide/v0.17.0/full/pyodide.js";
 	console.debug(`Using Pyodide fallback from ${cdn}...`);
 	var script = document.createElement("script");
 	script.setAttribute("src", cdn);

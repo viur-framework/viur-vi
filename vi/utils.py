@@ -110,7 +110,7 @@ class indexeddb():
 		name = event.target.listName
 		db = event.target
 		def fetchedData(event):
-			db.dispatchEvent(CustomEvent.new("dataready",{"detail":{"data":event.target.result}}))
+			db.dispatchEvent(CustomEvent.new("dataready",detail={"data":event.target.result}))
 
 		dbResult = event.target.result
 		dbTransaction = event.target.result.transaction
@@ -131,7 +131,8 @@ class indexeddb():
 		name = event.target.listName
 		db = event.target
 		def fetchedData(event):
-			db.dispatchEvent(CustomEvent.new("dataready",{"detail":{"data":event.target.result}}))
+			db.dispatchEvent(CustomEvent.new("dataready",detail={"data":event.target.result}))
+
 
 		dbResult = event.target.result
 		dbTransaction = event.target.result.transaction

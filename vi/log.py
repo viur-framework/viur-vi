@@ -128,6 +128,7 @@ class LogButton(html5.Div):
 	def idbdata(self,event):
 		logAmount = conf["logAmount"]
 		for item in list(event.detail["data"])[:logAmount]:
+			item = item.to_py()
 			self.log(item["type"],
 			         item["msg"],
 			         item["icon"],
@@ -138,7 +139,6 @@ class LogButton(html5.Div):
 		             item["date"],
 					 onlyLoad=True
 		          )
-
 		self.cleanLog()
 
 
@@ -149,6 +149,7 @@ class LogButton(html5.Div):
 
 	def cleanLogAction( self,event ):
 		for idx in list(event.detail["data"])[:-conf["logAmount"]-1]:
+			idx = idx.to_py()
 			conf[ "indexeddb" ].dbAction( "delete", "vi_log", idx )
 
 
