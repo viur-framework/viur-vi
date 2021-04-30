@@ -487,6 +487,7 @@ class RelationalBone( html5.Div ):
 			self.selectBtn = None
 			self.quickselector = None
 			self.addSelection = None
+			self.quickselectionWrapper = None
 
 		self.selectionDiv = html5.Div()
 
@@ -768,7 +769,7 @@ class RelationalBone( html5.Div ):
 
 		self.entries.append( entry )
 		self.selectionDiv.appendChild( entry )
-		if not self.multiple:
+		if not self.multiple and self.quickselectionWrapper:
 			self.quickselectionWrapper.hide()
 
 	def removeEntry( self, entry ):
@@ -779,7 +780,7 @@ class RelationalBone( html5.Div ):
 		assert entry in self.entries, "Cannot remove unknown entry %s from relationalBone" % str( entry )
 		self.selectionDiv.removeChild( entry )
 		self.entries.remove( entry )
-		if not self.multiple and len( self.entries ) == 0:
+		if not self.multiple and len( self.entries ) == 0 and self.quickselectionWrapper:
 			self.quickselectionWrapper.show()
 			DeferredCall( self.quickselector.updateContainer, _delay = 1 )
 		if len( self.entries ) == 0:
