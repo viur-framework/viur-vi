@@ -113,14 +113,22 @@ class EditAction(Button):
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor(s["key"])
+			group = None
+			if "listgroup" in s:
+				group = s["listgroup"]
 
-	def openEditor(self, key):
+			self.openEditor(s["key"], group)
+
+	def openEditor(self, key,group = None):
 		pane = Pane(translate("Edit"), closeable=True, iconURL="icons-edit",
 					iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit"])
 		conf["mainWindow"].stackPane(pane, focus=True)
+
+		if not group:
+			group = self.parent().parent().group
+
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key,
-						  context=self.parent().parent().context, group=self.parent().parent().group)
+						  context=self.parent().parent().context, group=group)
 		pane.addWidget(edwg)
 
 	def resetLoadingState(self):
@@ -176,14 +184,22 @@ class CloneAction(Button):
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor(s["key"])
+			group = None
+			if "listgroup" in s:
+				group = s["listgroup"]
 
-	def openEditor(self, key):
+			self.openEditor(s["key"], group)
+
+	def openEditor(self, key, group=None):
 		pane = Pane(translate("Clone"), closeable=True, iconURL="icons-clone",
 					iconClasses=["modul_%s" % self.parent().parent().module, "apptype_list", "action_edit"])
 		conf["mainWindow"].stackPane(pane)
+
+		if not group:
+			group = self.parent().parent().group
+
 		edwg = EditWidget(self.parent().parent().module, EditWidget.appList, key=key, clone=True,
-						  context=self.parent().parent().context, group=self.parent().parent().group)
+						  context=self.parent().parent().context, group=group)
 		pane.addWidget(edwg)
 		pane.focus()
 
