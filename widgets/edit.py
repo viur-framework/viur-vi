@@ -532,6 +532,15 @@ class EditWidget( html5.Div ):
 				elif bone[ "error" ] is None and not self.wasInitialRequest:
 					descrLbl.addClass( "is-valid" )
 
+			if bone["visible"] and bone[ "error" ] is not None and not self.wasInitialRequest and bone[ "type" ] not in ["bool"] and \
+					bone[ "error" ] not in ["No value selected", "No value entered", "Invalid entry selected", "No rawValue entered"]:
+				descrLbl.addClass("is-invalid")
+				descrLbl["title"] = bone["error"]
+
+				segments[cat].addClass("is-incomplete is-active")
+
+				hasMissing = True
+
 			if isinstance( bone[ "error" ], dict ):
 				widget.setExtendedErrorInformation( bone[ "error" ] )
 
