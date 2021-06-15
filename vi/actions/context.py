@@ -28,7 +28,7 @@ class ContextAction(Button):
 
 		icon = adminInfo.get("icon")
 
-		super(ContextAction, self).__init__(text=title, icon=icon, *args, **kwargs)
+		super(ContextAction, self).__init__(text=title, icon=icon)
 
 		self.widget = None
 		self.adminInfo = adminInfo

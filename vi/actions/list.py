@@ -21,7 +21,7 @@ class AddAction(Button):
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddAction, self ).__init__(translate("Add"), icon="icon-add", *args, **kwargs )
+		super( AddAction, self ).__init__(translate("Add"), icon="icon-add")
 		self["class"] = "bar-item btn btn--small btn--add-list btn--primary"
 
 	@staticmethod
@@ -59,7 +59,7 @@ class EditAction(Button):
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), icon="icon-edit", *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), icon="icon-edit")
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -133,7 +133,7 @@ class CloneAction(Button):
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( CloneAction, self ).__init__( translate("Clone"), icon="icon-clone", *args, **kwargs )
+		super( CloneAction, self ).__init__( translate("Clone"), icon="icon-clone")
 		self["class"] = "bar-item btn btn--small btn--clone"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -200,7 +200,7 @@ class DeleteAction(Button):
 		Allows deleting an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__( translate("Delete"), icon="icon-delete", *args, **kwargs )
+		super( DeleteAction, self ).__init__( translate("Delete"), icon="icon-delete")
 		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -401,7 +401,7 @@ actionDelegateSelector.insert( 2, ListPreviewAction.isSuitableFor, ListPreviewAc
 
 class ListPreviewInlineAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( ListPreviewInlineAction, self ).__init__( translate("vi.sidebar.internalpreview"), icon="icon-list-item", *args, **kwargs )
+		super( ListPreviewInlineAction, self ).__init__( translate("vi.sidebar.internalpreview"), icon="icon-list-item")
 		self["class"] = "bar-item btn btn--small btn--intpreview"
 		self.urls = None
 		self.intPrevActive = False
@@ -520,7 +520,7 @@ class SelectFieldsPopup( Popup ):
 		if not listWdg._structure:
 			return
 
-		super( SelectFieldsPopup, self ).__init__( title=translate("Select fields"), *args, **kwargs )
+		super( SelectFieldsPopup, self ).__init__( title=translate("Select fields"))
 
 		self.removeClass("popup--center")
 		self.addClass("popup--n popup--selectfields")
@@ -629,7 +629,7 @@ class SelectFieldsPopup( Popup ):
 
 class SelectFieldsAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( SelectFieldsAction, self ).__init__( translate("Select fields"), icon="icon-list", *args, **kwargs )
+		super( SelectFieldsAction, self ).__init__( translate("Select fields"), icon="icon-list")
 		self["class"] = "bar-item btn btn--small btn--selectfields"
 		self["disabled"] = self.isDisabled = True
 
@@ -661,7 +661,7 @@ class ReloadAction(Button):
 		Allows Reloading
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), icon="icon-reload", *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), icon="icon-reload")
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
@@ -687,7 +687,7 @@ actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 class TableNextPage(Button):
 
 	def __init__(self, *args, **kwargs):
-		super(TableNextPage, self).__init__(translate("next Page"), icon="icon-table", *args, **kwargs)
+		super(TableNextPage, self).__init__(translate("next Page"), icon="icon-table")
 		self["class"] = "bar-item btn btn--small btn--next"
 
 	def postInit(self,widget=None):
@@ -713,7 +713,7 @@ actionDelegateSelector.insert(1, TableNextPage.isSuitableFor, TableNextPage)
 class TablePrevPage(Button):
 
 	def __init__(self, *args, **kwargs):
-		super(TablePrevPage, self).__init__(translate("prev Page"), icon="icon-table", *args, **kwargs)
+		super(TablePrevPage, self).__init__(translate("prev Page"), icon="icon-table")
 		self["class"] = "bar-item btn btn--small btn--prev"
 
 	def postInit(self,widget=None):
@@ -896,7 +896,7 @@ class LoadAllAction(Button):
 		Allows Loading all Entries in a list
 	"""
 	def __init__(self, *args, **kwargs):
-		super( LoadAllAction, self ).__init__( translate("Load all"), icon="icon-table", *args, **kwargs )
+		super( LoadAllAction, self ).__init__( translate("Load all"), icon="icon-table")
 		self["class"] = "bar-item btn btn--small btn--loadall"
 
 	@staticmethod
@@ -999,7 +999,7 @@ actionDelegateSelector.insert( 1, PageFindAction.isSuitableFor, PageFindAction )
 
 class ListSelectFilterAction(Button):
 	def __init__(self, *args, **kwargs ):
-		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), icon="icon-search", *args, **kwargs )
+		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), icon="icon-search")
 		self["class"] = "bar-item btn btn--small btn--selectfilter"
 		self.urls = None
 		self.filterSelector = None
@@ -1044,7 +1044,7 @@ actionDelegateSelector.insert( 1, ListSelectFilterAction.isSuitableFor, ListSele
 
 class CreateRecurrentAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(CreateRecurrentAction, self ).__init__( translate("Save-Close"), icon="icon-save-file", *args, **kwargs )
+		super(CreateRecurrentAction, self ).__init__( translate("Save-Close"), icon="icon-save-file")
 		self["class"] = "bar-item btn btn--small btn--primary btn--save-close"
 
 	@staticmethod
@@ -1059,7 +1059,7 @@ actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRec
 
 class ExportCsvAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(ExportCsvAction, self).__init__(translate("CSV Export"), icon="icon-download-file", *args, **kwargs)
+		super(ExportCsvAction, self).__init__(translate("CSV Export"), icon="icon-download-file")
 		self["class"] = "bar-item btn btn--small btn--download"
 
 	def onClick(self, sender = None):
@@ -1073,7 +1073,7 @@ actionDelegateSelector.insert(1, ExportCsvAction.isSuitableFor, ExportCsvAction)
 
 class SelectAllAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectAllAction, self ).__init__(translate("Select all"), icon="icon-select-add", *args, **kwargs)
+		super(SelectAllAction, self ).__init__(translate("Select all"), icon="icon-select-add")
 		self["class"] = "bar-item btn btn--small btn--selectall"
 		self["disabled"] = self.isDisabled = True
 
@@ -1104,7 +1104,7 @@ actionDelegateSelector.insert(1, SelectAllAction.isSuitableFor, SelectAllAction)
 
 class UnSelectAllAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), icon="icon-select-remove", *args, **kwargs)
+		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), icon="icon-select-remove")
 		self["class"] = "bar-item btn btn--small btn--unselectall"
 		self["disabled"] = self.isDisabled = True
 
@@ -1134,7 +1134,7 @@ actionDelegateSelector.insert(1, UnSelectAllAction.isSuitableFor, UnSelectAllAct
 
 class SelectInvertAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectInvertAction, self ).__init__(translate("Invert selection"), icon="icon-select-invert", *args, **kwargs)
+		super(SelectInvertAction, self ).__init__(translate("Invert selection"), icon="icon-select-invert")
 		self["class"] = "bar-item btn btn--small btn--selectinvert"
 		self["disabled"] = self.isDisabled = True
 

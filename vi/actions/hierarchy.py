@@ -14,7 +14,7 @@ class AddAction(Button):
 		Adds a new node in a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddAction, self ).__init__( translate("Add"), icon="icon-add", *args, **kwargs )
+		super( AddAction, self ).__init__( translate("Add"), icon="icon-add")
 		self["class"] = "bar-item btn btn--small btn--primary"
 
 	@staticmethod
@@ -60,7 +60,7 @@ class EditAction(Button):
 		Edits a node in a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), icon="icon-edit", *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), icon="icon-edit")
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -138,7 +138,7 @@ class CloneAction(Button):
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( CloneAction, self ).__init__( translate("Clone"), icon="icon-clone", *args, **kwargs )
+		super( CloneAction, self ).__init__( translate("Clone"), icon="icon-clone")
 		self["class"] = "bar-item btn btn--small btn--clone"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -209,7 +209,7 @@ class DeleteAction(Button):
 		Deletes a node from a hierarchy application.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__( translate("Delete"), icon="icon-delete", *args, **kwargs )
+		super( DeleteAction, self ).__init__( translate("Delete"), icon="icon-delete")
 		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled = True
@@ -283,7 +283,7 @@ class ReloadAction(Button):
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), icon="icon-reload", *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), icon="icon-reload")
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
@@ -369,7 +369,7 @@ class ListViewAction(Button):
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ListViewAction, self ).__init__( translate("ListViewAction"), icon="icon-list", *args, **kwargs )
+		super( ListViewAction, self ).__init__( translate("ListViewAction"), icon="icon-list")
 		self["class"] = "bar-item btn btn--small btn--list"
 
 	@staticmethod

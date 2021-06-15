@@ -12,7 +12,7 @@ class AddLeafAction(Button):
 		Creates a new leaf (ie. a file) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddLeafAction, self ).__init__( translate("Add"), icon="icon-add", *args, **kwargs )
+		super( AddLeafAction, self ).__init__( translate("Add"), icon="icon-add")
 		self["class"] = "bar-item btn btn--small btn--add-leaf btn--primary"
 
 	@staticmethod
@@ -54,7 +54,7 @@ class AddNodeAction(Button):
 		Creates a new node (ie. a directory) for a tree application
 	"""
 	def __init__(self, *args, **kwargs):
-		super( AddNodeAction, self ).__init__(  translate("Add"), icon="icon-add-folder", *args, **kwargs )
+		super( AddNodeAction, self ).__init__(  translate("Add"), icon="icon-add-folder")
 		self["class"] = "bar-item btn btn--small btn--add-node"
 
 	@staticmethod
@@ -98,7 +98,7 @@ class EditAction(Button):
 		The type (node or leaf) of the entry is determined dynamically
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__(  translate("Edit"), icon="icon-edit", *args, **kwargs )
+		super( EditAction, self ).__init__(  translate("Edit"), icon="icon-edit")
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -203,7 +203,7 @@ class DeleteAction(Button):
 		The type (node or leaf) of the entry is determined dynamically.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__(translate("Delete"), icon="icon-delete", *args, **kwargs )
+		super( DeleteAction, self ).__init__(translate("Delete"), icon="icon-delete")
 		self["class"] = "bar-item btn btn--small btn--delete"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -284,7 +284,7 @@ class ReloadAction(Button):
 		Allows adding an entry in a list-module.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), icon="icon-reload", *args, **kwargs )
+		super( ReloadAction, self ).__init__( translate("Reload"), icon="icon-reload")
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod

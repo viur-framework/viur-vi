@@ -53,13 +53,10 @@ class ActionBar(html5.Div):
 					handler = ""
 
 				actionWdg = actionDelegateSelector.select(self.module, handler, action)
-				if actionWdg is not None:
-					try:
-						actionWdg = actionWdg(self.module, handler, action)
-					except:
-						actionWdg = actionWdg()
 
-					self.appendChild( actionWdg )
+				if actionWdg is not None:
+					actionWdg = actionWdg(self.module, handler, action)
+					self.appendChild(actionWdg)
 
 					if "postInit" in dir(actionWdg):
 						actionWdg.postInit(widget=widget)
