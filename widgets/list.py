@@ -345,6 +345,9 @@ class ListWidget(html5.Div):
 		if module and module != self.module:
 			return
 
+		if "__id" in kwargs and kwargs["__id"] and kwargs["__id"]!= self.filterID:
+			return
+
 		self.reloadData()
 
 	def reloadData(self):
