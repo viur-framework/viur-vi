@@ -10,7 +10,7 @@ from flare.i18n import translate
 # ShopMarkAction -------------------------------------------------------------------------------------------------------
 class ShopMarkAction( Button ):
 	def __init__(self, action, title, cls="", txtQuestion=None, txtSuccess=None, txtFailure=None, *args, **kwargs):
-		super( ShopMarkAction, self ).__init__( translate( title ), *args, **kwargs )
+		super( ShopMarkAction, self ).__init__( translate( title ))
 
 		#self["class"] = "icon order_markpayed"
 		self["disabled"] = True

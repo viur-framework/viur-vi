@@ -140,7 +140,7 @@ class EditAction(Button):
 		otherwise the full editWidget is used.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), icon="icon-edit", *args, **kwargs )
+		super( EditAction, self ).__init__( translate("Edit"), icon="icon-edit")
 		self["class"] = "bar-item btn btn--small btn--edit"
 		self["disabled"]= True
 		self.isDisabled=True
@@ -240,7 +240,7 @@ class DownloadAction(Button):
 		Allows downloading files from the server.
 	"""
 	def __init__(self, *args, **kwargs):
-		super( DownloadAction, self ).__init__( translate("Download"), icon="icon-download-file", *args, **kwargs )
+		super( DownloadAction, self ).__init__( translate("Download"), icon="icon-download-file")
 		self["class"] = "bar-item btn btn--small btn--download"
 		self["disabled"]= True
 		self.isDisabled=True
