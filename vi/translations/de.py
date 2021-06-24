@@ -206,13 +206,12 @@ lngDe = {
 	"Invalid Value":"Wert ist ungültig",
 	"Invalid value submitted":"Wert ist ungültig",
 	"Invalid value selected":"Wert ist ungültig",
+	"Incomplete data":"Daten unvollständig",
 	"server.bones.passwordBone.tooWeakMessage": "Das eingegebene Passwort ist zu schwach! Bitte verwenden Sie Ziffern, sowie Klein- und Großbuchstaben.",
 	"server.bones.passwordbone.tooshortmessage": "Das eingegebene Passwort ist zu kurz! Es werden mindestens 8 Zeichen benötigt.",
 	"The entered password is to short - it requires at least 8 characters.": "Das eingegebene Passwort ist zu schwach! Bitte verwenden Sie Ziffern, sowie Klein- und Großbuchstaben.",
 	"The entered password is too weak.": "Das eingegebene Passwort ist zu kurz! Es werden mindestens 8 Zeichen benötigt.",
 
-	
-	
 
 	#Sidebar
 	"vi.sidebar.internalpreview": "Details",
