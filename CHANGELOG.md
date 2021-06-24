@@ -1,7 +1,11 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
-
+## [3.0.0-rc.1] - 2021-06-24
+- Feature(**BREAKING**): formatStrings now safeEval expressions
+- removed(**BREAKING**): AdminInfo options `disabledFunctions`, `rootNodeOf`, `extendedFilters`, `visibleName`, `checkboxSelction`, `indexes`, `entryActions`, `disableInternalPreview`, `hideInMainBar`
+- added(**BREAKING**): AdminInfo options `display`, `moduleGroup`, `changeInvalidates`, `disabledActions`
+- changed(**BREAKING**): AdminInfo option `actions` now by default left oriented. user `|` at the beginning and end to center actions
 
 ## [3.0.0-b.10] - 2021-04-22
 
