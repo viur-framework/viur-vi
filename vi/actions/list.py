@@ -328,7 +328,7 @@ class ListPreviewAction(html5.Span):
 		if module in conf["modules"].keys():
 			moduleConfig = conf["modules"][module]
 
-			urls = moduleConfig.get("preview", moduleConfig.get("previewurls"))
+			urls = moduleConfig.get("preview", moduleConfig.get("preview"))
 			if urls:
 				self.urls = urls
 
@@ -392,7 +392,7 @@ class ListPreviewAction(html5.Span):
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
-		isAvailable = conf["modules"][module].get("preview", conf["modules"][module].get("previewurls"))
+		isAvailable = conf["modules"][module].get("preview", conf["modules"][module].get("preview"))
 
 		return correctAction and correctHandler and hasAccess and not isDisabled and isAvailable
 
@@ -424,11 +424,6 @@ class ListPreviewInlineAction(Button):
 			self.removeClass("is-disabled")
 		else:
 			self.addClass("is-disabled")
-
-		# Disable internal Preview by config
-		module = self.parent().parent().module
-		if conf["modules"][module].get("disableInternalPreview", not conf["internalPreview"]):
-			return
 
 		# If there is already something in the sidebar, don't show the internal preview!
 		if (self.parent().parent().sideBar.getWidget()
@@ -482,8 +477,7 @@ class CloseAction(Button):
 	def __init__(self, *args, **kwargs ):
 		super(CloseAction, self).__init__(
 			translate("Close"),
-			icon="icon-cancel",
-			*args, **kwargs
+			icon="icon-cancel"
 		)
 		self.addClass("bar-item btn btn--small btn--close")
 
@@ -500,8 +494,7 @@ class SelectAction(Button):
 	def __init__(self, *args, **kwargs ):
 		super().__init__(
 			translate("Select"),
-			icon="icon-select-add",
-			*args, **kwargs
+			icon="icon-select-add"
 		)
 		self.addClass("bar-item btn btn--small btn--activateselection")
 

@@ -7,11 +7,11 @@ from vi.config import conf
 
 
 
-def formatString(format, data, structure = None, prefix = None, language = None, context=None, _rec = 0):
+def formatString(format, data, structure = None, language = None):
 	"""
 	Parses a string given by format and substitutes placeholders using values specified by data.
 	"""
-	return fl_formatString(format,data,structure,prefix,language,context,_rec)
+	return fl_formatString(format,data,structure,language)
 
 def getImagePreview(data, cropped = False, size = 150):
 	return data["downloadUrl"]

@@ -71,20 +71,9 @@ class ListWidget(html5.Div):
 						if v["__id"] == filterID:
 							myView = v
 							break
-			if myView and "extendedFilters" in myView.keys() and myView["extendedFilters"]:
 
-				#fixme
-				#self.appendChild(CompoundFilter(myView, module, embed=True))
-				logging.error("#fixme CompoundFilter")
-
-		self._checkboxes = (conf["modules"]
-		              and module in conf["modules"].keys()
-		              and "checkboxSelection" in conf["modules"][module].keys()
-		              and conf["modules"][module]["checkboxSelection"])
-		self._indexes = (conf["modules"]
-		           and module in conf["modules"].keys()
-		           and "indexes" in conf["modules"][module].keys()
-		           and conf["modules"][module]["indexes"])
+		self._checkboxes = False # will be user configureable
+		self._indexes = False # will be user configureable
 
 		self._currentCursor = None
 		self._structure = None
@@ -105,8 +94,14 @@ class ListWidget(html5.Div):
 		self.tableInitialization(*args, **kwargs)
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
 
-		self.actionBar.setActions(self.getActions(myView), widget=self)
-		self.entryActionBar.setActions(self.getDefaultEntryActions(myView), widget=self)
+		#build actions
+		self.actions = []
+		self.entryActions = []
+
+		self.getAllActions(myView)
+
+		self.actionBar.setActions(self.getActions(), widget=self)
+		self.entryActionBar.setActions(self.getDefaultEntryActions(), widget=self)
 
 		self.emptyNotificationDiv = html5.Div()
 		self.emptyNotificationDiv.prependChild( SvgIcon( "icon-error-file", title = "Currently no entries" ) )
@@ -207,60 +202,82 @@ class ListWidget(html5.Div):
 		self.appendChild(self.tableBottomActionBar)
 		self.tableBottomActionBar.setActions(["|","loadnext", "|", "tableitems"]) #,"tableprev","tablenext"
 
-	def getActions(self, view = None):
-		"""
-			Returns the list of actions available in the action bar.
-		"""
-		actions = ["add", "selectfields"]
-
-		#if not self.selectMode:
-		#	actions += ["|", "exportcsv"]
-
-		# Extended actions from view?
-		if view and "actions" in view.keys():
-			if actions[-1] != "|":
-				actions.append( "|" )
-
-			actions.extend( view[ "actions" ] or [] )
-
-		# Extended Actions from config?
-		elif conf["modules"] and self.module in conf["modules"].keys():
-			cfg = conf["modules"][ self.module ]
-
-			if "actions" in cfg.keys() and cfg["actions"]:
-				if actions[-1] != "|":
-					actions.append( "|" )
-
-				actions.extend( cfg["actions"] )
-
-		actions += ["|",  "reload", "setamount", "intpreview", "selectfilter"] #"pagefind",  "loadnext",
-
-		return actions
-
-	def getDefaultEntryActions(self, view = None ):
+	def getDefaultEntryActions(self):
 		"""
 			Returns the list of actions available in our actionBar
 		"""
-		actions = ["edit", "clone", "delete"]
+		return self.entryActions
 
-		# Extended actions from view?
-		if view and "actions" in view.keys():
-			if actions[-1] != "|":
-				actions.append( "|" )
+	def getActions(self):
+		"""
+			Returns the list of actions available in our actionBar
+		"""
+		return self.actions
 
-			actions.extend( view[ "actions" ] or [] )
+	def getAllActions(self, view = None):
+		"""
+			Returns the list of actions available in the action bar.
+		"""
+		allActions = {
+			"default_actions":[["add","selectfields"],["reload","setamount","intpreview","selectfilter"] ],
+			"entry_actions":[["edit","clone","delete"],["preview"]]
+		}
 
-		# Extended Actions from config?
-		elif conf["modules"] and self.module in conf["modules"].keys():
-			cfg = conf["modules"][ self.module ]
+		configActions = []
+		disabledActions = []
 
-			if "entryActions" in cfg.keys() and cfg["entryActions"]:
-				#if actions[-1] != "|":
-				#	actions.append( "|" )
+		cfg = None
+		if conf["modules"] and self.module in conf["modules"]:
+			cfg = conf["modules"][self.module]
 
-				actions.extend( cfg["entryActions"] )
-		actions.extend(["|", "preview"])
-		return actions
+		#try to use view cfg first
+		for cfgSource in [view, cfg]:
+			if cfgSource:
+				if "actions" in cfgSource and cfgSource["actions"]:
+					configActions = cfgSource["actions"]
+
+					if "disabledActions" in cfgSource and cfgSource["disabledActions"]:
+						disabledActions = cfgSource["disabledActions"]
+					break
+
+		#remove disabledAction from defaultActions
+		for disabledAction in disabledActions:
+			#remove action from defaultActions
+			for key,value in allActions.items():
+				for actionslist in value:
+					if disabledAction in actionslist:
+						actionslist.remove(disabledAction)
+
+		if configActions:
+			try:
+				splitIndex = configActions.index("\n")
+			except:
+				splitIndex = None
+
+			if splitIndex:
+				allActions["default_actions"].insert(1, configActions[0:splitIndex])
+				allActions["entry_actions"].insert(1, configActions[splitIndex+1:])
+			else:
+				allActions["default_actions"].insert(1, configActions[:])
+
+
+		#for each bar
+		for k,v in allActions.items():
+			if len(v)==2: # build default setup.
+				v = [l+["|"] for l in v] # add | between lists
+			else:
+				if "|" not in v[1]: #per default all custom actions will be on the left side.
+					v[1]+= ["|"] #ensure atleast one seperator
+
+			actionList = [action for l in v for action in l]
+
+			if actionList[-1]=="|":
+				actionList = actionList[:-1] #never end with |
+
+			allActions[k] = actionList
+
+		self.actions = allActions["default_actions"]
+		self.entryActions = allActions["entry_actions"]
 
 	def showErrorMsg(self, req=None, code=None):
 		"""

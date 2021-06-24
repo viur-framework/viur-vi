@@ -272,7 +272,7 @@ class TreeWidget(html5.Div):
 			for k, v in conf["modules"].items():
 				if (k == module
 						and v.get("handler") == "list"
-						and v.get("rootNodeOf") == self.module):
+						and self.module in v.get("changeInvalidates", [])):
 					isRootNode = True
 					break
 

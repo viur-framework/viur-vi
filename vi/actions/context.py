@@ -19,9 +19,7 @@ class ContextAction(Button):
 		assert mod in conf["modules"], "The module '%s' must provide an adminInfo when run in a context action"
 		adminInfo = conf["modules"][mod]
 
-		if "visibleName" in adminInfo:
-			title = adminInfo["visibleName"]
-		elif "name" in adminInfo:
+		if "name" in adminInfo:
 			title = adminInfo["name"]
 		else:
 			title = mod

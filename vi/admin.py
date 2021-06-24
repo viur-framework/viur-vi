@@ -154,20 +154,16 @@ class AdminScreen(Screen):
 			elif "sortIndex" not in m and "name" not in m: #no sortidx, no name
 				m.update( { "sortIndex": 0} )
 
-			if ": " in m["name"]:
-				# find modules that belong to groups
-
-				#maybe a groupprefix
-				group = m["name"].split(": ")[0]+": "
+			if "moduleGroup" in m and m["moduleGroup"]:
+				group = m["moduleGroup"]
 
 				#stack modules in groups
-				getGroup = next((item for item in mergedItems if "prefix" in item and item["prefix"]==group),None)
+				getGroup = mergedItems[group] if group in mergedItems else None
 
 				if not getGroup: #corrupt group definition, add as normal module
 					mergedItems.append( m )
 					continue
 
-				m["name"] = m["name"].replace(group,"")
 				if "subItem" not in getGroup:
 					getGroup.update({"subItem":[m]})
 				else:
@@ -248,7 +244,7 @@ class AdminScreen(Screen):
 
 
 			#only generate navpoints if module is visible
-			if ("hideInMainBar" in item and item[ "hideInMainBar" ]) or ("mode" in item and item["mode"]=="hidden"):
+			if ("display" in item and item["display"]=="hidden"):
 				continue
 
 			#skip Empty groups
@@ -256,7 +252,7 @@ class AdminScreen(Screen):
 				continue
 
 			#get  viewName
-			if "mode" in item and item["mode"]=="group":
+			if "display" in item and item["display"]=="group":
 				viewInstName = None
 			else:
 				viewInstName = viewInst.name if viewInst else "notfound"

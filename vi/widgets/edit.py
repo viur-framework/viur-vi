@@ -398,9 +398,10 @@ class EditWidget(html5.Div):
 		                              "fromParent" : self.clone_of, "toParent" : self.key },
 		                                secure=True, successHandler=self.cloneComplete )
 		else:
-			NetworkService.request( conf[ "modules" ][ self.module ][ "rootNodeOf" ], "clone",
-		                            { "fromRepo" : self.clone_of, "toRepo" : self.key },
-		                                secure=True, successHandler=self.cloneComplete )
+			for amodule in conf[ "modules" ][ self.module ][ "changeInvalidates" ]:
+				NetworkService.request( amodule, "clone",
+										{ "fromRepo" : self.clone_of, "toRepo" : self.key },
+											secure=True, successHandler=self.cloneComplete )
 
 	def cloneComplete(self, request):
 		conf["mainWindow"].log("success", translate( u"The hierarchy will be cloned in the background." ))
@@ -435,7 +436,7 @@ class EditWidget(html5.Div):
 
 			if askHierarchyCloning and self.clone:
 				# for lists, which are rootNode entries of hierarchies, ask to clone entire hierarchy
-				if self.applicationType == EditWidget.appList and "rootNodeOf" in conf[ "modules" ][ self.module ]:
+				if self.applicationType == EditWidget.appList and "changeInvalidates" in conf[ "modules" ][ self.module ]:
 					Confirm(translate(u"Do you want to clone the entire hierarchy?"),
 				                            yesCallback=self.doCloneHierarchy,
 				                            noCallback=self.closeOrContinue)
@@ -467,7 +468,7 @@ class EditWidget(html5.Div):
 		firstCat = None
 		currRow = 0
 		hasMissing = False
-		defaultCat = conf["modules"][self.module].get("visibleName", self.module)
+		defaultCat = conf["modules"][self.module].get("name", self.module)
 		adminCat = conf["modules"][self.module].get("defaultCategory",None)
 
 		contextVariable = conf["modules"][self.module].get("editContext")
