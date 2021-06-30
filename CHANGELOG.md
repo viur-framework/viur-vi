@@ -1,6 +1,10 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+## [3.0.0-rc.3] - 2021-06-30
+- Fix: tree selection works again, multi-selection only allowed in browser-trees
+- Fix: file actions works again
+
 ## [3.0.0-rc.2] - 2021-06-30
 - Fix: tree edit action works again
 - docu: updated urllib3

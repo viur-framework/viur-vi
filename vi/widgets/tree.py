@@ -69,7 +69,7 @@ class TreeWidget(html5.Div):
 		# Selection
 		self.selectionCallback = None
 		self.selectionAllow = TreeItemWidget
-		self.selectionMulti = True
+		self.selectionMulti = False
 		self.selection = []
 		self.isSelector = False
 
@@ -229,7 +229,9 @@ class TreeWidget(html5.Div):
 			self.selection.append(element)
 			element.addClass("is-focused")
 
-		self._currentRow = self.entryFrame._children.index(element)
+		if self.selectionMulti:
+			self._currentRow = self.entryFrame._children.index(element)
+
 		self.selectionChangedEvent.fire(self, self.selection)
 
 	def activateSelection(self, element):
@@ -521,7 +523,7 @@ class TreeBrowserWidget(TreeWidget):
 
 	def __init__(self, module, rootNode=None, node=None, context=None, *args, **kwargs):
 		super(TreeBrowserWidget, self).__init__(module, rootNode, node, context, *args, **kwargs)
-
+		self.selectionMulti = True
 		self.pathList = html5.Div()
 		self.pathList.addClass("vi-tree-breadcrumb")
 		self.appendChild(self.pathList, self.entryFrame)

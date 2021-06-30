@@ -54,8 +54,7 @@ class AddNodeAction(Button):
 	def __init__(self, *args, **kwargs):
 		super(AddNodeAction, self).__init__(
 			translate("Add folder"),
-			icon="icon-add-folder",
-			*args, **kwargs
+			icon="icon-add-folder"
 		)
 		self.addClass("bar-item btn btn--small btn--mkdir")
 
@@ -103,8 +102,7 @@ class AddLeafAction(Button):
 	def __init__(self, *args, **kwargs):
 		super(AddLeafAction, self).__init__(
 			translate("Upload"),
-			icon="icon-upload-file",
-			*args, **kwargs
+			icon="icon-upload-file"
 		)
 		self.addClass("bar-item btn btn--small btn--upload btn--primary")
 
