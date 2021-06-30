@@ -1,6 +1,10 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+## [3.0.0-rc.2] - 2021-06-30
+- Fix: tree edit action works again
+- docu: updated urllib3
+
 ## [3.0.0-rc.1] - 2021-06-24
 - Feature(**BREAKING**): formatStrings now safeEval expressions
 - removed(**BREAKING**): AdminInfo options `disabledFunctions`, `rootNodeOf`, `extendedFilters`, `visibleName`, `checkboxSelction`, `indexes`, `entryActions`, `disableInternalPreview`, `hideInMainBar`
