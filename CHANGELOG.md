@@ -1,6 +1,10 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+## [3.0.0-rc.4] - 2021-07-01
+- Fix: last 50 log entries are now stored in indexedDB again 
+- Feature: new Version handling.
+
 ## [3.0.0-rc.3] - 2021-06-30
 - Fix: tree selection works again, multi-selection only allowed in browser-trees
 - Fix: file actions works again
