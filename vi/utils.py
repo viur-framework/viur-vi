@@ -4,8 +4,7 @@ from flare import html5,utils
 from flare.forms.formatString import formatString as fl_formatString
 from js import CustomEvent
 from vi.config import conf
-
-
+from pyodide import to_js
 
 def formatString(format, data, structure = None, language = None):
 	"""
@@ -49,8 +48,6 @@ class indexeddbConnector():
 
 
 	def connect(self):
-		#print("Version")
-		#print(self.dbVersion)
 		self.db = None
 		if self.dbVersion:
 			self.db = self.dbHandler.open(self.dbName,self.dbVersion)
@@ -69,16 +66,14 @@ class indexeddbConnector():
 		print( "blocked --------------------------" )
 
 	def db_version( self, event):
-		db = event.target
+		db = event.target.version
 		print('Version changed %s'%db)
 		self.dbResult.close()
 
 	def db_onupgradeneeded( self,event ):
 		event.target.dispatchEvent(CustomEvent.new("db_update"))
-		#self.createObjectStore(event.target,"vi_log")
 
 	def db_success(self, event):
-		#event.target.dispatchEvent(CustomEvent.new("upgradeneeded"))
 		self.dbResult = self.db.result
 		self.dbVersion = self.dbResult.version
 		event.target.result.addEventListener("versionchange", self.db_version)
@@ -163,7 +158,7 @@ class indexeddb():
 		db.addEventListener("db_update", self._processDbUpdate)
 
 	def _processDbUpdate(self,event):
-		print("READY 2")
+		#print("READY 2")
 		dbResult = event.target.result
 		dbTransaction = event.target.result.transaction
 		for item in self.dbqueue:
@@ -176,7 +171,7 @@ class indexeddb():
 
 
 	def _processQueue(self,event):
-		print("READY")
+		#print("READY")
 		dbResult = event.target.result
 		dbTransaction = event.target.result.transaction
 
@@ -199,10 +194,11 @@ class indexeddb():
 
 		trans = dbTransaction([name], "readwrite")
 		StoreHandler = trans.objectStore(name)
+
 		if key:
-			StoreHandler.add(obj, key)
+			StoreHandler.add(to_js(obj), key)
 		else:
-			StoreHandler.add(obj)
+			StoreHandler.add(to_js(obj))
 
 	def _deleteFromStore(self,item,dbResult,dbTransaction):
 		name = item[1]
@@ -241,10 +237,7 @@ class indexeddb():
 		if not obj:
 			obj = {}
 
-		#if "storeOptions" not in obj or obj["storeOptions"] == "default":
-		#	obj.update({"autoIncrement": True})
-
-		dbResult.createObjectStore(name, obj)
+		dbResult.createObjectStore(name, **obj)
 		dbResult.dispatchEvent(CustomEvent.new("versionchange"))
 
 

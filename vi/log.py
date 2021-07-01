@@ -13,6 +13,8 @@ from vi.widgets import table as tablewdgt
 from vi.widgets.edit import EditWidget
 from .utils import indexeddb
 
+
+iddbTableName = "vi_log3"
 class logEntry(html5.Span):
 	'''
 	PopOut Elements
@@ -119,9 +121,9 @@ class LogButton(html5.Div):
 
 		#load old logs from idb
 		idb = conf["indexeddb"]
-		if "vi_log" not in idb.objectStoreNames:
-			idb.dbAction( "createStore", "vi_log", None, { "autoIncrement": True } )
-		data = idb.getList("vi_log")
+		if iddbTableName not in idb.objectStoreNames:
+			idb.dbAction( "createStore", iddbTableName, None, { "autoIncrement": True } )
+		data = idb.getList(iddbTableName)
 		data.addEventListener("dataready", self.idbdata)
 
 
@@ -144,13 +146,13 @@ class LogButton(html5.Div):
 
 	def cleanLog( self ):
 		idb = conf[ "indexeddb" ]
-		data = idb.getListKeys( "vi_log" )
+		data = idb.getListKeys( iddbTableName )
 		data.addEventListener( "dataready", self.cleanLogAction )
 
 	def cleanLogAction( self,event ):
 		for idx in list(event.detail["data"])[:-conf["logAmount"]-1]:
 			idx = idx.to_py()
-			conf[ "indexeddb" ].dbAction( "delete", "vi_log", idx )
+			conf[ "indexeddb" ].dbAction( "delete", iddbTableName, idx )
 
 
 	def renderPopOut(self):
@@ -209,17 +211,9 @@ class LogButton(html5.Div):
 		else:
 			logObj.update({"date":date})
 
-		#conf["indexeddb"].dbAction("createStore", "vi_log",None,{"autoIncrement": True})
-		#conf["indexeddb"].dbAction("createStore", "vi_test")
-		#conf["indexeddb"].dbAction("createStore", "vi_test2")
-		#conf["indexeddb"].dbAction("add", "vi_test", "1", {"test":1})
-		#conf["indexeddb"].dbAction("add", "vi_test", "2", {"test": 1})
-		#conf["indexeddb"].dbAction("edit", "vi_test", "2", {"test": 1,"test2":1})
-		#conf["indexeddb"].dbAction("add", "vi_test", "3", {"test": 1})
-		#conf["indexeddb"].dbAction("delete", "vi_test", "1")
 		if isinstance(msg,str):
 			if not onlyLoad:
-				conf["indexeddb"].dbAction("add","vi_log", None, logObj)
+				conf["indexeddb"].dbAction("add",iddbTableName, None, logObj)
 			self.logsList.insert(0,logObj)
 
 			#self.cleanLog()
