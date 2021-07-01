@@ -154,12 +154,12 @@ lngDe = {
 	"vi.login.handler.googleaccount": "Google",
 	"login with google": "Mit Google einloggen",
 
-	"the viur server (v{{server.version}}) is incompatible to this vi (v{{vi.version}}).":
-		u"Die Version des verwendeten ViUR Servers (v{{server.version}}) ist inkompatibel mit diesem Vi (v{{vi.version}}).",
+	"ViUR-core (v{{core.version}}) is incompatible to this Vi (v{{vi.version}}). The ViUR-core version musst be greater or equal version v{{core.version.min}} and lower than v{{core.version.max}}.":
+		u"Die Version des verwendeten ViUR-core (v{{core.version}}) ist inkompatibel mit diesem Vi (v{{vi.version}}). Die Version des ViUR-core muss größer oder gleich Version v{{core.version.min}} und kleiner als v{{core.version.max}} sein.",
 	"there may be a lack on functionality.": "Diese Inkompatibilität kann zu technischen Problemen führen.",
-	"please update either your server or vi!": "Bitte aktualisieren Sie entweder den Server oder das Vi auf eine neuere Version!",
+	"Please update your ViUR-core to ViUR 3": "Um diese Version des Vi zu verwenden muss auf ViUR3 aktualisiert werden.",
 	"version mismatch": "Versionen stimmen nicht überein",
-	"continue anyway": "Trotzdem fortfahren",
+	"Continue at your own risk": "Trotzdem fortfahren",
 	"vi.login.insufficient-rights": "Der aktuelle angemeldete Benutzer hat nicht genügend Rechte um diese "
 	                                u"Funktion zu verwenden.\n\nBitte loggen Sie sich unter einem anderen "
 	                                u"Benutzer mit entsprechenden Zugriffsrechten ein.",

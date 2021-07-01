@@ -45,23 +45,34 @@ class Application(html5.Div):
 
 	def getVersionSuccess(self, req):
 		conf["core.version"] = network.NetworkService.decode(req)
-
-		if ((conf["core.version"][0] >= 0                              # check version?
-			and (conf["core.version"][0] != conf["vi.version"][0]     # major version mismatch (disabled)
-				or (conf["core.version"][1] > conf["vi.version"][1])))): # minor version mismatch
+		if (conf["core.version"][0] == 3                                     # enforce ViUR3
+			and ((conf["core.version"][1] < conf["core.version.min"][1])
+			or (conf["core.version"][1] >= conf["core.version.max"][1]))
+		):
 
 			params = {
 				"core.version": ".".join(str(x) for x in conf["core.version"]),
 				"vi.version": ".".join(str(x) for x in conf["vi.version"]),
+				"core.version.min": ".".join(str(x) for x in conf["core.version.min"]),
+				"core.version.max": ".".join(str(x) for x in conf["core.version.max"]),
 			}
 
 			Alert(
-				translate("ViUR-core (v{core.version}) is incompatible to this Vi (v{vi.version}).", **params)
-					+ "\n" + translate("There may be a lack on functionality.")
-					+ "\n" + translate("Please update either your server or Vi!"),
+				translate("ViUR-core (v{{core.version}}) is incompatible to this Vi (v{{vi.version}}). The ViUR-core version musst be greater or equal version v{{core.version.min}} and lower than v{{core.version.max}}.", **params)
+					+ "\n\n" + translate("There may be a lack on functionality.")
+					+ "\n" + translate("Please update either your ViUR-core or Vi!"),
 				title=translate("Version mismatch"),
 				okCallback=self.startup,
 				okLabel=translate("Continue at your own risk")
+			)
+
+			return
+
+		elif conf["core.version"][0] == 2:
+			Alert(
+				translate("Please update your ViUR-core to ViUR 3"),
+				title=translate("Legacy ViUR-Version"),
+				closeable=False,
 			)
 
 			return
