@@ -1,4 +1,4 @@
-import json
+import json, pyodide
 from flare import html5
 from flare.button import Button
 from flare.icons import SvgIcon
@@ -152,7 +152,7 @@ class Uploader(html5.Div):
 		self.targetKey = None
 		self.addClass("is-loading")
 		self.appendChild(SvgIcon("icon-loader", title = "uploading..."))
-
+		self.proxy_callback = None
 		self.context = context
 		params = {"fileName": file.name, "mimeType": (file.type or "application/octet-stream")}
 		if node:
@@ -177,10 +177,12 @@ class Uploader(html5.Div):
 		"""
 		params = NetworkService.decode(req)["values"]
 
+		self.proxy_callback = pyodide.create_proxy(self.onLoad)
+
 		if "uploadKey" in params:  # New Resumeable upload format
 			self.targetKey = params["uploadKey"]
-			html5.window.fetch(params["uploadUrl"], {"method": "POST", "body": req.file, "mode": "no-cors"}).then(
-				self.onLoad)
+			html5.window.fetch(params["uploadUrl"], **{"method": "POST", "body": req.file, "mode": "no-cors"}).then(
+				self.proxy_callback)
 		else:
 			formData = html5.jseval( "new FormData();" )
 
@@ -193,14 +195,7 @@ class Uploader(html5.Div):
 				formData.append( key, value )
 			formData.append( "file", req.file )
 
-			# self.xhr = html5.jseval("new XMLHttpRequest()")
-			# self.xhr.open("POST", params["url"])
-			# self.xhr.onload = self.onLoad
-			# self.xhr.upload.onprogress = self.onProgress
-			# self.xhr.send(formData)
-
-			html5.window.fetch( params[ "url" ], { "method": "POST", "body": formData, "mode": "no-cors" } ).then( self.onLoad )
-
+			html5.window.fetch( params[ "url" ], **{ "method": "POST", "body": formData, "mode": "no-cors" } ).then( self.proxy_callback )
 
 
 	def onSkeyAvailable(self, req):
@@ -239,21 +234,9 @@ class Uploader(html5.Div):
 			failureHandler = self.onFailed,
 			secure = True
 		)
-
+		if self.proxy_callback:
+			self.proxy_callback.destroy()
 		return 0
-		#old
-		#if self.xhr.status in [200, 204]:
-		#	NetworkService.request(
-		#		"file", "add", {
-		#			"key": self.targetKey,
-		#			"node": self.node,
-		#			"skelType": "leaf"
-		#		},
-		#		successHandler=self.onUploadAdded,
-		#		secure=True
-		#	)
-		#else:
-		#	DeferredCall(self.onFailed, self.xhr.status, _delay=1000)
 
 	def onUploadAdded(self, req):
 		self.responseValue = NetworkService.decode(req)
@@ -318,7 +301,7 @@ class MultiUploader(html5.Div):
 		self.context = context
 		self.files = files
 		self.filesToUpload = files[:]
-
+		self.proxy_callback=None
 		self.handleFile(self.filesToUpload.pop(0))
 
 		self.logMessage = conf["mainWindow"].log("progress", self)
@@ -350,10 +333,12 @@ class MultiUploader(html5.Div):
 		"""
 		params = NetworkService.decode(req)["values"]
 
+		self.proxy_callback = pyodide.create_proxy(self.onLoad)
+
 		if "uploadKey" in params:  # New Resumeable upload format
 			self.targetKey = params["uploadKey"]
-			html5.window.fetch(params["uploadUrl"], {"method": "POST", "body": req.file, "mode": "no-cors"}).then(
-				self.onLoad)
+			html5.window.fetch(params["uploadUrl"], **{"method": "POST", "body": req.file, "mode": "no-cors"}).then(
+				self.proxy_callback)
 		else:
 			formData = html5.jseval("new FormData();")
 
@@ -366,7 +351,7 @@ class MultiUploader(html5.Div):
 				formData.append(key, value)
 			formData.append("file", req.file)
 
-			html5.window.fetch(params["url"], {"method": "POST", "body": formData, "mode": "no-cors"}).then(self.onLoad)
+			html5.window.fetch(params["url"], **{"method": "POST", "body": formData, "mode": "no-cors"}).then(self.proxy_callback)
 
 	def onLoad(self, *args, **kwargs):
 		"""
@@ -382,7 +367,8 @@ class MultiUploader(html5.Div):
 			failureHandler=self.onFailed,
 			secure=True
 		)
-
+		if self.proxy_callback:
+			self.proxy_callback.destroy()
 		return 0
 
 	def onUploadAdded(self, req):

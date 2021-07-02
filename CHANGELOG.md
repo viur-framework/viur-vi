@@ -1,6 +1,9 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+## [3.0.0-rc.5] - 2021-07-02
+- Fix: File upload now works again.
+
 ## [3.0.0-rc.4] - 2021-07-01
 - Fix: last 50 log entries are now stored in indexedDB again 
 - Feature: new Version handling.
