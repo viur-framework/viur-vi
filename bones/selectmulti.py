@@ -256,7 +256,7 @@ class AccessMultiSelectBone( html5.Div ):
 				title = conf["modules"][module]["name"]
 			except:
 				title = module
-				label.hide()
+				#label.hide()
 			title = title if title else module
 			label._getData()["name"] = title
 			label.element.setAttribute( str("data-name"), title.lower() )
