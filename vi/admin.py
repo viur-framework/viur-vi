@@ -186,7 +186,6 @@ class AdminScreen(Screen):
 	def appendNavList( self,NavList, target, parentInfo=() ):
 		for item in NavList:
 			viewInst = None
-
 			if "moduleName" in item: # its a module
 				#update conf
 				conf[ "modules" ][ item[ "moduleName" ] ] = item
@@ -194,6 +193,7 @@ class AdminScreen(Screen):
 				#get handler view
 				handlerCls = HandlerClassSelector.select( item[ "moduleName" ], item )
 				#generate a parameterized view
+				instancename=item["moduleName"]+item["handler"]
 				viewInst = generateView(handlerCls,item["moduleName"],item["handler"],data=item)
 
 			elif parentInfo:
@@ -242,7 +242,11 @@ class AdminScreen(Screen):
 
 				#create new viewInstance
 				viewInst = generateView( handlerCls, item[ "moduleName" ], item[ "handler" ], data = item, name=instancename )
+			else:
+				#moduleGroup
+				instancename = None
 
+			if instancename:
 				#register this new view
 				conf[ "views_registered" ].update( { instancename: viewInst } )
 
