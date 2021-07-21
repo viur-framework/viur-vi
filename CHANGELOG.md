@@ -1,6 +1,11 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+
+## [3.0.0-rc.6] - 2021-07-21
+- Fix: modulesGoups now useable again
+- Updated: Flare
+
 ## [3.0.0-rc.5] - 2021-07-02
 - Fix: File upload now works again.
 
