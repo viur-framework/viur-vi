@@ -143,7 +143,11 @@ class AdminScreen(Screen):
 		groups = conf["mainConfig"]["configuration"].get("moduleGroups",[])
 		modules = conf["mainConfig"]["modules"]
 
-		mergedItems = groups
+		mergedItems = []
+		for k, v in groups.items():
+			v.update({"prefix":k})
+			mergedItems.append(v)
+
 		for key, m in modules.items():
 			#convert dict of dicts to list of dicts
 			m.update({"moduleName":key})
@@ -158,7 +162,7 @@ class AdminScreen(Screen):
 				group = m["moduleGroup"]
 
 				#stack modules in groups
-				getGroup = mergedItems[group] if group in mergedItems else None
+				getGroup = next((item for item in mergedItems if "prefix" in item and item["prefix"]==group),None)
 
 				if not getGroup: #corrupt group definition, add as normal module
 					mergedItems.append( m )
