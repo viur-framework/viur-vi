@@ -1,6 +1,8 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+## [3.0.0-rc.7] - 2021-07-23
+- Fix: File upload now works again.
 
 ## [3.0.0-rc.6] - 2021-07-21
 - Fix: modulesGoups now useable again
