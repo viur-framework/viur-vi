@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from vi import html5
-from js import CustomEvent
+from js import CustomEvent, Worker
 from vi.config import conf
 
 def formatOneEntry(key, format, data, structure = None, prefix = None, language = None, context=None, _rec = 0):
@@ -344,7 +344,33 @@ class indexeddb():
 		dbResult.dispatchEvent(CustomEvent.new("versionchange"))
 
 
+def createWorker(pythonCode, callback=None, errorCallback=None, context={}):
+	"""Generates and starts a Pyodide Webworker.
 
+	def calllog(txt=None):
+		result = txt.data.to_py()
+		if "error" in result:
+			print(result["error"])
+		if "msg" in result:
+			print(result["msg"])
+
+	code:
+	import statistics,time
+    from js import self as js_self
+    for i in range(0,100):
+        js_self.postMessage("POST %s"%i)
+
+	context can take variables, these are like global startparameters
+
+	"""
+	worker = Worker.new('public/js/pycapsule/worker.js')
+	worker.onmessage = callback
+	worker.onerror = errorCallback
+	#worker.postMessage(python=pythonCode, **context) #todo 0.17
+	context.update({"python":pythonCode})
+	worker.postMessage(context)
+
+	return worker
 
 
 
