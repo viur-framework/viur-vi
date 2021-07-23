@@ -492,9 +492,9 @@ class FileWidget(TreeBrowserWidget):
 				filelist.append(files.item(x))
 
 			if len(filelist) == 1:
-				Uploader(files.item(0), self.node, self.module)
+				Uploader(files.item(0), self.node, module= self.module)
 			else:
-				MultiUploader(filelist, self.node, self.module)
+				MultiUploader(filelist, self.node, module =self.module)
 		else:
 			super().onDrop(event)
 

@@ -38,9 +38,9 @@ class FileSelectUploader(html5.Input):
 				filelist.append(files.item(x))
 
 			if len(filelist) == 1:
-				ul = Uploader(files.item(0), node, self.parent().module)
+				ul = Uploader(files.item(0), node, module=self.parent().module)
 			else:
-				ul = MultiUploader(filelist, node,self.parent().module)
+				ul = MultiUploader(filelist, node,module=self.parent().module)
 
 			if "filebone" in dir(self):
 				ul.uploadSuccess.register( self.filebone )
