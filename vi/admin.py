@@ -140,9 +140,10 @@ class AdminScreen(Screen):
 	def initializeConfig( self ):
 		#print("------------------------------")
 		#print(conf["mainConfig"]["configuration"])
-		groups = conf["mainConfig"]["configuration"].get("moduleGroups",[])
+		groups = conf["mainConfig"]["configuration"].get("moduleGroups",{})
 		modules = conf["mainConfig"]["modules"]
 
+		assert isinstance(groups, dict), "moduleGroups has to be a dictionary!"
 		mergedItems = []
 		for k, v in groups.items():
 			v.update({"prefix":k})
