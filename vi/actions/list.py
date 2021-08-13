@@ -255,7 +255,12 @@ class DeleteAction(Button):
 									failureHandler = self.deletedFailed )
 		agroup.call()
 
+		self.deleteProgressMessage = conf[ "mainWindow" ].log( "progress", translate( "Einträge werden gelöscht... bitte warten" ), modul = self.parent().parent().module,
+															   action = "delete" )
+
 	def allDeletedSuccess( self,success ):
+		conf[ "mainWindow" ].logWdg.removeInfo( self.deleteProgressMessage )
+
 		if success:
 			conf[ "mainWindow" ].log( "success", translate( "Einträge gelöscht" ), modul = self.parent().parent().module, action = "delete" )
 		else:
