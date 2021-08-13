@@ -39,7 +39,7 @@ jobs:
           echo $GITHUB_WORKSPACE/vi
           ls $GITHUB_WORKSPACE/vi
           python3 /tools/flare.py -s $GITHUB_WORKSPACE/vi -t /build -m -c -z -n vi
-
+          ls /build
       - uses: actions/upload-artifact@master
         with:
           name: buildfiles
