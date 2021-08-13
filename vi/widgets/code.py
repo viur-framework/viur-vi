@@ -48,7 +48,7 @@ csvfile.download() #trigger download of the file
 		self.appendChild(Scripter(exampleCode=exampleCode,executable=False))
 
 class CodePopup( Popup ):
-	def __init__( self, title="Editor" ):
+	def __init__( self, title="🐍Editor" ):
 		super( CodePopup, self ).__init__( title = title )
 		self[ "class" ].append( "popup--script" )
 		self["style"]["width"]="75%"
