@@ -36,7 +36,7 @@ jobs:
       - name: build Vi
         run: |
           echo $GITHUB_WORKSPACE
-          python3 /scripts/flare.py -s $GITHUB_WORKSPACE/vi -t /build -m -c -z -n vi
+          python3 /tools/flare.py -s $GITHUB_WORKSPACE/vi -t /build -m -c -z -n vi
 
       - uses: actions/upload-artifact@master
         with:
