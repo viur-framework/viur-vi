@@ -12,6 +12,7 @@
   "config.py",
   "exception.py",
   "flare/flare/__init__.py",
+  "flare/flare/debug.py",
   "flare/flare/button.py",
   "flare/flare/cache.py",
   "flare/flare/config.py",
