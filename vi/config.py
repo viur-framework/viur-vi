@@ -61,7 +61,7 @@ vi_conf = {
 	"initialHashEvent"      : EventDispatcher( "initialHash" ),
 
 	# Actions in the top level bar
-	"toplevelactions"       : [ "log", "tasks", "userstate", "logout" ],
+	"toplevelactions"       : [ "scripter", "log", "tasks", "userstate", "logout" ],
 
 	# Number of rows to fetch in list widgets
 	"batchSize"             : 30,

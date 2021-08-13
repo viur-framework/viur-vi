@@ -109,5 +109,6 @@
   "widgets/tooltip.py",
   "widgets/topbar.py",
   "widgets/tree.py",
+  "widgets/code.py",
   "widgets/userlogoutmsg.py"
 ]

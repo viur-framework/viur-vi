@@ -1,6 +1,13 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+
+## [3.0.0] - 2021-08-13
+- Fix: deleting entries from a list works again
+- Feat(**BREAKING**): uses pyodide 0.18
+- Feat: new buildscripts
+- Feat: new topbar action scripter
+
 ## [3.0.0-rc.7] - 2021-07-23
 - Fix: File upload now works again.
 
