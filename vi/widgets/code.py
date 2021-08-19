@@ -206,7 +206,7 @@ class PythonCode(html5.Div):
 		if self.worker:
 			self.stop()
 
-		self.worker = createWorker(source, self.workerFeedback, self.workerFeedback,context={"scriptPath":"/vi/s/"})
+		self.worker = createWorker(source, self.workerFeedback, self.workerFeedback)
 
 		self.scripter.runbtn.hide()
 		self.scripter.killbtn.show()
