@@ -2,6 +2,9 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.2] - 2021-08-20
+- Fix: edit widget for relational bone didn't work properly due unclosed <div>-tag
+
 ## [3.0.1] - 2021-08-19
 - Fix: webworker now supported
 - Feat: added some build options (develop, zip, pyc, min)
