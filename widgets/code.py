@@ -2,11 +2,13 @@ from vi import html5
 from vi.config import conf
 from js import CodeMirror, URL, window
 from vi.i18n import translate
-from vi.network import DeferredCall
+from vi.network import DeferredCall,NetworkService
 #from pyodide import to_js #todo 0.17
 from vi.utils import createWorker
 from vi.framework.components.icon import Icon
 from vi.framework.components.button import Button
+from js import document
+from vi.framework.components.tree import Tree, TreeNode
 
 class CodeHelpPopup( html5.ext.Popup ):
 	def __init__( self, title="Code Hilfe" ):
@@ -57,25 +59,149 @@ class CodePopup( html5.ext.Popup ):
 		self.title = title
 		self.appendChild(Scripter())
 
+
+
+
+
 class CodeStructurePopup( html5.ext.Popup ):
+
+	def moduleAction(self,wdg,*args,**kwargs):
+		if "loaded" not in dir(wdg):
+			wdg.loaded = False
+
+		if "moduleName" in kwargs and not wdg.loaded:
+			wdg.loaded = True
+
+			if "handler" in kwargs and kwargs["handler"] =="list.grouped" and "group" in kwargs and kwargs["group"]:
+				action = f"add/{kwargs['group']}"
+			else:
+				action = "add"
+
+			loading = html5.Img()
+			loading["src"] = "./public/images/is-loading.gif"
+			wdg.item.appendChild(loading)
+
+			def copyString(e):
+				akey = document.createElement("textarea")
+				if "handler" in kwargs and kwargs["handler"] == "list.grouped" and "group" in kwargs and kwargs[
+					"group"]:
+					akey.value = f'alist = request("/{kwargs["moduleName"]}/list/{kwargs["group"]}", params={{"amount":5}})'
+				else:
+
+					akey.value = f'alist = request("/{kwargs["moduleName"]}/list/", params={{"amount":5}})'
+				document.body.appendChild(akey)
+				akey.select()
+				akey.setSelectionRange(0, 99999)
+				document.execCommand("copy")
+
+				document.body.removeChild(akey)
+
+			cpybtn = Button("copy", callback=copyString)
+
+			wdg.item.appendChild(cpybtn)
+
+			r = NetworkService.request(kwargs["moduleName"], action,
+								   successHandler=self.actionResult)
+			r.wdg = wdg
+			r.loading = loading
+			r.kwargs = kwargs
+
+	def actionResult(self,req):
+		wdg = req.wdg
+		kwargs = req.kwargs
+		answ = NetworkService.decode(req)
+
+		if not answ or not "structure" in answ:
+			return
+
+		for bone in answ["structure"]:
+			anEntry = html5.Div()
+			anEntry["style"]["border-bottom"] = "1xp solid white"
+
+			anameLine = html5.Div()
+
+			amult = False
+			if "multiple" in bone[1] and bone[1]["multiple"]:
+				amult = " (multiple)"
+
+			aname = html5.Span(bone[0])
+			aname["style"]["font-weight"] ="bold"
+			anameLine.appendChild(aname)
+
+			aname2 = html5.Span((amult if amult else "") +" ")
+			anameLine.appendChild(aname2)
+			if bone[1]["type"] == "select":
+				aval = html5.Span("( "+", ".join([k for k,v in bone[1]["values"]])+" )")
+				aval["style"]["word-break"] = "break-all"
+				anameLine.appendChild(aval)
+			elif bone[1]["type"].startswith("relational") and "relskel" in bone[1] and bone[1]["relskel"]:
+				aval = html5.Span("( " + ", ".join([k[0] for k in bone[1]["relskel"]]) + " )")
+				aval["style"]["word-break"] = "break-all"
+				anameLine.appendChild(aval)
+
+			anEntry.appendChild(anameLine)
+
+
+			atype = html5.Div(bone[1]["type"])
+			atype["style"]["font-style"] = "italic"
+			atype["style"]["font-size"] = "11px"
+
+			anEntry.appendChild(atype)
+
+
+			wdg.subItem.appendChild(TreeNode(anEntry))
+		try:
+			wdg.item.removeChild(req.loading)
+		except:
+			pass
+
 
 	def __init__( self, title="Strukturinformation" ):
 		super( CodeStructurePopup, self ).__init__( title = title )
+		moduleStructure = [] #conf["mainConfig"]["configuration"]["moduleGroups"]
 
-		self.moduleList = html5.Ul()
+		modulChilds = {}
 
-		for moduleName,info in conf["mainConfig"]["modules"].items():
-			if "hideInMainBar" in info and info["hideInMainBar"]:
+		for m, x in conf["mainConfig"]["modules"].items():
+			if "hideInMainBar" in x and x["hideInMainBar"]:
 				continue
+			x.update({"moduleName":m,"action":self.moduleAction})
 
-			moduleLi = html5.Li(f'<a href="#">{info["name"]}</a>')
-			self.moduleList.appendChild(moduleLi)
+			if x["handler"] == "list.grouped" and "views" in x and x["views"]:
+				for view in x["views"]:
+					view.update({"moduleName": m, "action": self.moduleAction})
 
-			print(moduleName)
-			print(info)
+				x.update({"children":x["views"]})
+				del x["action"]
 
-		self.appendChild(self.moduleList)
 
+
+			if ": " in x["name"]:
+				prefixkey = x["name"].split(":")[0]+": "
+				if not prefixkey in modulChilds:
+					modulChilds.update({prefixkey:[x]})
+				else:
+					modulChilds[prefixkey].append(x)
+			else:
+				moduleStructure.append(x)
+
+		for group in conf["mainConfig"]["configuration"]["moduleGroups"]:
+			if group["prefix"] in modulChilds:
+				group.update({"children":modulChilds[group["prefix"]]})
+			if group["children"]:
+				moduleStructure.append(group)
+		#moduleStructure = sorted(moduleStructure, key=lambda x: x["name"])
+
+		self.loading = html5.Img()
+		self.loading["src"] = "./public/images/is-loading.gif"
+		self.appendChild(self.loading)
+		DeferredCall(self.loadTree,moduleStructure, _delay=1000)
+
+	def loadTree(self,moduleStructure):
+		treeWidget = Tree(moduleStructure)
+		self.appendChild(treeWidget)
+
+		self.popupBody.removeChild(self.loading)
 
 
 @html5.tag
@@ -299,7 +425,7 @@ class Scripter(html5.Div):
 		''')
 		self.scriptEditor = coder(self.log,self)
 		if not exampleCode:
-			exampleCode = '''# Python 3.8 / Pyodide 0.17
+			exampleCode = '''# Python 3.9 / Pyodide 0.18
 log.info("Hello !")
 '''
 
@@ -325,9 +451,9 @@ log.info("Hello !")
 			self.helpbtn.addClass("btn--edit")
 			actionbar.appendChild(self.helpbtn)
 
-			#self.structurebtn = Button(translate("Struktur"), icon="icons-hierarchy", callback=self.openStructure)
-			#self.helpbtn.addClass("btn--edit")
-			#actionbar.appendChild(self.structurebtn)
+			self.structurebtn = Button(translate("Struktur"), icon="icons-hierarchy", callback=self.openStructure)
+			self.helpbtn.addClass("btn--edit")
+			actionbar.appendChild(self.structurebtn)
 
 			self.fullscreenbtn = Button(translate("Vollbild"), icon="icons-fullscreen", callback=self.startFullscreen)
 			actionbar.appendChild(self.fullscreenbtn)

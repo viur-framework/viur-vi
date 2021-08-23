@@ -5,13 +5,13 @@
 // and `.wasm` files as well:
 
 // THIS IS THE DEFAULT PYODIDE WEBWORKER
-importScripts('https://cdn.jsdelivr.net/pyodide/v0.17.0/full/pyodide.js');
+importScripts("https://cdn.jsdelivr.net/pyodide/v0.18.0/full/pyodide.js");
 
 async function loadScripts(){
 	let promises = [];
 	let url = "webworker_scripts.py"
 
-	let path = ("/lib/python3.8/site-packages/scripts/"+url).split("/")
+	let path = ("/lib/python3.9/site-packages/scripts/"+url).split("/")
 	promises.push(
 		new Promise((resolve, reject) => {
 			fetch("/vi/s/"+url, {}).then((response) => {
@@ -47,7 +47,7 @@ async function loadScripts(){
 
 
 async function loadPyodideAndPackages(){
-    await loadPyodide({ indexURL : 'https://cdn.jsdelivr.net/pyodide/v0.17.0/full/' });
+    self.pyodide = await loadPyodide({ indexURL : 'https://cdn.jsdelivr.net/pyodide/v0.18.0/full/' });
 }
 let pyodideReadyPromise = loadPyodideAndPackages();
 
