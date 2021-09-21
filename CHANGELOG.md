@@ -1,6 +1,14 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+## [3.0.4] - 2021-09-21
+- Feat: added Icon Caching
+- Feat: added SyncHandler
+- Feat: hash getter und setter can now accept parameters
+- Feat: direct FileUpload is now possible, use `"widget":"direct"` as parameter
+- Feat: Update get-pyodide.py with configurable Version
+- Fix: File and Folder names are displayed again
+- Fix: Multiple SelectBones can be set to ReadOnly again
 
 ## [3.0.3] - 2021-08-20
 - Fix: updated relational style
