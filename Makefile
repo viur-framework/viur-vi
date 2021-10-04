@@ -2,6 +2,9 @@ deploy:
 	python3 vi/flare/tools/flare.py -s `pwd`/vi -t ../../deploy/vi -z -m -c -n vi
 
 develop:
+	@echo "--- Please use 'make debug' for this ---"
+
+debug:
 	python3 vi/flare/tools/flare.py -s `pwd`/vi -t ../../deploy/vi -n vi
 
 min:
