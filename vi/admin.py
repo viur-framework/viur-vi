@@ -70,7 +70,7 @@ class AdminScreen(Screen):
 
 
 	def onClick(self, event):
-		if utils.doesEventHitWidgetOrChildren(event, self.modulePipe):
+		if utils.doesEventHitWidgetOrChildren(event, self.modulePipe) and conf["modulepipe"]:
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
 	def reset(self):

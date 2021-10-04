@@ -1,6 +1,16 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+
+## [3.0.6] - 2021-09-30
+- Feat: updated to Flare 1.0.7
+- Fix: RelationalBones and RecordBone now work again as expected
+
+## [3.0.5] - 2021-09-29
+- Feat: updated to Flare 1.0.6
+- Fix: Texteditor now available in relationalbones and recordbones
+- Feat: the modulepipe is now disabled, but can be configured
+
 ## [3.0.4] - 2021-09-21
 - Feat: added Icon Caching
 - Feat: added SyncHandler
