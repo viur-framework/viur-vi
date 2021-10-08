@@ -1,0 +1,52 @@
+@charset "UTF-8";
+/* FILE BONE */
+
+.flr-bone {
+  & .flr-file {
+    &-imagepreview {
+      .basicInput(@padding:0, @margin:@defaultMargin, @borderRadius:@defaultBorderRadius, @borderWidth:@defaultBorderWidth, @borderColor:darken(@defaultInputColor,10%));
+      background-color: #fafafa;
+      margin: 0;
+      border-right: none;
+
+      & * {
+        border-radius: 0;
+      }
+    }
+  }
+
+
+  & .flr-value--file{
+    align-items: stretch;
+    background-color: #fafafa;
+    flex-flow: wrap;
+
+    .btn--select{
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-left: none;
+    }
+
+    & .supports-upload {
+      position: relative;
+      border: 2px dashed #ccc;
+      padding: @innerSpace @innerSpace @bottomSpace + 5px;
+      margin: @defaultMargin -2px;
+    }
+  }
+}
+
+.flr-item-filedrop{
+  background-color: white;
+  border-radius: 5px;
+  outline: 1px dashed black;
+  outline-offset: -10px;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+// See widget/file.less for more.

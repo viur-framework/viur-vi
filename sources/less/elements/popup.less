@@ -1,0 +1,140 @@
+@charset "UTF-8";
+/**
+ * POPUP and OVERLAY
+ */
+
+// A dark overlay to hide the rest of the page.
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  background:fadeout(@clearColor,100%);
+  transition: all .3s ease;
+  .zIndex('background',-1);
+  &.is-active,
+  .popup.is-active ~ & {
+    pointer-events: auto;
+    opacity: 1;
+    background:fadeout(@clearColor,40%);
+    .zIndex('overlay',0)
+  }
+}
+
+// Positioning of the popup
+.popup {
+  opacity: 0;
+  position: fixed;
+  transition: all .3s ease;
+  .zIndex('background',-1);
+  pointer-events: none;
+  width: 90%;
+  max-height: ~"calc(100vh - "2 * @outerSpace~")";
+  transform: translateX(-50%);
+  left:50%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  .boxShadow(2, #000);
+  // A local popup that positions absolute to the surrounding container.
+  &--local {
+    position: absolute;
+    max-height: 95%;
+    .boxShadow(1, #000);
+  }
+  &.is-active {
+    .zIndex('overlay', 1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .mq-min(@breakMedium, {
+    max-width: @pageWidth/2;
+    width: 33%;
+  });
+}
+
+.popup--center {
+  top: 40%;
+  transform: translate(-50%, ~"calc(-100% - "@outerSpace + 5px~")");
+  bottom: inherit;
+  &.is-active {
+    transform: translate(-50%, -40%);
+  }
+}
+
+.popup--s,
+.popup--se,
+.popup--sw {
+  bottom: @outerSpace;
+  transform: translate(0, ~"calc(100% + "@outerSpace + 5px~")");
+  top: inherit;
+}
+.popup--s {
+  transform: translate(-50%, ~"calc(100% + "@outerSpace + 5px~")");
+  &.is-active {
+    transform: translate(-50%, 0);
+  }
+}
+.popup--se {
+  right: @outerSpace;
+  left: inherit;
+  &.is-active {
+    transform: none;
+  }
+}
+.popup--sw {
+  left: @outerSpace;
+  &.is-active {
+    transform: none;
+  }
+}
+
+.popup--n,
+.popup--ne,
+.popup--nw {
+  top: @outerSpace;
+  transform: translate(0, ~"calc(-100% - "@outerSpace + 5px~")");
+  bottom: inherit;
+}
+
+.popup--n {
+  transform: translate(-50%, ~"calc(-100% - "@outerSpace + 5px~")");
+  &.is-active {
+    transform: translate(-50%, 0);
+  }
+}
+.popup--ne {
+  right: @outerSpace;
+  left: inherit;
+  &.is-active {
+    transform: none;
+  }
+}
+.popup--nw {
+  left: @outerSpace;
+  &.is-active {
+    transform: none;
+  }
+}
+
+.popup--w,
+.popup--e {
+  top: 50%;
+  bottom: inherit;
+  &.is-active {
+    transform: translate(0, -50%);
+  }
+}
+.popup--e {
+  right: @outerSpace;
+  transform: translate(~"calc(100% + "@outerSpace + 5px~")", -50%);
+  left: inherit;
+}
+.popup--w {
+  left: @outerSpace;
+  transform: translate(~"calc(-100% - "@outerSpace + 5px~")", -50%);
+}

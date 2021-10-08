@@ -1,0 +1,96 @@
+@charset "UTF-8";
+/* BADGES and MARKERS */
+// Notification Badges are numerical indicators of how many items are associated with some kind of content.
+
+// Prefixes and objects:
+// .badge-
+// .marker-
+
+.badge(
+    @color: @mainColor,
+    @borderRadius: .1em
+  ) {
+  &,
+  &-attr:after {
+    display: inline-block;
+    pointer-events: none;
+    font-size: .7em;
+    font-weight: 700;
+    line-height: 1.5;
+    text-decoration: none;
+    text-shadow: none;
+    text-align: center;
+    vertical-align: middle;
+    letter-spacing: normal;
+    padding: 0 .45em;
+    color: contrast(@color);
+    background: @color;
+    box-shadow: none;
+    .border-radius(@borderRadius);
+  }
+  &-attr:after {
+    content: attr(data-badge);
+    margin: -3px -2px 0 10px;
+  }
+  &--inverse,
+  &-attr&--inverse:after {
+    background:transparent;
+    color:inherit;
+    border:1px solid;
+    border-color:currentColor;
+    box-shadow: none;
+    padding: 0 .45em;
+  }
+}
+
+.colorizeBadge(@color: @mainColor) {
+  color: contrast(@color);
+  background: @color;
+}
+
+// Markers are used to provide additional information about something.
+
+.marker(
+    @color: @mainColor,
+    @borderRadius: .1em
+  ) {
+  &,
+  &-attr:after {
+    display: inline-block;
+    pointer-events: none;
+    font-size: .7em;
+    font-weight: 700;
+    line-height: 1.6;
+    text-transform: UPPERCASE;
+    text-decoration: none;
+    text-shadow: none;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    letter-spacing: normal;
+    padding: .1em .6em;
+    color: contrast(@color);
+    background: @color;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.2), 0 1px rgba(0, 0, 0, 0.2);
+    .border-radius(@borderRadius);
+  }
+  &-attr:after {
+    content: attr(aria-label);
+    margin: -2px -2px 0 .8em;
+  }
+  &--inverse,
+  &-attr&--inverse:after {
+    background:transparent;
+    color:inherit;
+    border:1px solid;
+    border-color:currentColor;
+    box-shadow: none;
+    padding: 0 .45em;
+  }
+}
+
+.colorizeMarker(@color: @mainColor) {
+  color: contrast(@color);
+  background: @color;
+}
+

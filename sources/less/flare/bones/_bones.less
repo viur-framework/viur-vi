@@ -1,0 +1,123 @@
+@charset "UTF-8";
+/* General Bones Styling */
+
+.flr-label {
+  margin-right: -1px;
+  flex-basis: 300px;
+  align-self: flex-start;
+}
+
+.flr-bone {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  &,
+  &.input-group {
+    align-items: flex-start;
+  }
+  &-dragger {
+    margin-right: @innerSpace;
+    align-self: stretch;
+    align-items: center;
+  }
+  &--hidden {
+    display: none;
+  }
+}
+
+.flr-value-wrapper{
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  margin-bottom: 10px;
+}
+
+.flr-value {
+  /*flex-basis: 100%;*/
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex-grow: 1;
+  &-container {
+    display: flex;
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: auto;
+    align-items: flex-start;
+    flex-flow: column;
+    & > * + * {
+      margin-left: 10px;
+    }
+    &-langcontent {
+      display: flex;
+      flex-basis: 100%;
+    }
+    &-langbtns { }
+    &.supports-upload {
+      position: relative;
+      border: 2px dashed #ccc;
+      padding: @innerSpace @innerSpace @bottomSpace + 5px;
+      margin: @defaultMargin -2px;
+      &:after {
+        content: attr(title);
+        font-size: .75em;
+        line-height: .75em;
+        font-weight: @fontWeightBold;
+        color: #bbb;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+      }
+    }
+  }
+}
+
+.flr-bone-widgets {
+  &:not(:empty) {
+    border: 1px solid #e0e0e0;
+    padding: @innerSpace;
+    flex-basis: 90%;
+    flex-grow: 1;
+    flex-shrink: 1;
+    /*margin-bottom: @innerSpace;*/
+    & ~ .flr-bone-actions {
+      margin-left: auto;
+    }
+  }
+  &-item {
+    display: flex;
+    align-items: flex-start;
+    transition: all ease .3s;
+    &:not(:last-child) {
+      margin-bottom: @innerSpace;
+    }
+    &:not(:first-child) {
+      padding-top: @innerSpace;
+      border-top: 1px solid darken(@defaultInputColor,12%);
+    }
+    &.is-dragging-over {
+      padding-top: @innerSpace;
+      border-top: 1px solid @successColor;
+    }
+  }
+}
+
+
+.flr-bone-multi-edit{
+  flex: 1;
+}
+
+.flr-bone-language{
+  flex: 1;
+}
+
+/* Bone imports */
+@import "color";
+@import "date";
+@import "file";
+@import "numeric";
+@import "record";
+@import "relational";
+@import "select";
+@import "string";
+@import "text";

@@ -1,0 +1,40 @@
+@charset "UTF-8";
+/* BUTTONS */
+
+// Prefixes and objects:
+// .btn-
+// .btnGroup
+
+.item {
+  .item();
+  &--hint,
+  &--progress,
+  &--info
+  {
+    .colorizeItem(
+    @backgroundColor: lighten(@hintColor,35%),
+    @activeBackgroundColor: @hintColor,
+    @actionBackgroundColor: @hintColor);
+  }
+  &--success {
+    .colorizeItem(
+    @backgroundColor: lighten(@successColor,35%),
+    @activeBackgroundColor: @successColor,
+    @actionBackgroundColor: @successColor);
+  }
+
+   &--error {
+    .colorizeItem(
+    @backgroundColor: lighten(@failColor,35%),
+    @activeBackgroundColor: @failColor,
+    @actionBackgroundColor: @failColor);
+  }
+
+   &--warning {
+    .colorizeItem(
+    @backgroundColor: lighten(@warnColor,35%),
+    @activeBackgroundColor: @warnColor,
+    @actionBackgroundColor: @warnColor);
+  }
+
+}

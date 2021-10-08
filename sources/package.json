@@ -1,0 +1,41 @@
+{
+  "main": "gulpfile.js",
+  "author": "Mausbrand Infosys",
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "autoprefixer": "^10.3.7",
+    "copy": "^0.3.2",
+    "del": "^6.0.0",
+    "fs": "^0.0.1-security",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-cheerio": "^1.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-exec": "^5.0.0",
+    "gulp-filter": "^7.0.0",
+    "gulp-flatten": "^0.4.0",
+    "gulp-imagemin": "^7.1.0",
+    "gulp-join-media-queries": "^1.2.0",
+    "gulp-less": "^5.0.0",
+    "gulp-load-plugins": "^2.0.7",
+    "gulp-postcss": "^9.0.1",
+    "gulp-print": "^5.0.2",
+    "gulp-rename": "^2.0.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "imagemin-gifsicle": "^5.2.0",
+    "imagemin-mozjpeg": "^9.0.0",
+    "imagemin-optipng": "^5.2.1",
+    "imagemin-svgo": "^6.0.0",
+    "path": "^0.12.7",
+    "postcss-discard-comments": "^5.0.1",
+    "postcss-focus": "^5.0.1",
+    "postcss-zindex": "^5.0.1"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%"
+  ]
+}

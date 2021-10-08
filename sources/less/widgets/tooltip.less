@@ -1,0 +1,37 @@
+@charset "UTF-8";
+/* TOOLTIP */
+
+// Prefixes and objects:
+// .vi-tooltip-
+
+.vi-tooltip {
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: 0;
+  margin: 0 0 0 @innerSpace;
+  cursor: help;
+  padding: @defaultPadding;
+  padding-right: @defaultPadding*3.75;
+
+  .msg-headline{
+    white-space: nowrap;
+  }
+
+  &.msg .icon {
+    height: 1.6em;
+    width: 1.6em;
+    margin-right: 5px;
+  }
+    & .msg-descr {
+      display: none;
+    }
+  &.is-open {
+    flex-basis: 30%;
+    &.msg .icon {
+      transform: rotate(90deg);
+    }
+    & .msg-descr {
+      display: block;
+    }
+  }
+}

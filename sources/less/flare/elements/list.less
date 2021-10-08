@@ -1,0 +1,101 @@
+@charset "UTF-8";
+/* Vi Lists */
+
+// Prefixes and objects:
+// .list-
+// .sublist-
+
+.list() {
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color:@backgroundColor;
+  & * + .item {
+    border-top: 1px solid #dadad9;
+  }
+  & .item {
+    &.is-active {
+      border-top-color: transparent;
+    }
+  }
+  &-separator {
+    display:flex;
+    flex:0 0 auto;
+    padding: @defaultPadding @defaultPadding*1.25;
+    color: @textColor;
+    font-size:.8em;
+    font-weight: @fontWeightLight;
+    background-color: darken(@backgroundColor,5%);
+    border-top: 1px solid darken(@backgroundColor,10%);
+    &--accordion {
+      cursor: pointer;
+      & .icon {
+        position: relative;
+        display: inline-flex;
+        transition: all 0.3s ease;
+        margin-right: 5px;
+        font-size: 1.3em;
+        align-self: center;
+        pointer-events: none;
+      }
+      .icon:last-of-type {
+        margin-left: auto;
+      }
+      &.is-active .icon:last-of-type {
+        transform: rotate(-90deg);
+      }
+      & ~ .item,
+      & ~ .list--sub {
+        display: none;
+      }
+      &.is-active ~ .item,
+      &.is-active ~ .list--sub.is-active {
+        display: flex;
+      }
+    }
+  }
+
+
+  &--sub {
+    color: darken(@backgroundColor, 55%);
+    background-color: darken(@backgroundColor, 2.5%);
+    display: none;
+    &.is-active {
+      display: flex;
+    }
+    & .item {
+      font-size: .7em;
+      padding: 0 @defaultPadding*1.25;
+      &-image {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      &.has-hover {
+        &:hover {
+          color: darken(@backgroundColor, 55%);
+          background-color: darken(@backgroundColor, 5%);
+        }
+      }
+      &.is-disabled {
+        color: darken(@backgroundColor, 40%) !important;
+        background-color: darken(@backgroundColor, 15%) !important;
+        & .i {
+          background-color: darken(@backgroundColor, 25%) !important;
+        }
+      }
+      &.is-disabled .item-action,
+      &.is-disabled:hover .item-action,
+      &.is-disabled .item-action:hover {
+        color: darken(@backgroundColor, 20%);
+        background: transparent;
+      }
+    }
+  }
+  &--sub &--sub {
+    color: darken(@backgroundColor, 55%);
+    background-color: darken(@backgroundColor, 7.5%);
+    & .item-image {
+      font-size: .7em;
+    }
+  }
+}

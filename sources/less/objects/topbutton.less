@@ -1,0 +1,40 @@
+﻿/* Top Button */
+.topbutton {
+  position: fixed;
+  right: -10px;
+  bottom: -45px;
+  transition: all .7s ease;
+}
+
+.topbutton.is-scrolled {
+  bottom: 40px;
+  z-index: 10;
+}
+
+.topbutton a {
+  display: block;
+  width: 50px;
+  height: 40px;
+  background: #fff;
+  box-shadow: -1px 2px 3px rgba(0, 0, 0, 0.4);
+  border: 1px solid @mainColor;
+}
+
+.topbutton a:before {
+  content: ' ';
+  display: inline-block;
+  z-index: 100;
+  line-height: 0;
+  border-style: solid;
+  height: 0px;
+  width: 0px;
+  border-width: 0 12px 12px;
+  border-color: transparent transparent @mainColor;
+  margin-left: 9px;
+  margin-top: 14px;
+  transition: all .3s ease;
+}
+
+.topbutton a:hover:before {
+  border-color: transparent transparent #BC218C;
+}

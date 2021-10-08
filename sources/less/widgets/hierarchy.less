@@ -1,0 +1,117 @@
+@charset "UTF-8";
+/* HIERARCHY */
+
+.hierarchy {
+  min-width: 500px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.hierarchy-item {
+  padding: 20px;
+  transition: all 0.3s ease;
+  * + & {
+    margin-top: 4px;
+  }
+  .hierarchy > & {
+    border: 1px solid #ddd;
+    background-color: #fcfcfc;
+    &:nth-of-type(odd) {
+      background-color: #ececec;
+    }
+  }
+  &-icon {
+    & .icon {
+      position: relative;
+      display: inline-flex;
+      transition: all 0.3s ease;
+      margin-right: 5px;
+      font-size: 1.5em;
+      pointer-events: none;
+    }
+  }
+  &.is-expanded {
+    & .hierarchy-sublist {
+      margin-top: 7px;
+      & .hierarchy-sublist {
+        border-left: 2px dashed #ccc;
+        border-bottom: 1px dashed #ddd;
+      }
+      & .hierarchy-item {
+        padding-left: 35px;
+      }
+    }
+    &.has-no-child .hierarchy-sublist .hierarchy-sublist {
+      border-bottom: 0;
+    }
+  }
+  &.is-focused {
+    background: @focusoddcolor !important;
+    color: #fff !important;
+    padding-top:14px;
+    padding-bottom:14px;
+  }
+
+  .after-element{
+    height: 30px;
+    width: 100%;
+    border: 1px dashed @mainColor;
+    text-align: center;
+    font-style: italic;
+    color: fadeOut(@textColor, 60%);
+  }
+  .before-element{
+    height: 30px;
+    width: 100%;
+    border: 1px dashed @mainColor;
+    text-align: center;
+    font-style: italic;
+    color: fadeOut(@textColor, 60%);
+  }
+  .before-element.is-focused{
+    border: 1px solid @mainColor;
+  }
+  .after-element.is-focused{
+    border: 1px solid @mainColor;
+  }
+
+}
+
+.hierarchy-toggle {
+  cursor: pointer;
+  & .icon {
+    position: relative;
+    display: inline-flex;
+    transition: all 0.3s ease;
+    margin-right: 5px;
+    font-size: 1.5em;
+    pointer-events: none;
+    .is-collapsed > & {
+    }
+    .is-expanded > & {
+      transform: rotate(90deg);
+    }
+    .has-no-child > & {
+    }
+  }
+}
+
+[draggable] {
+  user-select: none;
+}
+
+.treeitem.insert-before,
+.hierarchy-item.insert-before {
+  &:before {
+    content:'';
+    display:block;
+    width:100%;
+    border: 1px dashed @mainColor;
+    height: 30px;
+  }
+}
+.hierarchy-item.insert-here{border:1px solid @mainColor !important;}
+.treeitem.insert-here {border:1px solid @mainColor !important; padding:12px 7px !important;}
+.treeitem.insert-after,
+.hierarchy-item.insert-after {border-bottom:2px solid @mainColor !important;}

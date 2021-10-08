@@ -1,0 +1,59 @@
+@charset "UTF-8";
+/* RELATIONAL */
+
+.vi-bone--relational{
+  align-items: stretch;
+
+  & > *{
+    margin-bottom: @innerSpace;
+  }
+
+  .input ~ .btn--select{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+  }
+}
+
+.vi-relation-selectioncontainer {
+  flex-basis: 100%;
+  & button.btn{
+    align-self: baseline;
+  }
+
+  & .vi-tree-labelwrapper > .ignt-label{
+    white-space: normal;
+  }
+}
+
+.vi-tree-selectioncontainer-entry{
+   & .vi-tree-labelwrapper > button.btn{
+    align-self: baseline;
+  }
+}
+
+.vi-bone--relational .vi-relation-selectioncontainer,
+.vi-bone--hierarchy .vi-relation-selectioncontainer,
+.vi-bone--treeitem .vi-relation-selectioncontainer,
+.vi-bone--treedir .vi-relation-selectioncontainer{
+  padding: @innerSpace;
+  margin: @defaultMargin 0;
+  border: 1px solid darken(@defaultInputColor,12%);
+  align-self: stretch;
+}
+.vi-bone--relational .vi-tree-selectioncontainer-entry,
+.vi-bone--hierarchy .vi-tree-selectioncontainer-entry,
+.vi-bone--treeitem .vi-tree-selectioncontainer-entry,
+.vi-bone--treedir .vi-tree-selectioncontainer-entry{
+  flex-flow: column;
+}
+
+.vi-bone--relational .vi-tree-selectioncontainer-entry .relationwrapper,
+.vi-bone--hierarchy  .vi-tree-selectioncontainer-entry .relationwrapper,
+.vi-bone--treeitem .vi-tree-selectioncontainer-entry .relationwrapper,
+.vi-bone--treedir  .vi-tree-selectioncontainer-entry .relationwrapper {
+  margin: 0;
+  width:100%;
+}
+
+

@@ -1,0 +1,64 @@
+@charset "UTF-8";
+/* RELATIONAL */
+
+.flr-bone--relational{
+  align-items: stretch;
+
+  & > *{
+    margin-bottom: @innerSpace;
+  }
+
+  .input ~ .btn--select{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+  }
+}
+
+.flr-internal-edit {
+  margin-left: @innerSpace;
+  flex-grow: 1;
+}
+
+.flr-relation-selectioncontainer {
+  flex-basis: 100%;
+  & button.btn{
+    align-self: baseline;
+  }
+
+  & .flr-tree-labelwrapper > .flr-label{
+    white-space: normal;
+  }
+}
+
+.flr-tree-selectioncontainer-entry{
+   & .flr-tree-labelwrapper > button.btn{
+    align-self: baseline;
+  }
+}
+
+.flr-bone--relational .flr-relation-selectioncontainer,
+.flr-bone--hierarchy .flr-relation-selectioncontainer,
+.flr-bone--treeitem .flr-relation-selectioncontainer,
+.flr-bone--treedir .flr-relation-selectioncontainer{
+  padding: @innerSpace;
+  margin: @defaultMargin 0;
+  border: 1px solid darken(@defaultInputColor,12%);
+  align-self: stretch;
+}
+.flr-bone--relational .flr-tree-selectioncontainer-entry,
+.flr-bone--hierarchy .flr-tree-selectioncontainer-entry,
+.flr-bone--treeitem .flr-tree-selectioncontainer-entry,
+.flr-bone--treedir .flr-tree-selectioncontainer-entry{
+  flex-flow: column;
+}
+
+.flr-bone--relational .flr-tree-selectioncontainer-entry .relationwrapper,
+.flr-bone--hierarchy  .flr-tree-selectioncontainer-entry .relationwrapper,
+.flr-bone--treeitem .flr-tree-selectioncontainer-entry .relationwrapper,
+.flr-bone--treedir  .flr-tree-selectioncontainer-entry .relationwrapper {
+  margin: 0;
+  width:100%;
+}
+
+
