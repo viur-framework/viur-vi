@@ -52,7 +52,7 @@ class ListWidget(html5.Div):
 
 		#Entry Actions
 		self.entryActionBar = ActionBar(module,"list", currentAction = "list")
-		self.entryActionBar["class"] = ["bar", "vi-entryactionbar"]
+		self.entryActionBar["class"] = ["bar", "vi-actionbar", "vi-actionbar--entry"]
 		self.appendChild( self.entryActionBar )
 
 		self.sideBar = SideBar()

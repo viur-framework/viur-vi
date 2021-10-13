@@ -4,26 +4,31 @@
 // Prefixes and objects:
 // .icon
 
-@iconBorderRadius: .4em;
-@iconHeight: 2em;
-@iconWidth: 2em;
+@icon-color: contrast(@icon-backgroundColor);
+@icon-backgroundColor: @mainColor;
+@icon-borderRadius: @defaultBorderRadius;
+@icon-height: 100%;
+@icon-width: 100%;
+@icon-fontWeight: @fontWeightBold;
 
 .i(
-  @color: @mainColor;
-  @borderRadius: @iconBorderRadius;
-  @height: @iconHeight;
-  @width: @iconWidth;
+  @color: @icon-color;
+  @backgroundColor: @icon-backgroundColor;
+  @borderRadius: @icon-borderRadius;
+  @height: @icon-height;
+  @width: @icon-width;
+  @fontWeight: @icon-fontWeight;
   ) {
   position: relative;
   height: @height;
   width: @width;
   line-height: 2;
-  background-color: @color;
-  color: contrast(@color);
+  background-color: @backgroundColor;
+  color: @color;
   border-radius: @borderRadius;
   text-align: center;
   font-style: unset;
-  font-weight: @fontWeightBold;
+  font-weight: @fontWeight;
   font-size: 1.2em;
   align-self: center;
   display: flex;

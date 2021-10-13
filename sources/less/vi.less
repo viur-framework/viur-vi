@@ -18,9 +18,6 @@
 // Initialize and configurate fundamental elements.
 @import "configuration/_configuration"; // variables and constants.
 
-// Load generic elements.
-@import "elements/_elements";
-
 // Load widgets.
 @import "widgets/_widgets";
 
@@ -33,18 +30,8 @@
 @import "objects/modulelist"; // the modulelist
 @import "objects/progress"; // progress bars
 @import "objects/tooltip"; // light weight tool tip bubbles
-@import "objects/badge"; // counter, badges and marker
-
-// @import "objects/form"; // DEPRECATED: use bones/_bones instead!
-// @import "objects/textedit"; // DEPRECATED: all new summernote editor is styled in bones/text!
-// @import "objects/alert"; Not in use … ignite/messages work fine.
-
-// Bones
-@import "bones/_bones";
-
-// Status
-@import "status/_status";
 
 @import (optional) "../../../appengine/vi_plugins/vi_custom";
 @import (optional) "../../../deploy/vi_plugins/vi_custom";
+@import (optional) "../../vi_template/less/template";
 

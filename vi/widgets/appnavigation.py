@@ -16,14 +16,14 @@ class NavigationElement(html5.Div):
 					<div class="item-headline">{{name}}</div>
 				</div>
 			</a>
-			
+
 			<span [name]="itemArrow" class="item-open is-hidden" @click="ArrowAction">
 				<flare-svg-icon value="icon-arrow-left"></flare-svg-icon>
 			</span>
 			<span [name]="itemRemove" class="is-hidden" @click="RemoveAction">
 				<flare-svg-icon value="icon-cross"></flare-svg-icon>
 			</span>
-			
+
 		</div>
 		<div [name]="subItem" class="list list--sub">
 		</div>
@@ -34,7 +34,7 @@ class NavigationElement(html5.Div):
 		self.view = view
 		self.nav = nav
 		self.closeable = closeable
-		self["class"] = "itemGroup"
+		self["class"] = "item-group"
 		#register state handler
 		nav.state.register("activeNavigation",self)
 

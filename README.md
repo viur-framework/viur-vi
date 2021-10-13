@@ -38,7 +38,7 @@ Help of any kind to extend and improve or enhance this project in any kind or wa
 
 ## License
 
-Copyright (C) 2012-2020 by Mausbrand Informationssysteme GmbH.
+Copyright (C) 2012-2021 by Mausbrand Informationssysteme GmbH.
 
 Mausbrand and ViUR are registered trademarks of Mausbrand Informationssysteme GmbH.
 

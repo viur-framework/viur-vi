@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<link rel="stylesheet" href="public/css/style.css?v6"/>
+		<link rel="stylesheet" href="public/css/style.css?v6.6"/>
 		<link rel="stylesheet" href="public/htmleditor/htmleditor.min.css"/>
 		<script src="public/htmleditor/htmleditor.min.js"></script>
 
@@ -39,97 +39,13 @@
 
 		<link rel="manifest" href="manifest.webmanifest">
 		<link rel="shortcut icon" href="public/images/favicon.png" />
-		<style>
-			/* Will be moved to vi-styling */
-
-			.list-separator--accordion .icon {
-			    position: relative;
-			    display: -ms-inline-flexbox;
-			    display: inline-flex;
-			    transition: all .3s ease;
-			    margin-right: 5px;
-			    font-size: 1.3em;
-			    -ms-flex-item-align: center;
-			    align-self: center;
-			    pointer-events: none;
-			}
-
-			.list-separator--accordion {
-			    cursor: pointer;
-			}
-
-			.list-separator {
-			    display: -ms-flexbox;
-			    display: flex;
-			    -ms-flex: 0 0 auto;
-			    flex: 0 0 auto;
-			    padding: 3px 3.75px;
-			    color: #51514e;
-			    font-size: .8em;
-			    font-weight: 400;
-			    background-color: #ededed;
-			    border-top: 1px solid #e1e1e1;
-			}
-
-			.list-separator--accordion .icon:last-of-type {
-			    margin-left: auto;
-			}
-
-			.list-separator--accordion.is-active~.itemGroup, .list-separator--accordion.is-active~.itemGroup .list--sub.is-active {
-			    display: block;
-			}
-			.list-separator--accordion~.itemGroup, .list-separator--accordion~.itemGroup .list--sub {
-			    display: none;
-			}
-
-			.list-separator--accordion.is-active .icon:last-of-type {
-				-webkit-transform: rotate(-90deg);
-				transform: rotate(-90deg);
-			}
-			.item-open.is-active .icon:last-of-type {
-				-webkit-transform: rotate(-90deg);
-				transform: rotate(-90deg);
-			}
-
-
-			.flr-bone--select span.is-disabled{
-				cursor: not-allowed !important;
-			}
-		</style>
-
 
 	</head>
 	<body class="vi-screen">
-		<style>
-			/* Will be moved to vi-styling */
-			#wrapper{
-				width: 100%;
-				height: 100%;
-			}
-
-			.centercontent{
-				display: flex;
-				align-items: center;
-				flex-direction: column;
-				justify-content: center;
-				width: 100%;
-				height: 100%;
-			}
-			.loading-bar{
-				border: 1px solid black;
-				width: 50%;
-				height: 25px;
-				padding:1px
-			}
-
-		</style>
-
-		<div id="wrapper">
-			<div class="centercontent">
-				<div class="loading-bar">
-					<progress id="loadingbar" class="progress progress--danger progress--small"></progress>
-					<div id="fileinfo">loading library...</div>
-				</div>
+		<div id="wrapper" class="splash">
+			<div class="loading-bar">
+				<progress id="loadingbar" class="progress progress--danger progress--small"></progress>
+				<div id="fileinfo">loading library...</div>
 			</div>
 		</div>
 	</body>

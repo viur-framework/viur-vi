@@ -24,7 +24,7 @@
     padding: @defaultPadding @defaultPadding*1.25;
     color: @textColor;
     font-size:.8em;
-    font-weight: @fontWeightLight;
+    font-weight: @fontWeightNormal;
     background-color: darken(@backgroundColor,5%);
     border-top: 1px solid darken(@backgroundColor,10%);
     &--accordion {
@@ -37,20 +37,20 @@
         font-size: 1.3em;
         align-self: center;
         pointer-events: none;
+        &:last-of-type {
+          margin-left: auto;
+        }
       }
-      .icon:last-of-type {
-        margin-left: auto;
+      &.is-active~.item-group,
+      &.is-active~.item-group .list--sub.is-active {
+          display: block;
       }
-      &.is-active .icon:last-of-type {
-        transform: rotate(-90deg);
-      }
-      & ~ .item,
-      & ~ .list--sub {
+      &~.item-group,
+      &~.item-group .list--sub {
         display: none;
       }
-      &.is-active ~ .item,
-      &.is-active ~ .list--sub.is-active {
-        display: flex;
+      &~.item-group .item-open.is-active .icon:last-of-type {
+          transform: rotate(-90deg);
       }
     }
   }
