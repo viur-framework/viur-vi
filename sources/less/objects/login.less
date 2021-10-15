@@ -13,6 +13,16 @@
   background-repeat: no-repeat;
   background-image: url("../images/vi-login-background.jpg");
   top: 0;
+  &:after {
+    content: '';
+    opacity: .8;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to left,#ff5d36,#d00f1c);
+  }
 }
 
 .vi-login-dialog { }
@@ -36,6 +46,7 @@
   display: none;
   &.is-active {
     display: flex;
+    margin-top: @spaceSmall;
   }
 }
 

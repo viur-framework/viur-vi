@@ -2,6 +2,7 @@
 /* SPLASH */
 
 .splash {
+  position: relative;
   font-family: @headFonts;
   display: flex;
   align-items: center;
@@ -9,51 +10,34 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-image: url("../images/vi-login-background.jpg");
+  &:after {
+    content: '';
+    opacity: .8;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to left,#ff5d36,#d00f1c);
+    .zIndex("background", 1);
+  }
 }
 
-.loading-bar{
-    border: 1px solid black;
-    width: 50%;
-    height: 25px;
-    padding:1px
+.splash-loading {
+  width: 75%;
+  height: 25px;
+  .zIndex("overlay", 1);
 }
 
-.splash.progressBar {
-  margin: 0 auto;
-  height: 6px;
-  line-height: 6px;
-  font-size: 0;
-  max-height: 6px;
-  width: 0;
-  background-color: @mainColor;
-}
-
-.splash.status {
+.splash-fileinfo {
   margin-top: 6px;
+  color: #fff;
+  font-size: 1.2em;
   font-weight: @fontWeightBold;
-}
-
-.splash.cont {
-  background-color: @clearColor;
-  color:#333;
-  .zIndex("alert", 1);
-  text-align:center;
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-}
-
-.splash.infoCont {
-  margin:0 auto;
-  width:40%;
-  border-left:1px solid #333;
-  border-right:1px solid #333;
-}
-
-.splash.header {
-  text-align:center;
 }
 
 .vi-screen.is-loading:after {
