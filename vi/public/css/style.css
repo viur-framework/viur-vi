@@ -1339,10 +1339,6 @@ div.swiper-button-next:after {
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
-	-webkit-box-orient: vertical;
-	-webkit-box-direction: normal;
-	-ms-flex-direction: column;
-	flex-direction: column;
 }
 
 .flr-bone .flr-file-imagepreview {
@@ -1530,7 +1526,8 @@ div.swiper-button-next:after {
 	flex-basis: 100%;
 }
 
-.flr-bone--text .flr-value-container {
+.flr-bone--text .flr-value-container,
+.flr-bone--raw .flr-value-container {
 	-ms-flex-preferred-size: 0;
 	flex-basis: 0;
 	-webkit-box-orient: horizontal;
@@ -1539,15 +1536,21 @@ div.swiper-button-next:after {
 	flex-direction: row;
 }
 
-.flr-bone--text .flr-value-container .note-editor {
+.flr-bone--text .flr-value-container .note-editor,
+.flr-bone--raw .flr-value-container .note-editor {
 	margin-top: 0;
 	margin-left: 0;
 }
 
-.flr-bone--text textarea {
+.flr-bone--text textarea,
+.flr-bone--raw textarea {
 	-webkit-box-flex: inherit;
 	-ms-flex-positive: inherit;
 	flex-grow: inherit;
+}
+
+.flr-textarea {
+	width: 100%;
 }
 
 .note-modal-backdrop {
@@ -6076,15 +6079,6 @@ a.vi-login-btn:focus {
 	cursor: ew-resize;
 	-webkit-transition: 0.3s ease all;
 	transition: 0.3s ease all;
-}
-
-.vi-modulepipe:before {
-	content: '';
-	display: block;
-	height: 100%;
-	width: 10px;
-	position: absolute;
-	left: -10px;
 }
 
 .vi-modulepipe:hover,

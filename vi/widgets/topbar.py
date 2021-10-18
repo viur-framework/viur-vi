@@ -115,7 +115,7 @@ class UserState(html5.Div):
 	def __init__(self, *args, **kwargs):
 		super( UserState, self ).__init__(*args, **kwargs)
 
-		self[ "class" ] = [ "popout-opener", "popout-anchor", "popout--sw" ]
+		self[ "class" ] = [ "popout-opener", "popout-anchor", "popout--sw", "input-group-item" ]
 
 		self.btn = Button( icon = "icon-user", className = "btn btn--topbar btn--user" )
 		self.appendChild( self.btn )
