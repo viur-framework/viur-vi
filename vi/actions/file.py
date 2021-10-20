@@ -170,7 +170,7 @@ class EditAction(Button):
 			)
 
 
-	def onSelectionChanged(self, table, selection ):
+	def onSelectionChanged(self, table, selection, *args, **kwargs ):
 		if len(selection)>0:
 			if self.isDisabled:
 				self.isDisabled = False
@@ -251,7 +251,7 @@ class DownloadAction(Button):
 		self.parent().parent().selectionChangedEvent.unregister( self )
 		super(DownloadAction,self).onDetach()
 
-	def onSelectionChanged(self, table, selection ):
+	def onSelectionChanged(self, table, selection, *args, **kwargs ):
 		if len(selection)>0:
 			if self.isDisabled:
 				self.isDisabled = False

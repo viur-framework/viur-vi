@@ -74,7 +74,7 @@ class EditAction(Button):
 		self.parent().parent().selectionActivatedEvent.unregister( self )
 		super(EditAction,self).onDetach()
 
-	def onSelectionChanged(self, table, selection ):
+	def onSelectionChanged(self, table, selection, *args, **kwargs ):
 		if len(selection)>0:
 			if self.isDisabled:
 				self.isDisabled = False
@@ -146,7 +146,7 @@ class CloneAction(Button):
 		self.parent().parent().selectionChangedEvent.unregister( self )
 		super(CloneAction,self).onDetach()
 
-	def onSelectionChanged(self, table, selection ):
+	def onSelectionChanged(self, table, selection, *args, **kwargs ):
 		if len(selection)>0:
 			if self.isDisabled:
 				self.isDisabled = False
@@ -213,7 +213,7 @@ class DeleteAction(Button):
 		self.parent().parent().selectionChangedEvent.unregister( self )
 		super(DeleteAction,self).onDetach()
 
-	def onSelectionChanged(self, table, selection ):
+	def onSelectionChanged(self, table, selection, *args, **kwargs ):
 		if len(selection)>0:
 			if self.isDisabled:
 				self.isDisabled = False
@@ -344,7 +344,7 @@ class ListPreviewAction(html5.Span):
 		self.parent().parent().selectionChangedEvent.unregister(self)
 		super(ListPreviewAction, self).onDetach()
 
-	def onSelectionChanged(self, table, selection):
+	def onSelectionChanged(self, table, selection, *args, **kwargs):
 		if len(selection) > 0:
 			if self.isDisabled:
 				self.isDisabled = False
@@ -420,7 +420,7 @@ class ListPreviewInlineAction(Button):
 		self.parent().parent().selectionChangedEvent.unregister( self )
 		super( ListPreviewInlineAction, self ).onDetach()
 
-	def onSelectionChanged(self, table, selection):
+	def onSelectionChanged(self, table, selection, *args, **kwargs):
 		# Disallow internal preview in selector mode
 		if self.parent().parent().selectionCallback:
 			return
@@ -642,7 +642,7 @@ class SelectFieldsAction(Button):
 		self.parent().parent().tableChangedEvent.unregister( self )
 		super(SelectFieldsAction,self).onDetach()
 
-	def onTableChanged(self, table, count):
+	def onTableChanged(self, table, count, *args, **kwargs):
 		if count > 0:
 			self["disabled"] = self.isDisabled = False
 		elif not self.isDisabled:
@@ -742,7 +742,7 @@ class TableItems(html5.Div):
 		if self.currentModule:
 			self.currentModule.table.tableChangedEvent.register(self)
 
-	def onTableChanged(self,table, rowCount):
+	def onTableChanged(self,table, rowCount, *args, **kwargs):
 		if "elementSpan" in dir(self):
 			self.removeChild(self.elementSpan)
 
@@ -1091,7 +1091,7 @@ class SelectAllAction(Button):
 		self.parent().parent().tableChangedEvent.unregister( self )
 		super(SelectAllAction,self).onDetach()
 
-	def onTableChanged(self, table, count):
+	def onTableChanged(self, table, count, *args, **kwargs):
 		if count > 0:
 			self["disabled"] = self.isDisabled = False
 		elif not self.isDisabled:
@@ -1122,7 +1122,7 @@ class UnSelectAllAction(Button):
 		self.parent().parent().tableChangedEvent.unregister( self )
 		super(UnSelectAllAction,self).onDetach()
 
-	def onTableChanged(self, table, count):
+	def onTableChanged(self, table, count, *args, **kwargs):
 		if count > 0:
 			self["disabled"] = self.isDisabled = False
 		elif not self.isDisabled:
@@ -1159,7 +1159,7 @@ class SelectInvertAction(Button):
 		self.parent().parent().tableChangedEvent.unregister( self )
 		super(SelectInvertAction,self).onDetach()
 
-	def onTableChanged(self, table, count):
+	def onTableChanged(self, table, count, *args, **kwargs):
 		if count > 0:
 			self["disabled"] = self.isDisabled = False
 		elif not self.isDisabled:

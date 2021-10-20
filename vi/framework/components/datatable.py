@@ -707,7 +707,7 @@ class DataTable( html5.Div ):
 		self.rebuildTable(recalculate=True) #we only add or remove new rows, dont recalculate existing values
 		self.table.tableChangedEvent.fire( self, self.getRowCount() )
 
-	def onSelectionChanged( self, table, rows ):
+	def onSelectionChanged( self, table, rows, *args, **kwargs ):
 		"""
 			Re-emit the event. Maps row-numbers to actual models.
 		"""
@@ -721,7 +721,7 @@ class DataTable( html5.Div ):
 		vals = [ self._model[x] for x in rows]
 		self.selectionActivatedEvent.fire( self, vals )
 
-	def onTableChanged( self, table, rowCount ):
+	def onTableChanged( self, table, rowCount, *args, **kwargs ):
 		"""
 			Re-emit the event.
 		"""

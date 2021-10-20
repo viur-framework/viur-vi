@@ -20,7 +20,7 @@ class NavigationElement(html5.Div):
 			<span [name]="itemArrow" class="item-open is-hidden" @click="ArrowAction">
 				<flare-svg-icon value="icon-arrow-left"></flare-svg-icon>
 			</span>
-			<span [name]="itemRemove" class="is-hidden" @click="RemoveAction">
+			<span [name]="itemRemove" class="item-pin is-hidden" @click="RemoveAction">
 				<flare-svg-icon value="icon-cross"></flare-svg-icon>
 			</span>
 
@@ -51,7 +51,7 @@ class NavigationElement(html5.Div):
 		if self.closeable:
 			self.itemRemove.removeClass("is-hidden")
 
-	def onActiveViewChanged( self,e,wdg ):
+	def onActiveViewChanged( self,e,wdg, *args, **kwargs ):
 		if wdg == self.view:
 			self.item.addClass( "is-active" )
 		else:
@@ -95,7 +95,7 @@ class NavigationElement(html5.Div):
 		self.subItem.toggleClass("is-active")
 		self.itemArrow.toggleClass("is-active")
 
-	def onActiveNavigationChanged( self,e,wdg ):
+	def onActiveNavigationChanged( self,e,wdg, *args, **kwargs ):
 		'''
 			What should happen if the State from the surrounding Navigation gets an update
 		'''
@@ -104,7 +104,7 @@ class NavigationElement(html5.Div):
 		else:
 			self.item.removeClass("is-active")
 
-	def onHasSubItemsChanged( self,e,wdg ):
+	def onHasSubItemsChanged( self,e,wdg, *args, **kwargs ):
 		'''
 			If subChild is added, show itemArrow, hide if no subitem present
 		'''

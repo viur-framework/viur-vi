@@ -33,7 +33,7 @@ class ShopMarkAction( Button ):
 		self.parent().parent().selectionChangedEvent.unregister( self )
 		super(ShopMarkAction,self).onDetach()
 
-	def onSelectionChanged(self, table, selection ):
+	def onSelectionChanged(self, table, selection, *args, **kwargs ):
 		if len( selection ):
 			if self.isDisabled:
 				self.isDisabled = False
