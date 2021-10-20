@@ -1553,7 +1553,7 @@ div.swiper-button-next:after {
 	width: 100%;
 }
 
-.note-modal-backdrop {
+div.note-modal-backdrop {
 	z-index: 600;
 }
 
@@ -1643,6 +1643,11 @@ html {
 	width: 100%;
 	height: 100vh;
 	z-index: 100;
+}
+
+.vi-application.is-loading:before,
+.vi-screen.is-loading:before {
+	background-size: 3em;
 }
 
 .vi-main-frame {
@@ -5910,23 +5915,6 @@ a.vi-login-btn:focus {
 	color: #fff;
 	font-size: 1.2em;
 	font-weight: 700;
-}
-
-.vi-screen.is-loading:after {
-	background-image: url(../images/is-loading32.gif);
-	background-position: center 35%;
-	background-repeat: no-repeat;
-	background-color: rgba(255, 255, 255, 0.6);
-	position: absolute;
-	z-index: 700;
-	content: ' ';
-	width: 100%;
-	height: 100%;
-	display: block;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
 }
 
 .vi-messenger {
