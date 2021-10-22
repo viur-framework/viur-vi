@@ -9,39 +9,53 @@ importScripts("https://cdn.jsdelivr.net/pyodide/v0.18.0/full/pyodide.js");
 
 async function loadScripts(){
 	let promises = [];
-	let url = "webworker_scripts.py"
+	let urls = [
+		// urlpath,filename, required
+		{"urlpath":"/vi/s/","filename":"webworker_scripts.py","required":1},
+		{"urlpath":"/vi_plugins/","filename":"webworker_scripts_plugins.py","required":0}
+	]
 
-	let path = ("/lib/python3.9/site-packages/scripts/"+url).split("/")
-	promises.push(
-		new Promise((resolve, reject) => {
-			fetch("/vi/s/"+url, {}).then((response) => {
-				if (response.status === 200) {
-					response.text().then((code) => {
-						let lookup = "";
-						for (let i in path) {
-							if (!path[i]) {
-								continue;
-							}
 
-							lookup += (lookup ? "/" : "") + path[i];
-							if (parseInt(i) === path.length - 1) {
-								self.pyodide._module.FS.writeFile(lookup, code);
-							} else {
-								try {
-									self.pyodide._module.FS.lookupPath(lookup);
-								} catch {
-									self.pyodide._module.FS.mkdir(lookup);
+	for(const fileObj of urls){
+		console.log(fileObj)
+		let url = fileObj["filename"]
+		let urlpath = fileObj["urlpath"]
+
+		let path = ("/lib/python3.9/site-packages/scripts/"+url).split("/")
+		promises.push(
+			new Promise((resolve, reject) => {
+				fetch(urlpath+url, {}).then((response) => {
+					if (response.status === 200) {
+						response.text().then((code) => {
+							let lookup = "";
+							for (let i in path) {
+								if (!path[i]) {
+									continue;
+								}
+
+								lookup += (lookup ? "/" : "") + path[i];
+								if (parseInt(i) === path.length - 1) {
+									self.pyodide._module.FS.writeFile(lookup, code);
+								} else {
+									try {
+										self.pyodide._module.FS.lookupPath(lookup);
+									} catch {
+										self.pyodide._module.FS.mkdir(lookup);
+									}
 								}
 							}
-						}
+							resolve();
+						});
+					} else if(fileObj["required"]===1) {
+						reject();
+					} else{
 						resolve();
-					});
-				} else {
-					reject();
-				}
+					}
+				})
 			})
-		})
-	)
+		)
+	}
+
 	return Promise.all(promises);
 }
 

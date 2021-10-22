@@ -6,6 +6,7 @@ from js import eval as jseval, self as web_self, Blob, URL
 import os, sys, json, string, random, csv
 from io import StringIO
 
+
 def request(url,params=None,jsonResult=True, whitelist=("/list/","/view/")):
 	"""A very simple version of the NetworkService to request synchronous data"""
 
@@ -271,3 +272,7 @@ class SimpleNetwork(object):
 		self.status = "failed"
 		self.result = text
 		self.code = code
+
+
+from scripts.webworker_scripts_plugins import *
+
