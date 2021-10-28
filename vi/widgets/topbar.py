@@ -11,6 +11,7 @@ from flare.icons import Icon, SvgIcon
 from vi.pane import Pane
 from vi.widgets.edit import EditWidget
 from vi.log import LogButton
+from vi.widgets.code import CodePopup
 
 class TopBarWidget(html5.Header):
 	"""
@@ -274,5 +275,38 @@ class Logout(Button):
 		return action == "logout" and not conf["theApp"].isFramed
 
 toplevelActionSelector.insert(0, Logout.canHandle, Logout)
+
+class Scripter(Button):
+	def __init__(self, *args, **kwargs):
+		super( Scripter, self ).__init__( icon = "icon-play", *args, **kwargs )
+		self.sinkEvent("onClick")
+		self.hide()
+		self.addClass("btn vi-tb-play")
+		self.updateUser()
+
+	def onCurrentUserAvailable(self, req):
+		data = NetworkService.decode( req )
+		conf[ "currentUser" ] = data[ "values" ]
+		self.updateUser()
+
+	def updateUser(self):
+		user = conf.get( "currentUser" )
+		if not user:
+			NetworkService.request( "user", "view/self",
+			                        successHandler=self.onCurrentUserAvailable,
+			                        cacheable=False )
+			return
+
+		if "root" in user[ "access" ]:
+			self.show()
+
+	def onClick(self, event ):
+		CodePopup()
+
+	@staticmethod
+	def canHandle( action ):
+		return action == "scripter"
+
+toplevelActionSelector.insert( 0, Scripter.canHandle, Scripter )
 
 #FIXME: Put Message Center in Iconnav. The message center will be a popout in the topbar.

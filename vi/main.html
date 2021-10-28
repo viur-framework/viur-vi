@@ -12,6 +12,31 @@
 		<script src="public/flare/js/flare.js"></script>
 		<script src="public/js/startup.js"></script>
 
+		<!-- codmirror -->
+        <link rel="stylesheet" href="public/scripter/codemirror-5.61.0/lib/codemirror.css">
+        <link rel="stylesheet" href="public/scripter/codemirror-5.61.0/addon/fold/foldgutter.css">
+        <link rel="stylesheet" href="public/scripter/codemirror-5.61.0/addon/hint/show-hint.css">
+        <link rel="stylesheet" href="public/scripter/codemirror-5.61.0/addon/lint/lint.css">
+
+        <script src="public/scripter/codemirror-5.61.0/lib/codemirror.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/comment/comment.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/display/autorefresh.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/selection/active-line.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/keymap/sublime.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/hint/show-hint.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/lint/lint.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/mode/python/python.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/fold/foldcode.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/fold/foldgutter.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/fold/brace-fold.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/fold/indent-fold.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/fold/comment-fold.js"></script>
+
+        <script src="public/scripter/codemirror-5.61.0/addon/edit/closebrackets.js"></script>
+        <script src="public/scripter/codemirror-5.61.0/addon/edit/matchbrackets.js"></script>
+
+		<link rel="stylesheet" href="public/scripter/theme.css">
+
 		<link rel="manifest" href="manifest.webmanifest">
 		<link rel="shortcut icon" href="public/images/favicon.png" />
 		<style>
@@ -66,6 +91,10 @@
 				transform: rotate(-90deg);
 			}
 
+
+			.flr-bone--select span.is-disabled{
+				cursor: not-allowed !important;
+			}
 		</style>
 
 

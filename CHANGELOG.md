@@ -1,6 +1,41 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+
+## [3.0.6] - 2021-09-30
+- Feat: updated to Flare 1.0.7
+- Fix: RelationalBones and RecordBone now work again as expected
+
+## [3.0.5] - 2021-09-29
+- Feat: updated to Flare 1.0.6
+- Fix: Texteditor now available in relationalbones and recordbones
+- Feat: the modulepipe is now disabled, but can be configured
+
+## [3.0.4] - 2021-09-21
+- Feat: added Icon Caching
+- Feat: added SyncHandler
+- Feat: hash getter und setter can now accept parameters
+- Feat: direct FileUpload is now possible, use `"widget":"direct"` as parameter
+- Feat: Update get-pyodide.py with configurable Version
+- Fix: File and Folder names are displayed again
+- Fix: Multiple SelectBones can be set to ReadOnly again
+
+## [3.0.3] - 2021-08-20
+- Fix: updated relational style
+
+## [3.0.2] - 2021-08-20
+- Fix: edit widget for relational bone didn't work properly due unclosed <div>-tag
+
+## [3.0.1] - 2021-08-19
+- Fix: webworker now supported
+- Feat: added some build options (develop, zip, pyc, min)
+
+## [3.0.0] - 2021-08-13
+- Fix: deleting entries from a list works again
+- Feat(**BREAKING**): uses pyodide 0.18
+- Feat: new buildscripts
+- Feat: new topbar action scripter
+
 ## [3.0.0-rc.7] - 2021-07-23
 - Fix: File upload now works again.
 
