@@ -117,7 +117,7 @@ class EditWidget(html5.Div):
 	__editIdx_ = 0 #Internal counter to ensure unique ids
 
 	def __init__(self, module, applicationType, key=0, node=None, skelType=None, clone=False,
-	                hashArgs=None, context=None, logAction = "Entry saved!", *args, **kwargs):
+	                hashArgs=None, context=None, logAction="Entry saved!", skelData=None, *args, **kwargs):
 		"""
 			Initialize a new Edit or Add-Widget for the given module.
 			:param module: Name of the module
@@ -142,6 +142,7 @@ class EditWidget(html5.Div):
 
 		super(EditWidget, self ).__init__(*args, **kwargs)
 		self.module = module
+		self.skelData = skelData
 
 		self.addClass("vi-widget vi-widget--edit form-group--validation")
 
@@ -170,8 +171,6 @@ class EditWidget(html5.Div):
 		self.applicationType = applicationType
 		self.key = key
 		self.mode = "edit" if self.key or applicationType == EditWidget.appSingleton else "add"
-		print("apptype %r" % applicationType)
-		print("appSingleton??? %r" % applicationType == EditWidget.appSingleton)
 		self.modified = False
 		self.node = node
 		self.skelType = skelType
@@ -599,7 +598,9 @@ class EditWidget(html5.Div):
 			if "setContext" in dir(bone) and callable(bone.setContext):
 				bone.setContext(self.context)
 
-			if data is not None:
+			if self.wasInitialRequest and self.skelData and (value:= self.skelData.get(key)):
+				bone.unserialize(value)
+			elif data is not None:
 				bone.unserialize(data.get(key))
 
 	def serializeForPost(self, validityCheck = False): #fixme consolidate this with serializeForDocument() to just serialize()

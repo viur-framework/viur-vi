@@ -19,7 +19,6 @@ class editHandlerWidget(ViewWidget):
 		self.addClass( [ "vi-viewer-pane", "is-active" ] )
 		self.data = self.view.params["data"]
 		self.moduleName = self.view.params["moduleName"]
-		print(self.data)
 		context = self.data.get("context",None)
 		akey = self.data.get("key",None)
 		clone = self.data.get("clone",False)
@@ -28,12 +27,12 @@ class editHandlerWidget(ViewWidget):
 		skelType = self.data.get("skelType",None)
 
 		widget = EditWidget(self.moduleName, baseType,
+							skelData=self.data.get("skelData", None),
 							context=context,
 							key=akey,
 							clone =clone,
 							node = node,
 							skelType=skelType)
-
 		self.appendChild(widget)
 
 
