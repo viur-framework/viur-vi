@@ -1,4 +1,3 @@
-from flare.safeeval import SafeEval
 from flare.event import EventDispatcher
 from flare.i18n import translate
 
@@ -75,9 +74,6 @@ vi_conf = {
 
 	# Max number of entries to show in multiple Bones
 	"maxMultiBoneEntries": 5,
-
-	# Interpreter for conditional evaluations
-	"conditionalEvaluator": SafeEval(),
 
 	# Cached selector widgets on relationalBones for re-use
 	"selectors": {},

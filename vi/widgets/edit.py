@@ -1,6 +1,3 @@
-import logging, pprint
-
-from flare import html5
 from flare.popup import Confirm
 
 import vi.utils as utils
@@ -8,6 +5,7 @@ import vi.utils as utils
 from flare.network import NetworkService, DeferredCall
 from vi.config import conf
 from flare.forms import boneSelector
+from flare.forms.widgets.edit import EditWidget as BaseEditWidget
 from vi.framework.components.actionbar import ActionBar
 from flare.i18n import translate
 from vi.widgets.list import ListWidget
@@ -74,7 +72,7 @@ def parseHashParameters(src, prefix=""):
 	return res
 
 
-class EditWidget(html5.Div):
+class EditWidget(BaseEditWidget):
 	appList = "list"
 	appHierarchy = "hierarchy"
 	appTree = "tree"
@@ -82,7 +80,7 @@ class EditWidget(html5.Div):
 	__editIdx_ = 0  # Internal counter to ensure unique ids
 
 	def __init__(self, module, applicationType, key=0, node=None, skelType=None, clone=False,
-	             hashArgs=None, context=None, logAction="Entry saved!", skelData=None, *args, **kwargs):
+	             hashArgs=None, context=None, logAction="Entry saved!", values=None, *args, **kwargs):
 		"""
 			Initialize a new Edit or Add-Widget for the given module.
 			:param module: Name of the module
@@ -112,9 +110,8 @@ class EditWidget(html5.Div):
 			)
 			return
 
-		super(EditWidget, self).__init__(*args, **kwargs)
-		self.module = module
-
+		super().__init__(context=context)
+		self.removeClass("flr-internal-edit")
 		self.addClass("vi-widget vi-widget--edit form-group--validation")
 
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
@@ -136,29 +133,26 @@ class EditWidget(html5.Div):
 			if applicationType == EditWidget.appTree:
 				assert node is not None  # We still need a path for cloning #FIXME
 
-			self.clone_of = key
+			self.cloneOf = key
 		else:
-			self.clone_of = None
+			self.cloneOf = None
 
-		# End santy-checks
+		# Initialize instance variables
 		self.editIdx = EditWidget.__editIdx_  # Internal counter to ensure unique ids
 		EditWidget.__editIdx_ += 1
+
+		self.module = module
 		self.applicationType = applicationType
 		self.key = key
-		self.structure = {}
 		self.mode = "edit" if self.key or applicationType == EditWidget.appSingleton else "add"
-		self.modified = False
 		self.node = node
 		self.skelType = skelType
-		self.skelData = skelData
+		self.values = values or {}
 		self.clone = clone
 		self.closeOnSuccess = False
 		self.logAction = logAction
-		self.sinkEvent("onChange")
 		self.context = context
 
-		self.bones = {}
-		self.containers = {}
 		self.views = {}
 
 		if hashArgs:
@@ -209,58 +203,6 @@ class EditWidget(html5.Div):
 		super(EditWidget, self).onAttach()
 		utils.setPreventUnloading(True)
 
-	def performLogics(self):
-		fields = self.serialize()
-
-		for key, desc in self.structure.items():
-			for event in ("visibleIf", "readonlyIf", "evaluate"):
-				if not (expr := desc["params"].get(event)):
-					continue
-
-				print(event, expr)
-				print(fields)
-
-				# Compile logic at first run
-				if isinstance(expr, str):
-					desc["params"][event] = conf["conditionalEvaluator"].compile(expr)
-					if desc["params"][event] is None:
-						logging.error("Parse error: %s", expr)
-						continue
-
-					expr = desc["params"][event]
-
-				try:
-					res = conf["conditionalEvaluator"].execute(expr, fields)
-				except Exception as e:
-					logging.error("Tobi's ScheissEval hat einen Fehler geworfen, wahrscheinlich weil es ja so sicher und eine echte Alternative für Logics ist...")
-					logging.exception(e)
-					res = False
-
-				if event == "evaluate":
-					self.bones[key].unserialize({key: res})
-				elif res:
-					if event == "visibleIf":
-						self.containers[key].show()
-					elif event == "readonlyIf":
-						self.containers[key].disable()
-					else:
-						raise NotImplementedError("Unknown event %r", event)
-				else:
-					if event == "visibleIf":
-						self.containers[key].hide()
-					elif event == "readonlyIf":
-						self.containers[key].enable()
-					else:
-						raise NotImplementedError("Unknown event %r", event)
-
-	def onChange(self, event):
-		self.modified = True
-		DeferredCall(self.performLogics)
-
-	def onBoneChange(self, bone):
-		self.modified = True
-		DeferredCall(self.performLogics)
-
 	def showErrorMsg(self, req=None, code=None):
 		"""
 			Removes all currently visible elements and displays an error message
@@ -276,9 +218,9 @@ class EditWidget(html5.Div):
 			conf["mainWindow"].removeWidget(self)
 
 	def reloadData(self):
-		self.save({})
+		self._save({})
 
-	def save(self, data):
+	def _save(self, data):
 		"""
 			Creates the actual NetworkService request used to transmit our data.
 			If data is None, it fetches a clean add/edit form.
@@ -380,7 +322,7 @@ class EditWidget(html5.Div):
 				self.module, "clone", {
 					"fromRepo": self.node,
 					"toRepo": self.node,
-					"fromParent": self.clone_of,
+					"fromParent": self.cloneOf,
 					"toParent": self.key
 				},
 				secure=True,
@@ -390,7 +332,7 @@ class EditWidget(html5.Div):
 			for module in conf["modules"][self.module]["changeInvalidates"]:
 				NetworkService.request(
 					module, "clone", {
-						"fromRepo": self.clone_of,
+						"fromRepo": self.cloneOf,
 						"toRepo": self.key
 					},
 					secure=True,
@@ -447,9 +389,9 @@ class EditWidget(html5.Div):
 			return
 
 		self.clear()
+		self._render(data["values"], data.get("errors"), structure=data["structure"])
 
-		self.structure = {k: v for k, v in data["structure"]}
-
+	def _form(self, values, errors):
 		segments = {}
 		firstCat = None
 		hasMissing = False
@@ -467,7 +409,7 @@ class EditWidget(html5.Div):
 				contextKey = "key"
 
 			self.context.update({
-				contextVariable: data["values"].get(contextKey)
+				contextVariable: values.get(contextKey)
 			})
 
 		self.accordion.clearSegments()
@@ -483,8 +425,8 @@ class EditWidget(html5.Div):
 			if cat not in segments:
 				segments[cat] = self.accordion.addSegment(cat)
 
-			boneFactory = boneSelector.select(self.module, key, self.structure)
-			boneFactory = boneFactory(self.module, key, self.structure, data.get("errors"))
+			boneClass = boneSelector.select(self.module, key, self.structure)
+			boneFactory = boneClass(self.module, key, self.structure, errors)
 			containerDiv, descrLbl, widget, hasError = boneFactory.boneWidget()
 
 			if "setContext" in dir(widget) and callable(widget.setContext):
@@ -556,7 +498,7 @@ class EditWidget(html5.Div):
 
 				if vvariable:
 					context = self.context.copy() if self.context else {}
-					context[vvariable] = data["values"]["key"]
+					context[vvariable] = values["key"]
 				else:
 					context = self.context
 
@@ -567,7 +509,7 @@ class EditWidget(html5.Div):
 				)
 				segments[vmodule].addWidget(self.views[vmodule])
 
-		self.unserialize(data["values"], data.get("errors"))
+		self.unserialize(values, errors)
 
 		if self._hashArgs:  # Apply the default values (if any)
 			self.unserialize(self._hashArgs)
@@ -580,23 +522,8 @@ class EditWidget(html5.Div):
 				modul=self.module,
 				key=self.key,
 				action=self.mode,
-				data=data
+				data=values
 			)
-
-		DeferredCall(self.performLogics)
-
-	def unserialize(self, data=None, errors=()):
-		"""
-			Applies data read from the server to the bones.
-		"""
-		for key, bone in self.bones.items():
-			if "setContext" in dir(bone) and callable(bone.setContext):
-				bone.setContext(self.context)
-
-			if self.wasInitialRequest and self.skelData and (value := self.skelData.get(key)):
-				bone.unserialize(value)
-			elif data is not None:
-				bone.unserialize(data.get(key))
 
 	def serialize(self, forPost=False):
 		"""
@@ -639,7 +566,5 @@ class EditWidget(html5.Div):
 		self.closeOnSuccess = closeOnSuccess
 
 		res = self.serialize(forPost=True)
-		if res is None:
-			return None
-
-		self.save(res)
+		if res:
+			self._save(res)
