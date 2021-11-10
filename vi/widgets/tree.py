@@ -268,7 +268,7 @@ class TreeWidget(html5.Div):
 		errorDiv.appendChild(html5.TextNode(txt))
 		self.appendChild(errorDiv)
 
-	def onDataChanged(self, module, **kwargs):
+	def onDataChanged(self, module,*args, **kwargs):
 		if module != self.module:
 			isRootNode = False
 			for k, v in conf["modules"].items():

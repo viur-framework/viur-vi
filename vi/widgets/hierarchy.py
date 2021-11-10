@@ -67,7 +67,7 @@ class HierarchyWidget(TreeWidget):
 	def hideListView(self):
 		self.listview.hide()
 
-	def onSelectionChanged(self, widget, selection):
+	def onSelectionChanged(self, widget, selection, *args,**kwargs):
 		if self.listviewActive:
 			if not self.viewNodeStructure:
 				self.requestStructure()

@@ -10,47 +10,50 @@ from vi.sidebarwidgets.internalpreview import InternalPreview
 from vi.sidebarwidgets.filterselector import FilterSelector
 from flare.i18n import translate
 from flare.button import Button
-from flare.network import DeferredCall,requestGroup
-
+from flare.network import DeferredCall, requestGroup
 
 """
 	Provides the actions suitable for list applications
 """
+
+
 class AddAction(Button):
 	"""
 		Allows adding an entry in a list-module.
 	"""
+
 	def __init__(self, *args, **kwargs):
-		super( AddAction, self ).__init__(translate("Add"), icon="icon-add")
+		super(AddAction, self).__init__(translate("Add"), icon="icon-add")
 		self["class"] = "bar-item btn btn--small btn--add-list btn--primary"
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
+	def isSuitableFor(module, handler, actionName):
 		if module is None or module not in conf["modules"].keys():
 			return False
 
-		correctAction = actionName=="add"
+		correctAction = actionName == "add"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
-		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add" in conf["modules"][module]["disabledFunctions"]
+		hasAccess = conf["currentUser"] and (
+				"root" in conf["currentUser"]["access"] or module + "-add" in conf["currentUser"]["access"])
 
-		return correctAction and correctHandler and hasAccess and not isDisabled
+		return correctAction and correctHandler and hasAccess
 
 	def onClick(self, sender=None):
-		conf[ "mainWindow" ].openView(
-			translate( "Add" ), 			#AnzeigeName
-			"icon-add", 					#Icon
-			"edithandler",					#viewName
-			self.parent().parent().module,	#Modulename
-			"add",							#Action
-			data = {"context":self.parent().parent().context},
-			target = "popup" if self.parent().parent().isSelector else "mainNav"
+		conf["mainWindow"].openView(
+			translate("Add"),  # AnzeigeName
+			"icon-add",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"add",  # Action
+			data={"context": self.parent().parent().context, "group": self.parent().parent().group},
+			target="popup" if self.parent().parent().isSelector else "mainNav"
 		)
 
 	def resetLoadingState(self):
 		pass
 
-actionDelegateSelector.insert( 1, AddAction.isSuitableFor, AddAction )
+
+actionDelegateSelector.insert(1, AddAction.isSuitableFor, AddAction)
 
 
 class EditAction(Button):
@@ -59,72 +62,71 @@ class EditAction(Button):
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( EditAction, self ).__init__( translate("Edit"), icon="icon-edit")
+		super(EditAction, self).__init__(translate("Edit"), icon="icon-edit")
 		self["class"] = "bar-item btn btn--small btn--edit"
-		self["disabled"]= True
-		self.isDisabled=True
+		self["disabled"] = True
+		self.isDisabled = True
 
 	def onAttach(self):
-		super(EditAction,self).onAttach()
-		self.parent().parent().selectionChangedEvent.register( self )
-		self.parent().parent().selectionActivatedEvent.register( self )
+		super(EditAction, self).onAttach()
+		self.parent().parent().selectionChangedEvent.register(self)
+		self.parent().parent().selectionActivatedEvent.register(self)
 
 	def onDetach(self):
-		self.parent().parent().selectionChangedEvent.unregister( self )
-		self.parent().parent().selectionActivatedEvent.unregister( self )
-		super(EditAction,self).onDetach()
+		self.parent().parent().selectionChangedEvent.unregister(self)
+		self.parent().parent().selectionActivatedEvent.unregister(self)
+		super(EditAction, self).onDetach()
 
-	def onSelectionChanged(self, table, selection ):
-		if len(selection)>0:
+	def onSelectionChanged(self, table, selection, *args,**kwargs):
+		if len(selection) > 0:
 			if self.isDisabled:
 				self.isDisabled = False
-			self["disabled"]= False
+			self["disabled"] = False
 		else:
 			if not self.isDisabled:
-				self["disabled"]= True
+				self["disabled"] = True
 				self.isDisabled = True
 
-	def onSelectionActivated(self, table, selection ):
+	def onSelectionActivated(self, table, selection):
 		if len(selection) == 1:
 			self.openEditor(selection[0]["key"])
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
+	def isSuitableFor(module, handler, actionName):
 		if module is None or module not in conf["modules"].keys():
 			return False
 
-		correctAction = actionName=="edit"
+		correctAction = actionName == "edit"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
-		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "edit" in conf["modules"][module]["disabledFunctions"]
+		hasAccess = conf["currentUser"] and (
+				"root" in conf["currentUser"]["access"] or module + "-edit" in conf["currentUser"]["access"])
 
-		return correctAction and correctHandler and hasAccess and not isDisabled
+		return correctAction and correctHandler and hasAccess
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor( s["key"] )
+			self.openEditor(s["key"])
 
 	def openEditor(self, key):
-		conf[ "mainWindow" ].openView(
+		conf["mainWindow"].openView(
 			translate("Edit"),  # AnzeigeName
 			"icon-edit",  # Icon
 			"edithandler",  # viewName
 			self.parent().parent().module,  # Modulename
 			"edit",  # Action
-			data = { "context": self.parent().parent().context,
-					 "key":key},
-			target = "popup" if self.parent().parent().isSelector else "mainNav"
+			data={"context": self.parent().parent().context, "group": self.parent().parent().group,
+				  "key": key},
+			target="popup" if self.parent().parent().isSelector else "mainNav"
 		)
-
-
 
 	def resetLoadingState(self):
 		pass
 
-actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
+
+actionDelegateSelector.insert(1, EditAction.isSuitableFor, EditAction)
 
 
 class CloneAction(Button):
@@ -133,160 +135,170 @@ class CloneAction(Button):
 	"""
 
 	def __init__(self, *args, **kwargs):
-		super( CloneAction, self ).__init__( translate("Clone"), icon="icon-clone")
+		super(CloneAction, self).__init__(translate("Clone"), icon="icon-clone")
 		self["class"] = "bar-item btn btn--small btn--clone"
-		self["disabled"]= True
-		self.isDisabled=True
+		self["disabled"] = True
+		self.isDisabled = True
 
 	def onAttach(self):
-		super(CloneAction,self).onAttach()
-		self.parent().parent().selectionChangedEvent.register( self )
+		super(CloneAction, self).onAttach()
+		self.parent().parent().selectionChangedEvent.register(self)
 
 	def onDetach(self):
-		self.parent().parent().selectionChangedEvent.unregister( self )
-		super(CloneAction,self).onDetach()
+		self.parent().parent().selectionChangedEvent.unregister(self)
+		super(CloneAction, self).onDetach()
 
-	def onSelectionChanged(self, table, selection ):
-		if len(selection)>0:
+	def onSelectionChanged(self, table, selection, *args,**kwargs):
+		if len(selection) > 0:
 			if self.isDisabled:
 				self.isDisabled = False
-			self["disabled"]= False
+			self["disabled"] = False
 		else:
 			if not self.isDisabled:
-				self["disabled"]= True
+				self["disabled"] = True
 				self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
+	def isSuitableFor(module, handler, actionName):
 		if module is None or module not in conf["modules"].keys():
 			return False
 
-		correctAction = actionName=="clone"
+		correctAction = actionName == "clone"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
-		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "clone" in conf["modules"][module]["disabledFunctions"]
+		hasAccess = conf["currentUser"] and (
+				"root" in conf["currentUser"]["access"] or module + "-edit" in conf["currentUser"]["access"])
 
-		return correctAction and correctHandler and hasAccess and not isDisabled
+		return correctAction and correctHandler and hasAccess
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
 		for s in selection:
-			self.openEditor( s["key"] )
+			self.openEditor(s["key"])
 
 	def openEditor(self, key):
-		conf[ "mainWindow" ].openView(
-			translate( "Clone" ),  # AnzeigeName
+		conf["mainWindow"].openView(
+			translate("Clone"),  # AnzeigeName
 			"icon-clone",  # Icon
 			"edithandler",  # viewName
 			self.parent().parent().module,  # Modulename
 			"add",  # Action
-			data = { "context": self.parent().parent().context,
-					 "key"    : key,
-					 "clone"  : True},
-			target = "popup" if self.parent().parent().isSelector else "mainNav"
+			data={"context": self.parent().parent().context, "group": self.parent().parent().group,
+				  "key": key,
+				  "clone": True},
+			target="popup" if self.parent().parent().isSelector else "mainNav"
 		)
-
 
 	def resetLoadingState(self):
 		pass
 
-actionDelegateSelector.insert( 1, CloneAction.isSuitableFor, CloneAction )
+
+actionDelegateSelector.insert(1, CloneAction.isSuitableFor, CloneAction)
 
 
 class DeleteAction(Button):
 	"""
 		Allows deleting an entry in a list-module.
 	"""
+
 	def __init__(self, *args, **kwargs):
-		super( DeleteAction, self ).__init__( translate("Delete"), icon="icon-delete")
+		super(DeleteAction, self).__init__(translate("Delete"), icon="icon-delete")
 		self["class"] = "bar-item btn btn--small btn--delete"
-		self["disabled"]= True
-		self.isDisabled=True
+		self["disabled"] = True
+		self.isDisabled = True
 
 	def onAttach(self):
-		super(DeleteAction,self).onAttach()
-		self.parent().parent().selectionChangedEvent.register( self )
+		super(DeleteAction, self).onAttach()
+		self.parent().parent().selectionChangedEvent.register(self)
 
 	def onDetach(self):
-		self.parent().parent().selectionChangedEvent.unregister( self )
-		super(DeleteAction,self).onDetach()
+		self.parent().parent().selectionChangedEvent.unregister(self)
+		super(DeleteAction, self).onDetach()
 
-	def onSelectionChanged(self, table, selection ):
-		if len(selection)>0:
+	def onSelectionChanged(self, table, selection, *args,**kwargs):
+		if len(selection) > 0:
 			if self.isDisabled:
 				self.isDisabled = False
-			self["disabled"]= False
+			self["disabled"] = False
 		else:
 			if not self.isDisabled:
-				self["disabled"]= True
+				self["disabled"] = True
 				self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
+	def isSuitableFor(module, handler, actionName):
 		if module is None or module not in conf["modules"].keys():
 			return False
 
-		correctAction = actionName=="delete"
+		correctAction = actionName == "delete"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-delete" in conf["currentUser"]["access"])
-		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "delete" in conf["modules"][module]["disabledFunctions"]
+		hasAccess = conf["currentUser"] and (
+				"root" in conf["currentUser"]["access"] or module + "-delete" in conf["currentUser"]["access"])
 
-		return correctAction and correctHandler and hasAccess and not isDisabled
+		return correctAction and correctHandler and hasAccess
 
 	def onClick(self, sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if not selection:
 			return
-		d = Confirm(translate("Delete {{amt}} Entries?",amt=len(selection)) ,title=translate("Delete them?"), yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep") )
+		d = Confirm(translate("Delete {{amt}} Entries?", amt=len(selection)), title=translate("Delete them?"),
+					yesCallback=self.doDelete, yesLabel=translate("Delete"), noLabel=translate("Keep"))
 		d.deleteList = [x["key"] for x in selection]
-		d.addClass( "delete" )
+		d.addClass("delete")
 
 	def doDelete(self, dialog):
 		deleteList = dialog.deleteList
 
-		agroup = requestGroup( self.allDeletedSuccess )
+		agroup = requestGroup(self.allDeletedSuccess)
 
 		for x in deleteList:
-			NetworkService.request( self.parent().parent().module, "delete", { "key": x },
-									secure = True, modifies = False, group=agroup,
-									successHandler = self.deletedSuccess,
-									failureHandler = self.deletedFailed )
+			NetworkService.request(self.parent().parent().module, "delete", {"key": x},
+								   secure=True, modifies=False, group=agroup,
+								   successHandler=self.deletedSuccess,
+								   failureHandler=self.deletedFailed)
 		agroup.call()
 
-		self.deleteProgressMessage = conf[ "mainWindow" ].log( "progress", translate( "Einträge werden gelöscht... bitte warten" ), modul = self.parent().parent().module,
-															   action = "delete" )
+		self.deleteProgressMessage = conf["mainWindow"].log("progress",
+															translate("Einträge werden gelöscht... bitte warten"),
+															modul=self.parent().parent().module,
+															action="delete")
 
-	def allDeletedSuccess( self,success ):
-		conf[ "mainWindow" ].logWdg.removeInfo( self.deleteProgressMessage )
+	def allDeletedSuccess(self, success):
+		conf["mainWindow"].logWdg.removeInfo(self.deleteProgressMessage)
 
 		if success:
-			conf[ "mainWindow" ].log( "success", translate( "Einträge gelöscht" ), modul = self.parent().parent().module, action = "delete" )
+			conf["mainWindow"].log("success", translate("Einträge gelöscht"), modul=self.parent().parent().module,
+								   action="delete")
 		else:
-			conf[ "mainWindow" ].log( "error", translate( "Ein oder mehrere Einträge konnten nicht gelöscht werden" ), modul = self.parent().parent().module, action = "delete" )
+			conf["mainWindow"].log("error", translate("Ein oder mehrere Einträge konnten nicht gelöscht werden"),
+								   modul=self.parent().parent().module, action="delete")
 
 		DeferredCall(
 			NetworkService.notifyChange, self.parent().parent().module,
-			action = 'delete', _delay = 1500
+			action='delete', _delay=1500
 		)
 
-	def deletedSuccess( self, req=None, code=None ):
+	def deletedSuccess(self, req=None, code=None):
 		pass
-		#conf["mainWindow"].log("success",translate("Eintrag gelöscht"),modul=self.parent().parent().module,action="delete" )
 
-	def deletedFailed( self, req=None, code=None ):
-		conf["mainWindow"].log("error",translate("Eintrag konnte nicht gelöscht werden (status: %s)"%code),modul=self.parent().parent().module,action="delete" )
+	# conf["mainWindow"].log("success",translate("Eintrag gelöscht"),modul=self.parent().parent().module,action="delete" )
+
+	def deletedFailed(self, req=None, code=None):
+		conf["mainWindow"].log("error", translate("Eintrag konnte nicht gelöscht werden (status: %s)" % code),
+							   modul=self.parent().parent().module, action="delete")
 
 	def resetLoadingState(self):
 		pass
 
-actionDelegateSelector.insert( 1, DeleteAction.isSuitableFor, DeleteAction )
+
+actionDelegateSelector.insert(1, DeleteAction.isSuitableFor, DeleteAction)
+
 
 class ListPreviewAction(html5.Span):
 
-	def __init__(self, module, handler, actionName, *args, **kwargs ):
-		super(ListPreviewAction, self ).__init__(*args, **kwargs)
+	def __init__(self, module, handler, actionName, *args, **kwargs):
+		super(ListPreviewAction, self).__init__(*args, **kwargs)
 
 		self.urls = conf["defaultPreview"]
 
@@ -326,7 +338,7 @@ class ListPreviewAction(html5.Span):
 		self.urlCb.removeClass("is-hidden")
 
 	def onAttach(self):
-		super(ListPreviewAction,self).onAttach()
+		super(ListPreviewAction, self).onAttach()
 		self.parent().parent().selectionChangedEvent.register(self)
 
 		module = self.parent().parent().module
@@ -344,7 +356,7 @@ class ListPreviewAction(html5.Span):
 		self.parent().parent().selectionChangedEvent.unregister(self)
 		super(ListPreviewAction, self).onDetach()
 
-	def onSelectionChanged(self, table, selection):
+	def onSelectionChanged(self, table, selection, *args,**kwargs):
 		if len(selection) > 0:
 			if self.isDisabled:
 				self.isDisabled = False
@@ -352,7 +364,7 @@ class ListPreviewAction(html5.Span):
 
 		else:
 			if not self.isDisabled:
-				self["disabled"]= True
+				self["disabled"] = True
 				self.isDisabled = True
 
 	def onClick(self, sender=None):
@@ -373,12 +385,12 @@ class ListPreviewAction(html5.Span):
 				newUrl = self.urlCb["options"].item(self.urlCb["selectedIndex"]).value
 
 			newUrl = newUrl \
-						.replace( "{{modul}}", self.parent().parent().module)\
-							.replace("{{module}}", self.parent().parent().module)
+				.replace("{{modul}}", self.parent().parent().module) \
+				.replace("{{module}}", self.parent().parent().module)
 
-			if "updateParams" in conf and conf[ "updateParams" ]:
-				for k, v in conf[ "default_params" ].items():
-					newUrl = newUrl.replace( "{{%s}}"%k, v )
+			if "updateParams" in conf and conf["updateParams"]:
+				for k, v in conf["default_params"].items():
+					newUrl = newUrl.replace("{{%s}}" % k, v)
 
 			for k, v in entry.items():
 				newUrl = newUrl.replace("{{%s}}" % k, str(v))
@@ -389,50 +401,51 @@ class ListPreviewAction(html5.Span):
 			html5.window.open(newUrl, target)
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
+	def isSuitableFor(module, handler, actionName):
 		if module is None or module not in conf["modules"].keys():
 			return False
 
-		correctAction = actionName=="preview"
+		correctAction = actionName == "preview"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
-		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
+		hasAccess = conf["currentUser"] and (
+				"root" in conf["currentUser"]["access"] or module + "-view" in conf["currentUser"]["access"])
 		isAvailable = conf["modules"][module].get("preview", conf["modules"][module].get("preview"))
 
-		return correctAction and correctHandler and hasAccess and not isDisabled and isAvailable
+		return correctAction and correctHandler and hasAccess and isAvailable
 
-actionDelegateSelector.insert( 2, ListPreviewAction.isSuitableFor, ListPreviewAction )
+
+actionDelegateSelector.insert(2, ListPreviewAction.isSuitableFor, ListPreviewAction)
 
 
 class ListPreviewInlineAction(Button):
-	def __init__(self, *args, **kwargs ):
-		super( ListPreviewInlineAction, self ).__init__( translate("vi.sidebar.internalpreview"), icon="icon-list-item")
+	def __init__(self, *args, **kwargs):
+		super(ListPreviewInlineAction, self).__init__(translate("vi.sidebar.internalpreview"), icon="icon-list-item")
 		self["class"] = "bar-item btn btn--small btn--intpreview"
 		self.urls = None
 		self.intPrevActive = False
 		self.addClass("is-disabled")
 
 	def onAttach(self):
-		super( ListPreviewInlineAction,self ).onAttach()
-		self.parent().parent().selectionChangedEvent.register( self )
+		super(ListPreviewInlineAction, self).onAttach()
+		self.parent().parent().selectionChangedEvent.register(self)
 
 	def onDetach(self):
-		self.parent().parent().selectionChangedEvent.unregister( self )
-		super( ListPreviewInlineAction, self ).onDetach()
+		self.parent().parent().selectionChangedEvent.unregister(self)
+		super(ListPreviewInlineAction, self).onDetach()
 
-	def onSelectionChanged(self, table, selection):
+	def onSelectionChanged(self, table, selection, *args,**kwargs):
 		# Disallow internal preview in selector mode
 		if self.parent().parent().selectionCallback:
 			return
 
-		if len(selection)>0:
+		if len(selection) > 0:
 			self.removeClass("is-disabled")
 		else:
 			self.addClass("is-disabled")
 
 		# If there is already something in the sidebar, don't show the internal preview!
 		if (self.parent().parent().sideBar.getWidget()
-			and not isinstance(self.parent().parent().sideBar.getWidget(), InternalPreview)):
+				and not isinstance(self.parent().parent().sideBar.getWidget(), InternalPreview)):
 			return
 
 		# Show internal preview when one entry is selected; Else, remove sidebar widget if
@@ -452,34 +465,36 @@ class ListPreviewInlineAction(Button):
 	def toggleIntPrev(self):
 		intPrevActive = self.intPrevActive
 		selection = self.parent().parent().getCurrentSelection()
-		if len(selection) == 1 and intPrevActive == True :
-			preview = InternalPreview( self.parent().parent().module, self.parent().parent()._structure, selection[0])
+		if len(selection) == 1 and intPrevActive == True:
+			preview = InternalPreview(self.parent().parent().module, self.parent().parent()._structure, selection[0])
 			self.parent().parent().sideBar.sidebarHeadline.element.innerHTML = translate("vi.sidebar.internalpreview")
 
-			self.parent().parent().sideBar.sidebarIcon.prependChild( SvgIcon("icon-list-item" ) )
+			self.parent().parent().sideBar.sidebarIcon.prependChild(SvgIcon("icon-list-item"))
 			self.parent().parent().sideBar.setWidget(preview)
 		else:
-			if isinstance( self.parent().parent().sideBar.getWidget(), InternalPreview ):
+			if isinstance(self.parent().parent().sideBar.getWidget(), InternalPreview):
 				self.parent().parent().sideBar.setWidget(None)
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
+	def isSuitableFor(module, handler, actionName):
 		if module is None or module not in conf["modules"].keys():
 			return False
 
 		correctAction = actionName == "intpreview"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
-		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
+		hasAccess = conf["currentUser"] and (
+				"root" in conf["currentUser"]["access"] or module + "-view" in conf["currentUser"]["access"])
+
 		generallyDisabled = not bool(conf["modules"][module].get("disableInternalPreview", not conf["internalPreview"]))
 
-		return correctAction and correctHandler and hasAccess and not isDisabled and generallyDisabled
+		return correctAction and correctHandler and hasAccess and generallyDisabled
 
-actionDelegateSelector.insert( 1, ListPreviewInlineAction.isSuitableFor, ListPreviewInlineAction )
+
+actionDelegateSelector.insert(1, ListPreviewInlineAction.isSuitableFor, ListPreviewInlineAction)
 
 
 class CloseAction(Button):
-	def __init__(self, *args, **kwargs ):
+	def __init__(self, *args, **kwargs):
 		super(CloseAction, self).__init__(
 			translate("Close"),
 			icon="icon-cancel"
@@ -490,13 +505,15 @@ class CloseAction(Button):
 		conf["mainWindow"].removeWidget(self.parent().parent())
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		return actionName=="close"
+	def isSuitableFor(module, handler, actionName):
+		return actionName == "close"
+
 
 actionDelegateSelector.insert(1, CloseAction.isSuitableFor, CloseAction)
 
+
 class SelectAction(Button):
-	def __init__(self, *args, **kwargs ):
+	def __init__(self, *args, **kwargs):
 		super().__init__(
 			translate("Select"),
 			icon="icon-select-add"
@@ -507,18 +524,19 @@ class SelectAction(Button):
 		self.parent().parent().selectorReturn()
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		return actionName=="select"
+	def isSuitableFor(module, handler, actionName):
+		return actionName == "select"
+
 
 actionDelegateSelector.insert(1, SelectAction.isSuitableFor, SelectAction)
 
 
-class SelectFieldsPopup( Popup ):
+class SelectFieldsPopup(Popup):
 	def __init__(self, listWdg, *args, **kwargs):
 		if not listWdg._structure:
 			return
 
-		super( SelectFieldsPopup, self ).__init__( title=translate("Select fields"))
+		super(SelectFieldsPopup, self).__init__(title=translate("Select fields"))
 
 		self.removeClass("popup--center")
 		self.addClass("popup--n popup--selectfields")
@@ -528,13 +546,13 @@ class SelectFieldsPopup( Popup ):
 
 		ul = html5.Ul()
 		ul.addClass("option-group")
-		self.popupBody.appendChild( ul )
+		self.popupBody.appendChild(ul)
 
 		for key, bone in self.listWdg._structure.items():
 			li = html5.Li()
 			li.addClass("check")
 
-			ul.appendChild( li )
+			ul.appendChild(li)
 
 			chkBox = html5.Input()
 			chkBox.addClass("check-input")
@@ -542,36 +560,36 @@ class SelectFieldsPopup( Popup ):
 			chkBox["value"] = key
 
 			li.appendChild(chkBox)
-			self.checkboxes.append( chkBox )
+			self.checkboxes.append(chkBox)
 
 			if key in self.listWdg.getFields():
 				chkBox["checked"] = True
-			lbl = html5.Label(bone["descr"],forElem=chkBox)
+			lbl = html5.Label(bone["descr"], forElem=chkBox)
 			lbl.addClass("check-label")
 			li.appendChild(lbl)
 
 		# Functions for Selection
 		div = html5.Div()
-		div[ "class" ].append( "selectiontools input-group" )
+		div["class"].append("selectiontools input-group")
 
-		self.popupBody.appendChild( div )
+		self.popupBody.appendChild(div)
 
-		self.selectAllBtn =  Button( translate( "Select all" ), callback=self.doSelectAll )
-		self.selectAllBtn[ "class" ].append( "btn--selectall" )
-		self.unselectAllBtn =  Button( translate( "Unselect all" ), callback=self.doUnselectAll )
-		self.unselectAllBtn[ "class" ].append( "btn--unselectall" )
-		self.invertSelectionBtn =  Button( translate( "Invert selection" ), callback=self.doInvertSelection )
-		self.invertSelectionBtn[ "class" ].append( "btn--selectinvert" )
+		self.selectAllBtn = Button(translate("Select all"), callback=self.doSelectAll)
+		self.selectAllBtn["class"].append("btn--selectall")
+		self.unselectAllBtn = Button(translate("Unselect all"), callback=self.doUnselectAll)
+		self.unselectAllBtn["class"].append("btn--unselectall")
+		self.invertSelectionBtn = Button(translate("Invert selection"), callback=self.doInvertSelection)
+		self.invertSelectionBtn["class"].append("btn--selectinvert")
 
 		div.appendChild(self.selectAllBtn)
 		div.appendChild(self.unselectAllBtn)
 		div.appendChild(self.invertSelectionBtn)
 
 		# Function for Commit
-		self.cancelBtn = Button( translate( "Cancel" ), callback=self.doCancel)
+		self.cancelBtn = Button(translate("Cancel"), callback=self.doCancel)
 		self.cancelBtn.addClass("btn btn--danger")
 
-		self.applyBtn = Button( translate( "Apply" ), callback=self.doApply)
+		self.applyBtn = Button(translate("Apply"), callback=self.doApply)
 		self.applyBtn.addClass("btn btn--primary")
 
 		self.popupFoot.appendChild(self.cancelBtn)
@@ -585,7 +603,7 @@ class SelectFieldsPopup( Popup ):
 		res = []
 		for c in self.checkboxes:
 			if c["checked"]:
-				res.append( c["value"] )
+				res.append(c["value"])
 
 		if not res:
 			Alert(
@@ -597,11 +615,12 @@ class SelectFieldsPopup( Popup ):
 		self.applyBtn["disabled"] = True
 
 		DeferredCall(self.listWdg.setFields, res, _delay=100, _callback=self.doSetFields)
-		#self.listWdg.setFields( res )
-		#self.applyBtn.resetIcon()
-		#self.close()
 
-	def doSetFields( self,*args,**kwargs ):
+	# self.listWdg.setFields( res )
+	# self.applyBtn.resetIcon()
+	# self.close()
+
+	def doSetFields(self, *args, **kwargs):
 		self.applyBtn.resetIcon()
 		self.close()
 
@@ -610,61 +629,65 @@ class SelectFieldsPopup( Popup ):
 
 	def doSelectAll(self, *args, **kwargs):
 		for cb in self.checkboxes:
-			if cb[ "checked" ] == False:
-				cb[ "checked" ] = True
+			if cb["checked"] == False:
+				cb["checked"] = True
 
 	def doUnselectAll(self, *args, **kwargs):
 		for cb in self.checkboxes:
-			if cb[ "checked" ] == True:
-				cb[ "checked" ] = False
+			if cb["checked"] == True:
+				cb["checked"] = False
 
 	def doInvertSelection(self, *args, **kwargs):
 		for cb in self.checkboxes:
-			if cb[ "checked" ] == False:
-				cb[ "checked" ] = True
+			if cb["checked"] == False:
+				cb["checked"] = True
 			else:
-				cb[ "checked" ] = False
+				cb["checked"] = False
+
 
 class SelectFieldsAction(Button):
-	def __init__(self, *args, **kwargs ):
-		super( SelectFieldsAction, self ).__init__( translate("Select fields"), icon="icon-list")
+	def __init__(self, *args, **kwargs):
+		super(SelectFieldsAction, self).__init__(translate("Select fields"), icon="icon-list")
 		self["class"] = "bar-item btn btn--small btn--selectfields"
 		self["disabled"] = self.isDisabled = True
 
 	def onClick(self, sender=None):
-		SelectFieldsPopup( self.parent().parent() )
+		SelectFieldsPopup(self.parent().parent())
 
 	def onAttach(self):
-		super(SelectFieldsAction,self).onAttach()
-		self.parent().parent().tableChangedEvent.register( self )
+		super(SelectFieldsAction, self).onAttach()
+		self.parent().parent().tableChangedEvent.register(self)
 
 	def onDetach(self):
-		self.parent().parent().tableChangedEvent.unregister( self )
-		super(SelectFieldsAction,self).onDetach()
+		self.parent().parent().tableChangedEvent.unregister(self)
+		super(SelectFieldsAction, self).onDetach()
 
-	def onTableChanged(self, table, count):
+	def onTableChanged(self, table, count, *args,**kwargs):
 		if count > 0:
 			self["disabled"] = self.isDisabled = False
 		elif not self.isDisabled:
 			self["disabled"] = self.isDisabled = True
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		return actionName=="selectfields"
+	def isSuitableFor(module, handler, actionName):
+		return actionName == "selectfields"
 
-actionDelegateSelector.insert( 1, SelectFieldsAction.isSuitableFor, SelectFieldsAction )
+
+actionDelegateSelector.insert(1, SelectFieldsAction.isSuitableFor, SelectFieldsAction)
+
 
 class ReloadAction(Button):
 	"""
 		Allows Reloading
 	"""
+
 	def __init__(self, *args, **kwargs):
-		super( ReloadAction, self ).__init__( translate("Reload"), icon="icon-reload")
+		super(ReloadAction, self).__init__(translate("Reload"), icon="icon-reload")
 		self["class"] = "bar-item btn btn--small btn--reload"
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		correctAction = actionName=="reload"
+	def isSuitableFor(module, handler, actionName):
+		correctAction = actionName == "reload"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		return correctAction and correctHandler
 
@@ -672,14 +695,14 @@ class ReloadAction(Button):
 		event.stopPropagation()
 		event.preventDefault()
 		self.addClass("is-loading")
-		NetworkService.notifyChange( self.parent().parent().module )
+		NetworkService.notifyChange(self.parent().parent().module)
 
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
 
 
-actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
+actionDelegateSelector.insert(1, ReloadAction.isSuitableFor, ReloadAction)
 
 
 class TableNextPage(Button):
@@ -688,7 +711,7 @@ class TableNextPage(Button):
 		super(TableNextPage, self).__init__(translate("next Page"), icon="icon-table")
 		self["class"] = "bar-item btn btn--small btn--next"
 
-	def postInit(self,widget=None):
+	def postInit(self, widget=None):
 		self.currentModule = self.parent().parent()
 
 	def onClick(self, sender=None):
@@ -706,7 +729,9 @@ class TableNextPage(Button):
 		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
 
+
 actionDelegateSelector.insert(1, TableNextPage.isSuitableFor, TableNextPage)
+
 
 class TablePrevPage(Button):
 
@@ -714,7 +739,7 @@ class TablePrevPage(Button):
 		super(TablePrevPage, self).__init__(translate("prev Page"), icon="icon-table")
 		self["class"] = "bar-item btn btn--small btn--prev"
 
-	def postInit(self,widget=None):
+	def postInit(self, widget=None):
 		self.currentModule = self.parent().parent()
 
 	def onClick(self, sender=None):
@@ -728,33 +753,34 @@ class TablePrevPage(Button):
 		correctHandler = handler == "list" or handler.startswith("list.")
 		return correctAction and correctHandler
 
+
 actionDelegateSelector.insert(1, TablePrevPage.isSuitableFor, TablePrevPage)
 
 
 class TableItems(html5.Div):
 
 	def __init__(self, *args, **kwargs):
-		super( TableItems, self ).__init__( )
+		super(TableItems, self).__init__()
 		self["class"] = "item"
 
-	def postInit(self,widget=None):
+	def postInit(self, widget=None):
 		self.currentModule = self.parent().parent()
 		if self.currentModule:
 			self.currentModule.table.tableChangedEvent.register(self)
 
-	def onTableChanged(self,table, rowCount):
+	def onTableChanged(self, table, rowCount, *args,**kwargs):
 		if "elementSpan" in dir(self):
 			self.removeChild(self.elementSpan)
 
 		pages = self.currentModule.loadedPages
 		currentpage = self.currentModule.currentPage
-		#print(table._model)
+		# print(table._model)
 		if table._dataProvider:
-			#self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, loaded elements: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage )))
+			# self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, loaded elements: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage )))
 			self.elementSpan = html5.Span(html5.TextNode(
 				translate("loaded elements: {{amt}}, pages: {{pg}}", amt=len(table._model), pg=pages)))
 		else:
-			#self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, all elements loaded: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage)))
+			# self.elementSpan = html5.Span(html5.TextNode(translate("current Page {cpg}, all elements loaded: {amt}, pages: {pg}",amt=rowCount, pg=pages, cpg=currentpage)))
 			self.elementSpan = html5.Span(html5.TextNode(
 				translate("all elements loaded: {{amt}}, pages: {{pg}}", amt=len(table._model), pg=pages)))
 		self.appendChild(self.elementSpan)
@@ -765,6 +791,7 @@ class TableItems(html5.Div):
 		correctHandler = handler == "list" or handler.startswith("list.")
 		return correctAction and correctHandler
 
+
 actionDelegateSelector.insert(1, TableItems.isSuitableFor, TableItems)
 
 
@@ -772,16 +799,17 @@ class SetPageRowAmountAction(html5.Div):
 	"""
 		Load a bunch of pages
 	"""
+
 	def __init__(self, *args, **kwargs):
-		super( SetPageRowAmountAction, self ).__init__( )
+		super(SetPageRowAmountAction, self).__init__()
 		self["class"].append("input-group")
 
 		self.pages = html5.Select()
 		self.pages["class"].append("select ignt-select select--small")
 
-		defaultSizes = [5,10,25,50,75,99]
+		defaultSizes = [5, 10, 25, 50, 75, 99]
 		if not conf["batchSize"] in defaultSizes:
-			defaultSizes.insert(0,conf["batchSize"])
+			defaultSizes.insert(0, conf["batchSize"])
 
 		for x in defaultSizes:
 			opt = html5.Option(x)
@@ -789,9 +817,9 @@ class SetPageRowAmountAction(html5.Div):
 			self.pages.appendChild(opt)
 		self.appendChild(self.pages)
 
-		self.btn = Button( translate( "amount" ), callback = self.onClick )
-		self.btn[ "class" ] = "bar-item btn btn--small btn--amount"
-		self.appendChild( self.btn )
+		self.btn = Button(translate("amount"), callback=self.onClick)
+		self.btn["class"] = "bar-item btn btn--small btn--amount"
+		self.appendChild(self.btn)
 		self.sinkEvent("onChange")
 		self.currentLoadedPages = 0
 
@@ -799,7 +827,7 @@ class SetPageRowAmountAction(html5.Div):
 		if sender == self.btn:
 			self.setPageAmount()
 
-	def onChange(self,sender=None):
+	def onChange(self, sender=None):
 		self.setPageAmount()
 
 	def setPageAmount(self):
@@ -809,7 +837,6 @@ class SetPageRowAmountAction(html5.Div):
 		amount = int(self.pages["options"].item(self.pages["selectedIndex"]).value)
 		currentModule.setAmount(amount)
 		NetworkService.notifyChange(currentModule.module)
-
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
@@ -821,36 +848,39 @@ class SetPageRowAmountAction(html5.Div):
 		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
 
-actionDelegateSelector.insert( 1, SetPageRowAmountAction.isSuitableFor, SetPageRowAmountAction )
+
+actionDelegateSelector.insert(1, SetPageRowAmountAction.isSuitableFor, SetPageRowAmountAction)
+
 
 class LoadNextBatchAction(html5.Div):
 	"""
 		Load a bunch of pages
 	"""
+
 	def __init__(self, *args, **kwargs):
-		super( LoadNextBatchAction, self ).__init__( )
+		super(LoadNextBatchAction, self).__init__()
 		self["class"].append("input-group bar-item")
 
 		self.pages = html5.Select()
 		self.pages["class"].append("select ignt-select select--small")
-		for x in [1,5,10]:
+		for x in [1, 5, 10]:
 			opt = html5.Option(x)
 			opt["value"] = x
 			self.pages.appendChild(opt)
 		self.appendChild(self.pages)
 
-		self.btn = Button( translate( "load next pages" ), callback = self.onClick )
-		self.btn[ "class" ] = "bar-item btn btn--small btn--loadnext"
-		self.appendChild( self.btn )
+		self.btn = Button(translate("load next pages"), callback=self.onClick)
+		self.btn["class"] = "bar-item btn btn--small btn--loadnext"
+		self.appendChild(self.btn)
 		self.sinkEvent("onChange")
 		self.currentLoadedPages = 0
 		self.isloading = False
 		DeferredCall(self.registerScroll)
 
 	def registerScroll(self):
-		self.parent().parent().table.addEventListener("scroll",self.onScroll)
+		self.parent().parent().table.addEventListener("scroll", self.onScroll)
 
-	def onScroll(self,sender=None):
+	def onScroll(self, sender=None):
 		scrollableDiv = self.parent().parent().table
 		if not self.isloading and scrollableDiv.element.offsetHeight + scrollableDiv.element.scrollTop >= scrollableDiv.element.scrollHeight:
 			self.loadnextPages()
@@ -862,7 +892,7 @@ class LoadNextBatchAction(html5.Div):
 	def onChange(self, sender=None):
 		self.loadnextPages()
 
-	def loadnextPages(self,*args,**kwargs):
+	def loadnextPages(self, *args, **kwargs):
 		self.isloading = True
 		self.addClass("is-loading")
 		currentModule = self.parent().parent()
@@ -875,7 +905,6 @@ class LoadNextBatchAction(html5.Div):
 		else:
 			self.removeClass("is-loading")
 
-
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
 		correctAction = actionName == "loadnext"
@@ -887,19 +916,22 @@ class LoadNextBatchAction(html5.Div):
 			self.removeClass("is-loading")
 			self.isloading = False
 
-actionDelegateSelector.insert( 1, LoadNextBatchAction.isSuitableFor, LoadNextBatchAction )
+
+actionDelegateSelector.insert(1, LoadNextBatchAction.isSuitableFor, LoadNextBatchAction)
+
 
 class LoadAllAction(Button):
 	"""
 		Allows Loading all Entries in a list
 	"""
+
 	def __init__(self, *args, **kwargs):
-		super( LoadAllAction, self ).__init__( translate("Load all"), icon="icon-table")
+		super(LoadAllAction, self).__init__(translate("Load all"), icon="icon-table")
 		self["class"] = "bar-item btn btn--small btn--loadall"
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		correctAction = actionName=="loadall"
+	def isSuitableFor(module, handler, actionName):
+		correctAction = actionName == "loadall"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		return correctAction and correctHandler
 
@@ -908,45 +940,45 @@ class LoadAllAction(Button):
 		currentModule = self.parent().parent()
 
 		if currentModule:
-			currentModule.table._loadOnDisplay = True #mark to force load whole Dataset
-			html5.window.setTimeout( self.loadAllRows, 500 )
+			currentModule.table._loadOnDisplay = True  # mark to force load whole Dataset
+			html5.window.setTimeout(self.loadAllRows, 500)
 
 	def loadAllRows(self):
-		NetworkService.notifyChange( self.parent().parent().module )
+		NetworkService.notifyChange(self.parent().parent().module)
 
 	def resetLoadingState(self):
 		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
 
 
-actionDelegateSelector.insert( 1, LoadAllAction.isSuitableFor, LoadAllAction )
+actionDelegateSelector.insert(1, LoadAllAction.isSuitableFor, LoadAllAction)
 
 
 class PageFindAction(html5.Div):
 	"""
 		Allows Loading all Entries in a list
 	"""
+
 	def __init__(self, *args, **kwargs):
-		super( PageFindAction, self ).__init__( )
+		super(PageFindAction, self).__init__()
 		self["class"].append("input-group")
 
 		self.searchInput = html5.Input()
 		self.searchInput["class"].append("input ignt-input input--small")
 		self.appendChild(self.searchInput)
 
-
-		btn = Button( translate( "Find on Page" ), callback = self.onClick, icon = "icon-search" )
-		btn[ "class" ] = "bar-item btn btn--small btn--pagefind"
-		self.appendChild( btn )
+		btn = Button(translate("Find on Page"), callback=self.onClick, icon="icon-search")
+		btn["class"] = "bar-item btn btn--small btn--pagefind"
+		self.appendChild(btn)
 		self.sinkEvent("onKeyPress")
 
-	def onKeyPress( self, event ):
-		if html5.isReturn( event ):
+	def onKeyPress(self, event):
+		if html5.isReturn(event):
 			self.onClick()
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		correctAction = actionName=="pagefind"
+	def isSuitableFor(module, handler, actionName):
+		correctAction = actionName == "pagefind"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		return correctAction and correctHandler
 
@@ -956,7 +988,6 @@ class PageFindAction(html5.Div):
 			return 0
 		self.addClass("is-loading")
 		self.startFind()
-
 
 	def startFind(self):
 		strFound = self.findText()
@@ -993,27 +1024,30 @@ class PageFindAction(html5.Div):
 		if self.hasClass("is-loading"):
 			self.removeClass("is-loading")
 
-actionDelegateSelector.insert( 1, PageFindAction.isSuitableFor, PageFindAction )
+
+actionDelegateSelector.insert(1, PageFindAction.isSuitableFor, PageFindAction)
+
 
 class ListSelectFilterAction(Button):
-	def __init__(self, *args, **kwargs ):
-		super( ListSelectFilterAction, self ).__init__( translate("Select Filter"), icon="icon-search")
+	def __init__(self, *args, **kwargs):
+		super(ListSelectFilterAction, self).__init__(translate("Select Filter"), icon="icon-search")
 		self["class"] = "bar-item btn btn--small btn--selectfilter"
 		self.urls = None
 		self.filterSelector = None
 
 	def onAttach(self):
-		super(ListSelectFilterAction,self).onAttach()
+		super(ListSelectFilterAction, self).onAttach()
 		module = self.parent().parent().module
 		if self.parent().parent().filterID:
-			#Its a predefined search - we wont override this
+			# Its a predefined search - we wont override this
 			self["disabled"] = True
 		if module in conf["modules"].keys():
 			modulConfig = conf["modules"][module]
-			if "disabledFunctions" in modulConfig.keys() and modulConfig[ "disabledFunctions" ] and "fulltext-search" in modulConfig[ "disabledFunctions" ]:
+			if "disabledFunctions" in modulConfig.keys() and modulConfig["disabledFunctions"] and "fulltext-search" in \
+					modulConfig["disabledFunctions"]:
 				# Fulltext-Search is disabled
 				if not "views" in modulConfig.keys() or not modulConfig["views"]:
-					#And we dont have any views to display
+					# And we dont have any views to display
 					self["disabled"] = True
 
 	def onClick(self, sender=None):
@@ -1023,55 +1057,61 @@ class ListSelectFilterAction(Button):
 		else:
 			self.filterSelector = FilterSelector(self.parent().parent().module)
 			self.parent().parent().sideBar.sidebarHeadline.element.innerHTML = translate("vi.sidebar.filterselector")
-			self.parent().parent().sideBar.sidebarIcon.prependChild( SvgIcon( "icon-search" ) )
+			self.parent().parent().sideBar.sidebarIcon.prependChild(SvgIcon("icon-search"))
 			self.parent().parent().sideBar.setWidget(self.filterSelector)
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
+	def isSuitableFor(module, handler, actionName):
 		if module is None or module not in conf["modules"].keys():
 			return False
 
-		correctAction = actionName=="selectfilter"
+		correctAction = actionName == "selectfilter"
 		correctHandler = handler == "list" or handler.startswith("list.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-view" in conf["currentUser"]["access"])
-		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "view" in conf["modules"][module]["disabledFunctions"]
+		hasAccess = conf["currentUser"] and (
+				"root" in conf["currentUser"]["access"] or module + "-view" in conf["currentUser"]["access"])
 
-		return correctAction and correctHandler and hasAccess and not isDisabled
+		return correctAction and correctHandler and hasAccess
 
-actionDelegateSelector.insert( 1, ListSelectFilterAction.isSuitableFor, ListSelectFilterAction )
+
+actionDelegateSelector.insert(1, ListSelectFilterAction.isSuitableFor, ListSelectFilterAction)
+
 
 class CreateRecurrentAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(CreateRecurrentAction, self ).__init__( translate("Save-Close"), icon="icon-save-file")
+		super(CreateRecurrentAction, self).__init__(translate("Save-Close"), icon="icon-save-file")
 		self["class"] = "bar-item btn btn--small btn--primary btn--save-close"
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		return actionName=="create.recurrent"
+	def isSuitableFor(module, handler, actionName):
+		return actionName == "create.recurrent"
 
 	def onClick(self, sender=None):
 		self.addClass("is-loading")
 		self.parent().parent().doSave(closeOnSuccess=True)
 
-actionDelegateSelector.insert( 1, CreateRecurrentAction.isSuitableFor, CreateRecurrentAction)
+
+actionDelegateSelector.insert(1, CreateRecurrentAction.isSuitableFor, CreateRecurrentAction)
+
 
 class ExportCsvAction(Button):
 	def __init__(self, *args, **kwargs):
 		super(ExportCsvAction, self).__init__(translate("CSV Export"), icon="icon-download-file")
 		self["class"] = "bar-item btn btn--small btn--download"
 
-	def onClick(self, sender = None):
+	def onClick(self, sender=None):
 		ExportCsvStarter(self.parent().parent())
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
 		return actionName == "exportcsv" and (handler == "list" or handler.startswith("list."))
 
+
 actionDelegateSelector.insert(1, ExportCsvAction.isSuitableFor, ExportCsvAction)
+
 
 class SelectAllAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectAllAction, self ).__init__(translate("Select all"), icon="icon-select-add")
+		super(SelectAllAction, self).__init__(translate("Select all"), icon="icon-select-add")
 		self["class"] = "bar-item btn btn--small btn--selectall"
 		self["disabled"] = self.isDisabled = True
 
@@ -1084,25 +1124,26 @@ class SelectAllAction(Button):
 		conf["mainWindow"].log("info", translate(u"{{items}} items had been selected", items=cnt))
 
 	def onAttach(self):
-		super(SelectAllAction,self).onAttach()
-		self.parent().parent().tableChangedEvent.register( self )
+		super(SelectAllAction, self).onAttach()
+		self.parent().parent().tableChangedEvent.register(self)
 
 	def onDetach(self):
-		self.parent().parent().tableChangedEvent.unregister( self )
-		super(SelectAllAction,self).onDetach()
+		self.parent().parent().tableChangedEvent.unregister(self)
+		super(SelectAllAction, self).onDetach()
 
-	def onTableChanged(self, table, count):
+	def onTableChanged(self, table, count, *args,**kwargs):
 		if count > 0:
 			self["disabled"] = self.isDisabled = False
 		elif not self.isDisabled:
 			self["disabled"] = self.isDisabled = True
+
 
 actionDelegateSelector.insert(1, SelectAllAction.isSuitableFor, SelectAllAction)
 
 
 class UnSelectAllAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(UnSelectAllAction, self ).__init__(translate("Unselect all"), icon="icon-select-remove")
+		super(UnSelectAllAction, self).__init__(translate("Unselect all"), icon="icon-select-remove")
 		self["class"] = "bar-item btn btn--small btn--unselectall"
 		self["disabled"] = self.isDisabled = True
 
@@ -1115,24 +1156,26 @@ class UnSelectAllAction(Button):
 		conf["mainWindow"].log("info", translate(u"{{items}} items had been unselected", items=cnt))
 
 	def onAttach(self):
-		super(UnSelectAllAction,self).onAttach()
-		self.parent().parent().tableChangedEvent.register( self )
+		super(UnSelectAllAction, self).onAttach()
+		self.parent().parent().tableChangedEvent.register(self)
 
 	def onDetach(self):
-		self.parent().parent().tableChangedEvent.unregister( self )
-		super(UnSelectAllAction,self).onDetach()
+		self.parent().parent().tableChangedEvent.unregister(self)
+		super(UnSelectAllAction, self).onDetach()
 
-	def onTableChanged(self, table, count):
+	def onTableChanged(self, table, count, *args,**kwargs):
 		if count > 0:
 			self["disabled"] = self.isDisabled = False
 		elif not self.isDisabled:
 			self["disabled"] = self.isDisabled = True
 
+
 actionDelegateSelector.insert(1, UnSelectAllAction.isSuitableFor, UnSelectAllAction)
+
 
 class SelectInvertAction(Button):
 	def __init__(self, *args, **kwargs):
-		super(SelectInvertAction, self ).__init__(translate("Invert selection"), icon="icon-select-invert")
+		super(SelectInvertAction, self).__init__(translate("Invert selection"), icon="icon-select-invert")
 		self["class"] = "bar-item btn btn--small btn--selectinvert"
 		self["disabled"] = self.isDisabled = True
 
@@ -1145,24 +1188,27 @@ class SelectInvertAction(Button):
 
 		if removed and added:
 			conf["mainWindow"].log("info", translate(u"{{added}} items selected, {removed} items deselected",
-			                                            added=added, removed=removed), icon="icon-select-invert")
+													 added=added, removed=removed), icon="icon-select-invert")
 		elif removed == 0:
-			conf["mainWindow"].log("info", translate(u"{{items}} items had been selected", items=added), icon="icon-select-add")
+			conf["mainWindow"].log("info", translate(u"{{items}} items had been selected", items=added),
+								   icon="icon-select-add")
 		elif added == 0:
-			conf["mainWindow"].log("info", translate(u"{{items}} items had been unselected", items=removed), icon="icon-select-remove")
+			conf["mainWindow"].log("info", translate(u"{{items}} items had been unselected", items=removed),
+								   icon="icon-select-remove")
 
 	def onAttach(self):
-		super(SelectInvertAction,self).onAttach()
-		self.parent().parent().tableChangedEvent.register( self )
+		super(SelectInvertAction, self).onAttach()
+		self.parent().parent().tableChangedEvent.register(self)
 
 	def onDetach(self):
-		self.parent().parent().tableChangedEvent.unregister( self )
-		super(SelectInvertAction,self).onDetach()
+		self.parent().parent().tableChangedEvent.unregister(self)
+		super(SelectInvertAction, self).onDetach()
 
-	def onTableChanged(self, table, count):
+	def onTableChanged(self, table, count, *args,**kwargs):
 		if count > 0:
 			self["disabled"] = self.isDisabled = False
 		elif not self.isDisabled:
 			self["disabled"] = self.isDisabled = True
+
 
 actionDelegateSelector.insert(1, SelectInvertAction.isSuitableFor, SelectInvertAction)
