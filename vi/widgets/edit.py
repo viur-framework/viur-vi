@@ -1,13 +1,14 @@
+from flare import html5
 from flare.popup import Confirm
 
-import vi.utils as utils
-
 from flare.network import NetworkService, DeferredCall
-from vi.config import conf
 from flare.forms import boneSelector
-from flare.forms.widgets.edit import EditWidget as BaseEditWidget
-from vi.framework.components.actionbar import ActionBar
+from flare.forms.formtags import viurForm
 from flare.i18n import translate
+
+from vi import utils
+from vi.config import conf
+from vi.framework.components.actionbar import ActionBar
 from vi.widgets.list import ListWidget
 from vi.widgets.accordion import Accordion
 from vi.exception import InvalidBoneValueException
@@ -72,7 +73,7 @@ def parseHashParameters(src, prefix=""):
 	return res
 
 
-class EditWidget(BaseEditWidget):
+class EditWidget(html5.Div):
 	appList = "list"
 	appHierarchy = "hierarchy"
 	appTree = "tree"
@@ -80,7 +81,7 @@ class EditWidget(BaseEditWidget):
 	__editIdx_ = 0  # Internal counter to ensure unique ids
 
 	def __init__(self, module, applicationType, key=0, node=None, skelType=None, clone=False,
-	             hashArgs=None, context=None, logAction="Entry saved!", values=None, *args, **kwargs):
+	             hashArgs=None, context=None, logAction="Entry saved!", skel=None, *args, **kwargs):
 		"""
 			Initialize a new Edit or Add-Widget for the given module.
 			:param module: Name of the module
@@ -105,13 +106,11 @@ class EditWidget(BaseEditWidget):
 				translate("The module '{{module}}' does not exist.", module=module),
 				modul=self.module,
 				key=self.key,
-				action=self.mode,
-				data=data
+				action=self.mode
 			)
 			return
 
 		super().__init__(context=context)
-		self.removeClass("flr-internal-edit")
 		self.addClass("vi-widget vi-widget--edit form-group--validation")
 
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
@@ -147,12 +146,11 @@ class EditWidget(BaseEditWidget):
 		self.mode = "edit" if self.key or applicationType == EditWidget.appSingleton else "add"
 		self.node = node
 		self.skelType = skelType
-		self.values = values or {}
+		self.skel = skel or {}
 		self.clone = clone
 		self.closeOnSuccess = False
 		self.logAction = logAction
 		self.context = context
-
 		self.views = {}
 
 		if hashArgs:
@@ -163,7 +161,8 @@ class EditWidget(BaseEditWidget):
 		self.editTaskID = None
 		self.wasInitialRequest = True  # Wherever the last request attempted to save data or just fetched the form
 
-		# Action bar
+		# Widgets
+		self.form = None
 		self.actionbar = ActionBar(self.module, self.applicationType, (self.mode if not clone else "clone"))
 		self.appendChild(self.actionbar)
 
@@ -291,11 +290,8 @@ class EditWidget(BaseEditWidget):
 			Removes all visible bones/forms/fieldsets.
 		"""
 		self.accordion.removeAllChildren()
-		self.bones.clear()
 		self.views.clear()
-		self.containers.clear()
 		self.actionbar.resetLoadingState()
-		self.modified = False
 
 	def closeOrContinue(self, sender=None):
 		NetworkService.notifyChange(self.module, key=self.key, action=self.mode)
@@ -358,7 +354,6 @@ class EditWidget(BaseEditWidget):
 			data = NetworkService.decode(request)
 
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
-			self.modified = False
 			try:
 				self.key = data["values"]["key"]
 			except:
@@ -389,7 +384,15 @@ class EditWidget(BaseEditWidget):
 			return
 
 		self.clear()
-		self._render(data["values"], data.get("errors"), structure=data["structure"])
+
+		# Render form
+		if self.form:
+			self.removeChild(self.form)
+
+		self.form = viurForm(skel=data["values"], structure=data["structure"], errors=data.get("errors"))
+		self.form.buildInternalForm()
+		self.appendChild(self.form)
+
 
 	def _form(self, values, errors):
 		segments = {}
@@ -525,46 +528,13 @@ class EditWidget(BaseEditWidget):
 				data=values
 			)
 
-	def serialize(self, forPost=False):
-		"""
-		Serializes the EditWidget, either for sending data to the server application or for internal purposes.
-		:param forPost: Perform serialization for post to server.
-		:return: Dict of values.
-		"""
-
-		res = {}
-
-		for key, bone in self.bones.items():
-			# ignore the key, it is stored in self.key, and read-only bones
-			if forPost and (key == "key" or bone.bone.readonly):
-				continue
-
-			try:
-				res[key] = bone.serialize()
-				if res[key] is None or res[key] == []:
-					res[key] = ""
-
-			except InvalidBoneValueException:
-				if forPost:
-					# Fixme: Bad hack..
-					lbl = bone.parent()._children[0]
-					if "is-valid" in lbl["class"]:
-						lbl.removeClass("is-valid")
-					lbl.addClass("is-invalid")
-					self.actionbar.resetLoadingState()
-					return None
-
-			except Exception:
-				raise
-
-		return res
-
 	def doSave(self, closeOnSuccess=False, *args, **kwargs):
 		"""
 			Starts serializing and transmitting values to the server.
 		"""
 		self.closeOnSuccess = closeOnSuccess
 
-		res = self.serialize(forPost=True)
+		assert self.form
+		res = self.form.serialize()
 		if res:
 			self._save(res)
