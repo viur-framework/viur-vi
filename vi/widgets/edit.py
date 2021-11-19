@@ -2,7 +2,6 @@ from flare import html5
 from flare.popup import Confirm
 
 from flare.network import NetworkService, DeferredCall
-from flare.forms import boneSelector
 from flare.forms.formtags import viurForm
 from flare.i18n import translate
 
@@ -11,7 +10,6 @@ from vi.config import conf
 from vi.framework.components.actionbar import ActionBar
 from vi.widgets.list import ListWidget
 from vi.widgets.accordion import Accordion
-from vi.exception import InvalidBoneValueException
 
 
 def parseHashParameters(src, prefix=""):
@@ -112,6 +110,7 @@ class EditWidget(html5.Div):
 
 		super().__init__(context=context)
 		self.addClass("vi-widget vi-widget--edit form-group--validation")
+		self.sinkEvent("onChange")
 
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
 		assert applicationType in (
@@ -202,6 +201,14 @@ class EditWidget(html5.Div):
 		super(EditWidget, self).onAttach()
 		utils.setPreventUnloading(True)
 
+	def onChange(self, event):
+		assert self.form
+		DeferredCall(self.form.update)
+
+	def onBoneChange(self, bone):
+		assert self.form
+		DeferredCall(self.form.update)
+
 	def showErrorMsg(self, req=None, code=None):
 		"""
 			Removes all currently visible elements and displays an error message
@@ -289,7 +296,7 @@ class EditWidget(html5.Div):
 		"""
 			Removes all visible bones/forms/fieldsets.
 		"""
-		self.accordion.removeAllChildren()
+		self.accordion.clear()
 		self.views.clear()
 		self.actionbar.resetLoadingState()
 
@@ -383,24 +390,7 @@ class EditWidget(html5.Div):
 			self.closeOrContinue()
 			return
 
-		self.clear()
-
-		# Render form
-		if self.form:
-			self.removeChild(self.form)
-
-		self.form = viurForm(skel=data["values"], structure=data["structure"], errors=data.get("errors"))
-		self.form.buildInternalForm()
-		self.appendChild(self.form)
-
-
-	def _form(self, values, errors):
-		segments = {}
-		firstCat = None
-		hasMissing = False
-		defaultCat = conf["modules"][self.module].get("name", self.module)
-		adminCat = conf["modules"][self.module].get("defaultCategory", None)
-
+		# Context-Variables
 		contextVariable = conf["modules"][self.module].get("editContext")
 		if self.mode == "edit" and contextVariable:
 			if not self.context:
@@ -412,56 +402,59 @@ class EditWidget(html5.Div):
 				contextKey = "key"
 
 			self.context.update({
-				contextVariable: values.get(contextKey)
+				contextVariable: data["values"].get(contextKey)
 			})
 
-		self.accordion.clearSegments()
+		# Initializations
+		self.clear()
 
-		for key, bone in self.structure.items():
-			cat = defaultCat  # meow!
+		firstCat = None
+		hasMissing = False
+		defaultCat = conf["modules"][self.module].get("name", self.module)  # Name of the default category
+		adminCat = conf["modules"][self.module].get("defaultCategory", None)  # The category displayed first (I think...)
+		segments = {}
 
-			if ("params" in bone.keys()
-					and isinstance(bone["params"], dict)
-					and "category" in bone["params"].keys()):
-				cat = bone["params"]["category"]
+		# Build the form as viurForm with the available information as internalForm first.
+		# The bone widgets inside it are being re-arranged afterwards.
+		self.form = viurForm(
+			skel=data["values"],
+			structure=data["structure"],
+			errors=data.get("errors"),
+			context=self.context
+		)
+		self.form.buildInternalForm()
+
+		for name, bone in self.form.bones.items():
+			desc = self.form.structure[name]
+
+			# Get category from bone description
+			cat = desc["params"].get("category") or defaultCat
 
 			if cat not in segments:
 				segments[cat] = self.accordion.addSegment(cat)
 
-			boneClass = boneSelector.select(self.module, key, self.structure)
-			boneFactory = boneClass(self.module, key, self.structure, errors)
-			containerDiv, descrLbl, widget, hasError = boneFactory.boneWidget()
+			# Move the bone from the viurForm into our segment.
+			segments[cat].addWidget(bone)
 
-			if "setContext" in dir(widget) and callable(widget.setContext):
-				widget.setContext(self.context)
-
-			if "changeEvent" in dir(widget):
-				widget.changeEvent.register(self)
-
-			segments[cat].addWidget(containerDiv)
-
-			if hasError:
+			if bone.hasError:
 				segments[cat].addClass("is-incomplete is-active")
 				hasMissing = True
 
-			self.bones[key] = widget
-			self.containers[key] = containerDiv
-
 			# Hide invisible bones or logic-flavored bones with their default desire
-			if not bone["visible"] or (bone["params"] and bone["params"].get("visibleIf")):
-				self.containers[key].hide()
-			elif bone["visible"] and not firstCat and not adminCat:
+			if not desc["visible"] or (desc["params"].get("visibleIf")):
+				bone.hide()
+			elif desc["visible"] and not firstCat and not adminCat:
 				firstCat = segments[cat]
 			elif adminCat and cat == adminCat:
 				firstCat = segments[cat]
 
 			# NO elif!
-			if bone["params"] and bone["params"].get("logic.readonlyIf"):
-				self.containers[key].disable()
+			if desc["params"].get("readonlyIf"):
+				bone.disable()
 
 		# Hide all segments where all fields are invisible
-		for fs in segments.values():
-			fs.checkVisibility()
+		for segment in segments.values():
+			segment.checkVisibility()
 
 		# Show default category
 		if firstCat:
@@ -512,10 +505,10 @@ class EditWidget(html5.Div):
 				)
 				segments[vmodule].addWidget(self.views[vmodule])
 
-		self.unserialize(values, errors)
+		#self.unserialize(values, errors)
 
 		if self._hashArgs:  # Apply the default values (if any)
-			self.unserialize(self._hashArgs)
+			self.form.unserialize(self._hashArgs)
 			self._hashArgs = None
 
 		if hasMissing and not self.wasInitialRequest:
@@ -525,7 +518,7 @@ class EditWidget(html5.Div):
 				modul=self.module,
 				key=self.key,
 				action=self.mode,
-				data=values
+				data=data["values"]
 			)
 
 	def doSave(self, closeOnSuccess=False, *args, **kwargs):
