@@ -83,7 +83,7 @@ class StringViewBoneDelegate(object):
 		return self.getViewElement(output, False)
 
 	def getViewElement(self, labelstr, datafield):
-		labelstr = html5.utils.unescape(labelstr)
+		#labelstr = html5.utils.unescape(labelstr)
 		delegato = html5.Div(labelstr)
 
 		if datafield:
