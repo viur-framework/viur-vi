@@ -5,7 +5,7 @@
 // and `.wasm` files as well:
 
 // THIS IS THE DEFAULT PYODIDE WEBWORKER
-importScripts("https://cdn.jsdelivr.net/pyodide/v0.18.0/full/pyodide.js");
+importScripts("https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js");
 
 async function loadScripts(){
 	let promises = [];
@@ -61,7 +61,7 @@ async function loadScripts(){
 
 
 async function loadPyodideAndPackages(){
-    self.pyodide = await loadPyodide({ indexURL : 'https://cdn.jsdelivr.net/pyodide/v0.18.0/full/' });
+    self.pyodide = await loadPyodide({ indexURL : 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/' });
 }
 let pyodideReadyPromise = loadPyodideAndPackages();
 

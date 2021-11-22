@@ -2,10 +2,21 @@
 
 	 THIS USES PYODIDE V0.17!
 """
-from js import eval as jseval, self as web_self, Blob, URL
-import os, sys, json, string, random, csv
+from js import eval as jseval, self as web_self, Blob, URL, fetch
+import os, sys, json, string, random, csv,time
 from io import StringIO
 
+def fileDownload(url, filename):
+	#time.sleep does not work with pyodide 1.18.1
+	start = time.time()
+	while time.time() < start + 1:
+		pass
+
+	if not url.startswith("http"):
+		log.error("url musst start https://")
+		return 0
+
+	web_self.postMessage(type="fileapi_download", url=url, filename=filename)
 
 def request(url,params=None,jsonResult=True, whitelist=("/list/","/view/")):
 	"""A very simple version of the NetworkService to request synchronous data"""

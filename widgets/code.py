@@ -10,6 +10,10 @@ from vi.framework.components.button import Button
 from js import document
 from vi.framework.components.tree import Tree, TreeNode
 
+import js, time
+
+from js import selectDir,fileDownload,writeFile
+
 class CodeHelpPopup( html5.ext.Popup ):
 	def __init__( self, title="Code Hilfe" ):
 		super( CodeHelpPopup, self ).__init__( title = title )
@@ -321,6 +325,9 @@ class PythonCode(html5.Div):
 		self.logger.appendChild(self.ul)
 		self.appendChild(self.code)
 		self.worker = None
+		self.fs_handle = None #fileapi handle
+		self.fileDownloads = []
+		self.scriptEnded = False
 
 	def addToLog(self,data,type="normal"):
 		"""allowed types:
@@ -357,10 +364,13 @@ class PythonCode(html5.Div):
 			self.addToLog(data["error"],"error")
 
 		if "results" in dir(data):
-			self.scripter.loading.hide()
-			self.scripter.runbtn.show()
-			self.scripter.killbtn.hide()
+			if not self.fileDownloads:
+				self.scripter.loading.hide()
+				self.scripter.runbtn.show()
+				self.scripter.killbtn.hide()
+
 			self.addToLog(data["results"])
+			self.scriptEnded = True
 
 		if "type" in dir(data):
 			if data["type"] == "download":
@@ -375,11 +385,24 @@ class PythonCode(html5.Div):
 				window.document.body.appendChild(link)
 				link.click()
 				window.document.body.removeChild(link)
+			elif data["type"]=="fileapi_download":
+				self.fileDownloads.append(1)
 
+				def dl(self):
+					self.fileDownloads.pop()
+
+					if not self.fileDownloads and self.scriptEnded:
+						self.scripter.loading.hide()
+						self.scripter.runbtn.show()
+						self.scripter.killbtn.hide()
+
+				fileDownload(data["url"],data["filename"]).then(lambda x:dl(self))
 			else: #logs
 				self.addToLog(data["text"],data["type"])
 
 	def run(self):
+		self.fileDownloads = []
+		self.scriptEnded = False
 		self.log = []
 		self.ul.removeAllChildren()
 
@@ -390,8 +413,19 @@ class PythonCode(html5.Div):
 		if self.worker:
 			self.stop()
 
-		self.worker = createWorker(source, self.workerFeedback, self.workerFeedback)
+		context = {}
+		if "requestFileSystemAccess()" in source or "fileDownload(" in source:
+			# active file handler is needed
+			def dirSelected(handle,*args,**kwargs):
+				writeFile("", "deleteMe")
+				self.worker = createWorker(source, self.workerFeedback, self.workerFeedback, context)
 
+			selectDir().then(dirSelected)
+		else:
+			self.worker = createWorker(source, self.workerFeedback, self.workerFeedback, context)
+
+		self.scripter.loading.show()
+		self.scripter.loading["style"]["display"] = "inline-block"
 		self.scripter.runbtn.hide()
 		self.scripter.killbtn.show()
 
