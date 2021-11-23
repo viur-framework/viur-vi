@@ -1,7 +1,25 @@
-<svg id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 130"><title>Zeichenfläche 1</title>
-    <polygon id="SVGID" points="66.14 47.5 56.02 91.14 55.76 92.11 55.49 90.44 43.7 60.61 29.27 73.28 29.27 74.69 47.58 115.78 68.16 115.78 84.35 31.22 66.14 47.5"/>
-    <polygon id="SVGID-2" data-name="SVGID" points="66.14 47.5 56.02 91.14 55.76 92.11 55.49 90.44 43.7 60.61 29.27 73.28 29.27 74.69 47.58 115.78 68.16 115.78 84.35 31.22 66.14 47.5" />
-    <polygon points="84.35 31.22 68.16 115.78 47.58 115.78 28.83 73.64 43.7 60.61 55.49 90.44 55.76 92.11 56.02 91.14 66.14 47.5 84.35 31.22" />
-    <path id="SVGID-3" data-name="SVGID" d="M94.21,50.41v65.37h15V50.41Zm0-25.08V40.11l15-14.6V12.22Z" />
-    <path id="SVGID-4" data-name="SVGID" d="M94.21,50.41v65.37h15V50.41Zm0-25.08V40.11l15-14.6V12.22Z"/>
-    <path d="M109.08,115.78h-15V50.41h15Zm0-90.27-15,14.6V25.33l15-13.11Z"/></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.4.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 130 130" enable-background="new 0 0 130 130" xml:space="preserve">
+<polygon points="94.5,25.3 94.5,40.1 109.3,25.5 109.3,12.2 "/>
+<rect x="94.5" y="50.4" width="14.8" height="65.4"/>
+<g id="g3616_6_" transform="matrix(9.7765667,0,0,-9.7765667,-5642.9301,4389.3906)" opacity="0.5">
+	<g id="g3618_6_">
+		<g id="g3624_6_">
+			<g id="g3626_6_">
+				<path id="path3634_6_" d="M581.7,442.8l-1.5-1.3l1.9-4.3h2.1L581.7,442.8z"/>
+			</g>
+		</g>
+	</g>
+</g>
+<g id="g3616_5_" transform="matrix(9.7765667,0,0,-9.7765667,-5642.9301,4389.3906)">
+	<g id="g3618_5_">
+		<g id="g3624_5_">
+			<g id="g3626_5_">
+				<path id="path3634_5_" d="M584,444.1l-1.9-7h2.1l1.6,8.7L584,444.1L584,444.1z"/>
+			</g>
+		</g>
+	</g>
+</g>
+</svg>
