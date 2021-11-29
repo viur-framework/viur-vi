@@ -58,7 +58,7 @@ class ContextAction(Button):
 
 		super(ContextAction, self).onDetach()
 
-	def onSelectionChanged(self, table, selection):
+	def onSelectionChanged(self, table, selection, *args,**kwargs):
 		if len(selection) > 0:
 			self.enable()
 		else:
