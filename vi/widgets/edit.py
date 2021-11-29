@@ -2,7 +2,7 @@ from flare import html5
 from flare.popup import Confirm
 
 from flare.network import NetworkService, DeferredCall
-from flare.forms.formtags import viurForm
+from flare.forms.formtags import ViurForm
 from flare.i18n import translate
 
 from vi import utils
@@ -414,9 +414,9 @@ class EditWidget(html5.Div):
 		adminCat = conf["modules"][self.module].get("defaultCategory", None)  # The category displayed first (I think...)
 		segments = {}
 
-		# Build the form as viurForm with the available information as internalForm first.
+		# Build the form as ViurForm with the available information as internalForm first.
 		# The bone widgets inside it are being re-arranged afterwards.
-		self.form = viurForm(
+		self.form = ViurForm(
 			skel=data["values"],
 			structure=data["structure"],
 			errors=data.get("errors"),
@@ -433,7 +433,7 @@ class EditWidget(html5.Div):
 			if cat not in segments:
 				segments[cat] = self.accordion.addSegment(cat)
 
-			# Move the bone from the viurForm into our segment.
+			# Move the bone from the ViurForm into our segment.
 			segments[cat].addWidget(bone)
 
 			if bone.hasError:
