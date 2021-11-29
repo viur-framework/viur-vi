@@ -4,8 +4,8 @@ from collections import defaultdict
 from vi.config import conf
 from flare.i18n import translate
 from flare.network import NetworkService
-from vi.priorityqueue import moduleWidgetSelector
-from flare.forms import boneSelector
+from vi.priorityqueue import ModuleWidgetSelector
+from flare.viur import BoneSelector
 from vi.widgets.sidebar import SideBar
 from vi.framework.components.datatable import DataTable, ViewportDataTable
 from vi.framework.components.actionbar import ActionBar
@@ -483,7 +483,7 @@ class ListWidget(html5.Div):
 
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict, defaultdict(list))
+			boneFactory = BoneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict, defaultdict(list))
 			self.table.setCellRender(boneName, boneFactory)
 			boneInfoList.append( boneInfo )
 
@@ -498,7 +498,7 @@ class ListWidget(html5.Div):
 
 		for boneName in fields:
 			boneInfo = tmpDict[boneName]
-			boneFactory = boneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict, defaultdict(list))
+			boneFactory = BoneSelector.select(self.module, boneName, tmpDict)(self.module, boneName, tmpDict, defaultdict(list))
 			rendersDict[boneName] = boneFactory
 			boneInfoList.append(boneInfo)
 
@@ -523,7 +523,7 @@ class ListWidget(html5.Div):
 	def canHandle(moduleName, moduleInfo):
 		return moduleInfo["handler"] == "list" or moduleInfo["handler"].startswith("list.")
 
-moduleWidgetSelector.insert(1, ListWidget.canHandle, ListWidget)
+ModuleWidgetSelector.insert(1, ListWidget.canHandle, ListWidget)
 
 
 class ViewportListWidget(ListWidget):
@@ -615,5 +615,5 @@ class ViewportListWidget(ListWidget):
 		return moduleInfo["handler"] == "list.viewport" or moduleInfo["handler"].startswith("list.viewport.")
 
 
-moduleWidgetSelector.insert(10, ViewportListWidget.canHandle, ViewportListWidget)
+ModuleWidgetSelector.insert(10, ViewportListWidget.canHandle, ViewportListWidget)
 

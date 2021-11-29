@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flare import html5
 
-from flare.forms import boneSelector
+from flare.viur import BoneSelector
 from vi.config import conf
 from flare.button import Button
 from js import document
@@ -34,7 +34,7 @@ class InternalPreview( html5.Ul ):
 
 			self.ipdd = html5.Dd()
 			self.ipdd.addClass("vi-sb-intprev-descr")
-			boneFactory = boneSelector.select(module, key, tmpDict)(module, key, tmpDict)
+			boneFactory = BoneSelector.select(module, key, tmpDict)(module, key, tmpDict)
 
 			if key == "key":
 				keydiv = html5.Div()

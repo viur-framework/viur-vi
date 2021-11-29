@@ -20,7 +20,7 @@ from flare.i18n import translate
 
 # BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
 from . import actions
-from flare.forms import bones
+from flare.viur import bones
 from flare import i18n
 from vi.widgets.list import ListWidget
 from vi.widgets.tree import TreeWidget

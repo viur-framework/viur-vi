@@ -15,7 +15,7 @@ from flare.icons import Icon
 
 from flare.event import EventDispatcher
 from flare.network import NetworkService, DeferredCall, requestGroup
-from vi.priorityqueue import displayDelegateSelector, moduleWidgetSelector
+from vi.priorityqueue import DisplayDelegateSelector, ModuleWidgetSelector
 
 class FileImagePopup(Popup):
 	def __init__(self, preview, *args, **kwargs):
@@ -502,5 +502,5 @@ class FileWidget(TreeBrowserWidget):
 	def canHandle( module, moduleInfo ):
 		return (moduleInfo[ "handler" ].startswith( "tree.file" ) or moduleInfo[ "handler" ].startswith( "tree.simple.file" ) )
 
-moduleWidgetSelector.insert(5, FileWidget.canHandle, FileWidget)
-displayDelegateSelector.insert(5, FileWidget.canHandle, FileWidget)
+ModuleWidgetSelector.insert(5, FileWidget.canHandle, FileWidget)
+DisplayDelegateSelector.insert(5, FileWidget.canHandle, FileWidget)

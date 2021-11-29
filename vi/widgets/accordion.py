@@ -67,7 +67,7 @@ class AccordionSegment(html5.Fieldset):
 
 class Accordion(html5.Form):
 
-	def __init(self):
+	def __init__(self):
 		super().__init__()
 		self._segments = []
 

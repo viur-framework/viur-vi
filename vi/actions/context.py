@@ -2,7 +2,7 @@
 from vi import utils
 
 from vi.widgets import ListWidget, EditWidget
-from vi.priorityqueue import actionDelegateSelector, moduleWidgetSelector
+from vi.priorityqueue import actionDelegateSelector, ModuleWidgetSelector
 from flare.i18n import translate
 from vi.config import conf
 from vi.pane import Pane
@@ -77,7 +77,7 @@ class ContextAction(Button):
 
 	def openModule(self, data, title = None):
 		# Have a handler?
-		widgen = moduleWidgetSelector.select(self.contextModule, self.adminInfo)
+		widgen = ModuleWidgetSelector.select(self.contextModule, self.adminInfo)
 		assert widgen
 
 		# Generate title

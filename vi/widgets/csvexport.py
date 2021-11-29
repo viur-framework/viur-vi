@@ -6,7 +6,7 @@ from flare.popup import Popup
 
 from flare.network import NetworkService, DeferredCall
 from vi.config import conf
-from flare.forms import boneSelector
+from flare.viur import BoneSelector
 from flare.i18n import translate
 from flare.button import Button
 
@@ -86,7 +86,7 @@ class ExportCsv(html5.Progress):
 			#if bone["visible"] and ("params" not in bone or bone["params"] is None or "ignoreForCsvExport" not in bone[
 			#	"params"] or not bone["params"]["ignoreForCsvExport"]):
 			if bone["visible"]:
-				cellRenderer[key] = boneSelector.select(self.module, key, struct)
+				cellRenderer[key] = BoneSelector.select(self.module, key, struct)
 				if cellRenderer[key]:
 					cellRenderer[key] = cellRenderer[key](self.module, key, struct)
 

@@ -2,7 +2,7 @@ from flare import html5
 from flare.popup import Confirm
 
 from flare.network import NetworkService, DeferredCall
-from flare.forms.formtags import ViurForm
+from flare.viur import ViurForm
 from flare.i18n import translate
 
 from vi import utils
