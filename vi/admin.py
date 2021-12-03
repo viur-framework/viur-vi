@@ -20,7 +20,7 @@ from flare.i18n import translate
 
 # BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
 from . import actions
-from flare.forms import bones
+from flare.viur import bones
 from flare import i18n
 from vi.widgets.list import ListWidget
 from vi.widgets.tree import TreeWidget
@@ -370,9 +370,11 @@ class AdminScreen(Screen):
 				handlertype = "singletonhandler"
 			elif path[1] == "edit":
 				handlertype = "edithandler"
-				if len(path) >= 3:
+				if len(path) > 3:
 					data.update({"group": path[2]})
-				data = {"key": path[3], "context": None}  # fixme
+					data = {"key": path[3], "context": None}  # fixme
+				else:
+					data = {"key": path[2], "context": None}  # fixme
 			else:
 				if len(path) >= 3:
 					data.update({"group": path[2]})

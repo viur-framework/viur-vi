@@ -1,5 +1,5 @@
 from flare.views.view import View, ViewWidget
-from vi.priorityqueue import HandlerClassSelector, moduleWidgetSelector, initialHashHandler
+from vi.priorityqueue import HandlerClassSelector, ModuleWidgetSelector, initialHashHandler
 from vi.config import conf
 
 
@@ -30,7 +30,7 @@ class listHandlerWidget(ViewWidget):
 		self.moduleInfo = self.view.params["data"]
 		self.moduleName = self.view.params["moduleName"]
 
-		widgen = moduleWidgetSelector.select(self.moduleName, self.moduleInfo)
+		widgen = ModuleWidgetSelector.select(self.moduleName, self.moduleInfo)
 		widget = widgen(self.moduleName, **self.moduleInfo)
 		self.appendChild(widget)
 
