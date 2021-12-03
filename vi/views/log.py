@@ -1,5 +1,5 @@
 from flare.views.view import View, ViewWidget
-from vi.priorityqueue import HandlerClassSelector, moduleWidgetSelector
+from vi.priorityqueue import HandlerClassSelector, ModuleWidgetSelector
 from vi.log import logWidget
 
 

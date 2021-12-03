@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os, time
-from flare import html5,utils,bindApp
+from flare import html5, utils, bindApp
 from flare.event import EventDispatcher
 from .config import conf, updateConf
 from .widgets import TopBarWidget
@@ -14,18 +14,19 @@ from .screen import Screen
 
 from flare.popup import Popup
 
-from flare.views.helpers import registerViews, generateView, addView,updateDefaultView
+from flare.views.helpers import registerViews, generateView, addView, updateDefaultView
 from vi.widgets.appnavigation import AppNavigation
 from flare.i18n import translate
 
 # BELOW IMPORTS MUST REMAIN AND ARE QUEUED!!
 from . import actions
-from flare.forms import bones
+from flare.viur import bones
 from flare import i18n
 from vi.widgets.list import ListWidget
 from vi.widgets.tree import TreeWidget
 from vi.widgets.file import FileWidget
 from vi.widgets.hierarchy import HierarchyWidget
+
 
 class AdminScreen(Screen):
 
@@ -36,7 +37,7 @@ class AdminScreen(Screen):
 		self["id"] = "CoreWindow"
 
 		conf["mainWindow"] = self
-		_conf = bindApp(self,conf) #configure Flare Framework
+		_conf = bindApp(self, conf)  # configure Flare Framework
 		updateConf(_conf)
 
 		self.topBar = TopBarWidget()
@@ -46,14 +47,13 @@ class AdminScreen(Screen):
 		self.mainFrame["class"] = "vi-main-frame"
 		self.appendChild(self.mainFrame)
 
-
 		self.moduleMgr = html5.Div()
 		self.moduleMgr["class"] = "vi-manager-frame"
 		self.mainFrame.appendChild(self.moduleMgr)
 
 		self.moduleViMgr = html5.Div()
-		self.moduleViMgr[ "class" ] = "vi-manager"
-		self.moduleMgr.appendChild( self.moduleViMgr )
+		self.moduleViMgr["class"] = "vi-manager"
+		self.moduleMgr.appendChild(self.moduleViMgr)
 
 		self.navWrapper = AppNavigation()
 		self.moduleViMgr.appendChild(self.navWrapper)
@@ -67,7 +67,6 @@ class AdminScreen(Screen):
 		self.mainFrame.appendChild(self.viewport)
 
 		self.logWdg = None
-
 
 	def onClick(self, event):
 		if utils.doesEventHitWidgetOrChildren(event, self.modulePipe) and conf["modulepipe"]:
@@ -120,82 +119,80 @@ class AdminScreen(Screen):
 
 		self.initializeViews()
 		self.initializeConfig()
-		DeferredCall( self.checkInitialHash )
+		DeferredCall(self.checkInitialHash)
 		self.unlock()
 
+	def initializeViews(self):
+		root = os.path.dirname(__file__)  # path to root package
+		registerViews(root, "views")
 
-	def initializeViews( self ):
-		root = os.path.dirname(__file__) #path to root package
-		registerViews(root,"views")
-
-		#load default View
+		# load default View
 		updateDefaultView("overview")
-		conf["views_state"].updateState("activeView","overview")
+		conf["views_state"].updateState("activeView", "overview")
 		from vi import s
 		import time
 
-		print( "%.5f Sek - ready to View" % (time.time()-s) )
+		print("%.5f Sek - ready to View" % (time.time() - s))
 
-
-	def initializeConfig( self ):
-		#print("------------------------------")
-		#print(conf["mainConfig"]["configuration"])
-		groups = conf["mainConfig"]["configuration"].get("moduleGroups",{})
+	def initializeConfig(self):
+		# print("------------------------------")
+		# print(conf["mainConfig"]["configuration"])
+		groups = conf["mainConfig"]["configuration"].get("moduleGroups", {})
 		modules = conf["mainConfig"]["modules"]
 
 		assert isinstance(groups, dict), "moduleGroups has to be a dictionary!"
 		mergedItems = []
 		for k, v in groups.items():
-			v.update({"prefix":k})
+			v.update({"prefix": k})
 			mergedItems.append(v)
 
 		for key, m in modules.items():
-			#convert dict of dicts to list of dicts
-			m.update({"moduleName":key})
+			# convert dict of dicts to list of dicts
+			m.update({"moduleName": key})
 
-			#add missing sortIndexes
-			if "sortIndex" not in m and "name" in m: #no sortidx but name
-				m.update( { "sortIndex": ord(m["name"][0].lower())-97 } )
-			elif "sortIndex" not in m and "name" not in m: #no sortidx, no name
-				m.update( { "sortIndex": 0} )
+			# add missing sortIndexes
+			if "sortIndex" not in m and "name" in m:  # no sortidx but name
+				m.update({"sortIndex": ord(m["name"][0].lower()) - 97})
+			elif "sortIndex" not in m and "name" not in m:  # no sortidx, no name
+				m.update({"sortIndex": 0})
 
 			if "moduleGroup" in m and m["moduleGroup"]:
 				group = m["moduleGroup"]
 
-				#stack modules in groups
-				getGroup = next((item for item in mergedItems if "prefix" in item and item["prefix"]==group),None)
+				# stack modules in groups
+				getGroup = next((item for item in mergedItems if "prefix" in item and item["prefix"] == group), None)
 
-				if not getGroup: #corrupt group definition, add as normal module
-					mergedItems.append( m )
+				if not getGroup:  # corrupt group definition, add as normal module
+					mergedItems.append(m)
 					continue
 
 				if "subItem" not in getGroup:
-					getGroup.update({"subItem":[m]})
+					getGroup.update({"subItem": [m]})
 				else:
 					getGroup["subItem"].append(m)
 			else:
-				#add normal modules without groups
+				# add normal modules without groups
 				mergedItems.append(m)
 
-		#sort firstLayer
-		mergedItems = sorted(mergedItems, key = lambda i: i.get("sortIndex", 0))
+		# sort firstLayer
+		mergedItems = sorted(mergedItems, key=lambda i: i.get("sortIndex", 0))
 
-		#all will be add to this Widget
-		adminGroupWidget = self.navWrapper.addNavigationBlock( "Administration" )
-		self.appendNavList( mergedItems, adminGroupWidget )
+		# all will be add to this Widget
+		adminGroupWidget = self.navWrapper.addNavigationBlock("Administration")
+		self.appendNavList(mergedItems, adminGroupWidget)
 
-	def appendNavList( self,NavList, target, parentInfo=() ):
-		for item in NavList:
+	def appendNavList(self, NavList, target, parentInfo=()):
+		for idx, item in enumerate(NavList):
 			viewInst = None
-			if "moduleName" in item: # its a module
-				#update conf
-				conf[ "modules" ][ item[ "moduleName" ] ] = item
+			if "moduleName" in item:  # its a module
+				# update conf
+				conf["modules"][item["moduleName"]] = item
 
-				#get handler view
-				handlerCls = HandlerClassSelector.select( item[ "moduleName" ], item )
-				#generate a parameterized view
-				instancename=item["moduleName"]+item["handler"]
-				viewInst = generateView(handlerCls,item["moduleName"],item["handler"],data=item)
+				# get handler view
+				handlerCls = HandlerClassSelector.select(item["moduleName"], item)
+				# generate a parameterized view
+				instancename = item["moduleName"] + item["handler"]
+				viewInst = generateView(handlerCls, item["moduleName"], item["handler"], data=item)
 
 			elif parentInfo:
 
@@ -236,69 +233,72 @@ class AdminScreen(Screen):
 						item[inherit] = parentInfo[inherit]
 
 				# get handler view
-				handlerCls = HandlerClassSelector.select( item[ "moduleName" ], item )
+				handlerCls = HandlerClassSelector.select(item["moduleName"], item)
 
 				# generate a parameterized view
-				instancename = "%s___%s" % (item[ "moduleName" ]+item[ "handler" ], str( time.time() ).replace( ".", "_" ))
+				instancename = "%s___%s" % (item["moduleName"] + item["handler"], str(time.time()).replace(".", "_"))
 
-				#create new viewInstance
-				viewInst = generateView( handlerCls, item[ "moduleName" ], item[ "handler" ], data = item, name=instancename )
+				# add unique filterID
+				item["filterID"] = idx + 1
+
+				# create new viewInstance
+				viewInst = generateView(handlerCls, item["moduleName"], item["handler"], data=item, name=instancename)
 			else:
-				#moduleGroup
+				# moduleGroup
 				instancename = None
 
 			if instancename:
-				#register this new view
-				conf[ "views_registered" ].update( { instancename: viewInst } )
+				# register this new view
+				conf["views_registered"].update({instancename: viewInst})
 
-
-			#only generate navpoints if module is visible
-			if ("display" in item and item["display"]=="hidden"):
+			# only generate navpoints if module is visible
+			if ("display" in item and item["display"] == "hidden"):
 				continue
 
-			#skip Empty groups
+			# skip Empty groups
 			if "prefix" in item and "subItem" not in item:
 				continue
 
-			#get  viewName
-			if "display" in item and item["display"]=="group":
+			# get  viewName
+			if "display" in item and item["display"] == "group":
 				viewInstName = None
 			else:
 				viewInstName = viewInst.name if viewInst else "notfound"
 
-			#visible module
+			# visible module
 			currentModuleWidget = self.navWrapper.addNavigationPoint(
-				item.get("name","missing Name"),
-				item.get("icon",None),
+				item.get("name", "missing Name"),
+				item.get("icon", None),
 				viewInstName,
 				target
 			)
 
 			# sort and append Items modules in a Group
-			if "subItem" in item and item[ "subItem" ]:
-				subItems = sorted(item[ "subItem" ], key=lambda i: i.get("sortIndex", 0))
-				self.appendNavList( subItems, currentModuleWidget )
+			if "subItem" in item and item["subItem"]:
+				subItems = sorted(item["subItem"], key=lambda i: i.get("sortIndex", 0))
+				self.appendNavList(subItems, currentModuleWidget)
 
-			#sort and append views of a Module
-			if "views" in item and item[ "views" ]:
-				viewItems = sorted(item[ "views" ], key=lambda i: i.get("sortIndex", 0))
-				self.appendNavList( viewItems, currentModuleWidget,item )
+			# sort and append views of a Module
+			if "views" in item and item["views"]:
+				viewItems = sorted(item["views"], key=lambda i: i.get("sortIndex", 0))
+				self.appendNavList(viewItems, currentModuleWidget, item)
 
-	def openView( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False, target="mainNav" ):
+	def openView(self, name, icon, viewName, moduleName, actionName, data, focusView=True, append=False,
+				 target="mainNav"):
 		if target == "mainNav":
-			self.openNewMainView( name,icon,viewName,moduleName,actionName,data,focusView,append )
+			self.openNewMainView(name, icon, viewName, moduleName, actionName, data, focusView, append)
 		elif target == "popup":
-			self.openNewPopup( name, icon, viewName, moduleName, actionName, data, focusView, append )
+			self.openNewPopup(name, icon, viewName, moduleName, actionName, data, focusView, append)
 		else:
-			print("No valid target: %s"%target)
+			print("No valid target: %s" % target)
 
-	def openNewMainView( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False ):
+	def openNewMainView(self, name, icon, viewName, moduleName, actionName, data, focusView=True, append=False):
 		# generate a parameterized view
 		print("actionName %r" % actionName)
-		view = conf["views_registered"].get(viewName,"notfound").__class__
-		instancename = "%s___%s" % (viewName, str( time.time() ).replace( ".", "_" ))
-		viewInst = generateView( view, moduleName, actionName, data = data,name=instancename )
-		conf["views_registered"].update({instancename:viewInst})
+		view = conf["views_registered"].get(viewName, "notfound").__class__
+		instancename = "%s___%s" % (viewName, str(time.time()).replace(".", "_"))
+		viewInst = generateView(view, moduleName, actionName, data=data, name=instancename)
+		conf["views_registered"].update({instancename: viewInst})
 
 		currentActivNavPoint = self.navWrapper.state.getState("activeNavigation")
 		if append:
@@ -319,20 +319,19 @@ class AdminScreen(Screen):
 			)
 
 		if focusView:
-			conf[ "views_state" ].updateState( "activeView", instancename )
+			conf["views_state"].updateState("activeView", instancename)
 
-	def openNewPopup( self,name,icon,viewName,moduleName,actionName,data,focusView=True,append=False ):
-		view = conf[ "views_registered" ].get( viewName, "notfound" ).__class__
-		instancename = "%s___%s" % (viewName, str( time.time() ).replace( ".", "_" ))
-		viewInst = generateView( view, moduleName, actionName, data = data, name = instancename )
+	def openNewPopup(self, name, icon, viewName, moduleName, actionName, data, focusView=True, append=False):
+		view = conf["views_registered"].get(viewName, "notfound").__class__
+		instancename = "%s___%s" % (viewName, str(time.time()).replace(".", "_"))
+		viewInst = generateView(view, moduleName, actionName, data=data, name=instancename)
 
-		mainWidget = viewInst.widgets["viewport"](viewInst) #todo better solution is needed
+		mainWidget = viewInst.widgets["viewport"](viewInst)  # todo better solution is needed
 
 		self.stackWidget(mainWidget)
 
-
-	def log(self, type, msg, icon=None,modul=None,action=None,key=None,data=None):
-		msg = self.logWdg.log(type, msg, icon,modul,action,key,data)
+	def log(self, type, msg, icon=None, modul=None, action=None, key=None, data=None):
+		msg = self.logWdg.log(type, msg, icon, modul, action, key, data)
 		return msg
 
 	def checkInitialHash(self, *args, **kwargs):
@@ -361,31 +360,37 @@ class AdminScreen(Screen):
 		param = {}
 
 		print(path)
-		if len(path)>=2 and path[1]=="list":
+		if len(path) >= 2 and path[1] == "list":
 			viewname = "".join(path)
-			conf[ "views_state" ].updateState( "activeView", viewname )
+			conf["views_state"].updateState("activeView", viewname)
 			return
-		elif len(path)>=2 and path[1] in ["edit","add"]:
-			data = {"context": None} #fixme
+		elif len(path) >= 2 and path[1] in ["edit", "add"]:
+			data = {"context": None}  # fixme
 			if len(path) == 2:
 				handlertype = "singletonhandler"
 			elif path[1] == "edit":
 				handlertype = "edithandler"
-				data = {"key": path[2], "context": None } #fixme
+				if len(path) > 3:
+					data.update({"group": path[2]})
+					data = {"key": path[3], "context": None}  # fixme
+				else:
+					data = {"key": path[2], "context": None}  # fixme
 			else:
+				if len(path) >= 3:
+					data.update({"group": path[2]})
 				handlertype = "edithandler"
 
-			conf[ "views_state" ].updateState( "activeView", path[0]+"list" )
-			conf[ "mainWindow" ].openView(
-				translate( path[1] ),  # AnzeigeName
-				"icon-"+path[1],  # Icon
+			conf["views_state"].updateState("activeView", path[0] + "list")
+			conf["mainWindow"].openView(
+				translate(path[1]),  # AnzeigeName
+				"icon-" + path[1],  # Icon
 				handlertype,  # viewName
 				path[0],  # Modulename
 				path[1],  # Action
-				data = data
+				data=data
 			)
 
-	def stackWidget( self, widget, disableOtherWidgets=True ):
+	def stackWidget(self, widget, disableOtherWidgets=True):
 		'''
 			We dont stack widgets anymore.
 			We use now Popups.
@@ -400,10 +405,9 @@ class AdminScreen(Screen):
 		widget.parentPopup = widgetPopup
 		widgetPopup.popupBody.appendChild(widget)
 
-	def removeWidget( self, widget ):
+	def removeWidget(self, widget):
 		if "parentPopup" in dir(widget):
 			widget.parentPopup.close()
-
 
 	def switchFullscreen(self, fullscreen=True):
 		if fullscreen:
@@ -418,5 +422,6 @@ class AdminScreen(Screen):
 
 	def onError(self, req, code):
 		print("ONERROR")
+
 
 viInitializedEvent = EventDispatcher("viInitialized")

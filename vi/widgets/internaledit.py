@@ -1,3 +1,5 @@
+# fixme: This module is onlky used in login.py and should be superseeded by Flare already.
+
 # -*- coding: utf-8 -*-
 from flare import html5
 from flare.network import DeferredCall
@@ -5,14 +7,14 @@ from collections import defaultdict
 
 from vi.config import conf
 from vi.exception import InvalidBoneValueException
-from flare.forms import boneSelector
+from flare.viur import BoneSelector
 from vi.widgets.accordion import Accordion
 from vi.widgets.tooltip import ToolTip
 
 from js import console
 
 from typing import List, Tuple
-from flare.forms.bones.base import ReadFromClientErrorSeverity
+from flare.viur.bones.base import ReadFromClientErrorSeverity
 
 class ParsedErrorItem(html5.Li):
 	style = []
@@ -122,7 +124,7 @@ class InternalEdit(html5.Div):
 				if not firstCat:
 					firstCat = segments[cat]
 
-			boneFactory = boneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, errors, self.errorQueue)
+			boneFactory = BoneSelector.select(self.module, key, tmpDict)(self.module, key, tmpDict, errors, self.errorQueue)
 			widget = boneFactory.editWidget()
 			widget["id"] = "vi_%s_%s_%s_%s_bn_%s" % (self.editIdx, None, "internal", cat or "empty", key)
 

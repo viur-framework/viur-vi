@@ -731,7 +731,7 @@ class DataTable( html5.Div ):
 
 				self._dataProvider.onNextBatchNeeded()
 
-	def onSelectionChanged( self, table, rows, *args, **kwargs ):
+	def onSelectionChanged( self, table, rows, *args,**kwargs ):
 		"""
 			Re-emit the event. Maps row-numbers to actual models.
 		"""
@@ -745,7 +745,7 @@ class DataTable( html5.Div ):
 		vals = [ self._model[x] for x in rows]
 		self.selectionActivatedEvent.fire( self, vals )
 
-	def onTableChanged( self, table, rowCount, *args, **kwargs ):
+	def onTableChanged( self, table, rowCount, *args,**kwargs ):
 		"""
 			Re-emit the event.
 		"""

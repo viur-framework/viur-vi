@@ -2,7 +2,7 @@ from vi.widgets.tree import TreeWidget
 from vi.widgets.list import ListWidget
 from vi.config import conf
 
-from vi.priorityqueue import displayDelegateSelector, moduleWidgetSelector
+from vi.priorityqueue import DisplayDelegateSelector, ModuleWidgetSelector
 
 
 class HierarchyWidget(TreeWidget):
@@ -67,7 +67,7 @@ class HierarchyWidget(TreeWidget):
 	def hideListView(self):
 		self.listview.hide()
 
-	def onSelectionChanged(self, widget, selection, *args, **kwargs):
+	def onSelectionChanged(self, widget, selection, *args,**kwargs):
 		if self.listviewActive:
 			if not self.viewNodeStructure:
 				self.requestStructure()
@@ -79,5 +79,5 @@ class HierarchyWidget(TreeWidget):
 		return moduleInfo["handler"] == "hierarchy" or moduleInfo["handler"].startswith("hierarchy.")
 
 
-moduleWidgetSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget)
-displayDelegateSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget)
+ModuleWidgetSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget)
+DisplayDelegateSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget)

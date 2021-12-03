@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 import re
 from flare import html5,utils
-from flare.forms.formatString import formatString as fl_formatString
+from flare.viur.formatString import formatString as fl_formatString
 from js import CustomEvent
 from vi.config import conf
 from pyodide import to_js

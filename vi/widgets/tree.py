@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from flare import html5, utils
-from flare.forms.formatString import formatString
+from flare.viur.formatString import formatString
 from flare.network import NetworkService
 from vi.framework.components.actionbar import ActionBar
 from flare.event import EventDispatcher
-from vi.priorityqueue import displayDelegateSelector, moduleWidgetSelector
-from flare.forms import boneSelector
+from vi.priorityqueue import DisplayDelegateSelector, ModuleWidgetSelector
+from flare.viur import BoneSelector
 from vi.config import conf
 from flare.i18n import translate
 from flare.icons import SvgIcon,Icon
@@ -14,7 +14,7 @@ from collections import OrderedDict
 import logging
 
 
-from flare.forms.widgets.tree import TreeItemWidget,TreeLeafWidget, TreeNodeWidget
+from flare.viur.widgets.tree import TreeItemWidget,TreeLeafWidget, TreeNodeWidget
 
 
 class TreeWidget(html5.Div):
@@ -268,7 +268,7 @@ class TreeWidget(html5.Div):
 		errorDiv.appendChild(html5.TextNode(txt))
 		self.appendChild(errorDiv)
 
-	def onDataChanged(self, module, **kwargs):
+	def onDataChanged(self, module,*args, **kwargs):
 		if module != self.module:
 			isRootNode = False
 			for k, v in conf["modules"].items():
@@ -489,8 +489,8 @@ class TreeWidget(html5.Div):
 	def canHandle(moduleName, moduleInfo):
 		return moduleInfo["handler"] == "tree" or moduleInfo["handler"].startswith("tree.")
 
-moduleWidgetSelector.insert(1, TreeWidget.canHandle, TreeWidget)
-displayDelegateSelector.insert(1, TreeWidget.canHandle, TreeWidget)
+ModuleWidgetSelector.insert(1, TreeWidget.canHandle, TreeWidget)
+DisplayDelegateSelector.insert(1, TreeWidget.canHandle, TreeWidget)
 
 
 class BrowserLeafWidget(TreeLeafWidget):
@@ -576,5 +576,5 @@ class TreeBrowserWidget(TreeWidget):
 	def canHandle(module, moduleInfo):
 		return moduleInfo["handler"] == "tree.browser" or moduleInfo["handler"].startswith("tree.browser.")
 
-moduleWidgetSelector.insert(5, TreeBrowserWidget.canHandle, TreeBrowserWidget)
-displayDelegateSelector.insert(5, TreeBrowserWidget.canHandle, TreeBrowserWidget)
+ModuleWidgetSelector.insert(5, TreeBrowserWidget.canHandle, TreeBrowserWidget)
+DisplayDelegateSelector.insert(5, TreeBrowserWidget.canHandle, TreeBrowserWidget)

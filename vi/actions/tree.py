@@ -141,7 +141,7 @@ class EditAction(Button):
 				target = "popup" if self.parent().parent().isSelector else "mainNav"
 			)
 
-	def onSelectionChanged(self, table, selection, *args, **kwargs ):
+	def onSelectionChanged(self, table, selection, *args,**kwargs ):
 		if len(selection)>0:
 			if self.isDisabled:
 				self.isDisabled = False
@@ -216,7 +216,7 @@ class DeleteAction(Button):
 		self.parent().parent().selectionChangedEvent.unregister( self )
 		super(DeleteAction,self).onDetach()
 
-	def onSelectionChanged(self, table, selection, *args, **kwargs ):
+	def onSelectionChanged(self, table, selection, *args,**kwargs ):
 		if len(selection)>0:
 			if self.isDisabled:
 				self.isDisabled = False
@@ -328,7 +328,7 @@ class SelectRootNode( html5.Select ):
 		NetworkService.request( self.parent().parent().module, "listRootNodes",
 		                            successHandler=self.onRootNodesAvailable)
 
-	def onRootNodeChanged(self, newNode, *args, **kwargs):
+	def onRootNodeChanged(self, newNode, *args,**kwargs):
 		for option in self._children:
 			if option["value"] == newNode:
 				option["selected"] = True

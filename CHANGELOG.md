@@ -2,6 +2,15 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.8] - 2021-11-29
+- Feat: Updated to Flare 1.0.8 with new form classes
+- Feat: Rewrote EditWidget to work as a container for a Flare `ViurForm`, re-enabling conditional field behaviors
+- Fix: Renamed several imports from Flare 1.0.8
+
+## [3.0.7] - 2021-11-10
+- Feat: updated to Flare 1.0.8
+- Fix: EvalFormatStrings now work properly again
+
 ## [3.0.6] - 2021-09-30
 - Feat: updated to Flare 1.0.7
 - Fix: RelationalBones and RecordBone now work again as expected
