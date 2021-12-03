@@ -1107,10 +1107,14 @@ div.swiper-button-next:after {
 
 .flr-label {
 	margin-right: -1px;
-	-ms-flex-preferred-size: 300px;
-	flex-basis: 300px;
+	-ms-flex-preferred-size: 250px;
+	flex-basis: 250px;
 	-ms-flex-item-align: start;
 	align-self: flex-start;
+}
+
+.flr-label.label {
+	white-space: normal;
 }
 
 .flr-bone {
@@ -4957,16 +4961,16 @@ a.item:focus,
 
 .vi-accordion-segment.is-incomplete:target .vi-accordion-title,
 .vi-accordion-segment.is-incomplete .vi-accordion-title {
-	background-color: #f44336;
-	border-color: #ea1c0d;
+	background-color: #1da7e0;
+	border-color: #1785b3;
 	color: #fff;
 }
 
 .vi-accordion-segment.is-incomplete:not(.is-disabled):hover .vi-accordion-title,
 .vi-accordion-segment.is-incomplete.is-active .vi-accordion-title,
 .vi-accordion-segment.is-incomplete:not(.is-disabled):focus .vi-accordion-title {
-	background-color: #f77066;
-	border-color: #f44336;
+	background-color: #49b9e7;
+	border-color: #1da7e0;
 }
 
 .vi-accordion-segment .vi-accordion-title .icon {
@@ -4992,9 +4996,6 @@ a.item:focus,
 	border-bottom: 1px solid #eee;
 	padding: 40px;
 	background: #fff;
-	max-width: 1400px;
-	margin: 0 auto;
-	width: 100%;
 }
 
 .vi-accordion-segment.is-active > .vi-accordion-section,
@@ -5539,17 +5540,11 @@ td img ~ span {
 }
 
 .vi-tooltip {
-	-webkit-box-flex: 0;
-	-ms-flex-positive: 0;
-	flex-grow: 0;
-	-ms-flex-negative: 1;
-	flex-shrink: 1;
-	-ms-flex-preferred-size: 0;
-	flex-basis: 0;
-	margin: 0 0 0 10px;
+	-ms-flex-preferred-size: 100%;
+	flex-basis: 100%;
+	margin-top: 10px;
 	cursor: help;
 	padding: 0.2em;
-	padding-right: 0.75em;
 }
 
 .vi-tooltip .msg-headline {
@@ -5557,18 +5552,13 @@ td img ~ span {
 }
 
 .vi-tooltip.msg .icon {
-	height: 1.6em;
-	width: 1.6em;
+	height: 1.5em;
+	width: 1.5em;
 	margin-right: 5px;
 }
 
 .vi-tooltip .msg-descr {
 	display: none;
-}
-
-.vi-tooltip.is-open {
-	-ms-flex-preferred-size: 30%;
-	flex-basis: 30%;
 }
 
 .vi-tooltip.is-open.msg .icon {

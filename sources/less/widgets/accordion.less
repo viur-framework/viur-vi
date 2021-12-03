@@ -58,14 +58,14 @@
 
   &-segment.is-incomplete:target &-title,
   &-segment.is-incomplete &-title {
-    background-color: @failColor;
-    border-color: darken(@failColor, 10%);
+    background-color: @hintColor;
+    border-color: darken(@hintColor, 10%);
     color: #fff;
   }
   &-segment.is-incomplete:not(.is-disabled):hover &-title,
   &-segment.is-incomplete.is-active &-title {
-    background-color: lighten(@failColor, 10%);
-    border-color: @failColor;
+    background-color: lighten(@hintColor, 10%);
+    border-color: @hintColor;
   }
 
   /* Arrow before Title */
@@ -88,10 +88,6 @@
     border-bottom: 1px solid #eee;
     padding: @outerSpace*2;
     background: #fff;
-    //overflow: hidden;
-    max-width: @pageWidth;
-    margin: 0 auto;
-    width: 100%;
   }
   &-segment.is-active > &-section,
   &-segment:target &-section {
