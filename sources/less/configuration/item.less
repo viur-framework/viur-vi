@@ -36,5 +36,24 @@
     @activeBackgroundColor: @warnColor,
     @actionBackgroundColor: @warnColor);
   }
-
+  &-pin {
+    opacity: .4;
+    padding: @innerSpace;
+    & svg {
+      width: 1.2em;
+      height: 1.2em;
+    }
+    &.is-active {
+      color: @mainColor;
+      opacity: .6;
+    }
+    &:hover {
+      opacity: 1;
+    }
+  }
+  &-open {
+    &.is-active .icon:last-of-type {
+        transform: rotate(-90deg);
+      }
+  }
 }

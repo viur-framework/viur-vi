@@ -20,12 +20,13 @@
   }
   &:not(:last-child) {
     margin-bottom: @outerSpace;}
-  &-dragger {
-    //margin-right: @innerSpace;
+  &-dragger.label {
     align-self: stretch;
-    align-items: center;
-    border: 1px solid #e0e0e0;
-    padding: @defaultPadding @defaultPadding*3.75;
+    color: darken(@form-color, 52%);
+    height: auto;
+    & .icon {
+      margin: 0;
+    }
   }
   &--hidden {
     display: none;
@@ -81,9 +82,9 @@
     flex-basis: auto;
     align-items: flex-start;
     flex-flow: column;
-    & > * + * {
+/*    & > * + * {
       margin-left: 10px;
-    }
+    }*/
     &-langcontent {
       display: flex;
       flex-basis: 100%;
