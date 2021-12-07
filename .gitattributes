@@ -1,4 +1,2 @@
-sources/htmleditor/* linguist-vendored
-public/htmleditor/* linguist-vendored
-public/css/*.css linguist-generated
-
+vi/public/scripter/* linguist-vendored=true
+vi/public/htmleditor/* linguist-generated=true
