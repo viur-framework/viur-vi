@@ -234,6 +234,7 @@ class EditWidget(html5.Div):
 			:param data: The values to transmit or None to fetch a new, clean add/edit form.
 			:type data: dict or None
 		"""
+		data.pop("key", None)  # "key" is only stored in self.key, and must be removed here.
 		self.wasInitialRequest = not len(data) > 0
 
 		if self.context:
