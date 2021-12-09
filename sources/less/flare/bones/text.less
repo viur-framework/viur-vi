@@ -39,3 +39,11 @@ div.note-modal {
     opacity: 1;
   }
 }
+
+.is-disabled ~ .note-editor.note-frame {
+  color: #777777;
+  cursor: not-allowed;
+  .boxShadow(0);
+  border: @form-borderWidth dashed @form-disabledBorderColor;
+  background-color: @form-disabledBackgroundColor;
+}
