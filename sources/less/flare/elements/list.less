@@ -41,16 +41,16 @@
           margin-left: auto;
         }
       }
-      &.is-active~.item-group,
-      &.is-active~.item-group .list--sub.is-active {
-          display: block;
+      &.is-active .icon:last-of-type {
+        transform: rotate(-90deg);
       }
-      &~.item-group,
-      &~.item-group .list--sub {
+      & ~ .item,
+      & ~ .list--sub {
         display: none;
       }
-      &~.item-group .item-open.is-active .icon:last-of-type {
-          transform: rotate(-90deg);
+      &.is-active ~ .item,
+      &.is-active ~ .list--sub.is-active {
+        display: flex;
       }
     }
   }

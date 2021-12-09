@@ -6,16 +6,19 @@
 // .vi-searchbar
 
 .vi-actionbar {
-  padding: @innerSpace;
+  padding: calc(@innerSpace/2) @innerSpace;
   flex-shrink: 0;
   background-color: #f0f0f0;
   .boxShadow(1, #000);
   width: 100%;
   .zIndex('nav',10);
-  & .input-group {margin-bottom: 0;}
   &--entry {
     background-color: lighten(#f0f0f0, 5%);
     .zIndex('nav',5);
+  }
+  & .bar-item {
+    margin-top: calc(@innerSpace / 2);
+    margin-bottom: calc(@innerSpace / 2);
   }
 }
 
