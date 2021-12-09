@@ -1,0 +1,15 @@
+@charset "UTF-8";
+/* HORIZONTAL TABS */
+
+// Prefixes and objects:
+// .tabs-
+
+.tabs {
+  display: flex;
+  & .item {
+    border-right: 1px solid #dadad9;
+    &.is-active {
+      border-right-color: darken(@mainColor, 10%);
+    }
+  }
+}

@@ -1,0 +1,147 @@
+@charset "UTF-8";
+/* Map Karte */
+
+.map{
+  height: 100%;
+  width: 100%;
+}
+
+.map-main{
+  flex: 0 0 75%;
+  position: relative;
+}
+
+.map-left{
+  flex: 0 0 25%;
+  background-color: #fff;
+}
+
+.map-item-details{
+  font-weight: 400;
+  font-size: 1em;
+  line-height: 170%;
+  //background-color: #e8e8e8;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.map-item-btn-wrap{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  .icon{
+    width: 1.45em;
+    height: 1.45em;
+    margin-right: 15px;
+  }
+}
+
+.map-overlay{
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #fff;
+  .zIndex("overlay",1);
+}
+
+.map-overlay-head{
+  background-color: @backgroundColor;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+
+  .btn{
+    margin-left: auto;
+  }
+}
+
+.map-overlay-content{
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+}
+
+.map-overlay-slider{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.map-overlay-slider-content{
+  display: flex;
+  flex-direction: row;
+
+  .info-box{
+    margin: 0 20px;
+  }
+}
+
+.map-overlay-slider-arrow-left{
+  margin-right: 20px;
+  font-size: 2.3em;
+  color: @complementColor;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-overlay-slider-arrow-right{
+  margin-left: 20px;
+  font-size: 2.3em;
+  color: @complementColor;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-overlay-logo{
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-data{
+  display: flex;
+  flex-direction: column;
+  background-color: @backgroundColor;
+  list-style: none;
+  padding: 0 15px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  font-weight: 400;
+  line-height: 1.6;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.btn.btn--item-data{
+  &.is-active{
+    background-color: @mainColor;
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+
+    & + .item-data{
+      padding: 15px;
+      max-height: none;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+  }
+}

@@ -1,0 +1,27 @@
+@charset "UTF-8";
+/* INTERNAL EDIT */
+
+// Prefixes and objects:
+// .vi-internaledit
+
+.vi-internaledit {
+  & * + .vi-bone {
+    margin-top: 0;
+  }
+}
+
+.vi-internaledit{
+  flex: 1;
+
+  & > .vi-bone{
+    margin-bottom: @innerSpace !important;
+
+    .vi-bone {
+      margin-bottom: 0 !important;
+    }
+
+    &:last-child{
+      margin-bottom: 0 !important;
+    }
+  }
+}

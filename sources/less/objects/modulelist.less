@@ -1,0 +1,47 @@
+@charset "UTF-8";
+/* Modullist */
+
+// Prefixes and objects:
+// .vi-modulelist-
+// .vi-ml-
+
+@borderColorModulelist: #ebebea;
+
+.vi-modulelist {
+  & * + .vi-pane {
+    border-top: 1px solid @borderColorModulelist;
+  }
+  & .vi-pane * + .vi-pane {
+    border-top: 1px solid darken(@borderColorModulelist, 10%);
+  }
+}
+
+.vi-modulepipe {
+  height: 100%;
+  position: absolute;
+  right: -@outerSpace;
+  width: @outerSpace;
+  background: transparent;
+  border-left: 1px solid @borderColorModulelist;
+  top: 0;
+  cursor: ew-resize;
+  transition: .3s ease all;
+/*  &:before {
+    content: '';
+    display: block;
+    height: 100%;
+    width: @innerSpace;
+    position: absolute;
+    left: -@innerSpace;
+  }*/
+  &:hover {
+    border-left: 2px solid @mainColor;
+  }
+}
+
+.vi-manager-frame.is-collapsed {
+  min-width: unset;
+  flex-basis: auto;
+  flex-grow: 0;
+  .item-content {display: none;}
+}

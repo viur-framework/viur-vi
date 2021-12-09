@@ -302,7 +302,7 @@ class ListPreviewAction(html5.Span):
 
 		self.urls = conf["defaultPreview"]
 
-		self.addClass("input-group")
+		self.addClass("input-group", "bar-item")
 
 		self.urlCb = ignite.Select()
 		self.appendChild(self.urlCb)
@@ -570,7 +570,7 @@ class SelectFieldsPopup(Popup):
 
 		# Functions for Selection
 		div = html5.Div()
-		div["class"].append("selectiontools input-group")
+		div["class"].append("selectiontools input-group bar-item")
 
 		self.popupBody.appendChild(div)
 
@@ -802,7 +802,7 @@ class SetPageRowAmountAction(html5.Div):
 
 	def __init__(self, *args, **kwargs):
 		super(SetPageRowAmountAction, self).__init__()
-		self["class"].append("input-group")
+		self["class"].append("input-group bar-item")
 
 		self.pages = html5.Select()
 		self.pages["class"].append("select ignt-select select--small")
@@ -961,7 +961,7 @@ class PageFindAction(html5.Div):
 
 	def __init__(self, *args, **kwargs):
 		super(PageFindAction, self).__init__()
-		self["class"].append("input-group")
+		self["class"].append("input-group bar-item")
 
 		self.searchInput = html5.Input()
 		self.searchInput["class"].append("input ignt-input input--small")

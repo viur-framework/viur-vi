@@ -1,0 +1,150 @@
+@charset "UTF-8";
+/* BUTTONS */
+
+// Prefixes and objects:
+// .btn-
+// .btnGroup
+
+@btn-borderRadius: 4px;
+
+.btn {
+  .genericBtn(
+    @backgroundColor:#f8f8f8,
+    @padding: @defaultPadding,
+    @margin: @defaultMargin,
+    @borderWidth: @defaultBorderWidth,
+    @borderRadius: @btn-borderRadius,
+    @shadow: 0,
+    @shadowHover: 0,
+    @shadowColor: @defaultShadowColor,
+    @fontWeight: @fontWeightNormal );
+    &.is-busy,
+    &.is-loading,
+    &[aria-busy=true] {
+      & .icon {
+        & rect {
+          animation: spin-square-ani 1s infinite ease-in-out both;
+          &:nth-of-type(1n) {
+            animation-delay: .2s;
+          }
+          &:nth-of-type(3n),
+          &:nth-of-type(7n) {
+            animation-delay: .6s;
+          }
+          &:nth-of-type(2n) {
+            animation-delay: .4s;
+          }
+          &:nth-of-type(4n) {
+            animation-delay: .8s;
+          }
+        }
+      }
+    }
+  &--small {
+    font-weight: @fontWeightBold;
+  }
+}
+
+/* Red button, white font */
+.btn--viur {
+  .colorizeBtn(
+    @backgroundColor: @mainColor,
+    @borderWidth: 1px,
+    @shadow: 0,
+    @shadowHover: 1);
+}
+
+/* Green button, white font */
+.btn--primary,
+.btn--lang.is-filled {
+  .colorizeBtn(
+    @backgroundColor: @successColor,
+    @borderWidth: 1px,
+    @shadow: 0,
+    @shadowHover: 1);
+}
+
+.btn--add,
+.btn--activateselection{
+  .invertColorizedBtn(
+    @backgroundColor: @successColor,
+    @borderWidth: 1px,
+    @shadow: 0,
+    @shadowHover: 1);
+}
+
+.btn--close{
+  .colorizeBtn(
+    @backgroundColor: @failColor,
+    @borderWidth: 1px,
+    @shadow: 0,
+    @shadowHover: 1);
+}
+
+/* Grey button, red font, red hover */
+.btn--danger,
+.btn--delete {
+  .invertColorizedBtn(
+    @backgroundColor: @failColor,
+    @borderWidth: 1px,
+    @shadow: 0,
+    @shadowHover: 1);
+  margin-left: @innerSpace;
+}
+
+/* Grey button, blue font, blue hover */
+.btn--download,
+.btn--edit {
+  .invertColorizedBtn(
+    @backgroundColor: @hintColor,
+    @borderWidth: 1px,
+    @shadow: 0,
+    @shadowHover: 1);
+}
+
+.btn--lang {
+  margin-left: @innerSpace / 2;
+
+  &.is-active {
+    background-color: @hintColor;
+    color: #fff;
+    //border-bottom: 2px solid fadeOut(@textColor, 60%)!important;
+    //&:before {
+    //  content: '';
+    //  border-style: solid;
+    //  border-width: 5px;
+    //  border-color: transparent transparent fadeOut(@textColor, 60%);
+    //  position: absolute;
+    //  bottom: 0;
+    //  transform: translateX(50%);
+    //}
+  }
+}
+
+.btn--access-state {
+  &.is-active {
+    color: contrast(darken(@successColor, 20%));
+    background-color: lighten(@successColor, 10%);
+    border: @defaultBorderWidth solid lighten(@successColor, 5%);
+  }
+}
+
+.btn--intpreview,
+.btn--selectfilter {
+  &.is-active {
+    color: darken(@successColor,5%);
+    border: @defaultBorderWidth solid lighten(@successColor, 5%);
+  }
+}
+
+.btn--square{
+  .icon{
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  &:after{
+    content: '';
+    display: table;
+    padding-bottom: 100%;
+  }
+}

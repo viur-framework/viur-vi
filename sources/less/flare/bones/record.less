@@ -1,0 +1,27 @@
+@charset "UTF-8";
+/* RECORD */
+
+.flr-bone--record {
+  .flr-value-container {
+    flex-shrink: 1;
+    flex-basis: 100%;
+  }
+  & .recordbone {
+    flex: 1 1 auto;
+    & .recordbone-entries {
+      display: flex;
+      flex-flow: column;
+    }
+    & .recordbone-entry {
+      display: flex;
+      align-items: flex-start;
+      & .vi-internaledit {
+        border: 1px solid darken(@defaultInputColor,12%);
+        display: flex;
+        flex-basis: 100%;
+        align-self: stretch;
+        flex-direction: column;
+      }
+    }
+  }
+}

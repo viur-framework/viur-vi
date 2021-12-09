@@ -48,7 +48,7 @@ class ServerSideActionWdg(Button):
 		self.parent().parent().selectionChangedEvent.unregister(self)
 		super(ServerSideActionWdg, self).onDetach()
 
-	def onSelectionChanged(self, table, selection, *args,**kwargs):
+	def onSelectionChanged(self, table, selection, *args, **kwargs):
 		if self.actionData["allowMultiSelection"] and len(selection) > 0 or len(selection) == 1:
 			if not self.pendingFetches:
 				if self.selectionCheckerAst:

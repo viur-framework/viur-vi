@@ -1,0 +1,257 @@
+@charset "UTF-8";
+/* Item */
+
+//
+
+// Prefixes and objects:
+// .item-
+
+@item-backgroundColor: @backgroundColor;
+@item-borderRadius: @defaultBorderRadius;
+@item-activeBackgroundColor: @mainColor;
+@item-actionBackgroundColor: @complementColor;
+@item-padding: @defaultPadding;
+
+.item(
+  @backgroundColor: @item-backgroundColor;
+  @borderRadius: @item-borderRadius;
+  @activeBackgroundColor: @item-activeBackgroundColor;
+  @actionBackgroundColor: @item-actionBackgroundColor;
+  @padding: @item-padding;
+  ) {
+  -webkit-appearance: none;
+  cursor: auto;
+  border: 0;
+  text-align:left;
+  background-color: transparent;
+  border-radius: @borderRadius;
+  padding:@padding @padding*1.25;
+  display:flex;
+  flex:0 0 auto;
+  align-items: center;
+  align-self: stretch;
+  min-height:35px;
+  justify-content: space-between;
+  &--small {
+    padding: 0 @defaultPadding*1.25;
+  }
+  & > * + * {
+    margin-left: @innerSpace;
+  }
+  a&,
+  & a,
+  a&:hover,
+  & a:hover {
+    color:inherit;
+  }
+  &-link {
+    display:flex;
+    flex-basis:100%;
+    & > * + * {
+      margin-left: @innerSpace;
+    }
+  }
+  &-image {
+    flex-shrink: 0;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: unit(@defaultPadding * 2 + @defaultLineHeight, rem);
+    height: unit(@defaultPadding * 2 + @defaultLineHeight, rem);
+    margin-top: 3px;
+    margin-bottom: 3px;
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    & .i img {
+      object-fit: cover;
+    }
+  }
+  &--small &-image {
+    font-size: .7em;
+    height: 1.5rem;
+  }
+  &-content {
+    flex:1 1 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    justify-content: center;
+    & > * {
+      margin-left: 0;
+    }
+  }
+  &--small &-content {
+    font-size: .9em;
+  }
+  &-subline {
+    font-size: .75em;
+  }
+  &-subline + &-headline {
+    font-size: .9em;
+  }
+  &-descr {
+    font-size: .9em;
+    font-weight: @fontWeightLight;
+  }
+  &-controls {
+    padding-left: @padding*1.25;
+    padding-right: @padding*1.25;
+    display: flex;
+  }
+  &-action {
+    -webkit-appearance: none;
+    flex-basis: 0;
+    border-width: 0;
+    background-color: transparent;
+    padding-left: @padding*1.25;
+    padding-right: @padding*1.25;
+    color: @actionBackgroundColor;
+    height: 1.6em;
+    min-width: 1.6em;
+    line-height: 1.6;
+    font-size: 1.2em;
+    border-radius: 8px;
+    text-align: center;
+    cursor:pointer;
+  }
+  &--small &-action {
+    font-size: .7em;
+    border-radius: 4px;
+  }
+  &:hover &-action,
+  &-action:hover {
+    background-color: @actionBackgroundColor;
+    color: contrast(@actionBackgroundColor);
+  }
+  &.has-hover {
+    cursor: pointer;
+    &:hover {
+      color: contrast(darken(@backgroundColor,5%));
+      background-color: darken(@backgroundColor,5%);
+    }
+    &.is-active:hover {
+      color: contrast(darken(@activeBackgroundColor,5%));
+      background-color: darken(@activeBackgroundColor,5%);
+    }
+  }
+  &.is-disabled {
+    color: darken(@backgroundColor,40%)!important;
+    background-color: darken(@backgroundColor,15%)!important;
+    cursor: not-allowed!important;
+    user-select: none;
+    & .i {
+      background-color: darken(@backgroundColor,25%)!important;
+    }
+  }
+  &.is-disabled &-action,
+  &.is-disabled:hover &-action,
+  &.is-disabled &-action:hover {
+    color: darken(@backgroundColor,20%);
+    background: transparent;
+    cursor: not-allowed;
+  }
+  &.is-active,
+  &.is-focused {
+    background-color: @activeBackgroundColor!important;
+    color: contrast(@activeBackgroundColor)!important;
+    & .i {
+      background-color: contrast(@activeBackgroundColor);
+      color: @activeBackgroundColor;
+    }
+  }
+  &.is-active &-action,
+  &.is-focused &-action {
+    background-color: @activeBackgroundColor;
+    color: contrast(@activeBackgroundColor);
+  }
+  &.is-active:hover &-action,
+  &.is-active &-action:hover,
+  &.is-focused:hover &-action,
+  &.is-focused &-action:hover {
+    background-color: contrast(@activeBackgroundColor);
+    color: @activeBackgroundColor;
+  }
+}
+
+.colorizeItem(
+  @backgroundColor: @item-backgroundColor;
+  @activeBackgroundColor: @mainColor;
+  @actionBackgroundColor: @complementColor;
+  ) {
+  background-color:@backgroundColor;
+  color: darken(@backgroundColor,50%);
+  & .i {
+    color: contrast(@activeBackgroundColor);
+    background-color: @activeBackgroundColor;
+  }
+  & .item-action {
+    color: @actionBackgroundColor;
+  }
+  &:hover .item-action,
+  & .item-action:hover {
+    background-color: @actionBackgroundColor;
+    color: contrast(@actionBackgroundColor);
+  }
+  &.has-hover {
+    &:hover {
+      color: contrast(darken(@backgroundColor,5%));
+      background-color: darken(@backgroundColor,5%);
+    }
+    &.is-active:hover {
+      color: contrast(darken(@activeBackgroundColor,5%));
+      background-color: darken(@activeBackgroundColor,5%);
+    }
+  }
+  &.is-disabled {
+    color: darken(@backgroundColor,40%)!important;
+    background-color: darken(@backgroundColor,15%)!important;
+    & .i {
+      background-color: darken(@backgroundColor,25%)!important;
+    }
+  }
+  &.is-disabled .item-action,
+  &.is-disabled:hover .item-action,
+  &.is-disabled .item-action:hover {
+    color: darken(@backgroundColor,20%);
+    background: transparent;
+  }
+  &.is-active {
+    background-color: @activeBackgroundColor;
+    color: contrast(@activeBackgroundColor);
+    & .i {
+      background-color: contrast(@activeBackgroundColor);
+      color: @activeBackgroundColor;
+    }
+  }
+  &.is-active .item-action {
+    background-color: @activeBackgroundColor;
+    color: contrast(@activeBackgroundColor);
+  }
+  &.is-active:hover .item-action,
+  &.is-active .item-action:hover {
+    background-color: contrast(@activeBackgroundColor);
+    color: @activeBackgroundColor;
+  }
+}
+
+.headline{
+  color: @complementColor;
+  font-family: @headFonts;
+  text-transform: uppercase;
+}
+
+.item-content.flr-item-content{
+    &--row{
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+
+      *:not(:first-child){
+        margin-left: @innerSpace;
+      }
+    }
+}

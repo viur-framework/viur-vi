@@ -1,3 +1,11 @@
 [submodule "vi/flare"]
 	path = vi/flare
 url=https://github.com/viur-framework/flare.git
+
+[submodule "sources/less/ignite"]
+	path = sources/less/ignite
+	url = https://github.com/viur-framework/ignite.git
+
+[submodule "sources/embedsvg/icons"]
+	path = sources/embedsvg/icons
+	url = https://github.com/viur-framework/viur-icons.git

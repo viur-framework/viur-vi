@@ -1,0 +1,49 @@
+@charset "UTF-8";
+/* TEXT */
+
+.flr-bone-txtpreview {
+  overflow-x:hidden;
+  overflow-y:scroll;
+  text-overflow: ellipsis;
+  display: flex;
+  flex-basis: 100%;
+}
+
+.flr-bone--text,
+.flr-bone--raw {
+  & textarea{
+    flex-grow: inherit;
+  }
+}
+
+.flr-textarea {
+  width: 100%;
+}
+
+/* use div here to have a superior selector */
+div.note-modal-backdrop {
+  .zIndex('overlay');
+}
+
+div.note-popover,
+div.note-modal {
+  .zIndex('alert');
+}
+
+.note-editor:not(.codeview) {
+  .note-toolbar {
+    transition: .3s opacity ease;
+    opacity: 1;
+  }
+  .note-toolbar:not(.is-active) {
+    opacity: 1;
+  }
+}
+
+.is-disabled ~ .note-editor.note-frame {
+  color: #777777;
+  cursor: not-allowed;
+  .boxShadow(0);
+  border: @form-borderWidth dashed @form-disabledBorderColor;
+  background-color: @form-disabledBackgroundColor;
+}

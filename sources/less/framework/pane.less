@@ -1,0 +1,19 @@
+@charset "UTF-8";
+/* #PANE */
+
+// A pane represents an entry in the module list.
+.vi-pane {
+  display: none;
+  &.is-active {
+    display: block;
+  }
+}
+
+// A viewer pane represents an entry in the viewer window.
+.vi-viewer-pane {
+  width:100%;
+  display: none;
+  &.is-active {
+    display: flex;
+  }
+}

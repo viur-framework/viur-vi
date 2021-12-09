@@ -1,0 +1,36 @@
+@charset "UTF-8";
+/* Vi CSS 2018 */
+
+// This is the master file.
+// It imports all less files in their intended order for easy mass-inclusion.
+// Should you need specific files, you can easily customize the imports.
+
+// IGNITE
+@import "ignite/ignite"; // resets all browsers to the same base state.
+
+// FLARE
+@import "flare/flare"; // generated forms, recurring elements and statuses.
+
+
+// The framework:
+@import "framework/_framework"; // page wrappers.
+
+// Initialize and configurate fundamental elements.
+@import "configuration/_configuration"; // variables and constants.
+
+// Load widgets.
+@import "widgets/_widgets";
+
+// Load objects.
+@import "objects/login"; // the login screen
+@import "objects/splash"; // the loading splash animation
+@import "objects/messenger"; // the vi log
+@import "objects/tasks"; // the tasks menu
+
+@import "objects/modulelist"; // the modulelist
+@import "objects/progress"; // progress bars
+@import "objects/tooltip"; // light weight tool tip bubbles
+
+@import (optional) "../../../appengine/vi_plugins/vi_custom";
+@import (optional) "../../../deploy/vi_plugins/vi_custom";
+

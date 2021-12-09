@@ -1,0 +1,13 @@
+@charset "UTF-8";
+/* IMAGE */
+
+// avoid overflow by high resolution images
+img {
+  max-width: 100%;
+  height: auto;
+  .mq-print({
+    page-break-before: auto;
+    page-break-after: auto;
+    page-break-inside: avoid;
+  });
+}

@@ -1,0 +1,250 @@
+@charset "UTF-8";
+/* TOOLTIPS */
+// These great tooltips are taken from primercss.io — created by and copyright GitHub, Inc.
+
+// Prefixes and objects:
+// .tip-
+
+@tipMultilineMaxwidth: 250px;
+@tipColor: @hintColor;
+
+.tip {
+  position: relative;
+  //.zIndex('tooltip', 0);
+}
+
+// This is the tooltip bubble
+.tip:after {
+  position: absolute;
+  display: none;
+  padding: 5px 8px;
+  font: normal normal 11px/1.5 @bodyFonts;
+  color: contrast(@tipColor);
+  text-align: center;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: break-word;
+  white-space: pre;
+  pointer-events: none;
+  content: attr(aria-label);
+  background: fadeout(@tipColor,10%);
+  border-radius: 3px;
+  -webkit-font-smoothing: subpixel-antialiased;
+  .zIndex('tooltip', 0);
+}
+
+// This is the tooltip arrow
+.tip:before {
+  position: absolute;
+  .zIndex('tooltip', 1);
+  display: none;
+  width: 0;
+  height: 0;
+  color: @tipColor;
+  pointer-events: none;
+  content: "";
+  border: 5px solid transparent;
+}
+
+// This will indicate when we'll activate the tooltip
+.tip:hover,
+.tip:active,
+.tip:focus {
+  &:before,
+  &:after {
+    display: inline-block;
+    text-decoration: none;
+  }
+}
+
+.tip--multiline:hover,
+.tip--multiline:active,
+.tip--multiline:focus {
+  &:after {
+    display: table-cell;
+  }
+}
+
+// Tooltipped south
+.tip-s,
+.tip-se,
+.tip-sw {
+  &:after {
+    top: 100%;
+    right: 50%;
+    margin-top: 5px;
+  }
+
+  &:before {
+    top: auto;
+    right: 50%;
+    bottom: -5px;
+    margin-right: -5px;
+    border-bottom-color:  fadeout(@tipColor,10%);
+  }
+}
+
+.tip-se {
+  &:after {
+    right: auto;
+    left: 50%;
+    margin-left: -15px;
+  }
+}
+
+.tip-sw:after {
+  margin-right: -15px;
+}
+
+// Tooltips above the object
+.tip-n,
+.tip-ne,
+.tip-nw {
+  &:after {
+    right: 50%;
+    bottom: 100%;
+    margin-bottom: 5px;
+  }
+
+  &:before {
+    top: -5px;
+    right: 50%;
+    bottom: auto;
+    margin-right: -5px;
+    border-top-color:  fadeout(@tipColor,10%);
+  }
+}
+
+.tip-ne {
+  &:after {
+    right: auto;
+    left: 50%;
+    margin-left: -15px;
+  }
+}
+
+.tip-nw:after {
+  margin-right: -15px;
+}
+
+// Move the tooltip body to the center of the object.
+.tip-s:after,
+.tip-n:after {
+  transform: translateX(50%);
+}
+
+// Tooltipped to the left
+.tip-w {
+  &:after {
+    right: 100%;
+    bottom: 50%;
+    margin-right: 5px;
+    transform: translateY(50%);
+  }
+
+  &:before {
+    top: 50%;
+    bottom: 50%;
+    left: -5px;
+    margin-top: -5px;
+    border-left-color: fadeout(@tipColor,10%);
+  }
+}
+
+// tooltipped to the right
+.tip-e {
+  &:after {
+    bottom: 50%;
+    left: 100%;
+    margin-left: 5px;
+    transform: translateY(50%);
+  }
+
+  &:before {
+    top: 50%;
+    right: -5px;
+    bottom: 50%;
+    margin-top: -5px;
+    border-right-color: fadeout(@tipColor,10%);
+  }
+}
+
+// Multiline tooltips
+//
+// ».tip--multiline« Add this class when you have long content.
+// The downside is you cannot preformat the text with newlines and »[w,e]«
+// are always »@tipMultilineMaxwidth« wide.
+.tip--multiline {
+  &:after {
+    width: max-content;
+    max-width: @tipMultilineMaxwidth;
+    word-break: break-word;
+    word-wrap: normal;
+    white-space: pre-line;
+    border-collapse: separate;
+  }
+
+  &.tip-s:after,
+  &.tip-n:after {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.tip-w:after,
+  &.tip-e:after {
+    right: 100%;
+  }
+}
+
+// Sticky tooltips
+//
+// Always show the tooltip.
+.tip--sticky {
+  &:before,
+  &:after {
+    display: inline-block;
+  }
+
+  &.tip--multiline {
+    &:after {
+      display: table-cell;
+    }
+  }
+}
+
+// Alert tooltips
+//
+// Colors for different alert states.
+.colorizeTooltip(@backgroundColor) {
+  &:after {
+    color: contrast(@backgroundColor);
+    background: fadeout(@backgroundColor,10%);
+  }
+
+  &.tip-s,
+  &.tip-se,
+  &.tip-sw {
+    &:before {
+      border-bottom-color: fadeout(@backgroundColor,10%);
+    }
+  }
+
+  &.tip-n,
+  &.tip-ne,
+  &.tip-nw {
+    &:before {
+      border-top-color: fadeout(@backgroundColor,10%);
+    }
+  }
+
+  &.tip-e:before {
+    border-right-color: fadeout(@backgroundColor,10%);
+  }
+
+  &.tip-w:before {
+    border-left-color: fadeout(@backgroundColor,10%);
+  }
+}
