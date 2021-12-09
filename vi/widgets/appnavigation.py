@@ -29,7 +29,7 @@ class NavigationElement(html5.Div):
 		</div>
 		'''
 
-	def __init__(self,name,icon=None,view=None,nav=None,closeable=False):
+	def __init__(self,name,icon=None,view=None,nav=None,closeable=False, opened=False):
 		super().__init__()
 		self.view = view
 		self.nav = nav
@@ -50,6 +50,9 @@ class NavigationElement(html5.Div):
 		conf[ "views_state" ].register( "activeView", self )
 		if self.closeable:
 			self.itemRemove.removeClass("is-hidden")
+
+		if opened:
+			self.ArrowAction(None)
 
 	def onActiveViewChanged( self,e,wdg, *args,**kwargs ):
 		if wdg == self.view:
@@ -191,8 +194,8 @@ class AppNavigation(html5.Nav):
 		self.appendChild(aBlock)
 		return aBlock
 
-	def addNavigationPoint( self,name,icon,view=None,parent=None,closeable=False ):
-		aNav = NavigationElement(name,icon,view,self,closeable=closeable)
+	def addNavigationPoint( self,name,icon,view=None,parent=None,closeable=False, opened=False ):
+		aNav = NavigationElement(name,icon,view,self,closeable=closeable,opened=opened)
 		if not parent:
 			parent = self
 
@@ -205,8 +208,8 @@ class AppNavigation(html5.Nav):
 			aNav.navigationAction()
 		return aNav
 
-	def addNavigationPointAfter( self,name,icon,view=None,beforeElement=None,closeable=False ):
-		aNav = NavigationElement( name, icon, view, self,closeable=closeable )
+	def addNavigationPointAfter( self,name,icon,view=None,beforeElement=None,closeable=False, opened=False  ):
+		aNav = NavigationElement( name, icon, view, self,closeable=closeable,opened=opened )
 		if beforeElement:
 			beforeElement.parent().insertAfter( aNav, beforeElement )
 		else:

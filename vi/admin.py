@@ -265,12 +265,20 @@ class AdminScreen(Screen):
 			else:
 				viewInstName = viewInst.name if viewInst else "notfound"
 
+			# get open State
+			if "display" in item and item["display"] == "open":
+				isOpen = True
+			else:
+				isOpen = False
+			print("--")
+			print(isOpen)
 			# visible module
 			currentModuleWidget = self.navWrapper.addNavigationPoint(
 				item.get("name", "missing Name"),
 				item.get("icon", None),
 				viewInstName,
-				target
+				target,
+				opened=isOpen
 			)
 
 			# sort and append Items modules in a Group
