@@ -109,7 +109,7 @@ class EditWidget(html5.Div):
 			return
 
 		super().__init__(context=context)
-		self.addClass("vi-widget vi-widget--edit form-group--validation")
+		self.addClass("vi-widget vi-widget--edit")
 		self.sinkEvent("onChange")
 
 		# A Bunch of santy-checks, as there is a great chance to mess around with this widget
@@ -188,6 +188,7 @@ class EditWidget(html5.Div):
 
 		# Input form
 		self.accordion = Accordion()
+		self.accordion.addClass("flr-form")
 		self.appendChild(self.accordion)
 
 		# Engage
@@ -360,6 +361,9 @@ class EditWidget(html5.Div):
 
 		if request:
 			data = NetworkService.decode(request)
+
+		if not self.wasInitialRequest:
+			self.addClass("form-group--validation")
 
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
 			try:

@@ -8,7 +8,7 @@
       background-color: #fafafa;
       margin: 0;
       border-right: none;
-
+      width:2em;
       & * {
         border-radius: 0;
       }
@@ -48,5 +48,15 @@
   align-items: center;
 }
 
+
+.flr-value--file > .flr-file-imagepreview:not(.is-hidden) + .flr-value--relational-wrapper{
+  width: calc(100% - 2em);
+  margin-left: 0px;
+}
+
+.vi-file-imagepreview{
+  width:100%;
+  height:100%;
+}
 
 // See widget/file.less for more.

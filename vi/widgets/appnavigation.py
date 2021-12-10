@@ -21,7 +21,7 @@ class NavigationElement(html5.Div):
 				<flare-svg-icon value="icon-arrow-left"></flare-svg-icon>
 			</span>
 			<span [name]="itemRemove" class="item-pin is-hidden" @click="RemoveAction">
-				<flare-svg-icon value="icon-cross"></flare-svg-icon>
+				<flare-svg-icon value="icon-cancel"></flare-svg-icon>
 			</span>
 
 		</div>
