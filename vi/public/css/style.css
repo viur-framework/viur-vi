@@ -1591,6 +1591,11 @@ div.swiper-button-next:after {
 	flex-shrink: 1;
 }
 
+.ignt-table-content .flr-file-imagepreview {
+	width: 2em;
+	height: 2em;
+}
+
 .flr-bone--select select {
 	-webkit-box-flex: 1;
 	-ms-flex: 1;
