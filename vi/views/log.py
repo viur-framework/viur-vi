@@ -18,7 +18,7 @@ class logHandlerWidget(ViewWidget):
 			Here we start!
 		'''
 
-
+		self["class"] = "vi-viewer-pane is-active"
 
 		self.logslist = self.view.params["data"]["logslist"]
 		print(self.logslist)
