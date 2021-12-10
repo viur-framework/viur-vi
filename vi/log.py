@@ -57,8 +57,7 @@ class logA(html5.A):
 class logWidget(html5.Div):
 	def __init__(self, logList ):
 		super(logWidget, self).__init__()
-		self["class"] ="vi-widget"
-		self["style"]["overflow"] ="auto" #here we need a class?
+		self["class"] ="vi-widget vi-widget--log"
 		self.logList = logList
 		header = html5.Div()
 		header["class"] = ["vi-actionbar","bar"]
