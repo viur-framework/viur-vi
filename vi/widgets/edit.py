@@ -149,7 +149,11 @@ class EditWidget(html5.Div):
 		self.clone = clone
 		self.closeOnSuccess = False
 		self.logAction = logAction
-		self.context = context
+
+		self.context = context or {}
+		self.context["__mode__"] = self.mode
+
+		self.segments = {}
 		self.views = {}
 
 		if hashArgs:
@@ -299,8 +303,8 @@ class EditWidget(html5.Div):
 			Removes all visible bones/forms/fieldsets.
 		"""
 		self.accordion.clear()
+		self.segments.clear()
 		self.views.clear()
-		self.actionbar.resetLoadingState()
 
 	def closeOrContinue(self, sender=None):
 		NetworkService.notifyChange(self.module, key=self.key, action=self.mode)
@@ -365,14 +369,18 @@ class EditWidget(html5.Div):
 		if not self.wasInitialRequest:
 			self.addClass("form-group--validation")
 
+		# Reset loading state
+		self.actionbar.resetLoadingState()
+
 		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
 			try:
 				self.key = data["values"]["key"]
 			except:
 				self.key = None
 
-			conf["mainWindow"].log("success", translate(self.logAction), modul=self.module, key=self.key,
-			                       action=self.mode, data=data)
+			conf["mainWindow"].log("success", translate(self.logAction),
+				modul=self.module, key=self.key, action=self.mode, data=data
+			)
 
 			if askHierarchyCloning and self.clone:
 				# for lists, which are rootNode entries of hierarchies, ask to clone entire hierarchy
@@ -410,24 +418,25 @@ class EditWidget(html5.Div):
 				contextVariable: data["values"].get(contextKey)
 			})
 
-		# Initializations
-		self.clear()
+		if not self.form:
+			self.clear()
 
-		firstCat = None
+			# Build the form as ViurForm with the available information as internalForm first.
+			# The bone widgets inside it are being re-arranged afterwards.
+			self.form = ViurForm(
+				skel=data["values"],
+				structure=data["structure"],
+				context=self.context
+			)
+			self.form.buildInternalForm()
+			init = True
+		else:
+			init = False
+
 		hasMissing = False
+		firstCat = None
 		defaultCat = conf["modules"][self.module].get("name", self.module)  # Name of the default category
 		adminCat = conf["modules"][self.module].get("defaultCategory", None)  # The category displayed first (I think...)
-		segments = {}
-
-		# Build the form as ViurForm with the available information as internalForm first.
-		# The bone widgets inside it are being re-arranged afterwards.
-		self.form = ViurForm(
-			skel=data["values"],
-			structure=data["structure"],
-			errors=data.get("errors"),
-			context=self.context
-		)
-		self.form.buildInternalForm()
 
 		for name, bone in self.form.bones.items():
 			desc = self.form.structure[name]
@@ -435,37 +444,33 @@ class EditWidget(html5.Div):
 			# Get category from bone description
 			cat = desc["params"].get("category") or defaultCat
 
-			if cat not in segments:
-				segments[cat] = self.accordion.addSegment(cat)
+			if init:
+				if cat not in self.segments:
+					self.segments[cat] = self.accordion.addSegment(cat)
 
-			# Move the bone from the ViurForm into our segment.
-			segments[cat].addWidget(bone)
-
-			if bone.hasError:
-				segments[cat].addClass("is-incomplete is-active")
-				hasMissing = True
+				# Move the bone from the ViurForm into our segment.
+				self.segments[cat].addWidget(bone)
 
 			# Hide invisible bones or logic-flavored bones with their default desire
-			if not desc["visible"] or (desc["params"].get("visibleIf")):
-				bone.hide()
-			elif desc["visible"] and not firstCat and not adminCat:
-				firstCat = segments[cat]
+			if not firstCat and not adminCat:
+				firstCat = self.segments[cat]
 			elif adminCat and cat == adminCat:
-				firstCat = segments[cat]
+				firstCat = self.segments[cat]
 
-			# NO elif!
-			if desc["params"].get("readonlyIf"):
-				bone.disable()
+		# Render errors (if any)
+		self.form.errors = data.get("errors")
+		self.form.handleErrors()
 
 		# Hide all segments where all fields are invisible
-		for segment in segments.values():
+		for segment in self.segments.values():
 			segment.checkVisibility()
 
-		# Show default category
-		if firstCat:
-			firstCat.activate()
+		if init:
+			# Show default category
+			if firstCat and init:
+				firstCat.activate()
 
-		self.accordion.buildAccordion("asc")  # order and add to dom
+			self.accordion.buildAccordion("asc")  # order and add to dom
 
 		# Views
 		views = conf["modules"][self.module].get("editViews")
@@ -488,18 +493,18 @@ class EditWidget(html5.Div):
 
 				vdescr = conf["modules"][vmodule]
 
-				if vmodule not in segments:
-					segments[vmodule] = self.accordion.addSegment(
+				if vmodule not in self.segments:
+					self.segments[vmodule] = self.accordion.addSegment(
 						vmodule, vtitle or vdescr.get("name", vmodule), directAdd=True
 					)
-					segments[vmodule].addClass("editview")
+					self.segments[vmodule].addClass("editview")
 
 				if vclass:
-					segments[vmodule].addClass(*vclass)
+					self.segments[vmodule].addClass(*vclass)
 
 				if vvariable:
 					context = self.context.copy() if self.context else {}
-					context[vvariable] = values["key"]
+					context[vvariable] = data["values"]["key"]
 				else:
 					context = self.context
 
@@ -508,9 +513,7 @@ class EditWidget(html5.Div):
 					columns=vcolumns or vdescr.get("columns"),
 					context=context
 				)
-				segments[vmodule].addWidget(self.views[vmodule])
-
-		#self.unserialize(values, errors)
+				self.segments[vmodule].addWidget(self.views[vmodule])
 
 		if self._hashArgs:  # Apply the default values (if any)
 			self.form.unserialize(self._hashArgs)
