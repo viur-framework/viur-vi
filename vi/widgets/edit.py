@@ -142,6 +142,7 @@ class EditWidget(html5.Div):
 		self.module = module
 		self.applicationType = applicationType
 		self.key = key
+		self.modified = False
 		self.mode = "edit" if self.key or applicationType == EditWidget.appSingleton else "add"
 		self.node = node
 		self.skelType = skelType
@@ -208,10 +209,12 @@ class EditWidget(html5.Div):
 
 	def onChange(self, event):
 		assert self.form
+		self.modified = True
 		DeferredCall(self.form.update)
 
 	def onBoneChange(self, bone):
 		assert self.form
+		self.modified = True
 		DeferredCall(self.form.update)
 
 	def showErrorMsg(self, req=None, code=None):
@@ -229,6 +232,7 @@ class EditWidget(html5.Div):
 			conf["mainWindow"].removeWidget(self)
 
 	def reloadData(self):
+		self.form = None  # rebuild the entire form
 		self._save({})
 
 	def _save(self, data):
@@ -307,6 +311,7 @@ class EditWidget(html5.Div):
 		self.views.clear()
 
 	def closeOrContinue(self, sender=None):
+		self.modified = False
 		NetworkService.notifyChange(self.module, key=self.key, action=self.mode)
 
 		if self.closeOnSuccess:
