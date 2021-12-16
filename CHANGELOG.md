@@ -2,6 +2,10 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.9] - 2021-12-16
+- Feat: EditWidget with improved error reporting in ViurForm
+- Feat: Styling and icons updated
+- Fix: EditWidget speed increasement due bug with accordion rendering
 
 ## [3.0.8] - 2021-12-03
 - Feat: modules now can have display:open

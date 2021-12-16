@@ -270,8 +270,7 @@ class AdminScreen(Screen):
 				isOpen = True
 			else:
 				isOpen = False
-			print("--")
-			print(isOpen)
+
 			# visible module
 			currentModuleWidget = self.navWrapper.addNavigationPoint(
 				item.get("name", "missing Name"),
