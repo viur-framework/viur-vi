@@ -192,7 +192,7 @@ class CodeStructurePopup( html5.ext.Popup ):
 		for group in conf["mainConfig"]["configuration"]["moduleGroups"]:
 			if group["prefix"] in modulChilds:
 				group.update({"children":modulChilds[group["prefix"]]})
-			if group["children"]:
+			if "children" in group and group["children"]:
 				moduleStructure.append(group)
 		#moduleStructure = sorted(moduleStructure, key=lambda x: x["name"])
 
