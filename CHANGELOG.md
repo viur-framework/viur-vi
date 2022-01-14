@@ -2,6 +2,12 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.10] - 2022-01-14
+- Fix: Flare update
+- Fix: Edit Form update
+- Fix: Ignite update
+- Fix: Messages fix
+
 ## [3.0.9] - 2021-12-16
 - Feat: EditWidget with improved error reporting in ViurForm
 - Feat: Styling and icons updated
