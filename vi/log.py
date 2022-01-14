@@ -150,7 +150,6 @@ class LogButton(html5.Div):
 
 	def cleanLogAction( self,event ):
 		for idx in list(event.detail["data"])[:-conf["logAmount"]-1]:
-			idx = idx.to_py()
 			conf[ "indexeddb" ].dbAction( "delete", iddbTableName, idx )
 
 
