@@ -114,7 +114,10 @@ class ExportCsv(html5.Progress):
 
 				try:
 					if cellRenderer[key] is not None:
-						row[fields[key]] = cellRenderer[key].toString(value)
+						try:
+							row[fields[key]] = cellRenderer[key].toString(value)
+						except:
+							row[fields[key]] = str(value)
 					else:
 						row[fields[key]] = str(value)
 
