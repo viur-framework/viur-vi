@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
-
+import logging
+import re
 from flare import html5
 from flare.popup import Popup
 
@@ -43,6 +44,10 @@ class ExportCsv(html5.Progress):
 	def nextChunk(self, cursor = None):
 		if cursor:
 			self.params["cursor"] = cursor
+		if "cursor" in self.params:
+			if self.params["cursor"] is not  None and cursor is None :
+				self.exportToFile()
+				return
 
 		NetworkService.request(self.module, "list", self.params,
 		                        successHandler=self.nextChunkComplete,
@@ -96,26 +101,25 @@ class ExportCsv(html5.Progress):
 				titles.append(bone.get("descr", key) or key)
 
 		# Export
-		content = self.separator.join(titles) + self.lineSeparator
+		content= self.separator.join(titles) + self.lineSeparator
 
 		for entry in self.data:
-			row = [None for _ in range(len(fields.keys()))]
+			row = [str(None) for _ in range(len(fields.keys()))]
 
 			for key, value in entry.items():
-				print(key, value)
+				#print(key, value)
 
 				if key not in fields or value is None or str(value).lower() == "none":
 					continue
 
 				try:
 					if cellRenderer[key] is not None:
-						row[fields[key]] = cellRenderer[key].toString(entry, key) #fixme: ViUR3
+						row[fields[key]] = cellRenderer[key].toString(value)
 					else:
 						row[fields[key]] = str(value)
 
 				except ValueError:
 					pass
-
 			content += self.separator.join(row) + self.lineSeparator
 			self["value"] += 1
 
@@ -126,12 +130,21 @@ class ExportCsv(html5.Progress):
 		a.hide()
 		self.appendChild(a)
 
+		def replacer(obj):
+			'''Replace an Singel Character
+			to int then to to hex and the to string
+			after all the last to  Character retrun an "%" is added
+
+			! => to 33 => 0x21 => %21
+			'''
+			return "%" + str(hex(ord(obj.group(0))))[2:]
+		content=re.sub("[-_.!~*'()]",replacer,content) #relpace Character for "encodeURIComponent" and "escape"
+
 		if self.encoding == "utf-8":
-			encodeURIComponent = eval("encodeURIComponent")
-			a["href"] = "data:text/csv;charset=utf-8," + encodeURIComponent(content)
+
+			a["href"] = "data:text/csv;charset=utf-8," +html5.jseval('encodeURIComponent("%r")'%(content))
 		elif self.encoding == "iso-8859-15":
-			escape = eval("escape")
-			a["href"] = "data:text/csv;charset=ISO-8859-15," + escape(content)
+			a["href"] = "data:text/csv;charset=ISO-8859-15," +html5.jseval('escape("%r")'%(content))
 		else:
 			raise ValueError("unknown encoding: %s" % self.encoding)
 
@@ -155,7 +168,7 @@ class ExportCsv(html5.Progress):
 		self.parent().addClass("log-%s" % logClass)
 
 		msg = html5.Span()
-		html5.utils.textToHtml(msg, message)
+		html5.textToHtml(msg, message)
 
 		self.parent().appendChild(msg)
 		self.parent().removeChild(self)
