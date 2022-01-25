@@ -64,7 +64,12 @@ class ExportCsv(html5.Progress):
 			return
 
 		self.data.extend(answ["skellist"])
-		self.nextChunk(answ["cursor"])
+		if answ["cursor"]:
+			self.nextChunk(answ["cursor"])
+		else:
+			self.exportToFile()
+
+
 
 	def exportToFile(self):
 		if not self.data:
@@ -141,13 +146,12 @@ class ExportCsv(html5.Progress):
 			! => to 33 => 0x21 => %21
 			'''
 			return "%" + str(hex(ord(obj.group(0))))[2:]
-		content=re.sub("[-_.!~*'()]",replacer,content) #relpace Character for "encodeURIComponent" and "escape"
+		#content=re.sub("[-_.!~*'()]",replacer,content) #relpace Character for "encodeURIComponent" and "escape"
 
 		if self.encoding == "utf-8":
-
-			a["href"] = "data:text/csv;charset=utf-8," +html5.jseval('encodeURIComponent("%r")'%(content))
+			a["href"] = "data:text/csv;charset=utf-8," +content#html5.jseval('encodeURIComponent("%r")'%())
 		elif self.encoding == "iso-8859-15":
-			a["href"] = "data:text/csv;charset=ISO-8859-15," +html5.jseval('escape("%r")'%(content))
+			a["href"] = "data:text/csv;charset=ISO-8859-15," +content#+html5.jseval('escape("%r")'%(content))
 		else:
 			raise ValueError("unknown encoding: %s" % self.encoding)
 
