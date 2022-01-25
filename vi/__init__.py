@@ -1,3 +1,7 @@
+import logging
+logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(level=logging.DEBUG)
+
 from .config import vi_conf
 from flare import loadProjectConf
 loadProjectConf(vi_conf) #prepatch flare.conf
@@ -15,6 +19,7 @@ from .config import conf
 
 from flare.i18n import buildTranslations,translate
 from flare import i18n
+
 
 class Application(html5.Div):
 	def __init__(self):
