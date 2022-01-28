@@ -316,7 +316,7 @@ class EditWidget(html5.Div):
 
 		if self.closeOnSuccess:
 			if self.module == "_tasks":
-				self.parent().close()
+				self.parent().parent().parent().close()
 				return
 
 			if not conf["mainWindow"].navWrapper.removeNavigationPoint(self.parent().view.name):
