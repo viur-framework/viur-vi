@@ -1,3 +1,5 @@
+import pyodide
+
 from flare import html5
 from flare.popup import Confirm
 
@@ -221,15 +223,23 @@ class EditWidget(html5.Div):
 		"""
 			Removes all currently visible elements and displays an error message
 		"""
-		if code and (code == 401 or code == 403):
-			txt = translate("Access denied!")
-		else:
-			txt = translate("An error occurred: {{code}}", code=code or 0)
+		# Try to obtain error reason from header
+		if not (reason := pyodide.create_once_callable(req.request.req.getResponseHeader)("x-viur-error")):
+			reason = translate(
+				f"flare.network.error.{code}", fallback=translate("flare.network.error")
+			)
 
-		conf["mainWindow"].log("error", txt)
+		hint = translate(f"flare.network.hint.{code}", fallback="")
+
+		conf["mainWindow"].log(
+			"error",
+			reason + ((". " + hint) if hint else "")
+		)
 
 		if self.wasInitialRequest:
 			conf["mainWindow"].removeWidget(self)
+
+		self.actionbar.resetLoadingState()
 
 	def reloadData(self):
 		self.form = None  # rebuild the entire form

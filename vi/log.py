@@ -366,8 +366,6 @@ class Log(html5.Div):
 		msgDate.addClass("msg-date")
 		msgContent.appendChild(msgDate)
 
-
-
 		if isinstance( msg, html5.Widget ):
 			#Append that widget directly
 			msgContent.appendChild( msg )
