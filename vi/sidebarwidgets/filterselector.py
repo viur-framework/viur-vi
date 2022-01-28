@@ -30,7 +30,6 @@ class CompoundFilter(html5.Div):
 		filterImage = html5.Div()
 		filterImage.addClass("item-image")
 		self.filterheader.appendChild(filterImage)
-		filterImage.appendChild(Icon(view["icon"],title=view.get("name")))
 
 		if "name" in view.keys():
 			h2 = html5.H2()
@@ -147,18 +146,9 @@ class FilterSelector( html5.Div ):
 
 		if not isSearchDisabled:
 			self.search = Search()
-			self.search.addClass("item", "has-hover", "is-collapsed")
+			self.search.addClass("item", "has-hover")
 			self.appendChild(self.search)
 			self.search.startSearchEvent.register(self)
-
-			filterImage = html5.Div()
-			filterImage.addClass("item-image")
-			self.search.prependChild(filterImage)
-			filterImage.prependChild( Icon( "icon-search" ) )
-
-			self.search.searchLbl.addClass("item-content")
-
-
 
 	def onDetach(self):
 		if not self.defaultFilter:
