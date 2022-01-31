@@ -5,7 +5,7 @@ from flare.popup import Popup
 from flare.network import NetworkService, DeferredCall
 from vi.config import conf
 from flare.i18n import translate
-
+import pyodide
 from datetime import datetime
 
 

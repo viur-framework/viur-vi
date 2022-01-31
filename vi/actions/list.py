@@ -11,6 +11,7 @@ from vi.sidebarwidgets.filterselector import FilterSelector
 from flare.i18n import translate
 from flare.button import Button
 from flare.network import DeferredCall, requestGroup
+import pyodide
 
 """
 	Provides the actions suitable for list applications
@@ -941,7 +942,7 @@ class LoadAllAction(Button):
 
 		if currentModule:
 			currentModule.table._loadOnDisplay = True  # mark to force load whole Dataset
-			html5.window.setTimeout(self.loadAllRows, 500)
+			html5.window.setTimeout(pyodide.create_once_callable(self.loadAllRows), 500)
 
 	def loadAllRows(self):
 		NetworkService.notifyChange(self.parent().parent().module)

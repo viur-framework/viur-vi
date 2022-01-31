@@ -239,9 +239,6 @@ class ListWidget(html5.Div):
 		configActions = cfg["actions"] if "actions" in cfg else []
 		disabledActions = cfg["disabledActions"] if "disabledActions" in cfg else []
 
-		print("OOOOOOOOOO")
-		print(view)
-		print(disabledActions)
 		# remove disabledAction from defaultActions
 		for disabledAction in disabledActions:
 			# remove action from defaultActions
