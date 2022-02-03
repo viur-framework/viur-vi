@@ -341,7 +341,10 @@ class SelectRootNode(html5.Select):
 		for node in res:
 			option = html5.Option()
 			option["value"] = node["key"]
-			option.appendChild(node["name"])
+			option.appendChild(
+				node["name"].get(conf["flare.language.current"], conf["emptyValue"])
+					if isinstance(node["name"], dict) else node["name"]
+			)
 
 			if node["key"] == self.parent().parent().rootNode:
 				option["selected"] = True

@@ -75,7 +75,7 @@ class ContextAction(Button):
 			d = self.widget.serializeForDocument()
 			self.openModule(d)
 
-	def openModule(self, data, title = None):
+	def openModule(self, data, title=None):
 		# Have a handler?
 		widgen = ModuleWidgetSelector.select(self.contextModule, self.adminInfo)
 		assert widgen
@@ -83,11 +83,9 @@ class ContextAction(Button):
 		# Generate title
 		if title is None:
 			for key in conf["vi.context.title.bones"]:
-				title = data.get(key)
-
-				if title:
-					if isinstance(title, dict) and conf["currentLanguage"] in title:
-						title = title[conf["currentLanguage"]]
+				if title := data.get(key):
+					if isinstance(title, dict) and conf["flare.language.current"] in title:
+						title = title[conf["flare.language.current"]]
 
 					break
 
@@ -111,12 +109,12 @@ class ContextAction(Button):
 		widget = widgen(self.contextModule, **utils.mergeDict(self.adminInfo, context))
 
 		if widget:
-			pane = Pane(translate(u"{module} - {name}", module=self.title, name=title),
-			            closeable=True, iconURL=self.icon, iconClasses=["module_%s" % self.contextModule])
-			conf["mainWindow"].stackPane(pane)
+			conf["mainWindow"].stackWidget(
+				widget,
+				title=translate("{{module}} - {{name}}", module=self.title, name=title),
+				icon=self.adminInfo["icon"]
+			)
 
-			pane.addWidget(widget)
-			pane.focus()
 		else:
 			print("Widget could not be generated")
 

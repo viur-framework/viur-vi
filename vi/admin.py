@@ -335,7 +335,7 @@ class AdminScreen(Screen):
 
 		mainWidget = viewInst.widgets["viewport"](viewInst)  # todo better solution is needed
 
-		self.stackWidget(mainWidget)
+		self.stackWidget(mainWidget, title=name, icon=icon)
 
 	def log(self, type, msg, icon=None, modul=None, action=None, key=None, data=None):
 		msg = self.logWdg.log(type, msg, icon, modul, action, key, data)
@@ -397,14 +397,14 @@ class AdminScreen(Screen):
 				data=data
 			)
 
-	def stackWidget(self, widget, disableOtherWidgets=True):
+	def stackWidget(self, widget, title="", icon=None):
 		'''
 			We dont stack widgets anymore.
 			We use now Popups.
 
 
 		'''
-		widgetPopup = Popup()
+		widgetPopup = Popup(title=title, icon=icon)
 		widgetPopup["style"]["width"] = "auto"
 		widgetPopup["style"]["max-width"] = "90%"
 		widgetPopup["style"]["height"] = "90%"
