@@ -7,6 +7,7 @@ from flare.network import NetworkService,requestGroup,DeferredCall
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
 from flare.button import Button
+from flare.popup import Confirm
 
 
 class AddAction(Button):
