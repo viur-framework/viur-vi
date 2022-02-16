@@ -184,7 +184,7 @@ class EditWidget( html5.Div ):
 		if self.group:
 			pathList.append( self.group )
 
-		if self.mode == "edit":
+		if self.mode == "edit" and applicationType != EditWidget.appSingleton:
 			pathList.append( self.key )
 
 		conf[ "theApp" ].setPath( "/".join( pathList ) )
