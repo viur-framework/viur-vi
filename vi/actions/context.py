@@ -106,7 +106,9 @@ class ContextAction(Button):
 
 			context[key] = value
 
-		widget = widgen(self.contextModule, **utils.mergeDict(self.adminInfo, context))
+		#print(widgen, context, utils.mergeDict(self.adminInfo, {"context": context}))
+
+		widget = widgen(self.contextModule, **utils.mergeDict(self.adminInfo, {"context": context}))
 
 		if widget:
 			conf["mainWindow"].stackWidget(
