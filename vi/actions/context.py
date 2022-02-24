@@ -110,6 +110,8 @@ class ContextAction(Button):
 		widget = widgen(self.contextModule, **utils.mergeDict(self.adminInfo, {"context": context}))
 
 		if widget:
+			widget.isSelector = True  # this is done so that subsequent views are stacked in Popups...
+
 			conf["mainWindow"].stackWidget(
 				widget,
 				title=translate("{{module}} - {{name}}", module=self.title, name=title),
@@ -118,6 +120,19 @@ class ContextAction(Button):
 
 		else:
 			print("Widget could not be generated")
+
+		# Tut nicht:
+		# conf["mainWindow"].openView(
+		# 	translate("{{module}} - {{name}}", module=self.title, name=title),
+		# 	self.adminInfo.get("icon") or "icon-edit",
+		# 	self.adminInfo.get("handler", "list").split(".", 1)[0] + "handler",
+		# 	self.contextModule,
+		# 	self.contextModule + "list",  # häää?
+		# 	data={
+		# 		"context": context,
+		# 	},
+		# 	target="popup" if self.parent().parent().isSelector else "mainNav"
+		# )
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
