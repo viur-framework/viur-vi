@@ -107,14 +107,13 @@ class ContextAction(Button):
 			context[key] = value
 
 		#print(widgen, context, utils.mergeDict(self.adminInfo, {"context": context}))
-
 		widget = widgen(self.contextModule, **utils.mergeDict(self.adminInfo, {"context": context}))
 
 		if widget:
 			conf["mainWindow"].stackWidget(
 				widget,
 				title=translate("{{module}} - {{name}}", module=self.title, name=title),
-				icon=self.adminInfo["icon"]
+				icon=self.adminInfo.get("icon")
 			)
 
 		else:

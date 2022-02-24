@@ -43,9 +43,16 @@ class TreeWidget(html5.Div):
 		)
 
 		self.module = module
-		self.rootNode = rootNode
-		self.node = node or rootNode
-		self.context = context
+
+		# Try to get rootNode from context when available.
+		if context and not (rootNode or node):
+			context_var = conf["vi.context.prefix"] + "rootNode"
+			if rootNode := context.get(context_var):
+				del context[conf["vi.context.prefix"] + "rootNode"]
+
+		self.context = context  # context
+		self.rootNode = rootNode  # root node
+		self.node = node or rootNode  # current node
 
 		# Action bar
 		self.actionBar = ActionBar(module, "tree")
