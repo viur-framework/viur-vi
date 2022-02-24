@@ -302,47 +302,58 @@ class ReloadAction(Button):
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
 
-class SelectRootNode( html5.Select ):
+class SelectRootNode(html5.Select):
 	"""
-		Allows selecting a different rootNode in Tree applications
+		Selector for hierarchy root nodes.
 	"""
 	def __init__(self, module, handler, actionName, *args, **kwargs):
-		super( SelectRootNode, self ).__init__( *args, **kwargs )
-		self.addClass("select","select--small","bar-item")
+		super().__init__( *args, **kwargs )
+		self.addClass("select", "select--small", "bar-item")
 		self.sinkEvent("onChange")
 		self.hide()
 
 	def onAttach(self):
-		super( SelectRootNode, self ).onAttach()
-		self.parent().parent().rootNodeChangedEvent.register( self )
-
-		if self.parent().parent().rootNode is None:
-			self.update()
+		super(SelectRootNode, self).onAttach()
+		self.parent().parent().rootNodeChangedEvent.register(self)
+		self.update()
 
 	def onDetach(self):
-		self.parent().parent().rootNodeChangedEvent.unregister( self )
-		super( SelectRootNode, self ).onDetach()
+		self.parent().parent().rootNodeChangedEvent.unregister(self)
+		super(SelectRootNode, self).onDetach()
 
 	def update(self):
-		self.removeAllChildren()
-		NetworkService.request( self.parent().parent().module, "listRootNodes",
-		                            successHandler=self.onRootNodesAvailable)
+		# Root node preset, don't show anything
+		if self.parent().parent().rootNode:
+			return
 
-	def onRootNodeChanged(self, newNode, *args,**kwargs):
+		self.removeAllChildren()
+		NetworkService.request(
+			self.parent().parent().module,
+			"listRootNodes",
+			successHandler=self.onRootNodesAvailable
+		)
+
+	def onRootNodeChanged(self, newNode, *args, **kwargs):
 		for option in self._children:
 			if option["value"] == newNode:
 				option["selected"] = True
 				return
 
 	def onRootNodesAvailable(self, req):
-		res = NetworkService.decode( req )
+		res = NetworkService.decode(req)
+
 		for node in res:
 			option = html5.Option()
 			option["value"] = node["key"]
-			option.appendChild( html5.TextNode( node[ "name"] ) )
+			option.appendChild(
+				node["name"].get(conf["flare.language.current"], conf["emptyValue"])
+					if isinstance(node["name"], dict) else node["name"]
+			)
+
 			if node["key"] == self.parent().parent().rootNode:
 				option["selected"] = True
-			self.appendChild( option )
+
+			self.appendChild(option)
 
 		if len(self.children()) > 1:
 			self.show()
@@ -351,10 +362,11 @@ class SelectRootNode( html5.Select ):
 
 	def onChange(self, event):
 		newRootNode = self["options"].item(self["selectedIndex"]).value
-		self.parent().parent().setRootNode( newRootNode )
+		self.parent().parent().setRootNode(newRootNode)
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		return actionName=="selectrootnode" and (handler == "tree" or handler.startswith("tree."))
+	def isSuitableFor(module, handler, actionName):
+		return actionName == "selectrootnode" and (handler.split(".", 1)[0] in ["tree", "hierarchy"])
 
-actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
+
+actionDelegateSelector.insert(1, SelectRootNode.isSuitableFor, SelectRootNode)
