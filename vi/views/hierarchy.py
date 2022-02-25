@@ -12,9 +12,9 @@ class hierarchyHandler(View):
 
 	@staticmethod
 	def canHandle( moduleName, moduleInfo ):
-		return moduleInfo["handler"] == "hierarchy" or moduleInfo["handler"].startswith("hierarchy.") or  moduleInfo["handler"].startswith("tree.hierarchy")
+		return moduleInfo["handler"] == "hierarchy" or moduleInfo["handler"].startswith("hierarchy.") or moduleInfo["handler"].startswith("tree.node")
 
-HandlerClassSelector.insert(1, hierarchyHandler.canHandle, hierarchyHandler)
+HandlerClassSelector.insert(5, hierarchyHandler.canHandle, hierarchyHandler)
 
 class hierarchyHandlerWidget(ViewWidget):
 
