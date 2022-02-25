@@ -76,10 +76,6 @@ class ContextAction(Button):
 			self.openModule(d)
 
 	def openModule(self, data, title=None):
-		# Have a handler?
-		widgen = ModuleWidgetSelector.select(self.contextModule, self.adminInfo)
-		assert widgen
-
 		# Generate title
 		if title is None:
 			for key in conf["vi.context.title.bones"]:
@@ -106,33 +102,35 @@ class ContextAction(Button):
 
 			context[key] = value
 
-		#print(widgen, context, utils.mergeDict(self.adminInfo, {"context": context}))
-		widget = widgen(self.contextModule, **utils.mergeDict(self.adminInfo, {"context": context}))
+		# Open a new view for the context module
+		conf["mainWindow"].openView(
+			translate("{{module}} - {{name}}", module=self.title, name=title),
+			self.adminInfo.get("icon") or "icon-edit",
+			self.contextModule + self.adminInfo["handler"],
+			self.contextModule,
+			None,  # is not used...
+			data=utils.mergeDict(self.adminInfo, {"context": context}),
+			target="popup" if self.parent().parent().isSelector else "mainNav"
+		)
 
-		if widget:
-			widget.isSelector = True  # this is done so that subsequent views are stacked in Popups...
-
-			conf["mainWindow"].stackWidget(
-				widget,
-				title=translate("{{module}} - {{name}}", module=self.title, name=title),
-				icon=self.adminInfo.get("icon")
-			)
-
-		else:
-			print("Widget could not be generated")
-
-		# Tut nicht:
-		# conf["mainWindow"].openView(
-		# 	translate("{{module}} - {{name}}", module=self.title, name=title),
-		# 	self.adminInfo.get("icon") or "icon-edit",
-		# 	self.adminInfo.get("handler", "list").split(".", 1)[0] + "handler",
-		# 	self.contextModule,
-		# 	self.contextModule + "list",  # häää?
-		# 	data={
-		# 		"context": context,
-		# 	},
-		# 	target="popup" if self.parent().parent().isSelector else "mainNav"
-		# )
+		# OLD VERSION OPENS THE HANDLER DIRECTLY IN A POPUP.
+		# # Have a handler?
+		# assert (widgen := ModuleWidgetSelector.select(self.contextModule, self.adminInfo))
+		#
+		# #print(widgen, context, utils.mergeDict(self.adminInfo, {"context": context}))
+		# widget = widgen(self.contextModule, **utils.mergeDict(self.adminInfo, {"context": context}))
+		#
+		# if widget:
+		# 	widget.isSelector = True  # this is done so that subsequent views are stacked in Popups...
+		#
+		# 	conf["mainWindow"].stackWidget(
+		# 		widget,
+		# 		title=translate("{{module}} - {{name}}", module=self.title, name=title),
+		# 		icon=self.adminInfo.get("icon")
+		# 	)
+		#
+		# else:
+		# 	print("Widget could not be generated")
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):
