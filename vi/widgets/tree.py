@@ -558,7 +558,7 @@ class TreeBrowserWidget(TreeWidget):
 		skel = answ["values"]
 
 		if skel["parententry"] and skel["parententry"] != skel["key"]:
-			c = BreadcrumbNodeWidget(self.module, skel, {}, self)
+			c = BreadcrumbNodeWidget(self.module, skel, {"name":{"descr":"Name"}}, self)
 
 			NetworkService.request(
 				self.module, "view/node/%s" % skel["parententry"],
@@ -566,7 +566,7 @@ class TreeBrowserWidget(TreeWidget):
 			)
 
 		else:
-			c = BreadcrumbNodeWidget(self.module, {"key": self.rootNode, "name": "root"}, {}, self)
+			c = BreadcrumbNodeWidget(self.module, {"key": self.rootNode, "name": "root"}, {"name":{"descr":"Name"}}, self)
 			c.addClass("is-rootnode")
 
 		self.pathList.prependChild(c)
