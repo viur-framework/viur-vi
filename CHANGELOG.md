@@ -2,6 +2,13 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.11] - 2022-03-07
+- Fix: Flare update
+- Fix: editViews now work again
+- Feat: often used icons are loaded on start
+- Feat: Vi and Core Version now shown in Topbar
+- Fix: Embeding Images in Summernote is now disabled
+
 ## [3.0.10] - 2022-01-14
 - Fix: Flare update
 - Fix: Edit Form update
