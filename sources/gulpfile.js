@@ -76,3 +76,10 @@ gulp.task('default', gulp.series([
 	"vi_icons",
 	"vi_images"
 ]));
+
+gulp.task('watch', () => {
+	gulp.watch(srcpaths.embedsvg, gulp.series('vi_js'));
+	gulp.watch(srcpaths.images, gulp.series('vi_css'));
+	gulp.watch(srcpaths.images, gulp.series('vi_icons'));
+	gulp.watch(srcpaths.images, gulp.series('vi_images'));
+});
