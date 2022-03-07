@@ -52,6 +52,8 @@ class AccordionSegment(html5.Fieldset):
 			self.activate()
 
 	def onClick(self, event):
+		event.stopPropagation()
+		event.preventDefault()
 		if not utils.doesEventHitWidgetOrChildren(event, self.title):
 			return
 
