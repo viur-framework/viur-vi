@@ -9,6 +9,7 @@ loadProjectConf(vi_conf) #prepatch flare.conf
 from flare import html5
 from flare.popup import Alert
 from flare import network
+from flare.icons import SvgIcon
 from . import utils
 from . import sidebarwidgets
 from . import exception
@@ -155,6 +156,36 @@ class Application(html5.Div):
 
 		html5.window.location.hash = path + hash
 
+
+def preloadIcons():
+	iconList = ["icon-arrow-right",
+	"icon-save",
+	"icon-draggable",
+	"icon-save-file",
+	"icon-image-file",
+	"icon-arrow-left",
+	"icon-cancel",
+	"icon-file-system",
+	"icon-add",
+	"icon-list",
+	"icon-reload",
+	"icon-list-item",
+	"icon-hierarchy",
+	"icon-edit",
+	"icon-search",
+	"icon-clone",
+	"icon-delete",
+	"icon-play",
+	"icon-dashboard",
+	"icon-logout",
+	"icon-error",
+	"icon-error-file",
+	"icon-time"]
+
+	for icon in iconList:
+		SvgIcon(icon)
+
+
 def start():
 	buildTranslations("vi")
 
@@ -164,9 +195,14 @@ def start():
 	conf["currentLanguage"] = i18n.getLanguage()
 	conf["indexeddb"] = utils.indexeddb("vi-cache")
 
+	preloadIcons()
+
+
 	# Application
 	app = Application()
 	html5.Body().appendChild(app)
+
+
 
 s = None
 a = None
