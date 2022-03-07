@@ -27,7 +27,7 @@ class UserLogoutMsg(Popup):
 		self.popupFoot.appendChild(Button(translate("Refresh"), callback=self.startPolling))
 		self.popupFoot.appendChild(Button(translate("Login"), callback=self.showLoginWindow))
 
-		html5.document.addEventListener( "webkitvisibilitychange", self.visibilityChanged )
+		html5.document.addEventListener( "webkitvisibilitychange", pyodide.create_proxy(self.visibilityChanged) )
 
 		setInterval = html5.window.setInterval
 		self.interval = setInterval(pyodide.create_proxy(self.checkForSuspendResume), self.checkInterval)
