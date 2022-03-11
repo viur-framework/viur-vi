@@ -1,6 +1,8 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+## [3.0.12] - 2022-03-11
+- Fix: zipped releases now working again
 
 ## [3.0.11] - 2022-03-07
 - Fix: Flare update
