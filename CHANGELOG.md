@@ -1,10 +1,18 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+
+## [3.0.13] - 2022-03-14
+
+- Fix: submodule vi working again
+- Fix: formcontrols working again
+
 ## [3.0.12] - 2022-03-11
+
 - Fix: zipped releases now working again
 
 ## [3.0.11] - 2022-03-07
+
 - Fix: Flare update
 - Fix: editViews now work again
 - Feat: often used icons are loaded on start
