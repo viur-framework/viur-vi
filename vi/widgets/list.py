@@ -253,7 +253,7 @@ class ListWidget(html5.Div):
 			except:
 				splitIndex = None
 
-			if splitIndex:
+			if splitIndex is not None:
 				allActions["default_actions"].insert(1, configActions[0:splitIndex])
 				allActions["entry_actions"].insert(1, configActions[splitIndex + 1:])
 			else:
