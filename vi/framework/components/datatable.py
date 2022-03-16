@@ -2,7 +2,8 @@
 from flare import html5,utils
 from flare.ignite import Table
 from flare.event import EventDispatcher
-from flare.network import DeferredCall
+from flare.network import DeferredCall ,NetworkService
+
 
 
 class SelectTable( Table ):
@@ -665,6 +666,7 @@ class DataTable( html5.Div ):
 		rowIdx = self._model.index(obj)
 		cellIdx = 0
 
+
 		if not tableIsPrepared:
 			self.table.prepareCol( rowIdx, len( self._shownFields ) - 1 )
 
@@ -680,9 +682,58 @@ class DataTable( html5.Div ):
 					lbl = html5.Div("...")
 				lbl.addClass("ignt-table-content")
 				self._renderedModel[rowIdx][field] = lbl
+			#Set Event Listner
+			if field=="sortindex":
+				lbl.replaceChild("""
+				               <div [name]="dragArea" class="flr-bone-dragger label" style="height:50px;width:50px;">
+				                   <flare-svg-icon value="icon-draggable" ></flare-svg-icon>
+				               </div>
+				           """)
+				lbl["draggable"] = True
+				lbl.addEventListener("drop", self.onDrop)
+				lbl.addEventListener("dragstart", self.onDragStart)
+				lbl.addEventListener("dragover",self.onDragOver)
+
+
 
 			self.table.setCell( rowIdx, cellIdx, lbl )
 			cellIdx += 1
+
+
+	###Drag Drop Events
+	def onDrop(self, event):
+		event.preventDefault()
+		rowIdx = self.table.getIndexByTr(self.table._rowForEvent(event))
+		dropData = self._model[int(event.dataTransfer.getData("index"))]
+
+		if rowIdx>0:
+			sortindex=self._model[rowIdx]["sortindex"]
+			sortindexbefor=self._model[rowIdx-1]["sortindex"]
+			newIdx=(sortindexbefor+sortindex)/2
+			NetworkService.request(
+				"addedittest",
+				"edit",
+				{
+					"key": dropData["key"],
+					"sortindex": str(newIdx),
+				},
+				secure=True,
+				modifies=True,
+			)
+
+
+	def onDragStart(self, event):
+		rowIdx = self.table.getIndexByTr(self.table._rowForEvent(event))
+		event.dataTransfer.setData("index", rowIdx)
+		event.stopPropagation()
+
+	def onDragOver(self, event):
+		#print("over drag")
+		event.preventDefault()
+
+
+
+
 
 	def rebuildTable(self, recalculate=True):
 		"""
@@ -875,6 +926,7 @@ class ViewportDataTable(DataTable):
 			return
 
 		rowIdx = self._model.index(obj) % self._rows
+
 		cellIdx = 0
 
 		for field in self._shownFields:
