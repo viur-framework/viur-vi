@@ -522,6 +522,9 @@ class SelectTable( Table ):
 class DataTable( html5.Div ):
 
 	def __init__( self, _loadOnDisplay = False, *args, **kwargs ):
+		print("args are")
+		print(args)
+		print(kwargs)
 		super( DataTable, self ).__init__( )
 		self.table = SelectTable( *args, **kwargs )
 		self.addClass("vi-datatable")
@@ -536,6 +539,7 @@ class DataTable( html5.Div ):
 		self._dataProvider = None # Which object to call if we need more data
 		self._cellRender = {} # Map of renders for a given field
 		self._renderedModel = [] #save already rendered Field (used to rebuild Table if new Fields were selected
+		self._moduleName=kwargs.get("moduleName")
 		# We re-emit some events with custom parameters
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
@@ -685,10 +689,11 @@ class DataTable( html5.Div ):
 			#Set Event Listner
 			if field=="sortindex":
 				lbl.replaceChild("""
-				               <div [name]="dragArea" class="flr-bone-dragger label" style="height:50px;width:50px;">
-				                   <flare-svg-icon value="icon-draggable" ></flare-svg-icon>
+				               <div [name]="dragArea" class="flr-bone-dragger" style="height:25px;width:25px;">
+				                   <flare-svg-icon value="icon-draggable" style="height:25px;width:25px;" ></flare-svg-icon>
 				               </div>
 				           """)
+				#Fixme Replace inline styles
 				lbl["draggable"] = True
 				lbl.addEventListener("drop", self.onDrop)
 				lbl.addEventListener("dragstart", self.onDragStart)
@@ -705,13 +710,14 @@ class DataTable( html5.Div ):
 		event.preventDefault()
 		rowIdx = self.table.getIndexByTr(self.table._rowForEvent(event))
 		dropData = self._model[int(event.dataTransfer.getData("index"))]
-
+		if str(rowIdx) == event.dataTransfer.getData("index"):
+			return
 		if rowIdx>0:
 			sortindex=self._model[rowIdx]["sortindex"]
 			sortindexbefor=self._model[rowIdx-1]["sortindex"]
 			newIdx=(sortindexbefor+sortindex)/2
 			NetworkService.request(
-				"addedittest",
+				self._moduleName,
 				"edit",
 				{
 					"key": dropData["key"],
@@ -720,6 +726,21 @@ class DataTable( html5.Div ):
 				secure=True,
 				modifies=True,
 			)
+		else:
+			print("set on first place")
+			sortindex = self._model[rowIdx]["sortindex"]
+			newIdx = sortindex-1 #Todo find a better solution
+			NetworkService.request(
+				self._moduleName,
+				"edit",
+				{
+					"key": dropData["key"],
+					"sortindex": str(newIdx),
+				},
+				secure=True,
+				modifies=True,
+			)
+
 
 
 	def onDragStart(self, event):
