@@ -2,6 +2,10 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.14] - 2022-03-22
+- Feat: added Azure login
+- Fix: admininfo actions can now start with "\n"
+
 ## [3.0.13] - 2022-03-14
 
 - Fix: submodule vi working again
