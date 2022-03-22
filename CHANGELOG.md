@@ -2,6 +2,10 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.15] - 2022-03-22
+- Fix: Foldernavigation in fileBones working again
+- Fix: Selection for filtered lists remains 
+
 ## [3.0.14] - 2022-03-22
 - Feat: added Azure login
 - Fix: admininfo actions can now start with "\n"
