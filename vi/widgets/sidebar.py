@@ -36,11 +36,6 @@ class SideBar( html5.Div ):
 			self.setWidget( cw )
 
 	def onDetach(self):
-		if self.currentWidget:
-			self.removeChild( self.currentWidget )
-			self.currentWidget = None
-			self.removeClass("is-active")
-		super( SideBar, self ).onDetach()
 		self.isInit = False
 
 	def setWidget(self, widget):
