@@ -1,6 +1,8 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+## [3.0.16] - 2022-03-23
+- Fix: searchfilter now behaved as it should for relationalbones
 
 ## [3.0.15] - 2022-03-22
 - Fix: Foldernavigation in fileBones working again

@@ -1039,7 +1039,7 @@ class ListSelectFilterAction(Button):
 	def onAttach(self):
 		super(ListSelectFilterAction, self).onAttach()
 		module = self.parent().parent().module
-		if self.parent().parent().filterID:
+		if self.parent().parent().filterID and not self.parent().parent().filterID == -1:
 			# Its a predefined search - we wont override this
 			self["disabled"] = True
 		if module in conf["modules"].keys():
