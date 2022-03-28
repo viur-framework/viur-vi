@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 from flare import html5,utils
 from flare.ignite import Table
 from flare.event import EventDispatcher
@@ -688,7 +690,7 @@ class DataTable( html5.Div ):
 				self._renderedModel[rowIdx][field] = lbl
 			#Set Event Listner
 			if field=="sortindex":
-				lbl.replaceChild("""
+				lbl.appendChild("""
 				               <div [name]="dragArea" class="flr-bone-dragger" style="height:25px;width:25px;">
 				                   <flare-svg-icon value="icon-draggable" style="height:25px;width:25px;" ></flare-svg-icon>
 				               </div>
@@ -709,37 +711,42 @@ class DataTable( html5.Div ):
 	def onDrop(self, event):
 		event.preventDefault()
 		rowIdx = self.table.getIndexByTr(self.table._rowForEvent(event))
-		dropData = self._model[int(event.dataTransfer.getData("index"))]
-		if str(rowIdx) == event.dataTransfer.getData("index"):
+		dragElementIndex = int(event.dataTransfer.getData("index"))
+		dropData = self._model[dragElementIndex]
+
+		if rowIdx == dragElementIndex:
 			return
-		if rowIdx>0:
-			sortindex=self._model[rowIdx]["sortindex"]
-			sortindexbefor=self._model[rowIdx-1]["sortindex"]
-			newIdx=(sortindexbefor+sortindex)/2
-			NetworkService.request(
-				self._moduleName,
-				"edit",
-				{
-					"key": dropData["key"],
-					"sortindex": str(newIdx),
-				},
-				secure=True,
-				modifies=True,
+		sortindexdrop = self._model[rowIdx]["sortindex"]
+		if rowIdx<dragElementIndex:
+			print("befor")
+			if rowIdx-1<0:
+				sortindex =self._model[0]["sortindex"]-1
+			else:
+				sortindex =self._model[rowIdx-1]["sortindex"]
+
+		if rowIdx > dragElementIndex:
+			print("after")
+			if rowIdx + 1 == len(self._model):
+				sortindex=datetime.now().timestamp()
+			else:
+				print("gt index after")
+				sortindex = self._model[rowIdx + 1]["sortindex"]
+				print(sortindexdrop)
+				print(sortindex)
+
+		newIdx = (sortindex + sortindexdrop) / 2
+
+		NetworkService.request(
+			self._moduleName,"edit",
+			{
+				"key": dropData["key"],
+				"sortindex": str(newIdx),
+			},
+			secure=True,
+			modifies=True,
 			)
-		else:
-			print("set on first place")
-			sortindex = self._model[rowIdx]["sortindex"]
-			newIdx = sortindex-1 #Todo find a better solution
-			NetworkService.request(
-				self._moduleName,
-				"edit",
-				{
-					"key": dropData["key"],
-					"sortindex": str(newIdx),
-				},
-				secure=True,
-				modifies=True,
-			)
+
+
 
 
 
