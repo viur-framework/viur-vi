@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
 from datetime import datetime
 
 from flare import html5,utils
 from flare.ignite import Table
 from flare.event import EventDispatcher
-from flare.network import DeferredCall ,NetworkService
-
+from flare.network import DeferredCall, NetworkService
 
 
 class SelectTable( Table ):
@@ -524,10 +522,8 @@ class SelectTable( Table ):
 class DataTable( html5.Div ):
 
 	def __init__( self, _loadOnDisplay = False, *args, **kwargs ):
-		print("args are")
-		print(args)
-		print(kwargs)
-		super( DataTable, self ).__init__( )
+		super().__init__()
+
 		self.table = SelectTable( *args, **kwargs )
 		self.addClass("vi-datatable")
 		self.appendChild(self.table)
@@ -672,7 +668,6 @@ class DataTable( html5.Div ):
 		rowIdx = self._model.index(obj)
 		cellIdx = 0
 
-
 		if not tableIsPrepared:
 			self.table.prepareCol( rowIdx, len( self._shownFields ) - 1 )
 
@@ -688,62 +683,61 @@ class DataTable( html5.Div ):
 					lbl = html5.Div("...")
 				lbl.addClass("ignt-table-content")
 				self._renderedModel[rowIdx][field] = lbl
-			#Set Event Listner
-			if field=="sortindex":
+
+			# Inject sortindex
+			if field == "sortindex":
+				#language=HTML
 				lbl.replaceChild("""
-				               <div [name]="dragArea" class="flr-bone-dragger" style="height:25px;width:25px;">
-				                   <flare-svg-icon value="icon-draggable" style="height:25px;width:25px;" ></flare-svg-icon>
-				               </div>
-				           """)
-				#Fixme Replace inline styles
+				   <div [name]="dragArea" class="flr-bone-dragger" style="height:25px;width:25px;">
+					   <flare-svg-icon value="icon-draggable" style="height:25px;width:25px;" ></flare-svg-icon>
+				   </div>
+				""")
+				
+				#fixme: Replace inline styles
 				lbl["draggable"] = True
 				lbl.addEventListener("drop", self.onDrop)
 				lbl.addEventListener("dragstart", self.onDragStart)
 				lbl.addEventListener("dragover",self.onDragOver)
 
-
-
 			self.table.setCell( rowIdx, cellIdx, lbl )
 			cellIdx += 1
-
 
 	###Drag Drop Events
 	def onDrop(self, event):
 		event.preventDefault()
+
 		rowIdx = self.table.getIndexByTr(self.table._rowForEvent(event))
 		dragElementIndex = int(event.dataTransfer.getData("index"))
 		dropData = self._model[dragElementIndex]
 
 		if rowIdx == dragElementIndex:
 			return
-		sortindexdrop = self._model[rowIdx]["sortindex"]
-		if rowIdx<dragElementIndex:
-			if rowIdx-1<0:
-				sortindex =self._model[0]["sortindex"]-1
-			else:
-				sortindex =self._model[rowIdx-1]["sortindex"]
 
-		if rowIdx > dragElementIndex:
+		sortindexdrop = self._model[rowIdx]["sortindex"]
+		
+		if rowIdx < dragElementIndex:
+			if rowIdx - 1 < 0:
+				sortindex = self._model[0]["sortindex"] - 1
+			else:
+				sortindex = self._model[rowIdx-1]["sortindex"]
+
+		elif rowIdx > dragElementIndex:
 			if rowIdx + 1 == len(self._model):
-				sortindex=datetime.now().timestamp()
+				sortindex = datetime.now().timestamp()
 			else:
 				sortindex = self._model[rowIdx + 1]["sortindex"]
 
 		newIdx = (sortindex + sortindexdrop) / 2
 
 		NetworkService.request(
-			self._moduleName,"edit",
+			self._moduleName, "edit",
 			{
 				"key": dropData["key"],
 				"sortindex": str(newIdx),
 			},
 			secure=True,
 			modifies=True,
-			)
-
-
-
-
+		)
 
 	def onDragStart(self, event):
 		rowIdx = self.table.getIndexByTr(self.table._rowForEvent(event))
@@ -753,10 +747,6 @@ class DataTable( html5.Div ):
 	def onDragOver(self, event):
 		#print("over drag")
 		event.preventDefault()
-
-
-
-
 
 	def rebuildTable(self, recalculate=True):
 		"""
@@ -949,7 +939,6 @@ class ViewportDataTable(DataTable):
 			return
 
 		rowIdx = self._model.index(obj) % self._rows
-
 		cellIdx = 0
 
 		for field in self._shownFields:
