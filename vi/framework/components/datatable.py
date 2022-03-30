@@ -690,7 +690,7 @@ class DataTable( html5.Div ):
 				self._renderedModel[rowIdx][field] = lbl
 			#Set Event Listner
 			if field=="sortindex":
-				lbl.appendChild("""
+				lbl.replaceChild("""
 				               <div [name]="dragArea" class="flr-bone-dragger" style="height:25px;width:25px;">
 				                   <flare-svg-icon value="icon-draggable" style="height:25px;width:25px;" ></flare-svg-icon>
 				               </div>
@@ -718,21 +718,16 @@ class DataTable( html5.Div ):
 			return
 		sortindexdrop = self._model[rowIdx]["sortindex"]
 		if rowIdx<dragElementIndex:
-			print("befor")
 			if rowIdx-1<0:
 				sortindex =self._model[0]["sortindex"]-1
 			else:
 				sortindex =self._model[rowIdx-1]["sortindex"]
 
 		if rowIdx > dragElementIndex:
-			print("after")
 			if rowIdx + 1 == len(self._model):
 				sortindex=datetime.now().timestamp()
 			else:
-				print("gt index after")
 				sortindex = self._model[rowIdx + 1]["sortindex"]
-				print(sortindexdrop)
-				print(sortindex)
 
 		newIdx = (sortindex + sortindexdrop) / 2
 
