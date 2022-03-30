@@ -1,5 +1,4 @@
 from datetime import datetime
-from datetime import datetime
 
 from flare import html5, utils
 from flare.ignite import Table
