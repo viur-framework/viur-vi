@@ -294,7 +294,8 @@ class DownloadAction(Button):
 
 	def doDownload(self, fileData):
 		a = html5.A()
-		a["href"] = "/file/download/%s/%s?download=1" % (fileData["dlkey"],fileData["name"])
+		a["download"] = fileData["name"]
+		a["href"] = "/file/download/%s/%s?download=1" % (fileData["dlkey"])
 		a.element.click()
 
 	def resetLoadingState(self):

@@ -109,9 +109,10 @@ class FilePreviewImage(html5.Div):
 		if not self.currentFile:
 			return
 
-		self.downloadA["href"] = self.currentFile["downloadUrl"]
-		self.downloadA["target"] = "_blank"
-		self.downloadA.element.click()
+		a = html5.A()
+		a["download"] = self.currentFile["name"]
+		a["href"] = "/file/download/%s/%s?download=1" % ( self.currentFile["dlkey"])
+		a.element.click()
 
 	def onClick(self,sender=None):
 		if not self.currentFile:
