@@ -6,6 +6,8 @@ from flare.button import Button
 from flare.html5 import window
 from flare.network import NetworkService
 from flare.safeeval import SafeEval
+from flare.i18n import translate
+from flare.popup import Confirm
 
 from vi.config import conf
 
@@ -17,6 +19,7 @@ class ServerSideActionWdg(Button):
 		self.handler = handler
 		self.actionName = actionName
 		self.actionData = actionData
+		self.multiSelection = True if "allowMultiSelection" in self.actionData and self.actionData["allowMultiSelection"] else False
 		self["class"] = "bar-item btn btn--small %s" % actionData["icon"]
 		self["disabled"] = True
 		self.isDisabled = True
@@ -55,7 +58,7 @@ class ServerSideActionWdg(Button):
 			self.switchDisabledState(False)
 			return
 
-		if self.actionData["allowMultiSelection"] and len(selection) > 0 or len(selection) == 1:
+		if self.multiSelection and len(selection) > 0 or len(selection) == 1:
 			if not self.pendingFetches:
 				if self.selectionCheckerAst:
 					valid = True
@@ -76,35 +79,59 @@ class ServerSideActionWdg(Button):
 			self.switchDisabledState(True)
 
 	def onClick(self, sender=None):
-		selection = self.parent().parent().getCurrentSelection()
-		if self.actionData["allowMultiSelection"] and len(selection) > 0 or len(selection) == 1:
-			# if (len(selection) == 1 and not self.actionData["allowMultiSelection"]) or len(selection) > 0:
-			wasIdle = not self.pendingFetches
-			for item in selection:
+		if self.actionData.get("confirm",None) and self.actionData["confirm"]:
+			Confirm(self.actionData["confirm"],
+					title=translate(self.actionData['name']),
+					yesCallback=self.apply)
+		else:
+			self.apply()
+
+
+	def apply(self,sender=None):
+		if self.actionData["action"] == "view":
+			url_parts = self.actionData['url'].split("/")
+			targetInfo = conf["modules"][url_parts[0]]
+
+			conf["mainWindow"].openView(
+				translate("{{module}} - {{name}}", module=targetInfo["name"], name=self.actionData['name']),
+				targetInfo.get("icon") or "icon-edit",
+				targetInfo["moduleName"] + targetInfo["handler"],
+				targetInfo["moduleName"],
+				None,  # is not used...
+				data=targetInfo
+				#data=utils.mergeDict(self.adminInfo, {"context": context})
+			)
+
+		else:
+			selection = self.parent().parent().getCurrentSelection()
+			if self.multiSelection and len(selection) > 0 or len(selection) == 1:
+				# if (len(selection) == 1 and not self.actionData["allowMultiSelection"]) or len(selection) > 0:
+				wasIdle = not self.pendingFetches
+				for item in selection:
+					if self.actionData["action"] == "open":
+						url = self.actionData["url"].replace("{{key}}", item["key"])
+						window.open(url, "_blank")
+					elif self.actionData["action"] == "fetch":
+						url = self.actionData["url"].replace("{{key}}", item["key"])
+						self.pendingFetches.append(url)
+					else:
+						raise NotImplementedError()
+				if wasIdle and self.pendingFetches:
+					self.addClass("is-loading")
+					self.fetchNext()
+			elif self.actionData["enabled"] == "True":
+				wasIdle = not self.pendingFetches
 				if self.actionData["action"] == "open":
-					url = self.actionData["url"].replace("{{key}}", item["key"])
+					url = self.actionData["url"]
 					window.open(url, "_blank")
 				elif self.actionData["action"] == "fetch":
-					url = self.actionData["url"].replace("{{key}}", item["key"])
+					url = self.actionData["url"]
 					self.pendingFetches.append(url)
 				else:
 					raise NotImplementedError()
-			if wasIdle and self.pendingFetches:
-				self.addClass("is-loading")
-				self.fetchNext()
-		elif self.actionData["enabled"] == "True":
-			wasIdle = not self.pendingFetches
-			if self.actionData["action"] == "open":
-				url = self.actionData["url"]
-				window.open(url, "_blank")
-			elif self.actionData["action"] == "fetch":
-				url = self.actionData["url"]
-				self.pendingFetches.append(url)
-			else:
-				raise NotImplementedError()
-			if wasIdle and self.pendingFetches:
-				self.addClass("is-loading")
-				self.fetchNext()
+				if wasIdle and self.pendingFetches:
+					self.addClass("is-loading")
+					self.fetchNext()
 
 	def fetchNext(self):
 		if not self.pendingFetches:
