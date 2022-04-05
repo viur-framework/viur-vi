@@ -101,6 +101,15 @@ class AdminScreen(Screen):
 	def getCurrentUserFailure(self, req, code):
 		conf["theApp"].login()
 
+	def refresh(self):
+		NetworkService.request(None, "/vi/config",
+									   successHandler=self.refreshConfig,
+									   failureHandler=self.getCurrentUserFailure)
+
+	def refreshConfig(self,req):
+		conf["mainConfig"] = NetworkService.decode(req)
+		self.invoke()
+
 	def startup(self):
 		config = conf["mainConfig"]
 		assert config
