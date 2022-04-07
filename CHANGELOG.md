@@ -1,6 +1,13 @@
 # Changelog
 
 This file documents any relevant changes done to ViUR Vi since version 2.
+
+## [3.0.17] - 2022-04-07
+- Fix: summernote readded missing styles
+- Feat: serversideactions can now trigger a confirm popup
+- Feat: navigation and main-view can now reloaded
+- Fix: added a hierarchy specific add button
+
 ## [3.0.16] - 2022-03-23
 - Fix: searchfilter now behaved as it should for relationalbones
 
