@@ -118,7 +118,7 @@ function summernoteEditor(input, lang) {
 				'CMD+K': 'linkDialog.show'
 			}
 		},
-		styleTags: ['p', 'h1'], //, 'h2', 'h3', 'h4', 'h5', 'h6'
+		styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']
 		focus: false,
 		dialogsInBody: true,
 		disableDragAndDrop: true,
