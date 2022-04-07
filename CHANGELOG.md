@@ -2,6 +2,9 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.18] - 2022-04-07
+- Fix: summernote readded missing styles
+- 
 ## [3.0.17] - 2022-04-07
 - Fix: summernote readded missing styles
 - Feat: serversideactions can now trigger a confirm popup
