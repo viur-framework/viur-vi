@@ -63,7 +63,7 @@ class ListWidget(html5.Div):
 
 		myView = None
 		self.group = None
-		print(conf["modules"][module])
+
 		if conf["modules"] and module in conf["modules"].keys():
 			if filterID and "views" in conf["modules"][module] and conf["modules"][module]["views"]:
 				for v in conf["modules"][module]["views"]:
@@ -72,8 +72,8 @@ class ListWidget(html5.Div):
 						break
 
 			if conf["modules"][module]["handler"] == "list.grouped":
-				if "group" in conf["modules"][module] and conf["modules"][module]["group"]:
-					self.group = kwargs["adminInfo"]["group"]
+				if "group" in kwargs and kwargs["group"]:
+					self.group = kwargs["group"]
 				else:
 					self.group = "all"
 
