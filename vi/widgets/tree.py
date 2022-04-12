@@ -71,6 +71,8 @@ class TreeWidget(html5.Div):
 		self._currentRow = None
 		self._expandedNodes = []
 		self._currentRequests = []
+		self._currentCursor = None
+		self.currentKey = self.rootNode
 		self.path = []
 
 		# Selection
