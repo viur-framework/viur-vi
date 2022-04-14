@@ -1,4 +1,4 @@
-# <img src="https://github.com/viur-framework/viur-artwork/raw/main/icons/icon-vi.svg" height="150"> ViUR Vi 
+# <img src="https://github.com/viur-framework/viur-artwork/raw/main/icons/icon-vi.svg" height="128"> ViUR Vi 
 [![release](https://github.com/viur-framework/viur-vi/actions/workflows/main.yml/badge.svg)](https://github.com/viur-framework/viur-vi/actions/workflows/main.yml)
 [![Documentation Status](https://readthedocs.org/projects/viur-vi/badge/?version=latest)](https://viur-vi.readthedocs.io/en/latest/?badge=latest)
 
