@@ -2,11 +2,16 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.19] - 2022-04-14
+- Fix: Group parameter handling
+- Fix: Flare update to fix various TreeWidget issues
+- Fix: TreeWidget improvements and fixes causing double node listing
+
 ## [3.0.18] - 2022-04-07
-- Fix: summernote readded missing styles
-- 
+- Fix: summernote re-added missing styles
+
 ## [3.0.17] - 2022-04-07
-- Fix: summernote readded missing styles
+- Fix: summernote re-added missing styles
 - Feat: serversideactions can now trigger a confirm popup
 - Feat: navigation and main-view can now reloaded
 - Fix: added a hierarchy specific add button
