@@ -2,6 +2,11 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.20] - 2022-04-14
+- Fix: Corrected version number
+- Fix: Updated README
+- Fix: Updated .gitattributes
+
 ## [3.0.19] - 2022-04-14
 - Fix: Group parameter handling
 - Fix: Flare update to fix various TreeWidget issues
