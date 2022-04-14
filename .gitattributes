@@ -1,3 +1,4 @@
+sources/htmleditor/** linguist-vendored
 vi/public/htmleditor/htmleditor.min.js linguist-generated
 vi/public/js/vi.min.js linguist-generated
-vi/public/scripter/**/*.js linguist-vendored
+vi/public/scripter/** linguist-vendored
