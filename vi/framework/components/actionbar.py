@@ -26,7 +26,7 @@ class ActionBar(html5.Div):
 		self.currentAction = currentAction
 		self.addClass("vi-actionbar bar")
 
-	def setActions(self, actions, widget=None):
+	def setActions(self, actions, widget=None, view=None):
 		"""
 			Sets the list of valid actions for this module.
 			This function tries to resolve a suitable action-widget for each
@@ -63,15 +63,19 @@ class ActionBar(html5.Div):
 
 					self.widgets[action] = actionWdg
 				else:  # We may have a server-defined action
-					if handler and "customActions" in conf["modules"][self.module]:
-						if action in conf["modules"][self.module]["customActions"]:
-							if "access" in conf["modules"][self.module]["customActions"][action]:
+					mod = conf["modules"][self.module]
+					if view:
+						mod = view
+
+					if handler and "customActions" in mod:
+						if action in mod["customActions"]:
+							if "access" in mod["customActions"][action]:
 								if set(conf["currentUser"]["access"]).isdisjoint(
-										conf["modules"][self.module]["customActions"][action]["access"]):
+										mod["customActions"][action]["access"]):
 									continue
 
 							actionWdg = ServerSideActionWdg(self.module, handler, action,
-															conf["modules"][self.module]["customActions"][action])
+															mod["customActions"][action])
 							self.appendChild(actionWdg)
 							self.widgets[action] = actionWdg
 

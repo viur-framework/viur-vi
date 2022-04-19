@@ -105,8 +105,8 @@ class ListWidget(html5.Div):
 
 		self.getAllActions(myView)
 
-		self.actionBar.setActions(self.getActions(), widget=self)
-		self.entryActionBar.setActions(self.getDefaultEntryActions(), widget=self)
+		self.actionBar.setActions(self.getActions(), widget=self,view=myView)
+		self.entryActionBar.setActions(self.getDefaultEntryActions(), widget=self,view=myView)
 
 		self.emptyNotificationDiv = html5.Div()
 		self.emptyNotificationDiv.prependChild(SvgIcon("icon-error-file", title="Currently no entries"))
@@ -230,7 +230,7 @@ class ListWidget(html5.Div):
 
 		cfg = None
 		if conf["modules"] and self.module in conf["modules"]:
-			cfg = conf["modules"][self.module]
+			cfg = conf["modules"][self.module].copy()
 
 		# update with view cfg
 		if view:
