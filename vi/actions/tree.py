@@ -108,7 +108,7 @@ class AddNodeAction(Button):
 			return False
 
 		correctAction = actionName=="add.node"
-		correctHandler = handler == (("tree" or handler.startswith("tree.")) and not handler=="tree.node")
+		correctHandler = handler == "tree" or handler.startswith("tree.") and not handler == "tree.node"
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add-node" in conf["modules"][module]["disabledFunctions"]
 
