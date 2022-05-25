@@ -466,7 +466,7 @@ class EditWidget(html5.Div):
 			# Build the form as ViurForm with the available information as internalForm first.
 			# The bone widgets inside it are being re-arranged afterwards.
 			self.form = ViurForm(
-				skel=data["values"],
+				skel=self.skel if self.wasInitialRequest and self.skel else data["values"],
 				structure=data["structure"],
 				context=self.context
 			)
