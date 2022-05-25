@@ -28,7 +28,6 @@ class HierarchyWidget(TreeWidget):
 		return [
 			"selectrootnode",
 			"add",
-			"add.node",
 			"edit",
 			"clone",
 			"delete",

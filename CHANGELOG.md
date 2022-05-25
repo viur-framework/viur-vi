@@ -2,6 +2,14 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.21] - 2022-05-25
+- Feat: added grouped skels
+- Fix: viewactions now not merged by default, customActions now can be defined in a view
+- Fix: Handler for add.node action in tree widgets
+- Fix: HierarchyWidget getAction() returning "add"-action twice
+- Fix: Flare update for performance and security reasons
+- Fix: EditWidget accepts skel for unserialization again
+
 ## [3.0.20] - 2022-04-14
 - Fix: Corrected version number
 - Fix: Updated README
