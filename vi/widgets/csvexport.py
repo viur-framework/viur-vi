@@ -23,7 +23,7 @@ class ExportCsv(html5.Progress):
 			language = conf["currentLanguage"]
 
 		self.widget = widget
-		self.module = widget.module
+		self.module = self.widget.module
 		self.selection = selection
 		self.params = self.widget.getFilter().copy()
 		self.params["limit"] = 99
@@ -39,15 +39,20 @@ class ExportCsv(html5.Progress):
 		self.parent().addClass("log-progress")
 		self.appendChild(html5.TextNode(translate("CSV-Export")))
 
-		DeferredCall(self.nextChunk)
+		DeferredCall(self.nextChunk,firstRun=True)
 
-	def nextChunk(self, cursor = None):
-		if cursor:
+	def nextChunk(self, cursor = None,firstRun=False):
+
+		if cursor is not None:
 			self.params["cursor"] = cursor
+
 		if "cursor" in self.params:
-			if self.params["cursor"] is not  None and cursor is None :
+			if self.params["cursor"] is not None and cursor is None :
 				self.exportToFile()
 				return
+		if not firstRun and cursor is None:
+			self.exportToFile()
+			return
 
 		NetworkService.request(self.module, "list", self.params,
 		                        successHandler=self.nextChunkComplete,
@@ -228,7 +233,7 @@ class ExportCsvStarter(Popup):
 
 		self.popupBody.appendChild(div)
 
-		for i, (k, v) in enumerate([("iso-8859-15", "ISO-8859-15"), ("utf-8", "UTF-8")]):
+		for i, (k, v) in enumerate([("utf-8", "UTF-8"),("iso-8859-15", "ISO-8859-15")]):
 			opt = html5.Option()
 			opt["value"] = k
 
