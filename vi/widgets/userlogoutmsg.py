@@ -1,16 +1,17 @@
-#-*- coding: utf-8 -*-
+import pyodide
 from flare import html5
 from flare.button import Button
 from flare.popup import Popup
 from flare.network import NetworkService, DeferredCall
 from vi.config import conf
 from flare.i18n import translate
-
+import pyodide
 from datetime import datetime
+
 
 class UserLogoutMsg(Popup):
 	pollInterval = 120  # We query the server once a minute
-	checkIntervall = 1000 * 5  # We test if the system has been suspended every 5 seconds
+	checkInterval = 1000 * 5  # We test if the system has been suspended every 5 seconds
 
 	def __init__(self, *args, **kwargs):
 		super(UserLogoutMsg, self).__init__(title=translate("Session terminated"), enableShortcuts=False, *args, **kwargs)
@@ -26,10 +27,10 @@ class UserLogoutMsg(Popup):
 		self.popupFoot.appendChild(Button(translate("Refresh"), callback=self.startPolling))
 		self.popupFoot.appendChild(Button(translate("Login"), callback=self.showLoginWindow))
 
-		html5.document.addEventListener( "webkitvisibilitychange", self.visibilityChanged )
+		html5.document.addEventListener( "webkitvisibilitychange", pyodide.create_proxy(self.visibilityChanged) )
 
 		setInterval = html5.window.setInterval
-		self.interval = setInterval(self.checkForSuspendResume, self.checkIntervall)
+		self.interval = setInterval(pyodide.create_proxy(self.checkForSuspendResume), self.checkInterval)
 		self.hideMessage()
 
 	def visibilityChanged( self,e ):

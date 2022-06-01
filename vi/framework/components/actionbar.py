@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
 from flare import html5
 
-from vi.priorityqueue import actionDelegateSelector
 from vi.config import conf
-from flare.i18n import translate
+from vi.priorityqueue import actionDelegateSelector
 from vi.serversideaction import ServerSideActionWdg
+
 
 class ActionBar(html5.Div):
 	"""
 		Provides the container for actions (add,edit,..) suitable for one module (eg. for lists).
 	"""
-	def __init__(self, module = None, appType = None, currentAction = None, *args, **kwargs):
+
+	def __init__(self, module=None, appType=None, currentAction=None, *args, **kwargs):
 		"""
 			:param module: Name of the module were going to handle
 			:type module: str
 			:param appType: Type of the application (list, tree, hierarchy, ..)
 			:type appType: str
 		"""
-		super( ActionBar, self ).__init__(  )
+		super(ActionBar, self).__init__()
 		self.actions = []
 		self.widgets = {}
 		self.module = module
@@ -25,8 +26,7 @@ class ActionBar(html5.Div):
 		self.currentAction = currentAction
 		self.addClass("vi-actionbar bar")
 
-
-	def setActions(self, actions,widget=None):
+	def setActions(self, actions, widget=None, view=None):
 		"""
 			Sets the list of valid actions for this module.
 			This function tries to resolve a suitable action-widget for each
@@ -36,16 +36,16 @@ class ActionBar(html5.Div):
 			:type actions: list of str
 		"""
 		for c in self._children[:]:
-			self.removeChild( c )
+			self.removeChild(c)
 
 		self.widgets = {}
 		self.actions = actions
 
 		for action in actions:
-			if action=="|":
+			if action == "|":
 				span = html5.Span()
-				span.addClass( "vi-ab-spacer" )
-				self.appendChild( span )
+				span.addClass("vi-ab-spacer")
+				self.appendChild(span)
 			else:
 				if self.module is not None and self.module in conf["modules"].keys():
 					handler = conf["modules"][self.module]["handler"]
@@ -61,12 +61,21 @@ class ActionBar(html5.Div):
 					if "postInit" in dir(actionWdg):
 						actionWdg.postInit(widget=widget)
 
-					self.widgets[ action ] = actionWdg
+					self.widgets[action] = actionWdg
 				else:  # We may have a server-defined action
-					if handler and "customActions" in conf["modules"][self.module]:
-						if action in conf["modules"][self.module]["customActions"]:
+					mod = conf["modules"][self.module]
+					if view:
+						mod = view
+
+					if handler and "customActions" in mod:
+						if action in mod["customActions"]:
+							if "access" in mod["customActions"][action]:
+								if set(conf["currentUser"]["access"]).isdisjoint(
+										mod["customActions"][action]["access"]):
+									continue
+
 							actionWdg = ServerSideActionWdg(self.module, handler, action,
-														conf["modules"][self.module]["customActions"][action])
+															mod["customActions"][action])
 							self.appendChild(actionWdg)
 							self.widgets[action] = actionWdg
 
@@ -77,7 +86,7 @@ class ActionBar(html5.Div):
 			not displayed.
 			:returns: List of str
 		"""
-		return( self.actions )
+		return (self.actions)
 
 	def resetLoadingState(self):
 		"""

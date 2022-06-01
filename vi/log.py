@@ -12,6 +12,7 @@ from vi.pane import Pane
 from vi.widgets import table as tablewdgt
 from vi.widgets.edit import EditWidget
 from .utils import indexeddb
+import pyodide
 
 
 iddbTableName = "vi_log3"
@@ -123,11 +124,12 @@ class LogButton(html5.Div):
 		if iddbTableName not in idb.objectStoreNames:
 			idb.dbAction( "createStore", iddbTableName, None, { "autoIncrement": True } )
 		data = idb.getList(iddbTableName)
-		data.addEventListener("dataready", self.idbdata)
+		data.addEventListener("dataready", pyodide.create_proxy(self.idbdata))
 
 
 	def idbdata(self,event):
 		logAmount = conf["logAmount"]
+
 		for item in list(event.detail["data"])[:logAmount]:
 			item = item.to_py()
 			self.log(item["type"],
@@ -146,7 +148,7 @@ class LogButton(html5.Div):
 	def cleanLog( self ):
 		idb = conf[ "indexeddb" ]
 		data = idb.getListKeys( iddbTableName )
-		data.addEventListener( "dataready", self.cleanLogAction )
+		data.addEventListener( "dataready", pyodide.create_proxy(self.cleanLogAction) )
 
 	def cleanLogAction( self,event ):
 		for idx in list(event.detail["data"])[:-conf["logAmount"]-1]:
@@ -365,8 +367,6 @@ class Log(html5.Div):
 		msgDate.appendChild( html5.TextNode( adate ))
 		msgDate.addClass("msg-date")
 		msgContent.appendChild(msgDate)
-
-
 
 		if isinstance( msg, html5.Widget ):
 			#Append that widget directly

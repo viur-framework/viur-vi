@@ -152,7 +152,9 @@ lngDe = {
 	"one time password": "OTP-Token",
 	"verify": "Authentifizieren",
 	"vi.login.handler.googleaccount": "Google",
+	"vi.login.handler.oauthaccount": "Azure",
 	"login with google": "Mit Google einloggen",
+	"login with OAuth": "Mit Azure einloggen",
 
 	"ViUR-core (v{{core.version}}) is incompatible to this Vi (v{{vi.version}}). The ViUR-core version musst be greater or equal version v{{core.version.min}} and lower than v{{core.version.max}}.":
 		u"Die Version des verwendeten ViUR-core (v{{core.version}}) ist inkompatibel mit diesem Vi (v{{vi.version}}). Die Version des ViUR-core muss größer oder gleich Version v{{core.version.min}} und kleiner als v{{core.version.max}} sein.",

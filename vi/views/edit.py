@@ -32,7 +32,7 @@ class editHandlerWidget(ViewWidget):
 
 
 		widget = EditWidget(self.moduleName, baseType,
-							skelData=self.data.get("skelData", None),
+							skel=self.data.get("skelData", None),
 							context=context,
 							key=akey,
 							clone =clone,

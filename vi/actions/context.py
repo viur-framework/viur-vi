@@ -75,19 +75,13 @@ class ContextAction(Button):
 			d = self.widget.serializeForDocument()
 			self.openModule(d)
 
-	def openModule(self, data, title = None):
-		# Have a handler?
-		widgen = ModuleWidgetSelector.select(self.contextModule, self.adminInfo)
-		assert widgen
-
+	def openModule(self, data, title=None):
 		# Generate title
 		if title is None:
 			for key in conf["vi.context.title.bones"]:
-				title = data.get(key)
-
-				if title:
-					if isinstance(title, dict) and conf["currentLanguage"] in title:
-						title = title[conf["currentLanguage"]]
+				if title := data.get(key):
+					if isinstance(title, dict) and conf["flare.language.current"] in title:
+						title = title[conf["flare.language.current"]]
 
 					break
 
@@ -108,17 +102,35 @@ class ContextAction(Button):
 
 			context[key] = value
 
-		widget = widgen(self.contextModule, **utils.mergeDict(self.adminInfo, context))
+		# Open a new view for the context module
+		conf["mainWindow"].openView(
+			translate("{{module}} - {{name}}", module=self.title, name=title),
+			self.adminInfo.get("icon") or "icon-edit",
+			self.contextModule + self.adminInfo["handler"],
+			self.contextModule,
+			None,  # is not used...
+			data=utils.mergeDict(self.adminInfo, {"context": context}),
+			target="popup" if self.parent().parent().isSelector else "mainNav"
+		)
 
-		if widget:
-			pane = Pane(translate(u"{module} - {name}", module=self.title, name=title),
-			            closeable=True, iconURL=self.icon, iconClasses=["module_%s" % self.contextModule])
-			conf["mainWindow"].stackPane(pane)
-
-			pane.addWidget(widget)
-			pane.focus()
-		else:
-			print("Widget could not be generated")
+		# OLD VERSION OPENS THE HANDLER DIRECTLY IN A POPUP.
+		# # Have a handler?
+		# assert (widgen := ModuleWidgetSelector.select(self.contextModule, self.adminInfo))
+		#
+		# #print(widgen, context, utils.mergeDict(self.adminInfo, {"context": context}))
+		# widget = widgen(self.contextModule, **utils.mergeDict(self.adminInfo, {"context": context}))
+		#
+		# if widget:
+		# 	widget.isSelector = True  # this is done so that subsequent views are stacked in Popups...
+		#
+		# 	conf["mainWindow"].stackWidget(
+		# 		widget,
+		# 		title=translate("{{module}} - {{name}}", module=self.title, name=title),
+		# 		icon=self.adminInfo.get("icon")
+		# 	)
+		#
+		# else:
+		# 	print("Widget could not be generated")
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):

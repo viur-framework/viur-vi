@@ -5,6 +5,7 @@ from flare.viur.formatString import formatString as fl_formatString
 from js import CustomEvent
 from vi.config import conf
 from pyodide import to_js
+import pyodide
 
 def formatString(format, data, structure = None, language = None):
 	"""
@@ -53,10 +54,10 @@ class indexeddbConnector():
 			self.db = self.dbHandler.open(self.dbName,self.dbVersion)
 		else:
 			self.db = self.dbHandler.open(self.dbName)
-		self.db.addEventListener("error", self.db_error)
-		self.db.addEventListener("blocked", self.db_blocked)
-		self.db.addEventListener("upgradeneeded", self.db_onupgradeneeded)
-		self.db.addEventListener("success", self.db_success)
+		self.db.addEventListener("error",  pyodide.create_proxy(self.db_error))
+		self.db.addEventListener("blocked", pyodide.create_proxy(self.db_blocked))
+		self.db.addEventListener("upgradeneeded", pyodide.create_proxy(self.db_onupgradeneeded))
+		self.db.addEventListener("success", pyodide.create_proxy(self.db_success))
 		return self.db
 
 	def db_error( self,event ):
@@ -76,7 +77,7 @@ class indexeddbConnector():
 	def db_success(self, event):
 		self.dbResult = self.db.result
 		self.dbVersion = self.dbResult.version
-		event.target.result.addEventListener("versionchange", self.db_version)
+		event.target.result.addEventListener("versionchange", pyodide.create_proxy(self.db_version))
 		self.dbTransaction = self.db.transaction
 		self.db.dispatchEvent(CustomEvent.new("db_ready"))
 
@@ -92,20 +93,20 @@ class indexeddb():
 	def connect(self):
 		dbObj = indexeddbConnector(self.dbName,self.dbVersion)
 		db = dbObj.connect()
-		db.addEventListener("success", self.db_success)
+		db.addEventListener("success", pyodide.create_proxy(self.db_success))
 		return db
 
 	def getList(self,name):
 		db = self.connect()
 		db.listName = name
-		db.addEventListener("db_ready", self._getList)
+		db.addEventListener("db_ready", pyodide.create_proxy(self._getList))
 		return db
 
 	def _getList(self,event):
 		name = event.target.listName
 		db = event.target
 		def fetchedData(event):
-			db.dispatchEvent(CustomEvent.new("dataready",detail={"data":event.target.result}))
+			db.dispatchEvent(CustomEvent.new("dataready",detail=to_js({"data":event.target.result})))
 
 		dbResult = event.target.result
 		dbTransaction = event.target.result.transaction
@@ -113,20 +114,20 @@ class indexeddb():
 		StoreHandler = trans.objectStore(name)
 
 		all = StoreHandler.getAll()
-		all.addEventListener("success", fetchedData)
+		all.addEventListener("success", pyodide.create_proxy(fetchedData))
 
 
 	def getListKeys( self,name ):
 		db = self.connect()
 		db.listName = name
-		db.addEventListener( "db_ready", self._getListKey )
+		db.addEventListener( "db_ready", pyodide.create_proxy(self._getListKey ))
 		return db
 
 	def _getListKey(self,event):
 		name = event.target.listName
 		db = event.target
 		def fetchedData(event):
-			db.dispatchEvent(CustomEvent.new("dataready",detail={"data":event.target.result}))
+			db.dispatchEvent(CustomEvent.new("dataready",detail=to_js({"data":event.target.result})))
 
 
 		dbResult = event.target.result
@@ -135,7 +136,7 @@ class indexeddb():
 		StoreHandler = trans.objectStore(name)
 
 		all = StoreHandler.getAllKeys()
-		all.addEventListener("success", fetchedData)
+		all.addEventListener("success", pyodide.create_proxy(fetchedData))
 
 	def db_success(self,event):
 		self.dbVersion = event.target.result.version
@@ -154,8 +155,8 @@ class indexeddb():
 			self.queue.append([action,name,key,obj])
 		db = self.connect()
 
-		db.addEventListener("db_ready", self._processQueue)
-		db.addEventListener("db_update", self._processDbUpdate)
+		db.addEventListener("db_ready", pyodide.create_proxy(self._processQueue))
+		db.addEventListener("db_update", pyodide.create_proxy(self._processDbUpdate))
 
 	def _processDbUpdate(self,event):
 		#print("READY 2")
@@ -224,7 +225,7 @@ class indexeddb():
 			StoreHandler.put(result,key)
 
 		currentEntry = StoreHandler.get(key)
-		currentEntry.addEventListener("success", update)
+		currentEntry.addEventListener("success", pyodide.create_proxy(update))
 
 	def _deleteObjectStore(self,item,dbResult,dbTransaction):
 		name = item[1]

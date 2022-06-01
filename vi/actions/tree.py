@@ -48,6 +48,51 @@ class AddLeafAction(Button):
 
 actionDelegateSelector.insert( 1, AddLeafAction.isSuitableFor, AddLeafAction )
 
+class AddNodeOnlyAction(Button):
+	"""
+		Adds a new node in a hierarchy application.
+	"""
+	def __init__(self, *args, **kwargs):
+		super( AddNodeOnlyAction, self ).__init__( translate("Add"), icon="icon-add")
+		self["class"] = "bar-item btn btn--small btn--primary"
+
+	@staticmethod
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
+		correctAction = actionName=="add.node"
+		correctHandler = handler == "hierarchy" or handler == "tree.node"
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
+
+
+	def onClick(self, sender=None):
+		node = self.parent().parent().currentKey
+		if not node:
+			node = self.parent().parent().rootNode
+
+		conf[ "mainWindow" ].openView(
+			translate( "Add" ),  # AnzeigeName
+			"icon-add",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"add",  # Action
+			data = { "context" : self.parent().parent().context,
+					 "baseType": EditWidget.appTree,
+					 "node"    : node,
+					 "skelType": "node"
+					 },
+			target = "popup" if self.parent().parent().isSelector else "mainNav"
+		)
+
+	def resetLoadingState(self):
+		pass
+
+actionDelegateSelector.insert( 1, AddNodeOnlyAction.isSuitableFor, AddNodeOnlyAction )
+
 
 class AddNodeAction(Button):
 	"""
@@ -63,7 +108,7 @@ class AddNodeAction(Button):
 			return False
 
 		correctAction = actionName=="add.node"
-		correctHandler = handler == "tree" or handler.startswith("tree.")
+		correctHandler = handler == "tree" or handler.startswith("tree.") and not handler == "tree.node"
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add-node" in conf["modules"][module]["disabledFunctions"]
 
@@ -302,47 +347,59 @@ class ReloadAction(Button):
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
 
 
-class SelectRootNode( html5.Select ):
+class SelectRootNode(html5.Select):
 	"""
-		Allows selecting a different rootNode in Tree applications
+		Selector for hierarchy root nodes.
 	"""
 	def __init__(self, module, handler, actionName, *args, **kwargs):
-		super( SelectRootNode, self ).__init__( *args, **kwargs )
-		self.addClass("select","select--small","bar-item")
+		super().__init__( *args, **kwargs )
+		self.addClass("select", "select--small", "bar-item")
 		self.sinkEvent("onChange")
 		self.hide()
 
 	def onAttach(self):
-		super( SelectRootNode, self ).onAttach()
-		self.parent().parent().rootNodeChangedEvent.register( self )
-
-		if self.parent().parent().rootNode is None:
-			self.update()
+		super(SelectRootNode, self).onAttach()
+		self.parent().parent().rootNodeChangedEvent.register(self)
+		self.update()
 
 	def onDetach(self):
-		self.parent().parent().rootNodeChangedEvent.unregister( self )
-		super( SelectRootNode, self ).onDetach()
+		self.parent().parent().rootNodeChangedEvent.unregister(self)
+		super(SelectRootNode, self).onDetach()
 
 	def update(self):
-		self.removeAllChildren()
-		NetworkService.request( self.parent().parent().module, "listRootNodes",
-		                            successHandler=self.onRootNodesAvailable)
+		# Root node preset, don't show anything
+		if self.parent().parent().rootNode:
+			return
 
-	def onRootNodeChanged(self, newNode, *args,**kwargs):
+		self.removeAllChildren()
+		NetworkService.request(
+			self.parent().parent().module,
+			"listRootNodes",
+			successHandler=self.onRootNodesAvailable
+		)
+
+	def onRootNodeChanged(self, newNode, *args, **kwargs):
 		for option in self._children:
 			if option["value"] == newNode:
 				option["selected"] = True
 				return
 
 	def onRootNodesAvailable(self, req):
-		res = NetworkService.decode( req )
+		self.removeAllChildren()
+		res = NetworkService.decode(req)
+
 		for node in res:
 			option = html5.Option()
 			option["value"] = node["key"]
-			option.appendChild( html5.TextNode( node[ "name"] ) )
+			option.appendChild(
+				node["name"].get(conf["flare.language.current"], conf["emptyValue"])
+					if isinstance(node["name"], dict) else node["name"]
+			)
+
 			if node["key"] == self.parent().parent().rootNode:
 				option["selected"] = True
-			self.appendChild( option )
+
+			self.appendChild(option)
 
 		if len(self.children()) > 1:
 			self.show()
@@ -351,10 +408,11 @@ class SelectRootNode( html5.Select ):
 
 	def onChange(self, event):
 		newRootNode = self["options"].item(self["selectedIndex"]).value
-		self.parent().parent().setRootNode( newRootNode )
+		self.parent().parent().setRootNode(newRootNode)
 
 	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		return actionName=="selectrootnode" and (handler == "tree" or handler.startswith("tree."))
+	def isSuitableFor(module, handler, actionName):
+		return actionName == "selectrootnode" and (handler.split(".", 1)[0] in ["tree", "hierarchy"])
 
-actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
+
+actionDelegateSelector.insert(1, SelectRootNode.isSuitableFor, SelectRootNode)

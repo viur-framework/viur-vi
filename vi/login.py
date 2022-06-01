@@ -333,6 +333,39 @@ class GoogleAccountLoginHandler(BaseLoginHandler):
 loginHandlerSelector.insert(0, GoogleAccountLoginHandler.canHandle, GoogleAccountLoginHandler)
 
 
+class OAuthAccountLoginHandler(BaseLoginHandler):
+	cssname = "oauthaccount"
+
+	def __init__(self, loginScreen, *args, **kwargs):
+		super(OAuthAccountLoginHandler, self).__init__(loginScreen, *args, **kwargs)
+
+		self.loginBtn = Button(translate("Login with OAuth"), callback=self.onLoginClick)
+		self.loginBtn.addClass("vi-login-btn btn--viur")
+		self.mask.appendChild(self.loginBtn)
+
+	def onLoginClick(self, sender = None):
+		self.lock()
+
+		NetworkService.request( None, "/vi/skey", successHandler=self.doSkeySuccess)
+
+	def doSkeySuccess( self, req ):
+		skey = self.parseAnswer(req)
+		#language=HTML
+		self.appendChild("""
+							<form [name]="loginform" action="/vi/user/auth_oauth2/login" method="POST" style="display:none">
+								<input type="hidden" name="skey" value="{{skey}}">
+							</form>
+						""",
+						 skey=skey
+						 )
+		self.loginform.element.submit()
+
+	@staticmethod
+	def canHandle(method, secondFactor):
+		return method == "X-VIUR-AUTH-OAuth2"
+
+loginHandlerSelector.insert(0, OAuthAccountLoginHandler.canHandle, OAuthAccountLoginHandler)
+
 class LoginScreen(Screen):
 
 	def __init__(self, *args, **kwargs):

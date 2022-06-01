@@ -2,6 +2,61 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.21] - 2022-05-25
+- Feat: added grouped skels
+- Fix: viewactions now not merged by default, customActions now can be defined in a view
+- Fix: Handler for add.node action in tree widgets
+- Fix: HierarchyWidget getAction() returning "add"-action twice
+- Fix: Flare update for performance and security reasons
+- Fix: EditWidget accepts skel for unserialization again
+
+## [3.0.20] - 2022-04-14
+- Fix: Corrected version number
+- Fix: Updated README
+- Fix: Updated .gitattributes
+
+## [3.0.19] - 2022-04-14
+- Fix: Group parameter handling
+- Fix: Flare update to fix various TreeWidget issues
+- Fix: TreeWidget improvements and fixes causing double node listing
+
+## [3.0.18] - 2022-04-07
+- Fix: summernote re-added missing styles
+
+## [3.0.17] - 2022-04-07
+- Fix: summernote re-added missing styles
+- Feat: serversideactions can now trigger a confirm popup
+- Feat: navigation and main-view can now reloaded
+- Fix: added a hierarchy specific add button
+
+## [3.0.16] - 2022-03-23
+- Fix: searchfilter now behaved as it should for relationalbones
+
+## [3.0.15] - 2022-03-22
+- Fix: Foldernavigation in fileBones working again
+- Fix: Selection for filtered lists remains 
+
+## [3.0.14] - 2022-03-22
+- Feat: added Azure login
+- Fix: admininfo actions can now start with "\n"
+
+## [3.0.13] - 2022-03-14
+
+- Fix: submodule vi working again
+- Fix: formcontrols working again
+
+## [3.0.12] - 2022-03-11
+
+- Fix: zipped releases now working again
+
+## [3.0.11] - 2022-03-07
+
+- Fix: Flare update
+- Fix: editViews now work again
+- Feat: often used icons are loaded on start
+- Feat: Vi and Core Version now shown in Topbar
+- Fix: Embeding Images in Summernote is now disabled
+
 ## [3.0.10] - 2022-01-14
 - Fix: Flare update
 - Fix: Edit Form update

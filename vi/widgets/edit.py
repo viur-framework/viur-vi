@@ -1,3 +1,5 @@
+import pyodide
+
 from flare import html5
 from flare.popup import Confirm
 
@@ -154,6 +156,10 @@ class EditWidget(html5.Div):
 		self.context = context or {}
 		self.context["__mode__"] = self.mode
 
+		self.group = None
+		if "group" in kwargs and kwargs["group"]:
+			self.group = kwargs["group"]
+
 		self.segments = {}
 		self.views = {}
 
@@ -183,13 +189,22 @@ class EditWidget(html5.Div):
 		else:
 			self.actionbar.setActions(["save.continue", "save.close"] + editActions, widget=self)
 
-		# Set path
-		if applicationType == EditWidget.appSingleton:
-			conf["theApp"].setPath(module + "/" + self.mode)
-		elif self.mode == "edit":
-			conf["theApp"].setPath(module + "/" + (self.mode if not clone else "clone") + "/" + self.key)
+		pathList = [module]
+
+		if clone:
+			curr_mode = "clone"
 		else:
-			conf["theApp"].setPath(module + "/" + self.mode)
+			curr_mode = self.mode
+
+		pathList.append(curr_mode)
+
+		if self.group:
+			pathList.append(self.group)
+
+		if self.mode == "edit" and applicationType != EditWidget.appSingleton:
+			pathList.append(self.key)
+
+		conf[ "theApp" ].setPath( "/".join( pathList ) )
 
 		# Input form
 		self.accordion = Accordion()
@@ -221,15 +236,23 @@ class EditWidget(html5.Div):
 		"""
 			Removes all currently visible elements and displays an error message
 		"""
-		if code and (code == 401 or code == 403):
-			txt = translate("Access denied!")
-		else:
-			txt = translate("An error occurred: {{code}}", code=code or 0)
+		# Try to obtain error reason from header
+		if not (reason := pyodide.create_once_callable(req.request.req.getResponseHeader)("x-viur-error")):
+			reason = translate(
+				f"flare.network.error.{code}", fallback=translate("flare.network.error")
+			)
 
-		conf["mainWindow"].log("error", txt)
+		hint = translate(f"flare.network.hint.{code}", fallback="")
+
+		conf["mainWindow"].log(
+			"error",
+			reason + ((". " + hint) if hint else "")
+		)
 
 		if self.wasInitialRequest:
 			conf["mainWindow"].removeWidget(self)
+
+		self.actionbar.resetLoadingState()
 
 	def reloadData(self):
 		self.form = None  # rebuild the entire form
@@ -261,20 +284,34 @@ class EditWidget(html5.Div):
 			)
 
 		elif self.applicationType == EditWidget.appList:  ## Application: List
-			if self.key and (not self.clone or self.wasInitialRequest):
-				NetworkService.request(
-					self.module, "edit/%s" % self.key, data,
-					secure=not self.wasInitialRequest,
-					successHandler=self.setData,
-					failureHandler=self.showErrorMsg
-				)
+
+			if self.group:
+				if self.key and (not self.clone or self.wasInitialRequest):
+					NetworkService.request(self.module, "edit/%s/%s" % (self.group, self.key), data,
+										   secure=not self.wasInitialRequest,
+										   successHandler=self.setData,
+										   failureHandler=self.showErrorMsg)
+				else:
+					NetworkService.request(self.module, "add/%s" % self.group, data,
+										   secure=not self.wasInitialRequest,
+										   successHandler=self.setData,
+										   failureHandler=self.showErrorMsg)
 			else:
-				NetworkService.request(
-					self.module, "add", data,
-					secure=not self.wasInitialRequest,
-					successHandler=self.setData,
-					failureHandler=self.showErrorMsg
-				)
+
+				if self.key and (not self.clone or self.wasInitialRequest):
+					NetworkService.request(
+						self.module, "edit/%s" % self.key, data,
+						secure=not self.wasInitialRequest,
+						successHandler=self.setData,
+						failureHandler=self.showErrorMsg
+					)
+				else:
+					NetworkService.request(
+						self.module, "add", data,
+						secure=not self.wasInitialRequest,
+						successHandler=self.setData,
+						failureHandler=self.showErrorMsg
+					)
 
 		elif self.applicationType == EditWidget.appTree or self.applicationType == EditWidget.appHierarchy:  ## Application: Tree
 			if self.key and not self.clone:
@@ -316,7 +353,7 @@ class EditWidget(html5.Div):
 
 		if self.closeOnSuccess:
 			if self.module == "_tasks":
-				self.parent().close()
+				self.parent().parent().parent().close()
 				return
 
 			if not conf["mainWindow"].navWrapper.removeNavigationPoint(self.parent().view.name):
@@ -429,7 +466,7 @@ class EditWidget(html5.Div):
 			# Build the form as ViurForm with the available information as internalForm first.
 			# The bone widgets inside it are being re-arranged afterwards.
 			self.form = ViurForm(
-				skel=data["values"],
+				skel=self.skel if self.wasInitialRequest and self.skel else data["values"],
 				structure=data["structure"],
 				context=self.context
 			)

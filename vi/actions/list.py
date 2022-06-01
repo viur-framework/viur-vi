@@ -11,6 +11,7 @@ from vi.sidebarwidgets.filterselector import FilterSelector
 from flare.i18n import translate
 from flare.button import Button
 from flare.network import DeferredCall, requestGroup
+import pyodide
 
 """
 	Provides the actions suitable for list applications
@@ -941,7 +942,7 @@ class LoadAllAction(Button):
 
 		if currentModule:
 			currentModule.table._loadOnDisplay = True  # mark to force load whole Dataset
-			html5.window.setTimeout(self.loadAllRows, 500)
+			html5.window.setTimeout(pyodide.create_once_callable(self.loadAllRows), 500)
 
 	def loadAllRows(self):
 		NetworkService.notifyChange(self.parent().parent().module)
@@ -1038,7 +1039,7 @@ class ListSelectFilterAction(Button):
 	def onAttach(self):
 		super(ListSelectFilterAction, self).onAttach()
 		module = self.parent().parent().module
-		if self.parent().parent().filterID:
+		if self.parent().parent().filterID and not self.parent().parent().filterID == -1:
 			# Its a predefined search - we wont override this
 			self["disabled"] = True
 		if module in conf["modules"].keys():

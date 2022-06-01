@@ -198,17 +198,42 @@ class UserState(html5.Div):
 toplevelActionSelector.insert( 0, UserState.canHandle, UserState )
 
 
-class Tasks(Button):
+class Tasks(html5.Div):
 	def __init__(self, *args, **kwargs):
-		super(Tasks, self).__init__(icon="icon-settings", *args, **kwargs)
-		self.sinkEvent("onClick")
+		super(Tasks, self).__init__(*args, **kwargs)
+		#self.sinkEvent("onClick")
 		self.hide()
 		self.addClass("btn vi-tb-tasks")
-		self.appendChild(html5.TextNode(translate("System")))
+		self["class"] = ["popout-opener", "popout-anchor", "popout--sw", "input-group-item"]
+
+		self.btn = Button(text=translate("System"), callback=self.onClick, icon="icon-settings", className="btn btn--topbar vi-tb-tasks")
+		self.appendChild(self.btn)
 
 		if not conf[ "tasks" ][ "server" ]:
 			NetworkService.request( None, "/vi/_tasks/list",
 		        successHandler=self.onTaskListAvailable)
+
+		popout = html5.Div()
+		popout["class"] = ["popout"]
+		self.popoutlist = html5.Div()
+		self.popoutlist["class"] = ["list"]
+
+		popout.appendChild(self.popoutlist)
+		self.appendChild(popout)
+
+		aitem = html5.Div()
+		aitem["class"] = ["item", "has-hover", "item--small"]
+		aitem.appendChild(html5.Span(html5.TextNode("Vi")) )
+		aitem.appendChild(html5.Span(html5.TextNode("v"+".".join( map(str,conf["vi.version"])))))
+		self.popoutlist.appendChild(aitem)
+
+		aitem2 = html5.Div()
+		aitem2["class"] = ["item", "has-hover", "item--small"]
+		aitem2.appendChild(html5.Span(html5.TextNode("Core")))
+		aitem2.appendChild(html5.Span(html5.TextNode("v" + ".".join(map(str,conf["core.version"][:2])))))
+		self.popoutlist.appendChild(aitem2)
+
+
 
 		self.update()
 

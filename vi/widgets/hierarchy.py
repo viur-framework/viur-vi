@@ -7,7 +7,7 @@ from vi.priorityqueue import DisplayDelegateSelector, ModuleWidgetSelector
 
 class HierarchyWidget(TreeWidget):
 	"""
-	A Hierarchy is a Tree without leaf distiction!
+	A Hierarchy is a Tree without leaf distinction!
 	"""
 	leafWidget = None
 
@@ -19,6 +19,22 @@ class HierarchyWidget(TreeWidget):
 		self.listwidgetadded = False
 		self.listviewActive = False
 		self.setListView(self.listviewActive)
+
+	def getActions(self):
+		"""
+		Returns a list of actions that are being set for the ActionBar.
+		Override this to provide additional actions.
+		"""
+		return [
+			"selectrootnode",
+			"add",
+			"edit",
+			"clone",
+			"delete",
+			"|",
+			"listview",
+			"reload"
+		]
 
 	def reloadData(self):
 		super(HierarchyWidget, self).reloadData()
@@ -76,8 +92,8 @@ class HierarchyWidget(TreeWidget):
 
 	@staticmethod
 	def canHandle(moduleName, moduleInfo):
-		return moduleInfo["handler"] == "hierarchy" or moduleInfo["handler"].startswith("hierarchy.")
+		return moduleInfo["handler"] == "hierarchy" or moduleInfo["handler"].startswith("hierarchy.") or moduleInfo["handler"] == "tree.node"
 
 
-ModuleWidgetSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget)
-DisplayDelegateSelector.insert(1, HierarchyWidget.canHandle, HierarchyWidget)
+ModuleWidgetSelector.insert(3, HierarchyWidget.canHandle, HierarchyWidget)
+DisplayDelegateSelector.insert(3, HierarchyWidget.canHandle, HierarchyWidget)

@@ -7,6 +7,7 @@ from flare.network import NetworkService,requestGroup,DeferredCall
 from vi.priorityqueue import actionDelegateSelector
 from vi.widgets.edit import EditWidget
 from flare.button import Button
+from flare.popup import Confirm
 
 
 class AddAction(Button):
@@ -301,67 +302,6 @@ class ReloadAction(Button):
 			self.removeClass("is-loading")
 
 actionDelegateSelector.insert( 1, ReloadAction.isSuitableFor, ReloadAction )
-
-
-class SelectRootNode(html5.Select):
-	"""
-		Selector for hierarchy root nodes.
-	"""
-	def __init__(self, module, handler, actionName, *args, **kwargs):
-		super( SelectRootNode, self ).__init__( *args, **kwargs )
-		self.addClass("select", "select--small", "bar-item")
-		self.sinkEvent("onChange")
-		self.hide()
-
-	def onAttach(self):
-		super(SelectRootNode, self).onAttach()
-		self.parent().parent().rootNodeChangedEvent.register(self)
-
-		if self.parent().parent().rootNode is None:
-			self.update()
-
-	def onDetach(self):
-		self.parent().parent().rootNodeChangedEvent.unregister(self)
-		super(SelectRootNode, self).onDetach()
-
-	def update(self):
-		self.removeAllChildren()
-		NetworkService.request(self.parent().parent().module, "listRootNodes",
-		                        successHandler=self.onRootNodesAvailable)
-
-	def onRootNodeChanged(self, newNode, *args, **kwargs):
-		for option in self._children:
-			if option["value"] == newNode:
-				option["selected"] = True
-				return
-
-	def onRootNodesAvailable(self, req):
-		res = NetworkService.decode(req)
-
-		for node in res:
-			option = html5.Option()
-			option["value"] = node["key"]
-			option.appendChild(node["name"])
-
-			if node["key"] == self.parent().parent().rootNode:
-				option["selected"] = True
-
-			self.appendChild(option)
-
-		if len(self.children()) > 1:
-			self.show()
-		else:
-			self.hide()
-
-	def onChange(self, event):
-		newRootNode = self["options"].item(self["selectedIndex"]).value
-		self.parent().parent().setRootNode(newRootNode)
-
-	@staticmethod
-	def isSuitableFor( module, handler, actionName ):
-		return actionName == "selectrootnode" and (handler == "hierarchy" or handler.startswith("hierarchy."))
-
-actionDelegateSelector.insert( 1, SelectRootNode.isSuitableFor, SelectRootNode )
 
 
 class ListViewAction(Button):

@@ -63,7 +63,7 @@ class ListWidget(html5.Div):
 
 		myView = None
 		self.group = None
-		print(conf["modules"][module])
+
 		if conf["modules"] and module in conf["modules"].keys():
 			if filterID and "views" in conf["modules"][module] and conf["modules"][module]["views"]:
 				for v in conf["modules"][module]["views"]:
@@ -72,8 +72,8 @@ class ListWidget(html5.Div):
 						break
 
 			if conf["modules"][module]["handler"] == "list.grouped":
-				if "group" in conf["modules"][module] and conf["modules"][module]["group"]:
-					self.group = kwargs["adminInfo"]["group"]
+				if "group" in kwargs and kwargs["group"]:
+					self.group = kwargs["group"]
 				else:
 					self.group = "all"
 
@@ -105,8 +105,8 @@ class ListWidget(html5.Div):
 
 		self.getAllActions(myView)
 
-		self.actionBar.setActions(self.getActions(), widget=self)
-		self.entryActionBar.setActions(self.getDefaultEntryActions(), widget=self)
+		self.actionBar.setActions(self.getActions(), widget=self,view=myView)
+		self.entryActionBar.setActions(self.getDefaultEntryActions(), widget=self,view=myView)
 
 		self.emptyNotificationDiv = html5.Div()
 		self.emptyNotificationDiv.prependChild(SvgIcon("icon-error-file", title="Currently no entries"))
@@ -230,7 +230,7 @@ class ListWidget(html5.Div):
 
 		cfg = None
 		if conf["modules"] and self.module in conf["modules"]:
-			cfg = conf["modules"][self.module]
+			cfg = conf["modules"][self.module].copy()
 
 		# update with view cfg
 		if view:
@@ -239,9 +239,6 @@ class ListWidget(html5.Div):
 		configActions = cfg["actions"] if "actions" in cfg else []
 		disabledActions = cfg["disabledActions"] if "disabledActions" in cfg else []
 
-		print("OOOOOOOOOO")
-		print(view)
-		print(disabledActions)
 		# remove disabledAction from defaultActions
 		for disabledAction in disabledActions:
 			# remove action from defaultActions
@@ -256,7 +253,7 @@ class ListWidget(html5.Div):
 			except:
 				splitIndex = None
 
-			if splitIndex:
+			if splitIndex is not None:
 				allActions["default_actions"].insert(1, configActions[0:splitIndex])
 				allActions["entry_actions"].insert(1, configActions[splitIndex + 1:])
 			else:

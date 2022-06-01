@@ -1,17 +1,14 @@
-import json, pyodide
-from flare import html5
+from flare import html5, network
 from flare.button import Button
 from flare.icons import SvgIcon
 from flare.popup import Popup
 from flare.i18n import translate
-from flare.ignite import Progress
 import vi.utils as utils
 from vi.config import conf
 
 from vi.widgets.tree import TreeLeafWidget, TreeNodeWidget, TreeBrowserWidget
 from vi.widgets.search import Search
 from flare.icons import Icon
-
 
 from flare.event import EventDispatcher
 from flare.network import NetworkService, DeferredCall, requestGroup
@@ -152,7 +149,6 @@ class Uploader(html5.Div):
 		self.targetKey = None
 		self.addClass("is-loading")
 		self.appendChild(SvgIcon("icon-loader", title = "uploading..."))
-		self.proxy_callback = None
 		self.context = context
 		params = {"fileName": file.name, "mimeType": (file.type or "application/octet-stream")}
 		if node:
@@ -177,14 +173,12 @@ class Uploader(html5.Div):
 		"""
 		params = NetworkService.decode(req)["values"]
 
-		self.proxy_callback = pyodide.create_proxy(self.onLoad)
-
 		if "uploadKey" in params:  # New Resumeable upload format
 			self.targetKey = params["uploadKey"]
-			html5.window.fetch(params["uploadUrl"], **{"method": "POST", "body": req.file, "mode": "no-cors"}).then(
-				self.proxy_callback)
+			url = params["uploadUrl"]
+			body = req.file
 		else:
-			formData = html5.jseval( "new FormData();" )
+			formData = html5.jseval("new FormData()")
 
 			for key, value in params[ "params" ].items():
 				if key == "key":
@@ -193,32 +187,13 @@ class Uploader(html5.Div):
 					value = value.replace( "file.dat", fileName )
 
 				formData.append( key, value )
+
 			formData.append( "file", req.file )
 
-			html5.window.fetch( params[ "url" ], **{ "method": "POST", "body": formData, "mode": "no-cors" } ).then( self.proxy_callback )
+			url = params["url"]
+			body = formData
 
-
-	def onSkeyAvailable(self, req):
-		"""
-			Internal callback - the Security-Key is known.
-			Only for core 2.x needed
-		"""
-		formData = html5.jseval("new FormData();")
-		formData.append("file", req.file)
-
-		if self.context:
-			for k, v in self.context.items():
-				formData.append(k, v)
-
-		if req.node and str(req.node) != "null":
-			formData.append("node", req.node)
-
-		formData.append("skey", NetworkService.decode(req))
-		self.xhr = html5.jseval("new XMLHttpRequest()")
-		self.xhr.open("POST", req.destUrl)
-		self.xhr.onload = self.onLoad
-		self.xhr.upload.onprogress = self.onProgress
-		self.xhr.send(formData)
+		network.fetch_json(url, self.onLoad, method="POST", body=body, mode="no-cors")
 
 	def onLoad(self, *args, **kwargs):
 		"""
@@ -234,9 +209,6 @@ class Uploader(html5.Div):
 			failureHandler = self.onFailed,
 			secure = True
 		)
-		if self.proxy_callback:
-			self.proxy_callback.destroy()
-		return 0
 
 	def onUploadAdded(self, req):
 		self.responseValue = NetworkService.decode(req)
@@ -301,7 +273,6 @@ class MultiUploader(html5.Div):
 		self.context = context
 		self.files = files
 		self.filesToUpload = files[:]
-		self.proxy_callback=None
 		self.handleFile(self.filesToUpload.pop(0))
 
 		self.logMessage = conf["mainWindow"].log("progress", self)
@@ -333,12 +304,11 @@ class MultiUploader(html5.Div):
 		"""
 		params = NetworkService.decode(req)["values"]
 
-		self.proxy_callback = pyodide.create_proxy(self.onLoad)
-
 		if "uploadKey" in params:  # New Resumeable upload format
 			self.targetKey = params["uploadKey"]
-			html5.window.fetch(params["uploadUrl"], **{"method": "POST", "body": req.file, "mode": "no-cors"}).then(
-				self.proxy_callback)
+
+			url = params["uploadUrl"]
+			body = req.file
 		else:
 			formData = html5.jseval("new FormData();")
 
@@ -351,7 +321,10 @@ class MultiUploader(html5.Div):
 				formData.append(key, value)
 			formData.append("file", req.file)
 
-			html5.window.fetch(params["url"], **{"method": "POST", "body": formData, "mode": "no-cors"}).then(self.proxy_callback)
+			url = params["url"]
+			body = formData
+
+		network.fetch_json(url, self.onLoad, method="POST", body=body, mode="no-cors")
 
 	def onLoad(self, *args, **kwargs):
 		"""
@@ -367,9 +340,6 @@ class MultiUploader(html5.Div):
 			failureHandler=self.onFailed,
 			secure=True
 		)
-		if self.proxy_callback:
-			self.proxy_callback.destroy()
-		return 0
 
 	def onUploadAdded(self, req):
 		self.responseValue = NetworkService.decode(req)
