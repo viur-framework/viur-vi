@@ -13,10 +13,9 @@ from flare.button import Button
 
 
 class ExportCsv(html5.Progress):
-	def __init__(self, widget, selection, encoding = None, language = None,
+	def __init__(self, widget, selection=None, encoding = None, language = None,
 	                separator = None, lineSeparator = None, *args, **kwargs):
 		super(ExportCsv, self).__init__()
-
 		if encoding is None or encoding not in ["utf-8", "iso-8859-15"]:
 			encoding = "utf-8"
 
@@ -25,6 +24,7 @@ class ExportCsv(html5.Progress):
 
 		self.widget = widget
 		self.module = widget.module
+		self.selection = selection
 		self.params = self.widget.getFilter().copy()
 		self.params["limit"] = 99
 		self.data = []
@@ -64,12 +64,7 @@ class ExportCsv(html5.Progress):
 			return
 
 		self.data.extend(answ["skellist"])
-		if answ["cursor"]:
-			self.nextChunk(answ["cursor"])
-		else:
-			self.exportToFile()
-
-
+		self.nextChunk(answ["cursor"])
 
 	def exportToFile(self):
 		if not self.data:
@@ -92,10 +87,10 @@ class ExportCsv(html5.Progress):
 
 		idx = 0
 		for key, bone in self.structure:
-			print(key, bone)
+			#print(key, bone)
 			#if bone["visible"] and ("params" not in bone or bone["params"] is None or "ignoreForCsvExport" not in bone[
 			#	"params"] or not bone["params"]["ignoreForCsvExport"]):
-			if bone["visible"]:
+			if bone["visible"] and key in self.selection:
 				cellRenderer[key] = BoneSelector.select(self.module, key, struct)
 				if cellRenderer[key]:
 					cellRenderer[key] = cellRenderer[key](self.module, key, struct)
@@ -141,17 +136,19 @@ class ExportCsv(html5.Progress):
 		def replacer(obj):
 			'''Replace an Singel Character
 			to int then to to hex and the to string
-			after all the last to  Character retrun an "%" is added
+			after all the last to  Character return an "%" is added
 
 			! => to 33 => 0x21 => %21
 			'''
 			return "%" + str(hex(ord(obj.group(0))))[2:]
-		#content=re.sub("[-_.!~*'()]",replacer,content) #relpace Character for "encodeURIComponent" and "escape"
+
 
 		if self.encoding == "utf-8":
-			a["href"] = "data:text/csv;charset=utf-8," +content#html5.jseval('encodeURIComponent("%r")'%())
+			a["href"] = "data:text/csv;charset=utf-8," +html5.jseval('encodeURI("%r")'%(content))
 		elif self.encoding == "iso-8859-15":
-			a["href"] = "data:text/csv;charset=ISO-8859-15," +content#+html5.jseval('escape("%r")'%(content))
+			content = re.sub("[-_.!~*'()]", replacer,
+							 content)  # relpace Character for and "escape"
+			a["href"] = "data:text/csv;charset=ISO-8859-15," +html5.jseval('escape("%r")'%(content))
 		else:
 			raise ValueError("unknown encoding: %s" % self.encoding)
 
@@ -186,7 +183,7 @@ class ExportCsvStarter(Popup):
 		super(ExportCsvStarter, self).__init__(title=translate("CSV Export"))
 
 		self.widget = widget
-
+		self.checkboxes=[]
 		if "viur.defaultlangsvalues" in conf["server"].keys():
 			self.langSelect = html5.Select()
 			self.langSelect.addClass("select")
@@ -240,6 +237,32 @@ class ExportCsvStarter(Popup):
 
 			opt.appendChild(html5.TextNode(v))
 			self.encodingSelect.appendChild(opt)
+		###Select for Bones
+
+		ul = html5.Ul()
+		ul.addClass("option-group")
+		self.popupBody.appendChild(ul)
+
+		for key, bone in self.widget._structure.items():
+			li = html5.Li()
+			li.addClass("check")
+
+			ul.appendChild(li)
+
+			chkBox = html5.Input()
+			chkBox.addClass("check-input")
+			chkBox["type"] = "checkbox"
+			chkBox["value"] = key
+
+			li.appendChild(chkBox)
+			self.checkboxes.append(chkBox)
+
+			if key in self.widget.getFields():
+				chkBox["checked"] = True
+			lbl = html5.Label(bone["descr"], forElem=chkBox)
+			lbl.addClass("check-label")
+			li.appendChild(lbl)
+
 
 		self.cancelBtn = Button(translate("Cancel"), self.close, icon="icon-cancel")
 		self.popupFoot.appendChild(self.cancelBtn)
@@ -255,6 +278,12 @@ class ExportCsvStarter(Popup):
 			language = self.langSelect["options"].item(self.langSelect["selectedIndex"]).value
 		else:
 			language = None
+		selection =[]
+		for checkbox  in self.checkboxes:
+			if checkbox["checked"]:
+				selection.append(checkbox["value"])
 
-		ExportCsv(self.widget, self.widget.getCurrentSelection(), encoding=encoding, language=language)
+		ExportCsv(self.widget, encoding=encoding, language=language,selection=selection)
 		self.close()
+
+
