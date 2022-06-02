@@ -142,6 +142,7 @@ lngDe = {
 	"Language selection": "Sprachauswahl",
 	"Encoding": "Zeichensatz",
 	"and {{count}} more": "und {{count}} weitere",
+	"Select all":"Alles auswählen",
 
 	# new login method
 	"vi.login.title": "Login",

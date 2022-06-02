@@ -2,7 +2,7 @@
 import datetime
 import logging
 import re
-from flare import html5
+from flare import html5,utils
 from flare.popup import Popup
 
 from flare.network import NetworkService, DeferredCall
@@ -91,6 +91,9 @@ class ExportCsv(html5.Progress):
 		titles = []
 
 		idx = 0
+
+
+
 		for key, bone in self.structure:
 			if key in self.selection:
 				cellRenderer[key] = BoneSelector.select(self.module, key, struct)
@@ -145,7 +148,6 @@ class ExportCsv(html5.Progress):
 
 
 		if self.encoding == "utf-8":
-
 			a["href"] = 'data:attachment/csv,' + html5.jseval('encodeURIComponent("%r")'%(content))
 		elif self.encoding == "iso-8859-15":
 			# relpace Character for and "escape"
@@ -239,31 +241,45 @@ class ExportCsvStarter(Popup):
 
 			opt.appendChild(html5.TextNode(v))
 			self.encodingSelect.appendChild(opt)
-		###Select for Bones
+		##Select for Bones
+		if "root" in conf["currentUser"]["access"]:
+			ul = html5.Ul()
+			ul.addClass("option-group")
+			self.popupBody.appendChild(ul)
 
-		ul = html5.Ul()
-		ul.addClass("option-group")
-		self.popupBody.appendChild(ul)
-
-		for key, bone in self.widget._structure.items():
+			#select all
 			li = html5.Li()
 			li.addClass("check")
+			self.allcheckBox = html5.Input()
+			self.allcheckBox.addClass("check-input")
+			self.allcheckBox["type"] = "checkbox"
 
-			ul.appendChild(li)
+			li.appendChild(self.allcheckBox)
 
-			chkBox = html5.Input()
-			chkBox.addClass("check-input")
-			chkBox["type"] = "checkbox"
-			chkBox["value"] = key
-
-			li.appendChild(chkBox)
-			self.checkboxes.append(chkBox)
-
-			if key in self.widget.getFields():
-				chkBox["checked"] = True
-			lbl = html5.Label(bone["descr"], forElem=chkBox)
+			lbl = html5.Label(translate("Select all"), forElem=self.allcheckBox)
 			lbl.addClass("check-label")
 			li.appendChild(lbl)
+			ul.appendChild(li)
+
+			for key, bone in self.widget._structure.items():
+				li = html5.Li()
+				li.addClass("check")
+
+				ul.appendChild(li)
+
+				chkBox = html5.Input()
+				chkBox.addClass("check-input")
+				chkBox["type"] = "checkbox"
+				chkBox["value"] = key
+
+				li.appendChild(chkBox)
+				self.checkboxes.append(chkBox)
+
+				if key in self.widget.getFields():
+					chkBox["checked"] = True
+				lbl = html5.Label(bone["descr"], forElem=chkBox)
+				lbl.addClass("check-label")
+				li.appendChild(lbl)
 
 
 		self.cancelBtn = Button(translate("Cancel"), self.close, icon="icon-cancel")
@@ -272,6 +288,7 @@ class ExportCsvStarter(Popup):
 		self.exportBtn = Button(translate("Export"), self.onExportBtnClick, icon="icon-download-file")
 		self.exportBtn.addClass("btn--edit")
 		self.popupFoot.appendChild(self.exportBtn)
+		self.sinkEvent("onChange")
 
 	def onExportBtnClick(self, *args, **kwargs):
 		encoding = self.encodingSelect["options"].item(self.encodingSelect["selectedIndex"]).value
@@ -281,11 +298,19 @@ class ExportCsvStarter(Popup):
 		else:
 			language = None
 		selection =[]
-		for checkbox  in self.checkboxes:
-			if checkbox["checked"]:
-				selection.append(checkbox["value"])
-
+		if "root" in conf["currentUser"]["access"]:
+			for checkbox  in self.checkboxes:
+				if checkbox["checked"]:
+					selection.append(checkbox["value"])
+		else:
+			for key, bone in self.widget._structure.items():
+				if bone["visible"]:
+					selection.append(key)
 		ExportCsv(self.widget, encoding=encoding, language=language,selection=selection)
 		self.close()
 
+	def onChange(self, event):
+		if utils.doesEventHitWidgetOrChildren(event, self.allcheckBox):
+			for checkbox in self.checkboxes:
+				checkbox["checked"]=self.allcheckBox["checked"]
 
