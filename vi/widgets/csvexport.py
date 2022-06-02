@@ -92,10 +92,7 @@ class ExportCsv(html5.Progress):
 
 		idx = 0
 		for key, bone in self.structure:
-			#print(key, bone)
-			#if bone["visible"] and ("params" not in bone or bone["params"] is None or "ignoreForCsvExport" not in bone[
-			#	"params"] or not bone["params"]["ignoreForCsvExport"]):
-			if bone["visible"] and key in self.selection:
+			if key in self.selection:
 				cellRenderer[key] = BoneSelector.select(self.module, key, struct)
 				if cellRenderer[key]:
 					cellRenderer[key] = cellRenderer[key](self.module, key, struct)
@@ -112,7 +109,6 @@ class ExportCsv(html5.Progress):
 			row = [str(None) for _ in range(len(fields.keys()))]
 
 			for key, value in entry.items():
-				#print(key, value)
 
 				if key not in fields or value is None or str(value).lower() == "none":
 					continue
@@ -149,10 +145,11 @@ class ExportCsv(html5.Progress):
 
 
 		if self.encoding == "utf-8":
-			a["href"] = "data:text/csv;charset=utf-8," +html5.jseval('encodeURI("%r")'%(content))
+
+			a["href"] = 'data:attachment/csv,' + html5.jseval('encodeURIComponent("%r")'%(content))
 		elif self.encoding == "iso-8859-15":
-			content = re.sub("[-_.!~*'()]", replacer,
-							 content)  # relpace Character for and "escape"
+			# relpace Character for and "escape"
+			content = re.sub("[-_.!~*'()]", replacer,content)
 			a["href"] = "data:text/csv;charset=ISO-8859-15," +html5.jseval('escape("%r")'%(content))
 		else:
 			raise ValueError("unknown encoding: %s" % self.encoding)
