@@ -88,10 +88,16 @@ class ServerSideActionWdg(Button):
 
 
 	def apply(self,sender=None):
+		selection = self.parent().parent().getCurrentSelection()
 		if self.actionData["action"] == "view":
 			url_parts = self.actionData['url'].split("/")
 			targetInfo = conf["modules"][url_parts[0]]
 
+			if "params" in self.actionData:
+				if selection:
+					targetInfo.update({k: v.replace("{{key}}", selection[0]["key"]) for k, v in self.actionData["params"].items()})
+				else:
+					targetInfo.update(self.actionData["params"])
 			conf["mainWindow"].openView(
 				translate("{{module}} - {{name}}", module=targetInfo["name"], name=self.actionData['name']),
 				targetInfo.get("icon") or "icon-edit",
@@ -103,7 +109,6 @@ class ServerSideActionWdg(Button):
 			)
 
 		else:
-			selection = self.parent().parent().getCurrentSelection()
 			if self.multiSelection and len(selection) > 0 or len(selection) == 1:
 				# if (len(selection) == 1 and not self.actionData["allowMultiSelection"]) or len(selection) > 0:
 				wasIdle = not self.pendingFetches

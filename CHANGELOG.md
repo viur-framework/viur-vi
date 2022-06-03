@@ -2,6 +2,9 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.22] - 2022-06-03
+- Feat: added params to customAction view call
+
 ## [3.0.21] - 2022-05-25
 - Feat: added grouped skels
 - Fix: viewactions now not merged by default, customActions now can be defined in a view
