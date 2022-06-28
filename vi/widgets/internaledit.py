@@ -62,7 +62,7 @@ class InternalEdit(html5.Div):
 		console.log("InternalEdit: %r, %r, %r, %r, %r, %r, %r, %r, %r", skelStructure, values, errorInformation, readOnly, context, defaultCat, boneparams, errorQueue, prefix)
 		super(InternalEdit, self).__init__()
 
-		self.errorQueue = errorQueue
+		self.errorQueue = errorQueue or {}
 		self.addClass("vi-internaledit")
 		self.sinkEvent("onChange", "onKeyDown")
 		self.prefix = prefix
