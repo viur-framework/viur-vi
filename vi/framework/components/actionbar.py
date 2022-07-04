@@ -65,8 +65,21 @@ class ActionBar(html5.Div):
 				else:  # We may have a server-defined action
 					mod = conf["modules"][self.module]
 					if view:
-						mod = view
+						# First, check if that serverside action is defined on view level which takes precedence
+						if handler and "customActions" in view:
+							if action in view["customActions"]:
+								if "access" in view["customActions"][action]:
+									if set(conf["currentUser"]["access"]).isdisjoint(
+											view["customActions"][action]["access"]):
+										continue
 
+								actionWdg = ServerSideActionWdg(self.module, handler, action,
+																view["customActions"][action])
+								self.appendChild(actionWdg)
+								self.widgets[action] = actionWdg
+								continue
+
+					# Second, check if that serverside action is defined on the top level
 					if handler and "customActions" in mod:
 						if action in mod["customActions"]:
 							if "access" in mod["customActions"][action]:
