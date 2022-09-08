@@ -234,12 +234,99 @@ class EditAction(Button):
 				target = "popup" if self.parent().parent().isSelector else "mainNav"
 			)
 
-
-
 	def resetLoadingState(self):
 		pass
 
 actionDelegateSelector.insert( 1, EditAction.isSuitableFor, EditAction )
+
+
+class CloneAction(Button):
+	"""
+		Edits an entry inside a tree application.
+		The type (node or leaf) of the entry is determined dynamically
+	"""
+	def __init__(self, *args, **kwargs):
+		super( CloneAction, self ).__init__(  translate("Clone"), icon="icon-clone")
+		self["class"] = "bar-item btn btn--small btn--clone"
+		self["disabled"]= True
+		self.isDisabled=True
+
+	def onAttach(self):
+		super(CloneAction,self).onAttach()
+		self.parent().parent().selectionChangedEvent.register( self )
+		self.parent().parent().selectionActivatedEvent.register( self )
+
+	def onDetach(self):
+		self.parent().parent().selectionChangedEvent.unregister( self )
+		self.parent().parent().selectionActivatedEvent.unregister( self )
+		super(CloneAction,self).onDetach()
+
+	def openEditor(self, widget):
+		if isinstance(widget, self.parent().parent().nodeWidget):
+			skelType = "node"
+
+		elif isinstance(widget, self.parent().parent().leafWidget):
+			skelType = "leaf"
+
+		else:
+			raise ValueError("Unknown selection type: %s" % str(type(widget)))
+
+		conf["mainWindow"].openView(
+			translate("Clone"),  # AnzeigeName
+			"icon-clone",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"istegalwashiersteht",  # Action
+			data={"context": self.parent().parent().context,
+				"baseType": EditWidget.appTree,
+				"skelType": skelType,
+				"key": widget.data["key"],
+				"clone": True
+			},
+			target="popup" if self.parent().parent().isSelector else "mainNav"
+		)
+
+	def onSelectionActivated(self, table, selection ):
+		if (not self.parent().parent().selectionCallback
+			and len(selection) == 1
+			and isinstance(selection[0], self.parent().parent().leafWidget)):
+
+			self.openEditor(selection[0])
+
+	def onSelectionChanged(self, table, selection, *args,**kwargs ):
+		if len(selection)>0:
+			if self.isDisabled:
+				self.isDisabled = False
+			self["disabled"]= False
+		else:
+			if not self.isDisabled:
+				self["disabled"]= True
+				self.isDisabled = True
+
+	@staticmethod
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
+		correctAction = actionName=="clone"
+		correctHandler = handler == "tree" or handler.startswith("tree.")
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "clone" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
+
+	def onClick(self, sender=None):
+		selection = self.parent().parent().selection
+		if not selection:
+			return
+
+		for s in selection:
+			self.openEditor(s)
+
+	def resetLoadingState(self):
+		pass
+
+actionDelegateSelector.insert( 1, CloneAction.isSuitableFor, CloneAction )
 
 
 class DeleteAction(Button):

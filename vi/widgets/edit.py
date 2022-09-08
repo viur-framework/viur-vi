@@ -80,7 +80,7 @@ class EditWidget(html5.Div):
 	appSingleton = "singleton"
 	__editIdx_ = 0  # Internal counter to ensure unique ids
 
-	def __init__(self, module, applicationType, key=0, node=None, skelType=None, clone=False,
+	def __init__(self, module, applicationType, key=None, node=None, skelType=None, clone=False,
 	             hashArgs=None, context=None, logAction="Entry saved!", skel=None, *args, **kwargs):
 		"""
 			Initialize a new Edit or Add-Widget for the given module.
@@ -106,7 +106,7 @@ class EditWidget(html5.Div):
 				translate("The module '{{module}}' does not exist.", module=module),
 				modul=self.module,
 				key=self.key,
-				action=self.mode
+				action=self.action
 			)
 			return
 
@@ -123,19 +123,12 @@ class EditWidget(html5.Div):
 		)  # Invalid Application-Type?
 
 		if applicationType == EditWidget.appHierarchy or applicationType == EditWidget.appTree:
-			assert key is not None or node is not None  # Need either an id or an node
-
-		if clone:
-			assert key is not None  # Need an id if we should clone an entry
-			assert not applicationType == EditWidget.appSingleton  # We cant clone a singleton
-			if applicationType == EditWidget.appHierarchy or applicationType == EditWidget.appTree:
-				assert node is not None  # We still need a rootNode for cloning
-			if applicationType == EditWidget.appTree:
-				assert node is not None  # We still need a path for cloning #FIXME
-
-			self.cloneOf = key
-		else:
-			self.cloneOf = None
+			assert key is not None or node is not None  # Need either an entry or a node
+		elif applicationType == EditWidget.appTree:
+			assert skelType
+		elif applicationType == EditWidget.appSingleton:
+			key = ""
+			clone = False
 
 		# Initialize instance variables
 		self.editIdx = EditWidget.__editIdx_  # Internal counter to ensure unique ids
@@ -145,16 +138,17 @@ class EditWidget(html5.Div):
 		self.applicationType = applicationType
 		self.key = key
 		self.modified = False
-		self.mode = "edit" if self.key or applicationType == EditWidget.appSingleton else "add"
+
+		self.action = "add" if key is None else "clone" if clone else "edit"
 		self.node = node
 		self.skelType = skelType
 		self.skel = skel or {}
-		self.clone = clone
 		self.closeOnSuccess = False
 		self.logAction = logAction
 
 		self.context = context or {}
-		self.context["__mode__"] = self.mode
+		self.context["__action__"] = self.action
+		self.context["__mode__"] = self.action  # fixme: deprecated!
 
 		self.group = None
 		if "group" in kwargs and kwargs["group"]:
@@ -173,12 +167,12 @@ class EditWidget(html5.Div):
 
 		# Widgets
 		self.form = None
-		self.actionbar = ActionBar(self.module, self.applicationType, (self.mode if not clone else "clone"))
+		self.actionbar = ActionBar(self.module, self.applicationType, self.action)
 		self.appendChild(self.actionbar)
 
 		editActions = []
 
-		if self.mode == "edit":
+		if self.action == "edit":
 			editActions.append("refresh")
 
 		if module in conf["modules"] and conf["modules"][module]:
@@ -188,23 +182,6 @@ class EditWidget(html5.Div):
 			self.actionbar.setActions(["save.singleton"] + editActions, widget=self)
 		else:
 			self.actionbar.setActions(["save.continue", "save.close"] + editActions, widget=self)
-
-		pathList = [module]
-
-		if clone:
-			curr_mode = "clone"
-		else:
-			curr_mode = self.mode
-
-		pathList.append(curr_mode)
-
-		if self.group:
-			pathList.append(self.group)
-
-		if self.mode == "edit" and applicationType != EditWidget.appSingleton:
-			pathList.append(self.key)
-
-		conf[ "theApp" ].setPath( "/".join( pathList ) )
 
 		# Input form
 		self.accordion = Accordion()
@@ -282,62 +259,39 @@ class EditWidget(html5.Div):
 				successHandler=self.setData,
 				failureHandler=self.showErrorMsg
 			)
+			return
 
-		elif self.applicationType == EditWidget.appList:  ## Application: List
+		# Construct the URL
+		url = [self.action]
 
-			if self.group:
-				if self.key and (not self.clone or self.wasInitialRequest):
-					NetworkService.request(self.module, "edit/%s/%s" % (self.group, self.key), data,
-										   secure=not self.wasInitialRequest,
-										   successHandler=self.setData,
-										   failureHandler=self.showErrorMsg)
-				else:
-					NetworkService.request(self.module, "add/%s" % self.group, data,
-										   secure=not self.wasInitialRequest,
-										   successHandler=self.setData,
-										   failureHandler=self.showErrorMsg)
-			else:
+		for part in (self.skelType, self.group, self.key):
+			if part:
+				url.append(part)
 
-				if self.key and (not self.clone or self.wasInitialRequest):
-					NetworkService.request(
-						self.module, "edit/%s" % self.key, data,
-						secure=not self.wasInitialRequest,
-						successHandler=self.setData,
-						failureHandler=self.showErrorMsg
-					)
-				else:
-					NetworkService.request(
-						self.module, "add", data,
-						secure=not self.wasInitialRequest,
-						successHandler=self.setData,
-						failureHandler=self.showErrorMsg
-					)
+		'''
+		pathList = [module, self.mode]
 
-		elif self.applicationType == EditWidget.appTree or self.applicationType == EditWidget.appHierarchy:  ## Application: Tree
-			if self.key and not self.clone:
-				NetworkService.request(
-					self.module, "edit/%s/%s" % (self.skelType, self.key), data,
-					secure=not self.wasInitialRequest,
-					successHandler=self.setData,
-					failureHandler=self.showErrorMsg
-				)
-			else:
-				NetworkService.request(
-					self.module, "add/%s/%s" % (self.skelType, self.node), data,
-					secure=not self.wasInitialRequest,
-					successHandler=self.setData,
-					failureHandler=self.showErrorMsg
-				)
+		if self.group:
+			pathList.append(self.group)
 
-		elif self.applicationType == EditWidget.appSingleton:  ## Application: Singleton
-			NetworkService.request(
-				self.module, "edit", data,
-				secure=not self.wasInitialRequest,
-				successHandler=self.setData,
-				failureHandler=self.showErrorMsg
-			)
+		if self.key:
+			pathList.append(self.key)
+
+		# fixme: disable for Hierarchy and Tree as this isn't working right now
+		if self.applicationType not in [self.appHierarchy, self.appTree]:
+			conf["theApp"].setPath("/".join(pathList))
 		else:
-			raise NotImplementedError()  # Should never reach this
+			conf["theApp"].setPath("")
+		'''
+
+		NetworkService.request(
+			self.module,
+			"/".join(url),
+			data,
+			secure=not self.wasInitialRequest,
+			successHandler=self.setData,
+			failureHandler=self.showErrorMsg
+		)
 
 	def clear(self):
 		"""
@@ -349,7 +303,7 @@ class EditWidget(html5.Div):
 
 	def closeOrContinue(self, sender=None):
 		self.modified = False
-		NetworkService.notifyChange(self.module, key=self.key, action=self.mode)
+		NetworkService.notifyChange(self.module, key=self.key, action=self.action)
 
 		if self.closeOnSuccess:
 			if self.module == "_tasks":
@@ -362,39 +316,12 @@ class EditWidget(html5.Div):
 
 		self.clear()
 
-		if self.mode == "add":
-			self.key = 0
+		if self.action == "add":
+			self.key = None
 
 		self.reloadData()
 
-	def doCloneHierarchy(self, sender=None):
-		if self.applicationType == EditWidget.appHierarchy:
-			NetworkService.request(
-				self.module, "clone", {
-					"fromRepo": self.node,
-					"toRepo": self.node,
-					"fromParent": self.cloneOf,
-					"toParent": self.key
-				},
-				secure=True,
-				successHandler=self.cloneComplete
-			)
-		else:
-			for module in conf["modules"][self.module]["changeInvalidates"]:
-				NetworkService.request(
-					module, "clone", {
-						"fromRepo": self.cloneOf,
-						"toRepo": self.key
-					},
-					secure=True,
-					successHandler=self.cloneComplete
-				)
-
-	def cloneComplete(self, req):
-		conf["mainWindow"].log("success", translate("The hierarchy will be cloned in the background."))
-		self.closeOrContinue()
-
-	def setData(self, request=None, data=None, askHierarchyCloning=True):
+	def setData(self, request=None, data=None):
 		"""
 		Rebuilds the UI according to the skeleton received from server
 
@@ -414,40 +341,22 @@ class EditWidget(html5.Div):
 		# Reset loading state
 		self.actionbar.resetLoadingState()
 
-		if "action" in data and (data["action"] == "addSuccess" or data["action"] == "editSuccess"):
+		if data.get("action") == self.action + "Success":
 			try:
 				self.key = data["values"]["key"]
 			except:
 				self.key = None
 
 			conf["mainWindow"].log("success", translate(self.logAction),
-				modul=self.module, key=self.key, action=self.mode, data=data
+				modul=self.module, key=self.key, action=self.action, data=data
 			)
-
-			if askHierarchyCloning and self.clone:
-				# for lists, which are rootNode entries of hierarchies, ask to clone entire hierarchy
-				if self.applicationType == EditWidget.appList and "changeInvalidates" in conf["modules"][self.module]:
-					Confirm(
-						translate("Do you want to clone the entire hierarchy?"),
-						yesCallback=self.doCloneHierarchy,
-						noCallback=self.closeOrContinue
-					)
-					return
-				# for cloning within a hierarchy, ask for cloning all subentries.
-				elif self.applicationType == EditWidget.appHierarchy:
-					Confirm(
-						translate("Do you want to clone all subentries of this item?"),
-						yesCallback=self.doCloneHierarchy,
-						noCallback=self.closeOrContinue
-					)
-					return
 
 			self.closeOrContinue()
 			return
 
 		# Context-Variables
 		contextVariable = conf["modules"][self.module].get("editContext")
-		if self.mode == "edit" and contextVariable:
+		if self.action == "edit" and contextVariable:
 			if not self.context:
 				self.context = {}
 
@@ -516,7 +425,7 @@ class EditWidget(html5.Div):
 
 		# Views
 		views = conf["modules"][self.module].get("editViews")
-		if self.mode == "edit" and isinstance(views, list):
+		if self.action == "edit" and isinstance(views, list):
 			for view in views:
 				vmodule = view.get("module")
 				vvariable = view.get("context")
@@ -567,7 +476,7 @@ class EditWidget(html5.Div):
 				icon="icon-cancel",
 				modul=self.module,
 				key=self.key,
-				action=self.mode,
+				action=self.action,
 				data=data["values"]
 			)
 
