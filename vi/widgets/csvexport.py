@@ -64,7 +64,10 @@ class ExportCsv(html5.Progress):
 			return
 
 		self.data.extend(answ["skellist"])
-		self.nextChunk(answ["cursor"])
+		if answ["cursor"]:
+			self.nextChunk(answ["cursor"])
+		else:
+			self.exportToFile()
 
 	def exportToFile(self):
 		if not self.data:
