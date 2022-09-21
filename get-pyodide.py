@@ -3,7 +3,7 @@
 import os, sys, json, requests
 
 VERSION = "0.16.1"
-CDN = "https://pyodide-cdn2.iodide.io"
+CDN = "https://cdn.jsdelivr.net/pyodide"
 URL = "{CDN}/v{VERSION}/full/{file}"
 DIR = "pyodide"
 
