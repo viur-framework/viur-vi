@@ -208,6 +208,11 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 
 		if answ == "OKAY":
 			self.login()
+		elif "X-VIUR-2FACTOR-TimeBasedOTP" in answ:
+			self.pwform.hide()
+			self.editform.hide()
+			self.otpform.show()
+			self.otp.focus()
 
 		elif isinstance(answ, dict) and "action" in answ:
 			if answ["action"] == "otp":
