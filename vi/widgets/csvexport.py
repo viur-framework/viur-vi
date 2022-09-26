@@ -10,11 +10,15 @@ from vi.config import conf
 from flare.viur import BoneSelector
 from flare.i18n import translate
 from flare.button import Button
+from flare.viur.bones.relational import RelationalBone
+from io import BytesIO, StringIO
+import csv
+import js, pyodide
 
 
 class ExportCsv(html5.Progress):
 	def __init__(self, widget, selection, encoding = None, language = None,
-	                separator = None, lineSeparator = None, *args, **kwargs):
+	                separator = None, lineSeparator = None, expand=False, *args, **kwargs):
 		super(ExportCsv, self).__init__()
 
 		if encoding is None or encoding not in ["utf-8", "iso-8859-15"]:
@@ -23,6 +27,7 @@ class ExportCsv(html5.Progress):
 		if language is None or language not in conf["server"].keys():
 			language = conf["currentLanguage"]
 
+		self.expand = expand
 		self.widget = widget
 		self.module = widget.module
 		self.params = self.widget.getFilter().copy()
@@ -64,7 +69,10 @@ class ExportCsv(html5.Progress):
 			return
 
 		self.data.extend(answ["skellist"])
-		self.nextChunk(answ["cursor"])
+		if answ["cursor"]:
+			self.nextChunk(answ["cursor"])
+		else:
+			self.exportToFile()
 
 	def exportToFile(self):
 		if not self.data:
@@ -73,7 +81,6 @@ class ExportCsv(html5.Progress):
 
 		assert self.structure
 
-		defaultLanguage = conf["currentLanguage"]
 		conf["currentLanguage"] = self.lang
 
 		# Visualize progress
@@ -82,79 +89,78 @@ class ExportCsv(html5.Progress):
 
 		cellRenderer = {}
 		struct = {k: v for k, v in self.structure}
-		fields = {}
+		fields = []
 		titles = []
+		outFileCSV = StringIO()
+		writer = csv.writer(outFileCSV)
 
-		idx = 0
+		subFields = {}
 		for key, bone in self.structure:
 			print(key, bone)
-			#if bone["visible"] and ("params" not in bone or bone["params"] is None or "ignoreForCsvExport" not in bone[
-			#	"params"] or not bone["params"]["ignoreForCsvExport"]):
+
 			if bone["visible"]:
 				cellRenderer[key] = BoneSelector.select(self.module, key, struct)
 				if cellRenderer[key]:
 					cellRenderer[key] = cellRenderer[key](self.module, key, struct)
 
-				fields[key] = idx
-				idx += 1
-
+				fields.append(key)
 				titles.append(bone.get("descr", key) or key)
+				if self.expand and cellRenderer[key] and isinstance(cellRenderer[key], RelationalBone):
+					# Check for subfields
+					subFields[key] = {"dest": [], "rel": []}
+					for entry in self.data:
+						data = entry.get(key)
+						if isinstance(data, dict):
+							for subKey in (data.get("dest") or {}).keys():
+								if subKey not in subFields[key]["dest"]:
+									subFields[key]["dest"].append(subKey)
+							for subKey in (data.get("rel") or {}).keys():
+								if subKey not in subFields[key]["rel"]:
+									subFields[key]["rel"].append(subKey)
+					boneName = bone.get("descr", key) or key
+					for subKey in subFields[key]["dest"]:
+						titles.append("%s.dest.%s" % (boneName, subKey))
+						fields.append("%s.dest.%s" % (key, subKey))
+					for subKey in subFields[key]["rel"]:
+						titles.append("%s.rel.%s" % (boneName, subKey))
+						fields.append("%s.rel.%s" % (key, subKey))
 
+
+		writer.writerow(titles)
 		# Export
 		content= self.separator.join(titles) + self.lineSeparator
 
 		for entry in self.data:
-			row = [str(None) for _ in range(len(fields.keys()))]
+			row = []
 
-			for key, value in entry.items():
+			for field in fields:
 				#print(key, value)
-
-				if key not in fields or value is None or str(value).lower() == "none":
-					continue
-
-				try:
-					if cellRenderer[key] is not None:
-						try:
-							row[fields[key]] = cellRenderer[key].toString(value)
-						except:
-							row[fields[key]] = str(value)
+				value = entry
+				parts = field.split(".")
+				for part in parts:
+					if isinstance(value, dict):
+						value = value.get(part)
 					else:
-						row[fields[key]] = str(value)
+						value = ""
 
-				except ValueError:
-					pass
-			content += self.separator.join(row) + self.lineSeparator
-			self["value"] += 1
+				row.append(str(value))
+			writer.writerow(row)
 
-		# Virtual File
-		conf["currentLanguage"] = defaultLanguage
-
-		a = html5.A()
-		a.hide()
-		self.appendChild(a)
-
-		def replacer(obj):
-			'''Replace an Singel Character
-			to int then to to hex and the to string
-			after all the last to  Character retrun an "%" is added
-
-			! => to 33 => 0x21 => %21
-			'''
-			return "%" + str(hex(ord(obj.group(0))))[2:]
-		content=re.sub("[-_.!~*'()]",replacer,content) #relpace Character for "encodeURIComponent" and "escape"
-
-		if self.encoding == "utf-8":
-
-			a["href"] = "data:text/csv;charset=utf-8," +html5.jseval('encodeURIComponent("%r")'%(content))
-		elif self.encoding == "iso-8859-15":
-			a["href"] = "data:text/csv;charset=ISO-8859-15," +html5.jseval('escape("%r")'%(content))
-		else:
-			raise ValueError("unknown encoding: %s" % self.encoding)
-
+		outFileCSV.flush()
+		outFileCSV.seek(0)
+		data = outFileCSV.read().encode(self.encoding)
 		filename = "export-%s-%s-%s-%s.csv" % (self.module, self.lang, self.encoding,
-		                                       datetime.datetime.now().strftime("%Y-%m-%d"))
+											   datetime.datetime.now().strftime("%Y-%m-%d"))
+		blob = js.Blob.new(pyodide.to_js([data], dict_converter=js.Map.new),
+						   pyodide.to_js({"type": "octet/stream"},
+										 dict_converter=js.Map.new))
+		url = js.window.URL.createObjectURL(blob)
+		a = html5.A()
+		a["href"] = url
 		a["download"] = filename
+		self.appendChild(a)
 		a.element.click()
+		js.window.URL.revokeObjectURL(url)
 
 		self.replaceWithMessage(translate("{count} datasets exported\nas {filename}",
 		                                    count=len(self.data), filename=filename))
@@ -237,6 +243,14 @@ class ExportCsvStarter(Popup):
 			opt.appendChild(html5.TextNode(v))
 			self.encodingSelect.appendChild(opt)
 
+		div = html5.Div()
+		div.appendChild("""<input type="checkbox" [name]="expandCB" id="expandCB"><label for="expandCB">Expandieren</label>""")
+		div.addClass("input-group")
+		self.expandCB = div.expandCB
+
+		self.popupBody.appendChild(div)
+
+
 		self.cancelBtn = Button(translate("Cancel"), self.close, icon="icon-cancel")
 		self.popupFoot.appendChild(self.cancelBtn)
 
@@ -246,11 +260,12 @@ class ExportCsvStarter(Popup):
 
 	def onExportBtnClick(self, *args, **kwargs):
 		encoding = self.encodingSelect["options"].item(self.encodingSelect["selectedIndex"]).value
+		expand = self.expandCB.element.checked or True
 
 		if self.langSelect:
 			language = self.langSelect["options"].item(self.langSelect["selectedIndex"]).value
 		else:
 			language = None
 
-		ExportCsv(self.widget, self.widget.getCurrentSelection(), encoding=encoding, language=language)
+		ExportCsv(self.widget, self.widget.getCurrentSelection(), encoding=encoding, language=language, expand=expand)
 		self.close()
