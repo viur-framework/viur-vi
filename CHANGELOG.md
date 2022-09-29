@@ -2,6 +2,9 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.23] - 2022-09-28
+- Fix: Select image/file function in Summernote WYSIWYG-editor for TextBones fixed 
+
 ## [3.0.22] - 2022-06-03
 - Feat: added params to customAction view call
 
