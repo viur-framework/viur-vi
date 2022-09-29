@@ -11,11 +11,8 @@ from .sidebar import SideBar
 from .userlogoutmsg import UserLogoutMsg
 from .task import TaskWidget, TaskSelectWidget
 from .internaledit import InternalEdit
-from .htmleditor import HtmlEditor
 from .csvexport import ExportCsv, ExportCsvStarter
 
 from .tree import TreeWidget, TreeBrowserWidget
 from .hierarchy import HierarchyWidget
 from .file import FileWidget
-
-
