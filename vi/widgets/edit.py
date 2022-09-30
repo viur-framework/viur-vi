@@ -261,6 +261,10 @@ class EditWidget(html5.Div):
 			)
 			return
 
+		# Add node to parameters if set
+		if self.node:
+			data["node"] = self.node
+
 		# Construct the URL
 		url = [self.action]
 
