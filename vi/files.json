@@ -104,7 +104,6 @@
   "widgets/edit.py",
   "widgets/file.py",
   "widgets/hierarchy.py",
-  "widgets/htmleditor.py",
   "widgets/internaledit.py",
   "widgets/list.py",
   "widgets/preview.py",
