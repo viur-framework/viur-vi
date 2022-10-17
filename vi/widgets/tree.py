@@ -50,7 +50,7 @@ class TreeWidget(html5.Div):
 			if rootNode := context.get(context_var):
 				del context[conf["vi.context.prefix"] + "rootNode"]
 
-		self.context = context  # context
+		self.context = context or {}  # context
 		self.rootNode = rootNode  # root node
 		self.node = node or rootNode  # current node
 
@@ -103,7 +103,7 @@ class TreeWidget(html5.Div):
 			NetworkService.request(
 				self.module,
 				"listRootNodes",
-				self.context or {},
+				self.context.get("rootNodes") or {},
 				successHandler=self.onSetDefaultRootNode,
 				failureHandler=self._showErrorMsg
 			)
@@ -134,7 +134,6 @@ class TreeWidget(html5.Div):
 
 		self.reloadData()
 
-
 	def setSelector(self, callback, multi=True, allow=None):
 		"""
 		Configures the widget as selector for a relationalBone and shows it.
@@ -146,6 +145,14 @@ class TreeWidget(html5.Div):
 
 		self.actionBar.setActions(["select", "close", "|"] + self.getActions())
 		conf["mainWindow"].stackWidget(self)
+
+	def setContext(self, context):
+		self.context = context or {}
+
+		if not self.viewNodeStructure:
+			self.requestStructure()
+		else:
+			self.reloadData()
 
 	def selectorReturn(self):
 		"""
@@ -403,8 +410,8 @@ class TreeWidget(html5.Div):
 		if overrideParams:
 			params.update(overrideParams)
 
-		if self.context:
-			params.update(self.context)
+		if ctx := self.context.get(skelType):
+			params.update(ctx)
 
 		req = NetworkService.request(
 			self.module, "list", params,
