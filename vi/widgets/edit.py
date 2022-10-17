@@ -80,8 +80,8 @@ class EditWidget(html5.Div):
 	appSingleton = "singleton"
 	__editIdx_ = 0  # Internal counter to ensure unique ids
 
-	def __init__(self, module, applicationType, key=None, node=None, skelType=None, clone=False,
-	             hashArgs=None, context=None, logAction="Entry saved!", skel=None, *args, **kwargs):
+	def __init__(self, module, applicationType, key=None, node=None, skelType=None, clone=False, action=None,
+				hashArgs=None, context=None, logAction="Entry saved!", skel=None, *args, **kwargs):
 		"""
 			Initialize a new Edit or Add-Widget for the given module.
 			:param module: Name of the module
@@ -139,7 +139,7 @@ class EditWidget(html5.Div):
 		self.key = key
 		self.modified = False
 
-		self.action = "add" if key is None else "clone" if clone else "edit"
+		self.action = action or ("add" if key is None else "clone" if clone else "edit")
 		self.node = node
 		self.skelType = skelType
 		self.skel = skel or {}
@@ -148,7 +148,7 @@ class EditWidget(html5.Div):
 
 		self.context = context or {}
 		self.context["__action__"] = self.action
-		self.context["__mode__"] = self.action  # fixme: deprecated!
+		self.context["__mode__"] = self.action  # fixme: deprecated, replaced by __action__
 
 		self.group = None
 		if "group" in kwargs and kwargs["group"]:
@@ -251,15 +251,6 @@ class EditWidget(html5.Div):
 			ndata = self.context.copy()
 			ndata.update(data.copy())
 			data = ndata
-
-		if self.module == "_tasks":
-			NetworkService.request(
-				self.module, "execute/%s" % self.key, data,
-				secure=not self.wasInitialRequest,
-				successHandler=self.setData,
-				failureHandler=self.showErrorMsg
-			)
-			return
 
 		# Add node to parameters if set
 		if self.node:

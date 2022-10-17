@@ -16,7 +16,7 @@ class TaskWidget(Popup):
 class ServerTaskWidget(TaskWidget):
 	def __init__(self, title, key):
 		super(ServerTaskWidget, self).__init__(title=title)
-		self.widget = EditWidget("_tasks", EditWidget.appSingleton, key, logAction="vi.tasks.started")
+		self.widget = EditWidget("_tasks", EditWidget.appList, key, action="execute", logAction="vi.tasks.started")
 		self.popupBody.appendChild(self.widget)
 		self.popupBody.removeClass("box--content")
 		self.popupFoot.appendChild(Button(translate("Cancel"), self.close))
