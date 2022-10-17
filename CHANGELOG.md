@@ -2,6 +2,9 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.25] - 2022-10-04
+- Fix: Improving context support for TreeWidget
+
 ## [3.0.24] - 2022-10-04
 - Fix: Updated Flare to fix RawViewWidget
 
