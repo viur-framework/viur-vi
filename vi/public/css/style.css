@@ -3128,6 +3128,9 @@ html {
 	background-repeat: no-repeat;
 	text-align: left;
 	font-weight: 300;
+	font-family: monospace;
+	font-size: 0.8em;
+	width: 100%;
 }
 
 .textarea--block {
