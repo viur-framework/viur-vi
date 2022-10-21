@@ -1,5 +1,7 @@
 from flare.views.view import View, ViewWidget
 from vi.priorityqueue import HandlerClassSelector,ModuleWidgetSelector
+from vi.config import conf
+
 
 class treeHandler(View):
 
@@ -15,6 +17,7 @@ class treeHandler(View):
 
 HandlerClassSelector.insert(1, treeHandler.canHandle, treeHandler)
 
+
 class treeHandlerWidget(ViewWidget):
 
 	def initWidget( self ):
@@ -28,3 +31,6 @@ class treeHandlerWidget(ViewWidget):
 		widgen = ModuleWidgetSelector.select( self.moduleName, self.moduleInfo )
 		widget = widgen( self.moduleName, **self.moduleInfo )
 		self.appendChild( widget )
+
+	def onViewfocusedChanged(self, viewname, *args, **kwargs):
+		conf["theApp"].setPath(self.moduleName + "/list")

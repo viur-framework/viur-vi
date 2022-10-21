@@ -88,28 +88,6 @@ class TopBarWidget(html5.Header):
 		if utils.doesEventHitWidgetOrChildren(event, self.moduleH1):
 			conf["mainWindow"].switchFullscreen(not conf["mainWindow"].isFullscreen())
 
-	def setCurrentModulDescr(self, descr = "", iconURL=None, iconClasses=None, path=None):
-		self.moduleName.removeAllChildren()
-		descr = utils.unescape(descr)
-		self.moduleName.appendChild(html5.TextNode(descr))
-
-		self.modulImg.removeAllChildren()
-
-		self.mod_descr = descr
-		self.mod_iconURL = iconURL
-		# language=HTML
-		self.modulImg.appendChild( '''
-						<div class="item-image">
-							<flare-icon :title="mod_descr" :value="mod_iconURL"></flare-icon>
-						</div>
-					''', bindTo = self )
-		#self.modulImg.appendChild( Icon(descr, iconURL) )
-
-		conf["theApp"].setTitle(descr)
-
-		if path:
-			conf[ "theApp" ].setPath( path )
-
 
 class UserState(html5.Div):
 	def __init__(self, *args, **kwargs):

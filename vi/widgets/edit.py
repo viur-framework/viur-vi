@@ -263,21 +263,7 @@ class EditWidget(html5.Div):
 			if part:
 				url.append(part)
 
-		'''
-		pathList = [module, self.mode]
-
-		if self.group:
-			pathList.append(self.group)
-
-		if self.key:
-			pathList.append(self.key)
-
-		# fixme: disable for Hierarchy and Tree as this isn't working right now
-		if self.applicationType not in [self.appHierarchy, self.appTree]:
-			conf["theApp"].setPath("/".join(pathList))
-		else:
-			conf["theApp"].setPath("")
-		'''
+		conf["theApp"].setPath("/".join([self.module] + url))
 
 		NetworkService.request(
 			self.module,
