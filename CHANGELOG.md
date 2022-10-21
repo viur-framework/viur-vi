@@ -2,6 +2,9 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.26] - 2022-10-21
+- Fix: Removing -m build option to fix #121
+
 ## [3.0.25] - 2022-10-04
 - Fix: Improving context support for TreeWidget
 
