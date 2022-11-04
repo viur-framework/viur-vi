@@ -37,9 +37,9 @@ class BooleanEditBone(html5.Div):
 		self.switch = html5.ignite.Switch()
 		switchWrap.appendChild(self.switch)
 
-		switchLabel = html5.Label(forElem=self.switch)
-		switchLabel.addClass("switch-label")
-		switchWrap.appendChild(switchLabel)
+		#switchLabel = html5.Label(forElem=self.switch)
+		#switchLabel.addClass("switch-label")
+		#switchWrap.appendChild(switchLabel)
 
 		self.appendChild(switchWrap)
 
