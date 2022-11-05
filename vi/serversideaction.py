@@ -19,7 +19,7 @@ class ServerSideActionWdg(Button):
 		self.handler = handler
 		self.actionName = actionName
 		self.actionData = actionData
-		self.multiSelection = True if "allowMultiSelection" in self.actionData and self.actionData["allowMultiSelection"] else False
+		self.multiSelection = self.actionData.get("allowMultiSelection", False)
 		self["class"] = "bar-item btn btn--small %s" % actionData["icon"]
 		self["disabled"] = True
 		self.isDisabled = True
@@ -54,7 +54,7 @@ class ServerSideActionWdg(Button):
 		super(ServerSideActionWdg, self).onDetach()
 
 	def onSelectionChanged(self, table, selection, *args, **kwargs):
-		if self.actionData["enabled"] == "True":
+		if self.actionData.get("enabled") == "True":
 			self.switchDisabledState(False)
 			return
 
