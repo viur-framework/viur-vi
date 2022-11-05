@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import logging
 
 from flare.button import Button
 from flare.html5 import window
-from flare.network import NetworkService
+from flare.network import NetworkService, NiceErrorAndThen
 from flare.safeeval import SafeEval
 from flare.i18n import translate
 from flare.popup import Confirm
@@ -145,7 +143,7 @@ class ServerSideActionWdg(Button):
 		NetworkService.request(
 			None, url, secure=True,
 			successHandler=self.fetchSucceeded,
-			failureHandler=self.fetchFailed
+			failureHandler=NiceErrorAndThen(self.fetchFailed)
 		)
 
 	def fetchSucceeded(self, req):
@@ -157,9 +155,8 @@ class ServerSideActionWdg(Button):
 			self.removeClass("is-loading")
 			NetworkService.notifyChange(self.parent().parent().module)
 
-	def fetchFailed(self, req, code):
+	def fetchFailed(self):
 		self.pendingFetches = []
-		conf["mainWindow"].log("error", "Failed")
 		self.resetLoadingState()
 
 	def resetLoadingState(self):
