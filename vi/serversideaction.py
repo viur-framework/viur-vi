@@ -150,10 +150,15 @@ class ServerSideActionWdg(Button):
 		if self.pendingFetches:
 			self.fetchNext()
 		else:
-			conf["mainWindow"].log("success", "Done")
+			conf["mainWindow"].log("success", self.actionData.get("success", "Done"))
 
 			self.removeClass("is-loading")
-			NetworkService.notifyChange(self.parent().parent().module)
+
+			action = self.actionData.get("then", "reload-module")
+			if action == "reload-module":
+				NetworkService.notifyChange(self.parent().parent().module)
+			elif action == "reload-vi":
+				window.location.reload()
 
 	def fetchFailed(self):
 		self.pendingFetches = []
