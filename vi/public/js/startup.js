@@ -1,3 +1,8 @@
+// This prevents from unwanted window reloads
+if (!window.location.href.includes("?")) {
+	window.location.href += "?";
+}
+
 function postMessageChannelToFrame(frameId, origin, channel) {
 	document.getElementById(frameId).contentWindow.postMessage("set-message-channel", origin, [channel])
 }
