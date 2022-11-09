@@ -2,6 +2,14 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.27] - 2022-11-09
+- customActions
+  - several fixes
+  - with "success"-info & "then"-action
+  - Use NiceError functionality
+- Fixing "?" location href reload
+- Updating Flare to latest version
+
 ## [3.0.26] - 2022-10-21
 - Fix: Removing -m build option to fix #121
 
