@@ -2,7 +2,8 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
-## [3.0.27] - 2022-11-09
+## [3.0.27] - 2022-11-10
+- Fixing hierarchy.add
 - customActions
   - several fixes
   - with "success"-info & "then"-action

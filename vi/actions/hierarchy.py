@@ -32,7 +32,7 @@ class AddAction(Button):
 
 
 	def onClick(self, sender=None):
-		node = self.parent().parent().currentKey
+		node = self.parent().parent().node
 		if not node:
 			node = self.parent().parent().rootNode
 
