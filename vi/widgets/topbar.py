@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flare import html5,utils
 from flare.popup import Confirm
-from flare.network import NetworkService, DeferredCall
+from flare.network import HTTPRequest, NetworkService, DeferredCall
 from flare.i18n import translate
 from vi.config import conf
 from vi.widgets.task import TaskSelectWidget
@@ -303,11 +303,13 @@ toplevelActionSelector.insert(0, Logout.canHandle, Logout)
 
 class Scripter(Button):
 	def __init__(self, *args, **kwargs):
-		super( Scripter, self ).__init__( icon = "icon-play", *args, **kwargs )
+		super( Scripter, self ).__init__(icon="icon-play", *args, **kwargs)
 		self.sinkEvent("onClick")
 		self.hide()
+		self["title"] = "Script Editor"
 		self.addClass("btn vi-tb-play")
 		self.updateUser()
+		self.scriptor = None
 
 	def onCurrentUserAvailable(self, req):
 		data = NetworkService.decode( req )
@@ -325,8 +327,21 @@ class Scripter(Button):
 		if "root" in user[ "access" ]:
 			self.show()
 
-	def onClick(self, event ):
-		CodePopup()
+	def onClick(self, event=None):
+		if self.scriptor is None:
+			HTTPRequest("GET", "/scriptor/scriptor.html", self.scriptor_found, self.scriptor_not_found)
+		elif self.scriptor:
+			html5.window.open("/scriptor/scriptor.html")
+		else:
+			CodePopup()
+
+	def scriptor_found(self, response):
+		self.scriptor = True
+		self.onClick()
+
+	def scriptor_not_found(self, response):
+		self.scriptor = False
+		self.onClick()
 
 	@staticmethod
 	def canHandle( action ):
