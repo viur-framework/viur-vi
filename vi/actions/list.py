@@ -308,9 +308,9 @@ class ListPreviewAction(html5.Span):
 		self.urlCb = ignite.Select()
 		self.appendChild(self.urlCb)
 
-		btn = Button(translate("Preview"), callback=self.onClick, icon="icon-preview")
-		btn["class"] = "bar-item btn btn--small btn--preview"
-		self.appendChild(btn)
+		self.btn = Button(translate("Preview"), callback=self.onClick, icon="icon-preview")
+		self.btn["class"] = "bar-item btn btn--small btn--preview"
+		self.appendChild(self.btn)
 
 		self["disabled"] = True
 		self.isDisabled = True
@@ -326,7 +326,12 @@ class ListPreviewAction(html5.Span):
 		if isinstance(self.urls, list):
 			self.urls = {x: x for x in self.urls}
 
-		if not isinstance(self.urls, dict) or len(self.urls.keys()) == 1:
+		if isinstance(self.urls, dict) and len(self.urls.keys()) == 1:
+			self.urlCb.addClass("is-hidden")
+			self.btn["text"] = list(self.urls.keys())[0]
+			return
+
+		elif not isinstance(self.urls, dict):
 			self.urlCb.addClass("is-hidden")
 			return
 
