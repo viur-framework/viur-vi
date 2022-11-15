@@ -324,24 +324,14 @@ class Scripter(Button):
 			                        cacheable=False )
 			return
 
-		if "root" in user[ "access" ]:
+		if "root" in user["access"] or "scriptor" in user["access"]:
 			self.show()
 
 	def onClick(self, event=None):
-		if self.scriptor is None:
-			HTTPRequest("GET", "/scriptor/scriptor.html", self.scriptor_found, self.scriptor_not_found)
-		elif self.scriptor:
-			html5.window.open("/scriptor/scriptor.html")
+		if scriptor := conf["server"].get("scriptor"):
+			html5.window.open(scriptor)
 		else:
 			CodePopup()
-
-	def scriptor_found(self, response):
-		self.scriptor = True
-		self.onClick()
-
-	def scriptor_not_found(self, response):
-		self.scriptor = False
-		self.onClick()
 
 	@staticmethod
 	def canHandle( action ):
