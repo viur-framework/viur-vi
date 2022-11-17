@@ -2,6 +2,12 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.28]- 2022-11-17
+
+- Fixing rootnode selector (#130)
+- Parametrizable scriptor URL
+- Display custom preview name on preview button
+
 ## [3.0.27] - 2022-11-10
 - Fixing hierarchy.add
 - customActions
