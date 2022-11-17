@@ -51,7 +51,7 @@ class TreeWidget(html5.Div):
 				del context[conf["vi.context.prefix"] + "rootNode"]
 
 		self.context = context or {}  # context
-		self.rootNode = rootNode  # root node
+		self.initialRootNode = self.rootNode = rootNode  # root node
 		self.node = node or rootNode  # current node
 
 		# Action bar
@@ -143,7 +143,7 @@ class TreeWidget(html5.Div):
 		self.selectionAllow = allow or TreeItemWidget
 		self.selectionMulti = multi
 
-		self.actionBar.setActions(["select", "close", "|"] + self.getActions())
+		self.actionBar.setActions(["select", "close", "|"] + self.getActions(), widget=self)
 		conf["mainWindow"].stackWidget(self)
 
 	def setContext(self, context):

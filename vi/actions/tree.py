@@ -368,7 +368,7 @@ class SelectRootNode(html5.Select):
 
 	def update(self):
 		# Root node preset, don't show anything
-		if self.parent().parent().rootNode:
+		if self.parent().parent().initialRootNode:
 			return
 
 		self.removeAllChildren()
