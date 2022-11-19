@@ -100,7 +100,7 @@ class EditAction(Button):
 		correctAction = actionName == "edit"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and (
-				"root" in conf["currentUser"]["access"] or module + "-edit" in conf["currentUser"]["access"])
+				"root" in conf["currentUser"]["access"] or (module + "-edit" in conf["currentUser"]["access"]))
 
 		return correctAction and correctHandler and hasAccess
 
@@ -167,7 +167,7 @@ class CloneAction(Button):
 		correctAction = actionName == "clone"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and (
-				"root" in conf["currentUser"]["access"] or module + "-edit" in conf["currentUser"]["access"])
+				"root" in conf["currentUser"]["access"] or module + "-add" in conf["currentUser"]["access"])
 
 		return correctAction and correctHandler and hasAccess
 
