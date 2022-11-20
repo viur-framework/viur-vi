@@ -169,7 +169,7 @@ class CloneAction(Button):
 
 		correctAction = actionName=="clone"
 		correctHandler = handler == "hierarchy" or handler.startswith("hierarchy.")
-		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "clone" in conf["modules"][module]["disabledFunctions"]
 		return correctAction and correctHandler and hasAccess and not isDisabled
 
