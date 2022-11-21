@@ -451,10 +451,17 @@ class LoginScreen(Screen):
 				continue
 			# Check if this handler is already inserted!
 			if not any([c.__class__.__name__ == handler.__name__ for c in self.loginMethodSelector._children]):
-				handler(self)
+				methods.append(handler(self))
 
-		if len(answ)>1:
+		if len(methods) > 1:
 			self.loginMethodSelector.addClass("is-active")
+		elif len(methods) == 0:
+			Alert(
+				translate("vi.login.nosupportedhandler"),
+				title=translate("vi.login.nologinhandlerfound"),
+				closeable=False
+			)
+
 		self.haveLoginHandlers = True
 		self.invoke()
 
