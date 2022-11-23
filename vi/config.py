@@ -3,7 +3,7 @@ from flare.i18n import translate
 
 vi_conf = {
 	# Vi version number
-	"vi.version": (3, 0, 28),
+	"vi.version": (3, 0, 29),
 	# ViUR server version number
 	"core.version": None,
 	"core.version.min": (3, 0, 0),  # minimal core Version
