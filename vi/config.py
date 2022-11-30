@@ -3,11 +3,11 @@ from flare.i18n import translate
 
 vi_conf = {
 	# Vi version number
-	"vi.version": (3, 0, 29),
+	"vi.version": (3, 0, 30),
 	# ViUR server version number
 	"core.version": None,
 	"core.version.min": (3, 0, 0),  # minimal core Version
-	"core.version.max": (3, 2, 0),  # max recomended version core Version, must be less than!
+	"core.version.max": (3, 3, 0),  # max recomended version core Version, must be less than!
 	# Appendix to version
 	"vi.version.appendix": "dev",
 
