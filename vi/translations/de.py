@@ -163,8 +163,11 @@ lngDe = {
 	"version mismatch": "Versionen stimmen nicht überein",
 	"Continue at your own risk": "Trotzdem fortfahren",
 	"vi.login.insufficient-rights": "Der aktuelle angemeldete Benutzer hat nicht genügend Rechte um diese "
-	                                u"Funktion zu verwenden.\n\nBitte loggen Sie sich unter einem anderen "
-	                                u"Benutzer mit entsprechenden Zugriffsrechten ein.",
+	                                "Funktion zu verwenden.\n\nBitte loggen Sie sich unter einem anderen "
+	                                "Benutzer mit entsprechenden Zugriffsrechten ein.",
+	"vi.login.nologinhandlerfound": "Kein Login-Handler gefunden",
+	"vi.login.nosupportedhandler": "Oh Mist, es fehlt scheinbar ein Login-Handler.\n"
+	                               "Bitte versuchen Sie, sich über das Frontend einzuloggen!",
 	"login as different user": "Aktuellen Benutzer abmelden",
 
 	"the connection to the server could not be correctly established.":

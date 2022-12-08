@@ -14,6 +14,9 @@ lngEn = {
 	"login with google": u"Login with Google",
 	"vi.login.insufficient-rights": u"Your current user has insufficient access rights to use "
 	                                u"this part of the software.\n\nPlease login under a different user.",
+	"vi.login.nologinhandlerfound": "No Login-Handler found",
+	"vi.login.nosupportedhandler": "Oh no! A valid Login-Handler seems to be missing here.\n"
+	                               "Please try to login at the frontend!",
 	"login as different user": u"Log-out current user",
 
 	"vi.action.edit.refresh.question": u"This will reload the currently shown dataset.\nUnsafed changes will be lost.\n"
