@@ -2,14 +2,20 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
-## [3.0.29]- 2022-11-23
+## [3.0.30] - 2022-12-12
+
+- Hotfix for viur-core==3.3.0 regarding List-modules (new "indexes" in adminInfo)
+- Updated Flare 
+- `conf["admin.vi.customcss"]` injects a custom CSS file now
+
+## [3.0.29] - 2022-11-23
 
 - Updated Flare
 - Show an appropiate error message in case no login method is implemented
 - Fixed login with OTP as second factor (#132)
 - Fixing access right checks of some actions, clone only when add-right is set
 
-## [3.0.28]- 2022-11-17
+## [3.0.28] - 2022-11-17
 
 - Fixing rootnode selector (#130)
 - Parametrizable scriptor URL
