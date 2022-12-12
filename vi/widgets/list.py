@@ -162,7 +162,8 @@ class ListWidget(html5.Div):
 		:param kwargs: ListWidget Parameter
 		:return:
 		'''
-
+		if "indexes" in kwargs: # only used in the new vi
+			del kwargs["indexes"]
 		self.table = DataTable(checkboxes=self._checkboxes, indexes=self._indexes, *args, **kwargs)
 		self.widgetContent.appendChild(self.table)
 		self.table.setDataProvider(self)
