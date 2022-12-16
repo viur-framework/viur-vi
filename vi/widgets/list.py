@@ -163,6 +163,9 @@ class ListWidget(html5.Div):
 		:return:
 		'''
 
+		if "indexes" in kwargs:
+			del kwargs["indexes"]  # ViUR 3.3 adminInfo contains this key
+
 		self.table = DataTable(checkboxes=self._checkboxes, indexes=self._indexes, *args, **kwargs)
 		self.widgetContent.appendChild(self.table)
 		self.table.setDataProvider(self)
@@ -561,6 +564,10 @@ class ViewportListWidget(ListWidget):
 		Override explanation
 			- use ViewPort DataTable with rows parameter
 		'''
+
+		if "indexes" in kwargs:
+			del kwargs["indexes"]  # ViUR 3.3 adminInfo contains this key
+
 		self.table = ViewportDataTable(rows=self._batchSize,
 									   checkboxes=self._checkboxes,
 									   indexes=self._indexes,
