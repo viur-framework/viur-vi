@@ -2,6 +2,11 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.31] - 2023-01-24
+
+- Styling fixes
+- Handling of `defaultvalue` bone structure config
+
 ## [3.0.30] - 2022-12-12
 
 - Hotfix for viur-core==3.3.0 regarding List-modules (new "indexes" in adminInfo)
