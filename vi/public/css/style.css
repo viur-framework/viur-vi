@@ -5151,6 +5151,10 @@ a.item:focus,
 	background: #fff;
 }
 
+.vi-accordion-section .vi-widget {
+	max-width: calc(100vw - 20px*4 - 256px);
+}
+
 .vi-accordion-segment.is-active > .vi-accordion-section,
 .vi-accordion-segment:target .vi-accordion-section {
 	display: block;
@@ -5641,6 +5645,12 @@ a.item:focus,
 
 .ignt-table-body-cell {
 	text-align: left;
+	max-width: 300px;
+	min-height: 1px;
+}
+
+.ignt-table-body-cell .flr-value {
+	white-space: nowrap;
 }
 
 .ignt-table-body-cell .vi-file-imagepreview img {
@@ -5697,10 +5707,28 @@ a.item:focus,
 
 .ignt-table-content {
 	padding: 0.4em 0.6em;
-	white-space: nowrap;
-	overflow: hidden;
-	max-width: 300px;
-	text-overflow: ellipsis;
+	overflow-x: auto;
+	height: 100%;
+}
+
+.ignt-table-content::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+
+.ignt-table-content::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+	background-color: transparent;
+}
+
+.ignt-table-content::-webkit-scrollbar-thumb {
+	background-color: transparent;
+	border-radius: 3px;
+}
+
+.ignt-table-content:hover::-webkit-scrollbar-thumb,
+.ignt-table-content:focus::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.4);
 }
 
 .ignt-table-content .date {

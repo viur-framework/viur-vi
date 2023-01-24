@@ -21,6 +21,11 @@
   }
   &-body-cell {
     text-align: left;
+    max-width: 300px;
+    min-height: 1px;
+    .flr-value{
+      white-space: nowrap;
+    }
     & .vi-file-imagepreview {
       & img {
         min-width: 2.5rem;
@@ -53,10 +58,25 @@
   &-foot-row.is-focused &-foot-cell { color: contrast(darken(@mainColor, 4%)); }
   &-content {
     padding: 2*@defaultPadding 3*@defaultPadding;
-    white-space: nowrap;
-    overflow: hidden;
-    max-width: 300px;
-    text-overflow: ellipsis;
+    overflow-x: auto;
+    height: 100%;
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: transparent;
+      border-radius: 3px;
+    }
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, .4);
+      }
+    }
     & .date {
       margin-right: 10px;
       font-weight: @fontWeightBold;
