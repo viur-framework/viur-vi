@@ -5435,6 +5435,10 @@ a.item:focus,
 	gap: 10px;
 }
 
+.vi-sidebar {
+	margin-top: 80px;
+}
+
 .vi-sb-intprev-item {
 	font-size: 0.9em;
 }
