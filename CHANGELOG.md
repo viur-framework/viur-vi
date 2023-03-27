@@ -2,6 +2,10 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.32] - 2023-03-27
+
+- Check on "list.grouped."-handler prefix as well
+
 ## [3.0.31] - 2023-01-24
 
 - Styling fixes

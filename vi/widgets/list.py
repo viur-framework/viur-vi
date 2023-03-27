@@ -71,7 +71,8 @@ class ListWidget(html5.Div):
 						myView = v
 						break
 
-			if conf["modules"][module]["handler"] == "list.grouped":
+			if conf["modules"][module]["handler"] == "list.grouped" \
+					or conf["modules"][module]["handler"].startswith("list.grouped."):
 				if "group" in kwargs and kwargs["group"]:
 					self.group = kwargs["group"]
 				else:
