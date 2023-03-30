@@ -679,16 +679,17 @@ class DataTable( html5.Div ):
 				lbl = html5.fromHTML("""
 				   <div draggable class="flr-bone-dragger" style="height:25px;width:25px;">
 					   <flare-svg-icon value="icon-draggable" style="height:25px;width:25px;" ></flare-svg-icon>
+					   <span hidden>{{sortindex}}</span>
 				   </div>
-				""").pop()
-				
+				""", sortindex=self._model[rowIdx]["sortindex"]).pop()
+
 				lbl.addEventListener("drop", self.onDrop)
 				lbl.addEventListener("dragstart", self.onDragStart)
-				lbl.addEventListener("dragover",self.onDragOver)	
-				
+				lbl.addEventListener("dragover",self.onDragOver)
+
 			elif not recalculate and rowIdx < len(self._renderedModel) and field in self._renderedModel[rowIdx] and self._renderedModel[rowIdx][field]:
 				lbl = self._renderedModel[rowIdx][field]
-			
+
 			else:
 				if field in self._cellRender.keys():
 					lbl = self._cellRender[field].viewWidget(obj[field])
@@ -714,7 +715,7 @@ class DataTable( html5.Div ):
 			return
 
 		sortindexdrop = self._model[rowIdx]["sortindex"]
-		
+
 		if rowIdx < dragElementIndex:
 			if rowIdx - 1 < 0:
 				sortindex = self._model[0]["sortindex"] - 1
@@ -730,7 +731,7 @@ class DataTable( html5.Div ):
 		newIdx = (sortindex + sortindexdrop) / 2
 
 		NetworkService.request(
-			self._moduleName, "edit",
+			self._moduleName or self._dataProvider.module, "edit",
 			{
 				"key": dropData["key"],
 				"sortindex": str(newIdx),
