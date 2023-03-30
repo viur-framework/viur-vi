@@ -2,6 +2,96 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.32] - 2023-03-27
+
+- Check on "list.grouped."-handler prefix as well
+
+## [3.0.31] - 2023-01-24
+
+- Styling fixes
+- Handling of `defaultvalue` bone structure config
+
+## [3.0.30] - 2022-12-12
+
+- Hotfix for viur-core==3.3.0 regarding List-modules (new "indexes" in adminInfo)
+- Updated Flare 
+- `conf["admin.vi.customcss"]` injects a custom CSS file now
+
+## [3.0.29] - 2022-11-23
+
+- Updated Flare
+- Show an appropiate error message in case no login method is implemented
+- Fixed login with OTP as second factor (#132)
+- Fixing access right checks of some actions, clone only when add-right is set
+
+## [3.0.28] - 2022-11-17
+
+- Fixing rootnode selector (#130)
+- Parametrizable scriptor URL
+- Display custom preview name on preview button
+
+## [3.0.27] - 2022-11-10
+- Fixing hierarchy.add
+- customActions
+  - several fixes
+  - with "success"-info & "then"-action
+  - Use NiceError functionality
+- Fixing "?" location href reload
+- Updating Flare to latest version
+
+## [3.0.26] - 2022-10-21
+- Fix: Removing -m build option to fix #121
+
+## [3.0.25] - 2022-10-04
+- Fix: Improving context support for TreeWidget
+
+## [3.0.24] - 2022-10-04
+- Fix: Updated Flare to fix RawViewWidget
+
+## [3.0.23] - 2022-09-28
+- Fix: Select image/file function in Summernote WYSIWYG-editor for TextBones fixed 
+
+## [3.0.22] - 2022-06-03
+- Feat: added params to customAction view call
+
+## [3.0.21] - 2022-05-25
+- Feat: added grouped skels
+- Fix: viewactions now not merged by default, customActions now can be defined in a view
+- Fix: Handler for add.node action in tree widgets
+- Fix: HierarchyWidget getAction() returning "add"-action twice
+- Fix: Flare update for performance and security reasons
+- Fix: EditWidget accepts skel for unserialization again
+
+## [3.0.20] - 2022-04-14
+- Fix: Corrected version number
+- Fix: Updated README
+- Fix: Updated .gitattributes
+
+## [3.0.19] - 2022-04-14
+- Fix: Group parameter handling
+- Fix: Flare update to fix various TreeWidget issues
+- Fix: TreeWidget improvements and fixes causing double node listing
+
+## [3.0.18] - 2022-04-07
+- Fix: summernote re-added missing styles
+
+## [3.0.17] - 2022-04-07
+- Fix: summernote re-added missing styles
+- Feat: serversideactions can now trigger a confirm popup
+- Feat: navigation and main-view can now reloaded
+- Fix: added a hierarchy specific add button
+
+## [3.0.16] - 2022-03-23
+- Fix: searchfilter now behaved as it should for relationalbones
+
+## [3.0.15] - 2022-03-22
+- Fix: Foldernavigation in fileBones working again
+- Fix: Selection for filtered lists remains 
+
+## [3.0.14] - 2022-03-22
+- Feat: added Azure login
+- Fix: admininfo actions can now start with "\n"
+
 ## [3.0.13] - 2022-03-14
 
 - Fix: submodule vi working again

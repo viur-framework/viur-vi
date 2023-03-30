@@ -136,7 +136,7 @@ class NavigationSeperator(html5.Div):
 		self.appendChild( '''
 					<flare-svg-icon value="icon-dashboard"></flare-svg-icon>
 					<span class="list-separator-content">%s</span>
-					<flare-svg-icon value="icon-arrow-left"></flare-svg-icon>
+					<flare-svg-icon value="icon-redo"></flare-svg-icon>
 			''' % self.name )
 
 	def _setValue( self,value ):
@@ -145,10 +145,11 @@ class NavigationSeperator(html5.Div):
 
 class Navigationblock(html5.Div):
 
-	def __init__(self, name):
+	def __init__(self, name, nav):
 		super().__init__()
 		self.name = name
 		self.seperator = None
+		self.navigation = nav
 		self[ "class" ] = [ "vi-modulelist", "list" ]
 
 	def addSeperator( self ):
@@ -159,7 +160,11 @@ class Navigationblock(html5.Div):
 		 name=self.name)
 
 	def seperatorAction( self,e, wdg=None ):
-		self.seperator.toggleClass("is-active")
+		for p in self.navigation.navigationPoints.copy():
+			self.navigation.removeNavigationPoint(p)
+		self.navigation.removeAllChildren()
+		conf["mainWindow"].refresh()
+		#self.seperator.toggleClass("is-active")
 
 class AppNavigation(html5.Nav):
 
@@ -189,7 +194,7 @@ class AppNavigation(html5.Nav):
 		return aNav
 
 	def addNavigationBlock( self, name ):
-		aBlock = Navigationblock(name)
+		aBlock = Navigationblock(name,self)
 		aBlock.addSeperator()
 		self.appendChild(aBlock)
 		return aBlock

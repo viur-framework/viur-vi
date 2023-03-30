@@ -7,7 +7,7 @@ from vi.priorityqueue import DisplayDelegateSelector, ModuleWidgetSelector
 
 class HierarchyWidget(TreeWidget):
 	"""
-	A Hierarchy is a Tree without leaf distiction!
+	A Hierarchy is a Tree without leaf distinction!
 	"""
 	leafWidget = None
 
@@ -28,7 +28,6 @@ class HierarchyWidget(TreeWidget):
 		return [
 			"selectrootnode",
 			"add",
-			"add.node",
 			"edit",
 			"clone",
 			"delete",

@@ -42,13 +42,12 @@ class Search(html5.Div):
 		self.last_search = ""
 
 	def doSearch(self, *args, **kwargs):
-		if self.searchInput["value"] != self.last_search:
-			if len(self.searchInput["value"]):
-				self.startSearchEvent.fire(self.searchInput["value"])
-			else:
-				self.resetSearch()
+		if len(self.searchInput["value"]):
+			self.startSearchEvent.fire(self.searchInput["value"])
+		else:
+			self.resetSearch()
 
-			self.last_search = self.searchInput["value"]
+		self.last_search = self.searchInput["value"]
 
 	def resetSearch(self):
 		self.startSearchEvent.fire(None)

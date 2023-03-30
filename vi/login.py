@@ -208,6 +208,11 @@ class UserPasswordLoginHandler(BaseLoginHandler):
 
 		if answ == "OKAY":
 			self.login()
+		elif "X-VIUR-2FACTOR-TimeBasedOTP" in answ:
+			self.pwform.hide()
+			self.editform.hide()
+			self.otpform.show()
+			self.otp.focus()
 
 		elif isinstance(answ, dict) and "action" in answ:
 			if answ["action"] == "otp":
@@ -333,6 +338,39 @@ class GoogleAccountLoginHandler(BaseLoginHandler):
 loginHandlerSelector.insert(0, GoogleAccountLoginHandler.canHandle, GoogleAccountLoginHandler)
 
 
+class OAuthAccountLoginHandler(BaseLoginHandler):
+	cssname = "oauthaccount"
+
+	def __init__(self, loginScreen, *args, **kwargs):
+		super(OAuthAccountLoginHandler, self).__init__(loginScreen, *args, **kwargs)
+
+		self.loginBtn = Button(translate("Login with OAuth"), callback=self.onLoginClick)
+		self.loginBtn.addClass("vi-login-btn btn--viur")
+		self.mask.appendChild(self.loginBtn)
+
+	def onLoginClick(self, sender = None):
+		self.lock()
+
+		NetworkService.request( None, "/vi/skey", successHandler=self.doSkeySuccess)
+
+	def doSkeySuccess( self, req ):
+		skey = self.parseAnswer(req)
+		#language=HTML
+		self.appendChild("""
+							<form [name]="loginform" action="/vi/user/auth_oauth2/login" method="POST" style="display:none">
+								<input type="hidden" name="skey" value="{{skey}}">
+							</form>
+						""",
+						 skey=skey
+						 )
+		self.loginform.element.submit()
+
+	@staticmethod
+	def canHandle(method, secondFactor):
+		return method == "X-VIUR-AUTH-OAuth2"
+
+loginHandlerSelector.insert(0, OAuthAccountLoginHandler.canHandle, OAuthAccountLoginHandler)
+
 class LoginScreen(Screen):
 
 	def __init__(self, *args, **kwargs):
@@ -418,10 +456,17 @@ class LoginScreen(Screen):
 				continue
 			# Check if this handler is already inserted!
 			if not any([c.__class__.__name__ == handler.__name__ for c in self.loginMethodSelector._children]):
-				handler(self)
+				methods.append(handler(self))
 
-		if len(answ)>1:
+		if len(methods) > 1:
 			self.loginMethodSelector.addClass("is-active")
+		elif len(methods) == 0:
+			Alert(
+				translate("vi.login.nosupportedhandler"),
+				title=translate("vi.login.nologinhandlerfound"),
+				closeable=False
+			)
+
 		self.haveLoginHandlers = True
 		self.invoke()
 

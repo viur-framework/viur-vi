@@ -97,6 +97,7 @@ class FilterSelector( html5.Div ):
 
 		self.currentTarget = None
 		self.defaultFilter = True
+		self.search = None
 		self.sinkEvent("onClick")
 		self.addClass("vi-sb-filterselector")
 
@@ -144,7 +145,7 @@ class FilterSelector( html5.Div ):
 					modulConfig["disabledFunctions"]:
 				isSearchDisabled = True
 
-		if not isSearchDisabled:
+		if not isSearchDisabled and not self.search:
 			self.search = Search()
 			self.search.addClass("item", "has-hover")
 			self.appendChild(self.search)

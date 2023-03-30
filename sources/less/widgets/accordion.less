@@ -88,6 +88,10 @@
     border-bottom: 1px solid #eee;
     padding: @outerSpace*2;
     background: #fff;
+
+    .vi-widget{
+      max-width: calc(100vw - @outerSpace*4 - 256px);
+    }
   }
   &-segment.is-active > &-section,
   &-segment:target &-section {

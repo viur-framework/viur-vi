@@ -101,6 +101,15 @@ class AdminScreen(Screen):
 	def getCurrentUserFailure(self, req, code):
 		conf["theApp"].login()
 
+	def refresh(self):
+		NetworkService.request(None, "/vi/config",
+									   successHandler=self.refreshConfig,
+									   failureHandler=self.getCurrentUserFailure)
+
+	def refreshConfig(self,req):
+		conf["mainConfig"] = NetworkService.decode(req)
+		self.invoke()
+
 	def startup(self):
 		config = conf["mainConfig"]
 		assert config
@@ -111,8 +120,14 @@ class AdminScreen(Screen):
 
 		conf["server"] = config.get("configuration", {})
 
-		if "vi.name" in conf["server"]:
-			conf["vi.name"] = str(conf["server"]["vi.name"])
+		if name := conf["server"].get("vi.name"):
+			conf["vi.name"] = str(name)
+
+		if customcss := conf["server"].get("vi.customcss"):
+			html5.Head().appendChild(
+				# language=html
+				f"""<link rel="stylesheet" href="{customcss}">"""
+			)
 
 		self.userLoggedOutMsg = UserLogoutMsg()
 		self.topBar.invoke()

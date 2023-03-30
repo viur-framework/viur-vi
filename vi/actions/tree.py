@@ -48,6 +48,51 @@ class AddLeafAction(Button):
 
 actionDelegateSelector.insert( 1, AddLeafAction.isSuitableFor, AddLeafAction )
 
+class AddNodeOnlyAction(Button):
+	"""
+		Adds a new node in a hierarchy application.
+	"""
+	def __init__(self, *args, **kwargs):
+		super( AddNodeOnlyAction, self ).__init__( translate("Add"), icon="icon-add")
+		self["class"] = "bar-item btn btn--small btn--primary"
+
+	@staticmethod
+	def isSuitableFor( module, handler, actionName ):
+		if module is None or module not in conf["modules"].keys():
+			return False
+
+		correctAction = actionName=="add.node"
+		correctHandler = handler == "hierarchy" or handler == "tree.node"
+		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
+		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add" in conf["modules"][module]["disabledFunctions"]
+
+		return correctAction and correctHandler and hasAccess and not isDisabled
+
+
+	def onClick(self, sender=None):
+		node = self.parent().parent().currentKey
+		if not node:
+			node = self.parent().parent().rootNode
+
+		conf[ "mainWindow" ].openView(
+			translate( "Add" ),  # AnzeigeName
+			"icon-add",  # Icon
+			"edithandler",  # viewName
+			self.parent().parent().module,  # Modulename
+			"add",  # Action
+			data = { "context" : self.parent().parent().context,
+					 "baseType": EditWidget.appTree,
+					 "node"    : node,
+					 "skelType": "node"
+					 },
+			target = "popup" if self.parent().parent().isSelector else "mainNav"
+		)
+
+	def resetLoadingState(self):
+		pass
+
+actionDelegateSelector.insert( 1, AddNodeOnlyAction.isSuitableFor, AddNodeOnlyAction )
+
 
 class AddNodeAction(Button):
 	"""
@@ -63,7 +108,7 @@ class AddNodeAction(Button):
 			return False
 
 		correctAction = actionName=="add.node"
-		correctHandler = handler == "tree" or handler.startswith("tree.")
+		correctHandler = handler == "tree" or handler.startswith("tree.") and not handler == "tree.node"
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add-node" in conf["modules"][module]["disabledFunctions"]
 
@@ -323,7 +368,7 @@ class SelectRootNode(html5.Select):
 
 	def update(self):
 		# Root node preset, don't show anything
-		if self.parent().parent().rootNode:
+		if self.parent().parent().initialRootNode:
 			return
 
 		self.removeAllChildren()
@@ -340,6 +385,7 @@ class SelectRootNode(html5.Select):
 				return
 
 	def onRootNodesAvailable(self, req):
+		self.removeAllChildren()
 		res = NetworkService.decode(req)
 
 		for node in res:

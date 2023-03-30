@@ -14,7 +14,7 @@ from collections import OrderedDict
 import logging
 
 
-from flare.viur.widgets.tree import TreeItemWidget,TreeLeafWidget, TreeNodeWidget
+from flare.viur.widgets.tree import TreeItemWidget, TreeLeafWidget, TreeNodeWidget
 
 
 class TreeWidget(html5.Div):
@@ -50,8 +50,8 @@ class TreeWidget(html5.Div):
 			if rootNode := context.get(context_var):
 				del context[conf["vi.context.prefix"] + "rootNode"]
 
-		self.context = context  # context
-		self.rootNode = rootNode  # root node
+		self.context = context or {}  # context
+		self.initialRootNode = self.rootNode = rootNode  # root node
 		self.node = node or rootNode  # current node
 
 		# Action bar
@@ -71,6 +71,8 @@ class TreeWidget(html5.Div):
 		self._currentRow = None
 		self._expandedNodes = []
 		self._currentRequests = []
+		self._currentCursor = None
+		self.currentKey = self.rootNode
 		self.path = []
 
 		# Selection
@@ -101,9 +103,9 @@ class TreeWidget(html5.Div):
 			NetworkService.request(
 				self.module,
 				"listRootNodes",
-				self.context or {},
+				self.context.get("rootNodes") or {},
 				successHandler=self.onSetDefaultRootNode,
-				failureHandler=self.showErrorMsg
+				failureHandler=self._showErrorMsg
 			)
 
 	def requestStructure( self ):
@@ -132,7 +134,6 @@ class TreeWidget(html5.Div):
 
 		self.reloadData()
 
-
 	def setSelector(self, callback, multi=True, allow=None):
 		"""
 		Configures the widget as selector for a relationalBone and shows it.
@@ -142,8 +143,16 @@ class TreeWidget(html5.Div):
 		self.selectionAllow = allow or TreeItemWidget
 		self.selectionMulti = multi
 
-		self.actionBar.setActions(["select", "close", "|"] + self.getActions())
+		self.actionBar.setActions(["select", "close", "|"] + self.getActions(), widget=self)
 		conf["mainWindow"].stackWidget(self)
+
+	def setContext(self, context):
+		self.context = context or {}
+
+		if not self.viewNodeStructure:
+			self.requestStructure()
+		else:
+			self.reloadData()
 
 	def selectorReturn(self):
 		"""
@@ -172,9 +181,6 @@ class TreeWidget(html5.Div):
 		elif html5.isShift(event):
 			self._isShiftPressed = False
 			self._ctlStartRow = None
-
-
-
 
 	def getActions(self):
 		"""
@@ -237,7 +243,10 @@ class TreeWidget(html5.Div):
 			element.addClass("is-focused")
 
 		if self.selectionMulti:
-			self._currentRow = self.entryFrame._children.index(element)
+			try:
+				self._currentRow = self.entryFrame.children().index(element)
+			except ValueError:
+				self._currentRow = None
 
 		self.selectionChangedEvent.fire(self, self.selection)
 
@@ -257,7 +266,7 @@ class TreeWidget(html5.Div):
 	def requestChildren(self, element):
 		self.loadNode(element.data["key"])
 
-	def showErrorMsg(self, req=None, code=None):
+	def _showErrorMsg(self, req=None, code=None):
 		"""
 			Removes all currently visible elements and displayes an error message
 		"""
@@ -370,7 +379,7 @@ class TreeWidget(html5.Div):
 
 		self.loadNode(self.rootNode)
 
-	def loadNode(self, node, cursor=None, reqType=None, overrideParams=None):
+	def loadNode(self, node, skelType=None, cursor=None, overrideParams=None):
 		"""
 			Fetch the (direct) children of the given node.
 			Once the list is received, append them to their parent node.
@@ -379,92 +388,83 @@ class TreeWidget(html5.Div):
 		"""
 		self.node = node
 
+		# In case no skelType was provided, reload both.
+		if skelType is None:
+			self._currentRequests.clear()
+
+			self.loadNode(node, "node")
+			if self.leafWidget:
+				self.loadNode(node, "leaf")
+			return
+
 		params = {
-			"parententry": node,
+			"skelType": skelType,
+			"parententry": self.node,
 			"orderby": "sortindex",
-			"amount": 99
+			"limit": 99
 		}
 
-		def nodeReq():
-			if cursor:
-				params.update({"cursor": cursor})
+		if cursor:
+			params["cursor"] = cursor
 
-			if overrideParams:
-				params.update(overrideParams)
+		if overrideParams:
+			params.update(overrideParams)
 
-			if self.context:
-				params.update(self.context)
+		if ctx := self.context.get(skelType):
+			params.update(ctx)
 
-			r = NetworkService.request(self.module, "list/node",
-									   params,
-									   successHandler=self.onRequestSucceded,
-									   failureHandler=self.showErrorMsg)
-			r.reqType = "node"
-			r.node = node
-			self._currentRequests.append(r)
+		req = NetworkService.request(
+			self.module, "list", params,
+			successHandler=self._onRequestSucceded,
+			failureHandler=self._showErrorMsg
+		)
+		req.skelType = skelType
+		self._currentRequests.append(req)
 
-		def leafReq():
-			if self.leafWidget:
-				if cursor:
-					params.update({"cursor": cursor})
-
-				r = NetworkService.request(self.module, "list/leaf", params,
-										   successHandler=self.onRequestSucceded,
-										   failureHandler=self.showErrorMsg)
-				r.reqType = "leaf"
-				r.node = node
-				self._currentRequests.append(r)
-
-		if reqType == 'node':
-			nodeReq()
-		elif reqType == 'leaf':
-			leafReq()
-		else:
-			nodeReq()
-			leafReq()
-
-	def onRequestSucceded(self, req):
+	def _onRequestSucceded(self, req):
 		"""
 			The NetworkRequest for a (sub)node finished.
 			Create a new HierarchyItem for each entry received and add them to our view
 		"""
-		if not req in self._currentRequests:
+		self.actionBar.resetLoadingState()
+
+		if req not in self._currentRequests:
 			# Prevent inserting old (stale) data
-			self.actionBar.resetLoadingState()
 			return
 
 		self._currentRequests.remove(req)
 		data = NetworkService.decode(req)
 
-		if req.node == self.rootNode:
+		if self.node == self.rootNode:
 			ol = self.entryFrame
 		else:
-			tmp = self.itemForKey(req.node)
+			tmp = self.itemForKey(self.node)
 			if not tmp:
 				ol = self.entryFrame
 			else:
 				ol = tmp.ol
 
 		for skel in data["skellist"]:
-			if req.reqType == "leaf":
+			if req.skelType == "leaf":
 				hi = self.leafWidget(self.module, skel, self.viewLeafStructure, self)
 			else:
 				hi = self.nodeWidget(self.module, skel, self.viewNodeStructure, self)
+
 			ol.appendChild(hi)
+
 			if hi.data["key"] in self._expandedNodes:
 				hi.toggleExpand()
 				if not hi.childrenLoaded:
 					hi.childrenLoaded = True
 					self.loadNode(hi.data["key"])
+
 		ol.sortChildren(self.getChildKey)
 
-		if not ol._children and ol != self.entryFrame:
+		if not ol.children() and ol != self.entryFrame:
 			ol.parent().addClass("has-no-child")
 
 		if data["skellist"] and data["cursor"]:
-			self.loadNode(req.node, data["cursor"], req.reqType)
-
-		self.actionBar.resetLoadingState()
+			self.loadNode(self.node, req.skelType, data["cursor"])
 
 	def onDrop(self, event):
 		"""

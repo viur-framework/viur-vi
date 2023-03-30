@@ -100,7 +100,7 @@ class EditAction(Button):
 		correctAction = actionName == "edit"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and (
-				"root" in conf["currentUser"]["access"] or module + "-edit" in conf["currentUser"]["access"])
+				"root" in conf["currentUser"]["access"] or (module + "-edit" in conf["currentUser"]["access"]))
 
 		return correctAction and correctHandler and hasAccess
 
@@ -167,7 +167,7 @@ class CloneAction(Button):
 		correctAction = actionName == "clone"
 		correctHandler = handler == "list" or handler.startswith("list.")
 		hasAccess = conf["currentUser"] and (
-				"root" in conf["currentUser"]["access"] or module + "-edit" in conf["currentUser"]["access"])
+				"root" in conf["currentUser"]["access"] or module + "-add" in conf["currentUser"]["access"])
 
 		return correctAction and correctHandler and hasAccess
 
@@ -308,9 +308,9 @@ class ListPreviewAction(html5.Span):
 		self.urlCb = ignite.Select()
 		self.appendChild(self.urlCb)
 
-		btn = Button(translate("Preview"), callback=self.onClick, icon="icon-preview")
-		btn["class"] = "bar-item btn btn--small btn--preview"
-		self.appendChild(btn)
+		self.btn = Button(translate("Preview"), callback=self.onClick, icon="icon-preview")
+		self.btn["class"] = "bar-item btn btn--small btn--preview"
+		self.appendChild(self.btn)
 
 		self["disabled"] = True
 		self.isDisabled = True
@@ -326,7 +326,12 @@ class ListPreviewAction(html5.Span):
 		if isinstance(self.urls, list):
 			self.urls = {x: x for x in self.urls}
 
-		if not isinstance(self.urls, dict) or len(self.urls.keys()) == 1:
+		if isinstance(self.urls, dict) and len(self.urls.keys()) == 1:
+			self.urlCb.addClass("is-hidden")
+			self.btn["text"] = list(self.urls.keys())[0]
+			return
+
+		elif not isinstance(self.urls, dict):
 			self.urlCb.addClass("is-hidden")
 			return
 
@@ -1039,7 +1044,7 @@ class ListSelectFilterAction(Button):
 	def onAttach(self):
 		super(ListSelectFilterAction, self).onAttach()
 		module = self.parent().parent().module
-		if self.parent().parent().filterID:
+		if self.parent().parent().filterID and not self.parent().parent().filterID == -1:
 			# Its a predefined search - we wont override this
 			self["disabled"] = True
 		if module in conf["modules"].keys():

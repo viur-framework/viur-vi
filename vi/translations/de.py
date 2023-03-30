@@ -152,7 +152,9 @@ lngDe = {
 	"one time password": "OTP-Token",
 	"verify": "Authentifizieren",
 	"vi.login.handler.googleaccount": "Google",
+	"vi.login.handler.oauthaccount": "Azure",
 	"login with google": "Mit Google einloggen",
+	"login with OAuth": "Mit Azure einloggen",
 
 	"ViUR-core (v{{core.version}}) is incompatible to this Vi (v{{vi.version}}). The ViUR-core version musst be greater or equal version v{{core.version.min}} and lower than v{{core.version.max}}.":
 		u"Die Version des verwendeten ViUR-core (v{{core.version}}) ist inkompatibel mit diesem Vi (v{{vi.version}}). Die Version des ViUR-core muss größer oder gleich Version v{{core.version.min}} und kleiner als v{{core.version.max}} sein.",
@@ -161,8 +163,11 @@ lngDe = {
 	"version mismatch": "Versionen stimmen nicht überein",
 	"Continue at your own risk": "Trotzdem fortfahren",
 	"vi.login.insufficient-rights": "Der aktuelle angemeldete Benutzer hat nicht genügend Rechte um diese "
-	                                u"Funktion zu verwenden.\n\nBitte loggen Sie sich unter einem anderen "
-	                                u"Benutzer mit entsprechenden Zugriffsrechten ein.",
+	                                "Funktion zu verwenden.\n\nBitte loggen Sie sich unter einem anderen "
+	                                "Benutzer mit entsprechenden Zugriffsrechten ein.",
+	"vi.login.nologinhandlerfound": "Kein Login-Handler gefunden",
+	"vi.login.nosupportedhandler": "Oh Mist, es fehlt scheinbar ein Login-Handler.\n"
+	                               "Bitte versuchen Sie, sich über das Frontend einzuloggen!",
 	"login as different user": "Aktuellen Benutzer abmelden",
 
 	"the connection to the server could not be correctly established.":
