@@ -11,7 +11,6 @@ from vi.framework.components.datatable import DataTable, ViewportDataTable
 from vi.framework.components.actionbar import ActionBar
 from flare.event import EventDispatcher
 from flare.icons import SvgIcon
-from collections import OrderedDict
 
 import logging
 
@@ -367,9 +366,14 @@ class ListWidget(html5.Div):
 	def receivedStructure(self, resp):
 		data = NetworkService.decode(resp)
 		for stype, structlist in data.items():
-			structure = OrderedDict()
-			for k, v in structlist:
-				structure[k] = v
+			structure = {}
+
+			if isinstance(structlist, list):
+				for k, v in structlist:
+					structure[k] = v
+			else:
+				structure = structlist
+
 			if stype == "viewSkel":
 				self.viewStructure = structure
 			elif stype == "editSkel":
