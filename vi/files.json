@@ -106,7 +106,6 @@
   "widgets/hierarchy.py",
   "widgets/internaledit.py",
   "widgets/list.py",
-  "widgets/preview.py",
   "widgets/repeatdate.py",
   "widgets/search.py",
   "widgets/sidebar.py",
