@@ -3,7 +3,7 @@ from flare.i18n import translate
 
 vi_conf = {
 	# Vi version number
-	"vi.version": (3, 0, 34),
+	"vi.version": (3, 0, 35),
 	# Appendix to version
 	"vi.version.appendix": "dev",
 

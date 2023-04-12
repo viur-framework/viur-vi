@@ -2,6 +2,10 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.35] - 2023-04-12
+
+- Fix for default values in RelationalBones with using-Skel
+
 ## [3.0.34] - 2023-04-12
 
 - More fixes on tuple- and dict-structures
