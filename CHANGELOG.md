@@ -2,6 +2,14 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.33] - 2023-04-12
+
+- Support both tuple- and dict-structures
+- Use generic URL replacer for previews and server-side actions
+- Improvements for viur-core 3.4 support
+- Remove obsolete modules repeatdate.py and preview.py
+- Raising `conf["viur.core.version.max"]` version numbers
+
 ## [3.0.32] - 2023-03-27
 
 - Check on "list.grouped."-handler prefix as well
