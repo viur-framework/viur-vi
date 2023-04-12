@@ -2,6 +2,10 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.34] - 2023-04-12
+
+- More fixes on tuple- and dict-structures
+
 ## [3.0.33] - 2023-04-12
 
 - Support both tuple- and dict-structures
