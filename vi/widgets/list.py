@@ -11,7 +11,6 @@ from vi.framework.components.datatable import DataTable, ViewportDataTable
 from vi.framework.components.actionbar import ActionBar
 from flare.event import EventDispatcher
 from flare.icons import SvgIcon
-from collections import OrderedDict
 
 import logging
 
@@ -71,7 +70,8 @@ class ListWidget(html5.Div):
 						myView = v
 						break
 
-			if conf["modules"][module]["handler"] == "list.grouped":
+			if conf["modules"][module]["handler"] == "list.grouped" \
+					or conf["modules"][module]["handler"].startswith("list.grouped."):
 				if "group" in kwargs and kwargs["group"]:
 					self.group = kwargs["group"]
 				else:
@@ -366,9 +366,11 @@ class ListWidget(html5.Div):
 	def receivedStructure(self, resp):
 		data = NetworkService.decode(resp)
 		for stype, structlist in data.items():
-			structure = OrderedDict()
-			for k, v in structlist:
-				structure[k] = v
+			if isinstance(structlist, list):
+				structure = {k: v for k, v in structlist}
+			else:
+				structure = structlist
+
 			if stype == "viewSkel":
 				self.viewStructure = structure
 			elif stype == "editSkel":

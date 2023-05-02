@@ -8,6 +8,7 @@ from flare.i18n import translate
 from flare.popup import Confirm
 
 from vi.config import conf
+from vi import utils
 
 
 class ServerSideActionWdg(Button):
@@ -88,12 +89,12 @@ class ServerSideActionWdg(Button):
 	def apply(self,sender=None):
 		selection = self.parent().parent().getCurrentSelection()
 		if self.actionData["action"] == "view":
-			url_parts = self.actionData['url'].split("/")
+			url_parts = utils.render_url(self.actionData["url"], self.parent().parent().module).split("/", 1)
 			targetInfo = conf["modules"][url_parts[0]]
 
 			if "params" in self.actionData:
 				if selection:
-					targetInfo.update({k: v.replace("{{key}}", selection[0]["key"]) for k, v in self.actionData["params"].items()})
+					targetInfo.update({k: utils.render_url(v, self.parent().parent().module, selection[0]) for k, v in self.actionData["params"].items()})
 				else:
 					targetInfo.update(self.actionData["params"])
 			conf["mainWindow"].openView(
@@ -111,27 +112,30 @@ class ServerSideActionWdg(Button):
 				# if (len(selection) == 1 and not self.actionData["allowMultiSelection"]) or len(selection) > 0:
 				wasIdle = not self.pendingFetches
 				for item in selection:
+					url = utils.render_url(self.actionData["url"], self.parent().parent().module, item)
+
 					if self.actionData["action"] == "open":
-						url = self.actionData["url"].replace("{{key}}", item["key"])
 						window.open(url, "_blank")
 					elif self.actionData["action"] == "fetch":
-						url = self.actionData["url"].replace("{{key}}", item["key"])
 						self.pendingFetches.append(url)
 					else:
 						raise NotImplementedError()
+
 				if wasIdle and self.pendingFetches:
 					self.addClass("is-loading")
 					self.fetchNext()
+
 			elif self.actionData["enabled"] == "True":
 				wasIdle = not self.pendingFetches
+				url = utils.render_url(self.actionData["url"], self.parent().parent().module)
+
 				if self.actionData["action"] == "open":
-					url = self.actionData["url"]
 					window.open(url, "_blank")
 				elif self.actionData["action"] == "fetch":
-					url = self.actionData["url"]
 					self.pendingFetches.append(url)
 				else:
 					raise NotImplementedError()
+
 				if wasIdle and self.pendingFetches:
 					self.addClass("is-loading")
 					self.fetchNext()

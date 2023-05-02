@@ -1,11 +1,31 @@
-#-*- coding: utf-8 -*-
-import re
 from flare import html5,utils
 from flare.viur.formatString import formatString as fl_formatString
 from js import CustomEvent
 from vi.config import conf
 from pyodide import to_js
 import pyodide
+
+
+def render_url(url, module, entry=None, **kwargs):
+	"""
+	Renders a URL that contains {{variables}}, e.g. for previews.
+	"""
+	url = url.replace("{{modul}}", module)  # fixme: fallback for very old definitions
+	url = url.replace("{{module}}", module)
+
+	if conf["updateParams"]:
+		for k, v in conf["default_params"].items():
+			url = url.replace("{{%s}}" % k, str(v))
+
+	if entry:
+		for k, v in entry.items():
+			url = url.replace("{{%s}}" % k, str(v))
+
+	for k, v in kwargs.items():
+		url = url.replace("{{%s}}" % k, str(v))
+
+	return url.replace("'", "\\'")
+
 
 def formatString(format, data, structure = None, language = None):
 	"""
@@ -22,7 +42,7 @@ def setPreventUnloading(mode = True):
 	except:
 		return
 
-	print("setPreventUnloading", count, mode)
+	# print("setPreventUnloading", count, mode)
 
 	if not mode:
 		if count == 0:

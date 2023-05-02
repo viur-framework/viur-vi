@@ -1,18 +1,11 @@
-# -*- coding: utf-8 -*-
 from flare import html5, utils
-from flare.viur.formatString import formatString
 from flare.network import NetworkService
 from vi.framework.components.actionbar import ActionBar
 from flare.event import EventDispatcher
 from vi.priorityqueue import DisplayDelegateSelector, ModuleWidgetSelector
-from flare.viur import BoneSelector
 from vi.config import conf
 from flare.i18n import translate
-from flare.icons import SvgIcon,Icon
-from time import time
-from collections import OrderedDict
 import logging
-
 
 from flare.viur.widgets.tree import TreeItemWidget, TreeLeafWidget, TreeNodeWidget
 
@@ -116,9 +109,11 @@ class TreeWidget(html5.Div):
 	def receivedStructure( self, resp ):
 		data = NetworkService.decode(resp)
 		for stype, structlist in data.items():
-			structure = OrderedDict()
-			for k, v in structlist:
-				structure[k] = v
+			if isinstance(structlist, list):
+				structure = {k: v for k, v in structlist}
+			else:
+				structure = structlist
+
 			if stype == "viewNodeSkel":
 				self.viewNodeStructure = structure
 			elif stype == "viewLeafSkel":

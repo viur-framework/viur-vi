@@ -8,6 +8,7 @@ from vi.config import conf
 from vi.widgets.csvexport import ExportCsvStarter
 from vi.sidebarwidgets.internalpreview import InternalPreview
 from vi.sidebarwidgets.filterselector import FilterSelector
+from vi import utils
 from flare.i18n import translate
 from flare.button import Button
 from flare.network import DeferredCall, requestGroup
@@ -384,27 +385,16 @@ class ListPreviewAction(html5.Span):
 
 		for entry in selection:
 			if isinstance(self.urls, str):
-				newUrl = self.urls
+				url = self.urls
 			elif len(self.urls.keys()) == 1:
-				newUrl = list(self.urls.values())[0]
+				url = list(self.urls.values())[0]
 			else:
-				newUrl = self.urlCb["options"].item(self.urlCb["selectedIndex"]).value
+				url = self.urlCb["options"].item(self.urlCb["selectedIndex"]).value
 
-			newUrl = newUrl \
-				.replace("{{modul}}", self.parent().parent().module) \
-				.replace("{{module}}", self.parent().parent().module)
-
-			if "updateParams" in conf and conf["updateParams"]:
-				for k, v in conf["default_params"].items():
-					newUrl = newUrl.replace("{{%s}}" % k, v)
-
-			for k, v in entry.items():
-				newUrl = newUrl.replace("{{%s}}" % k, str(v))
-
-			newUrl = newUrl.replace("'", "\\'")
-
+			url = utils.render_url(url, self.parent().parent().module, entry)
 			target = "%s-%s" % (self.parent().parent().module, entry.get("key"))
-			html5.window.open(newUrl, target)
+
+			html5.window.open(url, target)
 
 	@staticmethod
 	def isSuitableFor(module, handler, actionName):

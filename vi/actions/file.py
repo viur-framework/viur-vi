@@ -64,7 +64,7 @@ class AddNodeAction(Button):
 			return False
 
 		correctAction = actionName=="add.node"
-		correctHandler = handler == "tree.simple.file" or handler == "tree.file" or handler.startswith("tree.file.")
+		correctHandler = handler == "tree.simple.file" or handler == "tree.file" or handler.startswith("tree.simple.file.") or handler.startswith("tree.file.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add-node" in conf["modules"][module]["disabledFunctions"]
 
@@ -112,7 +112,7 @@ class AddLeafAction(Button):
 			return False
 
 		correctAction = actionName=="add.leaf"
-		correctHandler = handler == "tree.simple.file" or handler == "tree.file" or handler.startswith("tree.file.")
+		correctHandler = handler == "tree.simple.file" or handler == "tree.file" or handler.startswith("tree.simple.file.") or handler.startswith("tree.file.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-add" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "add-leaf" in conf["modules"][module]["disabledFunctions"]
 
@@ -185,7 +185,7 @@ class EditAction(Button):
 			return False
 
 		correctAction = actionName=="edit"
-		correctHandler = handler == "tree.simple.file" or handler == "tree.file" or handler.startswith("tree.file.")
+		correctHandler = handler == "tree.simple.file" or handler == "tree.file" or handler.startswith("tree.simple.file.") or handler.startswith("tree.file.")
 		hasAccess = conf["currentUser"] and ("root" in conf["currentUser"]["access"] or module+"-edit" in conf["currentUser"]["access"])
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "edit" in conf["modules"][module]["disabledFunctions"]
 
@@ -267,7 +267,7 @@ class DownloadAction(Button):
 			return False
 
 		correctAction = actionName=="download"
-		correctHandler = handler == "tree.simple.file" or handler == "tree.file" or handler.startswith("tree.file.")
+		correctHandler = handler == "tree.simple.file" or handler == "tree.file" or handler.startswith("tree.simple.file.") or handler.startswith("tree.file.")
 		isDisabled = module is not None and "disabledFunctions" in conf["modules"][module].keys() and conf["modules"][module]["disabledFunctions"] and "download" in conf["modules"][module]["disabledFunctions"]
 
 		return correctAction and correctHandler and not isDisabled
