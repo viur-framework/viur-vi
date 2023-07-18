@@ -2,6 +2,11 @@
 
 This file documents any relevant changes done to ViUR Vi since version 2.
 
+## [3.0.37] - 2023-07-18
+
+- fix: Updated flare
+- fix: Accept viur-core 3.5
+
 ## [3.0.36] - 2023-04-13
 
 - fix: Handle empty values in format strings
