@@ -1,8 +1,9 @@
-# -*- coding: utf-8 -*-
-from flare import html5,utils
+from datetime import datetime
+
+from flare import html5, utils
 from flare.ignite import Table
 from flare.event import EventDispatcher
-from flare.network import DeferredCall
+from flare.network import DeferredCall, NetworkService
 
 
 class SelectTable( Table ):
@@ -521,7 +522,8 @@ class SelectTable( Table ):
 class DataTable( html5.Div ):
 
 	def __init__( self, _loadOnDisplay = False, *args, **kwargs ):
-		super( DataTable, self ).__init__( )
+		super().__init__()
+
 		self.table = SelectTable( *args, **kwargs )
 		self.addClass("vi-datatable")
 		self.appendChild(self.table)
@@ -535,6 +537,7 @@ class DataTable( html5.Div ):
 		self._dataProvider = None # Which object to call if we need more data
 		self._cellRender = {} # Map of renders for a given field
 		self._renderedModel = [] #save already rendered Field (used to rebuild Table if new Fields were selected
+		self._moduleName=kwargs.get("moduleName")
 		# We re-emit some events with custom parameters
 		self.selectionChangedEvent = EventDispatcher("selectionChanged")
 		self.selectionActivatedEvent = EventDispatcher("selectionActivated")
@@ -669,8 +672,24 @@ class DataTable( html5.Div ):
 			self.table.prepareCol( rowIdx, len( self._shownFields ) - 1 )
 
 		for field in self._shownFields:
-			if not recalculate and rowIdx<len(self._renderedModel) and field in self._renderedModel[rowIdx] and self._renderedModel[rowIdx][field]:
+			# Inject sortindex
+			if field == "sortindex":
+				#fixme: Replace inline styles below
+				#language=HTML
+				lbl = html5.fromHTML("""
+				   <div draggable class="flr-bone-dragger" style="height:25px;width:25px;">
+					   <flare-svg-icon value="icon-draggable" style="height:25px;width:25px;" ></flare-svg-icon>
+					   <span hidden>{{sortindex}}</span>
+				   </div>
+				""", sortindex=self._model[rowIdx]["sortindex"]).pop()
+
+				lbl.addEventListener("drop", self.onDrop)
+				lbl.addEventListener("dragstart", self.onDragStart)
+				lbl.addEventListener("dragover",self.onDragOver)
+
+			elif not recalculate and rowIdx < len(self._renderedModel) and field in self._renderedModel[rowIdx] and self._renderedModel[rowIdx][field]:
 				lbl = self._renderedModel[rowIdx][field]
+
 			else:
 				if field in self._cellRender.keys():
 					lbl = self._cellRender[field].viewWidget(obj[field])
@@ -683,6 +702,52 @@ class DataTable( html5.Div ):
 
 			self.table.setCell( rowIdx, cellIdx, lbl )
 			cellIdx += 1
+
+	###Drag Drop Events
+	def onDrop(self, event):
+		event.preventDefault()
+
+		rowIdx = self.table.getIndexByTr(self.table._rowForEvent(event))
+		dragElementIndex = int(event.dataTransfer.getData("index"))
+		dropData = self._model[dragElementIndex]
+
+		if rowIdx == dragElementIndex:
+			return
+
+		sortindexdrop = self._model[rowIdx]["sortindex"]
+
+		if rowIdx < dragElementIndex:
+			if rowIdx - 1 < 0:
+				sortindex = self._model[0]["sortindex"] - 1
+			else:
+				sortindex = self._model[rowIdx-1]["sortindex"]
+
+		elif rowIdx > dragElementIndex:
+			if rowIdx + 1 == len(self._model):
+				sortindex = datetime.now().timestamp()
+			else:
+				sortindex = self._model[rowIdx + 1]["sortindex"]
+
+		newIdx = (sortindex + sortindexdrop) / 2
+
+		NetworkService.request(
+			self._moduleName or self._dataProvider.module, "edit",
+			{
+				"key": dropData["key"],
+				"sortindex": str(newIdx),
+			},
+			secure=True,
+			modifies=True,
+		)
+
+	def onDragStart(self, event):
+		rowIdx = self.table.getIndexByTr(self.table._rowForEvent(event))
+		event.dataTransfer.setData("index", rowIdx)
+		event.stopPropagation()
+
+	def onDragOver(self, event):
+		#print("over drag")
+		event.preventDefault()
 
 	def rebuildTable(self, recalculate=True):
 		"""
