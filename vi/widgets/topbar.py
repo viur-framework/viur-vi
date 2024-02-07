@@ -208,7 +208,7 @@ class Tasks(html5.Div):
 		aitem2 = html5.Div()
 		aitem2["class"] = ["item", "has-hover", "item--small"]
 		aitem2.appendChild(html5.Span(html5.TextNode("Core")))
-		aitem2.appendChild(html5.Span(html5.TextNode("v" + ".".join(map(str,conf["core.version"][:2])))))
+		aitem2.appendChild(html5.Span(html5.TextNode("v" + ".".join(map(str,conf["core.version"])))))
 		self.popoutlist.appendChild(aitem2)
 
 
