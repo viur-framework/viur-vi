@@ -306,7 +306,7 @@ class Scripter(Button):
 			self.show()
 
 	def onClick(self, event=None):
-		if scriptor := conf["server"].get("scriptor"):
+		if scriptor := conf["server"].get("vi.scriptor"):
 			html5.window.open(scriptor)
 		else:
 			CodePopup()

@@ -118,7 +118,7 @@ class AdminScreen(Screen):
 			self.getCurrentUser()
 			return
 
-		conf["server"] = config.get("configuration", {})
+		conf["server"] = {k.replace("admin.", "vi."): v for k, v in config.get("configuration", {}).items()}
 
 		if name := conf["server"].get("vi.name"):
 			conf["vi.name"] = str(name)
