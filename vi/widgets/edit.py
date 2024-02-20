@@ -1,4 +1,5 @@
 import pyodide
+import logging
 
 from flare import html5
 from flare.popup import Confirm
@@ -11,6 +12,7 @@ from vi import utils
 from vi.config import conf
 from vi.framework.components.actionbar import ActionBar
 from vi.widgets.list import ListWidget
+from vi.widgets.tree import TreeWidget
 from vi.widgets.accordion import Accordion
 
 
@@ -436,15 +438,25 @@ class EditWidget(html5.Div):
 
 				if vvariable:
 					context = self.context.copy() if self.context else {}
-					context[vvariable] = data["values"]["key"]
+					if isinstance(vvariable, str):
+						context[vvariable] = data["values"]["key"]
+					elif isinstance(vvariable, dict):
+						context |= {v: data["values"][k] for v, k in vvariable.items()}
 				else:
 					context = self.context
 
-				self.views[vmodule] = ListWidget(
-					vmodule, filter=vfilter or vdescr.get("filter", {}),
-					columns=vcolumns or vdescr.get("columns"),
-					context=context
-				)
+				if vdescr["handler"] == "list" or vdescr["handler"].startswith("list."):
+					self.views[vmodule] = ListWidget(
+						vmodule, filter=vfilter or vdescr.get("filter", {}),
+						columns=vcolumns or vdescr.get("columns"),
+						context=context
+					)
+				elif vdescr["handler"] == "tree" or vdescr["handler"].startswith("tree."):
+					self.views[vmodule] = TreeWidget(vmodule, context=context)
+				else:
+					logging.error(f"Handler {vdescr['handler']} is not supported")
+					continue
+
 				self.segments[vmodule].addWidget(self.views[vmodule])
 
 		if self._hashArgs:  # Apply the default values (if any)

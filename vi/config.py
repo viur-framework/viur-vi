@@ -25,7 +25,7 @@ vi_conf = {
 	"vi.access.rights": ["admin", "root"],
 
 	# Context access variable prefix
-	"vi.context.prefix": "",
+	"vi.context.prefix": "@",
 
 	# Context action title fields
 	"vi.context.title.bones": ["name"],
