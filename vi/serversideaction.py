@@ -1,4 +1,5 @@
 import logging
+import re
 
 from flare.button import Button
 from flare.html5 import window
@@ -143,9 +144,12 @@ class ServerSideActionWdg(Button):
 	def fetchNext(self):
 		if not self.pendingFetches:
 			return
+
 		url = self.pendingFetches.pop()
+		stripped_url = re.sub(r"skey={{skey}}&?", "", url)  # support new vi-admin syntax
+
 		NetworkService.request(
-			None, url, secure=True,
+			None, stripped_url, secure=url != stripped_url,
 			successHandler=self.fetchSucceeded,
 			failureHandler=NiceErrorAndThen(self.fetchFailed)
 		)
